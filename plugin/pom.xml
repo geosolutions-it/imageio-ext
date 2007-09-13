@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <project xmlns="http://maven.apache.org/POM/4.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                               http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>it.geosolutions.imageio-ext</groupId>
+    <artifactId>imageio-ext</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <groupId>it.geosolutions.imageio-ext</groupId>
+  <artifactId>imageio-ext-plugin</artifactId>
+  <packaging>pom</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>GeoSolutions ImageIO Extension plugins</name>
+
+  <description>
+    ImageIO Extension plugin modules.
+  </description>
+
+
+	<dependencies>
+    <dependency>
+      <groupId>it.geosolutions.imageio-ext</groupId>
+      <artifactId>imageio-ext-gdal</artifactId>
+			<version>${project.version}</version>
+    </dependency>
+    <dependency>
+  		<groupId>it.geosolutions.imageio-ext</groupId>
+  		<artifactId>imageio-ext-customstreams</artifactId>
+			<version>${project.version}</version>
+    </dependency>
+    <dependency>
+  		<groupId>it.geosolutions.imageio-ext</groupId>
+  		<artifactId>imageio-ext-test-data</artifactId>
+			<version>${project.version}</version>
+    </dependency>
+    <dependency>
+  		<groupId>it.geosolutions.imageio-ext</groupId>
+  		<artifactId>imageio-ext-gdalframework</artifactId>
+			<version>${project.version}</version>
+    </dependency>
+	</dependencies>
+
+
+  <!-- =========================================================== -->
+  <!--     Build Configuration                                     -->
+  <!--         copies all JARs in a single directory.              -->
+  <!-- =========================================================== -->
+  <build>
+    <plugins>
+	    <plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>dependency-maven-plugin</artifactId>
+				<executions>
+				  <execution>
+				    <phase>install</phase>
+				      <goals>
+				        <goal>copy-dependencies</goal>
+				      </goals>
+				  </execution>
+				</executions>
+			</plugin>
+
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+				  <execution>
+				    <phase>install</phase>
+				    <configuration>
+				      <tasks>
+				        <delete>
+				        	<fileset dir="${project.build.directory}/dependency"/>
+								</delete>
+				      </tasks>
+				    </configuration>
+				    <goals>
+				      <goal>run</goal>
+				    </goals>
+				  </execution>
+				</executions>
+      </plugin>
+      <plugin>
+        <groupId>org.geotools</groupId>
+        <artifactId>gt2-jar-collector</artifactId>
+        <version>2.3.1-SNAPSHOT</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>collect</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <!-- =========================================================== -->
+  <!--     Modules for the build in approximate dependency order   -->
+  <!-- =========================================================== -->
+  <modules>
+    <module>geotiff</module>
+    <module>hdf4</module>
+    <module>mrsid</module>
+    <module>jp2kakadu</module>
+    <module>ecw</module>
+    <module>arcgrid</module>
+  </modules>
+</project>
