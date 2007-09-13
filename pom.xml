@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <project xmlns="http://maven.apache.org/POM/4.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                               http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+
+
+  <!-- 																														 -->
+  <!--     Project Description                                     -->
+  <!-- 																														 -->
+  <groupId>it.geosolutions.imageio-ext</groupId>
+  <artifactId>imageio-ext</artifactId>
+  <packaging>pom</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>ImageIO Extensions Library Root project</name>
+
+
+  <scm>
+    <connection>
+      scm:svn:https://www.geo-solutions.it/svn/repo/imageio_extension/trunk
+    </connection>
+    <url>https://www.geo-solutions.it/svn/repo/imageio_extension/trunk</url>
+  </scm>
+
+  <description>Container for tools and extensions to Image I/O project</description>
+
+  <organization>
+    <name>GeoSolutions</name>
+    <url>http://www.geo-solutions.it</url>
+  </organization>
+  <inceptionYear>2006</inceptionYear>
+
+  <licenses>
+    <license>
+      <name>Lesser General Public License (LGPL)</name>
+      <url>http://www.gnu.org/copyleft/lesser.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+
+  <!-- 																																			 -->
+  <!--     Developers and contributors.                                      -->
+  <!-- 																																			 -->
+  <developers>
+    <developer>
+      <name>Alessio Fabiani</name>
+      <id>AlFa</id>
+      <email>alessio.fabiani@gmail.com</email>
+      <organization>GeoSolutions</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Simone Giannecchini</name>
+      <id>Simboss</id>
+      <email>simboss1@gmail.com</email>
+      <organization>GeoSolutions</organization>
+      <roles>
+        <role>Java Developer</role>
+        <role>Project Architect</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Daniele Romagnoli</name>
+      <id>Daniele</id>
+      <email>dany.geotools@gmail.com</email>
+      <organization>GeoSolutions</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+  </developers>
+
+	<!--													-->
+	<!--		Plugin Repositories		-->
+	<!--													-->
+	<pluginRepositories>
+	  <pluginRepository>
+	    <id>codehaus.org</id>
+	    <name>CodeHaus Plugin Snapshots</name>
+	    <url>http://snapshots.repository.codehaus.org</url>
+	    <releases>
+	      <enabled>false</enabled>
+	    </releases>
+	    <snapshots>
+	      <enabled>true</enabled>
+	    </snapshots>
+	  </pluginRepository>
+	</pluginRepositories>
+
+
+	<!--			Repositories				-->
+	<!--													-->
+	<!--													-->
+	<repositories>
+	  <repository>
+		  <id>ibiblio mirror</id>
+		  <name>ibiblio mirror</name>
+		  <url>http://mirrors.ibiblio.org/pub/mirrors/maven2</url>
+		</repository>
+		<repository>
+		  <id>ibiblio</id>
+		  <name>ibiblio</name>
+		  <url>http://www.ibiblio.org/maven2/</url>
+		</repository>
+    <repository>
+      <id>codehaus</id>
+      <name>Codehaus maven repository</name>
+      <url>http://repository.codehaus.org/</url>
+    </repository>
+		<repository>
+		  <id>refractions</id>
+		  <name>Refractions Research Maven 2 Repository</name>
+		  <url>http://lists.refractions.net/m2</url>
+		</repository>
+    <repository>
+      <id>codehaus.org</id>
+      <name>CodeHaus Snapshots</name>
+      <url>http://snapshots.repository.codehaus.org</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+	</repositories>
+
+  <!-- 																																			 -->
+  <!--     Dependencies management.                                          -->
+  <!--     If a POM declares one of those dependencies, then it will use     -->
+  <!--     the version specified here. Otherwise, those dependencies are     -->
+  <!--     ignored.                                                          -->
+  <!-- 																																			 -->
+	<dependencies>
+		<!-- Tests or legacy -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+  <!-- 																														 -->
+  <!-- 																														 -->
+  <!--     Build Configuration                                     -->
+  <!-- 																														 -->
+  <build>
+    <plugins>
+      <!-- ======================================================= -->
+      <!--     Compilation.                                        -->
+      <!-- ======================================================= -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.4</source>  <!-- The -source argument for the Java compiler. -->
+          <target>1.4</target>  <!-- The -target argument for the Java compiler. -->
+          <debug>true</debug>   <!-- Whether to include debugging information.   -->
+          <encoding>ISO-8859-1</encoding> <!-- The -encoding argument for the Java compiler. -->
+        </configuration>
+      </plugin>
+
+
+
+      <!-- ======================================================= -->
+      <!--     Tests.                                              -->
+      <!-- ======================================================= -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <includes>
+            <include>**/*Test.java</include>
+          </includes>
+          <forkMode>once</forkMode>
+          <argLine>-Xmx512M -enableassertions</argLine>
+        </configuration>
+      </plugin>
+	  </plugins>
+	</build>
+
+
+
+
+  <!-- 										-->
+  <!--		PROPERTIES			-->
+  <!-- 										-->
+	<properties>
+		<path.native>${env.JAVA_HOME}/bin</path.native>
+	</properties>
+
+  <!--                                                             -->
+  <!--     Modules for the build in approximate dependency order   -->
+  <!-- 																														 -->
+  <modules>
+    <module>deploy</module>
+    <module>library</module>
+    <module>plugin</module>
+  </modules>
+
+
+
+</project>
