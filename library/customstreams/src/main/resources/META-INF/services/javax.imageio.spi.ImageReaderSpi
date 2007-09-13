@@ -1,0 +1,3 @@
+it.geosolutions.imageio.stream.input.spi.FileImageInputStreamExtImplSpi
+it.geosolutions.imageio.stream.input.spi.URLImageInputStreamSpi
+it.geosolutions.imageio.stream.input.spi.StringImageInputStreamSpi
