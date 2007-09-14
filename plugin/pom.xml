@@ -106,6 +106,7 @@
     <module>hdf4</module>
     <module>mrsid</module>
     <module>jp2kakadu</module>
+    <module>jpeg</module>
     <module>ecw</module>
     <module>arcgrid</module>
   </modules>
