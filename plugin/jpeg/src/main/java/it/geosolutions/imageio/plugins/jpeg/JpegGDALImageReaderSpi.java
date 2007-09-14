@@ -101,6 +101,7 @@ public class JpegGDALImageReaderSpi extends GDALImageReaderSpi {
 
 		if (logger.isLoggable(Level.FINE))
 			logger.fine("JpegGDALImageReaderSpi Constructor");
+		needsTileTuning=true;
 	}
 
 	/**
