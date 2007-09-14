@@ -47,9 +47,20 @@
   <!--                                                             -->
   <!--     Modules for the build in approximate order   -->
   <!-- 																														 -->
+<profiles>
+<profile>
+<id>windows</id>
   <modules>
     <module>jar</module>
     <module>native</module>
   </modules>
+</profile>
+<profile>
+<id>linux</id>
+  <modules>
+    <module>jar</module>
+  </modules>
+</profile>
+</profiles>
 
 </project>
