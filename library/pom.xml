@@ -48,7 +48,7 @@
 				    <phase>install</phase>
 				    <configuration>
 				      <tasks>
-				        <delete>
+				        <delete failonerror="false">
 				        	<fileset dir="${project.build.directory}/dependency"/>
 								</delete>
 				      </tasks>
