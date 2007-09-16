@@ -12,6 +12,9 @@ import javax.imageio.metadata.IIOMetadataNode;
 import net.sourceforge.jgrib.GribCollection;
 import net.sourceforge.jgrib.GribFile;
 
+/**
+ * @author Daniele Romagnoli
+ */
 public class GRIB1BasicStreamMetadata extends BasicStreamMetadata {
 
 	private Object gribSource;
@@ -59,28 +62,6 @@ public class GRIB1BasicStreamMetadata extends BasicStreamMetadata {
 				imagesNode = appendImagesNode(uri.toString(), images,
 						imagesNode);
 			}
-//		} else if (gribSource instanceof List) {
-//			List list = (List) gribSource;
-//			Iterator listIterator = list.iterator();
-//			while (listIterator.hasNext()) {
-//				IndexToRecordMapper mapper = (IndexToRecordMapper) listIterator
-//						.next();
-//
-//				IIOMetadataNode imageNode = new IIOMetadataNode("Image");
-//
-//				IIOMetadataNode imageIndexNode = new IIOMetadataNode("imageIndex");
-//				imageIndexNode.setNodeValue(Integer.toString(mapper.getImageIndex()));
-//				imageNode.appendChild(imageIndexNode);
-//
-//				IIOMetadataNode uriNode = new IIOMetadataNode("srcURI");
-//
-//				// TODO: Build Uri from gribFile
-//				uriNode.setNodeValue(mapper.getUriString());
-//				imageNode.appendChild(uriNode);
-//
-//				imagesNode.appendChild(imageNode);
-//			}
-
 		}
 		return imagesNode;
 	}

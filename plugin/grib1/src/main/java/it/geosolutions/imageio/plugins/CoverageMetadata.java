@@ -5,8 +5,12 @@ import javax.imageio.metadata.IIOMetadataNode;
 
 import org.w3c.dom.Node;
 
+/**
+ * @author Daniele Romagnoli
+ */
 public abstract class CoverageMetadata extends IIOMetadata {
 
+	//TODO:Set it properly
 	protected String name="WIND";
 
 	protected String description;
@@ -17,7 +21,7 @@ public abstract class CoverageMetadata extends IIOMetadata {
 			final IIOMetadataNode coverageDescriptionsNode);
 
 	// TODO: Change this name
-	public static final String nativeMetadataFormatName = "it.geosolutions.imageio.plugins.coveragemetadata";
+	public static final String nativeMetadataFormatName = "it_geosolutions_imageio_plugins_coveragemetadata_1.0";
 
 	public Node getAsTree(String formatName) {
 		if (nativeMetadataFormatName.equalsIgnoreCase(formatName))

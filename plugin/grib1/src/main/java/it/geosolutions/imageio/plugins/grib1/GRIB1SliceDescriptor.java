@@ -2,9 +2,14 @@ package it.geosolutions.imageio.plugins.grib1;
 
 import it.geosolutions.imageio.plugins.SliceDescriptor;
 
+/**
+ * Class defining main properties of a Grib Slice
+ * 
+ * @author Daniele Romagnoli
+ */
 public class GRIB1SliceDescriptor extends SliceDescriptor {
 
-	// a String "parameterTableVersion:parameterNumber"
+	/** a String "CenterID:SubcenterID:TableVersion:ParameterNumber" */
 	final String parameterID;
 	
 	private String stringRepresentation = null;

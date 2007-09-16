@@ -11,6 +11,12 @@ import net.sourceforge.jgrib.tables.GribPDSParameter;
 import org.joda.time.Instant;
 import org.joda.time.Interval;
 
+/**
+ * Set of utility methods to handle all problematics involved with table
+ * versions, parameter numbers, multicomponents
+ * 
+ * @author Daniele Romagnoli
+ */
 public class GRIB1Utilities {
 
 	public final static int SINGLE_COMPONENT_PARAM = -1;
@@ -192,6 +198,12 @@ public class GRIB1Utilities {
 		return sb.toString();
 	}
 
+	/**
+	 * Given a paramID String, returns tableVersionNumber and ParameterNumber
+	 * 
+	 * @param paramID
+	 * @return
+	 */
 	public static int[] getParam(final String paramID) {
 		String paramDesc[] = paramID.split(":");
 		int[] params = new int[] { Integer.parseInt(paramDesc[2]),
@@ -228,10 +240,10 @@ public class GRIB1Utilities {
 			final int paramNum) {
 
 		// TODO: leverage on GribPDSParamTable
-
-		// TODO: Handle any case.
+		// TODO: Refactor this method using tables
+		// TODO: Handle all cases.
 		// <a href="http://www.nco.ncep.noaa.gov/pmb/docs/on388/table2.html">
-		// ON388 - TABLE2 - Parameters & Units (PDS Octet 9)</a> for 
+		// ON388 - TABLE2 - Parameters & Units (PDS Octet 9)</a> for
 		// information about parameter table and table versions.
 
 		if (paramNum >= 0 && paramNum < 128) {
@@ -258,16 +270,16 @@ public class GRIB1Utilities {
 			switch (paramNum) {
 			case 190:
 			case 203:
-				return "SOMETHING";
+				return "PROPERPARAM";
 			}
 
 		case 129:
 			switch (paramNum) {
 			case 190:
-				return "SOMETHING";
+				return "PROPERPARAM";
 			}
 		default:
-			return "SOMETHING";
+			return "PROPERPARAM";
 		}
 	}
 
@@ -292,11 +304,13 @@ public class GRIB1Utilities {
 	public static boolean isMultiComponents(String coverageName) {
 		if (coverageName.equalsIgnoreCase("WIND"))
 			return true;
+		// TODO: Add all cases
 		return false;
 	}
 
 	public static String[] getParamNames(String coverageName,
 			GribPDSParamTable table) {
+//		 TODO: Provide a full set cases
 		String[] paramNames = null;
 		if (coverageName.equalsIgnoreCase("WIND")) {
 			paramNames = new String[2];
@@ -308,10 +322,13 @@ public class GRIB1Utilities {
 
 	public static String getAxisDescription(final int tableVersion,
 			final int paramNum) {
-		// TODO Auto-generated method stub
+		// TODO: Provide a full set case (also using tables).
 		return "WIND";
 	}
 
+	/**
+	 * return a parameterID String given the parameterTable and the parameter.
+	 */
 	public static String buildParamID(GribPDSParameter parameter,
 			GribPDSParamTable table) {
 		return new StringBuffer(Integer.toString(table.getCenter_id())).append(
@@ -328,6 +345,9 @@ public class GRIB1Utilities {
 				Integer.parseInt(paramTable[2]));
 	}
 
+	/**
+	 * Given a parameterID String, return an integer list
+	 */
 	public static int[] getParamDescriptor(String parameterID) {
 		String paramDesc[] = parameterID.split(":");
 		int[] params = new int[] { Integer.parseInt(paramDesc[0]),
@@ -341,7 +361,6 @@ public class GRIB1Utilities {
 		final String parameterDescription = getDescription(param);
 		return new StringBuffer(parameterDescription).append(" ").append(
 				unitString).toString();
-
 	}
 
 	private static String getDescription(GribPDSParameter param) {
@@ -355,6 +374,5 @@ public class GRIB1Utilities {
 					.substring(0, paramDesc.indexOf("V-Component"));
 		}
 		return paramDesc;
-
 	}
 }

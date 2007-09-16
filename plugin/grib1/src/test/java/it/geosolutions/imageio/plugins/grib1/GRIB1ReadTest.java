@@ -22,7 +22,7 @@ import org.w3c.dom.Node;
 
 public class GRIB1ReadTest extends TestCase {
 
-	final static String dataPathPrefix = "E:/work/data/grib/";
+	final static String dataPathPrefix = "c:/work/data/grib1/";
 
 	public GRIB1ReadTest(String name) {
 		super(name);
@@ -33,9 +33,6 @@ public class GRIB1ReadTest extends TestCase {
 
 		// Test reading of a simple image
 		suite.addTest(new GRIB1ReadTest("testSpatioTemporalRead"));
-		//
-		// Test reading of a simple image
-		suite.addTest(new GRIB1ReadTest("testSimpleRead"));
 		//
 		// Test reading of a simple image
 		suite.addTest(new GRIB1ReadTest("testSpatioTemporalRead2"));
@@ -70,20 +67,20 @@ public class GRIB1ReadTest extends TestCase {
 	}
 	
 	public void testSpatioTemporalRead2() throws IOException {
-		final String fileName = "lami_20060210.grib";
+//		final String fileName = "lami_20060210.grib";
 		AbstractSpatioTemporalReader reader = new GRIB1SpatioTemporalReader();
-
-		reader.setInput(dataPathPrefix + fileName);
+		reader.setInput(dataPathPrefix + "coamps2");
+//		reader.setInput(dataPathPrefix + fileName);
 		displayImageIOMetadata(reader.getCoverageMetadata().getAsTree(
 				GRIB1CoverageMetadata.nativeMetadataFormatName));
 
 		String timeInstants[] = new String[] {
-				new Instant("2005-04-02T06:00:00.000Z").toString(),//this one is not valid.
-				new Instant("2006-02-10T12:00:00.000Z").toString(),
-				new Instant("2006-02-10T21:00:00.000Z").toString() };
+				new Instant("2003-09-06T03:00:00.000Z").toString(),//this one is not valid.
+				new Instant("2003-09-06T06:00:00.000Z").toString(),
+				new Instant("2003-09-06T09:00:00.000Z").toString() };
 
 		List ris = ((GRIB1SpatioTemporalReader) reader).read("WIND",
-				timeInstants, null, null, new String[] { "UGRD", "VGRD" });
+				timeInstants, null, null, new String[] { "var33", "var34" });
 
 		final int images = ris.size();
 		for (int i = 0; i < images; i++) {
@@ -94,14 +91,14 @@ public class GRIB1ReadTest extends TestCase {
 
 	public void testSpatioTemporalRead() throws IOException {
 		AbstractSpatioTemporalReader reader = new GRIB1SpatioTemporalReader();
-		reader.setInput(dataPathPrefix + "coamps");
+		reader.setInput(dataPathPrefix + "windcoamps");
 		displayImageIOMetadata(reader.getCoverageMetadata().getAsTree(
 				GRIB1CoverageMetadata.nativeMetadataFormatName));
 
 		String timeInstants[] = new String[] {
-				new Instant("2005-04-02T03:00:00.000Z").toString(),
+				new Instant("2005-04-02T12:00:00.000Z").toString(),
 				new Instant("2005-04-02T15:00:00.000Z").toString(),
-				new Instant("2005-04-03T03:00:00.000Z").toString() };
+				new Instant("2005-04-02T18:00:00.000Z").toString() };
 
 		// Old test time: 2005-04-02T03:00:00.000Z
 		List ris = ((GRIB1SpatioTemporalReader) reader).read("WIND",
@@ -113,18 +110,6 @@ public class GRIB1ReadTest extends TestCase {
 			RenderedImage ri = (RenderedImage) ris.get(i);
 			visualize(ri, "");
 		}
-	}
-
-	public void testSimpleRead() throws IOException {
-		final File file = new File(dataPathPrefix
-				+ "coamps/separated WINDS/coamps_ugrd_2003090600_00.grib");
-		GRIB1ImageReader imageReader = new GRIB1ImageReader(
-				new GRIB1ImageReaderSpi());
-		imageReader.setInput(file);
-		ImageReadParam irp = new ImageReadParam();
-		// irp.setSourceRegion(new Rectangle(20, 20, 100, 100));
-		irp.setSourceSubsampling(2, 3, 0, 0);
-		visualize(imageReader.read(0, irp));
 	}
 
 	public static void displayImageIOMetadata(Node root) {

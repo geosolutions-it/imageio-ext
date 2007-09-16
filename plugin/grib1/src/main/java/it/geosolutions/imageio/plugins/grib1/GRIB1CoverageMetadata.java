@@ -12,6 +12,9 @@ import javax.imageio.metadata.IIOMetadataNode;
 
 import org.w3c.dom.Node;
 
+/**
+ * @author Daniele Romagnoli
+ */
 public class GRIB1CoverageMetadata extends CoverageMetadata {
 
 	private AbstractSpatioTemporalReader reader;

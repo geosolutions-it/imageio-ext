@@ -6,10 +6,13 @@ import javax.imageio.metadata.IIOMetadataNode;
 
 import org.w3c.dom.Node;
 
+/**
+ * @author Daniele Romagnoli
+ */
 public abstract class BasicStreamMetadata extends IIOMetadata {
 
 //	 TODO: Change this name
-	public static final String nativeMetadataFormatName = "it.geosolutions.imageio.plugins.basicstreammetadata";
+	public static final String nativeMetadataFormatName = "it_geosolutions_imageio_plugins_basicstreammetadata_1.0";
 
 	protected String format;
 
@@ -62,17 +65,14 @@ public abstract class BasicStreamMetadata extends IIOMetadata {
 	}
 	
 	public boolean isReadOnly() {
-//		 XXX
 		return false;
 	}
 
 	public void mergeTree(String formatName, Node root)
 			throws IIOInvalidTreeException {
-//		 XXX
 	}
 
 	public void reset() {
-//		 XXX
 
 	}
 

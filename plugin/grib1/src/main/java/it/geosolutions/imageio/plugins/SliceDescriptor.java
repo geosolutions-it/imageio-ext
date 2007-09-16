@@ -48,7 +48,7 @@ public class SliceDescriptor {
 		return parameterName;
 	}
 
-	//TODO: Change this
+	//TODO: Change this... Define a proper Interface
 	public float getZetaLevel() {
 		return ((GribPDSLevel)zetaLevel).getValue1();
 	}

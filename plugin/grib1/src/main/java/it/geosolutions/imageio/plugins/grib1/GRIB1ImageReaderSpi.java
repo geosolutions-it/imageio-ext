@@ -14,7 +14,6 @@ import net.sourceforge.jgrib.GribFile;
  * Service provider interface for the GRIB1 Image
  * 
  * @author Daniele Romagnoli
- * 
  */
 public class GRIB1ImageReaderSpi extends ImageReaderSpi {
 

@@ -6,6 +6,9 @@ import javax.imageio.metadata.IIOMetadataNode;
 
 import org.w3c.dom.Node;
 
+/**
+ * @author Daniele Romagnoli
+ */
 public abstract class ImageMetadata extends IIOMetadata {
 
 	protected int imageIndex;

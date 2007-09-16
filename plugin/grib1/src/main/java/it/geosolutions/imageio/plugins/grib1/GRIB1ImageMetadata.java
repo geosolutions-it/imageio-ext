@@ -6,6 +6,9 @@ import net.sourceforge.jgrib.GribFile;
 import it.geosolutions.imageio.plugins.ImageMetadata;
 import it.geosolutions.imageio.plugins.Utilities;
 
+/**
+ * @author Daniele Romagnoli
+ */
 public class GRIB1ImageMetadata extends ImageMetadata{
 	
 	public GRIB1ImageMetadata(final int imageIndex, Object source){

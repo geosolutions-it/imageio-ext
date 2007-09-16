@@ -7,8 +7,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import javax.imageio.stream.FileImageInputStream;
-
 public class Utilities {
 
 	/**

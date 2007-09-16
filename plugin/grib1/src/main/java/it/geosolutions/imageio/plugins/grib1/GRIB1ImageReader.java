@@ -50,7 +50,6 @@ import net.sourceforge.jgrib.tables.GribPDSParameter;
  * {@link RenderedImage} from GRIB1 sources.
  * 
  * @author Daniele Romagnoli
- * 
  */
 public class GRIB1ImageReader extends AbstractImageReader {
 
@@ -202,87 +201,6 @@ public class GRIB1ImageReader extends AbstractImageReader {
 		}
 	}
 
-	// private void initialize() {
-	//
-	// // Check if we can deeply use a refactored version of GribDataset
-	// // instead of this one which compacts 5D cubes.
-	//
-	//
-	//
-	//		
-	// isSingleFile = gribFile != null ? true : false;
-	// numImages = 0;
-	// if (isSingleFile) {
-	// // int numRecords = gribFile.getRecordCount();
-	// imagesList = new ArrayList(100);
-	//
-	// }
-	//
-	// else {
-	// // TODO: better improve this initialization
-	// imagesList = new ArrayList(100);
-	// Iterator gribFilesIt = gribCollection.getGribIterator();
-	//
-	// // Scan over gribFiles
-	// while (gribFilesIt.hasNext()) {
-	// int imageIndex = 0;
-	// int nRecords = 0;
-	//
-	// // getting the GribFile
-	// GribFile gribFile = (GribFile) gribFilesIt.next();
-	// // GribFileDescriptor gfd =
-	// // gribFileMapper.getGribFileDescriptor(gribFile);
-	//
-	// // getting the records number
-	// nRecords = gribFile.getRecordCount();
-	// final Object source = gribFile.getOriginatingSource();
-	//
-	// // build a proper URI for this source
-	// URI uri = Utilities.getURIFromSource(source);
-	//
-	// // Scan of all GribRecords
-	// for (int recordIndex = 0; recordIndex < nRecords; recordIndex++) {
-	// GribRecord gr = gribFile.getRecord(recordIndex + 1);
-	// GribRecordPDS pds = gr.getPDS();
-	// int paramNum = pds.getParameter().getNumber();
-	// int tableVersion = pds.getTableVersion();
-	//
-	// // Getting the number of bands of the parameter for which
-	// // this paramNum represents a component
-	// int bands = GRIB1Utilities.checkMultiBandsParam(
-	// tableVersion, paramNum);
-	// IndexToRecordMapper irMapper;
-	// if (bands != -1) {
-	// // retrieving the first band param num.
-	// final int firstBandParamNum = paramNum - bands;
-	// final int nBands = GRIB1Utilities
-	// .getBandsNumberFromFirstParamNum(tableVersion,
-	// firstBandParamNum);
-	// final String key = GRIB1Utilities.buildKey(
-	// firstBandParamNum, gr);
-	// if (indexToGribSourcesMapping.containsKey(key)) {
-	// irMapper = (IndexToRecordMapper) indexToGribSourcesMapping
-	// .get(key);
-	// irMapper.setBand(bands, uri, recordIndex);
-	// } else {
-	// irMapper = new IndexToRecordMapper(imageIndex,
-	// nBands);
-	// irMapper.setBand(bands, uri, recordIndex);
-	// indexToGribSourcesMapping.put(key, irMapper);
-	// }
-	// } else
-	// irMapper = new IndexToRecordMapper(imageIndex,
-	// recordIndex, uri);
-	// if (irMapper.isMappingComplete()) {
-	// imageIndex++;
-	// imagesList.add(irMapper);
-	// numImages++;
-	// }
-	// }
-	// // numImages += imageIndex;
-	// }
-	// }
-	// }
 
 	private void checkImageIndex(final int imageIndex) {
 		if (imageIndex < 0 || imageIndex >= numImages) {

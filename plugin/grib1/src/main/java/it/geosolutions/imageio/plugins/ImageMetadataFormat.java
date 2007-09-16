@@ -2,7 +2,9 @@ package it.geosolutions.imageio.plugins;
 
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
-
+/**
+ * @author Daniele Romagnoli
+ */
 public class ImageMetadataFormat extends IIOMetadataFormatImpl{
 
 	
