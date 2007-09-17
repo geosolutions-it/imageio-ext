@@ -1,3 +1,19 @@
+/*
+ *    JImageIO-extension - OpenSource Java Image translation Library
+ *    http://www.geo-solutions.it/
+ *		https://imageio-ext.dev.java.net/
+ *    (C) 2007, GeoSolutions
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 package it.geosolutions.imageio.plugins.ecw;
 
 import it.geosolutions.imageio.gdalframework.Viewer;
@@ -16,9 +32,10 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
+ * Testing reading capabilities for {@link ECWImageReader}.
  * 
  * @author Simone Giannecchini, GeoSolutions.
- *
+ * 
  */
 public class ECWJAIReadTest extends AbstractECWTestCase {
 
@@ -43,10 +60,12 @@ public class ECWJAIReadTest extends AbstractECWTestCase {
 		pbjImageRead.setParameter("Input", file);
 		pbjImageRead.setParameter("readParam", irp);
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-		if(TestData.isInteractiveTest())
+		if (TestData.isInteractiveTest())
 			Viewer.visualize(image, fileName);
 		else
 			image.getTiles();
+		assertEquals(688, image.getWidth());
+		assertEquals(471, image.getHeight());
 	}
 
 	/**
@@ -67,16 +86,18 @@ public class ECWJAIReadTest extends AbstractECWTestCase {
 		pbjImageRead.setParameter("Input", file);
 		pbjImageRead.setParameter("readParam", irp);
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-		if(TestData.isInteractiveTest())
+		if (TestData.isInteractiveTest())
 			Viewer.visualize(image, fileName);
 		else
 			image.getTiles();
+		assertEquals(1969, image.getWidth());
+		assertEquals(1760, image.getHeight());
 	}
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 
-		 // Test reading of a GrayScale image
+		// Test reading of a GrayScale image
 		suite.addTest(new ECWJAIReadTest("testGrayScaleImageRead"));
 
 		// Test reading of a RGB image
