@@ -2,7 +2,11 @@ package it.geosolutions.imageio.plugins.ecw;
 
 import javax.media.jai.JAI;
 import junit.framework.TestCase;
-
+/**
+ * 
+ * @author Simone Giannecchini, GeoSolutions.
+ *
+ */
 public class AbstractECWTestCase extends TestCase {
 
 	public AbstractECWTestCase(String name) {

@@ -9,6 +9,11 @@ import java.io.IOException;
 
 import javax.imageio.ImageReadParam;
 
+/**
+ * 
+ * @author Simone Giannecchini, GeoSolutions.
+ *
+ */
 public class ECWManualReadTest extends AbstractECWTestCase{
 
 	public ECWManualReadTest(String name) {

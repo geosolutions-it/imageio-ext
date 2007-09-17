@@ -12,8 +12,8 @@ import javax.imageio.ImageReader;
 /**
  * Service provider interface for the ECW Image
  * 
- * @author Simone Giannecchini
- * @author Daniele Romagnoli
+ * @author Simone Giannecchini, GeoSolutions.
+ * @author Daniele Romagnoli, GeoSolutions.
  * 
  */
 public class ECWImageReaderSpi extends GDALImageReaderSpi {

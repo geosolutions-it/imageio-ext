@@ -15,6 +15,11 @@ import javax.media.jai.RenderedOp;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+/**
+ * 
+ * @author Simone Giannecchini, GeoSolutions.
+ *
+ */
 public class ECWJAIReadTest extends AbstractECWTestCase {
 
 	public ECWJAIReadTest(String name) {
@@ -38,8 +43,10 @@ public class ECWJAIReadTest extends AbstractECWTestCase {
 		pbjImageRead.setParameter("Input", file);
 		pbjImageRead.setParameter("readParam", irp);
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-
-		Viewer.visualize(image, fileName);
+		if(TestData.isInteractiveTest())
+			Viewer.visualize(image, fileName);
+		else
+			image.getTiles();
 	}
 
 	/**
@@ -60,8 +67,10 @@ public class ECWJAIReadTest extends AbstractECWTestCase {
 		pbjImageRead.setParameter("Input", file);
 		pbjImageRead.setParameter("readParam", irp);
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-		
-		Viewer.visualize(image, fileName);
+		if(TestData.isInteractiveTest())
+			Viewer.visualize(image, fileName);
+		else
+			image.getTiles();
 	}
 
 	public static Test suite() {

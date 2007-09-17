@@ -16,8 +16,8 @@ import org.gdal.gdal.Dataset;
  * {@link ECWImageReader} is a {@link GDALImageReader} able to create
  * {@link RenderedImage} from ECW files.
  * 
- * @author Simone Giannecchini
- * @author Daniele Romagnoli
+ * @author Simone Giannecchini, GeoSolutions.
+ * @author Daniele Romagnoli, GeoSolutions.
  * 
  */
 public class ECWImageReader extends GDALImageReader {
