@@ -34,10 +34,10 @@ import org.gdal.gdal.gdal;
 import org.gdal.gdalconst.gdalconst;
 
 /**
- * The abstract service provider interface (SPI) for
+ * The abstract service provider interface (SPI) for 
  * <code>GDALImageReader</code>s.
  * 
- * @author Daniele Romagnoli.
+ * @author Daniele Romagnoli, GeoSolutions.
  */
 
 public abstract class GDALImageReaderSpi extends ImageReaderSpi {
@@ -79,7 +79,6 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
 	 * To specify different formats, just separate them by the ";" symbol. As an
 	 * instance: "HDF4;HDF4Image"
 	 * 
-	 * TODO: Come back to String's Array version?
 	 */
 
 	protected abstract String getSupportedFormats();

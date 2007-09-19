@@ -26,11 +26,12 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
 
 /**
- * @author Simone Giannecchini
- * @author Daniele Romagnoli
+ * An abstract class which works as an adapter of {@link ImageWriteParam}
+ * 
+ * @author Simone Giannecchini, GeoSolutions.
+ * @author Daniele Romagnoli, GeoSolutions.
  *
  */
-
 public abstract class GDALImageWriteParam extends ImageWriteParam{
 	protected ImageWriteParam adaptee;
 

@@ -78,8 +78,8 @@ import com.sun.media.imageioimpl.common.ImageUtil;
  * SWIG (Simplified Wrapper and Interface Generator) bindings in order to
  * perform read operations.
  * 
- * @author Daniele Romagnoli
- * @author Simone Giannecchini
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions.
  */
 public abstract class GDALImageReader extends ImageReader {
 

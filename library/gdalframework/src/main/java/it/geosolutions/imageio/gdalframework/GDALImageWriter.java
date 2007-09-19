@@ -65,8 +65,8 @@ import org.gdal.gdalconst.gdalconstConstants;
  * SWIG (Simplified Wrapper and Interface Generator) bindings in order to
  * perform write operations.
  * 
- * @author Daniele Romagnoli
- * @author Simone Giannecchini
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions.
  */
 public abstract class GDALImageWriter extends ImageWriter {
 

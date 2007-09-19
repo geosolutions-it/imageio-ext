@@ -36,7 +36,7 @@ import javax.imageio.stream.ImageOutputStream;
  * able to provide provide an {@link ImageOutputStream} object for writing to a
  * {@link URL} in case such a URL is writable of course.
  * 
- * @author Simone Giannecchini(Simboss)
+ * @author Simone Giannecchini, GeoSolutions
  */
 
 public class URLImageOutputStreamSpi extends ImageOutputStreamSpi {
