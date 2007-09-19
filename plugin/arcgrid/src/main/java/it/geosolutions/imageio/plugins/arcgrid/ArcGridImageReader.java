@@ -19,6 +19,7 @@ package it.geosolutions.imageio.plugins.arcgrid;
 import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
 
+import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,6 +28,14 @@ import javax.imageio.metadata.IIOMetadata;
 
 import org.gdal.gdal.Dataset;
 
+/**
+ * {@link ArcGridImageReader} is a {@link GDALImageReader} able to create
+ * {@link RenderedImage} from ASCII arcGrid files.
+ * 
+ * @author Simone Giannecchini, GeoSolutions.
+ * @author Daniele Romagnoli, GeoSolutions.
+ * 
+ */
 public class ArcGridImageReader extends GDALImageReader {
 
 	public class ArcGridDataSetWrapper extends GDALDatasetWrapper {

@@ -20,6 +20,10 @@ import javax.media.jai.JAI;
 
 import junit.framework.TestCase;
 
+/**
+ * @author Simone Giannecchini, GeoSolutions.
+ * @author Daniele Romagnoli, GeoSolutions.
+ */
 public class AbstractArcGridTestCase extends TestCase {
 
 	public AbstractArcGridTestCase(String name) {

@@ -30,11 +30,10 @@ import javax.imageio.spi.ServiceRegistry;
 
 /**
  * Class which provides a specialized Service Provider Interface which
- * instantiates an {@link AsciiGridsImageReader} if it is able to decode the input
- * provided.
+ * instantiates a {@link GeoTiffImageWriter} 
  * 
- * @author Daniele Romagnoli
- * @author Simone Giannecchini(Simboss)
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions.
  */
 public final class GeoTiffImageWriterSpi extends GDALImageWriterSpi {
 	static final String[] suffixes = { "GeoTiff", "tiff" , "tif" };
@@ -112,7 +111,7 @@ public final class GeoTiffImageWriterSpi extends GDALImageWriterSpi {
 	}
 
 	public boolean canEncodeImage(ImageTypeSpecifier type) {
-		// TODO Auto-generated method stub
+		// XXX
 		return true;
 	}
 	

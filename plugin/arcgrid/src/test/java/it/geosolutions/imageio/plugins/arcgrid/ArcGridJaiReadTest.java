@@ -30,6 +30,13 @@ import javax.media.jai.RenderedOp;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+/**
+ * Testing reading capabilities for {@link ArcGridImageReader} leveraging on JAI.
+ * 
+ * @author Simone Giannecchini, GeoSolutions.
+ * @author Daniele Romagnoli, GeoSolutions.
+ * 
+ */
 public class ArcGridJaiReadTest extends AbstractArcGridTestCase {
 	public ArcGridJaiReadTest(String name) {
 		super(name);
@@ -48,7 +55,12 @@ public class ArcGridJaiReadTest extends AbstractArcGridTestCase {
 		pbjImageRead = new ParameterBlockJAI("ImageRead");
 		pbjImageRead.setParameter("Input", file);
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-		Viewer.visualize(image);
+		if (TestData.isInteractiveTest())
+			Viewer.visualize(image, fileName);
+		else
+			image.getTiles();
+		assertEquals(120, image.getWidth());
+		assertEquals(85, image.getHeight());
 	}
 	
 	public static Test suite() {

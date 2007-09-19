@@ -31,8 +31,8 @@ import org.gdal.gdal.Dataset;
  * {@link JP2GDALKakaduImageReader} is a {@link GDALImageReader} able to create
  * {@link RenderedImage} from JP2K files.
  * 
- * @author Simone Giannecchini
- * @author Daniele Romagnoli
+ * @author Simone Giannecchini, GeoSolutions.
+ * @author Daniele Romagnoli, GeoSolutions.
  * 
  */
 public class JP2GDALKakaduImageReader extends GDALImageReader {

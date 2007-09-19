@@ -25,6 +25,13 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageReader;
 
+/**
+ * Service provider interface for the Ascii ArcInfo Image
+ * 
+ * @author Simone Giannecchini, GeoSolutions.
+ * @author Daniele Romagnoli, GeoSolutions.
+ * 
+ */
 public class ArcGridImageReaderSpi extends GDALImageReaderSpi {
 
 	private static final Logger logger = Logger
@@ -120,6 +127,9 @@ public class ArcGridImageReaderSpi extends GDALImageReaderSpi {
 				.toString();
 	}
 
+	/**
+	 * @see it.geosolutions.imageio.gdalframework.GDALImageReaderSpi#getSupportedFormats()
+	 */
 	protected String getSupportedFormats() {
 		return "AAIGrid";
 	}

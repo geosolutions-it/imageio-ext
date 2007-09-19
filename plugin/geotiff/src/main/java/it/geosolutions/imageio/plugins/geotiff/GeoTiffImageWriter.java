@@ -26,7 +26,7 @@ import org.gdal.gdal.gdal;
 public class GeoTiffImageWriter extends GDALImageWriter {
 	public GeoTiffImageWriter(GeoTiffImageWriterSpi originatingProvider) {
 		super(originatingProvider);
-		// TODO Auto-generated constructor stub
+		//XXX
 	}
 
 	protected Driver getDriver() {

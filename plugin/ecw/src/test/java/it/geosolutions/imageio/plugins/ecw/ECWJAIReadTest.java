@@ -32,9 +32,10 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Testing reading capabilities for {@link ECWImageReader}.
+ * Testing reading capabilities for {@link ECWImageReader} leveraging on JAI.
  * 
  * @author Simone Giannecchini, GeoSolutions.
+ * @author Daniele Romagnoli, GeoSolutions.
  * 
  */
 public class ECWJAIReadTest extends AbstractECWTestCase {

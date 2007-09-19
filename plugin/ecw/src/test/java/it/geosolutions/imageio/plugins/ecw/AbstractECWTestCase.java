@@ -18,10 +18,12 @@ package it.geosolutions.imageio.plugins.ecw;
 
 import javax.media.jai.JAI;
 import junit.framework.TestCase;
+
 /**
  * 
  * @author Simone Giannecchini, GeoSolutions.
- *
+ * @author Daniele Romagnoli, GeoSolutions.
+ * 
  */
 public class AbstractECWTestCase extends TestCase {
 
@@ -39,7 +41,6 @@ public class AbstractECWTestCase extends TestCase {
 		JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
 				180 * 1024 * 1024);
 		JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
-		
-		
+
 	}
 }

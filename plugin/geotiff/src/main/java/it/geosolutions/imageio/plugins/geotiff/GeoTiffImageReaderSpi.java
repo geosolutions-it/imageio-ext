@@ -29,6 +29,13 @@ import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
 
+/**
+ * Service provider interface for the GeoTiff Image
+ * 
+ * @author Simone Giannecchini, GeoSolutions.
+ * @author Daniele Romagnoli, GeoSolutions.
+ * 
+ */
 public class GeoTiffImageReaderSpi extends GDALImageReaderSpi {
 
 		private static final Logger logger = Logger

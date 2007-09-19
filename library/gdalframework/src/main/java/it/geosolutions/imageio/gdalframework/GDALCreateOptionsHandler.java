@@ -51,7 +51,7 @@ import java.util.Vector;
  * {@link http://www.gdal.org/formats_list.html}. Look at the proper format
  * page to retrieve names and values.
  * 
- * @author Daniele Romagnoli
+ * @author Daniele Romagnoli, GeoSolutions.
  */
 public abstract class GDALCreateOptionsHandler {
 

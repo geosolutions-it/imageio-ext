@@ -27,9 +27,11 @@ import java.io.IOException;
 import javax.imageio.ImageReadParam;
 
 /**
+ * Testing reading capabilities for {@link ECWImageReader}.
  * 
  * @author Simone Giannecchini, GeoSolutions.
- *
+ * @author Daniele Romagnoli, GeoSolutions.
+ * 
  */
 public class ECWManualReadTest extends AbstractECWTestCase{
 
@@ -38,19 +40,17 @@ public class ECWManualReadTest extends AbstractECWTestCase{
 	}
 	
 	/**
+	 * Test reading of a RGB image
 	 * 
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-
 	public void testManualRead() throws FileNotFoundException, IOException {
 		final ECWImageReaderSpi spi = new ECWImageReaderSpi();
 		final ECWImageReader mReader = new ECWImageReader(spi);
 		final String fileName = "samplergb.ecw";
 		final File file = TestData.file(this, fileName);
 		final ImageReadParam param = new ImageReadParam();
-		param.setSourceSubsampling((int) Math.pow(2, 0), (int) Math.pow(2, 0),
-				0, 0);
 		param.setSourceSubsampling(4,4,0,0);
 		final int imageIndex = 0;
 		

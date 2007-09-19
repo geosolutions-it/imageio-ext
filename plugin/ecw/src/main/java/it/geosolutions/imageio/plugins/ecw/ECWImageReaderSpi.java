@@ -127,6 +127,9 @@ public class ECWImageReaderSpi extends GDALImageReaderSpi {
 				.toString();
 	}
 
+	/**
+	 * @see it.geosolutions.imageio.gdalframework.GDALImageReaderSpi#getSupportedFormats()
+	 */
 	protected String getSupportedFormats() {
 		return "ECW";
 	}
