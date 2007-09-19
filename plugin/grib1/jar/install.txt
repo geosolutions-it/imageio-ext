@@ -1,2 +1,0 @@
-mvn install:install-file  -DgroupId=it.geosolutions -DartifactId=factory -Dversion=1.0-SNAPSHOT -Dpackaging=jar -Dfile=./factory.jar
-mvn install:install-file  -DgroupId=JGriB1   -DartifactId=JGriB1 -Dversion=0.9.x -Dpackaging=jar -Dfile=./jgrib1.jar
