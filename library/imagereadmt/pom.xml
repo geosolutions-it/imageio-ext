@@ -9,7 +9,7 @@
   </parent>
 
   <groupId>it.geosolutions.imageio-ext</groupId>
-  <artifactId>imageio-ext-imageioext</artifactId>
+  <artifactId>imageio-ext-imagereadmt</artifactId>
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>ImageIO Extension - Multithreading ImageRead</name>
