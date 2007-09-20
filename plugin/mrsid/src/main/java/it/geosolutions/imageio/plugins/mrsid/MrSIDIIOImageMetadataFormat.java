@@ -21,8 +21,8 @@ import javax.imageio.metadata.IIOMetadataFormat;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
 
 /**
- * @author Simone Giannecchini
- * 
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions. 
  */
 public class MrSIDIIOImageMetadataFormat extends IIOMetadataFormatImpl implements
 		IIOMetadataFormat {

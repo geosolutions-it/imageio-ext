@@ -1,6 +1,7 @@
 /*
  *    JImageIO-extension - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
+ *	  https://imageio-ext.dev.java.net/
  *    (C) 2007, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
@@ -28,7 +29,6 @@ import javax.imageio.IIOImage;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
-import javax.imageio.event.IIOWriteProgressListener;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
@@ -42,8 +42,8 @@ import org.w3c.dom.Node;
 /**
  * Class used for writing ASCII ArcGrid Format and ASCII GRASS Grid Format
  * 
- * @author Daniele Romagnoli
- * @author Simone Giannecchini (simboss)
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions. 
  */
 public final class AsciiGridsImageWriter extends ImageWriter {
 	private static final Logger LOGGER = Logger

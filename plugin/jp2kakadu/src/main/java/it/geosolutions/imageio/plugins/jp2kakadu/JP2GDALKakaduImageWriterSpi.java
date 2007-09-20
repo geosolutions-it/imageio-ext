@@ -32,11 +32,11 @@ import org.gdal.gdal.gdal;
 
 /**
  * Class which provides a specialized Service Provider Interface which
- * instantiates an {@link AsciiGridsImageReader} if it is able to decode the input
+ * instantiates a {@link JP2GDALKakaduImageWriter} if it is able to decode the input
  * provided.
  * 
- * @author Daniele Romagnoli
- * @author Simone Giannecchini(Simboss)
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions. 
  */
 public final class JP2GDALKakaduImageWriterSpi extends GDALImageWriterSpi {
 	static final String[] suffixes = { "JP2", "J2C" };

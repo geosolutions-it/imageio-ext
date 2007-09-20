@@ -1,6 +1,7 @@
 /*
  *    JImageIO-extension - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
+ *	  https://imageio-ext.dev.java.net/
  *    (C) 2007, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
@@ -19,6 +20,12 @@ import it.geosolutions.imageio.imageioimpl.imagereadmt.CloneableImageReadParam;
 
 import javax.imageio.ImageReadParam;
 
+/**
+ * Class 
+ * 
+ * @author Simone Giannecchini, GeoSolutions.
+ * @author Daniele Romagnoli, GeoSolutions.
+ */
 public class JP2KakaduImageReadParam extends CloneableImageReadParam {
 
 	public Object clone() throws CloneNotSupportedException {

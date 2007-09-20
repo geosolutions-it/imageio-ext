@@ -19,6 +19,10 @@ package it.geosolutions.imageio.plugins.jp2kakadu;
 import it.geosolutions.imageio.gdalframework.GDALCreateOption;
 import it.geosolutions.imageio.gdalframework.GDALCreateOptionsHandler;
 
+/**
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions. 
+ */
 public class JP2GDALKakaduCreateOptionsHandler extends GDALCreateOptionsHandler {
 
 	/**

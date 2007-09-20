@@ -30,7 +30,10 @@ import javax.media.jai.RenderedOp;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
+/**
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions. 
+ */
 public class MrSIDInformationRetrievalTest extends AbstractMrSIDTestCase {
 
 	public MrSIDInformationRetrievalTest(String name) {

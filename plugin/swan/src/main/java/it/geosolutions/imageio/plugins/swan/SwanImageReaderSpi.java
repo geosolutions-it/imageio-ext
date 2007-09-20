@@ -1,6 +1,7 @@
 /*
  *    JImageIO-extension - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
+ *	  https://imageio-ext.dev.java.net/
  *    (C) 2007, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
@@ -34,10 +35,10 @@ import org.apache.xmlbeans.XmlException;
 
 /**
  * Class which provides a specialized Service Provider Interface which
- * instantiates an SwanImageReader if it is able to decode the input provided.
+ * instantiates a {@link SwanImageReader} if it is able to decode the input provided.
  * 
- * @author Daniele Romagnoli
- * @author Simone Giannecchini(Simboss)
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions.
  */
 public final class SwanImageReaderSpi extends ImageReaderSpi {
 	private static final Logger LOGGER = Logger

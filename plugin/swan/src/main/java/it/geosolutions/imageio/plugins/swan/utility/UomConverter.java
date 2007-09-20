@@ -22,8 +22,8 @@ import javax.units.*;
  * This class simply provide to get a proper Unit for an input unit of measure
  * specified as a <code>String</code>
  * 
- * @author Daniele Romagnoli
- * 
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions.
  */
 public abstract class UomConverter {
 	

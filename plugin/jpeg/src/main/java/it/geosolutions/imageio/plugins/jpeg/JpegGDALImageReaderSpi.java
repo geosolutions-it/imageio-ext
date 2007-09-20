@@ -31,9 +31,8 @@ import javax.imageio.spi.ServiceRegistry;
 /**
  * Service provider interface for jpeg images
  * 
- * @author Daniele Romagnoli
- * @author Simone Giannecchini
- * 
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions. 
  */
 public class JpegGDALImageReaderSpi extends GDALImageReaderSpi {
 

@@ -1,6 +1,7 @@
 /*
  *    JImageIO-extension - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
+ *	  https://imageio-ext.dev.java.net/
  *    (C) 2007, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
@@ -53,8 +54,8 @@ import javax.media.jai.RasterFactory;
  * Class used for reading ASCII ArcInfo Grid Format (ArcGrid) and ASCII GRASS
  * Grid Format and to create {@link RenderedImage}s and {@link Raster}s.
  * 
- * @author Daniele Romagnoli
- * @author Simone Giannecchini(Simboss)
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions. 
  */
 public final class AsciiGridsImageReader extends ImageReader {
 	/** Logger. */

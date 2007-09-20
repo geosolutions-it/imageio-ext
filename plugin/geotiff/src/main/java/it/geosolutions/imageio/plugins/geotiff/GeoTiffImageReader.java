@@ -32,9 +32,8 @@ import org.gdal.gdal.Dataset;
  * {@link GeoTiffImageReader} is a {@link GDALImageReader} able to create
  * {@link RenderedImage} from GeoTiff files.
  * 
- * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
- * 
+ * @author Simone Giannecchini, GeoSolutions. 
  */
 public class GeoTiffImageReader extends GDALImageReader {
 

@@ -23,6 +23,10 @@ import javax.imageio.ImageWriteParam;
 import org.gdal.gdal.Driver;
 import org.gdal.gdal.gdal;
 
+/**
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions.
+ */
 public class JP2GDALKakaduImageWriter extends GDALImageWriter {
 	public JP2GDALKakaduImageWriter(
 			JP2GDALKakaduImageWriterSpi originatingProvider) {

@@ -22,7 +22,10 @@ import it.geosolutions.imageio.gdalframework.GDALImageWriteParam;
 import java.util.Locale;
 
 import com.sun.media.imageio.plugins.tiff.TIFFImageWriteParam;
-
+/**
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions. 
+ */
 public class GeoTiffImageWriteParam  extends GDALImageWriteParam {
 		public GeoTiffImageWriteParam() {
 			

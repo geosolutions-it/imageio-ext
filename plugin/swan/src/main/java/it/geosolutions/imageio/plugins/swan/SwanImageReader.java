@@ -1,6 +1,7 @@
 /*
  *    JImageIO-extension - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
+ *	  https://imageio-ext.dev.java.net/
  *    (C) 2007, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
@@ -48,7 +49,10 @@ import javax.media.jai.RasterFactory;
 import org.apache.xmlbeans.XmlException;
 
 import com.sun.media.imageioimpl.common.ImageUtil;
-
+/**
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions.
+ */
 public final class SwanImageReader extends ImageReader {
 	/** Logger. */
 	private static final Logger LOGGER = Logger

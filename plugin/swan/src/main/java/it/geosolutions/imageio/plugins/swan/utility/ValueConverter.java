@@ -20,9 +20,8 @@ package it.geosolutions.imageio.plugins.swan.utility;
  * This abstract class provides to compute a double value, given its
  * representation as a byte sequence
  * 
- * @author Daniele Romagnoli
- * @author Simone Giannecchini
- * 
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions.
  */
 public abstract class ValueConverter {
 

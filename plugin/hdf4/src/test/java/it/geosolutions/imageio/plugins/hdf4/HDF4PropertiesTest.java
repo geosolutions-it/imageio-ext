@@ -32,7 +32,10 @@ import javax.media.jai.RenderedOp;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
+/**
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions.
+ */
 public class HDF4PropertiesTest extends AbstractHDF4TestCase {
 
 	public HDF4PropertiesTest(String name) {
@@ -45,7 +48,6 @@ public class HDF4PropertiesTest extends AbstractHDF4TestCase {
 	/**
 	 * This test method simply tests the <code>getNumImages</code> method
 	 */
-
 	public void testNumberOfImages() throws FileNotFoundException, IOException {
 		final ParameterBlockJAI pbjImageRead;
 		final String fileName = "TOVS_DAILY_AM_870330_NG.HDF";

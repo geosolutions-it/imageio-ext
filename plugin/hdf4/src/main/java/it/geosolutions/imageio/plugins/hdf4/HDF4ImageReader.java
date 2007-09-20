@@ -19,6 +19,7 @@ package it.geosolutions.imageio.plugins.hdf4;
 import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
 
+import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.logging.Logger;
 
@@ -26,6 +27,13 @@ import javax.imageio.metadata.IIOMetadata;
 
 import org.gdal.gdal.Dataset;
 
+/**
+ * {@link HDF4ImageReader} is a {@link GDALImageReader} able to create
+ * {@link RenderedImage} from ECW files.
+ * 
+ * @author Simone Giannecchini, GeoSolutions.
+ * @author Daniele Romagnoli, GeoSolutions.
+ */
 public class HDF4ImageReader extends GDALImageReader {
 
 	public class HDF4DataSetWrapper extends GDALDatasetWrapper {

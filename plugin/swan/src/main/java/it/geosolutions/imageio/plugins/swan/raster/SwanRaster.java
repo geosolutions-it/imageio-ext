@@ -1,6 +1,7 @@
 /*
  *    JImageIO-extension - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
+ *	  https://imageio-ext.dev.java.net/
  *    (C) 2007, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
@@ -52,7 +53,12 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
 import com.sun.media.jai.codecimpl.util.RasterFactory;
-
+/**
+ * Class representing a SWAN data Raster.
+ * 
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions.
+ */
 public class SwanRaster {
 	
 	private final static String[] BI_COMPONENT_QUANTITIES = new String[] {

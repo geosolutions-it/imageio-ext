@@ -32,9 +32,8 @@ import org.gdal.gdal.Dataset;
  * {@link JpegGDALImageReader} is a {@link GDALImageReader} able to create
  * {@link RenderedImage} from JPEG files.
  * 
- * @author Simone Giannecchini
- * @author Daniele Romagnoli
- * 
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions. 
  */
 public class JpegGDALImageReader extends GDALImageReader {
 

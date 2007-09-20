@@ -1,6 +1,7 @@
 /*
  *    JImageIO-extension - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
+ *	  https://imageio-ext.dev.java.net/
  *    (C) 2007, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
@@ -24,15 +25,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.EventListener;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 
 import javax.imageio.ImageReadParam;
-import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
-import javax.imageio.event.IIOReadProgressListener;
-import javax.imageio.event.IIOWriteProgressListener;
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
@@ -43,7 +40,10 @@ import javax.swing.SwingUtilities;
 import junit.framework.TestCase;
 
 import com.sun.media.jai.operator.ImageWriteDescriptor;
-
+/**
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions. 
+ */
 public class AsciiGridTest extends TestCase {
 	public AsciiGridTest(String name) {
 		super(name);

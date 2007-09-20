@@ -1,6 +1,7 @@
 /*
  *    JImageIO-extension - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
+ *	  https://imageio-ext.dev.java.net/
  *    (C) 2007, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
@@ -30,6 +31,7 @@ import java.awt.image.DataBufferInt;
 import java.awt.image.DirectColorModel;
 import java.awt.image.Raster;
 import java.awt.image.RasterFormatException;
+import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.SinglePixelPackedSampleModel;
 import java.awt.image.WritableRaster;
@@ -62,6 +64,13 @@ import kdu_jni.Kdu_message_formatter;
 import kdu_jni.Kdu_region_compositor;
 import kdu_jni.Kdu_simple_file_source;
 
+/**
+ * {@link JP2KakaduImageReader} is a <code>ImageReader</code> able to create
+ * {@link RenderedImage} from JP2 files, leveraging on kdu_jni bindings.
+ * 
+ * @author Simone Giannecchini, GeoSolutions.
+ * @author Daniele Romagnoli, GeoSolutions.
+ */
 public class JP2KakaduImageReader extends ImageReader {
 
 	private static Logger LOGGER = Logger

@@ -35,7 +35,10 @@ import org.openuri.easypo.JP2EncodingProfileDocument.JP2EncodingProfile.Stiles;
 import org.openuri.easypo.JP2EncodingProfileDocument.JP2EncodingProfile.Cprecincts.Precinct;
 
 import com.sun.media.imageio.plugins.jpeg2000.J2KImageWriteParam;
-
+/**
+* @author Daniele Romagnoli, GeoSolutions.
+* @author Simone Giannecchini, GeoSolutions. 
+*/
 public class JP2GDALKakaduImageWriteParam extends GDALImageWriteParam {
 	
 	/**{@link Logger} class.*/

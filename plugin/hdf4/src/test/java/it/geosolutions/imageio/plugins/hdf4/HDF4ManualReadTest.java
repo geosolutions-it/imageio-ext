@@ -26,7 +26,11 @@ import java.io.IOException;
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 
-public class HDF4ManualReadTest extends AbstractHDF4TestCase{
+/**
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions.
+ */
+public class HDF4ManualReadTest extends AbstractHDF4TestCase {
 
 	public HDF4ManualReadTest(String name) {
 		super(name);
@@ -47,9 +51,10 @@ public class HDF4ManualReadTest extends AbstractHDF4TestCase{
 		pbjImageRead.setParameter("Reader", mReader);
 		final int imageIndex = 0;
 		pbjImageRead.setParameter("ImageChoice", new Integer(imageIndex));
-		Viewer.visualizeImageMetadata(JAI.create("ImageRead", pbjImageRead), fileName, imageIndex);
+		Viewer.visualizeImageMetadata(JAI.create("ImageRead", pbjImageRead),
+				fileName, imageIndex);
 	}
-	
+
 	public static void main(java.lang.String[] args) {
 		junit.textui.TestRunner.run(HDF4ManualReadTest.class);
 	}

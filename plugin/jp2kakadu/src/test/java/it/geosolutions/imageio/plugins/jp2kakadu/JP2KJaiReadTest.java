@@ -32,6 +32,10 @@ import javax.media.jai.RenderedOp;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+/**
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions. 
+ */
 public class JP2KJaiReadTest extends AbstractJP2KTestCase {
 
 	public final static boolean INTERMEDIATE_VISUALIZE = false;

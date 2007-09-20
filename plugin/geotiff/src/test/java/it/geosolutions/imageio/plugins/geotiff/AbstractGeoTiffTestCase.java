@@ -19,7 +19,10 @@ package it.geosolutions.imageio.plugins.geotiff;
 import javax.media.jai.JAI;
 
 import junit.framework.TestCase;
-
+/**
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions. 
+ */
 public class AbstractGeoTiffTestCase extends TestCase {
 
 	public AbstractGeoTiffTestCase(String name) {

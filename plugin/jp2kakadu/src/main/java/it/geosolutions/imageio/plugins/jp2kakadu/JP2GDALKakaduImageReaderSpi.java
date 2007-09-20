@@ -34,8 +34,8 @@ import org.gdal.gdal.gdal;
 /**
  * Service provider interface for the jp2k image
  * 
- * @author Daniele Romagnoli
- * @author Simone Giannecchini
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions. 
  */
 public class JP2GDALKakaduImageReaderSpi extends GDALImageReaderSpi {
 

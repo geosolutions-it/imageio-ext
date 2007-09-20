@@ -23,6 +23,12 @@ import java.util.Locale;
 
 import javax.imageio.ImageReader;
 
+/**
+ * Service provider interface for the HDF4 Datases
+ * 
+ * @author Simone Giannecchini, GeoSolutions.
+ * @author Daniele Romagnoli, GeoSolutions.
+ */
 public class HDF4ImageReaderSpi extends GDALImageReaderSpi {
 	
 	static final String[] suffixes = { "hdf" };

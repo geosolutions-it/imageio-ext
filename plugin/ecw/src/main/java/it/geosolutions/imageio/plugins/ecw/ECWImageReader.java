@@ -34,7 +34,6 @@ import org.gdal.gdal.Dataset;
  * 
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
- * 
  */
 public class ECWImageReader extends GDALImageReader {
 

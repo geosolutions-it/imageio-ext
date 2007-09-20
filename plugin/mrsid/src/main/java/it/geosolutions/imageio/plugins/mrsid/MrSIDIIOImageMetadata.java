@@ -35,8 +35,8 @@ import org.w3c.dom.Node;
  * Specialization of {@link IIOMetadata} specific for the MrSID format. It
  * provides the user with the specific MrSID metadata.
  * 
- * @author SImone Giannecchini
- * 
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions. 
  */
 public class MrSIDIIOImageMetadata extends GDALCommonIIOImageMetadata {
 

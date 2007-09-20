@@ -33,7 +33,7 @@ import javax.imageio.spi.ServiceRegistry;
  * instantiates a {@link GeoTiffImageWriter} 
  * 
  * @author Daniele Romagnoli, GeoSolutions.
- * @author Simone Giannecchini, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions. 
  */
 public final class GeoTiffImageWriterSpi extends GDALImageWriterSpi {
 	static final String[] suffixes = { "GeoTiff", "tiff" , "tif" };

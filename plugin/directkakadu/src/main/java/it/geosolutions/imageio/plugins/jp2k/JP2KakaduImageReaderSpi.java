@@ -1,6 +1,7 @@
 /*
  *    JImageIO-extension - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
+ *	  https://imageio-ext.dev.java.net/
  *    (C) 2007, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
@@ -37,7 +38,13 @@ import kdu_jni.Jp2_family_src;
 import kdu_jni.Jpx_source;
 import kdu_jni.KduException;
 import kdu_jni.Kdu_simple_file_source;
-
+/**
+ * Service provider interface for the JP2 Image
+ * 
+ * @author Simone Giannecchini, GeoSolutions.
+ * @author Daniele Romagnoli, GeoSolutions.
+ * 
+ */
 public class JP2KakaduImageReaderSpi extends ImageReaderSpi {
 
 	protected boolean registered = false;

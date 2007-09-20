@@ -36,6 +36,10 @@ import org.apache.xmlbeans.XmlException;
 
 import com.sun.media.jai.operator.ImageWriteDescriptor;
 
+/**
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions. 
+ */
 public class JP2KProfilesTest extends AbstractJP2KTestCase {
 
 	final static String testFileName = "sample.jp2";

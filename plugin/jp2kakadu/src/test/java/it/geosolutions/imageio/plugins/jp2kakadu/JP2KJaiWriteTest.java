@@ -33,6 +33,10 @@ import javax.media.jai.RenderedOp;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+/**
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions. 
+ */
 public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 
 	// Set this to true if you just want run test without visualizing written

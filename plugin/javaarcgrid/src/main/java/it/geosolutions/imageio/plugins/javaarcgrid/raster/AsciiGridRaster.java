@@ -1,6 +1,7 @@
 /*
  *    JImageIO-extension - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
+ *	  https://imageio-ext.dev.java.net/
  *    (C) 2007, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
@@ -38,8 +39,8 @@ import javax.media.jai.iterator.RectIter;
 /**
  * Abstract base class to handle ASCII ArcGrid/GRASS formats
  * 
- * @author Daniele Romagnoli
- * @author Simone Giannecchini
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions. 
  */
 public abstract class AsciiGridRaster {
 

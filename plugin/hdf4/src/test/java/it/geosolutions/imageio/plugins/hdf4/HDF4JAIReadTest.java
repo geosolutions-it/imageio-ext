@@ -30,7 +30,10 @@ import javax.media.jai.RenderedOp;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
+/**
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions.
+ */
 public class HDF4JAIReadTest extends AbstractHDF4TestCase {
 
 	public HDF4JAIReadTest(String name) {

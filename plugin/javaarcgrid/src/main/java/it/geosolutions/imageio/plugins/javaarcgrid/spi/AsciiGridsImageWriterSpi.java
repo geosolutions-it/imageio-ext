@@ -1,6 +1,7 @@
 /*
  *    JImageIO-extension - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
+ *	  https://imageio-ext.dev.java.net/
  *    (C) 2007, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
@@ -30,8 +31,8 @@ import javax.imageio.spi.ImageWriterSpi;
  * instantiates an {@link AsciiGridsImageReader} if it is able to decode the input
  * provided.
  * 
- * @author Daniele Romagnoli
- * @author Simone Giannecchini(Simboss)
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions. 
  */
 public final class AsciiGridsImageWriterSpi extends ImageWriterSpi {
 	static final String[] suffixes = { "asc", "gz" };

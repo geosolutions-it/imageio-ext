@@ -32,9 +32,8 @@ import javax.imageio.spi.ServiceRegistry;
 /**
  * Service provider interface for the GeoTiff Image
  * 
- * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
- * 
+ * @author Simone Giannecchini, GeoSolutions. 
  */
 public class GeoTiffImageReaderSpi extends GDALImageReaderSpi {
 

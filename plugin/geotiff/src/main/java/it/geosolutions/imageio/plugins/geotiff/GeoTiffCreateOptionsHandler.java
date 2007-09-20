@@ -20,8 +20,8 @@ import it.geosolutions.imageio.gdalframework.GDALCreateOption;
 import it.geosolutions.imageio.gdalframework.GDALCreateOptionsHandler;
 
 /**
- * 
- * @author Daniele Romagnoli
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions. 
  */
 public class GeoTiffCreateOptionsHandler extends GDALCreateOptionsHandler {
 

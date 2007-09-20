@@ -26,6 +26,10 @@ import javax.imageio.ImageReadParam;
 
 import junit.framework.TestCase;
 
+/**
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions. 
+ */
 public class MrSIDManualReadTest extends TestCase {
 
 	/**

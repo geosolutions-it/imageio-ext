@@ -28,9 +28,8 @@ import javax.imageio.ImageReader;
 /**
  * Service provider interface for MrSid image reader
  * 
- * @author Daniele Romagnoli
- * @author Simone Giannecchini
- * 
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions. 
  */
 public class MrSIDImageReaderSpi extends GDALImageReaderSpi {
 

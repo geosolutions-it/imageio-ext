@@ -31,9 +31,8 @@ import org.gdal.gdal.Dataset;
  * {@link MrSIDImageReader} is a {@link GDALImageReader} able to create
  * {@link RenderedImage} from MrSID files.
  * 
- * @author Simone Giannecchini
- * @author Daniele Romagnoli
- * 
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions. 
  */
 public class MrSIDImageReader extends GDALImageReader {
 

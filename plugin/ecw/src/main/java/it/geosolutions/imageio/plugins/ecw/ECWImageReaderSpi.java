@@ -30,7 +30,6 @@ import javax.imageio.ImageReader;
  * 
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
- * 
  */
 public class ECWImageReaderSpi extends GDALImageReaderSpi {
 

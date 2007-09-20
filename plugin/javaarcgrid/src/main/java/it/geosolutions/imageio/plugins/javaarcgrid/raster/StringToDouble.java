@@ -1,6 +1,7 @@
 /*
  *    JImageIO-extension - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
+ *	  https://imageio-ext.dev.java.net/
  *    (C) 2007, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
@@ -91,9 +92,8 @@ import java.util.Vector;
  * sinche the underlying pool is based on them.
  * <p>
  * 
- * @author Daniele Romagnoli
- * @author Simone Giannecchini
- * 
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions. 
  */
 public final class StringToDouble {
 	/**

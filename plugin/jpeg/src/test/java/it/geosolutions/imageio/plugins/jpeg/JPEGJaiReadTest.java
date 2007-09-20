@@ -31,6 +31,10 @@ import javax.media.jai.RenderedOp;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+/**
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions.
+ */
 public class JPEGJaiReadTest extends AbstractJPEGTestCase {
 	public JPEGJaiReadTest(String name) {
 		super(name);
@@ -53,12 +57,12 @@ public class JPEGJaiReadTest extends AbstractJPEGTestCase {
 		pbjImageRead.setParameter("readParam", irp);
 
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-		if(TestData.isInteractiveTest())
+		if (TestData.isInteractiveTest())
 			Viewer.visualize(image);
 		else
 			image.getTiles();
 	}
-	
+
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 

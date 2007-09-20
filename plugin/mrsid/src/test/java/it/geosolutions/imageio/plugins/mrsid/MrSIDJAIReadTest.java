@@ -35,6 +35,10 @@ import com.sun.media.jai.operator.ImageReadDescriptor;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+/**
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions. 
+ */
 public class MrSIDJAIReadTest extends AbstractMrSIDTestCase{
 	public MrSIDJAIReadTest(String name) {
 		super(name);
