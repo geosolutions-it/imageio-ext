@@ -47,7 +47,7 @@ public class HDF4MetadataTest extends AbstractHDF4TestCase {
 		final ParameterBlockJAI pbjImageRead;
 		final ImageReadParam irp = new ImageReadParam();
 
-		irp.setSourceSubsampling(xSubSamplingFactor, ySubSamplingFactor, 0, 0);
+		irp.setSourceSubsampling(1, 1, 0, 0);
 		pbjImageRead = new ParameterBlockJAI("ImageRead");
 		pbjImageRead.setParameter("Input", file);
 		pbjImageRead.setParameter("readParam", irp);
@@ -73,7 +73,7 @@ public class HDF4MetadataTest extends AbstractHDF4TestCase {
 		final ParameterBlockJAI pbjImageRead;
 		final ImageReadParam irp = new ImageReadParam();
 
-		irp.setSourceSubsampling(xSubSamplingFactor, ySubSamplingFactor, 0, 0);
+		irp.setSourceSubsampling(1, 1, 0, 0);
 		pbjImageRead = new ParameterBlockJAI("ImageRead");
 		pbjImageRead.setParameter("Input", file);
 		pbjImageRead.setParameter("readParam", irp);

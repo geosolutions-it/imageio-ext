@@ -62,7 +62,7 @@ public class HDF4JAIReadTest extends AbstractHDF4TestCase {
 		final int nSubdatasetsLoop = 5;
 		
 		final ImageReadParam irp = new ImageReadParam();
-		irp.setSourceSubsampling(xSubSamplingFactor, ySubSamplingFactor, 0, 0);
+		irp.setSourceSubsampling(1, 1, 0, 0);
 
 		HDF4ImageReader mReader = new HDF4ImageReader(new HDF4ImageReaderSpi());
 		ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
