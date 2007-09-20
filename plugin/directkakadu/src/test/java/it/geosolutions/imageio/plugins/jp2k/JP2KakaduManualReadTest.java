@@ -15,12 +15,17 @@
  */
 package it.geosolutions.imageio.plugins.jp2k;
 
+import it.geosolutions.resources.TestData;
+
 import java.awt.Rectangle;
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageReadParam;
+import javax.media.jai.widget.ScrollingImagePanel;
+import javax.swing.JFrame;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -85,29 +90,34 @@ public class JP2KakaduManualReadTest extends TestCase {
 	 */
 	public void testManualReadReducedScale() throws IOException {
 
-		final File file = new File("D:\\DatiPlugin\\jp2\\pana-field.jp2");
+		final File file = TestData.file(this,"CB_TM432.jp2");
 		JP2KakaduImageReader reader = new JP2KakaduImageReader(
 				new JP2KakaduImageReaderSpi());
 
 		reader.setInput(file);
 		ImageReadParam param = new ImageReadParam();
-		param.setSourceSubsampling(32, 32, 0, 0);
+		param.setSourceSubsampling(1, 1, 0, 0);
 		final long start = System.currentTimeMillis();
-		reader.read(0, param);
+		RenderedImage image = reader.read(0, param);
 		final long end = System.currentTimeMillis();
 		final long executionTime = end - start;
 		LOGGER.info(new StringBuffer("Reduced Scale Read Time: ").append(
 				Long.toString(executionTime)).toString());
+		final JFrame jf = new JFrame();
+		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		jf.getContentPane().add(new ScrollingImagePanel(image, 1600, 1200));
+		jf.pack();
+		jf.setVisible(true);
 	}
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 
-		suite
-				.addTest(new JP2KakaduManualReadTest(
-						"testManualReadAndVisualize"));
-
-		suite.addTest(new JP2KakaduManualReadTest("testManualReadFullScale"));
+//		suite
+//				.addTest(new JP2KakaduManualReadTest(
+//						"testManualReadAndVisualize"));
+//
+//		suite.addTest(new JP2KakaduManualReadTest("testManualReadFullScale"));
 
 		suite
 				.addTest(new JP2KakaduManualReadTest(

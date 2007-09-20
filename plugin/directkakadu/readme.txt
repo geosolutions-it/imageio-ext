@@ -1,1 +1,1 @@
-mvn install:install-file -DgroupId=it.geosolutions.jiio-ext -DartifactId=jiio-ext-kakadujni -Dversion=1.0-SNAPSHOT -Dpackaging=jar -Dfile=kdujni.jar
+mvn install:install-file -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-kakadujni -Dversion=1.0-SNAPSHOT -Dpackaging=jar -Dfile=kdu_jni.jar

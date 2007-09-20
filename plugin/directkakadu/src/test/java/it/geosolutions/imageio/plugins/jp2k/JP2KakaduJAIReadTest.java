@@ -16,6 +16,7 @@
 package it.geosolutions.imageio.plugins.jp2k;
 
 import it.geosolutions.imageio.imageioimpl.imagereadmt.CloneableImageReadParam;
+import it.geosolutions.resources.TestData;
 import it.geosolutions.util.FileCache;
 
 import java.awt.RenderingHints;
@@ -56,7 +57,7 @@ public class JP2KakaduJAIReadTest extends JP2KakaduBaseTestCase {
 		pbjImageRead = new ParameterBlockJAI("ImageRead");
 		pbjImageRead.setParameter("Input", file);
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-		final JFrame jf = new JFrame("puppa");
+		final JFrame jf = new JFrame("");
 		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		jf.getContentPane().add(new ScrollingImagePanel(image, 800, 600));
 		jf.pack();
@@ -69,7 +70,7 @@ public class JP2KakaduJAIReadTest extends JP2KakaduBaseTestCase {
 		double sum = 0;
 		// for (int i = 0; i < 10; i++) {
 		// long init=System.nanoTime();
-		final File file = new File("c:\\20070220121436004709.jp2");
+		final File file = TestData.file(this,"CB_TM432.jp2");
 		final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
 				"ImageReadMT");
 		ImageLayout l = new ImageLayout();
@@ -92,7 +93,7 @@ public class JP2KakaduJAIReadTest extends JP2KakaduBaseTestCase {
 		// sum+=(System.nanoTime()-init);
 		// }
 		// System.out.println(sum/10E9);
-		final JFrame jf = new JFrame("puppa");
+		final JFrame jf = new JFrame();
 		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		jf.getContentPane().add(new ScrollingImagePanel(image, 1600, 1200));
 		jf.pack();
