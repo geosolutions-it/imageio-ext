@@ -52,6 +52,12 @@
 <id>windows</id>
   <modules>
     <module>jar</module>
+  </modules>
+</profile>
+<profile>
+<id>windowsdeploy</id>
+  <modules>
+    <module>jar</module>
     <module>native</module>
   </modules>
 </profile>
