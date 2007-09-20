@@ -109,5 +109,8 @@
     <module>jpeg</module>
     <module>ecw</module>
     <module>arcgrid</module>
+		<module>javaarcgrid</module>
+		<module>directkakadu</module>
+		<module>swan</module>
   </modules>
 </project>
