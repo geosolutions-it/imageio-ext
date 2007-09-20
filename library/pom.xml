@@ -81,6 +81,6 @@
     <module>test-data</module>
     <module>customstreams</module>
     <module>gdalframework</module>
-    <module>imageioext</module>
+    <module>imagereadmt</module>
   </modules>
 </project>

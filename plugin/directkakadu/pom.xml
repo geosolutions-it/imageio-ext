@@ -14,7 +14,7 @@
     </dependency>
     <dependency>
   		<groupId>it.geosolutions.imageio-ext</groupId>
-  		<artifactId>imageio-ext-imageioext</artifactId>
+  		<artifactId>imageio-ext-imagereadmt</artifactId>
 			<version>${project.version}</version>
     </dependency>
     <dependency>

@@ -103,8 +103,8 @@ public class AsciiGridTest extends TestCase {
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 		if (ShareableTestData.isInteractiveTest())
 			visualize(image, title);
-		assert image.getWidth() == 278;
-		assert image.getHeight() == 144;
+		assertEquals(278, image.getWidth());
+		assertEquals(144, image.getHeight());
 
 		// //
 		//
@@ -141,8 +141,8 @@ public class AsciiGridTest extends TestCase {
 		if (TestData.isInteractiveTest())
 			visualize(image2, title);
 		
-		assert image.getWidth() == image2.getWidth();
-		assert image.getHeight() == image2.getHeight();
+		assertEquals(image2.getWidth(), image.getWidth());
+		assertEquals(image2.getHeight(), image.getHeight());
 
 		// ////////////////////////////////////////////////////////////////////
 		//
@@ -163,7 +163,7 @@ public class AsciiGridTest extends TestCase {
 		if (ShareableTestData.isInteractiveTest())
 			visualize(image, title);
 		else
-			assert image.getData() != null;
+			assertNotNull(image.getData());
 
 		// ////////////////////////////////////////////////////////////////////
 		//
@@ -195,6 +195,6 @@ public class AsciiGridTest extends TestCase {
 		if (ShareableTestData.isInteractiveTest())
 			visualize(image, title);
 		else
-			image.getData();
+			assertNotNull(image.getData());
 	}
 }
