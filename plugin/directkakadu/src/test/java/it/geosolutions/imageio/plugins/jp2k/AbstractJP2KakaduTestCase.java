@@ -1,28 +1,17 @@
-/*
- *    JImageIO-extension - OpenSource Java Image translation Library
- *    http://www.geo-solutions.it/
- *    (C) 2007, GeoSolutions
- *
- *    This library is free software; you can redistribute it and/or
- *    modify it under the terms of the GNU Lesser General Public
- *    License as published by the Free Software Foundation;
- *    version 2.1 of the License.
- *
- *    This library is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *    Lesser General Public License for more details.
- */
 package it.geosolutions.imageio.plugins.jp2k;
 
 import it.geosolutions.imageio.imageioimpl.imagereadmt.ImageReadDescriptorMT;
 
+import java.awt.image.RenderedImage;
+
 import javax.media.jai.JAI;
+import javax.media.jai.widget.ScrollingImagePanel;
+import javax.swing.JFrame;
 
 import junit.framework.TestCase;
 
-public class JP2KakaduBaseTestCase extends TestCase {
-	public JP2KakaduBaseTestCase(String name) {
+public class AbstractJP2KakaduTestCase extends TestCase {
+	public AbstractJP2KakaduTestCase(String name) {
 		super(name);
 	}
 
@@ -39,6 +28,18 @@ public class JP2KakaduBaseTestCase extends TestCase {
 		// final TCTool tool= new TCTool();
 
 		ImageReadDescriptorMT.register(JAI.getDefaultInstance());
+	}
+
+	public static void visualize(RenderedImage ri) {
+		visualize(ri, 800, 600);
+	}
+
+	public static void visualize(RenderedImage ri, int width, int height) {
+		final JFrame jf = new JFrame("");
+		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		jf.getContentPane().add(new ScrollingImagePanel(ri, 800, 600));
+		jf.pack();
+		jf.setVisible(true);
 	}
 
 }

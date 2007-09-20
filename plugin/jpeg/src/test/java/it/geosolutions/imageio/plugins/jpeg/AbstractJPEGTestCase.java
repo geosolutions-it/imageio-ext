@@ -20,6 +20,10 @@ import javax.media.jai.JAI;
 
 import junit.framework.TestCase;
 
+/**
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions.
+ */
 public class AbstractJPEGTestCase extends TestCase {
 
 	public AbstractJPEGTestCase(String name) {

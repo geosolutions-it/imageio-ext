@@ -28,13 +28,11 @@ import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
-import javax.media.jai.widget.ScrollingImagePanel;
-import javax.swing.JFrame;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-public class JP2KakaduJAIReadTest extends JP2KakaduBaseTestCase {
+public class JP2KakaduJAIReadTest extends AbstractJP2KakaduTestCase {
 	static FileCache fileCache = new FileCache();
 
 	public JP2KakaduJAIReadTest(String name) {
@@ -42,35 +40,32 @@ public class JP2KakaduJAIReadTest extends JP2KakaduBaseTestCase {
 
 	}
 
-	/**
-	 * Test Read exploiting Linear Interpolation
-	 * 
-	 * @throws IOException
-	 */
-
-	public void testJaiReadFromUrl() throws IOException {
-		final URL url = new URL(
-				"http://gatso.test.ambrero.nl/violation_images/bla.jp2");
-		final File file = fileCache.getFile(url);
-		// final File file=new File("d:/work/data/jp2/bla.jp2");
-		final ParameterBlockJAI pbjImageRead;
-		pbjImageRead = new ParameterBlockJAI("ImageRead");
-		pbjImageRead.setParameter("Input", file);
-		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-		final JFrame jf = new JFrame("");
-		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		jf.getContentPane().add(new ScrollingImagePanel(image, 800, 600));
-		jf.pack();
-		jf.setVisible(true);
-
-	}
+//	/**
+//	 * Test Read exploiting Linear Interpolation
+//	 * 
+//	 * @throws IOException
+//	 */
+//
+//	public void testJaiReadFromUrl() throws IOException {
+//		final URL url = new URL(
+//				"http://gatso.test.ambrero.nl/violation_images/bla.jp2");
+//		final File file = fileCache.getFile(url);
+//		final ParameterBlockJAI pbjImageRead;
+//		pbjImageRead = new ParameterBlockJAI("ImageRead");
+//		pbjImageRead.setParameter("Input", file);
+//		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+//		if (TestData.isInteractiveTest())
+//			visualize(image);
+//		else
+//			assertNotNull(image.getTiles());
+//	}
 
 	public void testJaiReadFromFile() throws IOException {
 
-		double sum = 0;
+		// double sum = 0;
 		// for (int i = 0; i < 10; i++) {
 		// long init=System.nanoTime();
-		final File file = TestData.file(this,"CB_TM432.jp2");
+		final File file = TestData.file(this, "CB_TM432.jp2");
 		final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
 				"ImageReadMT");
 		ImageLayout l = new ImageLayout();
@@ -93,11 +88,10 @@ public class JP2KakaduJAIReadTest extends JP2KakaduBaseTestCase {
 		// sum+=(System.nanoTime()-init);
 		// }
 		// System.out.println(sum/10E9);
-		final JFrame jf = new JFrame();
-		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		jf.getContentPane().add(new ScrollingImagePanel(image, 1600, 1200));
-		jf.pack();
-		jf.setVisible(true);
+		if (TestData.isInteractiveTest())
+			visualize(image, 1600, 1200);
+		else
+			assertNotNull(image.getData());
 
 	}
 
@@ -105,20 +99,8 @@ public class JP2KakaduJAIReadTest extends JP2KakaduBaseTestCase {
 		TestSuite suite = new TestSuite();
 
 		suite.addTest(new JP2KakaduJAIReadTest("testJaiReadFromFile"));
-		//
-		//
-		// suite.addTest(new JP2KakaduJAIReadTest(
-		// "testJaiReadAsymmetricSubsampling"));
 
-		// suite.addTest(new JP2KakaduJAIReadTest(
-		// "testJaiReadRGBBilinearInterpolation"));
-		//
-		// suite.addTest(new JP2KakaduJAIReadTest("testJaiReadGrayScale"));
-
-		// suite.addTest(new
-		// JP2KakaduJAIReadTest("testQualityLayerDifferences"));
-		//
-		// suite.addTest(new JP2KakaduJAIReadTest("testJaiReadFromUrl"));
+//		suite.addTest(new JP2KakaduJAIReadTest("testJaiReadFromUrl"));
 
 		return suite;
 	}
