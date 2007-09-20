@@ -54,6 +54,11 @@
 <profiles>
 <profile>
 <id>linux</id>
+<activation>
+  <os>
+  <family>linux</family>
+  </os>
+</activation>
   <build>
     <plugins>
     <plugin>
@@ -65,11 +70,20 @@
             <configuration>
             <tasks>
               <exec  executable="sh">
-             <arg value="mvn install:install-file  -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-gdal -Dversion=1.0-SNAPSHOT -Dpackaging=jar -Dfile=./gdal-1.4.2.jar"/>
-              </exec>
-              <exec  executable="sh">
-             <arg value="mvn install:install-file  -DgroupId=org.geotools   -DartifactId=gt2-jar-collector -Dversion=2.3.1-SNAPSHOT -Dpackaging=jar -Dfile=./gt2-jar-collector-2.3.1-SNAPSHOT.jar"/>
-              </exec>
+             <arg value="mvn install:install-file -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-gdal -Dversion=1.0-SNAPSHOT -Dpackaging=jar -Dfile=./gdal-1.4.2.jar"/>
+             </exec>
+             <exec  executable="sh">
+             <arg value="mvn install:install-file -DgroupId=org.geotools -DartifactId=gt2-jar-collector -Dversion=2.3.1-SNAPSHOT -Dpackaging=jar -Dfile=./gt2-jar-collector-2.3.1-SNAPSHOT.jar"/>
+             </exec>
+	     <exec  executable="sh">
+             <arg value="mvn install:install-file -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-swanheaderschema -Dversion=1.0-SNAPSHOT -Dpackaging=jar -Dfile=./SwanHeaderSchema.jar"/>
+             </exec>
+	     <exec  executable="sh">
+             <arg value="mvn install:install-file -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-kakadujni -Dversion=1.0-SNAPSHOT -Dpackaging=jar -Dfile=./kdu_jni.jar"/>
+	     </exec>
+	     <exec  executable="sh">
+             <arg value="mvn install:install-file -DgroupId=it.geosolutions.jp2 -DartifactId=ITTJP2EncodingProfileSchema -Dversion=1.0-SNAPSHOT -Dpackaging=jar -Dfile=./ITTJP2KProfileSchema.jar"/>
+             </exec>
             </tasks>
             </configuration>
             <goals>
@@ -110,7 +124,12 @@
 </profile>
 <profile>
 <id>windows</id>
-  <build>
+<activation>
+  <os>
+  <family>windows</family>
+  </os>
+</activation>
+<build>
     <plugins>
     <plugin>
 	<artifactId>maven-antrun-plugin</artifactId>
@@ -120,14 +139,26 @@
             <phase>install</phase>
             <configuration>
             <tasks>
-              <exec  executable="cmd">
-        	    <arg value="/c"/>
+            <exec  executable="cmd">
+		<arg value="/c"/>
                 <arg value="mvn install:install-file  -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-gdal -Dversion=1.0-SNAPSHOT -Dpackaging=jar -Dfile=./gdal-1.4.2.jar"/>
-              </exec>
-              <exec  executable="cmd">
-        	    <arg value="/c"/>
+            </exec>
+            <exec  executable="cmd">
+        	<arg value="/c"/>
                 <arg value="mvn install:install-file  -DgroupId=org.geotools   -DartifactId=gt2-jar-collector -Dversion=2.3.1-SNAPSHOT -Dpackaging=jar -Dfile=./gt2-jar-collector-2.3.1-SNAPSHOT.jar"/>
-              </exec>
+            </exec>
+	    <exec  executable="cmd">
+        	<arg value="/c"/>
+		<arg value="mvn install:install-file -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-swanheaderschema -Dversion=1.0-SNAPSHOT -Dpackaging=jar -Dfile=./SwanHeaderSchema.jar"/>
+            </exec>
+	    <exec  executable="cmd">
+        	<arg value="/c"/>
+		<arg value="mvn install:install-file -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-kakadujni -Dversion=1.0-SNAPSHOT -Dpackaging=jar -Dfile=./kdu_jni.jar"/>
+	     </exec>
+	     <exec  executable="cmd">
+        	<arg value="/c"/>
+		<arg value="mvn install:install-file -DgroupId=it.geosolutions.jp2 -DartifactId=ITTJP2EncodingProfileSchema -Dversion=1.0-SNAPSHOT -Dpackaging=jar -Dfile=./ITTJP2KProfileSchema.jar"/>
+             </exec>
             </tasks>
             </configuration>
             <goals>
