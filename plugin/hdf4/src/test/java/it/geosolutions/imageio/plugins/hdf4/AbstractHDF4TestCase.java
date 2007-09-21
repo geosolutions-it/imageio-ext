@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.hdf4;
 
+import java.util.logging.Logger;
+
 import javax.media.jai.JAI;
 
 import junit.framework.TestCase;
@@ -26,6 +28,9 @@ import junit.framework.TestCase;
  */
 public class AbstractHDF4TestCase extends TestCase {
 
+	protected static final Logger LOGGER = Logger
+	.getLogger("it.geosolutions.imageio.plugins.hdf4");
+	
 	public AbstractHDF4TestCase(String name) {
 		super(name);
 	}
@@ -40,6 +45,16 @@ public class AbstractHDF4TestCase extends TestCase {
 		JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
 				180 * 1024 * 1024);
 		JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
-
+	}
+	
+	protected void warningMessage(){
+		StringBuffer sb = new StringBuffer(
+				"Test file not available. Please download it at: "
+						+ "http://www.hdfgroup.uiuc.edu/UserSupport/code-"
+						+ "examples/sample-programs/convert/Conversion.html"
+						+ "\nThen copy it to: plugin/hdf4/src/test/resources/"
+						+ "it/geosolutions/imageio/plugins/hdf4/test-data"
+						+ " and repeat the test.");
+		LOGGER.info(sb.toString());
 	}
 }

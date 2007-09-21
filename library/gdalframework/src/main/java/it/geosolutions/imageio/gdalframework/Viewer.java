@@ -727,7 +727,7 @@ public abstract class Viewer {
 		String textPosition = BorderLayout.PAGE_START;
 
 		if (displayImage) {
-			frame.getContentPane().add(new ScrollingImagePanel(ri, 1024, 768));
+			frame.getContentPane().add(new ScrollingImagePanel(ri, 640, 480));
 
 			textPosition = BorderLayout.LINE_START;
 		}

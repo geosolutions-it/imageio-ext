@@ -57,8 +57,6 @@ public class JP2KProfilesTest extends AbstractJP2KTestCase {
 		// multithreading settings
 		JP2GDALKakaduImageReaderSpi.setReadMultithreadingLevel(5);
 		JP2GDALKakaduImageWriterSpi.setWriteMultithreadingLevel(5);
-		
-		
 	}
 
 	public void testWriteProfile() throws IOException, FileNotFoundException,
