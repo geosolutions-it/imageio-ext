@@ -16,16 +16,23 @@
  */
 package it.geosolutions.imageio.plugins.mrsid;
 
+import java.util.logging.Logger;
+
 import javax.media.jai.JAI;
 
 import junit.framework.TestCase;
 
 /**
  * @author Daniele Romagnoli, GeoSolutions.
- * @author Simone Giannecchini, GeoSolutions. 
+ * @author Simone Giannecchini, GeoSolutions.
  */
 public class AbstractMrSIDTestCase extends TestCase {
 
+	protected static final String fileName = "sample.sid";
+	
+	private static final Logger LOGGER = Logger
+	.getLogger("it.geosolutions.imageio.plugins.mrsid");
+	
 	public AbstractMrSIDTestCase(String name) {
 		super(name);
 	}
@@ -40,5 +47,18 @@ public class AbstractMrSIDTestCase extends TestCase {
 		JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
 				128 * 1024 * 1024);
 		JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
+	}
+	
+	protected void warningMessage(){
+		StringBuffer sb = new StringBuffer(
+				"Test file not available. Please download it as "
+						+ "anonymous FTP from "
+						+ "ftp://www.geo-solutions.it/mrsidsample.sid.\n"
+						+ "Use a tool supporting Active Mode.\n"
+						+ "Then unzip it on: plugin/"
+						+ "mrsid/src/test/resources/it/geosolutions/"
+						+ "imageio/plugins/mrsid/test-data folder and"
+						+ " repeat the test.");
+		LOGGER.info(sb.toString());
 	}
 }

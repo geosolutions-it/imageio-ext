@@ -32,6 +32,8 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
+ * Testing reading capabilities for {@link JpegGDALImageReader} leveraging on JAI.
+ *  *
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
@@ -60,7 +62,7 @@ public class JPEGJaiReadTest extends AbstractJPEGTestCase {
 		if (TestData.isInteractiveTest())
 			Viewer.visualize(image);
 		else
-			image.getTiles();
+			assertNotNull(image.getTiles());
 	}
 
 	public static Test suite() {

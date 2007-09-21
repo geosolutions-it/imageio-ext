@@ -29,9 +29,6 @@ import junit.framework.TestSuite;
 
 public class JP2KakaduManualReadTest extends AbstractJP2KakaduTestCase {
 
-	private static Logger LOGGER = Logger
-			.getLogger(JP2KakaduManualReadTest.class.toString());
-
 	public JP2KakaduManualReadTest(String name) {
 		super(name);
 	}

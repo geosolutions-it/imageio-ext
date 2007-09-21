@@ -33,12 +33,13 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
+ * Testing reading capabilities for {@link JP2GDALKakaduImageReader} leveraging
+ * on JAI.
+ * 
  * @author Daniele Romagnoli, GeoSolutions.
- * @author Simone Giannecchini, GeoSolutions. 
+ * @author Simone Giannecchini, GeoSolutions.
  */
 public class JP2KJaiReadTest extends AbstractJP2KTestCase {
-
-	public final static boolean INTERMEDIATE_VISUALIZE = false;
 
 	public final static String fileName = "sample.jp2";
 
@@ -62,7 +63,10 @@ public class JP2KJaiReadTest extends AbstractJP2KTestCase {
 		pbjImageRead.setParameter("Input", file);
 
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-		Viewer.visualize(image);
+		if (TestData.isInteractiveTest())
+			Viewer.visualize(image);
+		else
+			assertNotNull(image.getTiles());
 	}
 
 	/**
@@ -98,7 +102,7 @@ public class JP2KJaiReadTest extends AbstractJP2KTestCase {
 		pbjImageRead.setParameter("readParam", irp);
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 
-		if (INTERMEDIATE_VISUALIZE)
+		if (TestData.isInteractiveTest())
 			Viewer.visualize(image, "subsampled");
 
 		// ////////////////////////////////////////////////////////////////
@@ -118,7 +122,7 @@ public class JP2KJaiReadTest extends AbstractJP2KTestCase {
 		pbjCrop.setParameter("height", cropHeigth);
 		final RenderedOp croppedImage = JAI.create("Crop", pbjCrop);
 
-		if (INTERMEDIATE_VISUALIZE)
+		if (TestData.isInteractiveTest())
 			Viewer.visualize(croppedImage, "cropped");
 
 		// ////////////////////////////////////////////////////////////////
@@ -134,7 +138,7 @@ public class JP2KJaiReadTest extends AbstractJP2KTestCase {
 		final RenderedOp translatedImage = JAI
 				.create("Translate", pbjTranslate);
 
-		if (INTERMEDIATE_VISUALIZE)
+		if (TestData.isInteractiveTest())
 			Viewer.visualize(translatedImage, "translated");
 
 		// ////////////////////////////////////////////////////////////////
@@ -166,8 +170,10 @@ public class JP2KJaiReadTest extends AbstractJP2KTestCase {
 						xOrigin.toString()).append("]-yOrig[").append(
 						yOrigin.toString()).append("]-ang[").append(
 						angle.toString()).append("]");
-
-		Viewer.visualize(rotatedImage, title.toString());
+		if (TestData.isInteractiveTest())
+			Viewer.visualize(rotatedImage, title.toString());
+		else
+			assertNotNull(rotatedImage.getTiles());
 	}
 
 	public static Test suite() {

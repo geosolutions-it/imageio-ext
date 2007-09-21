@@ -32,8 +32,10 @@ import javax.media.jai.RenderedOp;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 /**
+ * Testing reading capabilities for {@link GeoTiffImageReader} leveraging on JAI.
+ *
  * @author Daniele Romagnoli, GeoSolutions.
- * @author Simone Giannecchini, GeoSolutions. 
+ * @author Simone Giannecchini, GeoSolutions.
  */
 public class GeoTiffJAIReadTest extends AbstractGeoTiffTestCase {
 
@@ -51,7 +53,7 @@ public class GeoTiffJAIReadTest extends AbstractGeoTiffTestCase {
 	public void testRead() throws FileNotFoundException, IOException {
 		final ParameterBlockJAI pbjImageRead;
 		// final ImageReadParam irp = new ImageReadParam();
-		String fileName = "o41078a.tiff";
+		String fileName = "bogota.tif";
 		final File file = TestData.file(this, fileName);
 
 		// irp.setSourceSubsampling(5, 5, 0, 0);
@@ -64,14 +66,17 @@ public class GeoTiffJAIReadTest extends AbstractGeoTiffTestCase {
 		pbjImageRead.setParameter("Reader", new GeoTiffImageReaderSpi()
 				.createReaderInstance());
 
-		// final ImageLayout layout= new ImageLayout();
-		// layout.setTileHeight(11203);
-		// layout.setTileWidth(9130);
+//		final ImageLayout layout= new ImageLayout();
+//		layout.setTileHeight(162);
+//		layout.setTileWidth(120);
 		final RenderingHints hints = new RenderingHints(JAI.KEY_TILE_CACHE,
 				null);
-		// hints.add(new RenderingHints(JAI.KEY_IMAGE_LAYOUT,layout));
+//		hints.add(new RenderingHints(JAI.KEY_IMAGE_LAYOUT,layout));
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead, hints);
-		Viewer.visualizeAllInformation(image, "",false);
+		if (TestData.isInteractiveTest())
+			Viewer.visualizeAllInformation(image, "", true);
+		else
+			assertNotNull(image.getTiles());
 	}
 
 	public static Test suite() {

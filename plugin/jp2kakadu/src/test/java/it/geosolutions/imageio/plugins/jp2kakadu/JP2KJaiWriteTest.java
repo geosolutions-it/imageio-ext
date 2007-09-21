@@ -22,6 +22,7 @@ import it.geosolutions.resources.TestData;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageWriteParam;
@@ -34,15 +35,20 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
+ * Class for testing all supported Kakadu Create Options
+ * 
  * @author Daniele Romagnoli, GeoSolutions.
- * @author Simone Giannecchini, GeoSolutions. 
+ * @author Simone Giannecchini, GeoSolutions.
  */
 public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
+	
+	/** The LOGGER for this class. */
+	private static final Logger LOGGER = Logger
+			.getLogger("it.geosolutions.imageio.plugins.jp2kakadu");
 
 	// Set this to true if you just want run test without visualizing written
 	// images.
-	final static boolean DELETE_TEMP_FILES_ON_EXIT = false;
-
+	boolean deleteTempFilesOnExit = true;
 	final static String testFileName = "sample.jp2";
 
 	// When testing write operations on very big images, performing subsampled
@@ -60,6 +66,9 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 		// multithreading settings
 		JP2GDALKakaduImageReaderSpi.setReadMultithreadingLevel(2);
 		JP2GDALKakaduImageWriterSpi.setWriteMultithreadingLevel(2);
+		if (TestData.isInteractiveTest()){
+			deleteTempFilesOnExit = false;
+		}
 	}
 
 	// ////////////////////////////////////////////////////////////////////////
@@ -69,6 +78,7 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 	// ////////////////////////////////////////////////////////////////////////
 	public void testWrite_Clevels() throws IOException, FileNotFoundException {
 
+		LOGGER.info("Testing JP2 Write operation with Clevels option setting");
 		// //
 		// Preparing input/output files
 		// //
@@ -86,9 +96,9 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 				Integer.toString(secondClevelsParam)).append("-.jp2")
 				.toString();
 		final File outputFile1 = TestData.temp(this, fileName1,
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 		final File outputFile2 = TestData.temp(this, fileName2,
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 
 		// //
 		// Preparing to read
@@ -163,6 +173,7 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 	// ////////////////////////////////////////////////////////////////////////
 	public void testWrite_Clayers() throws IOException, FileNotFoundException {
 
+		LOGGER.info("Testing JP2 Write operation with Clayers option setting");
 		// //
 		// Preparing input/output files
 		// //
@@ -180,9 +191,9 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 				Integer.toString(secondClayersParam)).append("-.jp2")
 				.toString();
 		final File outputFile1 = TestData.temp(this, fileName1,
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 		final File outputFile2 = TestData.temp(this, fileName2,
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 
 		// //
 		// Preparing to read
@@ -257,6 +268,7 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 	public void testWrite_Cprecincts() throws IOException,
 			FileNotFoundException {
 
+		LOGGER.info("Testing JP2 Write operation with Cprecincts option setting");
 		// //
 		// Preparing input/output files
 		// //
@@ -266,9 +278,9 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 		// Output files resulting from 2 different values of the same create
 		// option. In this test, the create option is Cprecincts.
 		final File outputFile1 = TestData.temp(this, "CprecintsA-.jp2",
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 		final File outputFile2 = TestData.temp(this, "CprecintsB-.jp2",
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 
 		// //
 		// Preparing to read
@@ -343,6 +355,7 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 	// ////////////////////////////////////////////////////////////////////////
 	public void testWrite_Corder() throws IOException, FileNotFoundException {
 
+		LOGGER.info("Testing JP2 Write operation with Corder option setting");
 		// //
 		// Preparing input/output files
 		// //
@@ -352,11 +365,11 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 		// Output files resulting from 2 different values of the same create
 		// option. In this test, the create option is Corder.
 		final File outputFile1 = TestData.temp(this, "CorderPCRL-.jp2",
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 		final File outputFile2 = TestData.temp(this, "CorderRPCL-.jp2",
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 		final File outputFile3 = TestData.temp(this, "CorderLRCP-.jp2",
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 
 		// //
 		// Preparing to read
@@ -454,6 +467,7 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 	// ////////////////////////////////////////////////////////////////////////
 	public void testWrite_Cblk() throws IOException, FileNotFoundException {
 
+		LOGGER.info("Testing JP2 Write operation with Cblk option setting");
 		// //
 		// Preparing input/output files
 		// //
@@ -463,9 +477,9 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 		// Output files resulting from 2 different values of the same create
 		// option. In this test, the create option is Cblk.
 		final File outputFile1 = TestData.temp(this, "cblk16x16-.jp2",
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 		final File outputFile2 = TestData.temp(this, "cblk64x64-.jp2",
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 
 		// //
 		// Preparing to read
@@ -538,6 +552,8 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 	// ////////////////////////////////////////////////////////////////////////
 
 	public void testWrite_Cmodes() throws IOException, FileNotFoundException {
+		
+		LOGGER.info("Testing JP2 Write operation with CModes option setting");
 		// //
 		// Preparing input/output files
 		// //
@@ -576,7 +592,7 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 			final StringBuffer fileName = new StringBuffer("CModes").append(
 					filenameVersion).append(".jp2");
 			final File outputFile = TestData.temp(this, fileName.toString(),
-					DELETE_TEMP_FILES_ON_EXIT);
+					deleteTempFilesOnExit);
 
 			// Setting output and writer
 			final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
@@ -608,6 +624,7 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 	// ////////////////////////////////////////////////////////////////////////
 	public void testWrite_Cycc() throws IOException, FileNotFoundException {
 
+		LOGGER.info("Testing JP2 Write operation with Cycc option setting");
 		// //
 		// Preparing input/output files
 		// //
@@ -617,9 +634,9 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 		// Output files resulting from 2 different values of the same create
 		// option. In this test, the create option is ORGgen_plt.
 		final File outputFile1 = TestData.temp(this, "Cycc-Y-.jp2",
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 		final File outputFile2 = TestData.temp(this, "Cycc-N-.jp2",
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 
 		// //
 		// Preparing to read
@@ -692,6 +709,7 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 	// ////////////////////////////////////////////////////////////////////////
 	public void testWrite_GMLJp2() throws IOException, FileNotFoundException {
 
+		LOGGER.info("Testing JP2 Write operation with GMLJp2 option setting");
 		// //
 		// Preparing input/output files
 		// //
@@ -701,9 +719,9 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 		// Output files resulting from 2 different values of the same create
 		// option. In this test, the create option is GMLJp2.
 		final File outputFile1 = TestData.temp(this, "GML-.jp2",
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 		final File outputFile2 = TestData.temp(this, "NO-GML-.jp2",
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 
 		// //
 		// Preparing to read
@@ -776,6 +794,7 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 	// ////////////////////////////////////////////////////////////////////////
 	public void testWrite_GeoJp2() throws IOException, FileNotFoundException {
 
+		LOGGER.info("Testing JP2 Write operation with GeoJp2 option setting");
 		// //
 		// Preparing input/output files
 		// //
@@ -785,9 +804,9 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 		// Output files resulting from 2 different values of the same create
 		// option. In this test, the create option is GeoJp2.
 		final File outputFile1 = TestData.temp(this, "GeoJp2-.jp2",
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 		final File outputFile2 = TestData.temp(this, "NO-GeoJp2-.jp2",
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 
 		// //
 		// Preparing to read
@@ -860,6 +879,8 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 	// ////////////////////////////////////////////////////////////////////////
 
 	public void testWrite_ORGtparts() throws IOException, FileNotFoundException {
+		
+		LOGGER.info("Testing JP2 Write operation with ORGtparts option setting");
 		// //
 		// Preparing input/output files
 		// //
@@ -899,7 +920,7 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 			final StringBuffer fileName = new StringBuffer("ORGtparts").append(
 					filenameVersion).append("-.jp2");
 			final File outputFile = TestData.temp(this, fileName.toString(),
-					DELETE_TEMP_FILES_ON_EXIT);
+					deleteTempFilesOnExit);
 
 			// Setting output and writer
 			final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
@@ -937,6 +958,7 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 	public void testWrite_ORGgen_plt() throws IOException,
 			FileNotFoundException {
 
+		LOGGER.info("Testing JP2 Write operation with ORGgen_plt option setting");
 		// //
 		// Preparing input/output files
 		// //
@@ -946,9 +968,9 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 		// Output files resulting from 2 different values of the same create
 		// option. In this test, the create option is ORGgen_plt.
 		final File outputFile1 = TestData.temp(this, "ORGgen_plt-Y-.jp2",
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 		final File outputFile2 = TestData.temp(this, "ORGgen_plt-N-.jp2",
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 
 		// //
 		// Preparing to read
@@ -1043,6 +1065,7 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 	public void testWrite_ORGgen_tlm() throws IOException,
 			FileNotFoundException {
 
+		LOGGER.info("Testing JP2 Write operation with ORGgen_tlm option setting");
 		// //
 		// Preparing input/output files
 		// //
@@ -1050,7 +1073,7 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 		assertTrue(inputFile.exists());
 
 		final File outputFile1 = TestData.temp(this, "ORGgen_tlm0-.jp2",
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 
 		// //
 		// Preparing to read
@@ -1096,6 +1119,7 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 	// ////////////////////////////////////////////////////////////////////////
 	public void testWrite_COMSEG() throws IOException, FileNotFoundException {
 
+		LOGGER.info("Testing JP2 Write operation with COMSEG option setting");
 		// //
 		// Preparing input/output files
 		// //
@@ -1105,9 +1129,9 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 		// Output files resulting from 2 different values of the same create
 		// option. In this test, the create option is COMSEG.
 		final File outputFile1 = TestData.temp(this, "COMSEG-.jp2",
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 		final File outputFile2 = TestData.temp(this, "NO-COMSEG-.jp2",
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 
 		// //
 		// Preparing to read
@@ -1180,6 +1204,7 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 	// ////////////////////////////////////////////////////////////////////////
 	public void testWrite_SProfile() throws IOException, FileNotFoundException {
 
+		LOGGER.info("Testing JP2 Write operation with SProfile option setting");
 		// //
 		// Preparing input/output files
 		// //
@@ -1189,9 +1214,9 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 		// Output files resulting from 2 different values of the same create
 		// option. In this test, the create option is SProfile.
 		final File outputFile1 = TestData.temp(this, "SProfile1-.jp2",
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 		final File outputFile2 = TestData.temp(this, "SProfile2-.jp2",
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 		// //
 		// Preparing to read
 		// //
@@ -1263,6 +1288,7 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 	// ////////////////////////////////////////////////////////////////////////
 	public void testWrite_Tiling() throws IOException, FileNotFoundException {
 
+		LOGGER.info("Testing JP2 Write operation with Tiling option setting");
 		// //
 		// Preparing input/output files
 		// //
@@ -1278,9 +1304,9 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 				Integer.toString(secondTilingParam)).append("-.jp2").toString();
 
 		final File outputFile1 = TestData.temp(this, fileName1,
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 		final File outputFile2 = TestData.temp(this, fileName2,
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 
 		// //
 		// Preparing to read
@@ -1356,6 +1382,7 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 	// ////////////////////////////////////////////////////////////////////////
 	public void testWrite_ROI() throws IOException, FileNotFoundException {
 
+		LOGGER.info("Testing JP2 Write operation with ROI option setting");
 		// //
 		// Preparing input/output files
 		// //
@@ -1365,9 +1392,9 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 		// Output files resulting from 2 different values of the same create
 		// option. In this test, the create option is SProfile.
 		final File outputFile1 = TestData.temp(this, "ROI-NO_ROI-.jp2",
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 		final File outputFile2 = TestData.temp(this, "ROI-parametrized-.jp2",
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 
 		// //
 		// Preparing to read
@@ -1446,6 +1473,7 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 	// ////////////////////////////////////////////////////////////////////////
 	public void testWrite_Qguard() throws IOException, FileNotFoundException {
 
+		LOGGER.info("Testing JP2 Write operation with Qguard option setting");
 		// //
 		// Preparing input/output files
 		// //
@@ -1455,9 +1483,9 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 		// Output files resulting from 2 different values of the same create
 		// option. In this test, the create option is Qguard.
 		final File outputFile1 = TestData.temp(this, "Qguard1-.jp2",
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 		final File outputFile2 = TestData.temp(this, "Qguard2-.jp2",
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 
 		// //
 		// Preparing to read
@@ -1530,6 +1558,7 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 	// ////////////////////////////////////////////////////////////////////////
 	public void testWrite_Qstep() throws IOException, FileNotFoundException {
 
+		LOGGER.info("Testing JP2 Write operation with Qstep option setting");
 		// //
 		// Preparing input/output files
 		// //
@@ -1546,11 +1575,11 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 				Float.toString(secondQstepParam)).append("f-.jp2").toString();
 		final String fileName3 = "Qstep-Default-.jp2";
 		final File outputFile1 = TestData.temp(this, fileName1,
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 		final File outputFile2 = TestData.temp(this, fileName2,
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 		final File outputFile3 = TestData.temp(this, fileName3,
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 
 		// //
 		// Preparing to read
@@ -1649,6 +1678,7 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 	// of an input UINT16 jpeg2000 image.
 	public void testWrite_Quality() throws IOException, FileNotFoundException {
 
+		LOGGER.info("Testing JP2 Write operation with Quality option setting");
 		// //
 		// Preparing input/output files
 		// //
@@ -1664,9 +1694,9 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 		final String fileName2 = new StringBuffer("Quality-").append(
 				Float.toString(secondQualityParam)).append("f-.jp2").toString();
 		final File outputFile1 = TestData.temp(this, fileName1,
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 		final File outputFile2 = TestData.temp(this, fileName2,
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 
 		// //
 		// Preparing to read
@@ -1739,6 +1769,7 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 	// ////////////////////////////////////////////////////////////////////////
 	public void testWrite_FLUSH() throws IOException, FileNotFoundException {
 
+		LOGGER.info("Testing JP2 Write operation with FLUSH option setting");
 		// //
 		// Preparing input/output files
 		// //
@@ -1748,9 +1779,9 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 		// Output files resulting from 2 different values of the same create
 		// option. In this test, the create option is FLUSH.
 		final File outputFile1 = TestData.temp(this, "FLUSH-.jp2",
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 		final File outputFile2 = TestData.temp(this, "NO-FLUSH-.jp2",
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 
 		// //
 		// Preparing to read
@@ -1824,10 +1855,11 @@ public class JP2KJaiWriteTest extends AbstractJP2KTestCase {
 	public void testWrite_Multithreading() throws IOException,
 			FileNotFoundException {
 
+		LOGGER.info("Testing JP2 Write operation with multithreading");
 		// Preparing input/output files
 		final File inputFile = TestData.file(this, testFileName);
 		final File outputFile = TestData.temp(this, "multithreadingwrite.jp2",
-				DELETE_TEMP_FILES_ON_EXIT);
+				deleteTempFilesOnExit);
 		assertTrue(inputFile.exists());
 
 		// Setting read-multithreading capabilities

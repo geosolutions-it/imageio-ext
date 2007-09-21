@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.jp2kakadu;
 
+import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.stream.output.FileImageOutputStreamExtImpl;
 import it.geosolutions.resources.TestData;
 
@@ -56,6 +57,8 @@ public class JP2KProfilesTest extends AbstractJP2KTestCase {
 		// multithreading settings
 		JP2GDALKakaduImageReaderSpi.setReadMultithreadingLevel(5);
 		JP2GDALKakaduImageWriterSpi.setWriteMultithreadingLevel(5);
+		
+		
 	}
 
 	public void testWriteProfile() throws IOException, FileNotFoundException,
@@ -65,9 +68,7 @@ public class JP2KProfilesTest extends AbstractJP2KTestCase {
 			// //
 			// Preparing input/output files
 			// //
-			final File inputFile =
-//				 TestData.file(this, testFileName);
-			new File("E:/work/data/GTiff/spezia_wgs84.tif");
+			final File inputFile =  TestData.file(this, "sampletest.tif");
 			assertTrue(inputFile.exists());
 
 			final File profileFile = TestData.file(this, profileFileNames[i]);
@@ -118,9 +119,11 @@ public class JP2KProfilesTest extends AbstractJP2KTestCase {
 			// ////////////////////////////////////////////////////////////////////
 			// read it back
 			// ////////////////////////////////////////////////////////////////////
-			// pbjImageRead.setParameter("Input", outputFile);
-			// image = JAI.create("ImageRead", pbjImageRead);
-			// Viewer.visualize(image);
+			if (TestData.isInteractiveTest()){
+				 pbjImageRead.setParameter("Input", outputFile);
+				 image = JAI.create("ImageRead", pbjImageRead);
+				 Viewer.visualize(image);
+			}
 		}
 	}
 

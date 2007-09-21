@@ -29,16 +29,10 @@ import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.awt.image.renderable.ParameterBlock;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLDecoder;
 
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
@@ -53,25 +47,25 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import com.sun.media.jai.operator.ImageReadDescriptor;
+
 /**
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
-public class SwanReadTest extends TestCase {
+public class SwanReadTest extends AbstractSwanTest {
 
 	public SwanReadTest(String name) {
 		super(name);
 	}
 
 	protected void setUp() throws Exception {
-		
+		super.setUp();
 	}
 
 	/**
@@ -138,7 +132,11 @@ public class SwanReadTest extends TestCase {
 				pbjImageRead.setParameter("Input", f);
 				pbjImageRead.setParameter("imageChoice", imageIndex);
 				RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-				visualize(image, title.toString());
+				if (TestData.isExtensiveTest())
+					visualize(image, title.toString());
+				else
+					assertNotNull(image.getTiles());
+
 			}
 			datasetNode = datasetNode.getNextSibling();
 		}
@@ -163,7 +161,10 @@ public class SwanReadTest extends TestCase {
 		pbjImageRead.setParameter("ImageChoice", 1);
 		pbjImageRead.setParameter("readParam", irp);
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-		visualize(image);
+		if (TestData.isExtensiveTest())
+			visualize(image);
+		else
+			assertNotNull(image.getTiles());
 	}
 
 	/**
@@ -194,9 +195,12 @@ public class SwanReadTest extends TestCase {
 				final BufferedImage bi = getQuantityComponent(db, band, width,
 						height);
 				final String fileName = inputFile.getName();
-				visualizeRescaled(bi, fileName.substring(0,
-						fileName.length() - 4)
-						+ component, null);
+				if (TestData.isExtensiveTest())
+					visualizeRescaled(bi, fileName.substring(0, fileName
+							.length() - 4)
+							+ component, null);
+				else
+					assertNotNull(image.getTiles());
 			}
 		}
 	}
@@ -215,7 +219,11 @@ public class SwanReadTest extends TestCase {
 		pbjImageRead.setParameter("Input", f);
 		pbjImageRead.setParameter("imageChoice", imageIndex);
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-		visualize(image, "PDIR from mixed file", imageIndex);
+		if (TestData.isExtensiveTest())
+			visualize(image, "PDIR from mixed file", imageIndex);
+		else
+			assertNotNull(image.getTiles());
+
 	}
 
 	/**
@@ -244,12 +252,16 @@ public class SwanReadTest extends TestCase {
 					"ImageRead");
 			pbjImageRead.setParameter("Input", f);
 			RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-			visualize(image);
+			if (TestData.isExtensiveTest())
+				visualize(image);
+			else
+				assertNotNull(image.getTiles());
 		}
 	}
-	
+
 	/**
 	 * Simple Manual Read operation followed by a rescaled image visualization.
+	 * 
 	 * @throws IOException
 	 */
 
@@ -258,17 +270,20 @@ public class SwanReadTest extends TestCase {
 		ImageReader reader = new SwanImageReader(new SwanImageReaderSpi());
 		reader.setInput(f);
 		BufferedImage bi = reader.read(0, null);
-		visualizeRescaled(bi, "Manual Read", null);
+		if (TestData.isExtensiveTest())
+			visualizeRescaled(bi, "Manual Read", null);
+		else
+			assertNotNull(bi.getData());
 	}
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
-		 suite.addTest(new SwanReadTest("testReadFromMultipleQuantitiesFile"));
-		 suite.addTest(new SwanReadTest("testReadSingleQuantity"));
-		 suite.addTest(new SwanReadTest("testAnyQuantity"));
+		suite.addTest(new SwanReadTest("testReadFromMultipleQuantitiesFile"));
+		suite.addTest(new SwanReadTest("testReadSingleQuantity"));
+		suite.addTest(new SwanReadTest("testAnyQuantity"));
 		suite.addTest(new SwanReadTest("testBiComponentQuantities"));
-		 suite.addTest(new SwanReadTest("testSingleFromMixedQuantities"));
-		 suite.addTest(new SwanReadTest("testManualRead"));
+		suite.addTest(new SwanReadTest("testSingleFromMixedQuantities"));
+		suite.addTest(new SwanReadTest("testManualRead"));
 		return suite;
 	}
 
@@ -346,8 +361,7 @@ public class SwanReadTest extends TestCase {
 		pbRescale.add(scale);
 		pbRescale.add(offset);
 		pbRescale.addSource(image);
-		RenderedOp rescaledImage = JAI.create("Rescale",
-				pbRescale);
+		RenderedOp rescaledImage = JAI.create("Rescale", pbRescale);
 
 		ParameterBlock pbConvert = new ParameterBlock();
 		pbConvert.addSource(rescaledImage);

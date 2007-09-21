@@ -22,7 +22,6 @@ import it.geosolutions.util.FileCache;
 import java.awt.RenderingHints;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
@@ -32,6 +31,14 @@ import javax.media.jai.RenderedOp;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+/**
+ * Testing reading capabilities for {@link JP2KakaduImageReader} leveraging on
+ * JAI.
+ * 
+ * @author Simone Giannecchini, GeoSolutions.
+ * @author Daniele Romagnoli, GeoSolutions.
+ * 
+ */
 public class JP2KakaduJAIReadTest extends AbstractJP2KakaduTestCase {
 	static FileCache fileCache = new FileCache();
 
@@ -40,25 +47,25 @@ public class JP2KakaduJAIReadTest extends AbstractJP2KakaduTestCase {
 
 	}
 
-//	/**
-//	 * Test Read exploiting Linear Interpolation
-//	 * 
-//	 * @throws IOException
-//	 */
-//
-//	public void testJaiReadFromUrl() throws IOException {
-//		final URL url = new URL(
-//				"http://gatso.test.ambrero.nl/violation_images/bla.jp2");
-//		final File file = fileCache.getFile(url);
-//		final ParameterBlockJAI pbjImageRead;
-//		pbjImageRead = new ParameterBlockJAI("ImageRead");
-//		pbjImageRead.setParameter("Input", file);
-//		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-//		if (TestData.isInteractiveTest())
-//			visualize(image);
-//		else
-//			assertNotNull(image.getTiles());
-//	}
+	// /**
+	// * Test Read exploiting Linear Interpolation
+	// *
+	// * @throws IOException
+	// */
+	//
+	// public void testJaiReadFromUrl() throws IOException {
+	// final URL url = new URL(
+	// "http://gatso.test.ambrero.nl/violation_images/bla.jp2");
+	// final File file = fileCache.getFile(url);
+	// final ParameterBlockJAI pbjImageRead;
+	// pbjImageRead = new ParameterBlockJAI("ImageRead");
+	// pbjImageRead.setParameter("Input", file);
+	// RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+	// if (TestData.isInteractiveTest())
+	// visualize(image);
+	// else
+	// assertNotNull(image.getTiles());
+	// }
 
 	public void testJaiReadFromFile() throws IOException {
 
@@ -75,11 +82,11 @@ public class JP2KakaduJAIReadTest extends AbstractJP2KakaduTestCase {
 			pbjImageRead.setParameter("Reader", new JP2KakaduImageReaderSpi()
 					.createReaderInstance());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// XXX
+
 		}
 		CloneableImageReadParam rp = new JP2KakaduImageReadParam();
-		rp.setSourceSubsampling(32, 32, 0, 0);
+		rp.setSourceSubsampling(4, 4, 0, 0);
 		pbjImageRead.setParameter("ReadParam", rp);
 		pbjImageRead.setParameter("Input", file);
 		RenderedOp image = JAI.create("ImageReadMT", pbjImageRead,
@@ -100,7 +107,7 @@ public class JP2KakaduJAIReadTest extends AbstractJP2KakaduTestCase {
 
 		suite.addTest(new JP2KakaduJAIReadTest("testJaiReadFromFile"));
 
-//		suite.addTest(new JP2KakaduJAIReadTest("testJaiReadFromUrl"));
+		// suite.addTest(new JP2KakaduJAIReadTest("testJaiReadFromUrl"));
 
 		return suite;
 	}

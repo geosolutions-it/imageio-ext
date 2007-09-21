@@ -19,6 +19,7 @@ package it.geosolutions.imageio.plugins.ecw;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.resources.TestData;
 
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -32,15 +33,14 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Testing reading capabilities for {@link ECWImageReader} leveraging on JAI.
+ * Testing reading capabilities for {@link ECWImageReader}.
  * 
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
- * 
  */
-public class ECWJAIReadTest extends AbstractECWTestCase {
+public class ECWTest extends AbstractECWTestCase {
 
-	public ECWJAIReadTest(String name) {
+	public ECWTest(String name) {
 		super(name);
 	}
 
@@ -94,15 +94,36 @@ public class ECWJAIReadTest extends AbstractECWTestCase {
 		assertEquals(1969, image.getWidth());
 		assertEquals(1760, image.getHeight());
 	}
+	
+	public void testManualRead() throws FileNotFoundException, IOException {
+		final ECWImageReaderSpi spi = new ECWImageReaderSpi();
+		final ECWImageReader mReader = new ECWImageReader(spi);
+		final String fileName = "samplergb.ecw";
+		final File file = TestData.file(this, fileName);
+		final ImageReadParam param = new ImageReadParam();
+		param.setSourceSubsampling(4,4,0,0);
+		final int imageIndex = 0;
+		
+		mReader.setInput(file);
+		final RenderedImage image = mReader.readAsRenderedImage(imageIndex, param);
+		if(TestData.isInteractiveTest())
+			Viewer.visualize(image, fileName);
+		assertEquals(688, image.getWidth());
+		assertEquals(471, image.getHeight());
+		mReader.dispose();
+	}
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 
 		// Test reading of a GrayScale image
-		suite.addTest(new ECWJAIReadTest("testGrayScaleImageRead"));
+		suite.addTest(new ECWTest("testGrayScaleImageRead"));
 
 		// Test reading of a RGB image
-		suite.addTest(new ECWJAIReadTest("testImageRead"));
+		suite.addTest(new ECWTest("testImageRead"));
+		
+		// Test reading of a RGB image
+		suite.addTest(new ECWTest("testManualRead"));
 
 		return suite;
 	}

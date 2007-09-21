@@ -19,6 +19,7 @@ package it.geosolutions.imageio.plugins.geotiff;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.resources.TestData;
 
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -52,7 +53,12 @@ public class GeoTiffManualReadTest extends TestCase{
 		irp.setSourceSubsampling(2, 2, 0, 0);
 		GeoTiffImageReader reader = new GeoTiffImageReader(new GeoTiffImageReaderSpi());
 		reader.setInput(inputFile);
-		Viewer.visualize(reader.read(0,irp));
+		final RenderedImage image = reader.readAsRenderedImage(0, irp);
+		if(TestData.isInteractiveTest())
+			Viewer.visualize(image, fileName);
+		assertEquals(256, image.getWidth());
+		assertEquals(256, image.getHeight());
+		reader.dispose();
 	}
 	
 	public static void main(java.lang.String[] args) {

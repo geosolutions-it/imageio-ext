@@ -56,8 +56,10 @@ public class ECWManualReadTest extends AbstractECWTestCase{
 		
 		mReader.setInput(file);
 		final RenderedImage image = mReader.readAsRenderedImage(imageIndex, param);
-		if(TestData.isExtensiveTest())
+		if(TestData.isInteractiveTest())
 			Viewer.visualize(image, fileName);
+		assertEquals(688, image.getWidth());
+		assertEquals(471, image.getHeight());
 		mReader.dispose();
 	}
 	
