@@ -33,7 +33,7 @@ import junit.framework.TestSuite;
 
 /**
  * Testing reading capabilities for {@link JpegGDALImageReader} leveraging on JAI.
- *  *
+ * 
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */

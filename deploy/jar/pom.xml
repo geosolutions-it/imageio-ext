@@ -84,6 +84,9 @@
 	     <exec  executable="sh">
              <arg value="mvn install:install-file -DgroupId=it.geosolutions.jp2 -DartifactId=ITTJP2EncodingProfileSchema -Dversion=1.0-SNAPSHOT -Dpackaging=jar -Dfile=./ITTJP2KProfileSchema.jar"/>
              </exec>
+	     <exec  executable="sh">
+             <arg value="mvn install:install-file -DgroupId=ncsa -DartifactId=jhdf -Dversion=4.1r5 -Dpackaging=jar -Dfile=./ncsa_jhdf.jar"/>
+	     </exec>
             </tasks>
             </configuration>
             <goals>
@@ -158,6 +161,10 @@
 	     <exec  executable="cmd">
         	<arg value="/c"/>
 		<arg value="mvn install:install-file -DgroupId=it.geosolutions.jp2 -DartifactId=ITTJP2EncodingProfileSchema -Dversion=1.0-SNAPSHOT -Dpackaging=jar -Dfile=./ITTJP2KProfileSchema.jar"/>
+             </exec>
+	     <exec  executable="cmd">
+        	<arg value="/c"/>
+		<arg value="mvn install:install-file -DgroupId=ncsa -DartifactId=jhdf -Dversion=4.1r5 -Dpackaging=jar -Dfile=./ncsa_jhdf.jar"/>
              </exec>
             </tasks>
             </configuration>

@@ -82,5 +82,6 @@
     <module>customstreams</module>
     <module>gdalframework</module>
     <module>imagereadmt</module>
+    <module>jhdfaccess</module>
   </modules>
 </project>

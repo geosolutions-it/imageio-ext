@@ -53,8 +53,8 @@ public class AbstractMrSIDTestCase extends TestCase {
 		StringBuffer sb = new StringBuffer(
 				"Test file not available. Please download it as "
 						+ "anonymous FTP from "
-						+ "ftp://www.geo-solutions.it/mrsidsample.sid.\n"
-						+ "Use a tool supporting Active Mode.\n"
+						+ "ftp://ftp.geo-solutions.it/incoming/mrsidsample."
+						+ "sid.\n Use a tool supporting Active Mode.\n"
 						+ "Then unzip it on: plugin/"
 						+ "mrsid/src/test/resources/it/geosolutions/"
 						+ "imageio/plugins/mrsid/test-data folder and"
