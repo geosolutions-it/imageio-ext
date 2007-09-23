@@ -6,6 +6,4 @@ mvn install:install-file -DgroupId=it.geosolutions.imageio-ext -DartifactId=imag
 
 mvn install:install-file -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-kakadujni -Dversion=1.0-SNAPSHOT -Dpackaging=jar -Dfile=./kdu_jni.jar
 
-mvn install:install-file -DgroupId=it.geosolutions.jp2 -DartifactId=ITTJP2EncodingProfileSchema -Dversion=1.0-SNAPSHOT -Dpackaging=jar -Dfile=./ITTJP2KProfileSchema.jar
-
 mvn install:install-file -DgroupId=ncsa -DartifactId=jhdf -Dversion=4.1r5 -Dpackaging=jar -Dfile=./ncsa_jhdf.jar
