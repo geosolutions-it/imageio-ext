@@ -45,12 +45,10 @@ public class JP2GDALKakaduImageReader extends GDALImageReader {
 		public JP2GDALKakaduDataSetWrapper(Dataset ds, String name) {
 			super(ds, name);
 		}
-
 	}
-
 	
 	private static final Logger LOGGER = Logger
-			.getLogger("javax.imageio.plugins");
+			.getLogger("it.geosolutions.imageio.plugins.jp2kakadu");
 
 	public JP2GDALKakaduImageReader(JP2GDALKakaduImageReaderSpi originatingProvider) {
 		super(originatingProvider);
@@ -84,10 +82,4 @@ public class JP2GDALKakaduImageReader extends GDALImageReader {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-//	protected IIOMetadata getIIOImageMetadata(GDALDatasetWrapper wrapper) {
-//		return new  JP2GDALKakaduIIOImageMetadata(wrapper);
-//	}
-
-
 }

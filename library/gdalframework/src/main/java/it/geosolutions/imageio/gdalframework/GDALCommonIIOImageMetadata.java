@@ -29,9 +29,13 @@ import javax.imageio.metadata.IIOMetadataNode;
 import org.gdal.gdal.GCP;
 import org.w3c.dom.Node;
 
+/**
+ * Class representing common image metadata
+ * 
+ * @author Simone Giannecchini, GeoSolutions.
+ * @author Daniele Romagnoli, GeoSolutions.
+ */
 public class GDALCommonIIOImageMetadata extends IIOMetadata {
-	// package scope
-	
 	public static final String nativeMetadataFormatName = "org_gdal_imageio_common_image_metadata_1.0";
 
 	public static final String nativeMetadataFormatClassName = "it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadataFormat";
@@ -41,19 +45,14 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 	public GDALCommonIIOImageMetadata(final GDALDatasetWrapper ds) {
 		this(ds, nativeMetadataFormatName,
 				nativeMetadataFormatClassName);
-
 	}
 
 	public GDALCommonIIOImageMetadata(final GDALDatasetWrapper ds,
 			String formatName, String formatClass) {
 		super(false, formatName, formatClass, null, null);
 		this.dsWrapper = ds;
-
 	}
 
-	/**
-	 * @param dsWrapper
-	 */
 	private Node getCommonNativeTree() {
 		// Create root node
 		final IIOMetadataNode root = new IIOMetadataNode(
@@ -187,7 +186,6 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 			return getCommonNativeTree();
 		throw new UnsupportedOperationException(formatName
 				+ " is not a supported format name");
-
 	}
 
 	public boolean isReadOnly() {
@@ -199,13 +197,10 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 			throws IIOInvalidTreeException {
 		// TODO change this
 		throw new UnsupportedOperationException("");
-
 	}
 
 	public void reset() {
 		// TODO change this
 		throw new UnsupportedOperationException("");
-
 	}
-
 }

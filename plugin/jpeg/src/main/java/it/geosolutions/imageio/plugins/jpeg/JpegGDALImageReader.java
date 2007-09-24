@@ -49,7 +49,7 @@ public class JpegGDALImageReader extends GDALImageReader {
 	}
 
 	private static final Logger LOGGER = Logger
-			.getLogger("javax.imageio.plugins");
+			.getLogger("it.geosolutions.imageio.plugins.jpeg");
 
 	public JpegGDALImageReader(JpegGDALImageReaderSpi originatingProvider) {
 		super(originatingProvider);
