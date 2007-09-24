@@ -44,12 +44,12 @@ public final class GeoTiffImageWriterSpi extends GDALImageWriterSpi {
 
 	static final String version = "1.0";
 
-	static final String writerCN = "javax.imageio.plugins.geotiff.GeoTiffImageWriter";
+	static final String writerCN = "it.geosolutions.imageio.plugins.geotiff.GeoTiffImageWriter";
 
 	static final String vendorName = "GeoSolutions";
 
 	// ReaderSpiNames
-	static final String[] readerSpiName = { "javax.imageio.plugins.geotiff.GeoTiffImageReaderSpi" };
+	static final String[] readerSpiName = { "it.geosolutions.imageio.plugins.geotiff.GeoTiffImageReaderSpi" };
 
 	// StreamMetadataFormatNames and StreamMetadataFormatClassNames
 	static final boolean supportsStandardStreamMetadataFormat = false;

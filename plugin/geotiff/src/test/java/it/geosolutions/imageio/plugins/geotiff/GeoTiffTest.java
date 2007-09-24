@@ -35,38 +35,39 @@ import junit.framework.TestSuite;
 
 /**
  * @author Daniele Romagnoli, GeoSolutions.
- * @author Simone Giannecchini, GeoSolutions. 
+ * @author Simone Giannecchini, GeoSolutions.
  */
-public class GeoTiffTest extends AbstractGeoTiffTestCase{
-	
+public class GeoTiffTest extends AbstractGeoTiffTestCase {
+
 	public GeoTiffTest(String name) {
 		super(name);
 
 	}
+
 	/**
 	 * Test Read without exploiting JAI-ImageIO Tools
 	 * 
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	public void testManualRead()throws IOException,FileNotFoundException{
+	public void testManualRead() throws IOException, FileNotFoundException {
 		final ImageReadParam irp = new ImageReadParam();
 
 		// Reading a simple GrayScale image
 		String fileName = "bogota.tif";
 		final File inputFile = TestData.file(this, fileName);
 		irp.setSourceSubsampling(2, 2, 0, 0);
-		GeoTiffImageReader reader = new GeoTiffImageReader(new GeoTiffImageReaderSpi());
+		GeoTiffImageReader reader = new GeoTiffImageReader(
+				new GeoTiffImageReaderSpi());
 		reader.setInput(inputFile);
 		final RenderedImage image = reader.readAsRenderedImage(0, irp);
-		if(TestData.isInteractiveTest())
+		if (TestData.isInteractiveTest())
 			Viewer.visualize(image, fileName);
 		assertEquals(256, image.getWidth());
 		assertEquals(256, image.getHeight());
 		reader.dispose();
 	}
-	
-	
+
 	/**
 	 * Test Read exploiting JAI-ImageIO tools capabilities
 	 * 
@@ -91,20 +92,6 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase{
 			assertNotNull(image.getTiles());
 	}
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite();
-
-		// Test Read exploiting JAI-ImageIO tools capabilities
-		suite.addTest(new GeoTiffTest("testRead"));
-		
-//		 Test Read without exploiting JAI-ImageIO tools capabilities
-		suite.addTest(new GeoTiffTest("testManualRead"));
-
-		//Test Write
-		suite.addTest(new GeoTiffTest("testWrite"));
-		return suite;
-	}
-	
 	/**
 	 * Test Writing capabilities.
 	 * 
@@ -113,7 +100,7 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase{
 	 */
 	public void testWrite() throws IOException, FileNotFoundException {
 
-		final File outputFile = TestData.temp(this, "writetest.tif",false);
+		final File outputFile = TestData.temp(this, "writetest.tif", false);
 		outputFile.deleteOnExit();
 		final File inputFile = TestData.file(this, "bogota.tif");
 
@@ -123,7 +110,7 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase{
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 		if (TestData.isInteractiveTest())
 			Viewer.visualize(image);
-		
+
 		// ////////////////////////////////////////////////////////////////
 		// preparing to write
 		// ////////////////////////////////////////////////////////////////
@@ -142,10 +129,23 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase{
 		final RenderedOp image2 = JAI.create("ImageRead", pbjImageReRead);
 		if (TestData.isInteractiveTest())
 			Viewer.visualize(image2);
-		else 
+		else
 			assertNotNull(image2.getTiles());
 	}
+	
+	public static Test suite() {
+		TestSuite suite = new TestSuite();
 
+		// Test Read exploiting JAI-ImageIO tools capabilities
+		suite.addTest(new GeoTiffTest("testRead"));
+
+		// Test Read without exploiting JAI-ImageIO tools capabilities
+		suite.addTest(new GeoTiffTest("testManualRead"));
+
+		// Test Write
+		suite.addTest(new GeoTiffTest("testWrite"));
+		return suite;
+	}
 
 	public static void main(java.lang.String[] args) {
 		junit.textui.TestRunner.run(suite());

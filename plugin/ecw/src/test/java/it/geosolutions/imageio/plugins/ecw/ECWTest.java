@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
@@ -112,7 +113,7 @@ public class ECWTest extends AbstractECWTestCase {
 		assertEquals(471, image.getHeight());
 		mReader.dispose();
 	}
-
+	
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 
@@ -124,7 +125,7 @@ public class ECWTest extends AbstractECWTestCase {
 		
 		// Test reading of a RGB image
 		suite.addTest(new ECWTest("testManualRead"));
-
+		
 		return suite;
 	}
 
