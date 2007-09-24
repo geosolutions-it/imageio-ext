@@ -19,11 +19,6 @@ ImageReadOpImage0=Destination bounds do not intersect available destination data
 ImageReadOpImage1=Source or destination region is empty.
 ImageReadOpImage2=Cannot perform rectangle mapping between source and destination because the image has no sources.
 
-ImageWriteCIF0=Unable to find an ImageWriter for format
-ImageWriteCIF1=Source Collection has more than one image and ImageWriter cannot write sequences.
-
-ImageWriteCRIF0=Cannot create read-write RandomAccessFile for path
-ImageWriteCRIF1=Cannot create OutputStream for Socket
 GlobalName=ImageReadMT
 DescriptorVersion=1.0
 
@@ -45,31 +40,4 @@ ImageReadDescriptor14=is closed.
 ImageReadDescriptor15=is not bound to an address.
 ImageReadDescriptor16=is not connected.
 
-ImageWriteDescriptor0=Writes an image using the Java Image I/O Framework.
-ImageWriteDescriptor1=The output destination.
-ImageWriteDescriptor2=The format name of the output.
-ImageWriteDescriptor3=Whether to use image metadata properties as fallbacks.
-ImageWriteDescriptor4=Whether to transcode metadata before writing.
-ImageWriteDescriptor5=Whether to verify the validity of the output destination.
-ImageWriteDescriptor6=Whether to allow pixel replacement in the output image.
-ImageWriteDescriptor7=The tile size of the output image.
-ImageWriteDescriptor8=Stream metadata to write to the output.
-ImageWriteDescriptor9=Image metadata to write to the output.
-ImageWriteDescriptor10=Thumbnails to write to the output.
-ImageWriteDescriptor11=EventListeners to be registered with the ImageWriter.
-ImageWriteDescriptor12=The Locale for the ImageWriter to use.
-ImageWriteDescriptor13=Java Image I/O write parameter instance.
-ImageWriteDescriptor14=Java Image I/O writer instance.
-ImageWriteDescriptor15=exists but is not writable.
-ImageWriteDescriptor16=does not exist and cannot be created.
-ImageWriteDescriptor17=encountered IOException during createNewFile:
-ImageWriteDescriptor18=access denied by security manager:
-ImageWriteDescriptor19=has its write-half shut down.
-ImageWriteDescriptor20=is closed.
-ImageWriteDescriptor21=is not bound to an address.
-ImageWriteDescriptor22=is not connected.
-ImageWriteDescriptor23=Non-positive tile dimension specified.
-ImageWriteDescriptor24=No RenderedImages in the source Collection.
-ImageWriteDescriptor25=There is more than one RenderedImage in the source \
-Collection and the supplied ImageWriter cannot write sequences.
 
