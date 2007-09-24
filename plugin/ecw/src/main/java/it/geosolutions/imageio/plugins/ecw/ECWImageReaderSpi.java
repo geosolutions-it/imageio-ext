@@ -44,9 +44,9 @@ public class ECWImageReaderSpi extends GDALImageReaderSpi {
 
 	static final String version = "1.0";
 
-	static final String readerCN = "javax.imageio.plugins.ecw.ECWImageReader";
+	static final String readerCN = "it.geosolutions.imageio.plugins.ecw.ECWImageReader";
 
-	static final String vendorName = "RomagnoliD-GiannecchiniS";
+	static final String vendorName = "GeoSolutions";
 
 	// writerSpiNames
 	static final String[] wSN = {/* "javax.imageio.plugins.ecw.ECWImageWriterSpi" */null };

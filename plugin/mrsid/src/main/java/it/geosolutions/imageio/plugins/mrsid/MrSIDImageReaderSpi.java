@@ -34,7 +34,7 @@ import javax.imageio.ImageReader;
 public class MrSIDImageReaderSpi extends GDALImageReaderSpi {
 
 	private static final Logger logger = Logger
-			.getLogger(MrSIDImageReaderSpi.class.toString());
+			.getLogger("it.geosolutions.imageio.plugins.mrsid");
 
 	static final String[] suffixes = { "sid", "sdw" };
 
