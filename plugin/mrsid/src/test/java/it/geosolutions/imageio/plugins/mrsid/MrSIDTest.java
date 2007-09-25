@@ -54,7 +54,6 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-//		new MrSIDImageReaderSpi();
 	}
 
 	/**

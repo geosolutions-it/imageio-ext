@@ -74,71 +74,76 @@ public class SwanReadTest extends AbstractSwanTest {
 	 */
 	public void testReadFromMultipleQuantitiesFile()
 			throws FileNotFoundException, IOException {
+		try {
+			File f = TestData.file(this, "Dirs.swo");
+			final SwanImageReader reader = new SwanImageReader(
+					new SwanImageReaderSpi());
+			reader.setInput(f);
 
-		File f = TestData.file(this, "Dirs.swo");
-		final SwanImageReader reader = new SwanImageReader(
-				new SwanImageReaderSpi());
-		reader.setInput(f);
+			// getting forecasts, datasets number, baseTime
+			final IIOMetadata metadata = reader.getStreamMetadata();
+			Node node = metadata
+					.getAsTree(SwanStreamMetadata.nativeMetadataFormatName);
+			Node generalNode = node.getFirstChild();
+			final NamedNodeMap attributes = generalNode.getAttributes();
+			final int quantities = Integer.parseInt(attributes.getNamedItem(
+					"datasetNumber").getNodeValue());
+			final int forecasts = Integer.parseInt(attributes.getNamedItem(
+					"tauNumber").getNodeValue());
+			final String baseTime = attributes.getNamedItem("baseTime")
+					.getNodeValue();
 
-		// getting forecasts, datasets number, baseTime
-		final IIOMetadata metadata = reader.getStreamMetadata();
-		Node node = metadata
-				.getAsTree(SwanStreamMetadata.nativeMetadataFormatName);
-		Node generalNode = node.getFirstChild();
-		final NamedNodeMap attributes = generalNode.getAttributes();
-		final int quantities = Integer.parseInt(attributes.getNamedItem(
-				"datasetNumber").getNodeValue());
-		final int forecasts = Integer.parseInt(attributes.getNamedItem(
-				"tauNumber").getNodeValue());
-		final String baseTime = attributes.getNamedItem("baseTime")
-				.getNodeValue();
+			// getting dataset properties
+			Node datasetNamesNode = generalNode.getFirstChild()
+					.getNextSibling();
+			Node tauNode = datasetNamesNode.getNextSibling();
+			final NamedNodeMap tauAttrib = tauNode.getAttributes();
+			final int tau = Integer.parseInt(tauAttrib.getNamedItem("time")
+					.getNodeValue());
+			final String tauUom = tauAttrib.getNamedItem("unitOfMeasure")
+					.getNodeValue();
 
-		// getting dataset properties
-		Node datasetNamesNode = generalNode.getFirstChild().getNextSibling();
-		Node tauNode = datasetNamesNode.getNextSibling();
-		final NamedNodeMap tauAttrib = tauNode.getAttributes();
-		final int tau = Integer.parseInt(tauAttrib.getNamedItem("time")
-				.getNodeValue());
-		final String tauUom = tauAttrib.getNamedItem("unitOfMeasure")
-				.getNodeValue();
+			// getting dataset
+			Node datasetNode = datasetNamesNode.getFirstChild();
 
-		// getting dataset
-		Node datasetNode = datasetNamesNode.getFirstChild();
+			// getting the shortname of the quantity
+			for (int i = 0; i < quantities; i++) {
+				final String quantityShortName = datasetNode.getAttributes()
+						.getNamedItem("name").getNodeValue();
 
-		// getting the shortname of the quantity
-		for (int i = 0; i < quantities; i++) {
-			final String quantityShortName = datasetNode.getAttributes()
-					.getNamedItem("name").getNodeValue();
+				// retrieving the index related to the next-to-last forecast of
+				// the
+				// next-to-last output quantity
+				for (int j = 0; j < forecasts; j++) {
+					final StringBuffer title = new StringBuffer(
+							quantityShortName).append(">>>>");
+					final int imageIndex = reader
+							.getImageIndexFromTauAndDatasets(j, i);
 
-			// retrieving the index related to the next-to-last forecast of the
-			// next-to-last output quantity
-			for (int j = 0; j < forecasts; j++) {
-				final StringBuffer title = new StringBuffer(quantityShortName)
-						.append(">>>>");
-				final int imageIndex = reader.getImageIndexFromTauAndDatasets(
-						j, i);
+					// preparing a new read operation
+					reader.dispose();
+					final int forecast = j * tau;
+					title.append(" Forecast = ").append(baseTime);
+					if (forecast != 0)
+						title.append(" + ").append(Integer.toString(forecast))
+								.append(tauUom);
 
-				// preparing a new read operation
-				reader.dispose();
-				final int forecast = j * tau;
-				title.append(" Forecast = ").append(baseTime);
-				if (forecast != 0)
-					title.append(" + ").append(Integer.toString(forecast))
-							.append(tauUom);
+					// reading the required raster using an imageRead operation
+					final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+							"ImageRead");
+					pbjImageRead.setParameter("Input", f);
+					pbjImageRead.setParameter("imageChoice", imageIndex);
+					RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+					if (TestData.isInteractiveTest())
+						visualize(image, title.toString());
+					else
+						assertNotNull(image.getTiles());
 
-				// reading the required raster using an imageRead operation
-				final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
-						"ImageRead");
-				pbjImageRead.setParameter("Input", f);
-				pbjImageRead.setParameter("imageChoice", imageIndex);
-				RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-				if (TestData.isExtensiveTest())
-					visualize(image, title.toString());
-				else
-					assertNotNull(image.getTiles());
-
+				}
+				datasetNode = datasetNode.getNextSibling();
 			}
-			datasetNode = datasetNode.getNextSibling();
+		} catch (FileNotFoundException fnfe) {
+			warningMessage();
 		}
 	}
 
@@ -150,21 +155,25 @@ public class SwanReadTest extends AbstractSwanTest {
 	 */
 	public void testReadSingleQuantity() throws FileNotFoundException,
 			IOException {
-		File f = TestData.file(this, "per.swo");
-		final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
-				"ImageRead");
-		pbjImageRead.setParameter("Input", f);
-		ImageReadParam irp = new ImageReadParam();
-		irp.setSourceSubsampling(1, 1, 0, 0);
+		try {
+			File f = TestData.file(this, "per.swo");
+			final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+					"ImageRead");
+			pbjImageRead.setParameter("Input", f);
+			ImageReadParam irp = new ImageReadParam();
+			irp.setSourceSubsampling(1, 1, 0, 0);
 
-		// Reading the second Forecast
-		pbjImageRead.setParameter("ImageChoice", 1);
-		pbjImageRead.setParameter("readParam", irp);
-		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-		if (TestData.isExtensiveTest())
-			visualize(image);
-		else
-			assertNotNull(image.getTiles());
+			// Reading the second Forecast
+			pbjImageRead.setParameter("ImageChoice", 1);
+			pbjImageRead.setParameter("readParam", irp);
+			RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+			if (TestData.isInteractiveTest())
+				visualize(image);
+			else
+				assertNotNull(image.getTiles());
+		} catch (FileNotFoundException fnfe) {
+			warningMessage();
+		}
 	}
 
 	/**
@@ -176,32 +185,36 @@ public class SwanReadTest extends AbstractSwanTest {
 	 */
 	public void testBiComponentQuantities() throws FileNotFoundException,
 			IOException {
-		File f[] = new File[] { TestData.file(this, "wind.swo"),
-				TestData.file(this, "force.swo") };
-		final int nFiles = f.length;
-		for (int i = 0; i < nFiles; i++) {
-			File inputFile = f[i];
-			final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
-					"ImageRead");
-			pbjImageRead.setParameter("Input", inputFile);
-			RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-			final int width = image.getWidth();
-			final int height = image.getHeight();
-			DataBufferFloat db = (DataBufferFloat) image.getData()
-					.getDataBuffer();
+		try {
+			File f[] = new File[] { TestData.file(this, "wind.swo"),
+					TestData.file(this, "force.swo") };
+			final int nFiles = f.length;
+			for (int i = 0; i < nFiles; i++) {
+				File inputFile = f[i];
+				final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+						"ImageRead");
+				pbjImageRead.setParameter("Input", inputFile);
+				RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+				final int width = image.getWidth();
+				final int height = image.getHeight();
+				DataBufferFloat db = (DataBufferFloat) image.getData()
+						.getDataBuffer();
 
-			for (int band = 0; band < 2; band++) {
-				final String component = band == 0 ? "X" : "Y";
-				final BufferedImage bi = getQuantityComponent(db, band, width,
-						height);
-				final String fileName = inputFile.getName();
-				if (TestData.isExtensiveTest())
-					visualizeRescaled(bi, fileName.substring(0, fileName
-							.length() - 4)
-							+ component, null);
-				else
-					assertNotNull(image.getTiles());
+				for (int band = 0; band < 2; band++) {
+					final String component = band == 0 ? "X" : "Y";
+					final BufferedImage bi = getQuantityComponent(db, band,
+							width, height);
+					final String fileName = inputFile.getName();
+					if (TestData.isInteractiveTest())
+						visualizeRescaled(bi, fileName.substring(0, fileName
+								.length() - 4)
+								+ component, null);
+					else
+						assertNotNull(image.getTiles());
+				}
 			}
+		} catch (FileNotFoundException fnfe) {
+			warningMessage();
 		}
 	}
 
@@ -212,18 +225,21 @@ public class SwanReadTest extends AbstractSwanTest {
 	 */
 	public void testSingleFromMixedQuantities() throws FileNotFoundException,
 			IOException {
-		File f = TestData.file(this, "WIND&PDIR.swo");
-		final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
-				"ImageRead");
-		final int imageIndex = 5;
-		pbjImageRead.setParameter("Input", f);
-		pbjImageRead.setParameter("imageChoice", imageIndex);
-		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-		if (TestData.isExtensiveTest())
-			visualize(image, "PDIR from mixed file", imageIndex);
-		else
-			assertNotNull(image.getTiles());
-
+		try {
+			File f = TestData.file(this, "WIND&PDIR.swo");
+			final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+					"ImageRead");
+			final int imageIndex = 5;
+			pbjImageRead.setParameter("Input", f);
+			pbjImageRead.setParameter("imageChoice", imageIndex);
+			RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+			if (TestData.isInteractiveTest())
+				visualize(image, "PDIR from mixed file", imageIndex);
+			else
+				assertNotNull(image.getTiles());
+		} catch (FileNotFoundException fnfe) {
+			warningMessage();
+		}
 	}
 
 	/**
@@ -231,31 +247,35 @@ public class SwanReadTest extends AbstractSwanTest {
 	 * single component quantities.
 	 */
 	public void testAnyQuantity() throws FileNotFoundException, IOException {
-		File[] testFiles;
-		testFiles = TestData.file(this, "/").listFiles(new FileFilter() {
+		try {
+			File[] testFiles;
+			testFiles = TestData.file(this, "/").listFiles(new FileFilter() {
 
-			public boolean accept(File pathname) {
-				final String fileName = pathname.getName().toLowerCase();
-				if (fileName.endsWith(".swo")
-						&& !(fileName.contains("wind")
-								|| fileName.contains("force") || fileName
-								.contains("trans")))
-					return true;
-				return false;
+				public boolean accept(File pathname) {
+					final String fileName = pathname.getName().toLowerCase();
+					if (fileName.endsWith(".swo")
+							&& !(fileName.contains("wind")
+									|| fileName.contains("force") || fileName
+									.contains("trans")))
+						return true;
+					return false;
+				}
+			});
+
+			final int nFiles = testFiles.length;
+			for (int i = 0; i < nFiles; i++) {
+				File f = testFiles[i];
+				final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+						"ImageRead");
+				pbjImageRead.setParameter("Input", f);
+				RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+				if (TestData.isInteractiveTest())
+					visualize(image);
+				else
+					assertNotNull(image.getTiles());
 			}
-		});
-
-		final int nFiles = testFiles.length;
-		for (int i = 0; i < nFiles; i++) {
-			File f = testFiles[i];
-			final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
-					"ImageRead");
-			pbjImageRead.setParameter("Input", f);
-			RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-			if (TestData.isExtensiveTest())
-				visualize(image);
-			else
-				assertNotNull(image.getTiles());
+		} catch (FileNotFoundException fnfe) {
+			warningMessage();
 		}
 	}
 
@@ -266,14 +286,18 @@ public class SwanReadTest extends AbstractSwanTest {
 	 */
 
 	public void testManualRead() throws IOException {
-		File f = TestData.file(this, "depth.swo");
-		ImageReader reader = new SwanImageReader(new SwanImageReaderSpi());
-		reader.setInput(f);
-		BufferedImage bi = reader.read(0, null);
-		if (TestData.isExtensiveTest())
-			visualizeRescaled(bi, "Manual Read", null);
-		else
-			assertNotNull(bi.getData());
+		try {
+			File f = TestData.file(this, "depth.swo");
+			ImageReader reader = new SwanImageReader(new SwanImageReaderSpi());
+			reader.setInput(f);
+			BufferedImage bi = reader.read(0, null);
+			if (TestData.isInteractiveTest())
+				visualizeRescaled(bi, "Manual Read", null);
+			else
+				assertNotNull(bi.getData());
+		} catch (FileNotFoundException fnfe) {
+			warningMessage();
+		}
 	}
 
 	public static Test suite() {
