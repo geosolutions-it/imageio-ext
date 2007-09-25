@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageio.imageioimpl.imagereadmt;
 
+import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 
 import junit.framework.TestCase;
@@ -53,6 +54,7 @@ public class ImageIOExtTest extends TestCase {
 
 	public void testImageReadMT() {
 
+		ImageReadDescriptorMT.register(JAI.getDefaultInstance());
 		final ParameterBlockJAI pbj = new ParameterBlockJAI("ImageReadMT");
 		assertNotNull(pbj);
 	}
