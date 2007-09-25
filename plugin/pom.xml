@@ -104,7 +104,6 @@
   <modules>
     <module>geotiff</module>
     <module>hdf4</module>
-    <module>mrsid</module>
     <module>jp2kakadu</module>
     <module>jpeg</module>
     <module>ecw</module>
@@ -112,5 +111,6 @@
     <module>javaarcgrid</module>
     <module>directkakadu</module>
     <module>swan</module>
+    <module>mrsid</module>
   </modules>
 </project>

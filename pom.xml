@@ -151,6 +151,38 @@
   <!--     Build Configuration                                     -->
   <!-- 																														 -->
   <build>
+
+    <!-- ========================================================= -->
+    <!--   Maven plugins dependencies management.                  -->
+    <!--   It should not be needed since Maven select by default   -->
+    <!--   the latest plugins. Unfortunatly, experience shows that -->
+    <!--   new plugin releases sometime introduce new bugs that    -->
+    <!--   break our build. So it is saferto specify plugin        -->
+    <!--   versions that are known to work.  This list is in       -->
+    <!--   alphabetical order for easier comparaison with latest   -->
+    <!--   plugins at                                              -->
+    <!--   http://www.ibiblio.org/maven2/org/apache/maven/plugins/ -->
+    <!-- ========================================================= -->
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-clover-plugin</artifactId>
+          <version>2.3</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.2</version>
+          <!-- Current version is 2.3, but it cause the following exception:
+                java.lang.NoClassDefFoundError: com/sun/medialib/mlib/Image
+                    at com.sun.media.jai.mlib.MediaLibAccessor.setUseMlib(MediaLibAccessor.java:245)
+                    at com.sun.media.jai.mlib.MlibAffineRIF.create(MlibAffineRIF.java:71)
+          -->
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
     <plugins>
       <!-- ======================================================= -->
       <!--     Compilation.                                        -->
@@ -178,7 +210,7 @@
           <includes>
             <include>**/*Test.java</include>
           </includes>
-          <forkMode>once</forkMode>
+          <forkMode>never</forkMode>
           <argLine>-Xmx512M -enableassertions</argLine>
         </configuration>
       </plugin>
