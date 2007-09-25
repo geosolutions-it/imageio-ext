@@ -112,8 +112,7 @@ public class SwanReadTest extends AbstractSwanTest {
 						.getNamedItem("name").getNodeValue();
 
 				// retrieving the index related to the next-to-last forecast of
-				// the
-				// next-to-last output quantity
+				// the next-to-last output quantity
 				for (int j = 0; j < forecasts; j++) {
 					final StringBuffer title = new StringBuffer(
 							quantityShortName).append(">>>>");
