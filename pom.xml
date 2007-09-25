@@ -210,7 +210,7 @@
           <includes>
             <include>**/*Test.java</include>
           </includes>
-          <forkMode>never</forkMode>
+          <forkMode>always</forkMode>
           <argLine>-Xmx512M -enableassertions</argLine>
         </configuration>
       </plugin>
