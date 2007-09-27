@@ -81,7 +81,7 @@ public class EnhancedRandomAccessFile implements DataInput, DataOutput {
 	// debug leaks - keep track of open files
 
 	/** The default buffer size, in bytes. */
-	public static final int defaultBufferSize = 4096;
+	public static final int DEFAULT_BUFFER_SIZE = 4096;
 
 	/** _more_ */
 	protected File location;
@@ -164,7 +164,7 @@ public class EnhancedRandomAccessFile implements DataInput, DataOutput {
 	 */
 	public EnhancedRandomAccessFile(File location, String mode)
 			throws IOException {
-		this(location, mode, defaultBufferSize);
+		this(location, mode, DEFAULT_BUFFER_SIZE);
 		this.location = location;
 	}
 

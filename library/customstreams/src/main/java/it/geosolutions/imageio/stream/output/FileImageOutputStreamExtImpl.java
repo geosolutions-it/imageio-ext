@@ -56,6 +56,25 @@ public class FileImageOutputStreamExtImpl extends ImageOutputStreamImpl
 		this.eraf.setByteOrder(ByteOrder.BIG_ENDIAN);
 
 	}
+	
+	/**
+	 * A constructor which accepts a File as input.
+	 * 
+	 * @param file
+	 * @param bufSize
+	 * 
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	public FileImageOutputStreamExtImpl(File file, int bufSize)
+			throws FileNotFoundException, IOException {
+		this.file = file;
+		eraf = new EnhancedRandomAccessFile(file, "rw",bufSize);
+		// NOTE: this must be done accordingly to what ImageInputStreamImpl
+		// does, otherwise some ImageREader subclasses might not work.
+		this.eraf.setByteOrder(ByteOrder.BIG_ENDIAN);
+
+	}
 
 	public int read() throws IOException {
 		checkClosed();

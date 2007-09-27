@@ -27,9 +27,9 @@ import javax.imageio.stream.ImageInputStream;
 
 public interface FileImageInputStreamExt extends ImageInputStream  {
     /**
-     * Returns the associated file
+     * Returns the associated {@link File}
      *
-     * @return the associated file
+     * @return the associated {@link File}
      */
     public File getFile();
 }

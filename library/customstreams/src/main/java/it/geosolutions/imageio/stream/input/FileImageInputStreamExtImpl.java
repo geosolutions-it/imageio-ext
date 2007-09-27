@@ -201,7 +201,7 @@ public final class FileImageInputStreamExtImpl extends ImageInputStreamImpl
 	public FileImageInputStreamExtImpl(File f, int bufferSize)
 			throws FileNotFoundException, IOException {
 		if (f == null) {
-			throw new NullPointerException("f == null!");
+			throw new NullPointerException("Input file was null!");
 		}
 		this.file = f;
 		this.eraf = new EnhancedRandomAccessFile(f, "r", bufferSize);
