@@ -103,22 +103,25 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 			final ParameterBlockJAI pbjImageRead;
 			final ImageReadParam irp = new ImageReadParam();
 
-			Integer xSubSampling = new Integer(8);
-			Integer ySubSampling = new Integer(8);
-			Integer xSubSamplingOffset = new Integer(0);
-			Integer ySubSamplingOffset = new Integer(0);
-
-			irp.setSourceSubsampling(xSubSampling.intValue(), ySubSampling
-					.intValue(), xSubSamplingOffset.intValue(),
-					ySubSamplingOffset.intValue());
-
-			pbjImageRead = new ParameterBlockJAI("ImageRead");
-			pbjImageRead.setParameter("Input", file);
-			pbjImageRead.setParameter("readParam", irp);
+			//subsample by 8 on both dimensions
+			final  int xSubSampling = 8;
+			final  int ySubSampling =8;
+			final  int xSubSamplingOffset =0;
+			final  int ySubSamplingOffset = 0;
+			irp.setSourceSubsampling(xSubSampling, ySubSampling
+					, xSubSamplingOffset,
+					ySubSamplingOffset);
+			
+			//re-tile on the fly to 512x512
 			final ImageLayout l = new ImageLayout();
 			l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512)
 					.setTileWidth(512);
 
+			pbjImageRead = new ParameterBlockJAI("ImageRead");
+			pbjImageRead.setParameter("Input", file);
+			pbjImageRead.setParameter("readParam", irp);
+
+			//get a RenderedImage
 			RenderedOp image = JAI.create("ImageRead", pbjImageRead,
 					new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
 	
