@@ -5,6 +5,31 @@
                                http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+<!-- 										-->
+  <!--		PROPERTIES			-->
+  <!-- 										-->
+	<properties>
+		<path.native>${env.JAVA_HOME}/bin</path.native>
+		<extensive.tests>false</extensive.tests>
+		<interactive.tests>false</interactive.tests>
+		<test.maxHeapSize>512M</test.maxHeapSize>
+	</properties>
+
+  <!-- Profiles set on the command-line overwrite default properties. -->
+  <profiles>
+    <profile>
+      <id>extensive.tests</id>
+      <properties>
+        <extensive.tests>true</extensive.tests>
+      </properties>
+    </profile>
+    <profile>
+      <id>interactive.tests</id>
+      <properties>
+        <interactive.tests>true</interactive.tests>
+      </properties>
+    </profile>
+  </profiles>
 
 
   <!-- 																														 -->
@@ -210,9 +235,9 @@
           <includes>
             <include>**/*Test.java</include>
           </includes>
-          <forkMode>always</forkMode>
-          <argLine>-Xmx512M -enableassertions</argLine>
-        </configuration>
+	  <forkMode>once</forkMode>
+          <argLine>-Xmx${test.maxHeapSize} -enableassertions -Dorg.geotools.test.extensive=${extensive.tests} -Dorg.geotools.test.interactive=${interactive.tests}</argLine>
+         </configuration>
       </plugin>
 	  </plugins>
 	</build>
@@ -220,12 +245,7 @@
 
 
 
-  <!-- 										-->
-  <!--		PROPERTIES			-->
-  <!-- 										-->
-	<properties>
-		<path.native>${env.JAVA_HOME}/bin</path.native>
-	</properties>
+  
 
   <!--                                                             -->
   <!--     Modules for the build in approximate dependency order   -->
