@@ -78,7 +78,7 @@ public class AsciiGridTest extends TestCase {
 
 			public void run() {
 				frame.pack();
-				frame.show();
+				frame.setVisible(true);
 			}
 		});
 	}
@@ -87,7 +87,7 @@ public class AsciiGridTest extends TestCase {
 	/**
 	 * Main test of the {@link AsciiGridTest} class
 	 */
-	public void testJaiRead() throws FileNotFoundException, IOException {
+	public void testReadWriter() throws FileNotFoundException, IOException {
 		// ////////////////////////////////////////////////////////////////////
 		//
 		// TEST 1:
@@ -103,6 +103,8 @@ public class AsciiGridTest extends TestCase {
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 		if (ShareableTestData.isInteractiveTest())
 			visualize(image, title);
+		else
+			image.getTiles();
 		assertEquals(278, image.getWidth());
 		assertEquals(144, image.getHeight());
 
@@ -124,7 +126,7 @@ public class AsciiGridTest extends TestCase {
 		// disk.
 		//
 		// //
-		RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
+		final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
 		final ImageWriter writer = (ImageWriter) op
 				.getProperty(ImageWriteDescriptor.PROPERTY_NAME_IMAGE_WRITER);
 		writer.dispose();
@@ -140,6 +142,8 @@ public class AsciiGridTest extends TestCase {
 		title = new String("Read Back the just written image");
 		if (TestData.isInteractiveTest())
 			visualize(image2, title);
+		else
+			image2.getTiles();
 		
 		assertEquals(image2.getWidth(), image.getWidth());
 		assertEquals(image2.getHeight(), image.getHeight());
@@ -151,7 +155,6 @@ public class AsciiGridTest extends TestCase {
 		// Read a GRASS, compressed (GZ) file
 		//
 		// ////////////////////////////////////////////////////////////////////
-
 		title = new String("JAI ImageRead on a GRASS GZipped file ");
 		LOGGER.info("\n\n " + title + " \n");
 		inputFile = TestData.file(this, "spearfish.asc.gz");
@@ -163,7 +166,7 @@ public class AsciiGridTest extends TestCase {
 		if (ShareableTestData.isInteractiveTest())
 			visualize(image, title);
 		else
-			assertNotNull(image.getData());
+			assertNotNull(image.getTiles());
 
 		// ////////////////////////////////////////////////////////////////////
 		//
@@ -195,6 +198,6 @@ public class AsciiGridTest extends TestCase {
 		if (ShareableTestData.isInteractiveTest())
 			visualize(image, title);
 		else
-			assertNotNull(image.getData());
+			assertNotNull(image.getTiles());
 	}
 }

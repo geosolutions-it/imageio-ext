@@ -374,8 +374,13 @@ public final class AsciiGridsImageReader extends ImageReader {
 			if (tileHeight < 1) {
 				tileHeight = 1;
 			}
-
-			rasterReader.setTilesData(tileWidth, tileHeight);
+			////
+			//
+			// Trick to handle very large rasters
+			//
+			////
+			sm = cm.createCompatibleSampleModel(tileWidth, tileHeight);
+			rasterReader.setTilesSize(tileWidth, tileHeight);
 		} else {
 			// If no Tiling needed, I set the tile sizes equal to the image
 			// sizes
@@ -456,7 +461,7 @@ public final class AsciiGridsImageReader extends ImageReader {
 	 *         <code>ImageTypeSpecifier</code> suggesting to use a 32 bit
 	 *         grayscale image.
 	 */
-	public Iterator getImageTypes(final int imageIndex) throws IOException {
+	public synchronized Iterator getImageTypes(final int imageIndex) throws IOException {
 		checkImageIndex(imageIndex);
 		final List l = new java.util.ArrayList();
 

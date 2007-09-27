@@ -372,7 +372,7 @@ public abstract class AsciiGridRaster {
 	 * @param tileHeight
 	 *            the height of the tile
 	 */
-	final public void setTilesData(final int tileWidth, final int tileHeight) {
+	final public void setTilesSize(final int tileWidth, final int tileHeight) {
 		this.tileHeight = tileHeight;
 		this.tileWidth = tileWidth;
 	}
