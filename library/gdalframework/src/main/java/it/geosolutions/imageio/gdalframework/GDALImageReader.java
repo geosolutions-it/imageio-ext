@@ -281,13 +281,13 @@ public abstract class GDALImageReader extends ImageReader {
 			bandsNumber = dataset.getRasterCount();
 			if (bandsNumber <= 0)
 				return false;
-			final int xsize = dataset.getRasterXSize();
-			final int ysize = dataset.getRasterYSize();
+//			final int xsize = dataset.getRasterXSize();
+//			final int ysize = dataset.getRasterYSize();
 
 			// If the image is very big, its size expressed as the number of
 			// bytes needed to store pixels, may be a negative number
-			final int totalImageSize = xsize
-					* ysize
+			final int tileSize = tileWidth
+					* tileHeight
 					* bandsNumber
 					* (gdal.GetDataTypeSize(dataset.GetRasterBand(1)
 							.getDataType()) / 8);
@@ -356,13 +356,21 @@ public abstract class GDALImageReader extends ImageReader {
 			//
 			// Setting the Sample Model
 			//
+			// Here you have a nice trick. If you check the SampleMOdel class
+			// you'll see that there is an actual limitation on the width and
+			// height of an image that we can create that is it the product
+			// width*height cannot be bigger than the maximum integer.
+			//
+			// Well a way to pass beyond that is to use TileWidth and TileHeight
+			// instead of the real width and height when creating the sample
+			// model. It will work!
 			// //
-			if (totalImageSize < 0)
-				sampleModel = new BandedSampleModel(buffer_type, xsize, ysize,
-						xsize, banks, offsetsR);
+			if (tileSize < 0)
+				sampleModel = new BandedSampleModel(buffer_type, tileWidth, tileHeight,
+						tileWidth, banks, offsetsR);
 			else
 				sampleModel = new PixelInterleavedSampleModel(buffer_type,
-						xsize, ysize, bandsNumber, xsize * bandsNumber,
+						tileWidth, tileHeight, bandsNumber, tileWidth * bandsNumber,
 						bandsOffset);
 
 			// //
