@@ -1,7 +1,5 @@
 package it.geosolutions.imageio.plugins.jp2k;
 
-import it.geosolutions.imageio.imageioimpl.imagereadmt.ImageReadDescriptorMT;
-
 import java.awt.image.RenderedImage;
 
 import javax.media.jai.JAI;
@@ -27,10 +25,9 @@ public class AbstractJP2KakaduTestCase extends TestCase {
 		JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
 		// final TCTool tool= new TCTool();
 
-		ImageReadDescriptorMT.register(JAI.getDefaultInstance());
 	}
 
-	public static void visualize(RenderedImage ri) {
+	public static void visualize(RenderedImage ri, String title) {
 		visualize(ri, 800, 600);
 	}
 

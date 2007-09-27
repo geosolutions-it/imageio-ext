@@ -38,6 +38,7 @@ import kdu_jni.Jp2_family_src;
 import kdu_jni.Jpx_source;
 import kdu_jni.KduException;
 import kdu_jni.Kdu_simple_file_source;
+
 /**
  * Service provider interface for the JP2 Image
  * 
@@ -113,60 +114,62 @@ public class JP2KakaduImageReaderSpi extends ImageReaderSpi {
 	 */
 	public boolean canDecodeInput(Object input) throws IOException {
 
-        boolean isDecodable = true;
-        File source = null;
+		boolean isDecodable = true;
+		File source = null;
 
-        // Retrieving the File source
-        if (input instanceof File) {
-            source = (File) input;
-        } else if (input instanceof FileImageInputStreamExt) {
-            source = ((FileImageInputStreamExt) input).getFile();
-        } else if (input instanceof URL) {
-            final URL tempURL = (URL) input;
-            if (tempURL.getProtocol().equalsIgnoreCase("file")) {
-                try {
-                    source = new File(URLDecoder.decode(tempURL.getFile (),
-                            "UTF-8"));
-                } catch (IOException e) {
-                    throw new RuntimeException("Not a Valid Input", e);
-                }
-            }
-        }
-        else
-            return false;
+		// Retrieving the File source
+		if (input instanceof File) {
+			source = (File) input;
+		} else if (input instanceof FileImageInputStreamExt) {
+			source = ((FileImageInputStreamExt) input).getFile();
+		} else if (input instanceof URL) {
+			final URL tempURL = (URL) input;
+			if (tempURL.getProtocol().equalsIgnoreCase("file")) {
+				try {
+					source = new File(URLDecoder.decode(tempURL.getFile(),
+							"UTF-8"));
+				} catch (IOException e) {
+					throw new RuntimeException("Not a Valid Input", e);
+				}
+			}
+		} else
+			return false;
 
-        Jp2_family_src familySource = new Jp2_family_src();
-        Jpx_source wrappedSource = new Jpx_source();
-        Kdu_simple_file_source rawSource = null;
-        try {
-            String fileName = source.getAbsolutePath();
-            familySource.Open(fileName);
-            int success = wrappedSource.Open(familySource, true);
-            // success is 0 if there isn't sufficient information from the source
-            // object to complete the opening operation.
-            // success is -1 if the source is not compatible with the JPX or JP2
-            // specifications
-            if (success < 0) { // Must open as raw file
-                familySource.Close();
-                wrappedSource.Close();
-                rawSource = new Kdu_simple_file_source(fileName);
-                if (rawSource != null)
-                    isDecodable = true;
-                else
-                	isDecodable = false;
-            }
-           
-        } catch (KduException e) {
-            throw new RuntimeException ("Error caused by a Kakadu exception during creation of key objects! ",e);
-        }
+		Jp2_family_src familySource = new Jp2_family_src();
+		Jpx_source wrappedSource = new Jpx_source();
+		Kdu_simple_file_source rawSource = null;
+		try {
+			String fileName = source.getAbsolutePath();
+			familySource.Open(fileName);
+			int success = wrappedSource.Open(familySource, true);
+			// success is 0 if there isn't sufficient information from the
+			// source
+			// object to complete the opening operation.
+			// success is -1 if the source is not compatible with the JPX or JP2
+			// specifications
+			if (success < 0) { // Must open as raw file
+				familySource.Close();
+				wrappedSource.Close();
+				rawSource = new Kdu_simple_file_source(fileName);
+				if (rawSource != null)
+					isDecodable = true;
+				else
+					isDecodable = false;
+			}
 
-        // Dispose
-        wrappedSource.Native_destroy();
-        familySource.Native_destroy();
-        if (rawSource != null)
-            rawSource.Native_destroy();
-        return isDecodable;
-    }
+		} catch (KduException e) {
+			throw new RuntimeException(
+					"Error caused by a Kakadu exception during creation of key objects! ",
+					e);
+		}
+
+		// Dispose
+		wrappedSource.Native_destroy();
+		familySource.Native_destroy();
+		if (rawSource != null)
+			rawSource.Native_destroy();
+		return isDecodable;
+	}
 
 	/**
 	 * Returns an instance of the MyJP2ImageReaderTiled
@@ -204,8 +207,8 @@ public class JP2KakaduImageReaderSpi extends ImageReaderSpi {
 
 		registered = true;
 
-		final Iterator readers = getJDKImageReaderWriterSPI(registry, "JPEG2000",
-				true).iterator();
+		final Iterator readers = getJDKImageReaderWriterSPI(registry,
+				"JPEG2000", true).iterator();
 		while (readers.hasNext()) {
 			final ImageReaderSpi spi = (ImageReaderSpi) readers.next();
 			if (spi == this)
@@ -230,10 +233,11 @@ public class JP2KakaduImageReaderSpi extends ImageReaderSpi {
 		final Iterator iter = iioRegistry.getServiceProviders(spiClass, true); // useOrdering
 		final ArrayList list = new ArrayList();
 		while (iter.hasNext()) {
-			final ImageReaderWriterSpi provider = (ImageReaderWriterSpi) iter.next();
+			final ImageReaderWriterSpi provider = (ImageReaderWriterSpi) iter
+					.next();
 
 			// Get the formatNames supported by this Spi
-			final String[]formatNames = provider.getFormatNames();
+			final String[] formatNames = provider.getFormatNames();
 			for (int i = 0; i < formatNames.length; i++) {
 				if (formatNames[i].equalsIgnoreCase(formatName)) {
 					// Must be a JDK provided ImageReader/ImageWriter

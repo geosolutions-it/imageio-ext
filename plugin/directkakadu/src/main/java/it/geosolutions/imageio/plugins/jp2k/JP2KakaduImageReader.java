@@ -851,7 +851,7 @@ public class JP2KakaduImageReader extends ImageReader {
 				}
 				cm = new ComponentColorModel(cs, bits, false, false,
 						Transparency.OPAQUE, dataBufferType);
-				sm = cm.createCompatibleSampleModel(xSize, ySize);
+				sm = cm.createCompatibleSampleModel(tileWidth, tileHeight);
 				break;
 			case 3:
 				sm = new SinglePixelPackedSampleModel(DataBuffer.TYPE_INT,
@@ -861,6 +861,7 @@ public class JP2KakaduImageReader extends ImageReader {
 				break;
 			default:
 				// TODO: Add more bands management
+				throw new UnsupportedOperationException("Insupported image type");
 			}
 
 		} catch (KduException e) {
