@@ -81,11 +81,6 @@ public class JP2KakaduImageReader extends ImageReader {
 
 	private int dataBufferType;
 
-	/**
-	 * Suggested number of samples to process each time the <code>process</code>
-	 * method executes a loop.
-	 */
-	private final static int SAMPLES_TO_PROCESS = 512 * 512;
 
 	/** The source resolution levels. */
 	private int sourceDWTLevels;
@@ -757,9 +752,12 @@ public class JP2KakaduImageReader extends ImageReader {
 					e);
 		}
 
+		
 		if (isRawSource)
 			if (rawSource != null)
 				rawSource.Native_destroy();
+		
+		super.setInput(input, seekForwardOnly, ignoreMetadata);
 	}
 
 	/**

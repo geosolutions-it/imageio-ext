@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageio.gdalframework;
 
+import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 
 import java.io.File;
@@ -34,7 +35,7 @@ import org.gdal.gdal.gdal;
 import org.gdal.gdalconst.gdalconst;
 
 /**
- * The abstract service provider interface (SPI) for 
+ * The abstract service provider interface (SPI) for
  * <code>GDALImageReader</code>s.
  * 
  * @author Daniele Romagnoli, GeoSolutions.
@@ -122,7 +123,7 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
 				suffixes,
 				MIMETypes,
 				readerClassName, // readerClassName
-				STANDARD_INPUT_TYPE,
+				new Class[] { File.class, FileImageInputStreamExt.class },
 				writerSpiNames, // writer Spi Names
 				supportsStandardStreamMetadataFormat,
 				nativeStreamMetadataFormatName,

@@ -33,6 +33,7 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageReaderWriterSpi;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.spi.ServiceRegistry;
+import javax.imageio.stream.ImageInputStream;
 
 import kdu_jni.Jp2_family_src;
 import kdu_jni.Jpx_source;
@@ -95,7 +96,8 @@ public class JP2KakaduImageReaderSpi extends ImageReaderSpi {
 				suffixes,
 				MIMETypes,
 				readerCN, // readerClassName
-				STANDARD_INPUT_TYPE,
+				new Class[] 
+		        { File.class, FileImageInputStreamExt.class },
 				wSN, // writer Spi Names
 				supportsStandardStreamMetadataFormat,
 				nativeStreamMetadataFormatName,
