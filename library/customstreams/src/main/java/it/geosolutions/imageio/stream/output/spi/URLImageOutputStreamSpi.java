@@ -76,7 +76,7 @@ public class URLImageOutputStreamSpi extends ImageOutputStreamSpi {
 		if (!(output instanceof URL))
 			return null;
 
-		// URL that point to a file
+		// URL that point to a eraf
 		final URL outputURL = ((URL) output);
 		if (outputURL.getProtocol().compareToIgnoreCase("file") == 0) {
 			File tempFile;

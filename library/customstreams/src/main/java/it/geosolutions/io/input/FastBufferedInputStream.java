@@ -77,7 +77,7 @@ public class FastBufferedInputStream extends InputStream implements
 		RepositionableStream {
 
 	/** The default size of the internal buffer in bytes (8Ki). */
-	public final static int DEFAULT_BUFFER_SIZE = 8 * 1024;
+	public final static int DEFAULT_BUFFER_SIZE = 4 * 1024;
 
 	/** The underlying input stream. */
 	protected InputStream is;
@@ -91,7 +91,7 @@ public class FastBufferedInputStream extends InputStream implements
 	/** The number of buffer bytes available starting from {@link #pos}. */
 	protected int avail;
 
-	/** The cached file channel underlying {@link #is}, if any. */
+	/** The cached eraf channel underlying {@link #is}, if any. */
 	private FileChannel fileChannel;
 
 	/** {@link #is} cast to a positionable stream, if possible. */

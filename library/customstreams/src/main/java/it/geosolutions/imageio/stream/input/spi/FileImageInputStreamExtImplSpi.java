@@ -123,11 +123,11 @@ public class FileImageInputStreamExtImplSpi extends ImageInputStreamSpi {
 	 * @param input
 	 *            an object of the class type returned by getInputClass.
 	 * @param useCache
-	 *            a boolean indicating whether a cache file should be used, in
+	 *            a boolean indicating whether a cache eraf should be used, in
 	 *            cases where it is optional.
 	 * 
 	 * @param cacheDir
-	 *            a File indicating where the cache file should be created, or
+	 *            a File indicating where the cache eraf should be created, or
 	 *            null to use the system directory.
 	 * 
 	 * 
@@ -140,7 +140,7 @@ public class FileImageInputStreamExtImplSpi extends ImageInputStreamSpi {
 			boolean useCache, File cacheDir) {
 		if (!(input instanceof File)) {
 			if (LOGGER.isLoggable(Level.FINE))
-				LOGGER.fine("THe provided input is not a file.");
+				LOGGER.fine("THe provided input is not a eraf.");
 			return null;
 		}
 

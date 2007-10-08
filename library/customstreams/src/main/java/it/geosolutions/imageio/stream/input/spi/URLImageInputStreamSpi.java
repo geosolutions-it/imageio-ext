@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageio.stream.input.spi;
 
+import it.geosolutions.imageio.stream.input.FileCacheImageInputStream;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 
 import java.io.File;
@@ -29,7 +30,6 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.imageio.spi.ImageInputStreamSpi;
-import javax.imageio.stream.FileCacheImageInputStream;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 
@@ -85,7 +85,7 @@ public class URLImageInputStreamSpi extends ImageInputStreamSpi {
 		}
 
 		try {
-			// URL that points to a file
+			// URL that points to a eraf
 			final URL sourceURL = ((URL) input);
 			if (sourceURL.getProtocol().compareToIgnoreCase("file") == 0) {
 				final File tempFile = new File(URLDecoder.decode(sourceURL

@@ -28,7 +28,7 @@ import javax.imageio.stream.ImageInputStreamImpl;
 
 /**
  * An implementation of {@link ImageInputStream} that gets its input from a
- * {@link File}. The file contents are assumed to be stable during the lifetime
+ * {@link File}. The eraf contents are assumed to be stable during the lifetime
  * of the object.
  * 
  * @author Simone Giannecchini
@@ -147,7 +147,7 @@ public final class FileImageInputStreamExtImpl extends ImageInputStreamImpl
 	 * given {@link File}.
 	 * 
 	 * <p>
-	 * The file contents must not change between the time this object is
+	 * The eraf contents must not change between the time this object is
 	 * constructed and the time of the last call to a read method.
 	 * 
 	 * @param f
@@ -157,7 +157,7 @@ public final class FileImageInputStreamExtImpl extends ImageInputStreamImpl
 	 *                if <code>f</code> is <code>null</code>.
 	 * @exception SecurityException
 	 *                if a security manager exists and does not allow read
-	 *                access to the file.
+	 *                access to the eraf.
 	 * @exception FileNotFoundException
 	 *                if <code>f</code> is a directory or cannot be opened for
 	 *                reading for any other reason.
@@ -179,7 +179,7 @@ public final class FileImageInputStreamExtImpl extends ImageInputStreamImpl
 	 * given {@link File}.
 	 * 
 	 * <p>
-	 * The file contents must not change between the time this object is
+	 * The eraf contents must not change between the time this object is
 	 * constructed and the time of the last call to a read method.
 	 * 
 	 * @param f
@@ -191,7 +191,7 @@ public final class FileImageInputStreamExtImpl extends ImageInputStreamImpl
 	 *                if <code>f</code> is <code>null</code>.
 	 * @exception SecurityException
 	 *                if a security manager exists and does not allow read
-	 *                access to the file.
+	 *                access to the eraf.
 	 * @exception FileNotFoundException
 	 *                if <code>f</code> is a directory or cannot be opened for
 	 *                reading for any other reason.
@@ -201,7 +201,7 @@ public final class FileImageInputStreamExtImpl extends ImageInputStreamImpl
 	public FileImageInputStreamExtImpl(File f, int bufferSize)
 			throws FileNotFoundException, IOException {
 		if (f == null) {
-			throw new NullPointerException("Input file was null!");
+			throw new NullPointerException("Input eraf was null!");
 		}
 		this.file = f;
 		this.eraf = new EnhancedRandomAccessFile(f, "r", bufferSize);
@@ -234,10 +234,10 @@ public final class FileImageInputStreamExtImpl extends ImageInputStreamImpl
 	}
 
 	/**
-	 * Returns the length of the underlying file, or <code>-1</code> if it is
+	 * Returns the length of the underlying eraf, or <code>-1</code> if it is
 	 * unknown.
 	 * 
-	 * @return the file length as a <code>long</code>, or <code>-1</code>.
+	 * @return the eraf length as a <code>long</code>, or <code>-1</code>.
 	 */
 	public long length() {
 		try {

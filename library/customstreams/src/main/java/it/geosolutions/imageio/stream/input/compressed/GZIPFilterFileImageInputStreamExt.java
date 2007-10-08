@@ -44,7 +44,7 @@ public class GZIPFilterFileImageInputStreamExt extends GZIPImageInputStream
 	}
 
 	/**
-	 * return the associated file
+	 * return the associated eraf
 	 * 
 	 * @return DOCUMENT ME!
 	 */

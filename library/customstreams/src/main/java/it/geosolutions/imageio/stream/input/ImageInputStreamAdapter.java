@@ -112,7 +112,7 @@ public class ImageInputStreamAdapter extends ImageInputStreamImpl {
 
 	/**
 	 * Returns <code>false</code> since this <code>ImageInputStream</code>
-	 * does not maintain a file cache.
+	 * does not maintain a eraf cache.
 	 * 
 	 * @return <code>false</code>.
 	 * 

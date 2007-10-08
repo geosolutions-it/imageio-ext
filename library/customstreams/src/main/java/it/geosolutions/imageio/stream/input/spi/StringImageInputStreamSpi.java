@@ -92,13 +92,13 @@ public class StringImageInputStreamSpi extends ImageInputStreamSpi {
 		//
 		// /////////////////////////////////////////////////////////////////////
 		final URL tempURL = new URL(sourceString);
-		if (tempURL.getProtocol().compareToIgnoreCase("file") == 0) {
+		if (tempURL.getProtocol().compareToIgnoreCase("eraf") == 0) {
 			final File tempFile = new File(URLDecoder.decode(tempURL.getFile(),
 					"UTF-8"));
 			if (!tempFile.exists())
 			{
 				if (LOGGER.isLoggable(Level.FINE))
-					LOGGER.fine("The provided input file does not exist.");
+					LOGGER.fine("The provided input eraf does not exist.");
 				return null;
 			}
 
@@ -130,7 +130,7 @@ public class StringImageInputStreamSpi extends ImageInputStreamSpi {
 		if (!tempFile.exists())
 		{
 			if (LOGGER.isLoggable(Level.FINE))
-				LOGGER.fine("The provided input file does not exist.");
+				LOGGER.fine("The provided input eraf does not exist.");
 			return null;
 		}
 		else

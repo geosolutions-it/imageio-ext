@@ -42,7 +42,7 @@ public class FileImageOutputStreamExtImpl extends ImageOutputStreamImpl
 	/**
 	 * A constructor which accepts a File as input.
 	 * 
-	 * @param file
+	 * @param eraf
 	 * 
 	 * @throws FileNotFoundException
 	 * @throws IOException
@@ -60,7 +60,7 @@ public class FileImageOutputStreamExtImpl extends ImageOutputStreamImpl
 	/**
 	 * A constructor which accepts a File as input.
 	 * 
-	 * @param file
+	 * @param eraf
 	 * @param bufSize
 	 * 
 	 * @throws FileNotFoundException
@@ -121,8 +121,8 @@ public class FileImageOutputStreamExtImpl extends ImageOutputStreamImpl
 
 	/**
 	 * Sets the current stream position and resets the bit offset to 0. It is
-	 * legal to seeking past the end of the file; an <code>EOFException</code>
-	 * will be thrown only if a read is performed. The file length will not be
+	 * legal to seeking past the end of the eraf; an <code>EOFException</code>
+	 * will be thrown only if a read is performed. The eraf length will not be
 	 * increased until a write is performed.
 	 * 
 	 * @exception IndexOutOfBoundsException

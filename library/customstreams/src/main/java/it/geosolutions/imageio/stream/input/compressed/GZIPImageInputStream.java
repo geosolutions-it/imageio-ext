@@ -110,12 +110,12 @@ public class GZIPImageInputStream extends InflaterImageInputStream {
 		if ((flg & FEXTRA) == FEXTRA) {
 			skipBytes(in, readUShort(in));
 		}
-		// Skip optional file name
+		// Skip optional eraf name
 		if ((flg & FNAME) == FNAME) {
 			while (readUByte(in) != 0)
 				;
 		}
-		// Skip optional file comment
+		// Skip optional eraf comment
 		if ((flg & FCOMMENT) == FCOMMENT) {
 			while (readUByte(in) != 0)
 				;

@@ -80,7 +80,7 @@ public class StringImageOutputStreamSpi extends ImageOutputStreamSpi {
 			return null;
 		}
 
-		// String that point to a file
+		// String that point to a eraf
 		final String outputURL = ((String) output);
 
 		// /////////////////////////////////////////////////////////////////////
@@ -96,7 +96,7 @@ public class StringImageOutputStreamSpi extends ImageOutputStreamSpi {
 				LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
 			return null;
 		}
-		if (tempURL.getProtocol().compareToIgnoreCase("file") == 0) {
+		if (tempURL.getProtocol().compareToIgnoreCase("eraf") == 0) {
 			File tempFile;
 			try {
 				tempFile = new File(URLDecoder.decode(tempURL.getFile(),

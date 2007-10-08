@@ -86,7 +86,7 @@ public class TestImageInputStream extends TestCase {
 	public void testInflaterInputStream() throws FileNotFoundException,
 			IOException {
 
-		// // open up test file
+		// // open up test eraf
 		// final BufferedInputStream inStream = new BufferedInputStream(
 		// new FileInputStream(TestData.file(this, "jam.txt")));
 		// // deflate it
@@ -137,7 +137,7 @@ public class TestImageInputStream extends TestCase {
 	// public void testGZIPImageInputStream() throws FileNotFoundException,
 	// IOException {
 	//
-	// // decompress the gzipped file to a stringbuffer
+	// // decompress the gzipped eraf to a stringbuffer
 	// final GZIPImageInputStream gzipIIS = new GZIPImageInputStream(
 	// new FileImageInputStreamExtImpl(TestData.file(this,
 	// "jam.txt.gz")));
@@ -154,7 +154,7 @@ public class TestImageInputStream extends TestCase {
 	//
 	// //compare them
 	// assertTrue(buf2==buf);
-	// // decompress the gzipped file to a stringbuffer
+	// // decompress the gzipped eraf to a stringbuffer
 	// final GZIPImageInputStream gzipIIS = new GZIPImageInputStream(
 	// new FileImageInputStreamExtImpl(TestData.file(this,
 	// "jam.txt.gz")));
@@ -168,7 +168,7 @@ public class TestImageInputStream extends TestCase {
 	// gzipIIS.close();
 	// LOGGER.info(buf.toString());
 	//		
-	// get the original unzipped file
+	// get the original unzipped eraf
 	// final FileImageInputStreamExtImpl fileIIS = new
 	// FileImageInputStreamExtImpl(
 	// TestData.file(this, "jam.txt"));

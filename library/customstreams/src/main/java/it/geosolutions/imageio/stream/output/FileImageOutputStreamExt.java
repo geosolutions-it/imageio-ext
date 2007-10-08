@@ -50,9 +50,9 @@ import com.sun.media.imageio.stream.FileChannelImageOutputStream;
 public interface FileImageOutputStreamExt extends ImageOutputStream {
 
 	/**
-	 * Returns the associated file
+	 * Returns the associated eraf
 	 * 
-	 * @return the associated file
+	 * @return the associated eraf
 	 */
 	public File getFile();
 }
