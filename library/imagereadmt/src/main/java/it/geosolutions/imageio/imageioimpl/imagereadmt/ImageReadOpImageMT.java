@@ -83,7 +83,7 @@ import com.sun.media.jai.operator.ImageReadDescriptor;
 
 /**
  * Implementation of the <code>OpImage</code> of the "ImageRead" operation.
- *
+ * 
  * @author Simone Giannecchini, GeoSolutions.
  */
 final class ImageReadOpImageMT extends OpImage {
@@ -196,6 +196,8 @@ final class ImageReadOpImageMT extends OpImage {
 	 * Destination to source Y translation factor.
 	 */
 	private int transY;
+
+	private boolean readerProvided = false;
 
 	/**
 	 * Derive the image layout based on the user-supplied layout, reading
@@ -432,23 +434,27 @@ final class ImageReadOpImageMT extends OpImage {
 	/**
 	 * XXX NB: This class may reset the following fields of the ImageReadParam
 	 * destinationOffset destinationType sourceRegion
+	 * 
+	 * @param readerProvided
 	 */
 	ImageReadOpImageMT(ImageLayout layout, Map configuration,
 			ImageReadParam param, ImageReader reader, int imageIndex,
-			boolean readThumbnails, ImageInputStream streamToClose)
-			throws IOException {
+			boolean readThumbnails, ImageInputStream streamToClose,
+			boolean readerProvided) throws IOException {
 		super(null, layoutHelper(layout, param, reader, imageIndex),
 				configuration, false);
 
+		this.readerProvided = readerProvided;
 		// Revise parameter 'param' as needed.
 		if (param == null) {
 			// Get the ImageReadParam from the ImageReader.
 			this.param = (CloneableImageReadParam) reader.getDefaultReadParam();
 		} else if (param instanceof CloneableImageReadParam) {
 			try {
-				this.param = (CloneableImageReadParam) ((CloneableImageReadParam) param).clone();
+				this.param = (CloneableImageReadParam) ((CloneableImageReadParam) param)
+						.clone();
 			} catch (CloneNotSupportedException e) {
-				final IOException ioe= new IOException();
+				final IOException ioe = new IOException();
 				ioe.initCause(e);
 				throw ioe;
 			}
@@ -623,7 +629,6 @@ final class ImageReadOpImageMT extends OpImage {
 		} catch (CloneNotSupportedException e) {
 			throw new RuntimeException(e);
 		}
-
 
 	}
 
@@ -800,7 +805,8 @@ final class ImageReadOpImageMT extends OpImage {
 	}
 
 	/**
-	 * Closes an <code>ImageInputStream</code> passed in, if any.
+	 * Closes an <code>ImageInputStream</code> passed in, if any. Same thing
+	 * for a reader.
 	 */
 	public void dispose() {
 		if (streamToClose != null) {
@@ -809,6 +815,11 @@ final class ImageReadOpImageMT extends OpImage {
 			} catch (IOException e) {
 				// Ignore it.
 			}
+		}
+		if (!readerProvided) {
+
+			reader.dispose();
+
 		}
 
 		super.dispose();

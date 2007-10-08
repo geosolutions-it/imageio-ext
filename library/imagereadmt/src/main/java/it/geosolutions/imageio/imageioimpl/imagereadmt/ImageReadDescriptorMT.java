@@ -558,7 +558,7 @@ public class ImageReadDescriptorMT extends OperationDescriptorImpl {
      * the specified JAI instance. This method is invoked by the static initializer
      * of {@link GridSampleDimension}.
      */
-    public static void register(final JAI jai) {
+    public static  synchronized void register(final JAI jai) {
         final OperationRegistry registry = jai.getOperationRegistry();
         try {
             registry.registerDescriptor(new ImageReadDescriptorMT());

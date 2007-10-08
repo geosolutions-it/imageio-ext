@@ -100,6 +100,8 @@ import com.sun.media.jai.operator.ImageReadDescriptor;
  */
 public final class ImageReadMTCRIF extends CRIFImpl {
 
+	private boolean readerProvided=false;
+
 	public ImageReadMTCRIF() {
 		super(); // Pass up the name?
 	}
@@ -293,6 +295,7 @@ public final class ImageReadMTCRIF extends CRIFImpl {
 		RenderedImage image = null;
 
 		// Get the reader.
+		readerProvided=pb.getObjectParameter(0)!=null&&pb.getObjectParameter(0) instanceof ImageReader;
 		ImageReader reader = getImageReader(pb);
 
 		// Proceed if a compatible reader was found.
@@ -324,7 +327,7 @@ public final class ImageReadMTCRIF extends CRIFImpl {
 
 				// Create the rendering.
 				image = new ImageReadOpImageMT(layout, rh, param, reader,
-						imageIndex, readThumbnails, streamToClose);
+						imageIndex, readThumbnails, streamToClose,readerProvided);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
