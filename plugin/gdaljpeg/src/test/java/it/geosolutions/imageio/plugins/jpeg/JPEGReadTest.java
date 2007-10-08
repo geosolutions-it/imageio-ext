@@ -53,9 +53,9 @@ public class JPEGReadTest extends AbstractJPEGTestCase {
 	public void testRead() throws FileNotFoundException, IOException {
 		final ParameterBlockJAI pbjImageRead;
 		final ImageReadParam irp = new ImageReadParam();
-		final String fileName = "001140.jpg";
+		final String fileName = "sample.jpg";
 		final File file = TestData.file(this, fileName);
-		irp.setSourceSubsampling(1, 1, 0, 0);
+		irp.setSourceSubsampling(4, 4, 0, 0);
 		pbjImageRead = new ParameterBlockJAI("ImageRead");
 		pbjImageRead.setParameter("Input", file);
 		pbjImageRead.setParameter("readParam", irp);
