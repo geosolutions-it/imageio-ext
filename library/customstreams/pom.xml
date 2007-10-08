@@ -15,7 +15,18 @@
 
   <name>ImageIO Extension - Custom Streams</name>
   <url>http://maven.apache.org</url>
-  <dependencies>
+
+
+  <!-- ===================================================================== -->
+  <!--     Dependencies management.                                          -->
+
+  <!-- ===================================================================== -->
+	<dependencies>
+    <dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+			<version>3.0.1</version>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
