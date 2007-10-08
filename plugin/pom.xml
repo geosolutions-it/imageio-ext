@@ -24,11 +24,6 @@
 
 	<dependencies>
     <dependency>
-      <groupId>it.geosolutions.imageio-ext</groupId>
-      <artifactId>imageio-ext-gdal</artifactId>
-			<version>${project.version}</version>
-    </dependency>
-    <dependency>
   		<groupId>it.geosolutions.imageio-ext</groupId>
   		<artifactId>imageio-ext-customstreams</artifactId>
 			<version>${project.version}</version>
@@ -36,11 +31,6 @@
     <dependency>
   		<groupId>it.geosolutions.imageio-ext</groupId>
   		<artifactId>imageio-ext-test-data</artifactId>
-			<version>${project.version}</version>
-    </dependency>
-    <dependency>
-  		<groupId>it.geosolutions.imageio-ext</groupId>
-  		<artifactId>imageio-ext-gdalframework</artifactId>
 			<version>${project.version}</version>
     </dependency>
 	</dependencies>
@@ -102,15 +92,16 @@
   <!--     Modules for the build in approximate dependency order   -->
   <!-- =========================================================== -->
   <modules>
-    <module>geotiff</module>
-    <module>hdf4</module>
-    <module>jp2kakadu</module>
-    <module>jpeg</module>
-    <module>ecw</module>
+    <module>gdalgeotiff</module>
+    <module>gdalhdf4</module>
+    <module>gdalkakadujp2</module>
+    <module>gdaljpeg</module>
+    <module>jmagickjpeg</module>
+    <module>gdalecw</module>
+    <module>gdalarcgrid</module>
     <module>arcgrid</module>
-    <module>javaarcgrid</module>
-    <module>directkakadu</module>
+    <module>kakadujp2</module>
     <module>swan</module>
-    <module>mrsid</module>
+    <module>gdalmrsid</module>
   </modules>
 </project>
