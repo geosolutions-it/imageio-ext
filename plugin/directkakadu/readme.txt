@@ -1,1 +1,0 @@
-mvn install:install-file -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-kakadujni -Dversion=1.0-SNAPSHOT -Dpackaging=jar -Dfile=kdu_jni.jar
