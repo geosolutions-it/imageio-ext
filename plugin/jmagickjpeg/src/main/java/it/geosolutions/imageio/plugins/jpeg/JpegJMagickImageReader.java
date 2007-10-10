@@ -73,7 +73,7 @@ public class JpegJMagickImageReader extends ImageReader {
 	 * Implementation of {@link ImageReadParam} for this
 	 * {@link JpegJMagickImageReader}. Actually we are using
 	 * {@link CloneableImageReadParam} since ImageMagick guys claim that their
-	 * library is thread safe but the moment I am gettin nasti errors if I try
+	 * library is thread safe but the moment I am getting nasty errors if I try
 	 * to use multithreading hence I am locking the reader up.
 	 * 
 	 * @author Simone Giannecchini, GeoSolutions.
@@ -98,7 +98,7 @@ public class JpegJMagickImageReader extends ImageReader {
 		}
 
 		/**
-		 * Deep copy this instance of {@link JpegJMagickImageReader};
+		 * Deep copy this instance of {@link JpegJMagickImageReaderReadParam};
 		 */
 		public Object clone() throws CloneNotSupportedException {
 			final JpegJMagickImageReaderReadParam retVal = new JpegJMagickImageReaderReadParam();
@@ -513,15 +513,11 @@ public class JpegJMagickImageReader extends ImageReader {
 								new ImageInfo(sourceFile.getAbsolutePath())));
 
 			} catch (MagickException e) {
-
 				final IOException ioe = new IOException();
 				ioe.initCause(e);
 				throw ioe;
-
 			}
-
 		}
-
 	}
 
 	public void setInput(Object input, boolean seekForwardOnly,
@@ -595,5 +591,4 @@ public class JpegJMagickImageReader extends ImageReader {
 		}
 		super.dispose();
 	}
-
 }

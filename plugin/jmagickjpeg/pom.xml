@@ -6,9 +6,9 @@
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
   <parent>
-  	<groupId>it.geosolutions.imageio-ext</groupId>
-  	<artifactId>imageio-ext-plugin</artifactId>
-		<version>1.0-SNAPSHOT</version>
+    <groupId>it.geosolutions.imageio-ext</groupId>
+    <artifactId>imageio-ext-plugin</artifactId>
+    <version>1.0-SNAPSHOT</version>
   </parent>
   <name>JPEG Plugin</name>
   <!-- url> </url -->
@@ -17,13 +17,18 @@
   <!-- ===================================================================== -->
   <!--     Dependencies management.                                          -->
   <!-- ===================================================================== -->
-	<dependencies>
+  <dependencies>
+    <dependency>
+        <groupId>it.geosolutions.imageio-ext</groupId>
+        <artifactId>imageio-ext-imagereadmt</artifactId>
+        <version>${project.version}</version>
+    </dependency>
     <dependency>
       <groupId>jmagick</groupId>
       <artifactId>jmagick</artifactId>
-			<version>6.2.6.0</version>
+      <version>6.2.6.0</version>
     </dependency>
-	</dependencies>
+  </dependencies>
 
 
 </project>
