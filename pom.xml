@@ -5,15 +5,15 @@
                                http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-<!-- 										-->
-  <!--		PROPERTIES			-->
-  <!-- 										-->
-	<properties>
-		<path.native>${env.JAVA_HOME}/bin</path.native>
-		<extensive.tests>false</extensive.tests>
-		<interactive.tests>false</interactive.tests>
-		<test.maxHeapSize>512M</test.maxHeapSize>
-	</properties>
+<!--                    -->
+  <!--    PROPERTIES      -->
+  <!--                    -->
+  <properties>
+    <path.native>${env.JAVA_HOME}/bin</path.native>
+    <extensive.tests>false</extensive.tests>
+    <interactive.tests>false</interactive.tests>
+    <test.maxHeapSize>512M</test.maxHeapSize>
+  </properties>
 
   <!-- Profiles set on the command-line overwrite default properties. -->
   <profiles>
@@ -32,9 +32,9 @@
   </profiles>
 
 
-  <!-- 																														 -->
+  <!--                                                             -->
   <!--     Project Description                                     -->
-  <!-- 																														 -->
+  <!--                                                             -->
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext</artifactId>
   <packaging>pom</packaging>
@@ -66,9 +66,9 @@
   </licenses>
 
 
-  <!-- 																																			 -->
+  <!--                                                                       -->
   <!--     Developers and contributors.                                      -->
-  <!-- 																																			 -->
+  <!--                                                                       -->
   <developers>
     <developer>
       <name>Alessio Fabiani</name>
@@ -100,48 +100,57 @@
     </developer>
   </developers>
 
-	<!--													-->
-	<!--		Plugin Repositories		-->
-	<!--													-->
-	<pluginRepositories>
-	  <pluginRepository>
-	    <id>codehaus.org</id>
-	    <name>CodeHaus Plugin Snapshots</name>
-	    <url>http://snapshots.repository.codehaus.org</url>
-	    <releases>
-	      <enabled>false</enabled>
-	    </releases>
-	    <snapshots>
-	      <enabled>true</enabled>
-	    </snapshots>
-	  </pluginRepository>
-	</pluginRepositories>
+  <!--                          -->
+  <!--    Plugin Repositories   -->
+  <!--                          -->
+  <pluginRepositories>
+    <pluginRepository>
+      <id>codehaus.org</id>
+      <name>CodeHaus Plugin Snapshots</name>
+      <url>http://snapshots.repository.codehaus.org</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+      <id>refractions</id>
+      <name>Refractions Research Maven 2 Repository</name>
+      <url>http://lists.refractions.net/m2</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+
+  </pluginRepositories>
 
 
-	<!--			Repositories				-->
-	<!--													-->
-	<!--													-->
-	<repositories>
-	  <repository>
-		  <id>ibiblio mirror</id>
-		  <name>ibiblio mirror</name>
-		  <url>http://mirrors.ibiblio.org/pub/mirrors/maven2</url>
-		</repository>
-		<repository>
-		  <id>ibiblio</id>
-		  <name>ibiblio</name>
-		  <url>http://www.ibiblio.org/maven2/</url>
-		</repository>
+  <!--      Repositories        -->
+  <!--                          -->
+  <!--                          -->
+  <repositories>
+    <repository>
+      <id>ibiblio mirror</id>
+      <name>ibiblio mirror</name>
+      <url>http://mirrors.ibiblio.org/pub/mirrors/maven2</url>
+    </repository>
+    <repository>
+      <id>ibiblio</id>
+      <name>ibiblio</name>
+      <url>http://www.ibiblio.org/maven2/</url>
+    </repository>
     <repository>
       <id>codehaus</id>
       <name>Codehaus maven repository</name>
       <url>http://repository.codehaus.org/</url>
     </repository>
-		<repository>
-		  <id>refractions</id>
-		  <name>Refractions Research Maven 2 Repository</name>
-		  <url>http://lists.refractions.net/m2</url>
-		</repository>
+    <repository>
+      <id>refractions</id>
+      <name>Refractions Research Maven 2 Repository</name>
+      <url>http://lists.refractions.net/m2</url>
+    </repository>
     <repository>
       <id>codehaus.org</id>
       <name>CodeHaus Snapshots</name>
@@ -153,28 +162,28 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
-	</repositories>
+  </repositories>
 
-  <!-- 																																			 -->
+  <!--                                                                       -->
   <!--     Dependencies management.                                          -->
   <!--     If a POM declares one of those dependencies, then it will use     -->
   <!--     the version specified here. Otherwise, those dependencies are     -->
   <!--     ignored.                                                          -->
-  <!-- 																																			 -->
-	<dependencies>
-		<!-- Tests or legacy -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+  <!--                                                                       -->
+  <dependencies>
+    <!-- Tests or legacy -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
-  <!-- 																														 -->
-  <!-- 																														 -->
+  <!--                                                             -->
+  <!--                                                             -->
   <!--     Build Configuration                                     -->
-  <!-- 																														 -->
+  <!--                                                             -->
   <build>
 
     <!-- ========================================================= -->
@@ -235,12 +244,12 @@
           <includes>
             <include>**/*Test.java</include>
           </includes>
-	  <forkMode>once</forkMode>
+    <forkMode>once</forkMode>
           <argLine>-Xmx${test.maxHeapSize} -enableassertions -Dorg.geotools.test.extensive=${extensive.tests} -Dorg.geotools.test.interactive=${interactive.tests}</argLine>
          </configuration>
       </plugin>
-	  </plugins>
-	</build>
+    </plugins>
+  </build>
 
 
 
@@ -249,7 +258,7 @@
 
   <!--                                                             -->
   <!--     Modules for the build in approximate dependency order   -->
-  <!-- 																														 -->
+  <!--                                                             -->
   <modules>
     <module>deploy</module>
     <module>library</module>

@@ -97,7 +97,7 @@
     <module>gdalkakadujp2</module>
     <module>gdalecwjp2</module>
     <module>gdaljpeg</module>
-    <module>jmagickjpeg</module>
+  <!--  <module>jmagickjpeg</module> -->
     <module>gdalecw</module>
     <module>gdalarcgrid</module>
     <module>arcgrid</module>
