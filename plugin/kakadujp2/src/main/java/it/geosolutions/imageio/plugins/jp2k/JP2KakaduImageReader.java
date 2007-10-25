@@ -74,7 +74,7 @@ import kdu_jni.Kdu_simple_file_source;
 public class JP2KakaduImageReader extends ImageReader {
 
 	private static Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.jp2k");
+			.getLogger("it.geosolutions.imageio.plugins.jp2k");
 
 	/** Auxiliary String Buffer. It is used for messages logging */
 	private StringBuffer sb;
