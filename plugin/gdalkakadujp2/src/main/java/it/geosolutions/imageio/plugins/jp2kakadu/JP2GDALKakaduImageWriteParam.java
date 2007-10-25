@@ -19,28 +19,29 @@ package it.geosolutions.imageio.plugins.jp2kakadu;
 import it.geosolutions.imageio.gdalframework.GDALCreateOptionsHandler;
 import it.geosolutions.imageio.gdalframework.GDALImageWriteParam;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 import java.util.Locale;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.sun.media.imageio.plugins.jpeg2000.J2KImageWriteParam;
+
 /**
-* @author Daniele Romagnoli, GeoSolutions.
-* @author Simone Giannecchini, GeoSolutions. 
-*/
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions.
+ */
 public class JP2GDALKakaduImageWriteParam extends GDALImageWriteParam {
-	
-	/**{@link Logger} class.*/
-	private final static Logger LOGGER =Logger.getLogger("it.geosolutions.imageio.plugins.jp2kakadu");
-	
-	JP2GDALKakaduCreateOptionsHandler myHandler = new JP2GDALKakaduCreateOptionsHandler();
+
+	/** {@link Logger} class. */
+	private final static Logger LOGGER = Logger
+			.getLogger("it.geosolutions.imageio.plugins.jp2kakadu");
+
+	protected JP2GDALKakaduCreateOptionsHandler myHandler = new JP2GDALKakaduCreateOptionsHandler();
 
 	public JP2GDALKakaduImageWriteParam() {
 		super(new J2KImageWriteParam(Locale.getDefault()));
-		// TODO Auto-generated constructor stub
+	}
+
+	public JP2GDALKakaduImageWriteParam(Locale l) {
+		super(new J2KImageWriteParam(l));
 	}
 
 	/**
