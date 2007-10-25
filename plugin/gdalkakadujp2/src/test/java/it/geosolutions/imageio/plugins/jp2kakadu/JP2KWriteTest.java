@@ -48,7 +48,9 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 
 	// Set this to true if you just want run test without visualizing written
 	// images.
-	boolean deleteTempFilesOnExit = true;
+	final private static String HOLD_WRITTEN = "it.geosolutions.imageio.plugins.jp2kakadu.holdwrittenfiles";
+	
+	boolean deleteTempFilesOnExit = !Boolean.getBoolean(HOLD_WRITTEN);
 	final static String testFileName = "sample.jp2";
 
 	// When testing write operations on very big images, performing subsampled
