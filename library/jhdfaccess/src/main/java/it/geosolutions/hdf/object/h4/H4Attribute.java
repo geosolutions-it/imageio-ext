@@ -228,11 +228,8 @@ public class H4Attribute {
 	 * 
 	 * @return a <code>String</code> containing attribute values.
 	 */
-	public String getValuesAsString() {
-		if (values != null)
-			return H4DatatypeUtilities.getValuesAsString(datatype, values);
-		else
-			return "";
+	public String getValuesAsString() throws HDFException {
+		return H4DatatypeUtilities.getValuesAsString(datatype, getValues());
 	}
 
 	/**
