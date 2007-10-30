@@ -27,10 +27,10 @@ import ncsa.hdf.hdflib.HDFConstants;
  * @author Daniele Romagnoli
  */
 public class H4DatatypeUtilities {
-	
-	//TODO: Should I change the datatype from int to this class?
-	private H4DatatypeUtilities(){
-		
+
+	// TODO: Should I change the datatype from int to this class?
+	private H4DatatypeUtilities() {
+
 	}
 
 	/**
@@ -192,5 +192,64 @@ public class H4DatatypeUtilities {
 
 		}
 		return bufferType;
+	}
+
+	/**
+	 * Return values contained in the provided data buffer of the specified
+	 * datatype, as <code>String</code>.
+	 * 
+	 * @param datatype
+	 *            the data type of values
+	 * @param buf
+	 *            a buffer containing data values of a specific type
+	 */
+	public static String getValuesAsString(int datatype, Object buf) {
+		StringBuffer sb = new StringBuffer();
+		if (datatype == HDFConstants.DFNT_FLOAT32
+				|| datatype == HDFConstants.DFNT_FLOAT) {
+			float[] ff = (float[]) buf;
+			final int size = ff.length;
+			for (int i = 0; i < size; i++) {
+				sb.append((ff[i])).append(" ");
+			}
+		} else if (datatype == HDFConstants.DFNT_DOUBLE
+				|| datatype == HDFConstants.DFNT_FLOAT64) {
+			double[] dd = (double[]) buf;
+			final int size = dd.length;
+			for (int i = 0; i < size; i++) {
+				sb.append((dd[i])).append(" ");
+			}
+		} else if (datatype == HDFConstants.DFNT_INT8
+				|| datatype == HDFConstants.DFNT_UINT8) {
+			byte[] bb = (byte[]) buf;
+			final int size = bb.length;
+			for (int i = 0; i < size; i++) {
+				sb.append((bb[i])).append(" ");
+			}
+		} else if (datatype == HDFConstants.DFNT_INT16
+				|| datatype == HDFConstants.DFNT_UINT16) {
+			short[] ss = (short[]) buf;
+			final int size = ss.length;
+			for (int i = 0; i < size; i++) {
+				sb.append((ss[i])).append(" ");
+			}
+		} else if (datatype == HDFConstants.DFNT_INT32
+				|| datatype == HDFConstants.DFNT_UINT32) {
+			int[] ii = (int[]) buf;
+			final int size = ii.length;
+			for (int i = 0; i < size; i++) {
+				sb.append((ii[i])).append(" ");
+			}
+		} else if (datatype == HDFConstants.DFNT_CHAR
+				|| datatype == HDFConstants.DFNT_UCHAR8) {
+
+			byte[] bb = (byte[]) buf;
+			final int size = bb.length;
+			sb = new StringBuffer(size);
+			for (int i = 0; i < size && bb[i] != 0; i++) {
+				sb.append(new String(bb, i, 1));
+			}
+		}
+		return sb.toString();
 	}
 }

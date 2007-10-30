@@ -86,7 +86,8 @@ public class H4Attribute {
 	 *            Attribute information retrieved by means of the VGroup
 	 *            interface, also returns the number of values.
 	 */
-	public H4Attribute(AbstractHObject object, int i, String attrName, int[] attrInfo) {
+	public H4Attribute(AbstractHObject object, int i, String attrName,
+			int[] attrInfo) {
 		this(object, i, attrName, attrInfo, null);
 	}
 
@@ -106,8 +107,8 @@ public class H4Attribute {
 	 * @param data
 	 *            an Object containing datavalues of this attribute.
 	 */
-	public H4Attribute(AbstractHObject object, int i, String attrName, int[] attrInfo,
-			Object data) {
+	public H4Attribute(AbstractHObject object, int i, String attrName,
+			int[] attrInfo, Object data) {
 		int attrDatatype;
 		if (attrInfo.length == 2) {
 			attrDatatype = attrInfo[0];
@@ -185,8 +186,8 @@ public class H4Attribute {
 	 * type of the returned object depends on the datatype of this attribute. As
 	 * an instance, for an attribute having <code>HDFConstants.DFNT_INT32</code>
 	 * as datatype, returned object is an <code>int</code> array. See
-	 * {@link H4DatatypeUtilities#allocateArray(int, int)} to retrieve information about
-	 * the returned type.
+	 * {@link H4DatatypeUtilities#allocateArray(int, int)} to retrieve
+	 * information about the returned type.
 	 * 
 	 * @return an <code>Object</code> containing attribute values.
 	 * @throws HDFException
@@ -223,18 +224,31 @@ public class H4Attribute {
 	}
 
 	/**
+	 * Return attribute values as a <code>String</code>.
+	 * 
+	 * @return a <code>String</code> containing attribute values.
+	 */
+	public String getValuesAsString() {
+		if (values != null)
+			return H4DatatypeUtilities.getValuesAsString(datatype, values);
+		else
+			return "";
+	}
+
+	/**
 	 * Static utility method which build a new {@link H4Attribute} given the
 	 * object to which the attribute is attached and the index of the attribute.
 	 * 
 	 * @param object
-	 *            The owner {@link AbstractHObject} to which the attribute is attached
+	 *            The owner {@link AbstractHObject} to which the attribute is
+	 *            attached
 	 * @param index
 	 *            The index of the required attribute.
 	 * @return the {@link H4Attribute} just built.
 	 * @throws HDFException
 	 */
-	public static H4Attribute buildAttribute(AbstractHObject object, final int index)
-			throws HDFException {
+	public static H4Attribute buildAttribute(AbstractHObject object,
+			final int index) throws HDFException {
 		H4Attribute attribute = null;
 
 		// retrieving the identifier of the attribute owner
