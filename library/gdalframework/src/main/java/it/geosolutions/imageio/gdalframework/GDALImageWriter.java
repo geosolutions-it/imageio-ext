@@ -110,6 +110,11 @@ public abstract class GDALImageWriter extends ImageWriter {
 		super(originatingProvider);
 		spi = originatingProvider;
 		driver = getDriver();
+		if(driver==null)
+		{
+			if(LOGGER.isLoggable(Level.SEVERE))
+				LOGGER.severe("The requested driver is not avaiable, this ImageWriter may malfunction");
+		}
 	}
 
 	public IIOMetadata getDefaultStreamMetadata(ImageWriteParam param) {

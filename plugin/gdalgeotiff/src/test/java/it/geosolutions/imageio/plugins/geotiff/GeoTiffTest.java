@@ -26,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
@@ -90,6 +91,27 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
 			Viewer.visualizeAllInformation(image, "", true);
 		else
 			assertNotNull(image.getTiles());
+	}
+	
+
+	/**
+	 * Test Read exploiting JAI-ImageIO tools capabilities
+	 * 
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+
+	public void testReadDirect() throws FileNotFoundException, IOException {
+		String fileName = "bogota.tif";
+		final File file = TestData.file(this, fileName);
+		assertTrue(new GeoTiffImageReaderSpi().canDecodeInput(file));
+		ImageReader reader = new GeoTiffImageReaderSpi().createReaderInstance();
+		reader.setInput(file);
+		final RenderedImage image= reader.read(0);
+		assertNotNull(image);
+		if (TestData.isInteractiveTest())
+			Viewer.visualizeAllInformation(image, "", true);
+
 	}
 
 	/**

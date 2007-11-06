@@ -19,6 +19,7 @@ import it.geosolutions.imageio.plugins.arcgrid.AsciiGridsImageReader;
 import it.geosolutions.imageio.plugins.arcgrid.raster.AsciiGridRaster;
 import it.geosolutions.imageio.plugins.arcgrid.raster.EsriAsciiGridRaster;
 import it.geosolutions.imageio.plugins.arcgrid.raster.GrassAsciiGridRaster;
+import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 
 import java.io.File;
 import java.io.IOException;
@@ -85,7 +86,8 @@ public final class AsciiGridsImageReaderSpi extends ImageReaderSpi {
 
 	public AsciiGridsImageReaderSpi() {
 		super(vendorName, version, formatNames, suffixes, MIMETypes, readerCN, // readerClassName
-				STANDARD_INPUT_TYPE, wSN, // writer Spi Names
+				new Class[] 
+					        { File.class, ImageInputStream.class }, wSN, // writer Spi Names
 				supportsStandardStreamMetadataFormat,
 				nativeStreamMetadataFormatName,
 				nativeStreamMetadataFormatClassName,

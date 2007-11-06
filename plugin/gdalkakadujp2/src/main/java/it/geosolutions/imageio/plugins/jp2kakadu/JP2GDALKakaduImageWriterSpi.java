@@ -119,11 +119,11 @@ public final class JP2GDALKakaduImageWriterSpi extends GDALImageWriterSpi {
 
 
 	public boolean canEncodeImage(ImageTypeSpecifier type) {
-		// TODO Auto-generated method stub
+		// TODO is this correct?
 		return true;
 	}
 	
-	public void onRegistration(ServiceRegistry registry, Class category) {
+	public synchronized  void onRegistration(ServiceRegistry registry, Class category) {
 		super.onRegistration(registry, category);
 		if (registered) {
 			return;
