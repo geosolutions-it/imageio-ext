@@ -162,7 +162,7 @@ public class H4SDSCollection extends H4DecoratedObject implements IHObject {
 	}
 
 	/**
-	 * CSonstructor which builds and initialize a <code>H4SDSCollection</code>
+	 * Constructor which builds and initialize a <code>H4SDSCollection</code>
 	 * given an input {@link H4File}.
 	 * 
 	 * @param h4file

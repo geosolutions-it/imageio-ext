@@ -321,6 +321,7 @@ public class H4SDS extends H4Variable implements IH4ReferencedObject, IHObject {
 		h4SDSCollectionOwner = h4SdsCollection;
 		this.index = index;
 		this.identifier = identifier;
+		init();
 		isOpened = true;
 	}
 
