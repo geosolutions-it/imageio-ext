@@ -33,10 +33,10 @@ public class FileCacheTest extends TestCase {
 					.append(Integer.toString(i + 1)).append(
 							": Elapsed Time is ");
 
-			start = System.nanoTime();
+			start = System.currentTimeMillis();
 			file = fileCache.getFile(url);
-			end = System.nanoTime() - start;
-			LOGGER.info(sb.append(Long.toString(end)).append(" nanoseconds")
+			end = System.currentTimeMillis() - start;
+			LOGGER.info(sb.append(Long.toString(end)).append(" milliseconds")
 					.toString());
 		}
 
@@ -49,30 +49,30 @@ public class FileCacheTest extends TestCase {
 			sb = new StringBuffer("Attempt N° ")
 					.append(Integer.toString(i + 1)).append(
 							": Elapsed Time is ");
-			start = System.nanoTime();
+			start = System.currentTimeMillis();
 			file = fileCache.getFile(url2);
-			end = System.nanoTime() - start;
-			LOGGER.info(sb.append(Long.toString(end)).append(" nanoseconds")
+			end = System.currentTimeMillis() - start;
+			LOGGER.info(sb.append(Long.toString(end)).append(" milliseconds")
 					.toString());
 		}
 
 		/** getting again File from the first URL */
 		LOGGER.info(new StringBuffer("Getting again File from URL:").append(
 				url.toString()).toString());
-		start = System.nanoTime();
+		start = System.currentTimeMillis();
 		file = fileCache.getFile(url);
-		end = System.nanoTime() - start;
+		end = System.currentTimeMillis() - start;
 		LOGGER.info(new StringBuffer("Elapsed Time is ").append(
-				Long.toString(end)).append(" nanoseconds").toString());
+				Long.toString(end)).append(" milliseconds").toString());
 
 		/** getting again File from the second URL */
 		LOGGER.info(new StringBuffer("Getting again File from URL:").append(
 				url2.toString()).toString());
-		start = System.nanoTime();
+		start = System.currentTimeMillis();
 		file = fileCache.getFile(url2);
-		end = System.nanoTime() - start;
+		end = System.currentTimeMillis() - start;
 		LOGGER.info(new StringBuffer("Elapsed Time is ").append(
-				Long.toString(end)).append(" nanoseconds").toString());
+				Long.toString(end)).append(" milliseconds").toString());
 		LOGGER.info("now: Cleaning Cache");
 		fileCache.clear();
 
