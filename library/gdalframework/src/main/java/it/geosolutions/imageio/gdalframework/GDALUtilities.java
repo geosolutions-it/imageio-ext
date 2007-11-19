@@ -288,7 +288,7 @@ public class GDALUtilities {
 						break;
 					case IIOMetadataFormat.DATATYPE_BOOLEAN:
 						// check that we can parse it
-						Boolean.parseBoolean(value);
+						Boolean.valueOf(value);
 						break;
 					case IIOMetadataFormat.DATATYPE_STRING:
 						// do nothing
