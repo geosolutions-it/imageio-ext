@@ -142,7 +142,9 @@ public class GZIPImageInputStream extends InflaterImageInputStream {
 		// Uses left-to-right evaluation order
 		if ((readUInt(in) != crc.getValue()) ||
 		// rfc1952; ISIZE is the input size modulo 2^32
-				(readUInt(in) != (inf.getBytesWritten() & 0xffffffffL)))
+				// TODO: improve this test (getBytesWritten() method from 1.5
+				// should be preferred)
+				(readUInt(in) != (inf.getTotalOut() & 0xffffffffL)))
 			throw new IOException("Corrupt GZIP trailer");
 	}
 
@@ -198,7 +200,7 @@ public class GZIPImageInputStream extends InflaterImageInputStream {
 	private long readUInt(InputStream in) throws IOException {
 		long a = readUShort(in);
 		long b = readUShort(in);
-		return ((b&0xffff) << 16) | (a&0xffff);
+		return ((b & 0xffff) << 16) | (a & 0xffff);
 	}
 
 	/*
@@ -206,8 +208,8 @@ public class GZIPImageInputStream extends InflaterImageInputStream {
 	 */
 	private int readUShort(InputStream in) throws IOException {
 		int a = readUByte(in);
-		int b=readUByte(in);
-		return ( (b&0xff) << 8) | (a&0xff);
+		int b = readUByte(in);
+		return ((b & 0xff) << 8) | (a & 0xff);
 	}
 
 	/*
@@ -218,7 +220,7 @@ public class GZIPImageInputStream extends InflaterImageInputStream {
 		if (b == -1) {
 			throw new EOFException();
 		}
-		return b&0xff;
+		return b & 0xff;
 	}
 
 	/*
