@@ -60,10 +60,10 @@ import org.gdal.gdal.gdal;
 import org.gdal.gdalconst.gdalconstConstants;
 
 /**
- * Main abstract class defining the main framework which need to be used to
- * extend ImageIO architecture using GDAL (Geospatial Data Abstraction Layer)
- * SWIG (Simplified Wrapper and Interface Generator) bindings in order to
- * perform write operations.
+ * Main abstract class defining the main framework which needs to be used to
+ * extend Image I/O architecture using <a href="http://www.gdal.org/"> GDAL
+ * (Geospatial Data Abstraction Layer)</a> by means of SWIG (Simplified Wrapper
+ * and Interface Generator) bindings in order to perform write operations.
  * 
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
@@ -110,10 +110,10 @@ public abstract class GDALImageWriter extends ImageWriter {
 		super(originatingProvider);
 		spi = originatingProvider;
 		driver = getDriver();
-		if(driver==null)
-		{
-			if(LOGGER.isLoggable(Level.SEVERE))
-				LOGGER.severe("The requested driver is not avaiable, this ImageWriter may malfunction");
+		if (driver == null) {
+			if (LOGGER.isLoggable(Level.SEVERE))
+				LOGGER
+						.severe("The requested driver is not avaiable, this ImageWriter may malfunction");
 		}
 	}
 
@@ -131,12 +131,14 @@ public abstract class GDALImageWriter extends ImageWriter {
 		// parameters.
 		//
 		// /////////////////////////////////////////////////////////////////////
-		if (!((GDALImageWriterSpi)spi).isSupportingCreate() && !((GDALImageWriterSpi)spi).isSupportingCreateCopy())
+		if (!((GDALImageWriterSpi) spi).isSupportingCreate()
+				&& !((GDALImageWriterSpi) spi).isSupportingCreateCopy())
 			throw new IllegalStateException(
 					"This writer seems to not support either create or create copy");
-		if(image==null)
-			throw new IllegalArgumentException("The provided input image is invalid.");
-		
+		if (image == null)
+			throw new IllegalArgumentException(
+					"The provided input image is invalid.");
+
 		// Getting the source
 		final PlanarImage inputRenderedImage = PlanarImage
 				.wrapRenderedImage(image.getRenderedImage());
@@ -209,7 +211,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 		// create a new File from an existing Dataset.
 		//
 		// /////////////////////////////////////////////////////////////////////
-		if (((GDALImageWriterSpi)spi).isSupportingCreate()) {
+		if (((GDALImageWriterSpi) spi).isSupportingCreate()) {
 			// Retrieving the number of bands
 			final int nBands = inputRenderedImage.getNumBands();
 
@@ -228,7 +230,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 			GDALUtilities.closeDataSet(ds);
 
 			// TODO: Adding additional writing operation (CRS,metadata,...)
-		} else if (((GDALImageWriterSpi)spi).isSupportingCreateCopy()) {
+		} else if (((GDALImageWriterSpi) spi).isSupportingCreateCopy()) {
 
 			// //
 			// TODO: CHECK CRS & PROJECTIONS & ...
@@ -250,7 +252,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 			// /////////////////////////////////////////////////////////////////
 			Dataset sourceDataset = null;
 			Dataset writeDataset = null;
-			
+
 			RenderedImage ri = image.getRenderedImage();
 			// Getting the reader which read the coming image
 			ImageReader reader = (ImageReader) ri
@@ -260,10 +262,11 @@ public abstract class GDALImageWriter extends ImageWriter {
 			ImageReadParam readParam = (ImageReadParam) ri
 					.getProperty("JAI.ImageReadParam");
 
-			boolean isAgdalImageReader=false;
-			if (reader instanceof GDALImageReader){
-				sourceDataset = ((GDALImageReader)reader).getLastRecentlyUsedDataset();
-				isAgdalImageReader=true;
+			boolean isAgdalImageReader = false;
+			if (reader instanceof GDALImageReader) {
+				sourceDataset = ((GDALImageReader) reader)
+						.getLastRecentlyUsedDataset();
+				isAgdalImageReader = true;
 			}
 
 			// /////////////////////////////////////////////////////////////////
@@ -275,17 +278,17 @@ public abstract class GDALImageWriter extends ImageWriter {
 			// /////////////////////////////////////////////////////////////////
 			File tempFile = File.createTempFile("datasetTemp", ".ds", null);
 			if (isPreviousReadOperationParametrized(readParam)
-					||!isAgdalImageReader) {
+					|| !isAgdalImageReader) {
 				// create a Dataset from the originating image
 				final Dataset tempDataset = createDatasetFromImage(ri, tempFile
 						.getAbsolutePath());
-				if(isAgdalImageReader&&sourceDataset!=null){
+				if (isAgdalImageReader && sourceDataset != null) {
 					// Retrieving CRS and Projections from the original dataset
-						final String projection = sourceDataset.GetProjection();	
-						final double geoTransform[] = new double[6];
-						sourceDataset.GetGeoTransform(geoTransform);
-						tempDataset.SetGeoTransform(geoTransform);
-						tempDataset.SetProjection(projection);
+					final String projection = sourceDataset.GetProjection();
+					final double geoTransform[] = new double[6];
+					sourceDataset.GetGeoTransform(geoTransform);
+					tempDataset.SetGeoTransform(geoTransform);
+					tempDataset.SetProjection(projection);
 				}
 				writeDataset = driver.CreateCopy(outputFile.getPath(),
 						tempDataset, 0, myOptions);
@@ -298,8 +301,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 				writeDataset = driver.CreateCopy(outputFile.getPath(),
 						sourceDataset, 0, myOptions);
 			}
-			
-			
+
 			writeDataset.FlushCache();
 			GDALUtilities.closeDataSet(writeDataset);
 			tempFile.deleteOnExit();// TODO: Is needed?
@@ -576,15 +578,15 @@ public abstract class GDALImageWriter extends ImageWriter {
 
 	public IIOMetadata convertStreamMetadata(IIOMetadata inData,
 			ImageWriteParam param) {
-//		throw new UnsupportedOperationException(
-//				"convertStreamMetadata not implemented yet.");
+		// throw new UnsupportedOperationException(
+		// "convertStreamMetadata not implemented yet.");
 		return null;
 	}
 
 	public IIOMetadata convertImageMetadata(IIOMetadata inData,
 			ImageTypeSpecifier imageType, ImageWriteParam param) {
-//		throw new UnsupportedOperationException(
-//				"convertImageMetadata not implemented yet.");
+		// throw new UnsupportedOperationException(
+		// "convertImageMetadata not implemented yet.");
 		return null;
 	}
 
@@ -619,62 +621,62 @@ public abstract class GDALImageWriter extends ImageWriter {
 		}
 	}
 
-//	/**
-//	 * Check if the GDAL specific driver support the <code>Create</code>
-//	 * method.
-//	 * 
-//	 * @return <code>true</code> it the driver support <code>Create</code>
-//	 */
-//	
-//	public boolean isSupportingCreate() {
-//		final Vector metadata = driver.GetMetadata_List("");
-//		final Enumeration enumerate = metadata.elements();
-//		while (enumerate.hasMoreElements()) {
-//			String s = (String) enumerate.nextElement();
-//			int indexOfEqualSymbol = s.indexOf('=');
-//			if (indexOfEqualSymbol < 0)
-//				continue;
-//			final String sName = s.substring(0, indexOfEqualSymbol);
-//			if (sName == null || sName.length() == 0)
-//				continue;
-//			if (sName.equals("DCAP_CREATE")) {
-//				s = s.substring(indexOfEqualSymbol + 1, s.length());
-//				if (s.equalsIgnoreCase("FALSE"))
-//					return false;
-//				else
-//					return true;
-//			}
-//		}
-//		return false;
-//	}
-//
-//	/**
-//	 * Check if the GDAL specific driver support the <code>CreateCopy</code>
-//	 * method.
-//	 * 
-//	 * @return <code>true</code> it the driver support <code>CreateCopy</code>
-//	 */
-//	public boolean isSupportingCreateCopy() {
-//		final Vector metadata = driver.GetMetadata_List("");
-//		final Enumeration enumerate = metadata.elements();
-//		while (enumerate.hasMoreElements()) {
-//			final String s = (String) enumerate.nextElement();
-//			final int indexOfEqualSymbol = s.indexOf('=');
-//			if (indexOfEqualSymbol < 0)
-//				continue;
-//			final String sName = s.substring(0, indexOfEqualSymbol);
-//			if (sName == null || sName.length() == 0)
-//				continue;
-//			if (sName.equals("DCAP_CREATECOPY")) {
-//				if (s.substring(indexOfEqualSymbol + 1, s.length())
-//						.equalsIgnoreCase("FALSE"))
-//					return false;
-//				else
-//					return true;
-//			}
-//		}
-//		return false;
-//	}
+	// /**
+	// * Check if the GDAL specific driver support the <code>Create</code>
+	// * method.
+	// *
+	// * @return <code>true</code> it the driver support <code>Create</code>
+	// */
+	//	
+	// public boolean isSupportingCreate() {
+	// final Vector metadata = driver.GetMetadata_List("");
+	// final Enumeration enumerate = metadata.elements();
+	// while (enumerate.hasMoreElements()) {
+	// String s = (String) enumerate.nextElement();
+	// int indexOfEqualSymbol = s.indexOf('=');
+	// if (indexOfEqualSymbol < 0)
+	// continue;
+	// final String sName = s.substring(0, indexOfEqualSymbol);
+	// if (sName == null || sName.length() == 0)
+	// continue;
+	// if (sName.equals("DCAP_CREATE")) {
+	// s = s.substring(indexOfEqualSymbol + 1, s.length());
+	// if (s.equalsIgnoreCase("FALSE"))
+	// return false;
+	// else
+	// return true;
+	// }
+	// }
+	// return false;
+	// }
+	//
+	// /**
+	// * Check if the GDAL specific driver support the <code>CreateCopy</code>
+	// * method.
+	// *
+	// * @return <code>true</code> it the driver support <code>CreateCopy</code>
+	// */
+	// public boolean isSupportingCreateCopy() {
+	// final Vector metadata = driver.GetMetadata_List("");
+	// final Enumeration enumerate = metadata.elements();
+	// while (enumerate.hasMoreElements()) {
+	// final String s = (String) enumerate.nextElement();
+	// final int indexOfEqualSymbol = s.indexOf('=');
+	// if (indexOfEqualSymbol < 0)
+	// continue;
+	// final String sName = s.substring(0, indexOfEqualSymbol);
+	// if (sName == null || sName.length() == 0)
+	// continue;
+	// if (sName.equals("DCAP_CREATECOPY")) {
+	// if (s.substring(indexOfEqualSymbol + 1, s.length())
+	// .equalsIgnoreCase("FALSE"))
+	// return false;
+	// else
+	// return true;
+	// }
+	// }
+	// return false;
+	// }
 
 	public void write(IIOImage image) throws IOException {
 		write(null, image, null);
