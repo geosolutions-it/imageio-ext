@@ -18,13 +18,13 @@ package it.geosolutions.imageio.gdalframework;
 
 /**
  * Several GDAL format drivers allow to specify a set of options during the
- * creation of a file. <code>GDALCreateOption</code> class allows to represent
- * these creation options (properties as its name, its value,...) and it also
- * provides a set of methods to perform validity checks when users specify the
- * values for a create option.
+ * creation of a file. {@link GDALCreateOption} class allows to represent these
+ * creation options (properties as its name, its value,...) and it also provides
+ * a set of methods to perform validity checks when users specify the values for
+ * a create option.
  * 
- * @author Daniele Romagnoli
- * @author Simone Giannecchini
+ * @author Daniele Romagnoli, GeoSolutions
+ * @author Simone Giannecchini, GeoSolutions
  */
 public class GDALCreateOption {
 
@@ -36,8 +36,8 @@ public class GDALCreateOption {
 
 	/**
 	 * Values for create option need to be specified to GDAL as strings.
-	 * <code>representedValueType</code> allows to understand what kind of
-	 * data type the string is representing. This is needed for value coherency
+	 * <code>representedValueType</code> allows to understand what type of
+	 * data the string is representing. This is needed for value coherence
 	 * checks. As an instance, a create option accepting only one of "YES/NO"
 	 * values can't accept a value of 99, while a create option accepting an
 	 * integer value belonging [1-100] can't accept an "ENABLED" String value.
@@ -45,19 +45,25 @@ public class GDALCreateOption {
 	 * The actually supported values for this field are listed below as a
 	 * <code>public final static int</code> items list.
 	 */
-
 	private int representedValueType;
 
 	/**
+	 * ************************************************************************
+	 * 
 	 * supported <code>representedValueType</code> values.
+	 * 
+	 * ************************************************************************
 	 */
-
+	/** Tag for Integer Type */
 	public final static int TYPE_INT = 50;
 
+	/** Tag for Floating Point Type */
 	public final static int TYPE_FLOAT = 51;
 
+	/** Tag for Char Type */
 	public final static int TYPE_CHAR = 58;
 
+	/** Tag for String Type */
 	public final static int TYPE_STRING = 59;
 
 	/**
@@ -72,55 +78,85 @@ public class GDALCreateOption {
 	private int validityCheckType;
 
 	/**
+	 * ************************************************************************
+	 * 
 	 * supported validity check types
+	 * 
+	 * ************************************************************************
 	 */
+	/** Accepted value is a single one */
 	public final static int VALIDITYCHECKTYPE_VALUE = 0;
 
+	/** Accepted value is one of a set of predefined values */
 	public final static int VALIDITYCHECKTYPE_ONEOF = 1;
 
+	/**
+	 * Accepted values are a combination of values belonging a set of predefined
+	 * ones
+	 */
 	public final static int VALIDITYCHECKTYPE_COMBINATIONOF = 2;
 
+	/**
+	 * Accepted values are contained in a range, having the extremes included
+	 */
 	public final static int VALIDITYCHECKTYPE_VALUE_BELONGINGRANGE_EXTREMESINCLUDED = 10;
 
+	/**
+	 * Accepted values are contained in a range, having the left extreme
+	 * excluded.
+	 */
 	public final static int VALIDITYCHECKTYPE_VALUE_BELONGINGRANGE_LEFTEXCLUDED = 11;
 
+	/**
+	 * Accepted values are contained in a range, having the right extreme
+	 * excluded.
+	 */
 	public final static int VALIDITYCHECKTYPE_VALUE_BELONGINGRANGE_RIGHTEXCLUDED = 12;
 
+	/**
+	 * Accepted values are contained in a range, having the extremes excluded.
+	 */
 	public final static int VALIDITYCHECKTYPE_VALUE_BELONGINGRANGE_EXTREMESEXCLUDED = 19;
 
-	public final static int VALIDITYCHECKTYPE_VALUE_BELOWERTHAN = 21;
+	/** Accepted values are less than a predefined one */
+	public final static int VALIDITYCHECKTYPE_VALUE_LESSTHAN = 21;
 
-	public final static int VALIDITYCHECKTYPE_VALUE_BELOWEROREQUALTHAN = 22;
+	/** Accepted values are less than or equal to a predefined one */
+	public final static int VALIDITYCHECKTYPE_VALUE_LESSTHANOREQUALTO = 22;
 
-	public final static int VALIDITYCHECKTYPE_VALUE_GREATEROREQUALTHAN = 23;
+	/** Accepted values are greater than or equal to a predefined one */
+	public final static int VALIDITYCHECKTYPE_VALUE_GREATERTHANOREQUALTO = 23;
 
+	/** Accepted values are greater than a predefined one */
 	public final static int VALIDITYCHECKTYPE_VALUE_GREATERTHAN = 24;
 
+	/** Accepted values are strings which need to respect a predefined syntax */
 	public final static int VALIDITYCHECKTYPE_STRING_SYNTAX = 100;
 
+	/** Accepted values are anything */
 	public final static int VALIDITYCHECKTYPE_NONE = 9999;
 
 	/**
 	 * <code>validityValues</code> is an array of String representing the
-	 * control values will be used during value coherency checks in compliance
-	 * with <code>validityCheckType</code> field. <br />
+	 * control values will be used during value coherence checks in compliance
+	 * with <code>validityCheckType</code> field. <BR>
 	 * 
 	 * If validityCheckType is <code>VALIDITYCHECKTYPE_VALUE</code>, you need
-	 * to set the only supported value.<br />
+	 * to set the only supported value.<BR>
 	 * 
 	 * If validityCheckType is <code>VALIDITYCHECKTYPE_ONEOF</code> or
 	 * <code>VALIDITYCHECKTYPE_COMBINATIONOF</code>, you need to fill that
-	 * array with all supported values.<br />
+	 * array with all supported values.<BR>
 	 * 
 	 * If validityCheckType is
 	 * <code>VALIDITYCHECKTYPE_VALUE_BELONGINGRANGE_XXX</code>, you need to
 	 * set the two elements representing the extremes of that range.
 	 * 
-	 * If validityCheckType is one of <br />
-	 * <code>VALIDITYCHECKTYPE_VALUE_BELOWERTHAN</code>,
-	 * <code>VALIDITYCHECKTYPE_VALUE_BELOWEROREQUALTHAN</code>,
-	 * <code>VALIDITYCHECKTYPE_VALUE_GREATEROREQUALTHAN</code>,
-	 * <code>VALIDITYCHECKTYPE_VALUE_GREATERTHAN</code><br />
+	 * If validityCheckType is one of <BR>
+	 * <code>VALIDITYCHECKTYPE_VALUE_LESSTHAN</code>,
+	 * <code>VALIDITYCHECKTYPE_VALUE_LESSTHANOREQUALTO</code>,
+	 * <code>VALIDITYCHECKTYPE_VALUE_GREATERTHANOREQUALTO</code>,
+	 * <code>VALIDITYCHECKTYPE_VALUE_GREATERTHAN</code><BR>
 	 * you need to set the reference value.
 	 */
 	private String[] validityValues;
@@ -139,7 +175,7 @@ public class GDALCreateOption {
 	private String defaultValue; // Actually not used
 
 	/**
-	 * Constructor for a CreateOption.
+	 * Constructor for a <code>GDALCreateOption</code>.
 	 * 
 	 * @param optionName
 	 *            The name of the create option
@@ -170,6 +206,9 @@ public class GDALCreateOption {
 		return defaultValue;
 	}
 
+	/**
+	 * set the default value of the create option.
+	 */
 	public void setDefaultValue(String defaultValue) {
 		this.defaultValue = defaultValue;
 	}
@@ -183,42 +222,51 @@ public class GDALCreateOption {
 		return optionName;
 	}
 
+	/**
+	 * set the name of the create option.
+	 */
 	public void setOptionName(String optionName) {
 		this.optionName = optionName;
 	}
 
 	/**
-	 * returns <code>true</code> if the create option was set.
+	 * returns <code>true</code> if the create option has been set.
 	 * 
-	 * @return <code>true</code> if the create option was set.
+	 * @return <code>true</code> if the create option has been set.
 	 */
 	public boolean isSet() {
 		return set;
 	}
 
 	/**
-	 * returns the validty check type for the create option.
+	 * returns the validity check type for the create option.
 	 * 
-	 * @return returns the validty check type for the create option.
+	 * @return returns the validity check type for the create option.
 	 */
 	public int getValidityCheckType() {
 		return validityCheckType;
 	}
 
+	/**
+	 * set the validity check type for the create option.
+	 */
 	public void setValidityCheckType(int validityType) {
 		this.validityCheckType = validityType;
 	}
 
 	/**
-	 * returns the array containing the validty values for the create option.
+	 * returns the array containing the validity values for the create option.
 	 * 
-	 * @return returns the array containing the validty values for this create
+	 * @return returns the array containing the validity values for this create
 	 *         option.
 	 */
 	public String[] getValidityValues() {
 		return validityValues;
 	}
 
+	/**
+	 * set the array containing the validity values for the create option.
+	 */
 	public void setValidityValues(String[] validityValues) {
 		this.validityValues = validityValues;
 	}
@@ -239,13 +287,13 @@ public class GDALCreateOption {
 	 *            the value to set for the create option.
 	 */
 	public void setValue(String value) {
-		// Checking if the specified value is compliant with the constraints
+		// Checking if the specified value is complying with the constraints
 		// of this create option.
 		if (checkValidity(value)) {
 			this.value = value;
 			this.set = true;
 		} else {
-			// TODO: More understandable error messages (parametrized)
+			// TODO: More understandable error messages (parameterized)
 			StringBuffer sb = new StringBuffer(
 					"Error while setting value for create option ''").append(
 					optionName).append("''");
@@ -256,32 +304,50 @@ public class GDALCreateOption {
 	/**
 	 * Checks if the provided value is acceptable for this create option. As an
 	 * instance, for a create option which accepts values belonging the range
-	 * [1-100], the value ''ENABLED'' is obviously unapcetted and the method
+	 * [1-100], the value ''ENABLED'' is obviously unaccepted and the method
 	 * returns <code>false</code>
 	 * 
 	 * @param checkingValue
 	 *            the value need to be checked.
-	 * @return <code>true</code> if the specified value is compliant with this
+	 * @return <code>true</code> if the specified value is complying with this
 	 *         create option.
 	 */
 	private boolean checkValidity(String checkingValue) {
 		switch (validityCheckType) {
+		// //
+		// 
 		// No validity check is required for this option
+		//
+		// //
 		case VALIDITYCHECKTYPE_NONE:
 			return true;
+			// //
+			// 
 			// The specified value must be the only one value, supported by this
 			// option
+			//
+			// //
 		case VALIDITYCHECKTYPE_VALUE:
 			return checkValueIs(checkingValue);
-
-			// The specified value must be only one of a pre-established set.
+			// //
+			// 
+			// The specified value must be only one of a predefined set.
+			//
+			// //
 		case VALIDITYCHECKTYPE_ONEOF:
 			return checkOneOf(checkingValue);
-
+			// //
+			// 
+			// The specified value must be one or more of a predefined set.
+			//
+			// //
 		case VALIDITYCHECKTYPE_COMBINATIONOF:
 			return checkCombinationOf(checkingValue);
-
-			// The specified value must belonge to a pre-established range.
+			// //
+			// 
+			// The specified value must belong to a predefined range.
+			//
+			// //
 		case VALIDITYCHECKTYPE_VALUE_BELONGINGRANGE_EXTREMESEXCLUDED:
 		case VALIDITYCHECKTYPE_VALUE_BELONGINGRANGE_EXTREMESINCLUDED:
 		case VALIDITYCHECKTYPE_VALUE_BELONGINGRANGE_LEFTEXCLUDED:
@@ -293,11 +359,14 @@ public class GDALCreateOption {
 				return checkFloatRange(checkingValue);
 			}
 			break;
-
+		// //
+		// 
 		// The specified value must be compared to a reference value.
-		case VALIDITYCHECKTYPE_VALUE_BELOWEROREQUALTHAN:
-		case VALIDITYCHECKTYPE_VALUE_BELOWERTHAN:
-		case VALIDITYCHECKTYPE_VALUE_GREATEROREQUALTHAN:
+		//
+		// //
+		case VALIDITYCHECKTYPE_VALUE_LESSTHANOREQUALTO:
+		case VALIDITYCHECKTYPE_VALUE_LESSTHAN:
+		case VALIDITYCHECKTYPE_VALUE_GREATERTHANOREQUALTO:
 		case VALIDITYCHECKTYPE_VALUE_GREATERTHAN:
 			switch (representedValueType) {
 			case TYPE_INT:
@@ -306,9 +375,12 @@ public class GDALCreateOption {
 				return checkFloatValue(checkingValue);
 			}
 			break;
-
-		// The specified value is a String which must respect a pre-established
+		// //
+		// 
+		// The specified value is a String which must respect a predefined
 		// syntax
+		//
+		// //
 		case VALIDITYCHECKTYPE_STRING_SYNTAX:
 			return checkStringSyntaxCompliance(checkingValue);
 		}
@@ -334,22 +406,22 @@ public class GDALCreateOption {
 
 	/**
 	 * Checks if the specified <code>String</code> respects the syntax of the
-	 * value which the create option accepts.<BR />
+	 * value which the create option accepts.<BR>
 	 * 
-	 * How to intialize the <code>validityValues</code> array when setting
+	 * How to initialize the <code>validityValues</code> array when setting
 	 * <code>VALIDITYCHECKTYPE_STRING_SYNTAX</code> as
-	 * <code>validityCheckType</code>? <BR />
+	 * <code>validityCheckType</code>? <BR>
 	 * 
 	 * You need to build <code>validityValues</code> array with 1
-	 * <code>String</code>.<BR />
+	 * <code>String</code>.<BR>
 	 * 
 	 * <code>validityValues[0]</code> need to be set with a
 	 * <code>String</code> containing the tokens which separate the items in
-	 * the String syntax.<BR />
+	 * the String syntax.<BR>
 	 * 
-	 * Let us provide a simple example to clarify these explainations.<BR />
+	 * Let us provide a simple example to clarify these explanations.<BR>
 	 * Suppose a driver allows to specify the 'DATE' create option which has the
-	 * syntax "D/M/Y-H:M:S".<BR />
+	 * syntax "D/M/Y-H:M:S".<BR>
 	 * 
 	 * In such a case, you need to do: validityValues[0]="//-::"
 	 * 
@@ -359,27 +431,15 @@ public class GDALCreateOption {
 	 * @return <code>true</code> if the specified value respects the syntax.
 	 */
 	private boolean checkStringSyntaxCompliance(String checkingValue) {
-
+		// TODO: This method should be improved (more powerful checks)
 		final int expectedTokensNumber = validityValues[0].length();
 		char token[] = validityValues[0].toCharArray();
 		final int checkingStringLength = checkingValue.length();
 		int tokenPoisitions[] = new int[expectedTokensNumber];
 		int tokenPosition = -1;
 		int tokensFound = 0;
-		int firstTokenPosition = 0;
 		for (int i = 0; i < expectedTokensNumber; i++) {
 			tokenPosition = checkingValue.indexOf(token[i], tokenPosition + 1);
-
-			// It is worth to point out that tokens separate values.
-			// So, if the first char of the checked String is a token, the
-			// syntax was not respected, since at least the first char should be
-			// a value instead of a token.
-			if (i == 0) {
-				firstTokenPosition = tokenPosition;
-				// if (firstTokenPosition == 0)
-				// return false;
-			}
-
 			// each time I find a token, increase the number of found tokens.
 			if (tokenPosition != -1)
 				tokensFound++;
@@ -388,7 +448,7 @@ public class GDALCreateOption {
 			tokenPoisitions[i] = tokenPosition;
 		}
 		// At the end of the loop we need to check 3 cases:
-		// 1st) the number of tokens found can't be belower than the number of
+		// 1st) the number of tokens found can't be less than the number of
 		// expected tokens.
 		if (tokensFound < expectedTokensNumber)
 			return false;
@@ -406,11 +466,11 @@ public class GDALCreateOption {
 
 	/**
 	 * Check if the integer value represented by the input <code>String</code>
-	 * is compliant with the range of the accepted values for the create option
+	 * is complying with the range of the accepted values for the create option
 	 * 
 	 * @param checkingValue
 	 *            the string representing the integer value need to be checked.
-	 * @return <code>true</code> if the specified value is compliant with the
+	 * @return <code>true</code> if the specified value is complying with the
 	 *         range of the accepted values.
 	 */
 	private boolean checkIntRange(String checkingValue) {
@@ -443,11 +503,11 @@ public class GDALCreateOption {
 
 	/**
 	 * Check if the integer value represented by the input <code>String</code>
-	 * is compliant with the reference value.
+	 * is complying with the reference value.
 	 * 
 	 * @param checkingValue
 	 *            the string representing the integer value need to be checked
-	 * @return <code>true</code> if the provided value is compliant with the
+	 * @return <code>true</code> if the provided value is complying with the
 	 *         reference value
 	 */
 	private boolean checkIntValue(String checkingValue) {
@@ -455,17 +515,17 @@ public class GDALCreateOption {
 		final int parsedValue = Integer.parseInt(checkingValue);
 
 		switch (validityCheckType) {
-		case VALIDITYCHECKTYPE_VALUE_BELOWEROREQUALTHAN:
+		case VALIDITYCHECKTYPE_VALUE_LESSTHANOREQUALTO:
 			if (parsedValue <= limit)
 				return true;
 			break;
 
-		case VALIDITYCHECKTYPE_VALUE_BELOWERTHAN:
+		case VALIDITYCHECKTYPE_VALUE_LESSTHAN:
 			if (parsedValue < limit)
 				return true;
 			break;
 
-		case VALIDITYCHECKTYPE_VALUE_GREATEROREQUALTHAN:
+		case VALIDITYCHECKTYPE_VALUE_GREATERTHANOREQUALTO:
 			if (parsedValue >= limit)
 				return true;
 			break;
@@ -480,11 +540,11 @@ public class GDALCreateOption {
 
 	/**
 	 * Check if the float value represented by the input <code>String</code>
-	 * is compliant with the range of the accepted values for the create option
+	 * is complying with the range of the accepted values for the create option
 	 * 
 	 * @param checkingValue
 	 *            the string representing the float value need to be checked.
-	 * @return <code>true</code> if the specified value is compliant with the
+	 * @return <code>true</code> if the specified value is complying with the
 	 *         range of the accepted values.
 	 */
 	private boolean checkFloatRange(String checkingValue) {
@@ -517,11 +577,11 @@ public class GDALCreateOption {
 
 	/**
 	 * Check if the float value represented by the input <code>String</code>
-	 * is compliant with the reference value.
+	 * is complying with the reference value.
 	 * 
 	 * @param checkingValue
 	 *            the string representing the float value need to be checked
-	 * @return <code>true</code> if the provided value is compliant with the
+	 * @return <code>true</code> if the provided value is complying with the
 	 *         reference value
 	 */
 	private boolean checkFloatValue(String checkingValue) {
@@ -529,17 +589,17 @@ public class GDALCreateOption {
 		final float parsedValue = Float.parseFloat(checkingValue);
 
 		switch (validityCheckType) {
-		case VALIDITYCHECKTYPE_VALUE_BELOWEROREQUALTHAN:
+		case VALIDITYCHECKTYPE_VALUE_LESSTHANOREQUALTO:
 			if (parsedValue <= limit)
 				return true;
 			break;
 
-		case VALIDITYCHECKTYPE_VALUE_BELOWERTHAN:
+		case VALIDITYCHECKTYPE_VALUE_LESSTHAN:
 			if (parsedValue < limit)
 				return true;
 			break;
 
-		case VALIDITYCHECKTYPE_VALUE_GREATEROREQUALTHAN:
+		case VALIDITYCHECKTYPE_VALUE_GREATERTHANOREQUALTO:
 			if (parsedValue >= limit)
 				return true;
 			break;
@@ -566,7 +626,6 @@ public class GDALCreateOption {
 				return true;
 		}
 		return false;
-
 	}
 
 	/**
@@ -588,7 +647,7 @@ public class GDALCreateOption {
 		final String[] values = checkingValues.split("\\|");
 		final int numSpecifiedValues = values.length;
 
-		// preliminar check: no value repetitions are allowed.
+		// preliminary check: no value repetitions are allowed.
 		for (int l = 0; l < numSpecifiedValues; l++) {
 			final String comparingString = values[l];
 			for (int k = l + 1; k < numSpecifiedValues; k++) {
@@ -618,11 +677,19 @@ public class GDALCreateOption {
 		return true;
 	}
 
+	/**
+	 * return the type of the represented value
+	 * 
+	 * @return the type of the represented value
+	 */
 	public int getRepresentedValueType() {
 		return representedValueType;
 	}
 
-	public void setRepresentedValueType(int representedValueType) {
+	/**
+	 * set the type of the represented value
+	 */
+	public void setRepresentedValueType(final int representedValueType) {
 		this.representedValueType = representedValueType;
 	}
 

@@ -22,10 +22,17 @@ import javax.imageio.metadata.IIOMetadataNode;
 
 import org.w3c.dom.Node;
 
+/**
+ * Class representing common stream metadata returned by a
+ * {@link GDALImageReader}
+ * 
+ * @author Simone Giannecchini, GeoSolutions.
+ * @author Daniele Romagnoli, GeoSolutions.
+ */
 public class GDALCommonIIOStreamMetadata extends IIOMetadata {
 
 	// package scope
-	public static final String nativeMetadataFormatName = "org_gdal_imageio_common_stream_metadata_1.0";
+	public static final String nativeMetadataFormatName = "it.geosolutions.imageio.gdalframework.commonStreamMetadata_1.0";
 
 	public static final String nativeMetadataFormatClassName = "it.geosolutions.imageio.gdalframework.GDALCommonIIOStreamMetadata";
 
@@ -58,8 +65,6 @@ public class GDALCommonIIOStreamMetadata extends IIOMetadata {
 			dataSetNode.setAttribute("name", datasetNames[i]);
 			dataSetsNode.appendChild(dataSetNode);
 		}
-
-		
 		return root;
 	}
 

@@ -73,10 +73,10 @@ import org.gdal.gdalconst.gdalconstConstants;
 import com.sun.media.imageioimpl.common.ImageUtil;
 
 /**
- * Main abstract class defining the main framework which need to be used to
- * extend ImageIO architecture using GDAL (Geospatial Data Abstraction Layer)
- * SWIG (Simplified Wrapper and Interface Generator) bindings in order to
- * perform read operations.
+ * Main abstract class defining the main framework which needs to be used to
+ * extend Image I/O architecture using <a href="http://www.gdal.org/"> GDAL
+ * (Geospatial Data Abstraction Layer)</a> by means of SWIG (Simplified Wrapper
+ * and Interface Generator) bindings in order to perform read operations.
  * 
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
@@ -120,7 +120,7 @@ public abstract class GDALImageReader extends ImageReader {
 	/** Hashmap containing couples (datasetName, GDALDatasetWrapper). */
 	protected Map datasetMap = Collections.synchronizedMap(new HashMap(10));
 
-	/** Inner Class used to store dataset useful information for later usage */
+	/** Inner class used to store dataset useful information for later usage */
 	public class GDALDatasetWrapper {
 
 		// //////////////////////////////////////////////////////////////////////////////////
@@ -129,16 +129,28 @@ public abstract class GDALImageReader extends ImageReader {
 		// 
 		// //////////////////////////////////////////////////////////////////////////////////
 
+		/**
+		 * the name of the driver which has opened the dataset held by this
+		 * wrapper.
+		 */
 		protected String driverName;
 
+		/**
+		 * The description of the driver which has opened the dataset held by
+		 * this wrapper.
+		 */
 		protected String driverDescription;
 
+		/** The dataset name */
+		protected String datasetName;
+
+		/** The dataset description */
 		protected String datasetDescription;
 
-		/** gridToWorld transformation. */
+		/** The grid to world transformation. */
 		protected double[] geoTransformation = new double[6];
 
-		/** Data set projection. */
+		/** The data set projection. */
 		protected String projection;
 
 		/** The number of Ground Control Points */
@@ -150,25 +162,22 @@ public abstract class GDALImageReader extends ImageReader {
 		/** The list of Ground Control Points */
 		protected List gcps;
 
-		/** Raster Width */
+		/** The raster width */
 		protected int width;
 
-		/** Raster Height */
+		/** The raster height */
 		protected int height;
 
-		/** Raster Tile Height */
+		/** The raster tile height */
 		protected int tileHeight;
 
-		/** Raster Tile Width */
+		/** The raster tile width */
 		protected int tileWidth;
 
-		/** Dataset Name */
-		protected String datasetName;
-
-		/** ColorModel used for this Dataset */
+		/** The <code>ColorModel</code> used for the dataset */
 		protected ColorModel colorModel;
 
-		/** SampleModel used for this Dataset */
+		/** The <code>SampleModel</code> used for the dataset */
 		protected SampleModel sampleModel;
 
 		// ////////////////////////////////////////////////
@@ -216,34 +225,48 @@ public abstract class GDALImageReader extends ImageReader {
 			this(GDALUtilities.acquireDataSet(sDatasetName,
 					gdalconst.GA_ReadOnly), sDatasetName);
 		}
-		
-		public GDALDatasetWrapper(Dataset ds, String name, final boolean initializationRequired) {
+
+		/**
+		 * <code>GDALDatasetWrapper</code> constructor.
+		 * 
+		 * @param dataset
+		 *            the input <code>Dataset</code> on which build the
+		 *            wrapper.
+		 * @param name
+		 *            the name to be set for the dataset contained on this
+		 *            wrapper.
+		 * @param initializationRequired
+		 *            specify if initializing wrapper members is required or
+		 *            not.
+		 */
+		public GDALDatasetWrapper(Dataset dataset, String name,
+				final boolean initializationRequired) {
 			datasetName = name;
-			datasetDescription = ds.GetDescription();
-			driverDescription = ds.GetDriver().GetDescription();
-			driverName = ds.GetDriver().getShortName();
+			datasetDescription = dataset.GetDescription();
+			driverDescription = dataset.GetDriver().GetDescription();
+			driverName = dataset.GetDriver().getShortName();
 			if (initializationRequired)
-				setMembers(ds);
-			setGeoreferencingInfo(ds);
+				setMembers(dataset);
+			setGeoreferencingInfo(dataset);
 			// clean up data set in order to avoid keeping them around for a lot
 			// of time.
-			GDALUtilities.closeDataSet(ds);
+			GDALUtilities.closeDataSet(dataset);
 		}
-		
+
 		/**
 		 * Constructor which initializes fields by retrieving properties such as
 		 * raster size, raster tiling properties, projection, and more from a
 		 * given input <code>Dataset</code>.
 		 * 
-		 * @param ds
+		 * @param dataset
 		 *            the <code>Dataset</code> used to initialize all
 		 *            {@link GDALDatasetWrapper}'s fields.
 		 * @param name
 		 *            the dataset name
 		 */
-		public GDALDatasetWrapper(Dataset ds, String name) {
-			this (ds,name,true);
-			
+		public GDALDatasetWrapper(Dataset dataset, String name) {
+			this(dataset, name, true);
+
 		}
 
 		/**
@@ -281,8 +304,8 @@ public abstract class GDALImageReader extends ImageReader {
 			bandsNumber = dataset.getRasterCount();
 			if (bandsNumber <= 0)
 				return false;
-//			final int xsize = dataset.getRasterXSize();
-//			final int ysize = dataset.getRasterYSize();
+			// final int xsize = dataset.getRasterXSize();
+			// final int ysize = dataset.getRasterYSize();
 
 			// If the image is very big, its size expressed as the number of
 			// bytes needed to store pixels, may be a negative number
@@ -366,12 +389,12 @@ public abstract class GDALImageReader extends ImageReader {
 			// model. It will work!
 			// //
 			if (tileSize < 0)
-				sampleModel = new BandedSampleModel(buffer_type, tileWidth, tileHeight,
-						tileWidth, banks, offsetsR);
+				sampleModel = new BandedSampleModel(buffer_type, tileWidth,
+						tileHeight, tileWidth, banks, offsetsR);
 			else
 				sampleModel = new PixelInterleavedSampleModel(buffer_type,
-						tileWidth, tileHeight, bandsNumber, tileWidth * bandsNumber,
-						bandsOffset);
+						tileWidth, tileHeight, bandsNumber, tileWidth
+								* bandsNumber, bandsOffset);
 
 			// //
 			//
@@ -463,7 +486,6 @@ public abstract class GDALImageReader extends ImageReader {
 		 * make tiles a little bit greater than just a single line of pixels.
 		 * 
 		 * @param dataset
-		 * 
 		 */
 		private void performTileSizeTuning(Dataset dataset) {
 			final int width = dataset.getRasterXSize();
@@ -478,10 +500,18 @@ public abstract class GDALImageReader extends ImageReader {
 		// Simple Set of getters
 		// ////////////////////////////////////////////////////////////////////
 
+		/**
+		 * return the <code>ColorModel</code> for the dataset held by this
+		 * wrapper.
+		 */
 		public final ColorModel getColorModel() {
 			return colorModel;
 		}
 
+		/**
+		 * Get the Image metadata available for the dataset held by this
+		 * wrapper.
+		 */
 		public synchronized IIOMetadata getImageIOMetadata() {
 			if (iioMetadata == null) {
 				iioMetadata = getIIOImageMetadata(this);
@@ -489,38 +519,68 @@ public abstract class GDALImageReader extends ImageReader {
 			return iioMetadata;
 		}
 
+		/**
+		 * return the name of the dataset held by this wrapper.
+		 */
 		public final String getDatasetName() {
 			return datasetName;
 		}
 
-		public final int getHeight() {
-			return height;
-		}
-
+		/**
+		 * return the <code>SampleModel</code> for the dataset held by this
+		 * wrapper.
+		 */
 		public final SampleModel getSampleModel() {
 			return sampleModel;
 		}
 
+		/**
+		 * return the tile height of the raster held by this wrapper.
+		 */
 		public final int getTileHeight() {
 			return tileHeight;
 		}
 
+		/**
+		 * return the tile width of the raster held by this wrapper.
+		 */
 		public final int getTileWidth() {
 			return tileWidth;
 		}
 
+		/**
+		 * return the width of the raster held by this wrapper.
+		 */
 		public final int getWidth() {
 			return width;
 		}
 
-		public final double[] getGeoTransformation() {
-			return geoTransformation;
+		/**
+		 * return the height of the raster held by this wrapper.
+		 */
+		public final int getHeight() {
+			return height;
 		}
 
+		/**
+		 * return the number of bands of the raster held by this wrapper.
+		 */
 		public final int getBandsNumber() {
 			return bandsNumber;
 		}
 
+		/**
+		 * return the grid to world transformation for the dataset held by this
+		 * wrapper.
+		 */
+		public final double[] getGeoTransformation() {
+			return geoTransformation;
+		}
+
+		/**
+		 * return the number of Ground Control Points for the dataset held by
+		 * this wrapper.
+		 */
 		public final int getGcpNumber() {
 			return gcpNumber;
 		}
@@ -545,14 +605,19 @@ public abstract class GDALImageReader extends ImageReader {
 			return scales;
 		}
 
+		/**
+		 * return the Ground Control Point's projection.
+		 */
 		public String getGcpProjection() {
 			return gcpProjection;
 		}
 
+		/** return the driver name */
 		public final String getDrivername() {
 			return driverName;
 		}
 
+		/** return a list of Ground Control Points for the datase */
 		public synchronized final List getGcps() {
 			if (gcps == null) {
 				gcps = new Vector(gcpNumber);
@@ -569,10 +634,12 @@ public abstract class GDALImageReader extends ImageReader {
 			return noDataValues;
 		}
 
+		/** return the driver description */
 		public final String getDriverDescription() {
 			return driverDescription;
 		}
 
+		/** return the dataset description */
 		public final String getDatasetDescription() {
 			return datasetDescription;
 		}
@@ -612,6 +679,10 @@ public abstract class GDALImageReader extends ImageReader {
 		}
 	}
 
+	/**
+	 * Provide a proper <code>IIOMetadata</code> object for the specified
+	 * {@link GDALDatasetWrapper}
+	 */
 	protected abstract IIOMetadata getIIOImageMetadata(
 			GDALDatasetWrapper wrapper);
 
@@ -764,7 +835,8 @@ public abstract class GDALImageReader extends ImageReader {
 	}
 
 	/**
-	 * Initializes the <code>GDALImageReader<code>
+	 * Initializes the
+	 * <code>GDALImageReader<code> and return <code>true</code> if the source of this reader contains several subdatasets.
 	 * 
 	 * @return <code>true</code> if the source of this reader has several 
 	 * subDatasets.
@@ -825,7 +897,8 @@ public abstract class GDALImageReader extends ImageReader {
 						datasetNames[i] = subdatasetName.substring(nameStartAt);
 					}
 					datasetNames[nSubdatasets] = mainDatasetFileName;
-					datasetMap.put(mainDatasetFileName, createDataSetWrapper(mainDataset, mainDatasetFileName));
+					datasetMap.put(mainDatasetFileName, createDataSetWrapper(
+							mainDataset, mainDatasetFileName));
 					subdatasets.clear();
 				}
 				isInitialized = true;
@@ -835,8 +908,19 @@ public abstract class GDALImageReader extends ImageReader {
 		return nSubdatasets > 0;
 	}
 
-	protected abstract GDALDatasetWrapper createDataSetWrapper(String string);
+	/**
+	 * Build a proper {@link GDALDatasetWrapper} given the name of a dataset
+	 * 
+	 * @param datasetName
+	 *            the name of the dataset
+	 */
+	protected abstract GDALDatasetWrapper createDataSetWrapper(
+			String datasetName);
 
+	/**
+	 * Build a proper {@link GDALDatasetWrapper} given an input dataset as well
+	 * as the file name containing such a dataset
+	 */
 	protected abstract GDALDatasetWrapper createDataSetWrapper(
 			Dataset mainDataset, String mainDatasetFileName);
 
@@ -1205,16 +1289,12 @@ public abstract class GDALImageReader extends ImageReader {
 		if (LOGGER.isLoggable(Level.FINE))
 			LOGGER.fine((new Integer(GDALUtilities.getCacheUsed())).toString());
 
-		// //
 		// ////////////////////////////////////////////////////////////////////
-		// //
-		// //
+		//
 		// -------------------------------------------------------------------
-		// // Raster Creation >>> Step 4: Setting SampleModel
-		// //
+		// Raster Creation >>> Step 4: Setting SampleModel
 		// -------------------------------------------------------------------
-		// //
-		// //
+		//
 		// ////////////////////////////////////////////////////////////////////
 		if (splitBands)
 			sampleModel = new BandedSampleModel(dataBufferType, dstWidth,
@@ -1283,6 +1363,11 @@ public abstract class GDALImageReader extends ImageReader {
 		if (input == null)
 			throw new NullPointerException("The provided input is null!");
 
+		// //
+		//
+		// File input
+		//
+		// //
 		if (input instanceof File) {
 			datasetSource = (File) input;
 			try {
@@ -1291,11 +1376,22 @@ public abstract class GDALImageReader extends ImageReader {
 			} catch (IOException e) {
 				throw new RuntimeException("Not a Valid Input", e);
 			}
-		} else if (input instanceof FileImageInputStreamExt) {
+		}
+		// //
+		//
+		// FileImageInputStreamExt input
+		//
+		// //
+		else if (input instanceof FileImageInputStreamExt) {
 			datasetSource = ((FileImageInputStreamExt) input).getFile();
 			imageInputStream = (ImageInputStream) input;
-
-		} else if (input instanceof URL) {
+		}
+		// //
+		//
+		// URL input
+		//
+		// //
+		else if (input instanceof URL) {
 			final URL tempURL = (URL) input;
 			if (tempURL.getProtocol().equalsIgnoreCase("file")) {
 

@@ -35,10 +35,10 @@ import org.gdal.gdal.gdal;
 import org.gdal.gdalconst.gdalconst;
 
 /**
- * The abstract service provider interface (SPI) for
- * <code>GDALImageReader</code>s.
+ * The abstract service provider interface (SPI) for {@link GDALImageReader}s.
  * 
  * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions.
  */
 
 public abstract class GDALImageReaderSpi extends ImageReaderSpi {
@@ -81,7 +81,6 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
 	 * instance: "HDF4;HDF4Image"
 	 * 
 	 */
-
 	protected abstract String getSupportedFormats();
 
 	private static final Logger LOGGER = Logger
@@ -138,14 +137,33 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
 	}
 
 	/**
-	 * If the ImageReader's supported format supports subdatasets, the method
-	 * needs to return <code>true</code>.
+	 * In case the specific {@link GDALImageReader}'s implementation supports
+	 * subdatasets, this method return <code>true</code>.
+	 * 
+	 * @return <code>true</code> in case the specific format supports
+	 *         subdatasets
+	 * 
+	 * NOTE: When defining a specific {@link GDALImageReaderSpi} implementation,
+	 * be sure you properly initialize this field in the SPI constructor,
+	 * depending on the capabilities of the format for which you are
+	 * implementing the new class.
 	 */
 	public boolean supportsSubdatasets() {
 		return supportsSubDataSets;
 	}
 
-	/** If you want to perform tuning on tile sizes, return <code>true</code>. */
+	/**
+	 * In case the {@link GDALImageReader}'s implementation for a specific
+	 * format requires tile tuning, this method return <code>true</code>.
+	 * 
+	 * @return <code>true</code> in case the {@link GDALImageReader}'s
+	 *         implementation for a specific format requires tile tuning.
+	 * 
+	 * NOTE: When defining a specific {@link GDALImageReaderSpi} implementation,
+	 * be sure you properly initialize this field in the SPI constructor,
+	 * depending on the capabilities of the format for which you are
+	 * implementing the new class.
+	 */
 	public boolean needsTilesTuning() {
 		return needsTileTuning;
 	}

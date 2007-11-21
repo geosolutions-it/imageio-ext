@@ -29,7 +29,7 @@ import org.gdal.gdal.Dataset;
 
 /**
  * {@link HDF4ImageReader} is a {@link GDALImageReader} able to create
- * {@link RenderedImage} from ECW files.
+ * {@link RenderedImage} from HDF4 files.
  * 
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.

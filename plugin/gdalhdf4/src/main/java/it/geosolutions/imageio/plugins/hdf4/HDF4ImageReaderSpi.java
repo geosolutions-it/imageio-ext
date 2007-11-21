@@ -26,7 +26,7 @@ import java.util.Locale;
 import javax.imageio.ImageReader;
 
 /**
- * Service provider interface for the HDF4 Datases
+ * Service provider interface for the HDF4 Datasets
  * 
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.

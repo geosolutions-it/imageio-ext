@@ -20,6 +20,10 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadataFormat;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
 
+/**
+ * @author Daniele Romagnoli, GeoSolutions
+ * @author Simone Giannecchini, GeoSolutions
+ */
 public class GDALCommonIIOImageMetadataFormat extends IIOMetadataFormatImpl implements
 		IIOMetadataFormat {
 

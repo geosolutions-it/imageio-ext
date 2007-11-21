@@ -30,21 +30,25 @@ import org.gdal.gdal.GCP;
 import org.w3c.dom.Node;
 
 /**
- * Class representing common image metadata
+ * Class representing common image metadata returned by a
+ * {@link GDALImageReader}
  * 
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
  */
 public class GDALCommonIIOImageMetadata extends IIOMetadata {
-	public static final String nativeMetadataFormatName = "org_gdal_imageio_common_image_metadata_1.0";
+	public static final String nativeMetadataFormatName = "it.geosolutions.imageio.gdalframework.commonImageMetadata_1.0";
 
 	public static final String nativeMetadataFormatClassName = "it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadataFormat";
 
+	/**
+	 * The internal {@link GDALDatasetWrapper} from which information will be
+	 * retrieved in order to expose metadata
+	 */
 	protected GDALDatasetWrapper dsWrapper;
 
 	public GDALCommonIIOImageMetadata(final GDALDatasetWrapper ds) {
-		this(ds, nativeMetadataFormatName,
-				nativeMetadataFormatClassName);
+		this(ds, nativeMetadataFormatName, nativeMetadataFormatClassName);
 	}
 
 	public GDALCommonIIOImageMetadata(final GDALDatasetWrapper ds,
@@ -58,7 +62,11 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 		final IIOMetadataNode root = new IIOMetadataNode(
 				nativeMetadataFormatName);
 
+		// ////////////////////////////////////////////////////////////////////
+		//
 		// DatasetDescriptor
+		//
+		// ////////////////////////////////////////////////////////////////////
 		IIOMetadataNode node = new IIOMetadataNode("DatasetDescriptor");
 		node.setAttribute("name", dsWrapper.getDatasetName());
 		node.setAttribute("description", dsWrapper.getDatasetDescription());
@@ -73,7 +81,11 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 		node.setAttribute("gcpProjection", dsWrapper.getGcpProjection());
 		root.appendChild(node);
 
+		// ////////////////////////////////////////////////////////////////////
+		//
 		// RasterDimensions
+		//
+		// ////////////////////////////////////////////////////////////////////
 		node = new IIOMetadataNode("RasterDimensions");
 		node.setAttribute("width", Integer.toString(dsWrapper.getWidth()));
 		node.setAttribute("height", Integer.toString(dsWrapper.getHeight()));
@@ -85,7 +97,11 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 				.getBandsNumber()));
 		root.appendChild(node);
 
+		// ////////////////////////////////////////////////////////////////////
+		//
 		// GeoTransform
+		//
+		// ////////////////////////////////////////////////////////////////////
 		node = new IIOMetadataNode("GeoTransform");
 		final double[] geotransform = dsWrapper.getGeoTransformation();
 		final boolean hasgeoTransform = geotransform != null
@@ -104,7 +120,11 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 				.toString(geotransform[5]) : null);
 		root.appendChild(node);
 
+		// ////////////////////////////////////////////////////////////////////
+		//
 		// GCPS
+		//
+		// ////////////////////////////////////////////////////////////////////
 		final int gcpNumber = dsWrapper.getGcpNumber();
 		if (gcpNumber > 0) {
 			IIOMetadataNode nodeGCPs = new IIOMetadataNode("GCPS");
@@ -125,7 +145,11 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 			root.appendChild(nodeGCPs);
 		}
 
-		// BandInfo
+		// ////////////////////////////////////////////////////////////////////
+		//
+		// BandsInfo
+		//
+		// ////////////////////////////////////////////////////////////////////
 		final int numBand = dsWrapper.getBandsNumber();
 		IIOMetadataNode bandsNode = new IIOMetadataNode("BandsInfo");
 		for (int i = 0; i < numBand; i++) {
@@ -154,7 +178,11 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 			bandsNode.appendChild(node);
 		}
 
+		// ////////////////////////////////////////////////////////////////////
+		//
 		// BandInfos -> BandInfo -> ColorTable
+		//
+		// ////////////////////////////////////////////////////////////////////
 		if (dsWrapper.getColorModel() instanceof IndexColorModel) {
 			final IndexColorModel icm = (IndexColorModel) dsWrapper
 					.getColorModel();
@@ -167,7 +195,8 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 			icm.getReds(rgb[1]);
 			icm.getReds(rgb[2]);
 			for (int i = 0; i < mapSize; i++) {
-				IIOMetadataNode nodeEntry = new IIOMetadataNode("ColorTableEntry");
+				IIOMetadataNode nodeEntry = new IIOMetadataNode(
+						"ColorTableEntry");
 				nodeEntry.setAttribute("index", Integer.toString(i));
 				nodeEntry.setAttribute("red", Byte.toString(rgb[0][i]));
 				nodeEntry.setAttribute("green", Byte.toString(rgb[1][i]));

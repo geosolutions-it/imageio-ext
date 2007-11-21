@@ -39,7 +39,6 @@ import org.gdal.gdalconst.gdalconst;
 import org.gdal.gdalconst.gdalconstConstants;
 
 public class GDALUtilities {
-
 	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.gdalframework");
 
@@ -67,7 +66,6 @@ public class GDALUtilities {
 	 * @return the proper <code>GDALDataType</code>
 	 */
 	public final static int retrieveGDALDataBufferType(final int dataBufferType) {
-
 		switch (dataBufferType) {
 		case DataBuffer.TYPE_BYTE:
 			return gdalconstConstants.GDT_Byte;
@@ -137,9 +135,7 @@ public class GDALUtilities {
 					break;
 				}
 			}
-
 		}
-
 		return list;
 	}
 

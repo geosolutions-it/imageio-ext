@@ -39,7 +39,6 @@ import junit.framework.TestSuite;
  * @author Daniele Romagnoli, GeoSolutions.
  */
 public class ECWTest extends AbstractECWTestCase {
-
 	public ECWTest(String name) {
 		super(name);
 	}

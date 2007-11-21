@@ -120,13 +120,13 @@ public class JP2GDALKakaduCreateOptionsHandler extends GDALCreateOptionsHandler 
 		final String orgGen_tlmVV[] = new String[1];
 		orgGen_tlmVV[0] = "0";
 		createOptions[index++] = new GDALCreateOption("ORGgen_tlm",
-				GDALCreateOption.VALIDITYCHECKTYPE_VALUE_GREATEROREQUALTHAN,
+				GDALCreateOption.VALIDITYCHECKTYPE_VALUE_GREATERTHANOREQUALTO,
 				orgGen_tlmVV, GDALCreateOption.TYPE_INT);
 
 		final String cLevelsVV[] = new String[1];
 		cLevelsVV[0] = "1";
 		createOptions[index++] = new GDALCreateOption("Clevels",
-				GDALCreateOption.VALIDITYCHECKTYPE_VALUE_GREATEROREQUALTHAN,
+				GDALCreateOption.VALIDITYCHECKTYPE_VALUE_GREATERTHANOREQUALTO,
 				cLevelsVV, GDALCreateOption.TYPE_INT);
 
 		createOptions[index++] = new GDALCreateOption("Cprecincts",
@@ -232,7 +232,7 @@ public class JP2GDALKakaduCreateOptionsHandler extends GDALCreateOptionsHandler 
 		final String rShiftVV[] = new String[1];
 		rShiftVV[0] = "0";
 		createOptions[index++] = new GDALCreateOption("Rshift",
-				GDALCreateOption.VALIDITYCHECKTYPE_VALUE_GREATEROREQUALTHAN, rShiftVV,
+				GDALCreateOption.VALIDITYCHECKTYPE_VALUE_GREATERTHANOREQUALTO, rShiftVV,
 				GDALCreateOption.TYPE_INT);
 
 //		TODO: Check the validity values!!!
