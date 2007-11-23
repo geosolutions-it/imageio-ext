@@ -107,5 +107,6 @@
     <module>kakadujp2</module>
     <module>swan</module>
     <module>gdalmrsid</module>
+    <module>gdalenvisat</module>
   </modules>
 </project>

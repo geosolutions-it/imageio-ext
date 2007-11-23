@@ -31,6 +31,7 @@ import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferFloat;
 import java.awt.image.DataBufferInt;
 import java.awt.image.DataBufferShort;
+import java.awt.image.DataBufferUShort;
 import java.awt.image.PixelInterleavedSampleModel;
 import java.awt.image.Raster;
 import java.awt.image.SampleModel;
@@ -1168,8 +1169,6 @@ public abstract class GDALImageReader extends ImageReader {
 			//
 			// ////////////////////////////////////////////////////////////////
 
-			// short[][] shorts = new short[nBands][];
-
 			if (!splitBands) {
 				// I get short values from the ByteBuffer using a view
 				// of the ByteBuffer as a ShortBuffer
@@ -1178,7 +1177,10 @@ public abstract class GDALImageReader extends ImageReader {
 				bands[0].order(ByteOrder.nativeOrder());
 				final ShortBuffer buff = bands[0].asShortBuffer();
 				buff.get(shorts, 0, nBands * pixels);
-				imgBuffer = new DataBufferShort(shorts, nBands * pixels);
+				if (bufferType == gdalconstConstants.GDT_Int16)
+					imgBuffer = new DataBufferShort(shorts, nBands * pixels);
+				else
+					imgBuffer = new DataBufferUShort(shorts, nBands * pixels);
 			} else {
 				short[][] shorts = new short[nBands][];
 				for (int i = 0; i < nBands; i++) {
@@ -1186,7 +1188,10 @@ public abstract class GDALImageReader extends ImageReader {
 					bands[i].order(ByteOrder.nativeOrder());
 					bands[i].asShortBuffer().get(shorts[i], 0, pixels);
 				}
-				imgBuffer = new DataBufferShort(shorts, pixels);
+				if (bufferType == gdalconstConstants.GDT_Int16)
+					imgBuffer = new DataBufferShort(shorts, pixels);
+				else
+					imgBuffer = new DataBufferUShort(shorts, pixels);
 			}
 			if (bufferType == gdalconstConstants.GDT_UInt16)
 				dataBufferType = DataBuffer.TYPE_USHORT;
