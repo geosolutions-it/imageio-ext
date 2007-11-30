@@ -103,16 +103,15 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 			final ParameterBlockJAI pbjImageRead;
 			final ImageReadParam irp = new ImageReadParam();
 
-			//subsample by 8 on both dimensions
-			final  int xSubSampling = 8;
-			final  int ySubSampling =8;
-			final  int xSubSamplingOffset =0;
-			final  int ySubSamplingOffset = 0;
-			irp.setSourceSubsampling(xSubSampling, ySubSampling
-					, xSubSamplingOffset,
-					ySubSamplingOffset);
-			
-			//re-tile on the fly to 512x512
+			// subsample by 8 on both dimensions
+			final int xSubSampling = 2;
+			final int ySubSampling = 2;
+			final int xSubSamplingOffset = 0;
+			final int ySubSamplingOffset = 0;
+			irp.setSourceSubsampling(xSubSampling, ySubSampling,
+					xSubSamplingOffset, ySubSamplingOffset);
+
+			// re-tile on the fly to 512x512
 			final ImageLayout l = new ImageLayout();
 			l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512)
 					.setTileWidth(512);
@@ -121,11 +120,10 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 			pbjImageRead.setParameter("Input", file);
 			pbjImageRead.setParameter("readParam", irp);
 
-			//get a RenderedImage
+			// get a RenderedImage
 			RenderedOp image = JAI.create("ImageRead", pbjImageRead,
 					new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
-	
-		
+
 			if (TestData.isInteractiveTest())
 				Viewer.visualize(image, "Subsampling Read");
 			else
@@ -137,10 +135,12 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 			final ParameterBlockJAI pbjCrop = new ParameterBlockJAI("Crop");
 			pbjCrop.addSource(image);
 
-			Float xCrop = new Float(image.getWidth()*3/4.0+image.getMinX());
-			Float yCrop = new Float(image.getHeight()*3/4.0+image.getMinY());
-			Float cropWidth = new Float(image.getWidth()/4.0);
-			Float cropHeigth = new Float(image.getHeight()/4.0);
+			Float xCrop = new Float(image.getWidth() * 3 / 4.0
+					+ image.getMinX());
+			Float yCrop = new Float(image.getHeight() * 3 / 4.0
+					+ image.getMinY());
+			Float cropWidth = new Float(image.getWidth() / 4.0);
+			Float cropHeigth = new Float(image.getHeight() / 4.0);
 
 			pbjCrop.setParameter("x", xCrop);
 			pbjCrop.setParameter("y", yCrop);
@@ -157,19 +157,15 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 					"Translate");
 			pbjTranslate.addSource(croppedImage);
 
-			Float xTrans = new Float(-image.getMinX());
-			Float yTrans = new Float(-image.getMinY());
+			Float xTrans = new Float(-croppedImage.getMinX());
+			Float yTrans = new Float(-croppedImage.getMinY());
 
 			pbjTranslate.setParameter("xTrans", xTrans);
 			pbjTranslate.setParameter("yTrans", yTrans);
 
 			final RenderedOp translatedImage = JAI.create("Translate",
 					pbjTranslate);
-			if (TestData.isInteractiveTest())
-				Viewer.visualize(translatedImage,
-						"Cropped And Traslated Image ");
-			else
-				assertNotNull(image.getTiles());
+			assertNotNull(image.getTiles());
 
 			// ////////////////////////////////////////////////////////////////
 			// preparing to rotate
@@ -208,8 +204,9 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 			final RenderedImage image = reader.readAsRenderedImage(0, irp);
 			if (TestData.isInteractiveTest())
 				Viewer.visualize(image, "SubSampled MrSID ImageRead");
-//			assertEquals(779, image.getWidth());
-//			assertEquals(873, image.getHeight());
+			else
+				assertNotNull(image);
+				
 			reader.dispose();
 		} catch (FileNotFoundException fnfe) {
 			warningMessage();
@@ -224,7 +221,7 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 
 		// Test reading metadata information
 		suite.addTest(new MrSIDTest("testMetadata"));
-		
+
 		// Test read withouht exploiting JAI
 		suite.addTest(new MrSIDTest("testManualRead"));
 

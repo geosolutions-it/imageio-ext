@@ -10,7 +10,7 @@
     <artifactId>imageio-ext-plugin</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <name>ArcGrid Plugin that internally uses gdal</name>
+  <name>ArcGrid Plugin that internally uses GDAL</name>
   <!-- url> </url -->
 
   <dependencies>

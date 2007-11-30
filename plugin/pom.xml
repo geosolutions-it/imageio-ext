@@ -93,20 +93,28 @@
   <!-- =========================================================== -->
   <!--     Modules for the build in approximate dependency order   -->
   <!-- =========================================================== -->
+  <profiles>
+    <profile>
+        <id>jmagick</id>
+        <modules>
+           <module>jmagickjpeg</module>
+        </modules>
+    </profile>
+  </profiles>
   <modules>
     <module>gdalgeotiff</module>
     <module>gdalhdf4</module>
-    <module>gdalkakadujp2</module>
+    <module>gdalecw</module>
     <module>gdalecwjp2</module>
     <module>gdalmrsidjp2</module>
+    <module>gdalkakadujp2</module>
+    <module>kakadujp2</module>
     <module>gdaljpeg</module>
-  <!--  <module>jmagickjpeg</module> -->
-    <module>gdalecw</module>
     <module>gdalarcgrid</module>
     <module>arcgrid</module>
-    <module>kakadujp2</module>
     <module>swan</module>
     <module>gdalmrsid</module>
     <module>gdalenvisat</module>
   </modules>
+ 
 </project>

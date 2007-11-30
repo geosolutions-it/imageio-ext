@@ -153,6 +153,7 @@ public class JpegJMagickImageReader extends ImageReader {
 			this.interpolationType = interpolationType;
 		}
 
+		/** Initilize this JpegJMagickImageReaderReadParam */
 		protected void intialize(ImageReadParam param) {
 			if (param.hasController()) {
 				setController(param.getController());
@@ -264,6 +265,15 @@ public class JpegJMagickImageReader extends ImageReader {
 			}
 		}
 
+		/**
+		 * Get a <code>BufferedImage</code> from a {@link MagickImage}
+		 * 
+		 * @param magickImage
+		 *            The source {@link MagickImage}
+		 * @return a <code>BufferedImage</code> from a {@link MagickImage}
+		 * 
+		 * @throws IOException
+		 */
 		public static BufferedImage magickImageToBufferedImage(
 				MagickImage magickImage) throws IOException {
 
@@ -283,8 +293,9 @@ public class JpegJMagickImageReader extends ImageReader {
 				MagickImage im = srcRegion != null ? image.imageMagick
 						.cropImage(srcRegion) : image.imageMagick;
 				final Dimension dim = im.getDimension();
-				im = (dim.width != dstWidth || dim.height != dstHeight) ? im.sampleImage(dstWidth, dstHeight)
-						.sampleImage(dstWidth, dstHeight) : im;
+				im = (dim.width != dstWidth || dim.height != dstHeight) ? im
+						.sampleImage(dstWidth, dstHeight).sampleImage(dstWidth,
+								dstHeight) : im;
 				return magickImageToBufferedImage(im);
 			} catch (MagickException e) {
 				final IOException ioe = new IOException();
@@ -292,12 +303,12 @@ public class JpegJMagickImageReader extends ImageReader {
 				throw ioe;
 			}
 		}
-
 	}
 
 	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.plugins.jpeg");
 
+	/** The source of the image*/
 	private File sourceFile;
 
 	public JpegJMagickImageReader(JpegJMagickImageReaderSpi originatingProvider) {
@@ -314,17 +325,37 @@ public class JpegJMagickImageReader extends ImageReader {
 	private final List/* <ImageLayout> */imagesLayouts = Collections
 			.synchronizedList(new ArrayList/* <ImageLayout> */(10));
 
+	/**
+	 * Returns the height in pixels of the given image within the input source.
+	 * 
+	 * @param imageIndex
+	 *            the index of the image to be queried.
+	 * @return the height of the image, as an int.
+	 */
 	public int getHeight(int imageIndex) throws IOException {
 		synchronized (imagesLayouts) {
 			checkImageIndex(imageIndex);
 			return ((MagickImageAdapter) imagesLayouts.get(imageIndex))
 					.getLayout().getHeight(null);
 		}
+	}
 
+	/**
+	 * Returns the width in pixels of the given image within the input source.
+	 * 
+	 * @param imageIndex
+	 *            the index of the image to be queried.
+	 * @return the width of the image, as an int.
+	 */
+	public int getWidth(int imageIndex) throws IOException {
+		synchronized (imagesLayouts) {
+			checkImageIndex(imageIndex);
+			return ((MagickImageAdapter) imagesLayouts.get(imageIndex))
+					.getLayout().getWidth(null);
+		}
 	}
 
 	public Iterator getImageTypes(int imageIndex) throws IOException {
-
 		synchronized (imagesLayouts) {
 			checkImageIndex(imageIndex);
 			final ImageLayout layout = ((MagickImageAdapter) imagesLayouts
@@ -337,22 +368,22 @@ public class JpegJMagickImageReader extends ImageReader {
 	}
 
 	public int getNumImages(boolean allowSearch) throws IOException {
-		//@todo we need to change this
+		// @todo we need to change this
 		return 1;
 	}
 
-	public int getWidth(int imageIndex) throws IOException {
-		synchronized (imagesLayouts) {
-			checkImageIndex(imageIndex);
-			return ((MagickImageAdapter) imagesLayouts.get(imageIndex))
-					.getLayout().getWidth(null);
-		}
-	}
-
+	/**
+	 * Actually, this method is not supported and it throws an
+	 * <code>UnsupportedOperationException</code>
+	 */
 	public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * Actually, this method is not supported and it throws an
+	 * <code>UnsupportedOperationException</code>
+	 */
 	public IIOMetadata getStreamMetadata() throws IOException {
 		throw new UnsupportedOperationException();
 	}
@@ -361,8 +392,13 @@ public class JpegJMagickImageReader extends ImageReader {
 	 * Read the imageMagick and returns it as a complete
 	 * <code>BufferedImage</code>, using a supplied
 	 * <code>ImageReadParam</code>.
+	 * 
+	 * @param imageIndex
+	 *            the index of the image to be retrieved.
+	 * @param param
+	 *            an <code>ImageReadParam</code> used to control the reading
+	 *            process, or null.
 	 */
-
 	public BufferedImage read(int imageIndex, ImageReadParam param)
 			throws IOException {
 		synchronized (imagesLayouts) {
@@ -386,8 +422,6 @@ public class JpegJMagickImageReader extends ImageReader {
 			if (LOGGER.isLoggable(Level.FINE))
 				LOGGER.fine("Selected imageMagick adapter " + im.toString());
 			final ImageLayout layout = im.getLayout();
-
-			
 
 			width = layout.getWidth(null);
 			height = layout.getHeight(null);
@@ -488,7 +522,6 @@ public class JpegJMagickImageReader extends ImageReader {
 			dstWidth = ((dstWidth - 1) / xSubsamplingFactor) + 1;
 			dstHeight = ((dstHeight - 1) / ySubsamplingFactor) + 1;
 
-			
 			// ////////////////////////////////////////////////////////////////
 			//
 			// STEP 3.
@@ -498,10 +531,16 @@ public class JpegJMagickImageReader extends ImageReader {
 			// ////////////////////////////////////////////////////////////////
 			return MagickImageAdapter.magickImageToBufferedImage(im, srcRegion,
 					dstWidth, dstHeight);
-
 		}
 	}
 
+	/**
+	 * Check if the provided imageIndex is valid
+	 * 
+	 * @param imageIndex
+	 *            the image index to be checked
+	 * @throws IOException
+	 */
 	private void checkImageIndex(int imageIndex) throws IOException {
 		if (imageIndex > 0)
 			throw new IndexOutOfBoundsException();
@@ -520,6 +559,10 @@ public class JpegJMagickImageReader extends ImageReader {
 		}
 	}
 
+	/**
+	 * Sets the input source to use to the given <code>Object</code>, usually
+	 * a <code>File</code> or a <code>FileImageInputStreamExt</code>
+	 */
 	public void setInput(Object input, boolean seekForwardOnly,
 			boolean ignoreMetadata) {
 		if (LOGGER.isLoggable(Level.FINE))
@@ -537,11 +580,15 @@ public class JpegJMagickImageReader extends ImageReader {
 				// TODO: handle exception
 			}
 		} else
-			throw new IllegalArgumentException();
-
+			throw new IllegalArgumentException(
+					"The input type provided is not supported");
 		super.setInput(sourceFile, seekForwardOnly, ignoreMetadata);
 	}
 
+	/**
+	 * Sets the input source to use to the given <code>Object</code>, usually
+	 * a <code>File</code> or a <code>FileImageInputStreamExt</code>
+	 */
 	public void setInput(Object input, boolean seekForwardOnly) {
 		if (LOGGER.isLoggable(Level.FINE))
 			LOGGER.fine("setInput on object " + input.toString()
@@ -557,10 +604,15 @@ public class JpegJMagickImageReader extends ImageReader {
 				// TODO: handle exception
 			}
 		} else
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException(
+					"The input type provided is not supported");
 		super.setInput(sourceFile, seekForwardOnly);
 	}
 
+	/**
+	 * Sets the input source to use to the given <code>Object</code>, usually
+	 * a <code>File</code> or a <code>FileImageInputStreamExt</code>
+	 */
 	public void setInput(Object input) {
 		if (LOGGER.isLoggable(Level.FINE))
 			LOGGER.fine("setInput on object " + input.toString());
@@ -575,10 +627,14 @@ public class JpegJMagickImageReader extends ImageReader {
 				// TODO: handle exception
 			}
 		} else
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException(
+					"The input type provided is not supported");
 		super.setInput(input);
 	}
 
+	/**
+	 * Allows any resources held by this object to be released.
+	 */
 	public void dispose() {
 		if (LOGGER.isLoggable(Level.FINE))
 			LOGGER.fine("Disposing JpegJMagickImageReader");

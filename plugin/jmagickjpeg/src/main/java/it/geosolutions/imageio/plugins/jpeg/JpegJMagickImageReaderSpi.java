@@ -46,7 +46,7 @@ public class JpegJMagickImageReaderSpi extends ImageReaderSpi {
 
 	static final String version = "1.0";
 
-	static final String readerCN = "it.geosolutions.imageio.plugins.jpg.JpegJMagickImageReader";
+	static final String readerCN = "it.geosolutions.imageio.plugins.jpeg.JpegJMagickImageReader";
 
 	static final String vendorName = "GeoSolutions";
 
@@ -125,10 +125,4 @@ public class JpegJMagickImageReaderSpi extends ImageReaderSpi {
 		return new StringBuffer("JPEG Image Reader, version ").append(version)
 				.toString();
 	}
-
-	protected String getSupportedFormats() {
-		return "JPEG";
-	}
-
-	
 }

@@ -28,7 +28,7 @@ import junit.framework.TestCase;
  */
 public class AbstractMrSIDTestCase extends TestCase {
 
-	protected static final String fileName = "B260562A.sid";
+	protected static final String fileName = "Elba.sid";
 	
 	private static final Logger LOGGER = Logger
 	.getLogger("it.geosolutions.imageio.plugins.mrsid");

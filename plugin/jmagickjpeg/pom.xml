@@ -10,7 +10,7 @@
     <artifactId>imageio-ext-plugin</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <name>JPEG Plugin</name>
+  <name>JPEG Plugin that internally uses JMagick</name>
   <!-- url> </url -->
 
 

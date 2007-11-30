@@ -16,20 +16,10 @@
  */
 package it.geosolutions.imageio.plugins.swan;
 
-import it.geosolutions.resources.TestData;
-
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLDecoder;
 import java.util.logging.Logger;
 
 import junit.framework.TestCase;
+
 /**
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
@@ -37,17 +27,17 @@ import junit.framework.TestCase;
 public class AbstractSwanTest extends TestCase {
 
 	private static final Logger LOGGER = Logger
-	.getLogger("it.geosolutions.imageio.plugins.swan");
-	
+			.getLogger("it.geosolutions.imageio.plugins.swan");
+
 	public AbstractSwanTest(String name) {
 		super(name);
 	}
-	
+
 	protected void setUp() throws Exception {
 		super.setUp();
 	}
-	
-		protected void warningMessage(){
+
+	protected void warningMessage() {
 		StringBuffer sb = new StringBuffer(
 				"Test file not available. Please download it as "
 						+ "anonymous FTP from "

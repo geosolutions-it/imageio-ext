@@ -80,7 +80,7 @@ public class JPEGReadTest extends AbstractJPEGTestCase {
 		// do an image read with jai
 		final ParameterBlockJAI pbjImageRead;
 		final ImageReadParam irp = reader.getDefaultReadParam();
-		irp.setSourceSubsampling(1, 1, 0, 0);
+		irp.setSourceSubsampling(2, 2, 0, 0);
 		pbjImageRead = new ParameterBlockJAI("ImageReadMT");
 		pbjImageRead.setParameter("Input", file);
 		pbjImageRead.setParameter("Reader", reader);

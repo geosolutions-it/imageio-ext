@@ -46,35 +46,39 @@
 
   <!--                                                             -->
   <!--     Modules for the build in approximate order   -->
-  <!-- 																														 -->
+  <!--                                                             -->
 
-		<profiles>
-			<profile>
-			<id>windows</id>
-			<activation>
-				<os>
-					<family>windows</family>
-				</os>
-			</activation>
-				<modules>
-					<module>jar</module>
-					<module>windows</module>
-				</modules>
-			</profile>
-
-
-			<profile>
-			<id>linux</id>
-				<activation>
-					<os>
-						<family>linux</family>
-					</os>
-				</activation>
-				<modules>
-					<module>jar</module>
-					<module>linux</module>
-				</modules>
-			</profile>
-		</profiles>
-
+    <profiles>
+      <profile>
+      <id>windows</id>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+        <modules>
+          <module>jar</module>
+          <module>windows</module>
+        </modules>
+      </profile>
+      <profile>
+      <id>linux</id>
+        <activation>
+          <os>
+            <family>linux</family>
+          </os>
+        </activation>
+        <modules>
+          <module>jar</module>
+          <module>linux</module>
+        </modules>
+      </profile>
+      <profile>
+            <id>jmagick</id>
+              <modules>
+                <module>jmagick</module>
+              </modules>
+      </profile>
+    </profiles>
+    
 </project>

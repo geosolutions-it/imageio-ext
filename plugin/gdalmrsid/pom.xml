@@ -10,20 +10,20 @@
     <artifactId>imageio-ext-plugin</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <name>MrSid Plugin</name>
+  <name>MrSID Plugin that internally uses GDAL</name>
  <!-- url> </url -->
 
-	<dependencies>
+  <dependencies>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-gdal</artifactId>
-			<version>${project.version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-  		<groupId>it.geosolutions.imageio-ext</groupId>
-  		<artifactId>imageio-ext-gdalframework</artifactId>
-			<version>${project.version}</version>
+      <groupId>it.geosolutions.imageio-ext</groupId>
+      <artifactId>imageio-ext-gdalframework</artifactId>
+      <version>${project.version}</version>
     </dependency>
-	</dependencies>
+  </dependencies>
 
 </project>
