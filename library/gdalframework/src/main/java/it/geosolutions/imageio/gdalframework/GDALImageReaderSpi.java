@@ -219,7 +219,7 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
 			// Closing the dataset
 			GDALUtilities.closeDataSet(ds);
 		} catch (Exception e) {
-
+		} catch (NoClassDefFoundError missingDLLs){			
 		}
 		return isInputDecodable;
 	}
