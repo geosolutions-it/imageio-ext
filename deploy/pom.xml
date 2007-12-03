@@ -47,7 +47,10 @@
   <!--                                                             -->
   <!--     Modules for the build in approximate order   -->
   <!--                                                             -->
-
+
+ <modules>
+    <module>jar</module>
+ </modules>
     <profiles>
       <profile>
       <id>windows</id>
@@ -57,7 +60,6 @@
         </os>
       </activation>
         <modules>
-          <module>jar</module>
           <module>windows</module>
         </modules>
       </profile>
@@ -69,7 +71,6 @@
           </os>
         </activation>
         <modules>
-          <module>jar</module>
           <module>linux</module>
         </modules>
       </profile>
