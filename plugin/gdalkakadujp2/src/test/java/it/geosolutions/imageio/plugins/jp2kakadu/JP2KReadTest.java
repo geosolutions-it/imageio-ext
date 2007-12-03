@@ -110,75 +110,75 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
 			Viewer.visualize(image, "subsampled");
 		System.out.println(image.getWidth());
 		System.out.println(image.getHeight());
-//		// ////////////////////////////////////////////////////////////////
-//		// preparing to crop
-//		// ////////////////////////////////////////////////////////////////
-//		final ParameterBlockJAI pbjCrop = new ParameterBlockJAI("Crop");
-//		pbjCrop.addSource(image);
-//
-//		// Setting a square crop to avoid blanks zone when rotating.
-//		Float xCrop = new Float(image.getMinX() + image.getWidth() / 4);
-//		Float yCrop = new Float(image.getMinX() + image.getWidth() / 4);
-//		Float cropWidth = new Float(image.getWidth() / 4);
-//		Float cropHeigth = new Float(image.getWidth() / 4);
-//		pbjCrop.setParameter("x", xCrop);
-//		pbjCrop.setParameter("y", yCrop);
-//		pbjCrop.setParameter("width", cropWidth);
-//		pbjCrop.setParameter("height", cropHeigth);
-//		final RenderedOp croppedImage = JAI.create("Crop", pbjCrop);
-//
-//		if (TestData.isInteractiveTest())
-//			Viewer.visualize(croppedImage, "cropped");
-//
-//		// ////////////////////////////////////////////////////////////////
-//		// preparing to translate
-//		// ////////////////////////////////////////////////////////////////
-//		final ParameterBlockJAI pbjTranslate = new ParameterBlockJAI(
-//				"Translate");
-//		pbjTranslate.addSource(croppedImage);
-//		Float xTrans = new Float(xCrop.floatValue() * (-1));
-//		Float yTrans = new Float(yCrop.floatValue() * (-1));
-//		pbjTranslate.setParameter("xTrans", xTrans);
-//		pbjTranslate.setParameter("yTrans", yTrans);
-//		final RenderedOp translatedImage = JAI
-//				.create("Translate", pbjTranslate);
-//
-//		if (TestData.isInteractiveTest())
-//			Viewer.visualize(translatedImage, "translated");
-//
-//		// ////////////////////////////////////////////////////////////////
-//		// preparing to rotate
-//		// ////////////////////////////////////////////////////////////////
-//		final ParameterBlockJAI pbjRotate = new ParameterBlockJAI("Rotate");
-//		pbjRotate.addSource(translatedImage);
-//
-//		Float xOrigin = new Float(cropWidth.floatValue() / 2);
-//		Float yOrigin = new Float(cropHeigth.floatValue() / 2);
-//		Float angle = new Float(java.lang.Math.PI / 2);
-//
-//		pbjRotate.setParameter("xOrigin", xOrigin);
-//		pbjRotate.setParameter("yOrigin", yOrigin);
-//		pbjRotate.setParameter("angle", angle);
-//
-//		final RenderedOp rotatedImage = JAI.create("Rotate", pbjRotate);
-//
-//		StringBuffer title = new StringBuffer("SUBSAMP:").append("X[").append(
-//				xSubSampling.toString()).append("]-Y[").append(
-//				ySubSampling.toString()).append("]-Xof[").append(
-//				xSubSamplingOffset.toString()).append("]-Yof[").append(
-//				ySubSamplingOffset).append("]CROP:X[").append(xCrop.toString())
-//				.append("]-Y[").append(yCrop.toString()).append("]-W[").append(
-//						cropWidth.toString()).append("]-H[").append(
-//						cropHeigth.toString()).append("]TRANS:X[").append(
-//						xTrans.toString()).append("]-Y[").append(
-//						yTrans.toString()).append("]ROTATE:xOrig[").append(
-//						xOrigin.toString()).append("]-yOrig[").append(
-//						yOrigin.toString()).append("]-ang[").append(
-//						angle.toString()).append("]");
-//		if (TestData.isInteractiveTest())
-//			Viewer.visualize(rotatedImage, title.toString());
-//		else
-//			assertNotNull(rotatedImage.getTiles());
+		// ////////////////////////////////////////////////////////////////
+		// preparing to crop
+		// ////////////////////////////////////////////////////////////////
+		final ParameterBlockJAI pbjCrop = new ParameterBlockJAI("Crop");
+		pbjCrop.addSource(image);
+
+		// Setting a square crop to avoid blanks zone when rotating.
+		Float xCrop = new Float(image.getMinX() + image.getWidth() / 4);
+		Float yCrop = new Float(image.getMinX() + image.getWidth() / 4);
+		Float cropWidth = new Float(image.getWidth() / 4);
+		Float cropHeigth = new Float(image.getWidth() / 4);
+		pbjCrop.setParameter("x", xCrop);
+		pbjCrop.setParameter("y", yCrop);
+		pbjCrop.setParameter("width", cropWidth);
+		pbjCrop.setParameter("height", cropHeigth);
+		final RenderedOp croppedImage = JAI.create("Crop", pbjCrop);
+
+		if (TestData.isInteractiveTest())
+			Viewer.visualize(croppedImage, "cropped");
+
+		// ////////////////////////////////////////////////////////////////
+		// preparing to translate
+		// ////////////////////////////////////////////////////////////////
+		final ParameterBlockJAI pbjTranslate = new ParameterBlockJAI(
+				"Translate");
+		pbjTranslate.addSource(croppedImage);
+		Float xTrans = new Float(xCrop.floatValue() * (-1));
+		Float yTrans = new Float(yCrop.floatValue() * (-1));
+		pbjTranslate.setParameter("xTrans", xTrans);
+		pbjTranslate.setParameter("yTrans", yTrans);
+		final RenderedOp translatedImage = JAI
+				.create("Translate", pbjTranslate);
+
+		if (TestData.isInteractiveTest())
+			Viewer.visualize(translatedImage, "translated");
+
+		// ////////////////////////////////////////////////////////////////
+		// preparing to rotate
+		// ////////////////////////////////////////////////////////////////
+		final ParameterBlockJAI pbjRotate = new ParameterBlockJAI("Rotate");
+		pbjRotate.addSource(translatedImage);
+
+		Float xOrigin = new Float(cropWidth.floatValue() / 2);
+		Float yOrigin = new Float(cropHeigth.floatValue() / 2);
+		Float angle = new Float(java.lang.Math.PI / 2);
+
+		pbjRotate.setParameter("xOrigin", xOrigin);
+		pbjRotate.setParameter("yOrigin", yOrigin);
+		pbjRotate.setParameter("angle", angle);
+
+		final RenderedOp rotatedImage = JAI.create("Rotate", pbjRotate);
+
+		StringBuffer title = new StringBuffer("SUBSAMP:").append("X[").append(
+				xSubSampling.toString()).append("]-Y[").append(
+				ySubSampling.toString()).append("]-Xof[").append(
+				xSubSamplingOffset.toString()).append("]-Yof[").append(
+				ySubSamplingOffset).append("]CROP:X[").append(xCrop.toString())
+				.append("]-Y[").append(yCrop.toString()).append("]-W[").append(
+						cropWidth.toString()).append("]-H[").append(
+						cropHeigth.toString()).append("]TRANS:X[").append(
+						xTrans.toString()).append("]-Y[").append(
+						yTrans.toString()).append("]ROTATE:xOrig[").append(
+						xOrigin.toString()).append("]-yOrig[").append(
+						yOrigin.toString()).append("]-ang[").append(
+						angle.toString()).append("]");
+		if (TestData.isInteractiveTest())
+			Viewer.visualize(rotatedImage, title.toString());
+		else
+			assertNotNull(rotatedImage.getTiles());
 	}
 
 	public static Test suite() {
@@ -187,8 +187,8 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
 		// Test read exploiting common JAI operations (Crop-Translate-Rotate)
 		suite.addTest(new JP2KReadTest("testJaiOperations"));
 
-		// Test reading of a simple image
-//		suite.addTest(new JP2KReadTest("testRead"));
+//		 Test reading of a simple image
+		suite.addTest(new JP2KReadTest("testRead"));
 
 		return suite;
 	}

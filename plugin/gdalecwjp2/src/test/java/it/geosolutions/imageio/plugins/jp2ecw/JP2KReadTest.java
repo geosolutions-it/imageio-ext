@@ -70,32 +70,6 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
 	}
 
 	/**
-	 * Test Mean Running Time
-	 * 
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-	public void testSpeed() throws FileNotFoundException, IOException {
-		long totalTime = 0;
-		final int nLoops = 5;
-		LOGGER.info("Running Speed test");
-		for (int i = 0; i < nLoops; i++) {
-			long startTime = System.currentTimeMillis();
-			final ParameterBlockJAI pbjImageRead;
-			final File file = TestData.file(this, fileName);
-			pbjImageRead = new ParameterBlockJAI("ImageRead");
-			pbjImageRead.setParameter("Input", file);
-
-			RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-			image.getTiles();
-			long endTime = System.currentTimeMillis();
-			totalTime += endTime - startTime;
-		}
-		LOGGER.info("Mean Running Time " + Long.toString(totalTime / nLoops)
-				+ " milliseconds (" + nLoops + " runs)");
-	}
-
-	/**
 	 * Test read exploiting common JAI operations (Crop-Translate-Rotate)
 	 * 
 	 * @throws FileNotFoundException
@@ -206,9 +180,6 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
 
 		// Test reading of a simple image
 		suite.addTest(new JP2KReadTest("testRead"));
-
-		// Test reading of a simple image to compute mean running time
-		suite.addTest(new JP2KReadTest("testSpeed"));
 
 		return suite;
 	}
