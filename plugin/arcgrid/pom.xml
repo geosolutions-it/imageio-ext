@@ -12,4 +12,11 @@
   </parent>
   <name>ArcGrid Plugin</name>
   <!-- url> </url -->
+  
+  <scm>
+      <connection>
+        scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/arcgrid
+      </connection>
+      <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/arcgrid</url>
+  </scm>
 </project>

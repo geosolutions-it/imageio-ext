@@ -18,46 +18,53 @@
   <packaging>pom</packaging>
   <name>GeoSolutions ImageIO Extension libraries</name>
 
+  <scm>
+    <connection>
+      scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/library
+    </connection>
+    <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/library</url>
+  </scm>
+
   <description>
     ImageIO Extension core modules.
   </description>
 
-	<!-- =========================================================== -->
+  <!-- =========================================================== -->
   <!--     Build Configuration                                     -->
   <!--         copies all JARs in a single directory.              -->
   <!-- =========================================================== -->
   <build>
     <plugins>
-	    <plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>dependency-maven-plugin</artifactId>
-				<executions>
-				  <execution>
-				    <phase>install</phase>
-				      <goals>
-				        <goal>copy-dependencies</goal>
-				      </goals>
-				  </execution>
-				</executions>
-			</plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>dependency-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>install</phase>
+              <goals>
+                <goal>copy-dependencies</goal>
+              </goals>
+          </execution>
+        </executions>
+      </plugin>
 
       <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-				  <execution>
-				    <phase>install</phase>
-				    <configuration>
-				      <tasks>
-				        <delete failonerror="false">
-				        	<fileset dir="${project.build.directory}/dependency"/>
-								</delete>
-				      </tasks>
-				    </configuration>
-				    <goals>
-				      <goal>run</goal>
-				    </goals>
-				  </execution>
-				</executions>
+        <executions>
+          <execution>
+            <phase>install</phase>
+            <configuration>
+              <tasks>
+                <delete failonerror="false">
+                  <fileset dir="${project.build.directory}/dependency"/>
+                </delete>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.geotools</groupId>

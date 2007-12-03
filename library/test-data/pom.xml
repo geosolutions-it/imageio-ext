@@ -5,15 +5,22 @@
   <parent>
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-library</artifactId>
-	<version>1.0-SNAPSHOT</version>
+  <version>1.0-SNAPSHOT</version>
   </parent>
 
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-test-data</artifactId>
   <packaging>jar</packaging>
-	<version>1.0-SNAPSHOT</version>
+  <version>1.0-SNAPSHOT</version>
 
   <name>test-data</name>
   <url>http://maven.apache.org</url>
+
+  <scm>
+    <connection>
+      scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/library/test-data
+    </connection>
+    <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/library/test-data</url>
+  </scm>
 
 </project>

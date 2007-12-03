@@ -21,6 +21,12 @@
     ImageIO Extension plugin modules.
   </description>
 
+  <scm>
+    <connection>
+      scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin
+    </connection>
+    <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin</url>
+  </scm>
 
   <dependencies>
     <dependency>

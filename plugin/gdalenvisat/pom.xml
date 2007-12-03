@@ -11,7 +11,12 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
   <name>Envisat Plugin that internally uses GDAL</name>
- <!-- url> </url --> 
+   <scm>
+     <connection>
+       scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/gdalenvisat
+     </connection>
+     <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/gdalenvisat</url>
+  </scm>
 
   <dependencies>
     <dependency>

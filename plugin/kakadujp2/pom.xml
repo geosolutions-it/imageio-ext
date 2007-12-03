@@ -6,31 +6,36 @@
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
   <parent>
-  	<groupId>it.geosolutions.imageio-ext</groupId>
-  	<artifactId>imageio-ext-plugin</artifactId>
-		<version>1.0-SNAPSHOT</version>
+    <groupId>it.geosolutions.imageio-ext</groupId>
+    <artifactId>imageio-ext-plugin</artifactId>
+    <version>1.0-SNAPSHOT</version>
   </parent>
-
+  <scm>
+      <connection>
+        scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/kakadujp2
+      </connection>
+      <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/kakadujp2</url>
+  </scm>
   <dependencies>
     <dependency>
-  		<groupId>it.geosolutions.imageio-ext</groupId>
-  		<artifactId>imageio-ext-customstreams</artifactId>
-			<version>${project.version}</version>
+      <groupId>it.geosolutions.imageio-ext</groupId>
+      <artifactId>imageio-ext-customstreams</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-  		<groupId>it.geosolutions.imageio-ext</groupId>
-  		<artifactId>imageio-ext-imagereadmt</artifactId>
-			<version>${project.version}</version>
+      <groupId>it.geosolutions.imageio-ext</groupId>
+      <artifactId>imageio-ext-imagereadmt</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-  		<groupId>it.geosolutions.imageio-ext</groupId>
-  		<artifactId>imageio-ext-test-data</artifactId>
-			<version>${project.version}</version>
+      <groupId>it.geosolutions.imageio-ext</groupId>
+      <artifactId>imageio-ext-test-data</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-  		<groupId>it.geosolutions.imageio-ext</groupId>
-  		<artifactId>imageio-ext-kakadujni</artifactId>
-			<version>${project.version}</version>
+      <groupId>it.geosolutions.imageio-ext</groupId>
+      <artifactId>imageio-ext-kakadujni</artifactId>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 

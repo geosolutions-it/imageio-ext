@@ -14,6 +14,13 @@
   <name>ImageIO Extension - GDAL Image IO Framework</name>
   <url>http://maven.apache.org</url>
 
+  <scm>
+    <connection>
+      scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/library/gdalframework
+    </connection>
+    <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/library/gdalframework</url>
+  </scm>
+  
   <dependencies>
     <dependency>
       <groupId>junit</groupId>

@@ -16,16 +16,22 @@
   <name>ImageIO Extension - Custom Streams</name>
   <url>http://maven.apache.org</url>
 
+  <scm>
+    <connection>
+      scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/library/customstreams
+    </connection>
+    <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/library/customstreams</url>
+  </scm>
 
   <!-- ===================================================================== -->
   <!--     Dependencies management.                                          -->
 
   <!-- ===================================================================== -->
-	<dependencies>
+  <dependencies>
     <dependency>
-			<groupId>commons-httpclient</groupId>
-			<artifactId>commons-httpclient</artifactId>
-			<version>3.0.1</version>
+      <groupId>commons-httpclient</groupId>
+      <artifactId>commons-httpclient</artifactId>
+      <version>3.0.1</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

@@ -23,12 +23,12 @@
 
   <scm>
     <connection>
-      scm:svn:https://www.geo-solutions.it/svn/repo/imageio_extension/trunk
+      scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/deploy
     </connection>
-    <url>https://www.geo-solutions.it/svn/repo/imageio_extension/trunk</url>
+    <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/deploy</url>
   </scm>
 
-  <description>TODO</description>
+  <description>Image I/O Extension Dependency Deployer</description>
 
   <organization>
     <name>GeoSolutions</name>

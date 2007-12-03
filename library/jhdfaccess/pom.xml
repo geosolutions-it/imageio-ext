@@ -11,27 +11,35 @@
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
   <name>Revisited JHDF Access Libraries</name>
-  <!-- ===================================================================== -->
+ 
+   <scm>
+     <connection>
+       scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/library/jhdfaccess
+     </connection>
+     <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/library/jhdfaccess</url>
+  </scm>
+  
+ <!-- ===================================================================== -->
   <!--     Dependencies management.                                          -->
   <!-- ===================================================================== -->
 <dependencies>
-	<!-- Tests or legacy -->
-	<dependency>
-		<groupId>junit</groupId>
-		<artifactId>junit</artifactId>
-		<version>3.8.1</version>
-		<scope>test</scope>
-	</dependency>
-	<dependency>
-		<groupId>it.geosolutions.imageio-ext</groupId>
-		<artifactId>imageio-ext-test-data</artifactId>
-		<version>1.0-SNAPSHOT</version>
-		<scope>test</scope>
-	</dependency>
-	<dependency>
-		<groupId>ncsa</groupId>
-		<artifactId>jhdf</artifactId>
-		<version>4.1r5</version>
-	</dependency>
+  <!-- Tests or legacy -->
+  <dependency>
+    <groupId>junit</groupId>
+    <artifactId>junit</artifactId>
+    <version>3.8.1</version>
+    <scope>test</scope>
+  </dependency>
+  <dependency>
+    <groupId>it.geosolutions.imageio-ext</groupId>
+    <artifactId>imageio-ext-test-data</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <scope>test</scope>
+  </dependency>
+  <dependency>
+    <groupId>ncsa</groupId>
+    <artifactId>jhdf</artifactId>
+    <version>4.1r5</version>
+  </dependency>
 </dependencies>
  </project>

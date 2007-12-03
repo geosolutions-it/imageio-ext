@@ -23,9 +23,9 @@
 
   <scm>
     <connection>
-      scm:svn:https://www.geo-solutions.it/svn/repo/imageio_extension/trunk
+      scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/deploy/jmagick
     </connection>
-    <url>https://www.geo-solutions.it/svn/repo/imageio_extension/trunk</url>
+    <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/deploy/jmagick</url>
   </scm>
 
   <description>TODO</description>
