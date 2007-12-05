@@ -46,23 +46,25 @@ import com.sun.media.jai.codecimpl.util.RasterFactory;
  * 
  * 1) MISR_AM1_CGLS_WIN_2005_F04_0017.hdf<BR>
  * Available at:<BR>
- * http://eosweb.larc.nasa.gov/PRODOCS/misr/level3/download_data.html<BR>
+ * <a href="http://eosweb.larc.nasa.gov/PRODOCS/misr/level3/download_data.html">
+ * http://eosweb.larc.nasa.gov/PRODOCS/misr/level3/download_data.html</a><BR>
+ * (Year 2005: Winter - Land/Surface Data)<BR>
  * 
  * -------------------------------------------------------------------<BR>
  * 2) MODPM2007027121858.L3_000_EAST_MED.hdf<BR>
  * Available at:<BR>
- * ftp://ftp.geo-solutions.it/incoming/MODPM2007027121858.L3_000_EAST_MED.hdf
+ * <a
+ * href="ftp://ftp.geo-solutions.it/incoming/MODPM2007027121858.L3_000_EAST_MED.hdf">
+ * ftp://ftp.geo-solutions.it/incoming/MODPM2007027121858.L3_000_EAST_MED.hdf</a><BR>
  * (as anonymous ftp access, using active mode)<BR>
  * 
  * -------------------------------------------------------------------<BR>
  * 3) TOVS_BROWSE_MONTHLY_AM_B861001.E861031_NF.HDF<BR>
  * 4) TOVS_5DAYS_AM_B870511.E870515_NG.HDF<BR>
  * 5) TOVS_BROWSE_DAILY_AM_861031_NF.HDF<BR>
- * 
- * Available at:
- * http://www.hdfgroup.uiuc.edu/UserSupport/code-examples/sample-programs/convert/Conversion.html
- * 
- * All sample data used in these tests are available at the following sites:
+ * Available at: <a
+ * href="http://www.hdfgroup.uiuc.edu/UserSupport/code-examples/sample-programs/convert/Conversion.html">
+ * http://www.hdfgroup.uiuc.edu/UserSupport/code-examples/sample-programs/convert/Conversion.html</a><BR>
  * 
  * @author Romagnoli Daniele
  */
@@ -77,18 +79,26 @@ public class TestHDF extends TestCase {
 	public static TestSuite suite() {
 		TestSuite suite = new TestSuite();
 
+		// Testing File Annotations (Label/Description), Data Object
+		// (SDS/GRImage) Annotations (Label/Description)
 		suite.addTest(new TestHDF("testAnnotations"));
 
+		// Test attributes management
 		suite.addTest(new TestHDF("testAttributes"));
 
+		// Test group Structure
 		suite.addTest(new TestHDF("testGroups"));
 
+		// Test Dimension scales management
 		suite.addTest(new TestHDF("testDimensionScales"));
 
-		suite.addTest(new TestHDF("testVisualizeSDS"));
+		// SDS Data Read/Visualization Test
+		suite.addTest(new TestHDF("testSDSReadAndVisualize"));
 
+		// Test a MISR HDF source
 		suite.addTest(new TestHDF("testMisrSDS"));
 
+		// Test Paletted GR Images
 		suite.addTest(new TestHDF("testVisualizePalettedGRImage"));
 
 		return suite;
@@ -371,7 +381,6 @@ public class TestHDF extends TestCase {
 
 	/**
 	 * Test attributes management from various object.
-	 * 
 	 */
 	public void testAttributes() throws HDFException, IOException {
 		StringBuffer outSb = new StringBuffer();
@@ -498,8 +507,7 @@ public class TestHDF extends TestCase {
 	}
 
 	/**
-	 * Test Dimension scales
-	 * 
+	 * Test Dimension scales management
 	 */
 	public void testDimensionScales() throws HDFException, IOException {
 		StringBuffer outSb = new StringBuffer();
@@ -548,25 +556,16 @@ public class TestHDF extends TestCase {
 
 	/**
 	 * Test Paletted GR Images
-	 * 
 	 */
 	public void testVisualizePalettedGRImage() throws HDFException, IOException {
 		StringBuffer outSb = new StringBuffer();
 		File file = null;
-//		try {
-//			file = TestData.file(this, "TOVS_BROWSE_DAILY_AM_861031_NF.HDF");
-//		} catch (FileNotFoundException fnfe) {
-//			warningMessage("TOVS_BROWSE_DAILY_AM_861031_NF.HDF");
-//			return;
-//		}
-		
 		try {
-			file = TestData.file(this, "2007.1011.1457.n15.hdf4");
+			file = TestData.file(this, "TOVS_BROWSE_DAILY_AM_861031_NF.HDF");
 		} catch (FileNotFoundException fnfe) {
-			warningMessage("2007.1011.1457.n15.hdf4");
+			warningMessage("TOVS_BROWSE_DAILY_AM_861031_NF.HDF");
 			return;
 		}
-		
 
 		final H4File myFile;
 		H4GRImage grImage;
@@ -711,10 +710,9 @@ public class TestHDF extends TestCase {
 	}
 
 	/**
-	 * SDS Visualization Test
-	 * 
+	 * SDS Data Read/Visualization Test
 	 */
-	public void testVisualizeSDS() throws HDFException, IOException {
+	public void testSDSReadAndVisualize() throws HDFException, IOException {
 		StringBuffer outSb = new StringBuffer();
 		File file = null;
 		try {
