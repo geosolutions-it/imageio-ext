@@ -233,7 +233,7 @@ public class H4File extends AbstractHObject implements IHObject {
 		else
 			throw new IllegalArgumentException ("The specified file is not a valid HDF source " + path);
 		}catch (HDFException e){
-			throw new RuntimeException ("Error while checking if the provided file is a HDF source " + e);
+			throw new IllegalArgumentException ("Error while checking if the provided file is a HDF source " + e);
 		}
 		
 	}
