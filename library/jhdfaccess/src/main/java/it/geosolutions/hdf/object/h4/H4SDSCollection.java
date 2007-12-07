@@ -167,6 +167,9 @@ public class H4SDSCollection extends H4DecoratedObject implements IHObject {
 	 * 
 	 * @param h4file
 	 *            the input {@link H4File}
+	 * @throws IllegalArgumentException
+	 *             in case some error occurs when accessing the File or when
+	 *             accessing the SDS interface           
 	 */
 	public H4SDSCollection(H4File h4file) {
 		this.h4File = h4file;
@@ -222,7 +225,7 @@ public class H4SDSCollection extends H4DecoratedObject implements IHObject {
 				// XXX
 			}
 		} catch (HDFException e) {
-			throw new RuntimeException(
+			throw new IllegalArgumentException(
 					"HDFException occurred while accessing SDS routines with file "
 							+ h4file.getFilePath(), e);
 		}

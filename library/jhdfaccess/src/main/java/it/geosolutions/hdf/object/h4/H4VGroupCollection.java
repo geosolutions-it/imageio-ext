@@ -79,6 +79,10 @@ public class H4VGroupCollection extends AbstractHObject implements IHObject {
 	 * 
 	 * @param h4file
 	 *            the input {@link H4File}
+	 * 
+	 * @throws IllegalArgumentException
+	 *             in case some error occurs when accessing the File or when
+	 *             accessing the VGroup interface
 	 */
 	public H4VGroupCollection(H4File h4file) {
 		h4File = h4file;
@@ -108,7 +112,7 @@ public class H4VGroupCollection extends AbstractHObject implements IHObject {
 				// XXX
 			}
 		} catch (HDFException e) {
-			throw new RuntimeException(
+			throw new IllegalArgumentException(
 					"HDFException occurred while accessing VGroup routines with file "
 							+ h4file.getFilePath(), e);
 		}
@@ -133,11 +137,10 @@ public class H4VGroupCollection extends AbstractHObject implements IHObject {
 		return group;
 	}
 
-	
 	protected void finalize() throws Throwable {
 		dispose();
 	}
-	
+
 	/**
 	 * close this {@link H4VGroupCollection} and dispose allocated objects.
 	 */
@@ -157,11 +160,11 @@ public class H4VGroupCollection extends AbstractHObject implements IHObject {
 					group.dispose();
 				}
 			}
-			if (identifier != HDFConstants.FAIL){
+			if (identifier != HDFConstants.FAIL) {
 				HDFLibrary.Vend(identifier);
 				identifier = HDFConstants.FAIL;
 			}
-				
+
 		} catch (HDFException e) {
 			// XXX
 		}

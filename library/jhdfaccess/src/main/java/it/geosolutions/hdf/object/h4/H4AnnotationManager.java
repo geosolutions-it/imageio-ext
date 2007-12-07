@@ -34,9 +34,8 @@ import ncsa.hdf.hdflib.HDFLibrary;
  * @author Romagnoli Daniele
  */
 public class H4AnnotationManager extends AbstractHObject implements IHObject {
-	//XXX: Add Synchronization?
-	
-	
+	// XXX: Add Synchronization?
+
 	/**
 	 * The number of file label annotations <br>
 	 * 
@@ -135,6 +134,10 @@ public class H4AnnotationManager extends AbstractHObject implements IHObject {
 	 * 
 	 * @param h4file
 	 *            the input {@link H4File}
+	 * @throws IllegalArgumentException
+	 *             in case some error occurs when accessing the File or when
+	 *             accessing the Annotations
+	 * 
 	 */
 	public H4AnnotationManager(H4File h4file) {
 		// set the parent H4File and retrieve its identifier
@@ -156,7 +159,9 @@ public class H4AnnotationManager extends AbstractHObject implements IHObject {
 			}
 
 		} catch (HDFException e) {
-			throw new RuntimeException ("HDFException occurred while accessing to annotation routines ", e);
+			throw new IllegalArgumentException(
+					"HDFException occurred while accessing to annotation routines ",
+					e);
 		}
 	}
 
@@ -257,11 +262,11 @@ public class H4AnnotationManager extends AbstractHObject implements IHObject {
 	 */
 	public void close() {
 		try {
-			if (identifier != HDFConstants.FAIL){
+			if (identifier != HDFConstants.FAIL) {
 				HDFLibrary.ANend(identifier);
-				identifier=HDFConstants.FAIL;
+				identifier = HDFConstants.FAIL;
 			}
-				
+
 		} catch (HDFException e) {
 			// XXX
 		}

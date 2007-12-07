@@ -19,6 +19,7 @@ package it.geosolutions.hdf.object.h4;
 import it.geosolutions.hdf.object.AbstractHObject;
 import it.geosolutions.hdf.object.IHObject;
 
+import java.io.IOException;
 import java.util.List;
 
 import ncsa.hdf.hdflib.HDFConstants;
@@ -64,8 +65,6 @@ public class H4File extends AbstractHObject implements IHObject {
 	 * @uml.property name="nDescriptions"
 	 */
 	private int nDescriptions = -1;
-
-	private int[] mutex = new int[1];
 
 	/**
 	 * the {@link H4AnnotationManager} instance of this {@link H4File}
@@ -117,14 +116,17 @@ public class H4File extends AbstractHObject implements IHObject {
 	 * @return the {@link H4AnnotationManager} instance of this {@link H4File}
 	 * @uml.property name="h4AnnotationManager"
 	 */
-	public H4AnnotationManager getH4AnnotationManager() {
-		synchronized (mutex) {
+	public synchronized H4AnnotationManager getH4AnnotationManager() {
+		try {
 			if (!hOpened)
 				open();
-			if (h4AnnotationManager == null)
-				h4AnnotationManager = new H4AnnotationManager(this);
-			return h4AnnotationManager;
+		} catch (IOException ioe) {
+			throw new IllegalArgumentException(
+					"Error when getting VGroup Collection", ioe);
 		}
+		if (h4AnnotationManager == null)
+			h4AnnotationManager = new H4AnnotationManager(this);
+		return h4AnnotationManager;
 	}
 
 	/**
@@ -133,14 +135,17 @@ public class H4File extends AbstractHObject implements IHObject {
 	 * @return the {@link H4GRImageCollection} instance of this {@link H4File}
 	 * @uml.property name="h4GRImageCollection"
 	 */
-	public H4GRImageCollection getH4GRImageCollection() {
-		synchronized (mutex) {
+	public synchronized H4GRImageCollection getH4GRImageCollection() {
+		try {
 			if (!hOpened)
 				open();
-			if (h4GRImageCollection == null)
-				h4GRImageCollection = new H4GRImageCollection(this);
-			return h4GRImageCollection;
+		} catch (IOException ioe) {
+			throw new IllegalArgumentException(
+					"Error when getting VGroup Collection", ioe);
 		}
+		if (h4GRImageCollection == null)
+			h4GRImageCollection = new H4GRImageCollection(this);
+		return h4GRImageCollection;
 	}
 
 	/**
@@ -149,12 +154,10 @@ public class H4File extends AbstractHObject implements IHObject {
 	 * @return the {@link H4SDSCollection} instance of this {@link H4File}
 	 * @uml.property name="h4SdsCollection"
 	 */
-	public H4SDSCollection getH4SdsCollection() {
-		synchronized (mutex) {
-			if (h4SdsCollection == null)
-				h4SdsCollection = new H4SDSCollection(this);
-			return h4SdsCollection;
-		}
+	public synchronized H4SDSCollection getH4SdsCollection() {
+		if (h4SdsCollection == null)
+			h4SdsCollection = new H4SDSCollection(this);
+		return h4SdsCollection;
 	}
 
 	/**
@@ -163,14 +166,17 @@ public class H4File extends AbstractHObject implements IHObject {
 	 * @return the {@link H4VGroupCollection} instance of this {@link H4File}
 	 * @uml.property name="h4VGroupCollection"
 	 */
-	public H4VGroupCollection getH4VGroupCollection() {
-		synchronized (mutex) {
+	public synchronized H4VGroupCollection getH4VGroupCollection() {
+		try {
 			if (!hOpened)
 				open();
-			if (h4VGroupCollection == null)
-				h4VGroupCollection = new H4VGroupCollection(this);
-			return h4VGroupCollection;
+		} catch (IOException ioe) {
+			throw new IllegalArgumentException(
+					"Error when getting VGroup Collection", ioe);
 		}
+		if (h4VGroupCollection == null)
+			h4VGroupCollection = new H4VGroupCollection(this);
+		return h4VGroupCollection;
 	}
 
 	/**
@@ -179,16 +185,14 @@ public class H4File extends AbstractHObject implements IHObject {
 	 * @return the number of file description annotations related to this File.
 	 * @uml.property name="nDescriptions"
 	 */
-	public int getNDescriptions() {
-		synchronized (mutex) {
-			if (nDescriptions == -1)
-				try {
-					getAnnotations(HDFConstants.AN_FILE_DESC);
-				} catch (HDFException e) {
-					nDescriptions = 0;
-				}
-			return nDescriptions;
-		}
+	public synchronized int getNDescriptions() {
+		if (nDescriptions == -1)
+			try {
+				getAnnotations(HDFConstants.AN_FILE_DESC);
+			} catch (HDFException e) {
+				nDescriptions = 0;
+			}
+		return nDescriptions;
 	}
 
 	/**
@@ -197,16 +201,14 @@ public class H4File extends AbstractHObject implements IHObject {
 	 * @return the number of file label annotations related to this File.
 	 * @uml.property name="nLabels"
 	 */
-	public int getNLabels() {
-		synchronized (mutex) {
-			if (nLabels == -1)
-				try {
-					getAnnotations(HDFConstants.AN_FILE_LABEL);
-				} catch (HDFException e) {
-					nLabels = 0;
-				}
-			return nLabels;
-		}
+	public synchronized int getNLabels() {
+		if (nLabels == -1)
+			try {
+				getAnnotations(HDFConstants.AN_FILE_LABEL);
+			} catch (HDFException e) {
+				nLabels = 0;
+			}
+		return nLabels;
 	}
 
 	/**
@@ -227,33 +229,39 @@ public class H4File extends AbstractHObject implements IHObject {
 	 *            the path of the specified file.
 	 */
 	public H4File(final String path) {
-		try{
-		if (HDFLibrary.Hishdf(path))
-			filePath = path;
-		else
-			throw new IllegalArgumentException ("The specified file is not a valid HDF source " + path);
-		}catch (HDFException e){
-			throw new IllegalArgumentException ("Error while checking if the provided file is a HDF source " , e);
+		try {
+			if (HDFLibrary.Hishdf(path))
+				filePath = path;
+			else
+				throw new IllegalArgumentException(
+						"The specified file is not a valid HDF source " + path);
+		} catch (HDFException e) {
+			throw new IllegalArgumentException(
+					"Error while checking if the provided file is a HDF source ",
+					e);
 		}
-		
+
 	}
 
 	/**
 	 * when needed, open access to the file, by means of the HOpen routine.
+	 * 
+	 * @throws IOException
+	 *             if an error occurs when opening access to file.
 	 */
-	private void open() {
-		synchronized (mutex) {
-			try {
-				identifier = HDFLibrary.Hopen(filePath);
-				if (identifier != HDFConstants.FAIL)
-					hOpened = true;
-				else
-					throw new RuntimeException("Error while opening the file "
-							+ filePath);
-			} catch (HDFException e) {
-				throw new RuntimeException("Error while opening the file "
-						+ filePath, e);
-			}
+	private synchronized void open() throws IOException {
+		try {
+			identifier = HDFLibrary.Hopen(filePath);
+			if (identifier != HDFConstants.FAIL)
+				hOpened = true;
+			else
+				throw new IOException("Error while opening the file "
+						+ filePath);
+		} catch (HDFException e) {
+			IOException ioe = new IOException("Error while opening the file "
+					+ filePath);
+			ioe.initCause(e);
+			throw ioe;
 		}
 	}
 
@@ -261,63 +269,61 @@ public class H4File extends AbstractHObject implements IHObject {
 	 * Close access to this H4File and attempt to close all other related
 	 * opened/accessed interfaces and items.
 	 */
-	public void close() {
-		synchronized (mutex) {
-			if (identifier != HDFConstants.FAIL)
-				try {
+	public synchronized void close() {
+		if (identifier != HDFConstants.FAIL)
+			try {
 
-					// //
-					//
-					// Closing all opened interfaces
-					//
-					// //
+				// //
+				//
+				// Closing all opened interfaces
+				//
+				// //
 
-					if (h4GRImageCollection != null)
-						h4GRImageCollection.dispose();
-					if (h4VGroupCollection != null)
-						h4VGroupCollection.dispose();
-					if (h4SdsCollection != null)
-						h4SdsCollection.dispose();
+				if (h4GRImageCollection != null)
+					h4GRImageCollection.dispose();
+				if (h4VGroupCollection != null)
+					h4VGroupCollection.dispose();
+				if (h4SdsCollection != null)
+					h4SdsCollection.dispose();
 
-					// closing annotation Interface
-					if (h4AnnotationManager != null) {
-						// End access to file annotations
-						if (descAnnotations != null) {
-							final int annSize = descAnnotations.size();
-							if (annSize != 0) {
-								for (int i = 0; i < annSize; i++) {
-									H4Annotation annotation = (H4Annotation) descAnnotations
-											.get(i);
-									annotation.close();
-								}
+				// closing annotation Interface
+				if (h4AnnotationManager != null) {
+					// End access to file annotations
+					if (descAnnotations != null) {
+						final int annSize = descAnnotations.size();
+						if (annSize != 0) {
+							for (int i = 0; i < annSize; i++) {
+								H4Annotation annotation = (H4Annotation) descAnnotations
+										.get(i);
+								annotation.close();
 							}
 						}
-						if (labelAnnotations != null) {
-							final int annSize = labelAnnotations.size();
-							if (annSize != 0) {
-								for (int i = 0; i < annSize; i++) {
-									H4Annotation annotation = (H4Annotation) labelAnnotations
-											.get(i);
-									annotation.close();
-								}
+					}
+					if (labelAnnotations != null) {
+						final int annSize = labelAnnotations.size();
+						if (annSize != 0) {
+							for (int i = 0; i < annSize; i++) {
+								H4Annotation annotation = (H4Annotation) labelAnnotations
+										.get(i);
+								annotation.close();
 							}
 						}
-						h4AnnotationManager.close();
 					}
-
-					// //
-					//
-					// closing file
-					//
-					// //
-					if (hOpened) {
-						HDFLibrary.Hclose(identifier);
-						identifier = HDFConstants.FAIL;
-					}
-				} catch (HDFException e) {
-					// XXX
+					h4AnnotationManager.close();
 				}
-		}
+
+				// //
+				//
+				// closing file
+				//
+				// //
+				if (hOpened) {
+					HDFLibrary.Hclose(identifier);
+					identifier = HDFConstants.FAIL;
+				}
+			} catch (HDFException e) {
+				// XXX
+			}
 	}
 
 	/**
@@ -333,31 +339,28 @@ public class H4File extends AbstractHObject implements IHObject {
 	 * @return the <code>List</code> of annotations available for this File.
 	 * @throws HDFException
 	 */
-	public List getAnnotations(final int annotationType) throws HDFException {
-		synchronized (mutex) {
+	public synchronized List getAnnotations(final int annotationType)
+			throws HDFException {
+		// Get access to the annotations interface
+		getH4AnnotationManager();
+		switch (annotationType) {
+		case HDFConstants.AN_FILE_LABEL:
+			if (nLabels == -1) {// Annotations not yet initialized.
+				nLabels = h4AnnotationManager.getNFileLabels();
+				labelAnnotations = h4AnnotationManager
+						.getH4Annotations(annotationType);
 
-			// Get access to the annotations interface
-			getH4AnnotationManager();
-
-			switch (annotationType) {
-			case HDFConstants.AN_FILE_LABEL:
-				if (nLabels == -1) {// Annotations not yet initialized.
-					nLabels = h4AnnotationManager.getNFileLabels();
-					labelAnnotations = h4AnnotationManager
-							.getH4Annotations(annotationType);
-
-				}
-				return labelAnnotations;
-			case HDFConstants.AN_FILE_DESC:
-				if (nDescriptions == -1) {// Annotations not yet initialized.
-					nDescriptions = h4AnnotationManager.getNFileDescriptions();
-					descAnnotations = h4AnnotationManager
-							.getH4Annotations(annotationType);
-				}
-				return descAnnotations;
-			default:
-				return null;
 			}
+			return labelAnnotations;
+		case HDFConstants.AN_FILE_DESC:
+			if (nDescriptions == -1) {// Annotations not yet initialized.
+				nDescriptions = h4AnnotationManager.getNFileDescriptions();
+				descAnnotations = h4AnnotationManager
+						.getH4Annotations(annotationType);
+			}
+			return descAnnotations;
+		default:
+			return null;
 		}
 	}
 }

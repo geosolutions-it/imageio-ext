@@ -93,6 +93,9 @@ public class H4GRImageCollection extends H4DecoratedObject implements IHObject {
 	 * 
 	 * @param h4file
 	 *            the input {@link H4File}
+	 * @throws IllegalArgumentException
+	 *             in case some error occurs when accessing the File or when
+	 *             accessing the GR Interface
 	 */
 	public H4GRImageCollection(H4File h4file) {
 		h4File = h4file;
@@ -127,7 +130,7 @@ public class H4GRImageCollection extends H4DecoratedObject implements IHObject {
 				// XXX
 			}
 		} catch (HDFException e) {
-			throw new RuntimeException(
+			throw new IllegalArgumentException(
 					"HDFException occurred while accessing General Raster Images routines with file "
 							+ h4file.getFilePath(), e);
 		}
