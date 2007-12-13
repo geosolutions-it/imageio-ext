@@ -232,4 +232,16 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 		// TODO change this
 		throw new UnsupportedOperationException("");
 	}
+
+	/**
+	 * Allows users to get directly the source for this {@link IIOMetadata}
+	 * object without actually building it. It can be therefore easier to parse
+	 * its content.
+	 * 
+	 * @return the {@link GDALDatasetWrapper} which is the base for this
+	 *         {@link IIOMetadata} object.
+	 */
+	public GDALDatasetWrapper getDsWrapper() {
+		return dsWrapper;
+	}
 }
