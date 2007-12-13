@@ -4,30 +4,25 @@
            xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                                http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-plugin</artifactId>
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>GeoSolutions ImageIO Extension plugins</name>
-
   <description>
     ImageIO Extension plugin modules.
   </description>
-
   <scm>
     <connection>
       scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin
     </connection>
     <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin</url>
   </scm>
-
   <dependencies>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
@@ -39,11 +34,8 @@
       <artifactId>imageio-ext-test-data</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
-
     </dependency>
   </dependencies>
-
-
   <!-- =========================================================== -->
   <!--     Build Configuration                                     -->
   <!--         copies all JARs in a single directory.              -->
@@ -62,7 +54,6 @@
           </execution>
         </executions>
       </plugin>
-
       <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
@@ -122,5 +113,4 @@
     <module>gdalmrsid</module>
     <module>gdalenvisat</module>
   </modules>
- 
 </project>

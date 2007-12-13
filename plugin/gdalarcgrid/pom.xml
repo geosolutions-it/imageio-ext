@@ -17,7 +17,6 @@
       </connection>
       <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/gdalarcgrid</url>
   </scm>
-
   <dependencies>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
@@ -30,6 +29,4 @@
       <version>${project.version}</version>
     </dependency>
   </dependencies>
-
-
 </project>

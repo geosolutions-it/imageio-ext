@@ -17,7 +17,6 @@
       </connection>
       <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/gdalmrsidjp2</url>
   </scm>
-
   <!-- ===================================================================== -->
   <!--     Dependencies management.                                          -->
   <!-- ===================================================================== -->

@@ -115,7 +115,7 @@ public class SwanReadTest extends AbstractSwanTest {
 				// the next-to-last output quantity
 				for (int j = 0; j < forecasts; j++) {
 					final StringBuffer title = new StringBuffer(
-							quantityShortName).append(">>>>");
+							quantityShortName).append(">");
 					final int imageIndex = reader
 							.getImageIndexFromTauAndDatasets(j, i);
 
@@ -392,7 +392,7 @@ public class SwanReadTest extends AbstractSwanTest {
 		RenderedOp destImage = JAI.create("format", pbConvert);
 
 		frame.getContentPane()
-				.add(new ScrollingImagePanel(destImage, 800, 600));
+				.add(new ScrollingImagePanel(destImage, 300, 180));
 
 		frame.setTitle(title);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

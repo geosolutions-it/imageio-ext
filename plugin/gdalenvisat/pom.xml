@@ -17,7 +17,9 @@
      </connection>
      <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/gdalenvisat</url>
   </scm>
-
+  <!-- ===================================================================== -->
+  <!--     Dependencies management.                                          -->
+  <!-- ===================================================================== -->
   <dependencies>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
@@ -30,5 +32,4 @@
       <version>${project.version}</version>
     </dependency>
   </dependencies>
-
 </project>
