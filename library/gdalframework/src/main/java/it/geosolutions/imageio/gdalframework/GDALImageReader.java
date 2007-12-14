@@ -598,12 +598,15 @@ public abstract class GDALImageReader extends ImageReader {
 			return offsets;
 		}
 
-		public final String getProjection() {
-			return projection;
-		}
-
 		public final Double[] getScales() {
 			return scales;
+		}
+		
+		/** 
+		 * return the dataset projection 
+		 */
+		public final String getProjection() {
+			return projection;
 		}
 
 		/**
@@ -614,7 +617,7 @@ public abstract class GDALImageReader extends ImageReader {
 		}
 
 		/** return the driver name */
-		public final String getDrivername() {
+		public final String getDriverName() {
 			return driverName;
 		}
 
@@ -645,6 +648,7 @@ public abstract class GDALImageReader extends ImageReader {
 			return datasetDescription;
 		}
 
+		/** return the color interpretation for the dataset */
 		public final int[] getColorInterpretations() {
 			return colorInterpretations;
 		}

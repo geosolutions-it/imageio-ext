@@ -70,7 +70,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 		IIOMetadataNode node = new IIOMetadataNode("DatasetDescriptor");
 		node.setAttribute("name", dsWrapper.getDatasetName());
 		node.setAttribute("description", dsWrapper.getDatasetDescription());
-		node.setAttribute("driverName", dsWrapper.getDrivername());
+		node.setAttribute("driverName", dsWrapper.getDriverName());
 		node
 				.setAttribute("driverDescription", dsWrapper
 						.getDriverDescription());
@@ -234,14 +234,93 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 	}
 
 	/**
-	 * Allows users to get directly the source for this {@link IIOMetadata}
+	 * Allows users to get directly the source for this {@code IIOMetadata}
 	 * object without actually building it. It can be therefore easier to parse
 	 * its content.
 	 * 
 	 * @return the {@link GDALDatasetWrapper} which is the base for this
-	 *         {@link IIOMetadata} object.
+	 *         {@code IIOMetadata} object.
 	 */
 	public GDALDatasetWrapper getDsWrapper() {
 		return dsWrapper;
+	}
+
+	public final String getProjection() {
+		return dsWrapper.getProjection();
+	}
+
+	/** Return the width of the image */
+	public final int getWidth() {
+		return dsWrapper.getWidth();
+	}
+
+	/** Return the height of the image */
+	public final int getHeight() {
+		return dsWrapper.getHeight();
+	}
+
+	/** Return the tile height of the image */
+	public final int getTileHeight() {
+		return dsWrapper.getTileHeight();
+	}
+
+	/** Return the tile width of the image */
+	public final int getTileWidth() {
+		return dsWrapper.getTileWidth();
+	}
+
+	/** Return the grid to world transformation of the image */
+	public final double[] getGeoTransformation() {
+		return (double[]) dsWrapper.getGeoTransformation().clone();
+	}
+
+	/** Return the number of Ground Control Points */
+	public final int getGcpNumber() {
+		return dsWrapper.getGcpNumber();
+	}
+
+	/** return the Ground Control Point's projection */
+	public final String getGcpProjection() {
+		return dsWrapper.getGcpProjection();
+	}
+
+	/**
+	 * return the name of the dataset which is the source for this
+	 * {@code IIOMetadata}
+	 */
+	public final String getName() {
+		return dsWrapper.getDatasetName();
+	}
+
+	/**
+	 * return the description of the dataset which is the source for this
+	 * {@code IIOMetadata}
+	 */
+	public final String getDescription() {
+		return dsWrapper.getDatasetDescription();
+	}
+
+	/**
+	 * return the name of the GDAL driver used to open the source dataset for
+	 * this {@code IIOMetadata}
+	 */
+	public final String getDriverName() {
+		return dsWrapper.getDriverName();
+	}
+
+	/**
+	 * return the description of the GDAL driver used to open the source dataset
+	 * for this {@code IIOMetadata}
+	 */
+	public final String getDriverDescription() {
+		return dsWrapper.getDriverDescription();
+	}
+
+	/**
+	 * return the number of bands of the dataset which is the source for this
+	 * {@code IIOMetadata}
+	 */
+	public final int getBandsNumber() {
+		return dsWrapper.getBandsNumber();
 	}
 }
