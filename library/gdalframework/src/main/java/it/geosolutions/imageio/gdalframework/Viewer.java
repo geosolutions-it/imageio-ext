@@ -38,10 +38,15 @@ import com.sun.media.jai.operator.ImageReadDescriptor;
  * Simple class used to visualize <code>RenderedImages</code>. It may be used
  * within plugin's testCase
  * 
- * @author Daniele Romagnoli
+ * @author Daniele Romagnoli, GeoSolutions
+ * @TODO: fix visualization, graphic elements overlapping/location settings.
  * 
  */
-public abstract class Viewer {
+public final class Viewer {
+
+	/** private constructor to prevent instantiation */
+	private Viewer() {
+	}
 
 	/**
 	 * An auxiliary simple class containing only contants which are used to
@@ -50,7 +55,7 @@ public abstract class Viewer {
 	 * @author Daniele Romagnoli
 	 * 
 	 */
-	private abstract class TextType {
+	private class TextType {
 		private final static int ONLY_IMAGE_METADATA = 1;
 
 		private final static int ONLY_STREAM_METADATA = 2;
@@ -64,6 +69,10 @@ public abstract class Viewer {
 		private final static int PROJECT_AND_GEOTRANSF = 12;
 
 		private final static int EVERYTHING = 30;
+
+		private TextType() {
+
+		}
 	}
 
 	private final static String newLine = System.getProperty("line.separator");
@@ -661,11 +670,12 @@ public abstract class Viewer {
 	// returns a String containing metadata from the provided reader
 	//
 	// ////////////////////////////////////////////////////////////////////////
-	//TODO: change with the new ImageIO - Metadata Capabilities
+	// TODO: change with the new ImageIO - Metadata Capabilities
 	private static String getImageMetadata(GDALImageReader reader,
 			final int index) {
 		final GDALDatasetWrapper dsw = reader.getDataSetWrapper(index);
-		final List metadata = GDALUtilities.getGDALImageMetadata(dsw.getDatasetName());
+		final List metadata = GDALUtilities.getGDALImageMetadata(dsw
+				.getDatasetName());
 		final int size = metadata.size();
 		StringBuffer sb = new StringBuffer("Image Metadata:").append(newLine);
 		for (int i = 0; i < size; i++)
@@ -679,8 +689,10 @@ public abstract class Viewer {
 	//
 	// ////////////////////////////////////////////////////////////////////////
 	private static String getStreamMetadata(GDALImageReader reader) {
-		final GDALDatasetWrapper dsw = reader.getDataSetWrapper(reader.nSubdatasets);
-		final List metadata = GDALUtilities.getGDALStreamMetadata(dsw.getDatasetName());
+		final GDALDatasetWrapper dsw = reader
+				.getDataSetWrapper(reader.nSubdatasets);
+		final List metadata = GDALUtilities.getGDALStreamMetadata(dsw
+				.getDatasetName());
 		final int size = metadata.size();
 
 		StringBuffer sb = new StringBuffer("Stream Metadata:").append(newLine);
@@ -695,8 +707,8 @@ public abstract class Viewer {
 	// information (containing metadata or projections or both of them).
 	//
 	// ////////////////////////////////////////////////////////////////////////
-	
-	//TODO: Fix it since frame components are not well composed/located
+
+	// TODO: Fix it since frame components are not well composed/located
 	private static void visualizeWithTextArea(RenderedImage ri, String title,
 			final int textFields, final int index, final boolean displayImage) {
 

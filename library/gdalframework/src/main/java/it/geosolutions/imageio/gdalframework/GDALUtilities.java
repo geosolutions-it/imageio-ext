@@ -37,8 +37,17 @@ import org.gdal.gdal.Dataset;
 import org.gdal.gdal.gdal;
 import org.gdal.gdalconst.gdalconst;
 import org.gdal.gdalconst.gdalconstConstants;
-
-public class GDALUtilities {
+/**
+ * Utility class providing a set of static utility methods 
+ * 
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions.
+ */
+public final class GDALUtilities {
+	
+	/** private constructor to prevent instantiation */
+	private GDALUtilities(){}
+	
 	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.gdalframework");
 

@@ -31,7 +31,9 @@ import org.w3c.dom.Node;
 
 /**
  * Class representing common image metadata returned by a
- * {@link GDALImageReader}
+ * {@link GDALImageReader}. A wide set of getters method allow to retrieve
+ * several information directly from the metadata instance, without need of
+ * getting the XML DOM nodes tree.
  * 
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
@@ -46,6 +48,21 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 	 * retrieved in order to expose metadata
 	 */
 	protected GDALDatasetWrapper dsWrapper;
+
+	/** Array containing noData value for each band */ 
+	private double[] noDataValues;
+
+	/** Array containing maximum value for each band */ 
+	private double[] maximums;
+
+	/** Array containing minimum value for each band */ 
+	private double[] minimums;
+
+	/** Array containing scale value for each band */ 
+	private double[] scales;
+
+	/** Array containing offset value for each band */ 
+	private double[] offsets;
 
 	public GDALCommonIIOImageMetadata(final GDALDatasetWrapper ds) {
 		this(ds, nativeMetadataFormatName, nativeMetadataFormatClassName);
@@ -152,6 +169,14 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 		// ////////////////////////////////////////////////////////////////////
 		final int numBand = dsWrapper.getBandsNumber();
 		IIOMetadataNode bandsNode = new IIOMetadataNode("BandsInfo");
+
+		initBandValues();
+
+		// //
+		//
+		// BandInfos -> BandInfo
+		//
+		// //
 		for (int i = 0; i < numBand; i++) {
 			node = new IIOMetadataNode("BandInfo");
 			node.setAttribute("index", Integer.toString(i));
@@ -160,21 +185,24 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 					& dsWrapper.getColorInterpretations().length > i ? Integer
 					.toBinaryString(dsWrapper.getColorInterpretations()[i])
 					: "");
-			Double[] temp = dsWrapper.getNoDataValues();
-			node.setAttribute("noData", temp != null && temp.length > i
-					&& temp[i] != null ? temp[i].toString() : null);
-			temp = dsWrapper.getMaximums();
-			node.setAttribute("maximum", temp != null && temp.length > i
-					&& temp[i] != null ? temp[i].toString() : null);
-			temp = dsWrapper.getMinimums();
-			node.setAttribute("minimum", temp != null && temp.length > i
-					&& temp[i] != null ? temp[i].toString() : null);
-			temp = dsWrapper.getScales();
-			node.setAttribute("scale", temp != null && temp.length > i
-					&& temp[i] != null ? temp[i].toString() : null);
-			temp = dsWrapper.getOffsets();
-			node.setAttribute("offset", temp != null && temp.length > i
-					&& temp[i] != null ? temp[i].toString() : null);
+			node.setAttribute("noData", noDataValues != null
+					&& noDataValues.length > i
+					&& !Double.isNaN(noDataValues[i]) ? Double
+					.toString(noDataValues[i]) : null);
+			node.setAttribute("maximum",
+					maximums != null && maximums.length > i
+							&& !Double.isNaN(maximums[i]) ? Double
+							.toString(maximums[i]) : null);
+			node.setAttribute("minimum",
+					minimums != null && minimums.length > i
+							&& !Double.isNaN(minimums[i]) ? Double
+							.toString(minimums[i]) : null);
+			node.setAttribute("scale", scales != null && scales.length > i
+					&& !Double.isNaN(scales[i]) ? Double.toString(scales[i])
+					: null);
+			node.setAttribute("offset", offsets != null && offsets.length > i
+					&& !Double.isNaN(offsets[i]) ? Double.toString(offsets[i])
+					: null);
 			bandsNode.appendChild(node);
 		}
 
@@ -210,6 +238,18 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 		return root;
 	}
 
+	/**
+	 * Init all Bands properties (NoData, Maximums, Minimums, Scales and Offsets
+	 * values)
+	 */
+	private void initBandValues() {
+		getNoDataValues();
+		getMaximums();
+		getMinimums();
+		getScales();
+		getOffsets();
+	}
+
 	public Node getAsTree(String formatName) {
 		if (nativeMetadataFormatName.equalsIgnoreCase(formatName))
 			return getCommonNativeTree();
@@ -218,18 +258,15 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 	}
 
 	public boolean isReadOnly() {
-		// TODO change this
 		return true;
 	}
 
 	public void mergeTree(String formatName, Node root)
 			throws IIOInvalidTreeException {
-		// TODO change this
 		throw new UnsupportedOperationException("");
 	}
 
 	public void reset() {
-		// TODO change this
 		throw new UnsupportedOperationException("");
 	}
 
@@ -245,8 +282,54 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 		return dsWrapper;
 	}
 
-	public final String getProjection() {
-		return dsWrapper.getProjection();
+	// ////////////////////////////////////////////////////////////////////////
+	//
+	// Dataset and Driver Properties
+	// 
+	// ////////////////////////////////////////////////////////////////////////
+	/**
+	 * Return the name of the dataset which is the source for this
+	 * {@code IIOMetadata}
+	 */
+	public final String getName() {
+		return dsWrapper.getDatasetName();
+	}
+
+	/**
+	 * Return the description of the dataset which is the source for this
+	 * {@code IIOMetadata}
+	 */
+	public final String getDescription() {
+		return dsWrapper.getDatasetDescription();
+	}
+
+	/**
+	 * Return the name of the GDAL driver used to open the source dataset for
+	 * this {@code IIOMetadata}
+	 */
+	public final String getDriverName() {
+		return dsWrapper.getDriverName();
+	}
+
+	/**
+	 * Return the description of the GDAL driver used to open the source dataset
+	 * for this {@code IIOMetadata}
+	 */
+	public final String getDriverDescription() {
+		return dsWrapper.getDriverDescription();
+	}
+
+	// ////////////////////////////////////////////////////////////////////////
+	//
+	// Raster Properties
+	// 
+	// ////////////////////////////////////////////////////////////////////////
+	/**
+	 * Return the number of bands of the dataset which is the source for this
+	 * {@code IIOMetadata}
+	 */
+	public final int getBandsNumber() {
+		return dsWrapper.getBandsNumber();
 	}
 
 	/** Return the width of the image */
@@ -269,6 +352,16 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 		return dsWrapper.getTileWidth();
 	}
 
+	// ////////////////////////////////////////////////////////////////////////
+	//
+	// Referencing
+	// 
+	// ////////////////////////////////////////////////////////////////////////
+	/** Return the projection */
+	public final String getProjection() {
+		return dsWrapper.getProjection();
+	}
+
 	/** Return the grid to world transformation of the image */
 	public final double[] getGeoTransformation() {
 		return (double[]) dsWrapper.getGeoTransformation().clone();
@@ -284,43 +377,148 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 		return dsWrapper.getGcpProjection();
 	}
 
+	// ////////////////////////////////////////////////////////////////////////
+	//
+	// Bands Properties
+	// 
+	// ////////////////////////////////////////////////////////////////////////
 	/**
-	 * return the name of the dataset which is the source for this
-	 * {@code IIOMetadata}
+	 * Returns the maximum value for the specified band
+	 * 
+	 * @param bandIndex
+	 *            the index of the required band
 	 */
-	public final String getName() {
-		return dsWrapper.getDatasetName();
+	public final double getMaximum(final int bandIndex) {
+		checkBandIndex(bandIndex);
+		getMaximums();
+		return maximums[bandIndex];
+	}
+
+	/** Initialize the array containing the maximum value for each band */
+	private synchronized void getMaximums() {
+		if (maximums == null) {
+			final Double[] maxValues = dsWrapper.getMaximums();
+			final int nMaximums = maxValues.length;
+			maximums = new double[nMaximums];
+			for (int i = 0; i < nMaximums; i++)
+				maximums[i] = maxValues[i] != null ? maxValues[i].doubleValue()
+						: Double.NaN;
+		}
 	}
 
 	/**
-	 * return the description of the dataset which is the source for this
-	 * {@code IIOMetadata}
+	 * Returns the minimum value for the specified band
+	 * 
+	 * @param bandIndex
+	 *            the index of the required band
 	 */
-	public final String getDescription() {
-		return dsWrapper.getDatasetDescription();
+	public final double getMinimum(final int bandIndex) {
+		checkBandIndex(bandIndex);
+		getMinimums();
+		return minimums[bandIndex];
+	}
+
+	/** Initialize the array containing the minimum value for each band */
+	private synchronized void getMinimums() {
+		if (minimums == null) {
+			final Double[] minValues = dsWrapper.getMinimums();
+			final int nMinimums = minValues.length;
+			minimums = new double[nMinimums];
+			for (int i = 0; i < nMinimums; i++)
+				minimums[i] = minValues[i] != null ? minValues[i].doubleValue()
+						: Double.NaN;
+		}
 	}
 
 	/**
-	 * return the name of the GDAL driver used to open the source dataset for
-	 * this {@code IIOMetadata}
+	 * Returns the scale value for the specified band
+	 * 
+	 * @param bandIndex
+	 *            the index of the required band
 	 */
-	public final String getDriverName() {
-		return dsWrapper.getDriverName();
+	public final double getScale(final int bandIndex) {
+		checkBandIndex(bandIndex);
+		getScales();
+		return scales[bandIndex];
+	}
+
+	/** Initialize the array containing the scale value for each band */
+	private synchronized void getScales() {
+		if (scales == null) {
+			final Double[] scaleValues = dsWrapper.getScales();
+			final int nScales = scaleValues.length;
+			scales = new double[nScales];
+			for (int i = 0; i < nScales; i++)
+				scales[i] = scaleValues[i] != null ? scaleValues[i]
+						.doubleValue() : Double.NaN;
+		}
 	}
 
 	/**
-	 * return the description of the GDAL driver used to open the source dataset
-	 * for this {@code IIOMetadata}
+	 * Returns the offset value for the specified band
+	 * 
+	 * @param bandIndex
+	 *            the index of the required band
 	 */
-	public final String getDriverDescription() {
-		return dsWrapper.getDriverDescription();
+	public final double getOffset(final int bandIndex) {
+		checkBandIndex(bandIndex);
+		getOffsets();
+		return offsets[bandIndex];
+	}
+
+	/** Initialize the array containing the offset value for each band */
+	private synchronized void getOffsets() {
+		if (offsets == null) {
+			final Double[] offsetValues = dsWrapper.getOffsets();
+			final int nOffsets = offsetValues.length;
+			offsets = new double[nOffsets];
+			for (int i = 0; i < nOffsets; i++)
+				offsets[i] = offsetValues[i] != null ? offsetValues[i]
+						.doubleValue() : Double.NaN;
+		}
 	}
 
 	/**
-	 * return the number of bands of the dataset which is the source for this
-	 * {@code IIOMetadata}
+	 * Returns the noData value for the specified band
+	 * 
+	 * @param bandIndex
+	 *            the index of the required band
 	 */
-	public final int getBandsNumber() {
-		return dsWrapper.getBandsNumber();
+	public final double getNoDataValue(final int bandIndex) {
+		checkBandIndex(bandIndex);
+		getNoDataValues();
+		return noDataValues[bandIndex];
+	}
+
+	/** Initialize the array containing the noData value for each band */
+	private synchronized void getNoDataValues() {
+		if (noDataValues == null) {
+			final Double[] noDataVals = dsWrapper.getNoDataValues();
+			final int nNoDataValues = noDataVals.length;
+			noDataValues = new double[nNoDataValues];
+			for (int i = 0; i < nNoDataValues; i++)
+				noDataValues[i] = noDataVals[i] != null ? noDataVals[i]
+						.doubleValue() : Double.NaN;
+		}
+	}
+
+	/**
+	 * Check the validity of the specified band index. Band indexes are in the
+	 * range [0, numBands -1 ]
+	 * 
+	 * @param bandIndex
+	 *            the band index to be validated.
+	 * @throws IndexOutOfBoundsException
+	 *             in case the specified band index isn't in the valid range
+	 */
+	private void checkBandIndex(final int bandIndex) {
+		final int bandsNum = dsWrapper.getBandsNumber();
+		if (bandIndex < 0 || bandIndex > bandsNum) {
+			final StringBuffer sb = new StringBuffer("Specified band index (")
+					.append(bandIndex).append(
+							") is out of range. It should be in the range [0,")
+					.append(bandsNum - 1).append("]");
+			throw new IndexOutOfBoundsException(sb.toString());
+		}
 	}
 }

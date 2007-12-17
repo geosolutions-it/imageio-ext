@@ -160,7 +160,20 @@ public abstract class GDALImageReader extends ImageReader {
 		/** The GCP's Projection */
 		protected String gcpProjection;
 
-		/** The list of Ground Control Points */
+		/**
+		 * The list of Ground Control Points. <BR>
+		 * Any Ground Control Point has the following fields:<BR>
+		 * <UL>
+		 * <LI>ID: Unique Identifier</LI>
+		 * <LI>Info: Informational message/description</LI>
+		 * <LI>x: GCPPixel -----> Pixel (x) location of GCP on Raster</LI>
+		 * <LI>y: GCPLine ------> Line(y) location of GCP on Raster</LI>
+		 * <LI>lon: GCPX -------> X position of GCP in Georeferenced Space</LI>
+		 * <LI>lat: GCPY -------> Y position of GCP in Georeferenced Space</LI>
+		 * <LI>elevation: GCPZ -> elevation of GCP in Georeferenced Space</LI>
+		 * </UL>
+		 * 
+		 */
 		protected List gcps;
 
 		/** The raster width */
@@ -601,9 +614,9 @@ public abstract class GDALImageReader extends ImageReader {
 		public final Double[] getScales() {
 			return scales;
 		}
-		
-		/** 
-		 * return the dataset projection 
+
+		/**
+		 * return the dataset projection
 		 */
 		public final String getProjection() {
 			return projection;
