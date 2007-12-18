@@ -217,6 +217,9 @@ public abstract class GDALImageReader extends ImageReader {
 
 		/** Array to store the offset value for each band */
 		protected Double[] offsets;
+		
+		/** Array to store the number of numOverviews for each band */
+		protected int[] numOverviews;
 
 		/** Array to store the color interpretation for each band */
 		protected int[] colorInterpretations;
@@ -337,6 +340,7 @@ public abstract class GDALImageReader extends ImageReader {
 			offsets = new Double[bandsNumber];
 			minimums = new Double[bandsNumber];
 			maximums = new Double[bandsNumber];
+			numOverviews = new int[bandsNumber];
 			colorInterpretations = new int[bandsNumber];
 			int buf_type = 0;
 
@@ -363,6 +367,7 @@ public abstract class GDALImageReader extends ImageReader {
 				maximums[band] = tempD[0];
 				colorInterpretations[band] = pBand
 						.GetRasterColorInterpretation();
+				numOverviews[band]= pBand.GetOverviewCount();
 				bandsOffset[band] = band;
 			}
 
@@ -613,6 +618,10 @@ public abstract class GDALImageReader extends ImageReader {
 
 		public final Double[] getScales() {
 			return scales;
+		}
+		
+		public final int[] getNumOverviews() {
+			return numOverviews;
 		}
 
 		/**

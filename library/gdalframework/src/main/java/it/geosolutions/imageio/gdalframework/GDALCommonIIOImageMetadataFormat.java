@@ -113,6 +113,8 @@ public class GDALCommonIIOImageMetadataFormat extends IIOMetadataFormatImpl impl
 				null, null, false, false);
 		addAttribute("BandInfo", "maximum", DATATYPE_DOUBLE, false, null,
 				null, null, false, false);
+		addAttribute("BandInfo", "numOverviews", DATATYPE_INTEGER, false, null,
+				null, null, false, false);
 		addAttribute("BandInfo", "unit", DATATYPE_STRING, false, "");
 
 		// root -> BandInfo -> ColorTable

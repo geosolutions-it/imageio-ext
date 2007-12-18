@@ -49,20 +49,23 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 	 */
 	protected GDALDatasetWrapper dsWrapper;
 
-	/** Array containing noData value for each band */ 
+	/** Array containing noData value for each band */
 	private double[] noDataValues;
 
-	/** Array containing maximum value for each band */ 
+	/** Array containing maximum value for each band */
 	private double[] maximums;
 
-	/** Array containing minimum value for each band */ 
+	/** Array containing minimum value for each band */
 	private double[] minimums;
 
-	/** Array containing scale value for each band */ 
+	/** Array containing scale value for each band */
 	private double[] scales;
 
-	/** Array containing offset value for each band */ 
+	/** Array containing offset value for each band */
 	private double[] offsets;
+
+	/** Array containing the number of overviews for each band */
+	private int[] numOverviews;
 
 	public GDALCommonIIOImageMetadata(final GDALDatasetWrapper ds) {
 		this(ds, nativeMetadataFormatName, nativeMetadataFormatClassName);
@@ -203,6 +206,9 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 			node.setAttribute("offset", offsets != null && offsets.length > i
 					&& !Double.isNaN(offsets[i]) ? Double.toString(offsets[i])
 					: null);
+			node.setAttribute("numOverviews", numOverviews != null
+					&& numOverviews.length > i ? Integer
+					.toString(numOverviews[i]) : null);
 			bandsNode.appendChild(node);
 		}
 
@@ -246,6 +252,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 		getNoDataValues();
 		getMaximums();
 		getMinimums();
+		getNumOverviews();
 		getScales();
 		getOffsets();
 	}
@@ -427,6 +434,25 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 			for (int i = 0; i < nMinimums; i++)
 				minimums[i] = minValues[i] != null ? minValues[i].doubleValue()
 						: Double.NaN;
+		}
+	}
+
+	/**
+	 * Returns the number of overviews for the specified band
+	 * 
+	 * @param bandIndex
+	 *            the index of the required band
+	 */
+	public final int getNumOverviews(final int bandIndex) {
+		checkBandIndex(bandIndex);
+		getNumOverviews();
+		return numOverviews[bandIndex];
+	}
+
+	/** Initialize the array containing the number of overviews for each band */
+	private synchronized void getNumOverviews() {
+		if (numOverviews == null) {
+			numOverviews = dsWrapper.getNumOverviews();
 		}
 	}
 
