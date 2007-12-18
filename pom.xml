@@ -31,10 +31,10 @@
     </profile>
   </profiles>
 
-
-  <!--                                                             -->
-  <!--     Project Description                                     -->
-  <!--                                                             -->
+  <!---------------------------------------------------------------->
+  <!--                    Project Description                     -->
+  <!---------------------------------------------------------------->
+  
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext</artifactId>
   <packaging>pom</packaging>
@@ -49,13 +49,11 @@
   </scm>
 
   <description>Container for tools and extensions to Image I/O project</description>
-
   <organization>
     <name>GeoSolutions</name>
     <url>http://www.geo-solutions.it</url>
   </organization>
   <inceptionYear>2006</inceptionYear>
-
   <licenses>
     <license>
       <name>Lesser General Public License (LGPL)</name>
@@ -64,19 +62,14 @@
     </license>
   </licenses>
   
-  <!--                                                                 -->
-  <!--                Remote Repository for Deployment                 -->       
-  <!--                                                                 -->
-  <!--
+  <!---------------------------------------------------------------->
+  <!--                 Deployment Repository                      -->
+  <!---------------------------------------------------------------->
+ 
+  <!--..................................-->
+  <!--      Refractions Repository      -->
+  <!--..................................-->
   <distributionManagement>
-    <repository>
-       <id>repotest</id>
-       <url>file:///e:/work/maventestrepo/</url>
-    </repository>
-  </distributionManagement>
-  -->
-
- <distributionManagement>
     <repository>
       <uniqueVersion>false</uniqueVersion>
       <id>refractions</id>
@@ -85,10 +78,9 @@
     </repository>
   </distributionManagement>
 
-  <!--                                                                      -->
-  <!--              REAL SETTING of distributionManagement TAG:             -->       
-  <!--                                                                      -->
-  <!--                                                                      -->
+  <!--..................................-->
+  <!--    java.net Maven2 Repository    -->
+  <!--..................................-->
   <!-- <distributionManagement>                                             -->
   <!--  <repository>                                                        -->
   <!--  <id>java.net-m2-repository</id>                                     -->
@@ -97,9 +89,9 @@
   <!-- </distributionManagement>                                            -->
     
     
-  <!--                                                              -->
-  <!--     Developers and contributors.                             -->
-  <!--                                                              -->
+  <!---------------------------------------------------------------->
+  <!--                 Developers and contributors                -->
+  <!---------------------------------------------------------------->
   <developers>
     <developer>
       <name>Alessio Fabiani</name>
@@ -131,9 +123,9 @@
     </developer>
   </developers>
 
-  <!--                          -->
-  <!--    Plugin Repositories   -->
-  <!--                          -->
+  <!---------------------------------------------------------------->
+  <!--                     Plugin Repositories                    -->
+  <!---------------------------------------------------------------->
   <pluginRepositories>
     <pluginRepository>
       <id>codehaus.org</id>
@@ -154,26 +146,13 @@
         <enabled>true</enabled>
       </snapshots>
     </pluginRepository>
-
   </pluginRepositories>
 
   
-  <!--                          -->
-  <!--      Repositories        -->
-  <!--                          -->
+  <!---------------------------------------------------------------->
+  <!--                         Repositories                       -->
+  <!---------------------------------------------------------------->
   <repositories>
-  
-  <!--                                                            -->
-  <!--                      TESTING LOCAL REPO                    -->
-  <!--                                                            -->
-    <repository>
-          <name>repotest</name>
-          <id>repotest</id>
-          <url>file:///e:/work/maventestrepo</url>
-    </repository>
-  <!--                END OF TESTING LOCAL REPO                   -->
-    
-    
     <repository>
       <id>ibiblio mirror</id>
       <name>ibiblio mirror</name>
@@ -229,18 +208,18 @@
     </dependency>
   </dependencies>
 
-  <!--                                                             -->
-  <!--                                                             -->
-  <!--     Build Configuration                                     -->
-  <!--                                                             -->
-  <build>
-
+  <!---------------------------------------------------------------->
+  <!--                                                            -->
+  <!--                   Build Configuration                      -->
+  <!--                                                            -->
+  <!---------------------------------------------------------------->
+ <build>
     <!-- ========================================================= -->
     <!--   Maven plugins dependencies management.                  -->
     <!--   It should not be needed since Maven select by default   -->
     <!--   the latest plugins. Unfortunatly, experience shows that -->
     <!--   new plugin releases sometime introduce new bugs that    -->
-    <!--   break our build. So it is safer to specify plugin        -->
+    <!--   break our build. So it is safer to specify plugin       -->
     <!--   versions that are known to work.  This list is in       -->
     <!--   alphabetical order for easier comparaison with latest   -->
     <!--   plugins at                                              -->
@@ -275,12 +254,11 @@
         </plugin>
       </plugins>
     </pluginManagement>
-        
+      
    
-
     <plugins>
       <!-- ======================================================= -->
-      <!--     Compilation.                                        -->
+      <!--                      Compilation.                       -->
       <!-- ======================================================= -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -292,11 +270,8 @@
           <encoding>ISO-8859-1</encoding> <!-- The -encoding argument for the Java compiler. -->
         </configuration>
       </plugin>
-
-
-
       <!-- ======================================================= -->
-      <!--     Tests.                                              -->
+      <!--                        Tests                            -->
       <!-- ======================================================= -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -311,36 +286,38 @@
       </plugin>
     </plugins>
    
-    <extensions>
-	<!-- 						           -->
-	<!-- extension setting for svn deploy on java.net maven2   -->
-	<!-- 						           -->
-        <!--  <extension>
-            <groupId>org.jvnet.wagon-svn</groupId>
-            <artifactId>wagon-svn</artifactId>
-            <version>RELEASE</version>
-          </extension> -->
+  <!---------------------------------------------------------------->
+  <!--              Extensions settings for Deployment            -->
+  <!---------------------------------------------------------------->
+   <extensions>
+  
+    <!--....................................-->
+    <!-- java.net maven2 (using wagon svn)  -->
+    <!--....................................-->
+    <!--  <extension>
+           <groupId>org.jvnet.wagon-svn</groupId>
+           <artifactId>wagon-svn</artifactId>
+           <version>RELEASE</version>
+          </extension> 
+    -->
     
-	<!--				   		   -->
-	<!-- extension setting for WebDav on refractions   -->
-	<!-- 						   -->
-          <extension>
-            <groupId>org.apache.maven.wagon</groupId>
-            <artifactId>wagon-webdav</artifactId>
-            <version>1.0-beta-2</version>
-          </extension>
-    </extensions>
-    
+    <!--....................................-->
+    <!-- Refractions (using wagon webdav)   -->
+    <!--....................................-->
+    <extension>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-webdav</artifactId>
+      <version>1.0-beta-2</version>
+    </extension>
+   </extensions>
   </build>
-  <!--                                                             -->
-  <!--     Modules for the build in approximate dependency order   -->
-  <!--                                                             -->
+  
+  <!---------------------------------------------------------------->
+  <!--   Modules for the build in approximate dependency order    -->
+  <!---------------------------------------------------------------->
   <modules>
     <module>deploy</module>
     <module>library</module>
     <module>plugin</module>
   </modules>
-
-
-
 </project>

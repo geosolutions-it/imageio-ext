@@ -51,7 +51,7 @@ public class JP2GDALKakaduImageReaderSpi extends GDALImageReaderSpi {
 	}
 
 	private static final Logger logger = Logger
-			.getLogger("it.geosolutions.imageio.plugins.jp2kakadu.jp2kakadu");
+			.getLogger("it.geosolutions.imageio.plugins.jp2kakadu");
 
 	static final String[] suffixes = { "jp2", "jp2" };
 
