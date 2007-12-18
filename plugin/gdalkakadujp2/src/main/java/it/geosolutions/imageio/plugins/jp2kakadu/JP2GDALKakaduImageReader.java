@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.jp2kakadu;
 
+import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
 
 import java.awt.image.RenderedImage;
@@ -32,10 +33,10 @@ import org.gdal.gdal.Dataset;
  * {@link RenderedImage} from JP2K files.
  * 
  * @author Daniele Romagnoli, GeoSolutions.
- * @author Simone Giannecchini, GeoSolutions. 
+ * @author Simone Giannecchini, GeoSolutions.
  */
 public class JP2GDALKakaduImageReader extends GDALImageReader {
-	
+
 	public class JP2GDALKakaduDataSetWrapper extends GDALDatasetWrapper {
 
 		public JP2GDALKakaduDataSetWrapper(String sDatasetName) {
@@ -46,11 +47,12 @@ public class JP2GDALKakaduImageReader extends GDALImageReader {
 			super(ds, name);
 		}
 	}
-	
+
 	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.plugins.jp2kakadu");
 
-	public JP2GDALKakaduImageReader(JP2GDALKakaduImageReaderSpi originatingProvider) {
+	public JP2GDALKakaduImageReader(
+			JP2GDALKakaduImageReaderSpi originatingProvider) {
 		super(originatingProvider);
 		if (LOGGER.isLoggable(Level.FINE))
 			LOGGER.fine("JP2GDALKakaduImageReader Constructor");
@@ -78,8 +80,7 @@ public class JP2GDALKakaduImageReader extends GDALImageReader {
 		return new JP2GDALKakaduDataSetWrapper(string);
 	}
 
-	protected IIOMetadata getIIOImageMetadata(GDALDatasetWrapper arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	protected IIOMetadata getIIOImageMetadata(GDALDatasetWrapper wrapper) {
+		return new GDALCommonIIOImageMetadata(wrapper);
 	}
 }
