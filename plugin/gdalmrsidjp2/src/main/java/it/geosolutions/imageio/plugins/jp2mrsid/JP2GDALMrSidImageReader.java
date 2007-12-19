@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.jp2mrsid;
 
+import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
 
 import java.awt.image.RenderedImage;
@@ -32,10 +33,10 @@ import org.gdal.gdal.Dataset;
  * {@link RenderedImage} from JP2K files.
  * 
  * @author Daniele Romagnoli, GeoSolutions.
- * @author Simone Giannecchini, GeoSolutions. 
+ * @author Simone Giannecchini, GeoSolutions.
  */
 public class JP2GDALMrSidImageReader extends GDALImageReader {
-	
+
 	public class JP2GDALMrSidDataSetWrapper extends GDALDatasetWrapper {
 
 		public JP2GDALMrSidDataSetWrapper(String sDatasetName) {
@@ -46,11 +47,12 @@ public class JP2GDALMrSidImageReader extends GDALImageReader {
 			super(ds, name);
 		}
 	}
-	
+
 	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.plugins.jp2mrsid");
 
-	public JP2GDALMrSidImageReader(JP2GDALMrSidImageReaderSpi originatingProvider) {
+	public JP2GDALMrSidImageReader(
+			JP2GDALMrSidImageReaderSpi originatingProvider) {
 		super(originatingProvider);
 		if (LOGGER.isLoggable(Level.FINE))
 			LOGGER.fine("JP2GDALMrSidImageReader Constructor");
@@ -59,14 +61,6 @@ public class JP2GDALMrSidImageReader extends GDALImageReader {
 
 	public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
 		return getDataSetWrapper(imageIndex).getImageIOMetadata();
-	}
-
-	public IIOMetadata getStreamMetadata() throws IOException {
-		if (LOGGER.isLoggable(Level.INFO))
-			LOGGER
-					.info("This method actually returns null. Use getGDALImageMetadata.");
-		throw new UnsupportedOperationException(
-				"This method actually returns null. Use getGDALStreamMetadata.");
 	}
 
 	protected GDALDatasetWrapper createDataSetWrapper(Dataset mainDataset,
@@ -78,8 +72,7 @@ public class JP2GDALMrSidImageReader extends GDALImageReader {
 		return new JP2GDALMrSidDataSetWrapper(string);
 	}
 
-	protected IIOMetadata getIIOImageMetadata(GDALDatasetWrapper arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	protected IIOMetadata getIIOImageMetadata(GDALDatasetWrapper wrapper) {
+		return new GDALCommonIIOImageMetadata(wrapper);
 	}
 }

@@ -63,14 +63,6 @@ public class JP2GDALKakaduImageReader extends GDALImageReader {
 		return getDataSetWrapper(imageIndex).getImageIOMetadata();
 	}
 
-	public IIOMetadata getStreamMetadata() throws IOException {
-		if (LOGGER.isLoggable(Level.INFO))
-			LOGGER
-					.info("This method actually returns null. Use getGDALImageMetadata.");
-		throw new UnsupportedOperationException(
-				"This method actually returns null. Use getGDALStreamMetadata.");
-	}
-
 	protected GDALDatasetWrapper createDataSetWrapper(Dataset mainDataset,
 			String mainDatasetFileName) {
 		return new JP2GDALKakaduDataSetWrapper(mainDataset, mainDatasetFileName);

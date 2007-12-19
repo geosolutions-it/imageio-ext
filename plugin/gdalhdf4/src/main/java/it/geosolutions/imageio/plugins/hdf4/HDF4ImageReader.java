@@ -52,16 +52,11 @@ public class HDF4ImageReader extends GDALImageReader {
 			.toString());
 
 	public HDF4ImageReader(HDF4ImageReaderSpi originatingProvider) {
-		super(originatingProvider);		
+		super(originatingProvider);
 	}
 
 	public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
 		return getDataSetWrapper(imageIndex).getImageIOMetadata();
-	}
-
-	public IIOMetadata getStreamMetadata() throws IOException {
-		logger.info("This method actually returns. Use getGDALStreamMetadata.");
-		return null;
 	}
 
 	protected GDALDatasetWrapper createDataSetWrapper(Dataset mainDataset,
@@ -72,9 +67,9 @@ public class HDF4ImageReader extends GDALImageReader {
 	protected GDALDatasetWrapper createDataSetWrapper(String string) {
 		return new HDF4DataSetWrapper(string);
 	}
-	
+
 	protected IIOMetadata getIIOImageMetadata(GDALDatasetWrapper wrapper) {
-		//TODO: in the future, we could define a specific HDF4 metadata format
+		// TODO: in the future, we could define a specific HDF4 metadata format
 		return new GDALCommonIIOImageMetadata(wrapper);
 	}
 

@@ -13,9 +13,9 @@
   <artifactId>imageio-ext-plugin</artifactId>
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
-  <name>GeoSolutions ImageIO Extension plugins</name>
+  <name>GeoSolutions Image I/O-Extensions plugins</name>
   <description>
-    ImageIO Extension plugin modules.
+    Image I/O-Extensions plugin modules.
   </description>
   <scm>
     <connection>
@@ -101,6 +101,8 @@
   <modules>
     <module>gdalgeotiff</module>
     <module>gdalhdf4</module>
+    <module>gdalenvisat</module>
+    <module>gdalmrsid</module>    
     <module>gdalecw</module>
     <module>gdalecwjp2</module>
     <module>gdalmrsidjp2</module>
@@ -110,7 +112,5 @@
     <module>gdalarcgrid</module>
     <module>arcgrid</module>
     <module>swan</module>
-    <module>gdalmrsid</module>
-    <module>gdalenvisat</module>
   </modules>
 </project>

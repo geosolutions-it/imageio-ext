@@ -33,7 +33,7 @@ import org.gdal.gdal.Dataset;
  * {@link RenderedImage} from GeoTiff files.
  * 
  * @author Daniele Romagnoli, GeoSolutions.
- * @author Simone Giannecchini, GeoSolutions. 
+ * @author Simone Giannecchini, GeoSolutions.
  */
 public class GeoTiffImageReader extends GDALImageReader {
 
@@ -51,14 +51,6 @@ public class GeoTiffImageReader extends GDALImageReader {
 		return getDataSetWrapper(imageIndex).getImageIOMetadata();
 	}
 
-	public IIOMetadata getStreamMetadata() throws IOException {
-		if (LOGGER.isLoggable(Level.INFO))
-			LOGGER
-					.info("This method actually returns null. Use getGDALImageMetadata.");
-		throw new UnsupportedOperationException(
-				"This method actually returns null. Use getGDALStreamMetadata.");
-	}
-
 	protected GDALDatasetWrapper createDataSetWrapper(String string) {
 		return new GDALDatasetWrapper(string);
 	}
@@ -69,7 +61,7 @@ public class GeoTiffImageReader extends GDALImageReader {
 	}
 
 	protected IIOMetadata getIIOImageMetadata(GDALDatasetWrapper wrapper) {
-		//TODO: Change in GeoTIFF specific metadata
+		// TODO: Change in GeoTIFF specific metadata
 		return new GDALCommonIIOImageMetadata(wrapper);
 	}
 }

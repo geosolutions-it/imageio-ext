@@ -270,23 +270,13 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 
 	public void mergeTree(String formatName, Node root)
 			throws IIOInvalidTreeException {
-		throw new UnsupportedOperationException("");
+		throw new UnsupportedOperationException(
+				"reset operation is not allowed");
 	}
 
 	public void reset() {
-		throw new UnsupportedOperationException("");
-	}
-
-	/**
-	 * Allows users to get directly the source for this {@code IIOMetadata}
-	 * object without actually building it. It can be therefore easier to parse
-	 * its content.
-	 * 
-	 * @return the {@link GDALDatasetWrapper} which is the base for this
-	 *         {@code IIOMetadata} object.
-	 */
-	public GDALDatasetWrapper getDsWrapper() {
-		return dsWrapper;
+		throw new UnsupportedOperationException(
+				"reset operation is not allowed");
 	}
 
 	// ////////////////////////////////////////////////////////////////////////
@@ -304,7 +294,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 
 	/**
 	 * Return the description of the dataset which is the source for this
-	 * {@code IIOMetadata}
+	 * <code>IIOMetadata</code>
 	 */
 	public final String getDescription() {
 		return dsWrapper.getDatasetDescription();
@@ -312,7 +302,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 
 	/**
 	 * Return the name of the GDAL driver used to open the source dataset for
-	 * this {@code IIOMetadata}
+	 * this <code>IIOMetadata</code>
 	 */
 	public final String getDriverName() {
 		return dsWrapper.getDriverName();
@@ -320,7 +310,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 
 	/**
 	 * Return the description of the GDAL driver used to open the source dataset
-	 * for this {@code IIOMetadata}
+	 * for this <code>IIOMetadata</code>
 	 */
 	public final String getDriverDescription() {
 		return dsWrapper.getDriverDescription();
@@ -333,7 +323,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 	// ////////////////////////////////////////////////////////////////////////
 	/**
 	 * Return the number of bands of the dataset which is the source for this
-	 * {@code IIOMetadata}
+	 * <code>IIOMetadata</code>
 	 */
 	public final int getBandsNumber() {
 		return dsWrapper.getBandsNumber();

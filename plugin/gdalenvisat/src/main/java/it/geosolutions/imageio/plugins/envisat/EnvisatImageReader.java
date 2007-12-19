@@ -33,7 +33,7 @@ import org.gdal.gdal.Dataset;
  * {@link RenderedImage} from Envisat files.
  * 
  * @author Daniele Romagnoli, GeoSolutions.
- * @author Simone Giannecchini, GeoSolutions. 
+ * @author Simone Giannecchini, GeoSolutions.
  */
 public class EnvisatImageReader extends GDALImageReader {
 
@@ -49,7 +49,7 @@ public class EnvisatImageReader extends GDALImageReader {
 			super(ds, name);
 		}
 	}
-	
+
 	public EnvisatImageReader(EnvisatImageReaderSpi originatingProvider) {
 		super(originatingProvider);
 		if (LOGGER.isLoggable(Level.FINE))
@@ -59,14 +59,6 @@ public class EnvisatImageReader extends GDALImageReader {
 
 	public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
 		return getDataSetWrapper(imageIndex).getImageIOMetadata();
-	}
-
-	public IIOMetadata getStreamMetadata() throws IOException {
-		if (LOGGER.isLoggable(Level.INFO))
-			LOGGER
-					.info("This method actually returns null. Use getGDALImageMetadata.");
-		throw new UnsupportedOperationException(
-				"This method actually returns null. Use getGDALStreamMetadata.");
 	}
 
 	protected GDALDatasetWrapper createDataSetWrapper(Dataset mainDataset,

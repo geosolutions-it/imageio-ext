@@ -29,7 +29,7 @@ public class FileCacheTest extends TestCase {
 		LOGGER.info(new StringBuffer("Getting File from URL:").append(
 				url.toString()).toString());
 		for (int i = 0; i < 3; i++) {
-			sb = new StringBuffer("Attempt N° ")
+			sb = new StringBuffer("Attempt N. ")
 					.append(Integer.toString(i + 1)).append(
 							": Elapsed Time is ");
 

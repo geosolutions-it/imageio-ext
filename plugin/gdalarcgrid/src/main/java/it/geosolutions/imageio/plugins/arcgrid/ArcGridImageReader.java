@@ -48,7 +48,7 @@ public class ArcGridImageReader extends GDALImageReader {
 			super(ds, name);
 		}
 	}
-	
+
 	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.plugins.arcgrid");
 
@@ -63,24 +63,16 @@ public class ArcGridImageReader extends GDALImageReader {
 		return getDataSetWrapper(imageIndex).getImageIOMetadata();
 	}
 
-	public IIOMetadata getStreamMetadata() throws IOException {
-		if (LOGGER.isLoggable(Level.INFO))
-			LOGGER
-					.info("This method actually returns null. Use getGDALStreamMetadata.");
-		throw new UnsupportedOperationException(
-				"This method actually returns null. Use getGDALStreamMetadata.");
+	protected GDALDatasetWrapper createDataSetWrapper(Dataset mainDataset,
+			String mainDatasetFileName) {
+		return new ArcGridDataSetWrapper(mainDataset, mainDatasetFileName);
 	}
 
-		protected GDALDatasetWrapper createDataSetWrapper(Dataset mainDataset,
-				String mainDatasetFileName) {
-			return new ArcGridDataSetWrapper(mainDataset, mainDatasetFileName);
-		}
+	protected GDALDatasetWrapper createDataSetWrapper(String string) {
+		return new ArcGridDataSetWrapper(string);
+	}
 
-		protected GDALDatasetWrapper createDataSetWrapper(String string) {
-			return new ArcGridDataSetWrapper(string);
-		}
-		
-		protected IIOMetadata getIIOImageMetadata(GDALDatasetWrapper wrapper) {
-			return new GDALCommonIIOImageMetadata(wrapper);
-		}
+	protected IIOMetadata getIIOImageMetadata(GDALDatasetWrapper wrapper) {
+		return new GDALCommonIIOImageMetadata(wrapper);
+	}
 }

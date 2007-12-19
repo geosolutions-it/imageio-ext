@@ -92,12 +92,6 @@ public abstract class GDALImageReader extends ImageReader {
 		this.setInput(input);
 	}
 
-	/** List associated to gdalImageMetadata */
-	protected List gdalImageMetadata;
-
-	/** List associated to gdalStreamMetadata */
-	protected List gdalStreamMetadata;
-
 	/** list of childs subdatasets names (if any) contained into the source */
 	protected String datasetNames[];
 
@@ -217,7 +211,7 @@ public abstract class GDALImageReader extends ImageReader {
 
 		/** Array to store the offset value for each band */
 		protected Double[] offsets;
-		
+
 		/** Array to store the number of numOverviews for each band */
 		protected int[] numOverviews;
 
@@ -367,7 +361,7 @@ public abstract class GDALImageReader extends ImageReader {
 				maximums[band] = tempD[0];
 				colorInterpretations[band] = pBand
 						.GetRasterColorInterpretation();
-				numOverviews[band]= pBand.GetOverviewCount();
+				numOverviews[band] = pBand.GetOverviewCount();
 				bandsOffset[band] = band;
 			}
 
@@ -619,7 +613,7 @@ public abstract class GDALImageReader extends ImageReader {
 		public final Double[] getScales() {
 			return scales;
 		}
-		
+
 		public final int[] getNumOverviews() {
 			return numOverviews;
 		}
@@ -725,91 +719,6 @@ public abstract class GDALImageReader extends ImageReader {
 		super(originatingProvider);
 		spi = originatingProvider;
 	}
-
-	// /**
-	// * Provides to return any metadata related to the specified image. The
-	// * SUBDATASETS domain is not returned since it is related to the whole
-	// * stream instead of a single image.
-	// *
-	// *
-	// * @param imageIndex
-	// * index of the specified image.
-	// * @return a <code>Vector</code> containing any metadata found.
-	// */
-	// public List getGDALImageMetadata(int imageIndex) {
-	// checkImageIndex(imageIndex);
-	// final GDALDatasetWrapper item = getDataSet(imageIndex);
-	// final Dataset ds = GDALUtilities.acquireDataSet(item.getDatasetName(),
-	// gdalconst.GA_ReadOnly);
-	// ds.GetMetadata_Dict("");
-	// gdalImageMetadata = ds.GetMetadata_List("");
-	// ds.delete();
-	// return gdalImageMetadata;
-	// }
-
-	// /**
-	// * Provides to return any metadata which is not related to a specific
-	// image.
-	// * The actual implementation provide to return only the SUBDATASETS domain
-	// * metadata but it may be changed in future.
-	// *
-	// * @return a <code>Vector</code> containing metadata related to the
-	// * stream.
-	// */
-	// public List getGDALStreamMetadata() {
-	// if (nSubdatasets == 0)
-	// gdalStreamMetadata = getGDALImageMetadata(0);
-	// else {
-	// checkImageIndex(nSubdatasets);
-	// final GDALDatasetWrapper item = getDataSet(nSubdatasets);
-	// final Dataset ds = GDALUtilities.acquireDataSet(item
-	// .getDatasetName(), gdalconst.GA_ReadOnly);
-	// gdalStreamMetadata = ds.GetMetadata_List("SUBDATASETS");
-	// ds.delete();
-	// }
-	// return gdalStreamMetadata;
-	//
-	// }
-
-	// /**
-	// * Returns the value of a specific metadata item related to the stream. As
-	// * an instance, it may be used to find the name or the description of a
-	// * specific subdataset.
-	// *
-	// * @param metadataName
-	// * the name of the specified metadata item.
-	// * @return the value of the required metadata item.
-	// */
-	// public String getStreamMetadataItem(String metadataName) {
-	// if (gdalStreamMetadata == null)
-	// getGDALStreamMetadata();
-	// return getMetadataItem(gdalStreamMetadata, metadataName);
-	// }
-	//
-	// /**
-	// * Provides to return the value of a specific metadata item contained in
-	// the
-	// * metadata parameter
-	// *
-	// * @param gdalImageMetadata
-	// * the required metadata <code>Vector</code>
-	// * (gdalStreamMetadata or gdalImageMetadata)
-	// * @param metadataName
-	// * the name of the specified metadata item
-	// * @return the value of the specified metadata item
-	// */
-	// private String getMetadataItem(List imageMetadata, String metadataName) {
-	// final Iterator it = imageMetadata.iterator();
-	// // Metadata items scanning
-	// while (it.hasNext()) {
-	// String s = (String) it.next();
-	// int indexOfEqualSymbol = s.indexOf('=');
-	// String sName = s.substring(0, indexOfEqualSymbol);
-	// if (sName.equals(metadataName))
-	// return s.substring(indexOfEqualSymbol + 1, s.length());
-	// }
-	// return null;
-	// }
 
 	/**
 	 * Checks if the specified ImageIndex is valid.
@@ -1489,15 +1398,6 @@ public abstract class GDALImageReader extends ImageReader {
 
 		datasetMap = null;
 		datasetNames = null;
-
-		if (gdalStreamMetadata != null) {
-			gdalStreamMetadata.clear();
-			gdalStreamMetadata = null;
-		}
-		if (gdalImageMetadata != null) {
-			gdalImageMetadata.clear();
-			gdalImageMetadata = null;
-		}
 		super.dispose();
 	}
 
@@ -1528,7 +1428,7 @@ public abstract class GDALImageReader extends ImageReader {
 	 */
 
 	public Iterator getImageTypes(int imageIndex) throws IOException {
-		final List l = new java.util.ArrayList(5);
+		final List l = new java.util.ArrayList(4);
 		final GDALDatasetWrapper item = getDataSetWrapper(imageIndex);
 		imageType = new ImageTypeSpecifier(item.getColorModel(), item
 				.getSampleModel());
@@ -1620,7 +1520,7 @@ public abstract class GDALImageReader extends ImageReader {
 	}
 
 	/**
-	 * Returns the width of of the raster of the <code>Dataset</code> at index
+	 * Returns the width of the raster of the <code>Dataset</code> at index
 	 * <code>imageIndex</code>.
 	 * 
 	 * @param imageIndex
@@ -1681,8 +1581,7 @@ public abstract class GDALImageReader extends ImageReader {
 	 * <code>Dataset</code> at index <code>imageIndex</code>.
 	 * 
 	 * @param imageIndex
-	 *            is the index of the dataset we want to get the projections
-	 *            for.
+	 *            the index of the dataset we want to get the projections for.
 	 * @return the WKT projection <code>String</code> for the
 	 *         <code>Dataset</code> at index <code>imageIndex</code>.
 	 */
@@ -1695,8 +1594,7 @@ public abstract class GDALImageReader extends ImageReader {
 	 * at index <code>imageIndex</code>.
 	 * 
 	 * @param imageIndex
-	 *            is the index of the dataset we want to get the coefficients
-	 *            for.
+	 *            the index of the dataset we want to get the coefficients for.
 	 * @return the array containing the GeoTransformation coefficients.
 	 */
 	public double[] getGeoTransform(final int imageIndex) {
@@ -1747,8 +1645,6 @@ public abstract class GDALImageReader extends ImageReader {
 	//
 	// Raster Band Properties Retrieval METHODS
 	//
-	// TODO: Why returning always property[0] instead of property[band]??
-	//
 	// ///////////////////////////////////////////////////////////////////
 
 	/**
@@ -1760,8 +1656,10 @@ public abstract class GDALImageReader extends ImageReader {
 	 *            the specified band
 	 * @return the Band NoDataValue if available, <code>Double.NaN</code>
 	 *         otherwise.
+	 * @throws IllegalArgumentException
+	 *             in case the specified band number is out of range or noData
+	 *             value has not been found
 	 */
-
 	public double getNoDataValue(int imageIndex, int band) {
 		final GDALDatasetWrapper item = getDataSetWrapper(imageIndex);
 		if (band > item.bandsNumber)
@@ -1782,6 +1680,9 @@ public abstract class GDALImageReader extends ImageReader {
 	 *            the specified band
 	 * @return the Band Offset Value if available, <code>Double.NaN</code>
 	 *         otherwise.
+	 * @throws IllegalArgumentException
+	 *             in case the specified band number is out of range or Offset
+	 *             value has not been found
 	 */
 	public double getOffset(int imageIndex, int band) {
 		final GDALDatasetWrapper item = getDataSetWrapper(imageIndex);
@@ -1804,6 +1705,9 @@ public abstract class GDALImageReader extends ImageReader {
 	 *            the specified band
 	 * @return the Band Scale Value if available, <code>Double.NaN</code>
 	 *         otherwise.
+	 * @throws IllegalArgumentException
+	 *             in case the specified band number is out of range or scale
+	 *             value has not been found
 	 */
 	public double getScale(int imageIndex, int band) {
 		final GDALDatasetWrapper item = getDataSetWrapper(imageIndex);
@@ -1825,6 +1729,9 @@ public abstract class GDALImageReader extends ImageReader {
 	 *            the specified band
 	 * @return the Band Minimum Value if available, <code>Double.NaN</code>
 	 *         otherwise.
+	 * @throws IllegalArgumentException
+	 *             in case the specified band number is out of range or minimum
+	 *             value has not been found
 	 */
 	public double getMinimum(int imageIndex, int band) {
 		final GDALDatasetWrapper item = getDataSetWrapper(imageIndex);
@@ -1846,6 +1753,9 @@ public abstract class GDALImageReader extends ImageReader {
 	 *            the specified band
 	 * @return the Band Maximum Value if available, <code>Double.NaN</code>
 	 *         otherwise.
+	 * @throws IllegalArgumentException
+	 *             in case the specified band number is out of range or maximum
+	 *             value has not been found
 	 */
 	public double getMaximum(int imageIndex, int band) {
 		final GDALDatasetWrapper item = getDataSetWrapper(imageIndex);
@@ -1867,7 +1777,6 @@ public abstract class GDALImageReader extends ImageReader {
 						gdalconst.GA_ReadOnly);
 		}
 		return null;
-
 	}
 
 	public IIOMetadata getStreamMetadata() throws IOException {

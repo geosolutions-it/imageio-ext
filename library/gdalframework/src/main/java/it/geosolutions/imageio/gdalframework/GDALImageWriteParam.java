@@ -30,10 +30,14 @@ import javax.imageio.ImageWriteParam;
  * 
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
- *
+ * 
  */
-public abstract class GDALImageWriteParam extends ImageWriteParam{
+public abstract class GDALImageWriteParam extends ImageWriteParam {
 	protected ImageWriteParam adaptee;
+
+	protected GDALCreateOptionsHandler createOptionsHandler;
+
+	public abstract GDALCreateOptionsHandler getGDALCreateOptionsHandler();
 
 	public boolean canWriteCompressed() {
 		return adaptee.canWriteCompressed();
@@ -141,8 +145,7 @@ public abstract class GDALImageWriteParam extends ImageWriteParam{
 
 	public void setTiling(int tileWidth, int tileHeight) {
 
-		adaptee.setTiling(tileWidth, tileHeight, 0,
-				0);
+		adaptee.setTiling(tileWidth, tileHeight, 0, 0);
 	}
 
 	public void setTilingMode(int mode) {
@@ -273,10 +276,8 @@ public abstract class GDALImageWriteParam extends ImageWriteParam{
 		this.adaptee = adaptee;
 	}
 
-	public  ImageWriteParam getAdaptee() {
+	public ImageWriteParam getAdaptee() {
 		return adaptee;
 	}
-	
-	protected GDALCreateOptionsHandler createOptionsHandler;
-	public abstract GDALCreateOptionsHandler getGDALCreateOptionsHandler();
+
 }

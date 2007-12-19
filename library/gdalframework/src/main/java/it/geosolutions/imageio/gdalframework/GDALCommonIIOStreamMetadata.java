@@ -31,7 +31,6 @@ import org.w3c.dom.Node;
  */
 public class GDALCommonIIOStreamMetadata extends IIOMetadata {
 
-	// package scope
 	public static final String nativeMetadataFormatName = "it.geosolutions.imageio.gdalframework.commonStreamMetadata_1.0";
 
 	public static final String nativeMetadataFormatClassName = "it.geosolutions.imageio.gdalframework.GDALCommonIIOStreamMetadata";
@@ -69,19 +68,18 @@ public class GDALCommonIIOStreamMetadata extends IIOMetadata {
 	}
 
 	public boolean isReadOnly() {
-		// TODO what to do with me?
-		return false;
+		return true;
 	}
 
 	public void mergeTree(String formatName, Node root)
 			throws IIOInvalidTreeException {
-		// TODO what to do with me
-
+		throw new UnsupportedOperationException(
+				"reset operation is not allowed");
 	}
 
 	public void reset() {
-		// TODO what to do with me
-
+		throw new UnsupportedOperationException(
+				"reset operation is not allowed");
 	}
 
 }

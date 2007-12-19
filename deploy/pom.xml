@@ -19,7 +19,7 @@
   <artifactId>imageio-ext-deployer</artifactId>
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
-  <name>ImageIO Extension Dependency Deployer</name>
+  <name>GeoSolutions Image I/O-Extensions Dependency Deployer</name>
 
   <scm>
     <connection>

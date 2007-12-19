@@ -16,7 +16,7 @@
   <artifactId>imageio-ext-library</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>GeoSolutions ImageIO Extension libraries</name>
+  <name>GeoSolutions Image I/O-Extensions libraries</name>
 
   <scm>
     <connection>
@@ -26,7 +26,7 @@
   </scm>
 
   <description>
-    ImageIO Extension core modules.
+    Image I/O-Extensions core modules.
   </description>
 
   <!-- =========================================================== -->

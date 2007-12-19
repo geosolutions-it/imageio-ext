@@ -251,19 +251,25 @@ public abstract class GDALImageWriter extends ImageWriter {
 			//
 			// /////////////////////////////////////////////////////////////////
 			Dataset sourceDataset = null;
-			Dataset writeDataset = null;
+			final Dataset writeDataset;
+			final RenderedImage ri = image.getRenderedImage();
 
-			RenderedImage ri = image.getRenderedImage();
 			// Getting the reader which read the coming image
-			ImageReader reader = (ImageReader) ri
-					.getProperty("JAI.ImageReader");
+			ImageReader reader = null;
+			ImageReadParam readParam = null;
+			String[] properties = ri.getPropertyNames();
+			if (properties != null) {
+				//RenderedImage coming from a JAI ImageRead operation.
+				Object imageReader = ri.getProperty("JAI.ImageReader");
+				if (imageReader instanceof ImageReader)
+					reader = (ImageReader) imageReader;
 
-			// retrieving the <code>ImageReadParam</code> used by the read
-			ImageReadParam readParam = (ImageReadParam) ri
-					.getProperty("JAI.ImageReadParam");
-
+				// retrieving the <code>ImageReadParam</code> used by the read
+				readParam = (ImageReadParam) ri
+						.getProperty("JAI.ImageReadParam");
+			}
 			boolean isAgdalImageReader = false;
-			if (reader instanceof GDALImageReader) {
+			if (reader != null && reader instanceof GDALImageReader) {
 				sourceDataset = ((GDALImageReader) reader)
 						.getLastRecentlyUsedDataset();
 				isAgdalImageReader = true;
@@ -276,8 +282,8 @@ public abstract class GDALImageWriter extends ImageWriter {
 			// which originates the source image is not a GDALImageReader
 			//
 			// /////////////////////////////////////////////////////////////////
-			File tempFile = File.createTempFile("datasetTemp", ".ds", null);
-			if (isPreviousReadOperationParametrized(readParam)
+			final File tempFile = File.createTempFile("datasetTemp", ".ds", null);
+			if ((readParam != null && isPreviousReadOperationParametrized(readParam))
 					|| !isAgdalImageReader) {
 				// create a Dataset from the originating image
 				final Dataset tempDataset = createDatasetFromImage(ri, tempFile
@@ -620,63 +626,6 @@ public abstract class GDALImageWriter extends ImageWriter {
 			}
 		}
 	}
-
-	// /**
-	// * Check if the GDAL specific driver support the <code>Create</code>
-	// * method.
-	// *
-	// * @return <code>true</code> it the driver support <code>Create</code>
-	// */
-	//	
-	// public boolean isSupportingCreate() {
-	// final Vector metadata = driver.GetMetadata_List("");
-	// final Enumeration enumerate = metadata.elements();
-	// while (enumerate.hasMoreElements()) {
-	// String s = (String) enumerate.nextElement();
-	// int indexOfEqualSymbol = s.indexOf('=');
-	// if (indexOfEqualSymbol < 0)
-	// continue;
-	// final String sName = s.substring(0, indexOfEqualSymbol);
-	// if (sName == null || sName.length() == 0)
-	// continue;
-	// if (sName.equals("DCAP_CREATE")) {
-	// s = s.substring(indexOfEqualSymbol + 1, s.length());
-	// if (s.equalsIgnoreCase("FALSE"))
-	// return false;
-	// else
-	// return true;
-	// }
-	// }
-	// return false;
-	// }
-	//
-	// /**
-	// * Check if the GDAL specific driver support the <code>CreateCopy</code>
-	// * method.
-	// *
-	// * @return <code>true</code> it the driver support <code>CreateCopy</code>
-	// */
-	// public boolean isSupportingCreateCopy() {
-	// final Vector metadata = driver.GetMetadata_List("");
-	// final Enumeration enumerate = metadata.elements();
-	// while (enumerate.hasMoreElements()) {
-	// final String s = (String) enumerate.nextElement();
-	// final int indexOfEqualSymbol = s.indexOf('=');
-	// if (indexOfEqualSymbol < 0)
-	// continue;
-	// final String sName = s.substring(0, indexOfEqualSymbol);
-	// if (sName == null || sName.length() == 0)
-	// continue;
-	// if (sName.equals("DCAP_CREATECOPY")) {
-	// if (s.substring(indexOfEqualSymbol + 1, s.length())
-	// .equalsIgnoreCase("FALSE"))
-	// return false;
-	// else
-	// return true;
-	// }
-	// }
-	// return false;
-	// }
 
 	public void write(IIOImage image) throws IOException {
 		write(null, image, null);
