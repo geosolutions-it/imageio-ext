@@ -245,9 +245,8 @@ public abstract class GDALImageWriter extends ImageWriter {
 			// no parameters (like, as an instance, sourceRegion,
 			// sourceSubSamplingX/Y) was defined, we can directly use the
 			// Dataset which originated this image. The originating Dataset may
-			// be found using the ImageReader.
-			// Otherwise, we need to build a Dataset from the actual image using
-			// the memory driver.
+			// be found using the ImageReader. Otherwise, we need to build a
+			// Dataset from the actual image using the memory driver.
 			//
 			// /////////////////////////////////////////////////////////////////
 			Dataset sourceDataset = null;
@@ -257,16 +256,24 @@ public abstract class GDALImageWriter extends ImageWriter {
 			// Getting the reader which read the coming image
 			ImageReader reader = null;
 			ImageReadParam readParam = null;
-			String[] properties = ri.getPropertyNames();
+			final String[] properties = ri.getPropertyNames();
 			if (properties != null) {
-				//RenderedImage coming from a JAI ImageRead operation.
-				Object imageReader = ri.getProperty("JAI.ImageReader");
-				if (imageReader instanceof ImageReader)
+				// // 
+				//
+				// In case the RenderedImage is coming from a JAI ImageRead
+				// I can get the ImageReader as well as the ImageReadParam
+				//
+				// //
+				final Object imageReader = ri.getProperty("JAI.ImageReader");
+				if (imageReader != null && imageReader instanceof ImageReader)
 					reader = (ImageReader) imageReader;
 
-				// retrieving the <code>ImageReadParam</code> used by the read
-				readParam = (ImageReadParam) ri
+				// retrieving the ImageReadParam used by the read
+				final Object imageReadParam = ri
 						.getProperty("JAI.ImageReadParam");
+				if (imageReadParam != null
+						&& imageReadParam instanceof ImageReadParam)
+					readParam = (ImageReadParam) imageReadParam;
 			}
 			boolean isAgdalImageReader = false;
 			if (reader != null && reader instanceof GDALImageReader) {
@@ -282,7 +289,8 @@ public abstract class GDALImageWriter extends ImageWriter {
 			// which originates the source image is not a GDALImageReader
 			//
 			// /////////////////////////////////////////////////////////////////
-			final File tempFile = File.createTempFile("datasetTemp", ".ds", null);
+			final File tempFile = File.createTempFile("datasetTemp", ".ds",
+					null);
 			if ((readParam != null && isPreviousReadOperationParametrized(readParam))
 					|| !isAgdalImageReader) {
 				// create a Dataset from the originating image
