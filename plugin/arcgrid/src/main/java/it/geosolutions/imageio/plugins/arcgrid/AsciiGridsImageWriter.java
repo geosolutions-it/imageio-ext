@@ -43,7 +43,7 @@ import org.w3c.dom.Node;
  * Class used for writing ASCII ArcGrid Format and ASCII GRASS Grid Format
  * 
  * @author Daniele Romagnoli, GeoSolutions.
- * @author Simone Giannecchini, GeoSolutions. 
+ * @author Simone Giannecchini, GeoSolutions.
  */
 public final class AsciiGridsImageWriter extends ImageWriter {
 	private static final Logger LOGGER = Logger
@@ -52,7 +52,7 @@ public final class AsciiGridsImageWriter extends ImageWriter {
 	/** <code>true</code> if there are some listeners attached to this writer */
 	private boolean hasListeners;
 
-	private static final double EPS = 1E-6;
+	public static final double EPS = 1E-3;
 
 	/** The {@link AsciiGridsImageMetadata} associated to this writer. */
 	private AsciiGridsImageMetadata imageMetadata = null;
@@ -137,7 +137,7 @@ public final class AsciiGridsImageWriter extends ImageWriter {
 		}
 		if (LOGGER.isLoggable(Level.FINE))
 			LOGGER.info("Setting Output");
-		
+
 	}
 
 	/**
@@ -149,10 +149,10 @@ public final class AsciiGridsImageWriter extends ImageWriter {
 	 */
 	public void write(IIOMetadata streamMetadata, IIOImage image,
 			ImageWriteParam param) throws IOException {
-		
+
 		hasListeners = (this.progressListeners != null && (!(this.progressListeners
 				.isEmpty()))) ? true : false;
-				
+
 		if (hasListeners) {
 			clearAbortRequest();
 			// Broadcast the start of the image write operation
@@ -264,11 +264,25 @@ public final class AsciiGridsImageWriter extends ImageWriter {
 		cellsizeY *= nRows / actualHeight;
 		if (!GRASS) {
 			// If ArcGrid (No GRASS) check to have square cell Size
-			if (Math.abs(cellsizeX - cellsizeY) > EPS)
+			if (resolutionCheck(cellsizeX, cellsizeX, EPS))
 				throw new IOException(
 						"The provided metadata are illegal!CellSizeX!=CellSizeY.");
 		}
 
+	}
+
+	/**
+	 * Simple check for having squre pixels.
+	 * 
+	 * @param cellsizeX 
+	 * @param cellsizeY
+	 * @param eps tolerance for the check.
+	 * @return <code>true</code> if pixels are square (or almost square),
+	 *         <code>false</code> otherwise.
+	 */
+	public static boolean resolutionCheck(double cellsizeX, double cellsizeY,
+			double eps) {
+		return (Math.abs(cellsizeX - cellsizeY)/Math.min(cellsizeX, cellsizeY)) > eps;
 	}
 
 	/**
