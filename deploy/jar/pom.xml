@@ -15,7 +15,7 @@
   <artifactId>imageio-ext-jardeployer</artifactId>
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
-  <name>Image I/O-Extension JAR Dependency Deployer</name>
+  <name>JAR Dependency Deployer</name>
   <scm>
     <connection>
       scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/deploy/jar

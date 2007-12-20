@@ -41,16 +41,15 @@ import junit.framework.TestSuite;
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class JP2KWriteTest extends AbstractJP2KTestCase {
-	
+
 	/** The LOGGER for this class. */
 	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.plugins.jp2kakadu");
 
-	// Set this to true if you just want run test without visualizing written
-	// images.
 	final private static String HOLD_WRITTEN = "it.geosolutions.imageio.plugins.jp2kakadu.holdwrittenfiles";
-	
-	boolean deleteTempFilesOnExit = !Boolean.getBoolean(HOLD_WRITTEN);
+
+	final static boolean deleteTempFilesOnExit = !Boolean
+			.getBoolean(HOLD_WRITTEN);
 	final static String testFileName = "sample.jp2";
 
 	// When testing write operations on very big images, performing subsampled
@@ -68,9 +67,6 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 		// multithreading settings
 		JP2GDALKakaduImageReaderSpi.setReadMultithreadingLevel(2);
 		JP2GDALKakaduImageWriterSpi.setWriteMultithreadingLevel(2);
-		if (TestData.isInteractiveTest()){
-			deleteTempFilesOnExit = false;
-		}
 	}
 
 	// ////////////////////////////////////////////////////////////////////////
@@ -270,7 +266,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 	public void testWrite_Cprecincts() throws IOException,
 			FileNotFoundException {
 
-		LOGGER.info("Testing JP2 Write operation with Cprecincts option setting");
+		LOGGER
+				.info("Testing JP2 Write operation with Cprecincts option setting");
 		// //
 		// Preparing input/output files
 		// //
@@ -554,7 +551,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 	// ////////////////////////////////////////////////////////////////////////
 
 	public void testWrite_Cmodes() throws IOException, FileNotFoundException {
-		
+
 		LOGGER.info("Testing JP2 Write operation with CModes option setting");
 		// //
 		// Preparing input/output files
@@ -881,8 +878,9 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 	// ////////////////////////////////////////////////////////////////////////
 
 	public void testWrite_ORGtparts() throws IOException, FileNotFoundException {
-		
-		LOGGER.info("Testing JP2 Write operation with ORGtparts option setting");
+
+		LOGGER
+				.info("Testing JP2 Write operation with ORGtparts option setting");
 		// //
 		// Preparing input/output files
 		// //
@@ -960,7 +958,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 	public void testWrite_ORGgen_plt() throws IOException,
 			FileNotFoundException {
 
-		LOGGER.info("Testing JP2 Write operation with ORGgen_plt option setting");
+		LOGGER
+				.info("Testing JP2 Write operation with ORGgen_plt option setting");
 		// //
 		// Preparing input/output files
 		// //
@@ -1067,7 +1066,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 	public void testWrite_ORGgen_tlm() throws IOException,
 			FileNotFoundException {
 
-		LOGGER.info("Testing JP2 Write operation with ORGgen_tlm option setting");
+		LOGGER
+				.info("Testing JP2 Write operation with ORGgen_tlm option setting");
 		// //
 		// Preparing input/output files
 		// //
@@ -1901,13 +1901,27 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 
 		// Writing
 		final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
+
+		if (!deleteTempFilesOnExit) {
+			final String message = new StringBuffer(
+					"------------------------------------------------------------------------\n")
+					.append(
+							"Files written during write operations tests will not be automatically deleted.\n")
+					.append("Several tests will reduce you free disk space.\n")
+					.append(
+							"Be sure of deleting written test data files when they are no more needed.\n")
+					.append(
+							"------------------------------------------------------------------------------\n")
+					.toString();
+			LOGGER.info(message);
+		}
 	}
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 
 		// Testing "Clevels" Create Option.
-		suite.addTest(new JP2KWriteTest("testWrite_Clevels"));
+		 suite.addTest(new JP2KWriteTest("testWrite_Clevels"));
 
 		// Testing "Clayers" Create Option.
 		suite.addTest(new JP2KWriteTest("testWrite_Clayers"));
@@ -1975,5 +1989,4 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 	public static void main(java.lang.String[] args) {
 		junit.textui.TestRunner.run(suite());
 	}
-
 }

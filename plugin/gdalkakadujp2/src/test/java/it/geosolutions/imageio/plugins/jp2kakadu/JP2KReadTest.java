@@ -78,7 +78,7 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
 	 * @throws IOException
 	 */
 	public void testJaiOperations() throws IOException {
-		final File inputFile =TestData.file(this, fileName);
+		final File inputFile = TestData.file(this, fileName);
 
 		JP2GDALKakaduImageReaderSpi
 				.setKakaduInputErrorManagement(KakaduErrorManagement.FAST);
@@ -102,14 +102,14 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
 		pbjImageRead = new ParameterBlockJAI("ImageRead");
 		pbjImageRead.setParameter("Input", inputFile);
 		pbjImageRead.setParameter("readParam", irp);
-		
-		final ImageLayout layout= new ImageLayout();
-		RenderedOp image = JAI.create("ImageRead", pbjImageRead, new RenderingHints(JAI.KEY_IMAGE_LAYOUT,layout));
-		
+
+		final ImageLayout layout = new ImageLayout();
+		RenderedOp image = JAI.create("ImageRead", pbjImageRead,
+				new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout));
+
 		if (TestData.isInteractiveTest())
 			Viewer.visualize(image, "subsampled");
-		System.out.println(image.getWidth());
-		System.out.println(image.getHeight());
+
 		// ////////////////////////////////////////////////////////////////
 		// preparing to crop
 		// ////////////////////////////////////////////////////////////////
@@ -187,7 +187,7 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
 		// Test read exploiting common JAI operations (Crop-Translate-Rotate)
 		suite.addTest(new JP2KReadTest("testJaiOperations"));
 
-//		 Test reading of a simple image
+		// Test reading of a simple image
 		suite.addTest(new JP2KReadTest("testRead"));
 
 		return suite;

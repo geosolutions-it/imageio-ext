@@ -15,7 +15,7 @@
   <artifactId>imageio-ext-windows</artifactId>
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
-  <name>Image I/O-Extensions Windows Native Libraries Dependency Deployer</name>
+  <name>Windows Native Libraries Dependency Deployer</name>
   <scm>
      <connection>
        scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/deploy/windows

@@ -2,13 +2,13 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <properties>
-      <it.geosolutions.imageio.plugins.jp2kakadu.holdwrittenfiles>false</it.geosolutions.imageio.plugins.jp2kakadu.holdwrittenfiles>
+      <tests.holdwrittenfiles>false</tests.holdwrittenfiles>
   </properties>
   <profiles>
    <profile>
      <id>tests.holdwrittenfiles</id>
      <properties>
-      <it.geosolutions.imageio.plugins.jp2kakadu.holdwrittenfiles>true</it.geosolutions.imageio.plugins.jp2kakadu.holdwrittenfiles>
+      <tests.holdwrittenfiles>true</tests.holdwrittenfiles>
      </properties>
    </profile>
   </profiles>
@@ -31,6 +31,25 @@
   <!-- ===================================================================== -->
   <!--     Dependencies management.                                          -->
   <!-- ===================================================================== -->
+  
+  <build>
+   <plugins>
+      <!-- ======================================================= -->
+      <!--                        Tests                            -->
+      <!-- ======================================================= -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <includes>
+            <include>**/*Test.java</include>
+          </includes>
+          <forkMode>once</forkMode>
+          <argLine>-Xmx${test.maxHeapSize} -enableassertions -Dorg.geotools.test.extensive=${extensive.tests} -Dorg.geotools.test.interactive=${interactive.tests} -Dit.geosolutions.imageio.plugins.jp2kakadu.holdwrittenfiles=${tests.holdwrittenfiles}</argLine>
+         </configuration>
+      </plugin>
+    </plugins>
+  </build>
   <dependencies>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
