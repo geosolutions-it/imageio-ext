@@ -122,9 +122,6 @@ public final class AsciiGridsImageWriter extends ImageWriter {
 	public void setOutput(Object output) {
 		super.setOutput(output); // validates output
 		if (output != null) {
-			// if (!(output instanceof FileImageOutputStreamExtImpl)
-			// && !(output instanceof GZIPImageOutputStream)
-			// && !(output instanceof GZIPFilterImageOutputStreamExt)) {
 			if (!(output instanceof ImageOutputStream)) {
 				throw new IllegalArgumentException(
 						"Not a valid type of Output ");
@@ -133,11 +130,10 @@ public final class AsciiGridsImageWriter extends ImageWriter {
 
 		} else {
 			imageOutputStream = null;
-			throw new IllegalArgumentException("Not a valid type of Output ");
+//			throw new IllegalArgumentException("Not a valid type of Output ");
 		}
 		if (LOGGER.isLoggable(Level.FINE))
 			LOGGER.info("Setting Output");
-
 	}
 
 	/**
@@ -422,6 +418,14 @@ public final class AsciiGridsImageWriter extends ImageWriter {
 
 	public boolean isHasListeners() {
 		return hasListeners;
+	}
+
+	public void reset() {
+		super.reset();
+		imageOutputStream=null;
+		imageMetadata=null;
+		rasterWriter=null;
+		inputRenderedImage=null;
 	}
 
 }
