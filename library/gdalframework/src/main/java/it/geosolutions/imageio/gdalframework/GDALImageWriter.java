@@ -197,7 +197,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 		destinationWidth = (destinationWidth - 1) / xSubsamplingFactor + 1;
 		destinationHeight = (destinationHeight - 1) / ySubsamplingFactor + 1;
 
-		final int eType = GDALUtilities
+		final int dataType = GDALUtilities
 				.retrieveGDALDataBufferType(inputRenderedImage.getSampleModel()
 						.getDataType());
 		final Vector myOptions = ((GDALImageWriteParam) param)
@@ -220,11 +220,11 @@ public abstract class GDALImageWriter extends ImageWriter {
 
 			// Dataset creation
 			Dataset ds = driver.Create(fileName, destinationWidth,
-					destinationHeight, nBands, eType, myOptions);
+					destinationHeight, nBands, dataType, myOptions);
 
 			// Data Writing
-			ds = writeData(ds, inputRenderedImage, sourceRegion, nBands, eType,
-					destinationWidth, destinationHeight, sourceWidth,
+			ds = writeData(ds, inputRenderedImage, sourceRegion, nBands,
+					dataType, destinationWidth, destinationHeight, sourceWidth,
 					sourceHeight);
 			ds.FlushCache();
 			GDALUtilities.closeDataSet(ds);
@@ -258,7 +258,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 			ImageReadParam readParam = null;
 			final String[] properties = ri.getPropertyNames();
 			if (properties != null) {
-				// // 
+				// //
 				//
 				// In case the RenderedImage is coming from a JAI ImageRead
 				// I can get the ImageReader as well as the ImageReadParam
@@ -319,31 +319,40 @@ public abstract class GDALImageWriter extends ImageWriter {
 			writeDataset.FlushCache();
 			GDALUtilities.closeDataSet(writeDataset);
 			tempFile.deleteOnExit();// TODO: Is needed?
-
 		}
 	}
 
 	/**
-	 * Given a previously created Dataset, containing no data, provides to store
-	 * required data coming from an input <code>RenderedImage</code> in
-	 * compliance with a set of parameter such as destination size, source size.
+	 * Given a previously created <code>Dataset</code>, containing no data,
+	 * provides to store required data coming from an input
+	 * <code>RenderedImage</code> in compliance with a set of parameter such
+	 * as destination size, source size.
 	 * 
 	 * @param ds
+	 *            the destination dataset
 	 * @param inputRenderedImage
+	 *            the input image containing data which need to be written
 	 * @param sourceRegion
+	 *            the rectangle used to clip the source image dimensions
 	 * @param nBands
-	 * @param eType
+	 *            the number of bands need to be written
+	 * @param dataType
+	 *            the datatype
 	 * @param destinationWidth
+	 *            the width of the destination
 	 * @param destinationHeight
+	 *            the height of the destination
 	 * @param sourceWidth
+	 *            the widht of the original image
 	 * @param sourceHeight
-	 * @return
+	 *            the height of the original image
+	 * @return the <code>Dataset</code> resulting after the write operation
 	 */
 	private Dataset writeData(Dataset ds, RenderedImage inputRenderedImage,
-			final Rectangle sourceRegion, int nBands, int eType,
-			int destinationWidth, int destinationHeight, int sourceWidth,
-			int sourceHeight) {
-		final int dataTypeSizeInBytes = gdal.GetDataTypeSize(eType) / 8;
+			final Rectangle sourceRegion, final int nBands, final int dataType,
+			final int destinationWidth, final int destinationHeight,
+			final int sourceWidth, final int sourceHeight) {
+		final int dataTypeSizeInBytes = gdal.GetDataTypeSize(dataType) / 8;
 		final int pixels = destinationHeight * destinationWidth;
 		int capacity = pixels * dataTypeSizeInBytes * nBands;
 
@@ -364,7 +373,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 		ByteBuffer[] bands = new ByteBuffer[nBands];
 		DataBuffer db = null;
 
-		if (eType == gdalconstConstants.GDT_Byte) {
+		if (dataType == gdalconstConstants.GDT_Byte) {
 			if (!splitBands) {
 				bands[0] = ByteBuffer.allocateDirect(capacity);
 				for (int i = 0; i < nBands; i++) {
@@ -384,7 +393,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 					bands[i].put(bytes, 0, bytes.length);
 				}
 			}
-		} else if (eType == gdalconstConstants.GDT_UInt16) {
+		} else if (dataType == gdalconstConstants.GDT_UInt16) {
 			if (!splitBands) {
 				bands[0] = ByteBuffer.allocateDirect(capacity);
 				bands[0].order(ByteOrder.nativeOrder());
@@ -408,7 +417,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 					buff.put(shorts, 0, shorts.length);
 				}
 			}
-		} else if (eType == gdalconstConstants.GDT_Int16) {
+		} else if (dataType == gdalconstConstants.GDT_Int16) {
 			if (!splitBands) {
 				bands[0] = ByteBuffer.allocateDirect(capacity);
 				bands[0].order(ByteOrder.nativeOrder());
@@ -432,7 +441,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 					buff.put(shorts, 0, shorts.length);
 				}
 			}
-		} else if (eType == gdalconstConstants.GDT_Int32) {
+		} else if (dataType == gdalconstConstants.GDT_Int32) {
 			if (!splitBands) {
 				bands[0] = ByteBuffer.allocateDirect(capacity);
 				bands[0].order(ByteOrder.nativeOrder());
@@ -456,7 +465,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 					buff.put(ints, 0, ints.length);
 				}
 			}
-		} else if (eType == gdalconstConstants.GDT_Float32) {
+		} else if (dataType == gdalconstConstants.GDT_Float32) {
 
 			if (!splitBands) {
 				bands[0] = ByteBuffer.allocateDirect(capacity);
@@ -482,7 +491,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 				}
 			}
 
-		} else if (eType == gdalconstConstants.GDT_Float64) {
+		} else if (dataType == gdalconstConstants.GDT_Float64) {
 
 			if (!splitBands) {
 				bands[0] = ByteBuffer.allocateDirect(capacity);
@@ -513,13 +522,13 @@ public abstract class GDALImageWriter extends ImageWriter {
 		if (!splitBands)
 			// I can perform a single Write operation.
 			ds.WriteRaster_Direct(0, 0, destinationWidth, destinationHeight,
-					sourceWidth, sourceHeight, eType, nBands, bands[0]);
+					sourceWidth, sourceHeight, dataType, nBands, bands[0]);
 		else {
 			// I need to perform a write operation for each band.
 			for (int i = 0; i < nBands; i++)
 				ds.GetRasterBand(i + 1).WriteRaster_Direct(0, 0,
 						destinationWidth, destinationHeight, sourceWidth,
-						sourceHeight, eType, bands[i]);
+						sourceHeight, dataType, bands[i]);
 		}
 		return ds;
 	}
