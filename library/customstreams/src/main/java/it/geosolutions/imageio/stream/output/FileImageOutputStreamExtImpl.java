@@ -24,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteOrder;
 
+import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStreamImpl;
 
 /**
@@ -171,5 +172,16 @@ public class FileImageOutputStreamExtImpl extends ImageOutputStreamImpl
 
 		}
 
+	}
+
+	/**
+	 * Provides a simple description for this {@link ImageOutputStream}.
+	 * 
+	 * @return a simple description for this {@link ImageOutputStream}.
+	 */
+	public String toString() {
+
+		return new StringBuffer("FileImageOutputStreamExtImpl which points to ")
+				.append(this.file.toString()).toString();
 	}
 }

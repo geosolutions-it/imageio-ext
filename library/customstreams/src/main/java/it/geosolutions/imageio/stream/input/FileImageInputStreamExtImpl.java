@@ -293,4 +293,15 @@ public final class FileImageInputStreamExtImpl extends ImageInputStreamImpl
 
 	}
 
+	/**
+	 * Provides a simple description for this {@link ImageInputStream}.
+	 * 
+	 * @return a simple description for this {@link ImageInputStream}.
+	 */
+	public String toString() {
+
+		return new StringBuffer("FileImageInputStreamExtImpl which points to ")
+				.append(this.file.toString()).toString();
+	}
+
 }
