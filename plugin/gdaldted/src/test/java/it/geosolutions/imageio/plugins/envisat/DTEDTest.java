@@ -38,7 +38,7 @@ import junit.framework.TestSuite;
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
-public class DTEDTest extends AbstractEnvisatTestCase {
+public class DTEDTest extends AbstractTestCase {
 	public final static String fileName = "n54.dt0";
 
 	public DTEDTest(String name) {
