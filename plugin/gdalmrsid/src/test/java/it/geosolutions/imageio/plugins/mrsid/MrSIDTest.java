@@ -41,7 +41,7 @@ import com.sun.media.jai.operator.ImageReadDescriptor;
 /**
  * Testing reading capabilities for {@link MrSIDImageReader}.
  * 
- * In case you get directo buffer memory problems use the following hint
+ * In case you get direct buffer memory problems use the following hint
  * -XX:MaxDirectMemorySize=128M
  * 
  * @author Daniele Romagnoli, GeoSolutions.
@@ -222,7 +222,7 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 		// Test reading metadata information
 		suite.addTest(new MrSIDTest("testMetadata"));
 
-		// Test read withouht exploiting JAI
+		// Test read without exploiting JAI
 		suite.addTest(new MrSIDTest("testManualRead"));
 
 		return suite;
