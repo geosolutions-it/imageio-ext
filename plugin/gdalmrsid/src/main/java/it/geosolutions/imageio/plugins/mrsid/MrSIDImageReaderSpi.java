@@ -21,6 +21,7 @@ import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -95,7 +96,8 @@ public class MrSIDImageReaderSpi extends GDALImageReaderSpi {
 				nativeImageMetadataFormatName,
 				nativeImageMetadataFormatClassName,
 				extraImageMetadataFormatNames,
-				extraImageMetadataFormatClassNames);
+				extraImageMetadataFormatClassNames,
+				Collections.singletonList("MrSID"));
 		if (logger.isLoggable(Level.FINE))
 			logger.fine("MrSIDImageReaderSpi Constructor");
 
@@ -125,9 +127,7 @@ public class MrSIDImageReaderSpi extends GDALImageReaderSpi {
 				.toString();
 	}
 
-	protected String getSupportedFormats() {
-		return "MrSID";
-	}
+
 
 
 	
