@@ -89,14 +89,14 @@ public abstract class GDALImageReader extends ImageReader {
 			.getLogger("it.geosolutions.imageio.gdalframework");
 
 	public void setInput(Object input, boolean seekForwardOnly) {
-		this.setInput(input,seekForwardOnly,false);
+		this.setInput(input, seekForwardOnly, false);
 	}
 
 	/** list of childs subdatasets names (if any) contained into the source */
 	private String datasetNames[];
 
 	/** number of subdatasets */
-	private int nSubdatasets =-1;
+	private int nSubdatasets = -1;
 
 	/** The ImageInputStream */
 	private ImageInputStream imageInputStream;
@@ -301,7 +301,7 @@ public abstract class GDALImageReader extends ImageReader {
 			dataset.GetRasterBand(1).GetBlockSize(xBlockSize, yBlockSize);
 			tileHeight = yBlockSize[0];
 			tileWidth = xBlockSize[0];
-			if(((long)tileHeight)*((long)tileWidth)>Integer.MAX_VALUE)
+			if (((long) tileHeight) * ((long) tileWidth) > Integer.MAX_VALUE)
 				performTileSizeTuning(dataset);
 
 			// /////////////////////////////////////////////////////////////////
@@ -715,7 +715,7 @@ public abstract class GDALImageReader extends ImageReader {
 	public GDALImageReader(GDALImageReaderSpi originatingProvider) {
 		super(originatingProvider);
 	}
-	
+
 	/**
 	 * Constructs a
 	 * <code>GDALImageReader<code> using a {@link GDALImageReaderSpi}.
@@ -724,11 +724,13 @@ public abstract class GDALImageReader extends ImageReader {
 	 *            The {@link GDALImageReaderSpi} to use for building this
 	 *            <code>GDALImageReader<code>.
 	 */
-	public GDALImageReader(GDALImageReaderSpi originatingProvider, int numSubdatasets) {
+	public GDALImageReader(GDALImageReaderSpi originatingProvider,
+			int numSubdatasets) {
 		super(originatingProvider);
-		if(numSubdatasets<0)
-			throw new IllegalArgumentException("The provided number of sub datasets is invalid");
-		this.nSubdatasets=numSubdatasets;
+		if (numSubdatasets < 0)
+			throw new IllegalArgumentException(
+					"The provided number of sub datasets is invalid");
+		this.nSubdatasets = numSubdatasets;
 	}
 
 	/**
@@ -757,19 +759,18 @@ public abstract class GDALImageReader extends ImageReader {
 		// such a case the max valid imageIndex is nSubdatasets.
 		// ////////////////////////////////////////////////////////////////////
 
-		if (imageIndex < 0
-				|| imageIndex > nSubdatasets) {
+		if (imageIndex < 0 || imageIndex > nSubdatasets) {
 
 			// The specified imageIndex is not valid.
 			// Retrieving the valid image index range.
-			final int maxImageIndex =  nSubdatasets;
+			final int maxImageIndex = nSubdatasets;
 			final StringBuffer sb = new StringBuffer(
 					"Illegal imageIndex specified = ").append(imageIndex)
 					.append(", while the valid imageIndex");
 			if (maxImageIndex > 0)
 				// There are N Subdatasets.
-				sb.append(" range should be (0,").append(maxImageIndex )
-						.append(")!!");
+				sb.append(" range should be (0,").append(maxImageIndex).append(
+						")!!");
 			else
 				// Only the imageIndex 0 is valid.
 				sb.append(" should be 0!");
@@ -826,7 +827,7 @@ public abstract class GDALImageReader extends ImageReader {
 				//
 				// /////////////////////////////////////////////////////////////
 				if (nSubdatasets == 0) {
-					nSubdatasets=1;
+					nSubdatasets = 1;
 					datasetNames = new String[1];
 					datasetNames[0] = datasetSource.getAbsolutePath();
 					final GDALDatasetWrapper myItem = createDataSetWrapper(datasetNames[0]);
@@ -1365,8 +1366,8 @@ public abstract class GDALImageReader extends ImageReader {
 			Dataset dataSet = GDALUtilities.acquireDataSet(datasetSource
 					.getAbsolutePath(), gdalconstConstants.GA_ReadOnly);
 			if (dataSet != null) {
-				isInputDecodable = ((GDALImageReaderSpi) this.getOriginatingProvider())
-						.isDecodable(dataSet);
+				isInputDecodable = ((GDALImageReaderSpi) this
+						.getOriginatingProvider()).isDecodable(dataSet);
 				GDALUtilities.closeDataSet(dataSet);
 			} else
 				isInputDecodable = false;
@@ -1390,23 +1391,23 @@ public abstract class GDALImageReader extends ImageReader {
 	 * Allows resources to be released
 	 */
 	public synchronized void dispose() {
-		// Closing imageInputStream
-		if (imageInputStream != null)
-			try {
-				imageInputStream.close();
-			} catch (IOException ioe) {
-
-			}
-		imageInputStream = null;
-
+		super.dispose();
 		synchronized (datasetMap) {
+			// Closing imageInputStream
+			if (imageInputStream != null)
+				try {
+					imageInputStream.close();
+				} catch (IOException ioe) {
+
+				}
+			imageInputStream = null;
+
 			// Cleaning HashMap
 			datasetMap.clear();
-		}
 
-		datasetMap = null;
-		datasetNames = null;
-		super.dispose();
+			datasetNames = null;
+
+		}
 	}
 
 	/**

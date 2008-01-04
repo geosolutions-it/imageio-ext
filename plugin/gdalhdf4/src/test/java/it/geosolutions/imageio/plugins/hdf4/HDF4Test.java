@@ -57,7 +57,7 @@ public class HDF4Test extends AbstractHDF4TestCase {
 			final ImageReadParam irp = new ImageReadParam();
 			irp.setSourceSubsampling(1, 1, 0, 0);
 
-			HDF4ImageReader mReader = new HDF4ImageReader(
+			final HDF4ImageReader mReader = new HDF4ImageReader(
 					new HDF4ImageReaderSpi());
 			ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
 			final String fileName = "TOVS_DAILY_AM_870330_NG.HDF";
@@ -95,7 +95,10 @@ public class HDF4Test extends AbstractHDF4TestCase {
 			if (TestData.isInteractiveTest())
 				Viewer.visualize(ri);
 			else
-				assertNotNull(ri.getData());
+				{
+				assertNotNull(ri);
+				mReader.dispose();
+				}
 		} catch (FileNotFoundException fnfe) {
 			warningMessage();
 		}
