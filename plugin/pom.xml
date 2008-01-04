@@ -102,7 +102,7 @@
     <module>gdalgeotiff</module>
     <module>gdalhdf4</module>
     <module>gdalenvisat</module>
-    <module>gdalmrsid</module>    
+    <module>gdalmrsid</module>
     <module>gdalecw</module>
     <module>gdalecwjp2</module>
     <module>gdalmrsidjp2</module>
@@ -112,5 +112,6 @@
     <module>gdalarcgrid</module>
     <module>arcgrid</module>
     <module>swan</module>
+    <module>gdaldted</module>
   </modules>
 </project>
