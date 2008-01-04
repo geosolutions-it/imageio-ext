@@ -63,10 +63,11 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
 		JP2GDALKakaduImageReaderSpi.setReadMultithreadingLevel(15);
 		pbjImageRead = new ParameterBlockJAI("ImageRead");
 		pbjImageRead.setParameter("Input", file);
+		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi().createReaderInstance());
 
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 		if (TestData.isInteractiveTest())
-			Viewer.visualize(image);
+			Viewer.visualizeBothMetadata(image,"");
 		else
 			assertNotNull(image.getTiles());
 	}
@@ -102,6 +103,7 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
 		pbjImageRead = new ParameterBlockJAI("ImageRead");
 		pbjImageRead.setParameter("Input", inputFile);
 		pbjImageRead.setParameter("readParam", irp);
+		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi().createReaderInstance());
 
 		final ImageLayout layout = new ImageLayout();
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead,
