@@ -80,7 +80,7 @@ public class GeoTiffImageReaderSpi extends GDALImageReaderSpi {
 
 		static final String[] extraImageMetadataFormatClassNames = { null };
 
-		private boolean registered;
+//		private boolean registered;
 
 		public GeoTiffImageReaderSpi() {
 			super(
@@ -112,13 +112,6 @@ public class GeoTiffImageReaderSpi extends GDALImageReaderSpi {
 		}
 
 		/**
-		 * This method checks if the provided input can be decoded from this SPI
-		 */
-		public boolean canDecodeInput(Object input) throws IOException {
-			return super.canDecodeInput(input);
-		}
-
-		/**
 		 * Returns an instance of the GeoTiffImageReader
 		 * 
 		 * @see javax.imageio.spi.ImageReaderSpi#createReaderInstance(java.lang.Object)
@@ -137,38 +130,38 @@ public class GeoTiffImageReaderSpi extends GDALImageReaderSpi {
 
 
 
-		/**
-		 * Upon registration, this method ensures that this SPI is listed at the top
-		 * of the ImageReaderSpi items, so that it will be invoked before the
-		 * default ImageReaderSpi
-		 * 
-		 * @param registry
-		 *            ServiceRegistry where this object has been registered.
-		 * @param category
-		 *            a Class object indicating the registry category under which
-		 *            this object has been registered.
-		 */
-		public void onRegistration(ServiceRegistry registry, Class category) {
-			 super.onRegistration(registry, category);
-			if (registered) {
-				return;
-			}
-
-			registered = true;
-
-			Iterator readers = GDALUtilities.getJDKImageReaderWriterSPI(registry, "TIFF",
-					true).iterator();
-
-			ImageReaderSpi spi;
-			while (readers.hasNext()) {
-				spi = (ImageReaderSpi) readers.next();
-				if(spi==this)
-					continue;
-				registry.deregisterServiceProvider(spi);
-				registry.setOrdering(category, this, spi);
-
-			}
-		
-
-		}
+//		/**
+//		 * Upon registration, this method ensures that this SPI is listed at the top
+//		 * of the ImageReaderSpi items, so that it will be invoked before the
+//		 * default ImageReaderSpi
+//		 * 
+//		 * @param registry
+//		 *            ServiceRegistry where this object has been registered.
+//		 * @param category
+//		 *            a Class object indicating the registry category under which
+//		 *            this object has been registered.
+//		 */
+//		public void onRegistration(ServiceRegistry registry, Class category) {
+//			 super.onRegistration(registry, category);
+//			if (registered) {
+//				return;
+//			}
+//
+//			registered = true;
+//
+//			Iterator readers = GDALUtilities.getJDKImageReaderWriterSPI(registry, "TIFF",
+//					true).iterator();
+//
+//			ImageReaderSpi spi;
+//			while (readers.hasNext()) {
+//				spi = (ImageReaderSpi) readers.next();
+//				if(spi==this)
+//					continue;
+//				registry.deregisterServiceProvider(spi);
+//				registry.setOrdering(category, this, spi);
+//
+//			}
+//		
+//
+//		}
 }

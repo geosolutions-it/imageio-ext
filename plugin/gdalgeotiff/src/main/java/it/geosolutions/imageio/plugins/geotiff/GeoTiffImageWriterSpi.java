@@ -74,7 +74,7 @@ public final class GeoTiffImageWriterSpi extends GDALImageWriterSpi {
 
 	static final String[] extraImageMetadataFormatClassNames = { null };
 
-	private boolean registered;
+//	private boolean registered;
 	
 	/**
 	 * 
@@ -114,24 +114,24 @@ public final class GeoTiffImageWriterSpi extends GDALImageWriterSpi {
 		// XXX
 		return true;
 	}
-	
-	public void onRegistration(ServiceRegistry registry, Class category) {
-		 super.onRegistration(registry, category);
-		if (registered) 
-			return;
-
-		registered = true;
-		Iterator writers = GDALUtilities.getJDKImageReaderWriterSPI(registry, "TIFF",
-				false).iterator();
-		ImageWriterSpi spi;
-		while (writers.hasNext()) {
-			spi = (ImageWriterSpi) writers.next();
-			if(spi==this)
-				continue;
-			registry.deregisterServiceProvider(spi);
-			registry.setOrdering(category, this, spi);
-		}
-	}
+//	
+//	public void onRegistration(ServiceRegistry registry, Class category) {
+//		 super.onRegistration(registry, category);
+//		if (registered) 
+//			return;
+//
+//		registered = true;
+//		Iterator writers = GDALUtilities.getJDKImageReaderWriterSPI(registry, "TIFF",
+//				false).iterator();
+//		ImageWriterSpi spi;
+//		while (writers.hasNext()) {
+//			spi = (ImageWriterSpi) writers.next();
+//			if(spi==this)
+//				continue;
+//			registry.deregisterServiceProvider(spi);
+//			registry.setOrdering(category, this, spi);
+//		}
+//	}
 	
 	
 }

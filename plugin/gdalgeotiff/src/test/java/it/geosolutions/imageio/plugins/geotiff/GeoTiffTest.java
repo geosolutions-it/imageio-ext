@@ -129,6 +129,8 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
 		final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
 				"ImageRead");
 		pbjImageRead.setParameter("Input", inputFile);
+		pbjImageRead.setParameter("Reader", new GeoTiffImageReaderSpi()
+		.createReaderInstance());
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 		if (TestData.isInteractiveTest())
 			Viewer.visualize(image);
@@ -140,7 +142,7 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
 				"ImageWrite");
 		pbjImageWrite.setParameter("Output", outputFile);
 		pbjImageWrite.addSource(image);
-		final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
+		JAI.create("ImageWrite", pbjImageWrite);
 
 		// ////////////////////////////////////////////////////////////////
 		// preparing to read again
@@ -148,6 +150,8 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
 		final ParameterBlockJAI pbjImageReRead = new ParameterBlockJAI(
 				"ImageRead");
 		pbjImageReRead.setParameter("Input", outputFile);
+		pbjImageRead.setParameter("Reader", new GeoTiffImageReaderSpi()
+		.createReaderInstance());
 		final RenderedOp image2 = JAI.create("ImageRead", pbjImageReRead);
 		if (TestData.isInteractiveTest())
 			Viewer.visualize(image2);
