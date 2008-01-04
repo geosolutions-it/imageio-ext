@@ -20,6 +20,7 @@ import it.geosolutions.imageio.gdalframework.GDALImageReader.GDALDatasetWrapper;
 
 import java.awt.BorderLayout;
 import java.awt.image.RenderedImage;
+import java.io.IOException;
 import java.util.List;
 
 import javax.media.jai.widget.ScrollingImagePanel;
@@ -546,28 +547,33 @@ public final class Viewer {
 
 	private static String buildMetadataText(RenderedImage ri,
 			final int metadataFields, final int index) {
-		final String newLine = System.getProperty("line.separator");
+		try {
+			final String newLine = System.getProperty("line.separator");
 
-		GDALImageReader reader = (GDALImageReader) ri
-				.getProperty(ImageReadDescriptor.PROPERTY_NAME_IMAGE_READER);
+			GDALImageReader reader = (GDALImageReader) ri
+					.getProperty(ImageReadDescriptor.PROPERTY_NAME_IMAGE_READER);
 
-		StringBuffer sb = new StringBuffer("");
+			StringBuffer sb = new StringBuffer("");
 
-		switch (metadataFields) {
-		case TextType.ONLY_IMAGE_METADATA:
-		case TextType.EVERYTHING:
-			sb.append(getImageMetadata(reader, index));
-			break;
-		case TextType.ONLY_STREAM_METADATA:
-			sb.append(getStreamMetadata(reader));
-			break;
-		case TextType.STREAM_AND_IMAGE_METADATA:
-			sb.append(getImageMetadata(reader, index)).append(newLine).append(
-					getStreamMetadata(reader));
-			break;
+			switch (metadataFields) {
+			case TextType.ONLY_IMAGE_METADATA:
+			case TextType.EVERYTHING:
+				sb.append(getImageMetadata(reader, index));
+				break;
+			case TextType.ONLY_STREAM_METADATA:
+				sb.append(getStreamMetadata(reader));
+				break;
+			case TextType.STREAM_AND_IMAGE_METADATA:
+				sb.append(getImageMetadata(reader, index)).append(newLine)
+						.append(getStreamMetadata(reader));
+				break;
+			}
+
+			return sb.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
 		}
-
-		return sb.toString();
 	}
 
 	public static void displayImageIOMetadata(Node root) {
@@ -688,9 +694,9 @@ public final class Viewer {
 	// returns a String containing stream metadata from the provided reader
 	//
 	// ////////////////////////////////////////////////////////////////////////
-	private static String getStreamMetadata(GDALImageReader reader) {
+	private static String getStreamMetadata(GDALImageReader reader) throws IOException {
 		final GDALDatasetWrapper dsw = reader
-				.getDataSetWrapper(reader.nSubdatasets);
+				.getDataSetWrapper(reader.getNumImages(true));
 		final List metadata = GDALUtilities.getGDALStreamMetadata(dsw
 				.getDatasetName());
 		final int size = metadata.size();
