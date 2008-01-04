@@ -21,6 +21,7 @@ import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -95,10 +96,11 @@ public class EnvisatImageReaderSpi extends GDALImageReaderSpi {
 				nativeImageMetadataFormatName,
 				nativeImageMetadataFormatClassName,
 				extraImageMetadataFormatNames,
-				extraImageMetadataFormatClassNames);
+				extraImageMetadataFormatClassNames,
+				Collections.singletonList("ESAT"));
 		if (logger.isLoggable(Level.FINE))
 			logger.fine("EnvisatImageReaderSpi Constructor");
-		needsTileTuning = true;
+
 	}
 
 	/**
@@ -123,10 +125,6 @@ public class EnvisatImageReaderSpi extends GDALImageReaderSpi {
 	public String getDescription(Locale locale) {
 		return new StringBuffer("Envisat Image Reader, version ").append(version)
 				.toString();
-	}
-
-	protected String getSupportedFormats() {
-		return "ESAT";
 	}
 
 

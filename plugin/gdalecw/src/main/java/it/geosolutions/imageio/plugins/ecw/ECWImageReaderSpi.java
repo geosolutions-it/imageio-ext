@@ -21,6 +21,7 @@ import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -95,13 +96,12 @@ public class ECWImageReaderSpi extends GDALImageReaderSpi {
 				nativeImageMetadataFormatName,
 				nativeImageMetadataFormatClassName,
 				extraImageMetadataFormatNames,
-				extraImageMetadataFormatClassNames);
+				extraImageMetadataFormatClassNames,
+				Collections.singletonList("ECW"));
 
 		if (LOGGER.isLoggable(Level.FINE))
 			LOGGER.fine("ECWImageReaderSpi Constructor");
 		
-		needsTileTuning=true;
-		supportsSubDataSets=false;
 
 	}
 
@@ -129,11 +129,5 @@ public class ECWImageReaderSpi extends GDALImageReaderSpi {
 				.toString();
 	}
 
-	/**
-	 * @see it.geosolutions.imageio.gdalframework.GDALImageReaderSpi#getSupportedFormats()
-	 */
-	protected String getSupportedFormats() {
-		return "ECW";
-	}
 
 }

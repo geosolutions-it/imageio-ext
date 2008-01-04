@@ -21,6 +21,7 @@ import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -96,13 +97,11 @@ public class ArcGridImageReaderSpi extends GDALImageReaderSpi {
 				nativeImageMetadataFormatName,
 				nativeImageMetadataFormatClassName,
 				extraImageMetadataFormatNames,
-				extraImageMetadataFormatClassNames);
+				extraImageMetadataFormatClassNames,
+				Collections.singletonList("AAIGrid"));
 
 		if (logger.isLoggable(Level.FINE))
 			logger.fine("ArcGridImageReaderSpi Constructor");
-		
-		supportsSubDataSets=false;
-		needsTileTuning=true;
 
 	}
 
@@ -128,13 +127,6 @@ public class ArcGridImageReaderSpi extends GDALImageReaderSpi {
 	public String getDescription(Locale locale) {
 		return new StringBuffer("Ascii ArcGrid Image Reader, version ").append(version)
 				.toString();
-	}
-
-	/**
-	 * @see it.geosolutions.imageio.gdalframework.GDALImageReaderSpi#getSupportedFormats()
-	 */
-	protected String getSupportedFormats() {
-		return "AAIGrid";
 	}
 	
 }

@@ -22,6 +22,7 @@ import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -101,11 +102,12 @@ public class GeoTiffImageReaderSpi extends GDALImageReaderSpi {
 					nativeImageMetadataFormatName,
 					nativeImageMetadataFormatClassName,
 					extraImageMetadataFormatNames,
-					extraImageMetadataFormatClassNames);
+					extraImageMetadataFormatClassNames,
+					Collections.singletonList("GTiff"));
 
 			if (logger.isLoggable(Level.FINE))
 				logger.fine("GeoTiffImageReaderSpi Constructor");
-			needsTileTuning=true;
+
 
 		}
 
@@ -133,9 +135,7 @@ public class GeoTiffImageReaderSpi extends GDALImageReaderSpi {
 					.toString();
 		}
 
-		protected String getSupportedFormats() {
-			return "GTiff";
-		}
+
 
 		/**
 		 * Upon registration, this method ensures that this SPI is listed at the top

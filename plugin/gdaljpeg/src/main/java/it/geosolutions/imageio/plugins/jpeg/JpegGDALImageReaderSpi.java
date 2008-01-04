@@ -21,6 +21,7 @@ import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -100,11 +101,12 @@ public class JpegGDALImageReaderSpi extends GDALImageReaderSpi {
 				nativeImageMetadataFormatName,
 				nativeImageMetadataFormatClassName,
 				extraImageMetadataFormatNames,
-				extraImageMetadataFormatClassNames);
+				extraImageMetadataFormatClassNames,
+				Collections.singletonList("JPEG"));
 
 		if (logger.isLoggable(Level.FINE))
 			logger.fine("JpegGDALImageReaderSpi Constructor");
-		needsTileTuning=true;
+
 	}
 
 	/**
@@ -131,9 +133,7 @@ public class JpegGDALImageReaderSpi extends GDALImageReaderSpi {
 				.toString();
 	}
 
-	protected String getSupportedFormats() {
-		return "JPEG";
-	}
+
 
 	/**
 	 * Upon registration, this method ensures that this SPI is listed at the top

@@ -44,7 +44,10 @@ import org.gdal.gdalconst.gdalconstConstants;
  * @author Simone Giannecchini, GeoSolutions.
  */
 public final class GDALUtilities {
-	
+	private static boolean available;
+
+	private static boolean init=false;
+
 	/** private constructor to prevent instantiation */
 	private GDALUtilities(){}
 	
@@ -467,5 +470,37 @@ public final class GDALUtilities {
 		 * (assuming that
 		 */
 		return (rmax >= tileSize - tileSize / 4) ? sopt : 0;
+	}
+
+	/**
+	 * Returns <code>true</code> if the native library has been loaded.
+	 * <code>false</code> otherwise.
+	 * 
+	 * @return <code>true</code> if the native library has been loaded.
+	 *         <code>false</code> otherwise.
+	 */
+	public static boolean isGDALAvailable() {
+		loadGDAL();
+		return available;
+	}
+
+	
+	public synchronized  static void loadGDAL() {
+		if(init=false)
+			init=true;
+		else
+			return;
+		try {
+			System.loadLibrary("gdaljni");
+			gdal.AllRegister();
+			GDALUtilities.available = true;
+		} catch (UnsatisfiedLinkError e) {
+
+			if (LOGGER.isLoggable(Level.SEVERE))
+				LOGGER.severe(new StringBuffer("Native library load failed.")
+						.append(e.toString()).toString());
+			GDALUtilities.available = false;
+		}
+		
 	}
 }

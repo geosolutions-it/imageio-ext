@@ -96,7 +96,7 @@ public abstract class GDALImageReader extends ImageReader {
 	private String datasetNames[];
 
 	/** number of subdatasets */
-	private int nSubdatasets = -1;
+	private int nSubdatasets =-1;
 
 	/** The ImageInputStream */
 	private ImageInputStream imageInputStream;
@@ -301,7 +301,7 @@ public abstract class GDALImageReader extends ImageReader {
 			dataset.GetRasterBand(1).GetBlockSize(xBlockSize, yBlockSize);
 			tileHeight = yBlockSize[0];
 			tileWidth = xBlockSize[0];
-			if (((GDALImageReaderSpi)GDALImageReader.this.getOriginatingProvider()).needsTilesTuning())
+			if(((long)tileHeight)*((long)tileWidth)>Integer.MAX_VALUE)
 				performTileSizeTuning(dataset);
 
 			// /////////////////////////////////////////////////////////////////
@@ -744,8 +744,6 @@ public abstract class GDALImageReader extends ImageReader {
 	 */
 	protected void checkImageIndex(final int imageIndex) {
 		initialize();
-		final boolean isSupportingSubdatasets = ((GDALImageReaderSpi)this.originatingProvider).supportsSubdatasets();
-
 		// ////////////////////////////////////////////////////////////////////
 		// When is an imageIndex not valid? 1) When it is negative 2) When the
 		// format does not support subdatasets and imageIndex is > 0 3) When the
@@ -760,23 +758,21 @@ public abstract class GDALImageReader extends ImageReader {
 		// ////////////////////////////////////////////////////////////////////
 
 		if (imageIndex < 0
-				|| (!isSupportingSubdatasets && imageIndex > 0)
-				|| (isSupportingSubdatasets && ((nSubdatasets == 0 && imageIndex > 0) || (nSubdatasets != 0 && (imageIndex > nSubdatasets))))) {
+				|| imageIndex > nSubdatasets) {
 
 			// The specified imageIndex is not valid.
 			// Retrieving the valid image index range.
-			final int validImageIndex = isSupportingSubdatasets ? nSubdatasets
-					: 0;
-			StringBuffer sb = new StringBuffer(
+			final int maxImageIndex =  nSubdatasets;
+			final StringBuffer sb = new StringBuffer(
 					"Illegal imageIndex specified = ").append(imageIndex)
 					.append(", while the valid imageIndex");
-			if (validImageIndex > 0)
+			if (maxImageIndex > 0)
 				// There are N Subdatasets.
-				sb.append(" range should be (0,").append(validImageIndex - 1)
+				sb.append(" range should be (0,").append(maxImageIndex )
 						.append(")!!");
 			else
 				// Only the imageIndex 0 is valid.
-				sb.append(" should be only 0!");
+				sb.append(" should be 0!");
 			throw new IndexOutOfBoundsException(sb.toString());
 		}
 	}
@@ -789,7 +785,7 @@ public abstract class GDALImageReader extends ImageReader {
 	 * subDatasets.
 	 */
 	private boolean initialize() {
-		if (!GDALImageReaderSpi.isAvailable())
+		if (!GDALUtilities.isGDALAvailable())
 			throw new IllegalStateException(
 					"GDAL native libraries are not available.");
 		synchronized (datasetMap) {
@@ -830,6 +826,7 @@ public abstract class GDALImageReader extends ImageReader {
 				//
 				// /////////////////////////////////////////////////////////////
 				if (nSubdatasets == 0) {
+					nSubdatasets=1;
 					datasetNames = new String[1];
 					datasetNames[0] = datasetSource.getAbsolutePath();
 					final GDALDatasetWrapper myItem = createDataSetWrapper(datasetNames[0]);
@@ -1417,6 +1414,7 @@ public abstract class GDALImageReader extends ImageReader {
 	 */
 	public synchronized void reset() {
 		super.setInput(null, false, false);
+		dispose();
 		isInitialized = false;
 		nSubdatasets = -1;
 	}
@@ -1522,10 +1520,6 @@ public abstract class GDALImageReader extends ImageReader {
 	public int getNumImages(boolean allowSearch) throws IOException {
 		if (LOGGER.isLoggable(Level.FINE))
 			LOGGER.fine("getting NumImages");
-		// If Format supports subdatasets and the subdatasets list is not empty
-		// returns the number of subdatasets.
-		if (!((GDALImageReaderSpi)this.getOriginatingProvider()).supportsSubdatasets())
-			return 1;
 		initialize();
 		return nSubdatasets;
 	}
@@ -1609,6 +1603,7 @@ public abstract class GDALImageReader extends ImageReader {
 	 * @return the array containing the GeoTransformation coefficients.
 	 */
 	public double[] getGeoTransform(final int imageIndex) {
+		checkImageIndex(imageIndex);
 		return getDataSetWrapper(imageIndex).getGeoTransformation();
 	}
 
@@ -1623,6 +1618,7 @@ public abstract class GDALImageReader extends ImageReader {
 	 * 
 	 */
 	public List getGCPs(final int imageIndex) {
+		checkImageIndex(imageIndex);
 		return getDataSetWrapper(imageIndex).getGcps();
 	}
 
@@ -1636,6 +1632,7 @@ public abstract class GDALImageReader extends ImageReader {
 	 * @return the Ground Control Points projection definition string.
 	 */
 	public String getGCPProjection(final int imageIndex) {
+		checkImageIndex(imageIndex);
 		return getDataSetWrapper(imageIndex).getGcpProjection();
 	}
 
@@ -1649,6 +1646,7 @@ public abstract class GDALImageReader extends ImageReader {
 	 * @return the number of GroundControlPoints of the <code>Dataset</code>.
 	 */
 	public int getGCPCount(final int imageIndex) {
+		checkImageIndex(imageIndex);
 		return getDataSetWrapper(imageIndex).getGcpNumber();
 	}
 

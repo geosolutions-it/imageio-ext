@@ -25,6 +25,10 @@ import javax.imageio.spi.ImageWriterSpi;
  * @author Daniele Romagnoli.
  */
 public abstract class GDALImageWriterSpi extends ImageWriterSpi {
+	
+	static {
+		GDALUtilities.loadGDAL();
+	}
 
 	/**
 	 * <code>true</code> if the GDAL driver of the extending format support

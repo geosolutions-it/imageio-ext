@@ -23,6 +23,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -44,32 +49,14 @@ import org.gdal.gdalconst.gdalconst;
 public abstract class GDALImageReaderSpi extends ImageReaderSpi {
 	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.gdalframework");
-	private static boolean available;
-
 	static {
-		try {
-			System.loadLibrary("gdaljni");
-			gdal.AllRegister();
-			GDALImageReaderSpi.available = true;
-		} catch (UnsatisfiedLinkError e) {
-
-			if (LOGGER.isLoggable(Level.SEVERE))
-				LOGGER.severe(new StringBuffer("Native library load failed.")
-						.append(e.toString()).toString());
-			GDALImageReaderSpi.available = false;
-		}
+		GDALUtilities.loadGDAL();
 	}
 
-	/** <code>true</code> if the specific format supports subdatasets */
-	protected boolean supportsSubDataSets;
-
 	/**
-	 * Some formats use tiles having size N*1 (tiles are simple rows). To avoid
-	 * a wasting number of read operations (a read for each row), it should be
-	 * better to refine tile sizes. This field will be <code>true</code> if
-	 * the specific format needs tile tuning.
+	 * {@link List} of gdal formats supported by this plugin.
 	 */
-	protected boolean needsTileTuning;
+	private List supportedFormats;
 
 	/**
 	 * Methods returning the formats which are supported by a plugin.
@@ -96,7 +83,10 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
 	 * instance: "HDF4;HDF4Image"
 	 * 
 	 */
-	protected abstract String getSupportedFormats();
+	public List getSupportedFormats()
+	{
+		return Collections.unmodifiableList(this.supportedFormats);
+	}
 
 
 
@@ -113,7 +103,8 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
 			String nativeImageMetadataFormatName,
 			String nativeImageMetadataFormatClassName,
 			String[] extraImageMetadataFormatNames,
-			String[] extraImageMetadataFormatClassNames) {
+			String[] extraImageMetadataFormatClassNames,
+			Collection supportedFormats) {
 
 		super(
 				vendorName,
@@ -134,38 +125,7 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
 				nativeImageMetadataFormatClassName,
 				extraImageMetadataFormatNames,
 				extraImageMetadataFormatClassNames);
-	}
-
-	/**
-	 * In case the specific {@link GDALImageReader}'s implementation supports
-	 * subdatasets, this method return <code>true</code>.
-	 * 
-	 * @return <code>true</code> in case the specific format supports
-	 *         subdatasets
-	 * 
-	 * NOTE: When defining a specific {@link GDALImageReaderSpi} implementation,
-	 * be sure you properly initialize this field in the SPI constructor,
-	 * depending on the capabilities of the format for which you are
-	 * implementing the new class.
-	 */
-	public boolean supportsSubdatasets() {
-		return supportsSubDataSets;
-	}
-
-	/**
-	 * In case the {@link GDALImageReader}'s implementation for a specific
-	 * format requires tile tuning, this method return <code>true</code>.
-	 * 
-	 * @return <code>true</code> in case the {@link GDALImageReader}'s
-	 *         implementation for a specific format requires tile tuning.
-	 * 
-	 * NOTE: When defining a specific {@link GDALImageReaderSpi} implementation,
-	 * be sure you properly initialize this field in the SPI constructor,
-	 * depending on the capabilities of the format for which you are
-	 * implementing the new class.
-	 */
-	public boolean needsTilesTuning() {
-		return needsTileTuning;
+		this.supportedFormats= new  ArrayList(supportedFormats);
 	}
 
 	/**
@@ -243,7 +203,7 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
 	 */
 	protected boolean isDecodable(Dataset dataset) {
 		if (dataset != null) {
-			Driver driver = dataset.GetDriver();
+			final Driver driver = dataset.GetDriver();
 
 			// retrieving the format of the provided input.
 			// We use the "Description" of the driver which has opened the
@@ -253,42 +213,9 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
 			// ////////////////////////////////////////////////////////////////
 			// checking if this format is supported by the specific SPI */
 			// ////////////////////////////////////////////////////////////////
-
-			// Some plugins may support more than 1 Format (Driver).
-			// As an Instance, the HDF4ImageReader supports HDF4 and HDF4Image
-			// Formats
-			String formats = getSupportedFormats();
-			int hasManyFormats = formats.indexOf(';');
-			if (hasManyFormats == -1) {
-				// The plugin supports only one format
-				if (sDriver.equals(formats))
-					return true;
-			} else {
-				// The plugin supports different formats
-				while (hasManyFormats != -1) {
-					if (sDriver.equals(formats.substring(0, hasManyFormats)))
-						return true;
-					formats = formats.substring(hasManyFormats + 1, formats
-							.length());
-					hasManyFormats = formats.indexOf(';');
-				}
-				// I need to check the last string available
-				if (sDriver.equals(formats))
-					return true;
-			}
+			return getSupportedFormats().contains(sDriver);
 		}
 		return false;
-	}
-
-	/**
-	 * Returns <code>true</code> if the native library has been loaded.
-	 * <code>false</code> otherwise.
-	 * 
-	 * @return <code>true</code> if the native library has been loaded.
-	 *         <code>false</code> otherwise.
-	 */
-	public static final boolean isAvailable() {
-		return available;
 	}
 
 	/**
@@ -302,30 +229,17 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
 	 *         available. <code>false</code> otherwise.<BR>
 	 */
 	public boolean isDriverAvailable() {
-		String formats = getSupportedFormats();
-		int hasManyFormats = formats.indexOf(';');
-		if (hasManyFormats == -1) {
-			// The plugin supports only one format
-			Driver driver = gdal.GetDriverByName(formats);
-			if (driver != null)
-				return true;
-		} else {
-			// The plugin supports different formats
-			while (hasManyFormats != -1) {
-				Driver driver = gdal.GetDriverByName(formats.substring(0,
-						hasManyFormats));
-				if (driver != null)
-					return true;
-				formats = formats.substring(hasManyFormats + 1, formats
-						.length());
-				hasManyFormats = formats.indexOf(';');
-			}
-			// I need to check the last string available
-			Driver driver = gdal.GetDriverByName(formats);
-			if (driver != null)
-				return true;
+		final List formats = getSupportedFormats();
+		final Iterator it = formats.iterator();
+
+		// The plugin supports different formats
+		while (it.hasNext()) {
+			final Driver driver = gdal.GetDriverByName((String) it.next());
+			if (driver == null)
+				return false;
 		}
-		return false;
+
+		return true;
 	}
 
 }

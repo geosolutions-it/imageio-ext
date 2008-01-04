@@ -21,6 +21,8 @@ import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import javax.imageio.ImageReader;
@@ -83,8 +85,8 @@ public class HDF4ImageReaderSpi extends GDALImageReaderSpi {
 				nativeImageMetadataFormatName,
 				nativeImageMetadataFormatClassName,
 				extraImageMetadataFormatNames,
-				extraImageMetadataFormatClassNames);
-		supportsSubDataSets=true;
+				extraImageMetadataFormatClassNames,
+				getSupportedFormatsList());
 		
 	}
 	
@@ -104,8 +106,11 @@ public class HDF4ImageReaderSpi extends GDALImageReaderSpi {
 		return "HDF4 Image Reader, version " + version;
 	}
 
-	protected String getSupportedFormats() {
-		return "HDF4;HDF4Image";
+	private final static List getSupportedFormatsList() {
+		final List l= new ArrayList();
+		l.add("HDF4");
+		l.add("HDF4Image");
+		return l;
 	}
 
 }
