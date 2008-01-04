@@ -32,9 +32,6 @@ public class GeoTiffImageWriter extends GDALImageWriter {
 		//XXX
 	}
 
-	protected Driver getDriver() {
-		return gdal.GetDriverByName("GTiff");
-	}
 	
 	public ImageWriteParam getDefaultWriteParam() {
 		return new GeoTiffImageWriteParam();

@@ -144,9 +144,6 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
 		if (input instanceof ImageInputStream)
 			((ImageInputStream) input).mark();
 
-		/**
-		 * Checking input source types and creating an ImageInputStream
-		 */
 
 		// if input source is a string,
 		// convert input from String to File
@@ -170,10 +167,10 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
 		boolean isInputDecodable = false;
 		// Checking if this specific SPI can decode the provided input
 		try {
-			String s = ((FileImageInputStreamExtImpl) input).getFile()
+			final String s = ((FileImageInputStreamExtImpl) input).getFile()
 					.getAbsolutePath();
 
-			Dataset ds = GDALUtilities.acquireDataSet(s, gdalconst.GA_ReadOnly);
+			final Dataset ds = GDALUtilities.acquireDataSet(s, gdalconst.GA_ReadOnly);
 			isInputDecodable = isDecodable(ds);
 
 			// Closing the dataset
@@ -208,7 +205,7 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
 			// retrieving the format of the provided input.
 			// We use the "Description" of the driver which has opened the
 			// input.
-			final String sDriver = driver.GetDescription();
+			final String sDriver = driver.getShortName();
 
 			// ////////////////////////////////////////////////////////////////
 			// checking if this format is supported by the specific SPI */
@@ -218,28 +215,5 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
 		return false;
 	}
 
-	/**
-	 * Returns <code>true</code> if a driver for the specific format is
-	 * available. <code>false</code> otherwise.<BR>
-	 * It is worth to point out that a successfull loading of the native library
-	 * is not sufficient to grant the support for a specific format. We should
-	 * also check if the proper driver is available.
-	 * 
-	 * @return <code>true</code> if a driver for the specific format is
-	 *         available. <code>false</code> otherwise.<BR>
-	 */
-	public boolean isDriverAvailable() {
-		final List formats = getSupportedFormats();
-		final Iterator it = formats.iterator();
-
-		// The plugin supports different formats
-		while (it.hasNext()) {
-			final Driver driver = gdal.GetDriverByName((String) it.next());
-			if (driver == null)
-				return false;
-		}
-
-		return true;
-	}
 
 }

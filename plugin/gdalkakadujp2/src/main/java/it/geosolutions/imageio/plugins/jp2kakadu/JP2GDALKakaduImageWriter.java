@@ -33,10 +33,6 @@ public class JP2GDALKakaduImageWriter extends GDALImageWriter {
 		super(originatingProvider);
 	}
 
-	protected Driver getDriver() {
-		return gdal.GetDriverByName("JP2KAK");
-	}
-
 	/**
 	 * Build a default {@link JP2GDALKakaduImageWriteParam}
 	 */

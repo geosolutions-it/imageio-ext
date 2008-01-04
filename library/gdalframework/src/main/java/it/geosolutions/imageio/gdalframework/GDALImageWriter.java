@@ -57,6 +57,7 @@ import javax.media.jai.operator.BandSelectDescriptor;
 import org.gdal.gdal.Dataset;
 import org.gdal.gdal.Driver;
 import org.gdal.gdal.gdal;
+import org.gdal.gdalconst.gdalconst;
 import org.gdal.gdalconst.gdalconstConstants;
 
 /**
@@ -85,17 +86,8 @@ public abstract class GDALImageWriter extends ImageWriter {
 		}
 	}
 
-	/** GDAL Driver which will perform writing operations */
-	protected Driver driver;
-
 	/** Output File */
 	protected File outputFile;
-
-	/**
-	 * Method returning the specific GDAL <code>Driver</code> to handle the
-	 * format
-	 */
-	protected abstract Driver getDriver();
 
 	/** Memory driver for creating {@link Dataset}s in memory. */
 	protected final static Driver memDriver = gdal.GetDriverByName("MEM");
@@ -105,12 +97,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 	 */
 	public GDALImageWriter(ImageWriterSpi originatingProvider) {
 		super(originatingProvider);
-		driver = getDriver();
-		if (driver == null) {
-			if (LOGGER.isLoggable(Level.SEVERE))
-				LOGGER
-						.severe("The requested driver is not avaiable, this ImageWriter may malfunction");
-		}
+
 	}
 
 	public IIOMetadata getDefaultStreamMetadata(ImageWriteParam param) {
@@ -121,15 +108,18 @@ public abstract class GDALImageWriter extends ImageWriter {
 	public void write(IIOMetadata streamMetadata, IIOImage image,
 			ImageWriteParam param) throws IOException {
 
+
 		// /////////////////////////////////////////////////////////////////////
 		//
 		// Initial check on the capabilities of this writer and on the provided
 		// parameters.
 		//
 		// /////////////////////////////////////////////////////////////////////
-		if (!((GDALImageWriterSpi) originatingProvider).isSupportingCreate()
-				&& !((GDALImageWriterSpi) originatingProvider)
-						.isSupportingCreateCopy())
+		final String driverName=(String) ((GDALImageWriterSpi) this.originatingProvider)
+		.getSupportedFormats().get(0);
+		final int writingCapabilities = GDALUtilities
+				.formatWritingCapabilities(driverName);
+		if (writingCapabilities == GDALUtilities.DriverCreateCapabilities.READ_ONLY)
 			throw new IllegalStateException(
 					"This writer seems to not support either create or create copy");
 		if (image == null)
@@ -200,6 +190,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 		final Vector myOptions = (Vector) ((GDALImageWriteParam) param)
 				.getCreateOptionsHandler().getCreateOptions();
 
+		
 		// /////////////////////////////////////////////////////////////////////
 		//
 		// Some GDAL formats driver support both "Create" and "CreateCopy"
@@ -208,7 +199,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 		// create a new File from an existing Dataset.
 		//
 		// /////////////////////////////////////////////////////////////////////
-		if (((GDALImageWriterSpi) originatingProvider).isSupportingCreate()) {
+		if (writingCapabilities == GDALUtilities.DriverCreateCapabilities.CREATE) {
 			// Retrieving the number of bands
 			final int nBands = inputRenderedImage.getNumBands();
 
@@ -216,6 +207,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 			final String fileName = outputFile.getAbsolutePath();
 
 			// Dataset creation
+			final Driver driver=gdal.GetDriverByName(driverName);
 			Dataset ds = driver.Create(fileName, destinationWidth,
 					destinationHeight, nBands, dataType, myOptions);
 
@@ -225,99 +217,104 @@ public abstract class GDALImageWriter extends ImageWriter {
 					sourceHeight);
 			ds.FlushCache();
 			GDALUtilities.closeDataSet(ds);
+			return;
 
 			// TODO: Adding additional writing operation (CRS,metadata,...)
-		} else if (((GDALImageWriterSpi) originatingProvider)
-				.isSupportingCreateCopy()) {
-
-			// //
-			// TODO: CHECK CRS & PROJECTIONS & ...
-			// //
-
-			// /////////////////////////////////////////////////////////////////
-			//
-			// First of all, it is worth to point out that CreateCopy method
-			// allows to create a File from an existing Dataset.
-			// As first step, we need to retrieve the originary Dataset.
-			// If the source image comes from a "pure" read operation, where
-			// no parameters (like, as an instance, sourceRegion,
-			// sourceSubSamplingX/Y) was defined, we can directly use the
-			// Dataset which originated this image. The originating Dataset may
-			// be found using the ImageReader. Otherwise, we need to build a
-			// Dataset from the actual image using the memory driver.
-			//
-			// /////////////////////////////////////////////////////////////////
-			Dataset sourceDataset = null;
-			final Dataset writeDataset;
-			final RenderedImage ri = image.getRenderedImage();
-
-			// Getting the reader which read the coming image
-			ImageReader reader = null;
-			ImageReadParam readParam = null;
-			final String[] properties = ri.getPropertyNames();
-			if (properties != null) {
-				// //
-				//
-				// In case the RenderedImage is coming from a JAI ImageRead
-				// I can get the ImageReader as well as the ImageReadParam
-				//
-				// //
-				final Object imageReader = ri.getProperty("JAI.ImageReader");
-				if (imageReader != null && imageReader instanceof ImageReader)
-					reader = (ImageReader) imageReader;
-
-				// retrieving the ImageReadParam used by the read
-				final Object imageReadParam = ri
-						.getProperty("JAI.ImageReadParam");
-				if (imageReadParam != null
-						&& imageReadParam instanceof ImageReadParam)
-					readParam = (ImageReadParam) imageReadParam;
-			}
-			boolean isAgdalImageReader = false;
-			if (reader != null && reader instanceof GDALImageReader) {
-				sourceDataset = ((GDALImageReader) reader)
-						.getLastRecentlyUsedDataset();
-				isAgdalImageReader = true;
-			}
-
-			// /////////////////////////////////////////////////////////////////
-			//
-			// Checking if the readParam contains parameters which changes
-			// some image properties such size, position,... or if the reader
-			// which originates the source image is not a GDALImageReader
-			//
-			// /////////////////////////////////////////////////////////////////
-			final File tempFile = File.createTempFile("datasetTemp", ".ds",
-					null);
-			if ((readParam != null && isPreviousReadOperationParametrized(readParam))
-					|| !isAgdalImageReader) {
-				// create a Dataset from the originating image
-				final Dataset tempDataset = createDatasetFromImage(ri, tempFile
-						.getAbsolutePath());
-				if (isAgdalImageReader && sourceDataset != null) {
-					// Retrieving CRS and Projections from the original dataset
-					final String projection = sourceDataset.GetProjection();
-					final double geoTransform[] = new double[6];
-					sourceDataset.GetGeoTransform(geoTransform);
-					tempDataset.SetGeoTransform(geoTransform);
-					tempDataset.SetProjection(projection);
-				}
-				writeDataset = driver.CreateCopy(outputFile.getPath(),
-						tempDataset, 0, myOptions);
-				tempDataset.FlushCache();
-				GDALUtilities.closeDataSet(tempDataset);
-			} else {
-				// Originating image come from a "pure" read operation.
-				// I can use the Dataset coming from the reader as
-				// sourceDataset.
-				writeDataset = driver.CreateCopy(outputFile.getPath(),
-						sourceDataset, 0, myOptions);
-			}
-
-			writeDataset.FlushCache();
-			GDALUtilities.closeDataSet(writeDataset);
-			tempFile.deleteOnExit();// TODO: Is needed?
 		}
+
+		// //
+		// TODO: CHECK CRS & PROJECTIONS & ...
+		// //
+
+		// /////////////////////////////////////////////////////////////////
+		//
+		// Only create copy is supported
+		//
+		//
+		// //
+		// First of all, it is worth to point out that CreateCopy method
+		// allows to create a File from an existing Dataset.
+		// As first step, we need to retrieve the originary Dataset.
+		// If the source image comes from a "pure" read operation, where
+		// no parameters (like, as an instance, sourceRegion,
+		// sourceSubSamplingX/Y) was defined, we can directly use the
+		// Dataset which originated this image. The originating Dataset may
+		// be found using the ImageReader. Otherwise, we need to build a
+		// Dataset from the actual image using the memory driver.
+		//
+		// /////////////////////////////////////////////////////////////////
+		Dataset sourceDataset = null;
+		final Dataset writeDataset;
+		final RenderedImage ri = image.getRenderedImage();
+
+		// Getting the reader which read the coming image
+		ImageReader reader = null;
+		ImageReadParam readParam = null;
+		final String[] properties = ri.getPropertyNames();
+		if (properties != null) {
+			// //
+			//
+			// In case the RenderedImage is coming from a JAI ImageRead
+			// I can get the ImageReader as well as the ImageReadParam
+			//
+			// //
+			final Object imageReader = ri.getProperty("JAI.ImageReader");
+			if (imageReader != null && imageReader instanceof ImageReader)
+				reader = (ImageReader) imageReader;
+
+			// retrieving the ImageReadParam used by the read
+			final Object imageReadParam = ri.getProperty("JAI.ImageReadParam");
+			if (imageReadParam != null
+					&& imageReadParam instanceof ImageReadParam)
+				readParam = (ImageReadParam) imageReadParam;
+		}
+		boolean isAgdalImageReader = false;
+		if (reader != null && reader instanceof GDALImageReader) {
+			sourceDataset = ((GDALImageReader) reader)
+					.getLastRecentlyUsedDataset();
+			isAgdalImageReader = true;
+		}
+
+		// /////////////////////////////////////////////////////////////////
+		//
+		// Checking if the readParam contains parameters which changes
+		// some image properties such size, position,... or if the reader
+		// which originates the source image is not a GDALImageReader
+		//
+		// /////////////////////////////////////////////////////////////////
+		final Driver driver=gdal.GetDriverByName(driverName);
+		if ((readParam != null && isPreviousReadOperationParametrized(readParam))
+				|| !isAgdalImageReader) {
+			// create a Dataset from the originating image
+			final File tempFile = File.createTempFile("datasetTemp", ".ds", null);
+			tempFile.deleteOnExit();// TODO: Is needed?
+			final Dataset tempDataset = createDatasetFromImage(ri, tempFile
+					.getAbsolutePath());
+			if (isAgdalImageReader && sourceDataset != null) {
+				// Retrieving CRS and Projections from the original dataset
+				final String projection = sourceDataset.GetProjection();
+				final double geoTransform[] = new double[6];
+				sourceDataset.GetGeoTransform(geoTransform);
+				tempDataset.SetGeoTransform(geoTransform);
+				tempDataset.SetProjection(projection);
+			}
+			writeDataset = driver.CreateCopy(outputFile.getPath(), tempDataset,
+					0, myOptions);
+			tempDataset.FlushCache();
+			GDALUtilities.closeDataSet(tempDataset);
+			tempFile.delete();
+		} else {
+			// Originating image come from a "pure" read operation.
+			// I can use the Dataset coming from the reader as
+			// sourceDataset.
+			writeDataset = driver.CreateCopy(outputFile.getPath(),
+					sourceDataset, 0, myOptions);
+		}
+
+		writeDataset.FlushCache();
+		GDALUtilities.closeDataSet(writeDataset);
+		
+
 	}
 
 	/**

@@ -19,8 +19,12 @@ package it.geosolutions.imageio.gdalframework;
 import java.awt.Dimension;
 import java.awt.image.DataBuffer;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,6 +38,7 @@ import javax.imageio.spi.ServiceRegistry;
 import javax.media.jai.JAI;
 
 import org.gdal.gdal.Dataset;
+import org.gdal.gdal.Driver;
 import org.gdal.gdal.gdal;
 import org.gdal.gdalconst.gdalconst;
 import org.gdal.gdalconst.gdalconstConstants;
@@ -44,15 +49,31 @@ import org.gdal.gdalconst.gdalconstConstants;
  * @author Simone Giannecchini, GeoSolutions.
  */
 public final class GDALUtilities {
-	private static boolean available;
-
-	private static boolean init=false;
-
-	/** private constructor to prevent instantiation */
-	private GDALUtilities(){}
+	/**
+	 * Simple placeholder for information about a driver's capabilities.
+	 * 
+	 * @author Simone Giannecchini, GeoSOlutions.
+	 *
+	 */
+	public final static class DriverCreateCapabilities{
+		/**{@link Driver} suports up to create.*/
+		public final static int CREATE=0;
+		
+		/**{@link Driver} suports up to create copy.*/
+		public final static int CREATE_COPY=1;
+		
+		/**{@link Driver} suports up to read only.*/
+		public final static int READ_ONLY=2;
+	}
+	
 	
 	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.gdalframework");
+	
+	/** is gdal available on this machine?.*/
+	private static boolean available;
+
+	private static boolean init=false;
 
 	static {
 		try {
@@ -67,6 +88,18 @@ public final class GDALUtilities {
 		}
 	}
 
+	/**
+	 * This {@link Map} link each driver with its writing capabilities.
+	 * 
+	 */
+	private final static Map driversWritingCapabilities= Collections.synchronizedMap(new HashMap());
+
+
+
+
+	/** private constructor to prevent instantiation */
+	private GDALUtilities(){}
+	
 	/**
 	 * Simply provides to retrieve the corresponding <code>GDALDataType</code>
 	 * for the specified <code>dataBufferType</code>
@@ -196,9 +229,83 @@ public final class GDALUtilities {
 		return gdalImageMetadata;
 	}
 
+	/**
+	 * Closes the given {@link Dataset}.
+	 * @param ds {@link Dataset} to close.
+	 */
 	public static synchronized void closeDataSet(Dataset ds) {
+		if(ds==null)
+			throw new NullPointerException("The provided dataset is null");
 		ds.delete();
 	}
+	
+
+	/**
+	 * Returns <code>true</code> if a driver for the specific format is
+	 * available. <code>false</code> otherwise.<BR>
+	 * It is worth to point out that a successful loading of the native library
+	 * is not sufficient to grant the support for a specific format. We should
+	 * also check if the proper driver is available.
+	 * 
+	 * @return <code>true</code> if a driver for the specific format is
+	 *         available. <code>false</code> otherwise.<BR>
+	 */
+	public static boolean isDriverAvailable(final String driverName) {
+		final Driver driver = gdal.GetDriverByName(driverName);
+		if (driver == null)
+			return false;
+		return true;
+	}
+	
+	/**
+	 * Tells us about the capabilities for a gdal driver .
+	 * 
+	 * @param driverName
+	 *            name of the {@link Driver} we want to get info about.
+	 * @return {@link GDALUtilities.DriverCreateCapabilities#CREATE} in case the
+	 *         driver supports creation of dataset,
+	 *         {@link GDALUtilities.DriverCreateCapabilities#CREATE_COPY} in
+	 *         case the driver supports only create copy and eventually
+	 *         {@link GDALUtilities.DriverCreateCapabilities#READ_ONLY} for
+	 *         read-only drivers.
+	 */
+	public static int formatWritingCapabilities(final String driverName){
+		if(driverName==null)
+			throw new NullPointerException("he provided driver name is null");
+		loadGDAL();
+		synchronized (driversWritingCapabilities) {
+			if(driversWritingCapabilities.containsKey(driverName))
+				return ((Integer)driversWritingCapabilities.get(driverName)).intValue();
+			final Driver driver=gdal.GetDriverByName(driverName);
+			if(driver==null)
+					throw new IllegalArgumentException("The requested driver does not exist");
+			// parse metadata
+			final Map metadata=driver.GetMetadata_Dict("");
+			final boolean createSupported=Boolean.valueOf((String) metadata.get(gdalconst.DCAP_CREATE)).booleanValue();
+			final boolean createCopySupported=Boolean.valueOf((String) metadata.get(gdalconst.DCAP_CREATECOPY)).booleanValue();
+			int retVal;
+			if(createSupported)
+			{
+				driversWritingCapabilities.put(driverName, new Integer(GDALUtilities.DriverCreateCapabilities.CREATE));
+				retVal=GDALUtilities.DriverCreateCapabilities.CREATE;
+			}
+			else
+				if(createCopySupported)
+				{
+					driversWritingCapabilities.put(driverName, new Integer(GDALUtilities.DriverCreateCapabilities.CREATE_COPY));
+					retVal=GDALUtilities.DriverCreateCapabilities.CREATE_COPY;
+				}
+				else
+					{
+					driversWritingCapabilities.put(driverName, new Integer(GDALUtilities.DriverCreateCapabilities.READ_ONLY));
+					retVal=GDALUtilities.DriverCreateCapabilities.READ_ONLY;
+					}
+			return retVal;
+			
+			
+		}
+	}
+	
 
 	/**
 	 * Returns the value of a specific metadata item related to the stream. As
@@ -484,9 +591,11 @@ public final class GDALUtilities {
 		return available;
 	}
 
-	
+	/**
+	 * Forces loading of GDAL libs.
+	 */
 	public synchronized  static void loadGDAL() {
-		if(init=false)
+		if(init==false)
 			init=true;
 		else
 			return;

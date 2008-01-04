@@ -16,6 +16,10 @@
  */
 package it.geosolutions.imageio.gdalframework;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import javax.imageio.spi.ImageWriterSpi;
 
 /**
@@ -31,22 +35,9 @@ public abstract class GDALImageWriterSpi extends ImageWriterSpi {
 	}
 
 	/**
-	 * <code>true</code> if the GDAL driver of the extending format support
-	 * <code>Create</code> method. When defining a specialized
-	 * <code>GDALImageWriterSpi</code> be sure you properly initialize this
-	 * field. Information about Create support are available running <BR>
-	 * "gdalinfo --formats" command
+	 * {@link List}  of gdal formats supported by this plugin.
 	 */
-	protected boolean isSupportingCreate=false;
-
-	/**
-	 * <code>true</code> if the GDAL driver of the extending format support
-	 * <code>CreateCopy</code> method. When defining a specialized
-	 * <code>GDALImageWriterSpi</code> be sure you properly initialize this
-	 * field. Information about CreateCopy support are available running <BR>
-	 * "gdalinfo --formats" command
-	 */
-	protected boolean isSupportingCreateCopy=false;
+	private List supportedFormats;
 
 	public GDALImageWriterSpi(String vendorName, String version,
 			String[] names, String[] suffixes, String[] MIMETypes,
@@ -61,7 +52,8 @@ public abstract class GDALImageWriterSpi extends ImageWriterSpi {
 			String nativeImageMetadataFormatName,
 			String nativeImageMetadataFormatClassName,
 			String[] extraImageMetadataFormatNames,
-			String[] extraImageMetadataFormatClassNames) {
+			String[] extraImageMetadataFormatClassNames,
+			List supportedFormats) {
 
 		super(
 				vendorName,
@@ -82,14 +74,37 @@ public abstract class GDALImageWriterSpi extends ImageWriterSpi {
 				nativeImageMetadataFormatClassName,
 				extraImageMetadataFormatNames,
 				extraImageMetadataFormatClassNames);
+		this.supportedFormats= new ArrayList(supportedFormats);
 	}
 
-	public boolean isSupportingCreate() {
-		return isSupportingCreate;
-	}
-
-	public boolean isSupportingCreateCopy() {
-		return isSupportingCreateCopy;
+	/**
+	 * Methods returning the formats which are supported by a plugin.
+	 * 
+	 * The right value to be returned may be found using the GDAL command:
+	 * <code> gdalinfo --formats</code> which lists all the supported formats.
+	 * 
+	 * As an instance, the result of this command may be:
+	 * 
+	 * VRT (rw+): Virtual Raster GTiff (rw+): GeoTIFF NITF (rw+): National
+	 * Imagery Transmission Format HFA (rw+): Erdas Imagine Images (.img)
+	 * SAR_CEOS (ro): CEOS SAR Image CEOS (ro): CEOS Image
+	 * .........................................
+	 * 
+	 * You need to set the String returned as the first word (as an instance:
+	 * "HFA", if you are building a plugin for the Erdas Image Images)
+	 * 
+	 * In some circumstances, GDAL provides more than 1 driver to manage a
+	 * specific format. As an instance, in order to handle HDF4 files, GDAL
+	 * provides two drivers: HDF4 and HDF4Image (which supports Dataset
+	 * creation). The HDF4ImageReader will be capable of manage both formats.
+	 * 
+	 * To specify different formats, just separate them by the ";" symbol. As an
+	 * instance: "HDF4;HDF4Image"
+	 * 
+	 */
+	public List getSupportedFormats()
+	{
+		return Collections.unmodifiableList(this.supportedFormats);
 	}
 
 }

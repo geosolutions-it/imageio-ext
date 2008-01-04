@@ -20,6 +20,7 @@ import it.geosolutions.imageio.gdalframework.GDALImageWriterSpi;
 import it.geosolutions.imageio.gdalframework.GDALUtilities;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Locale;
 
@@ -90,9 +91,8 @@ public final class GeoTiffImageWriterSpi extends GDALImageWriterSpi {
 				nativeImageMetadataFormatName,
 				nativeImageMetadataFormatClassName,
 				extraImageMetadataFormatNames,
-				extraImageMetadataFormatClassNames);
-		isSupportingCreate=true;
-		isSupportingCreateCopy=true;
+				extraImageMetadataFormatClassNames,
+				Collections.singletonList("JP2KAK"));
 	}
 
 	/**
