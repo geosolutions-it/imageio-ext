@@ -58,6 +58,7 @@ public class JPEGReadTest extends AbstractJPEGTestCase {
 		irp.setSourceSubsampling(4, 4, 0, 0);
 		pbjImageRead = new ParameterBlockJAI("ImageRead");
 		pbjImageRead.setParameter("Input", file);
+		pbjImageRead.setParameter("Reader", new JpegGDALImageReaderSpi().createReaderInstance());
 		pbjImageRead.setParameter("readParam", irp);
 		
 		final ImageLayout l = new ImageLayout();

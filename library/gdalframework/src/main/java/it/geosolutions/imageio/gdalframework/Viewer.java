@@ -696,7 +696,7 @@ public final class Viewer {
 	// ////////////////////////////////////////////////////////////////////////
 	private static String getStreamMetadata(GDALImageReader reader) throws IOException {
 		final GDALDatasetWrapper dsw = reader
-				.getDataSetWrapper(reader.getNumImages(true));
+				.getDataSetWrapper(reader.getNumImages(true)-1);
 		final List metadata = GDALUtilities.getGDALStreamMetadata(dsw
 				.getDatasetName());
 		final int size = metadata.size();

@@ -79,7 +79,7 @@ public class JpegGDALImageReaderSpi extends GDALImageReaderSpi {
 
 	static final String[] extraImageMetadataFormatClassNames = { null };
 
-	private boolean registered;
+//	private boolean registered;
 
 	public JpegGDALImageReaderSpi() {
 		super(
@@ -135,32 +135,32 @@ public class JpegGDALImageReaderSpi extends GDALImageReaderSpi {
 
 
 
-	/**
-	 * Upon registration, this method ensures that this SPI is listed at the top
-	 * of the ImageReaderSpi items, so that it will be invoked before the
-	 * default ImageReaderSpi
-	 * 
-	 * @param registry
-	 *            ServiceRegistry where this object has been registered.
-	 * @param category
-	 *            a Class object indicating the registry category under which
-	 *            this object has been registered.
-	 */
-	public void onRegistration(ServiceRegistry registry, Class category) {
-		super.onRegistration(registry, category);
-		if (registered) {
-			return;
-		}
-		registered = true;
-		Iterator readers = com.sun.media.imageioimpl.common.ImageUtil
-				.getJDKImageReaderWriterSPI(registry, "JPEG", true).iterator();
-		ImageReaderSpi spi;
-		while (readers.hasNext()) {
-			spi = (ImageReaderSpi) readers.next();
-			if (spi == this)
-				continue;
-			registry.deregisterServiceProvider(spi);
-			registry.setOrdering(category, this, spi);
-		}
-	}
+//	/**
+//	 * Upon registration, this method ensures that this SPI is listed at the top
+//	 * of the ImageReaderSpi items, so that it will be invoked before the
+//	 * default ImageReaderSpi
+//	 * 
+//	 * @param registry
+//	 *            ServiceRegistry where this object has been registered.
+//	 * @param category
+//	 *            a Class object indicating the registry category under which
+//	 *            this object has been registered.
+//	 */
+//	public void onRegistration(ServiceRegistry registry, Class category) {
+//		super.onRegistration(registry, category);
+//		if (registered) {
+//			return;
+//		}
+//		registered = true;
+//		Iterator readers = com.sun.media.imageioimpl.common.ImageUtil
+//				.getJDKImageReaderWriterSPI(registry, "JPEG", true).iterator();
+//		ImageReaderSpi spi;
+//		while (readers.hasNext()) {
+//			spi = (ImageReaderSpi) readers.next();
+//			if (spi == this)
+//				continue;
+//			registry.deregisterServiceProvider(spi);
+//			registry.setOrdering(category, this, spi);
+//		}
+//	}
 }
