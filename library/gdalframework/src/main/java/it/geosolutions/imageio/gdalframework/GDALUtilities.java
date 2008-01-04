@@ -281,8 +281,10 @@ public final class GDALUtilities {
 					throw new IllegalArgumentException("The requested driver does not exist");
 			// parse metadata
 			final Map metadata=driver.GetMetadata_Dict("");
-			final boolean createSupported=Boolean.valueOf((String) metadata.get(gdalconst.DCAP_CREATE)).booleanValue();
-			final boolean createCopySupported=Boolean.valueOf((String) metadata.get(gdalconst.DCAP_CREATECOPY)).booleanValue();
+			final String create=(String) metadata.get("DCAP_CREATE");
+			final String createCopy=(String) metadata.get("DCAP_CREATECOPY");
+			final boolean createSupported=create!=null&&create.equalsIgnoreCase("yes");
+			final boolean createCopySupported=createCopy!=null&&createCopy.equalsIgnoreCase("yes");
 			int retVal;
 			if(createSupported)
 			{

@@ -20,19 +20,15 @@ import it.geosolutions.imageio.gdalframework.GDALImageWriter;
 
 import javax.imageio.ImageWriteParam;
 
-import org.gdal.gdal.Driver;
-import org.gdal.gdal.gdal;
 /**
  * @author Daniele Romagnoli, GeoSolutions.
- * @author Simone Giannecchini, GeoSolutions. 
+ * @author Simone Giannecchini, GeoSolutions.
  */
 public class GeoTiffImageWriter extends GDALImageWriter {
 	public GeoTiffImageWriter(GeoTiffImageWriterSpi originatingProvider) {
 		super(originatingProvider);
-		//XXX
 	}
 
-	
 	public ImageWriteParam getDefaultWriteParam() {
 		return new GeoTiffImageWriteParam();
 	}
