@@ -85,9 +85,6 @@ public abstract class GDALImageWriter extends ImageWriter {
 		}
 	}
 
-	/** The originating provider. It is used to retrieve supported formats */
-	protected ImageWriterSpi spi;
-
 	/** GDAL Driver which will perform writing operations */
 	protected Driver driver;
 
@@ -108,7 +105,6 @@ public abstract class GDALImageWriter extends ImageWriter {
 	 */
 	public GDALImageWriter(ImageWriterSpi originatingProvider) {
 		super(originatingProvider);
-		spi = originatingProvider;
 		driver = getDriver();
 		if (driver == null) {
 			if (LOGGER.isLoggable(Level.SEVERE))
@@ -131,8 +127,8 @@ public abstract class GDALImageWriter extends ImageWriter {
 		// parameters.
 		//
 		// /////////////////////////////////////////////////////////////////////
-		if (!((GDALImageWriterSpi) spi).isSupportingCreate()
-				&& !((GDALImageWriterSpi) spi).isSupportingCreateCopy())
+		if (!((GDALImageWriterSpi) originatingProvider).isSupportingCreate()
+				&& !((GDALImageWriterSpi) originatingProvider).isSupportingCreateCopy())
 			throw new IllegalStateException(
 					"This writer seems to not support either create or create copy");
 		if (image == null)
@@ -211,7 +207,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 		// create a new File from an existing Dataset.
 		//
 		// /////////////////////////////////////////////////////////////////////
-		if (((GDALImageWriterSpi) spi).isSupportingCreate()) {
+		if (((GDALImageWriterSpi) originatingProvider).isSupportingCreate()) {
 			// Retrieving the number of bands
 			final int nBands = inputRenderedImage.getNumBands();
 
@@ -230,7 +226,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 			GDALUtilities.closeDataSet(ds);
 
 			// TODO: Adding additional writing operation (CRS,metadata,...)
-		} else if (((GDALImageWriterSpi) spi).isSupportingCreateCopy()) {
+		} else if (((GDALImageWriterSpi) originatingProvider).isSupportingCreateCopy()) {
 
 			// //
 			// TODO: CHECK CRS & PROJECTIONS & ...
