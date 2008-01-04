@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 
 /**
- * Service provider interface for Envisat image reader
+ * Service provider interface for DTED image reader
  * 
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions. 
@@ -36,7 +36,7 @@ import javax.imageio.ImageReader;
 public class DTEDImageReaderSpi extends GDALImageReaderSpi {
 
 	private static final Logger logger = Logger
-			.getLogger("it.geosolutions.imageio.plugins.envisat");
+			.getLogger("it.geosolutions.imageio.plugins.dted");
 
 	static final String[] suffixes = { "n1" };
 

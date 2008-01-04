@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package it.geosolutions.imageio.plugins.envisat;
+package it.geosolutions.imageio.plugins.dted;
 
 import java.util.logging.Logger;
 
@@ -28,10 +28,8 @@ import junit.framework.TestCase;
  */
 public class AbstractTestCase extends TestCase {
 
-	protected static final String fileName = "B260562A.sid";
-
 	private static final Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.plugins.mrsid");
+			.getLogger("it.geosolutions.imageio.plugins.dted");
 
 	public AbstractTestCase(String name) {
 		super(name);
@@ -50,13 +48,7 @@ public class AbstractTestCase extends TestCase {
 	}
 
 	protected void warningMessage() {
-		StringBuffer sb = new StringBuffer(
-				"Test file not available. Please download it from "
-						+ "http://www.brockmann-consult.de/beam/data/products/ATS_TOA_1CNPDK20030504_111259_000000572016_00080_06146_0157.zip \n"
-						+ "Then unzip it on: plugin/"
-						+ "envisat/src/test/resources/it/geosolutions/"
-						+ "imageio/plugins/envisat/test-data folder and"
-						+ " repeat the test.");
+		StringBuffer sb = new StringBuffer("Test file not available");
 		LOGGER.info(sb.toString());
 	}
 }

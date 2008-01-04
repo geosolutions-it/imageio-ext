@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package it.geosolutions.imageio.plugins.envisat;
+package it.geosolutions.imageio.plugins.dted;
 
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.plugins.dted.DTEDImageReader;
@@ -83,10 +83,10 @@ public class DTEDTest extends AbstractTestCase {
 		// get a RenderedImage
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 
-//		if (TestData.isInteractiveTest())
+		if (TestData.isInteractiveTest())
 			Viewer.visualize(image, "Subsampling Read");
-//		else
-//			assertNotNull(image.getTiles());
+		else
+			assertNotNull(image.getTiles());
 	}
 
 	public static Test suite() {
