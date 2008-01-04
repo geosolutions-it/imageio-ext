@@ -21,6 +21,7 @@ import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -95,10 +96,10 @@ public class DTEDImageReaderSpi extends GDALImageReaderSpi {
 				nativeImageMetadataFormatName,
 				nativeImageMetadataFormatClassName,
 				extraImageMetadataFormatNames,
-				extraImageMetadataFormatClassNames);
+				extraImageMetadataFormatClassNames,
+				Collections.singletonList("DTED"));
 		if (logger.isLoggable(Level.FINE))
 			logger.fine("EnvisatImageReaderSpi Constructor");
-		needsTileTuning = true;
 	}
 
 	/**
@@ -125,9 +126,7 @@ public class DTEDImageReaderSpi extends GDALImageReaderSpi {
 				.toString();
 	}
 
-	protected String getSupportedFormats() {
-		return "DTED";
-	}
+
 
 
 	
