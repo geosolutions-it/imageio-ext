@@ -35,9 +35,7 @@ import javax.imageio.ImageWriteParam;
 public abstract class GDALImageWriteParam extends ImageWriteParam {
 	private final ImageWriteParam adaptee;
 
-	protected GDALCreateOptionsHandler createOptionsHandler;
-
-	protected abstract GDALCreateOptionsHandler getGDALCreateOptionsHandler();
+	protected final GDALCreateOptionsHandler createOptionsHandler;
 
 	public boolean canWriteCompressed() {
 		return adaptee.canWriteCompressed();
@@ -264,20 +262,25 @@ public abstract class GDALImageWriteParam extends ImageWriteParam {
 	/**
 	 * 
 	 */
-	public GDALImageWriteParam(final ImageWriteParam adaptee) {
-		this.adaptee = adaptee;
+	public GDALImageWriteParam(final ImageWriteParam adaptee,final GDALCreateOptionsHandler optionsHandler) {
+		this(adaptee, optionsHandler, Locale.getDefault());
 	}
 
 	/**
 	 * @param locale
 	 */
-	public GDALImageWriteParam(final ImageWriteParam adaptee, Locale locale) {
+	public GDALImageWriteParam(final ImageWriteParam adaptee,final GDALCreateOptionsHandler optionsHandler, Locale locale) {
 		super(locale);
 		this.adaptee = adaptee;
+		this.createOptionsHandler=optionsHandler;
 	}
 
 	public ImageWriteParam getAdaptee() {
 		return adaptee;
+	}
+
+	public GDALCreateOptionsHandler getCreateOptionsHandler() {
+		return createOptionsHandler;
 	}
 
 }

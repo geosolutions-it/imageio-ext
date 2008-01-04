@@ -34,14 +34,12 @@ public class JP2GDALKakaduImageWriteParam extends GDALImageWriteParam {
 	private final static Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.plugins.jp2kakadu");
 
-	protected JP2GDALKakaduCreateOptionsHandler myHandler = new JP2GDALKakaduCreateOptionsHandler();
-
 	public JP2GDALKakaduImageWriteParam() {
-		super(new J2KImageWriteParam(Locale.getDefault()));
+		super(new J2KImageWriteParam(Locale.getDefault()), new JP2GDALKakaduCreateOptionsHandler());
 	}
 
 	public JP2GDALKakaduImageWriteParam(Locale l) {
-		super(new J2KImageWriteParam(l));
+		super(new J2KImageWriteParam(l),new JP2GDALKakaduCreateOptionsHandler(),l);
 	}
 
 	/**
@@ -85,50 +83,46 @@ public class JP2GDALKakaduImageWriteParam extends GDALImageWriteParam {
 	 * enabled during tiles writing. Defaults to YES.
 	 */
 
-	public GDALCreateOptionsHandler getGDALCreateOptionsHandler() {
-		return myHandler;
-	}
-
 	/**
 	 * Setting GeoJP2 Create Option
 	 */
 	public void setGeoJp2(String geoJp2) {
-		myHandler.setCreateOption("GeoJP2", geoJp2.toUpperCase());
+		createOptionsHandler.setCreateOption("GeoJP2", geoJp2.toUpperCase());
 	}
 
 	/**
 	 * Setting ORGgen_plt Create Option
 	 */
 	public void setORGgen_plt(String ORGgen_plt) {
-		myHandler.setCreateOption("ORGgen_plt", ORGgen_plt.toLowerCase());
+		createOptionsHandler.setCreateOption("ORGgen_plt", ORGgen_plt.toLowerCase());
 	}
 
 	/**
 	 * Setting ORGgen_tlm Create Option
 	 */
 	public void setORGgen_tlm(final int ORGgen_tlm) {
-		myHandler.setCreateOption("ORGgen_tlm", ORGgen_tlm);
+		createOptionsHandler.setCreateOption("ORGgen_tlm", ORGgen_tlm);
 	}
 
 	/**
 	 * Setting ORGtparts Create Option
 	 */
 	public void setORGtparts(String orgTparts) {
-		myHandler.setCreateOption("ORGtparts", orgTparts);
+		createOptionsHandler.setCreateOption("ORGtparts", orgTparts);
 	}
 
 	/**
 	 * Setting GMLJp2 Create Option
 	 */
 	public void setGMLJp2(String gmlJp2) {
-		myHandler.setCreateOption("GMLJP2", gmlJp2.toUpperCase());
+		createOptionsHandler.setCreateOption("GMLJP2", gmlJp2.toUpperCase());
 	}
 
 	/**
 	 * Setting Clayers Create Option
 	 */
 	public void setLayers(final int layers) {
-		myHandler.setCreateOption("Clayers", layers);
+		createOptionsHandler.setCreateOption("Clayers", layers);
 	}
 
 	/**
@@ -142,35 +136,35 @@ public class JP2GDALKakaduImageWriteParam extends GDALImageWriteParam {
 	 * Setting Cycc Create Option
 	 */
 	public void setCycc(String cycc) {
-		myHandler.setCreateOption("Cycc", cycc);
+		createOptionsHandler.setCreateOption("Cycc", cycc);
 	}
 
 	/**
 	 * Setting Clevels Create Option
 	 */
 	public void setClevels(final int clevels) {
-		myHandler.setCreateOption("Clevels", clevels);
+		createOptionsHandler.setCreateOption("Clevels", clevels);
 	}
 
 	/**
 	 * Setting Qguard Create Option
 	 */
 	public void setQguard(final int qguard) {
-		myHandler.setCreateOption("Qguard", qguard);
+		createOptionsHandler.setCreateOption("Qguard", qguard);
 	}
 
 	/**
 	 * Setting Qstep Create Option
 	 */
 	public void setQstep(final float qstep) {
-		myHandler.setCreateOption("Qstep", qstep);
+		createOptionsHandler.setCreateOption("Qstep", qstep);
 	}
 
 	/**
 	 * Setting ROI Create Option
 	 */
 	public void setRoi(String roi) {
-		myHandler.setCreateOption("ROI", roi);
+		createOptionsHandler.setCreateOption("ROI", roi);
 	}
 
 	/**
@@ -181,28 +175,28 @@ public class JP2GDALKakaduImageWriteParam extends GDALImageWriteParam {
 	 *            uncompressed image.
 	 */
 	public void setQuality(final float quality) {
-		myHandler.setCreateOption("QUALITY", (quality));
+		createOptionsHandler.setCreateOption("QUALITY", (quality));
 	}
 
 	/**
 	 * Setting Cprecincts Create Option
 	 */
 	public void setCprecincts(String cPrecincts) {
-		myHandler.setCreateOption("Cprecincts", cPrecincts);
+		createOptionsHandler.setCreateOption("Cprecincts", cPrecincts);
 	}
 
 	/**
 	 * Setting Corder Create Option
 	 */
 	public void setCorder(String cOrder) {
-		myHandler.setCreateOption("Corder", cOrder);
+		createOptionsHandler.setCreateOption("Corder", cOrder);
 	}
 
 	/**
 	 * Setting Cblk Create Option
 	 */
 	public void setCblk(String cBlk) {
-		myHandler.setCreateOption("Cblk", cBlk);
+		createOptionsHandler.setCreateOption("Cblk", cBlk);
 	}
 
 	/**
@@ -234,18 +228,18 @@ public class JP2GDALKakaduImageWriteParam extends GDALImageWriteParam {
 			profile = "WRONG!!";
 			break;
 		}
-		myHandler.setCreateOption("SProfile", profile);
+		createOptionsHandler.setCreateOption("SProfile", profile);
 	}
 
 	public void setSProfile(final String sProfile) {
-		myHandler.setCreateOption("SProfile", sProfile);
+		createOptionsHandler.setCreateOption("SProfile", sProfile);
 	}
 
 	/**
 	 * Setting Cmodes Create Option
 	 */
 	public void setCmodes(String cModes) {
-		myHandler.setCreateOption("Cmodes", cModes);
+		createOptionsHandler.setCreateOption("Cmodes", cModes);
 
 	}
 
@@ -253,42 +247,42 @@ public class JP2GDALKakaduImageWriteParam extends GDALImageWriteParam {
 	 * Setting COMSEG Create Option
 	 */
 	public void setComseg(String comseg) {
-		myHandler.setCreateOption("COMSEG", comseg);
+		createOptionsHandler.setCreateOption("COMSEG", comseg);
 	}
 
 	/**
 	 * Setting ROI Create Option
 	 */
 	public void setROI(String roi) {
-		myHandler.setCreateOption("ROI", roi);
+		createOptionsHandler.setCreateOption("ROI", roi);
 	}
 
 	/**
 	 * Setting Rshift Create Option
 	 */
 	public void setRshift(int rShift) {
-		myHandler.setCreateOption("Rshift", rShift);
+		createOptionsHandler.setCreateOption("Rshift", rShift);
 	}
 
 	/**
 	 * Setting Rlevels Create Option
 	 */
 	public void setRlevels(int rLevels) {
-		myHandler.setCreateOption("Rlevels", rLevels);
+		createOptionsHandler.setCreateOption("Rlevels", rLevels);
 	}
 
 	/**
 	 * Setting Rweight Create Option
 	 */
 	public void setRweight(float rWeight) {
-		myHandler.setCreateOption("Rweight", rWeight);
+		createOptionsHandler.setCreateOption("Rweight", rWeight);
 	}
 
 	/**
 	 * Setting FLUSH Create Option
 	 */
 	public void setFlush(String flush) {
-		myHandler.setCreateOption("FLUSH", flush);
+		createOptionsHandler.setCreateOption("FLUSH", flush);
 
 	}
 
@@ -297,8 +291,8 @@ public class JP2GDALKakaduImageWriteParam extends GDALImageWriteParam {
 	 */
 	public void setTiling(final int tileWidth, final int tileHeight) {
 		super.setTiling(tileWidth, tileHeight);
-		myHandler.setCreateOption("BLOCKXSIZE", Integer.toString(tileWidth));
-		myHandler.setCreateOption("BLOCKYSIZE", Integer.toString(tileHeight));
+		createOptionsHandler.setCreateOption("BLOCKXSIZE", Integer.toString(tileWidth));
+		createOptionsHandler.setCreateOption("BLOCKYSIZE", Integer.toString(tileHeight));
 	}
 
 	public boolean canWriteTiles() {

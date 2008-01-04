@@ -128,7 +128,8 @@ public abstract class GDALImageWriter extends ImageWriter {
 		//
 		// /////////////////////////////////////////////////////////////////////
 		if (!((GDALImageWriterSpi) originatingProvider).isSupportingCreate()
-				&& !((GDALImageWriterSpi) originatingProvider).isSupportingCreateCopy())
+				&& !((GDALImageWriterSpi) originatingProvider)
+						.isSupportingCreateCopy())
 			throw new IllegalStateException(
 					"This writer seems to not support either create or create copy");
 		if (image == null)
@@ -197,7 +198,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 				.retrieveGDALDataBufferType(inputRenderedImage.getSampleModel()
 						.getDataType());
 		final Vector myOptions = (Vector) ((GDALImageWriteParam) param)
-				.getGDALCreateOptionsHandler().getCreateOptions();
+				.getCreateOptionsHandler().getCreateOptions();
 
 		// /////////////////////////////////////////////////////////////////////
 		//
@@ -226,7 +227,8 @@ public abstract class GDALImageWriter extends ImageWriter {
 			GDALUtilities.closeDataSet(ds);
 
 			// TODO: Adding additional writing operation (CRS,metadata,...)
-		} else if (((GDALImageWriterSpi) originatingProvider).isSupportingCreateCopy()) {
+		} else if (((GDALImageWriterSpi) originatingProvider)
+				.isSupportingCreateCopy()) {
 
 			// //
 			// TODO: CHECK CRS & PROJECTIONS & ...

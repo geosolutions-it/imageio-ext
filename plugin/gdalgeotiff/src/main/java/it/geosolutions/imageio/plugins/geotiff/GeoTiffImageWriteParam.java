@@ -30,12 +30,7 @@ public class GeoTiffImageWriteParam  extends GDALImageWriteParam {
 		public GeoTiffImageWriteParam() {
 			
 			//change this
-			super(new TIFFImageWriteParam(Locale.getDefault()));
+			super(new TIFFImageWriteParam(Locale.getDefault()), new GeoTiffCreateOptionsHandler());
 			// TODO Auto-generated constructor stub
-		}
-		GeoTiffCreateOptionsHandler myHandler=new GeoTiffCreateOptionsHandler();
-		
-		public GDALCreateOptionsHandler getGDALCreateOptionsHandler() {
-			return myHandler;
 		}
 }

@@ -1392,7 +1392,7 @@ public abstract class GDALImageReader extends ImageReader {
 	/**
 	 * Allows resources to be released
 	 */
-	public void dispose() {
+	public synchronized void dispose() {
 		// Closing imageInputStream
 		if (imageInputStream != null)
 			try {
@@ -1415,7 +1415,7 @@ public abstract class GDALImageReader extends ImageReader {
 	/**
 	 * Reset main values
 	 */
-	public void reset() {
+	public synchronized void reset() {
 		super.setInput(null, false, false);
 		isInitialized = false;
 		nSubdatasets = -1;
