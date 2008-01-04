@@ -56,7 +56,6 @@ public class ArcGridImageReader extends GDALImageReader {
 		super(originatingProvider);
 		if (LOGGER.isLoggable(Level.FINE))
 			LOGGER.fine("ArcGridImageReader Constructor");
-		nSubdatasets = 0;
 	}
 
 	public IIOMetadata getImageMetadata(int imageIndex) throws IOException {

@@ -52,10 +52,9 @@ public class ECWImageReader extends GDALImageReader {
 			.getLogger("it.geosolutions.imageio.plugins.ecw");
 
 	public ECWImageReader(ECWImageReaderSpi originatingProvider) {
-		super(originatingProvider);
+		super(originatingProvider,0);
 		if (LOGGER.isLoggable(Level.FINE))
 			LOGGER.fine("ECWImageReader Constructor");
-		nSubdatasets = 0;
 	}
 
 	public IIOMetadata getImageMetadata(int imageIndex) throws IOException {

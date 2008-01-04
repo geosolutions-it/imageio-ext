@@ -587,14 +587,14 @@ public class JP2KakaduImageReader extends ImageReader {
 				break;
 			case 1:
 				innerSampleModel = cm.createCompatibleSampleModel(
-						requiredRegionWidth, requiredRegionHeight);
+						tileWidth, tileHeight);
 
-				switch (dataBufferType) {
-				case DataBuffer.TYPE_INT:
+//				switch (dataBufferType) {
+//				case DataBuffer.TYPE_INT:
 					imageBuffer = new DataBufferInt(destinationBuffer,
 							databufferSize);
 					break;
-				}
+//				}
 			}
 
 			try {
@@ -725,9 +725,10 @@ public class JP2KakaduImageReader extends ImageReader {
 				tileSize = new Kdu_dims();
 				codestream.Get_tile_dims(new Kdu_coords(0, 0), -1, tileSize);
 
-				tileWidth = tileSize.Access_size().Get_x();
-				tileHeight = tileSize.Access_size().Get_y();
-
+//				tileWidth = tileSize.Access_size().Get_x();
+//				tileHeight = tileSize.Access_size().Get_y();
+				tileWidth = 512;
+				tileHeight = 512;
 				width = imageDims.Access_size().Get_x();
 				height = imageDims.Access_size().Get_y();
 				// codestream.Set_persistent();
@@ -837,6 +838,9 @@ public class JP2KakaduImageReader extends ImageReader {
 					dataBufferType = DataBuffer.TYPE_BYTE;
 					break;
 				case 16:
+					dataBufferType = DataBuffer.TYPE_USHORT;
+					break;
+				case 14:
 					dataBufferType = DataBuffer.TYPE_USHORT;
 					break;
 				case 32:

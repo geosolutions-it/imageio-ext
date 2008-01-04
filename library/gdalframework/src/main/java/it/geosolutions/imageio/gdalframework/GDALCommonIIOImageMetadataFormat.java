@@ -27,7 +27,7 @@ import javax.imageio.metadata.IIOMetadataFormatImpl;
 public class GDALCommonIIOImageMetadataFormat extends IIOMetadataFormatImpl implements
 		IIOMetadataFormat {
 
-	protected static GDALCommonIIOImageMetadataFormat commonInstace;
+	private static GDALCommonIIOImageMetadataFormat commonInstace;
 
 	public static synchronized IIOMetadataFormat getInstance() {
 		if (commonInstace == null) {
@@ -36,7 +36,7 @@ public class GDALCommonIIOImageMetadataFormat extends IIOMetadataFormatImpl impl
 		return commonInstace;
 	}
 
-	protected GDALCommonIIOImageMetadataFormat() {
+	public GDALCommonIIOImageMetadataFormat() {
 		super(GDALCommonIIOImageMetadata.nativeMetadataFormatName, CHILD_POLICY_SOME);
 
 		// root -> DatasetDescriptor

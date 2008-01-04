@@ -78,36 +78,34 @@ public class GeoTiffCreateOptionsHandler extends GDALCreateOptionsHandler {
 		 */
 	
 		public GeoTiffCreateOptionsHandler() {
-			createOptions = new GDALCreateOption[getCreateOptionsNumber()];
-			int index=0;
 			
 			final String tfwVV[]=new String [1];
 			tfwVV[0]="YES";
-			createOptions[index++] = new GDALCreateOption("TFW",GDALCreateOption.VALIDITYCHECKTYPE_VALUE,tfwVV,GDALCreateOption.TYPE_STRING);
+			addCreateOption(new GDALCreateOption("TFW",GDALCreateOption.VALIDITYCHECKTYPE_VALUE,tfwVV,GDALCreateOption.TYPE_STRING));
 			
 			final String interleaveVV[]=new String [2];
 			interleaveVV[0]="BAND";
 			interleaveVV[1]="PIXEL";
-			createOptions[index++] = new GDALCreateOption(
+			addCreateOption(new GDALCreateOption(
 					"INTERLEAVE",
 					GDALCreateOption.VALIDITYCHECKTYPE_ONEOF,
-					interleaveVV, GDALCreateOption.TYPE_STRING);
+					interleaveVV, GDALCreateOption.TYPE_STRING));
 			
 			final String tiledVV[]=new String [1];
 			tiledVV[0]="YES";
-			createOptions[index++] = new GDALCreateOption("TILED",GDALCreateOption.VALIDITYCHECKTYPE_VALUE,tiledVV,GDALCreateOption.TYPE_STRING);
+			addCreateOption(new GDALCreateOption("TILED",GDALCreateOption.VALIDITYCHECKTYPE_VALUE,tiledVV,GDALCreateOption.TYPE_STRING));
 
 			final String blockXSizeMinVV[]=new String [1];
 			blockXSizeMinVV[0]="0";
-			createOptions[index++] = new GDALCreateOption(
+			addCreateOption(new GDALCreateOption(
 					"BLOCKXSIZE",
-					GDALCreateOption.VALIDITYCHECKTYPE_VALUE_GREATERTHAN, blockXSizeMinVV,GDALCreateOption.TYPE_INT);
+					GDALCreateOption.VALIDITYCHECKTYPE_VALUE_GREATERTHAN, blockXSizeMinVV,GDALCreateOption.TYPE_INT));
 
 			final String blockYSizeMinVV[]=new String [1];
 			blockYSizeMinVV[0]="0";
-			createOptions[index++] = new GDALCreateOption(
+			addCreateOption(new GDALCreateOption(
 					"BLOCKYSIZE",
-					GDALCreateOption.VALIDITYCHECKTYPE_VALUE_GREATERTHAN, blockYSizeMinVV,GDALCreateOption.TYPE_INT);
+					GDALCreateOption.VALIDITYCHECKTYPE_VALUE_GREATERTHAN, blockYSizeMinVV,GDALCreateOption.TYPE_INT));
 			
 			final String compressVV[]=new String [5];
 			compressVV[0]="JPEG";
@@ -116,32 +114,32 @@ public class GeoTiffCreateOptionsHandler extends GDALCreateOptionsHandler {
 			compressVV[3]="DEFLATE";
 			compressVV[4]="NONE";
 			
-			createOptions[index++] = new GDALCreateOption(
+			addCreateOption(new GDALCreateOption(
 					"COMPRESS",
-					GDALCreateOption.VALIDITYCHECKTYPE_ONEOF, compressVV,GDALCreateOption.TYPE_STRING);
+					GDALCreateOption.VALIDITYCHECKTYPE_ONEOF, compressVV,GDALCreateOption.TYPE_STRING));
 		
 			final String predictorVV[]=new String [3];
 			predictorVV[0]="1";
 			predictorVV[1]="2";
 			predictorVV[2]="3";
-			createOptions[index++] = new GDALCreateOption(
+			addCreateOption(new GDALCreateOption(
 					"PREDICTOR",
-					GDALCreateOption.VALIDITYCHECKTYPE_ONEOF, predictorVV,GDALCreateOption.TYPE_INT);
+					GDALCreateOption.VALIDITYCHECKTYPE_ONEOF, predictorVV,GDALCreateOption.TYPE_INT));
 			
 			final String jpegQualityVV[]=new String [2];
 			jpegQualityVV[0]="1";
 			jpegQualityVV[1]="100";
-			createOptions[index++] = new GDALCreateOption(
+			addCreateOption(new GDALCreateOption(
 					"JPEG_QUALITY",
-					GDALCreateOption.VALIDITYCHECKTYPE_VALUE_BELONGINGRANGE_EXTREMESINCLUDED, jpegQualityVV,GDALCreateOption.TYPE_INT);
+					GDALCreateOption.VALIDITYCHECKTYPE_VALUE_BELONGINGRANGE_EXTREMESINCLUDED, jpegQualityVV,GDALCreateOption.TYPE_INT));
 			
 			final String profileVV[]=new String [3];
 			profileVV[0]="GDALGeoTIFF";
 			profileVV[1]="GeoTIFF";
 			profileVV[1]="BASELINE";
-			createOptions[index++] = new GDALCreateOption(
+			addCreateOption(new GDALCreateOption(
 					"PROFILE",
-					GDALCreateOption.VALIDITYCHECKTYPE_ONEOF, profileVV,GDALCreateOption.TYPE_STRING);
+					GDALCreateOption.VALIDITYCHECKTYPE_ONEOF, profileVV,GDALCreateOption.TYPE_STRING));
 			
 			final String photometricVV[]=new String [8];
 			photometricVV[0]="MINISBLACK";
@@ -153,16 +151,12 @@ public class GeoTiffCreateOptionsHandler extends GDALCreateOptionsHandler {
 			photometricVV[6]="ICCLAB";
 			photometricVV[7]="ITULAB";
 			
-			createOptions[index++] = new GDALCreateOption(
+			addCreateOption(new GDALCreateOption(
 					"PHOTOMETRIC",
-					GDALCreateOption.VALIDITYCHECKTYPE_ONEOF, photometricVV,GDALCreateOption.TYPE_STRING);
+					GDALCreateOption.VALIDITYCHECKTYPE_ONEOF, photometricVV,GDALCreateOption.TYPE_STRING));
 			
 			final String alphaVV[]=new String [1];
 			alphaVV[0]="YES";
-			createOptions[index++] = new GDALCreateOption("ALPHA",GDALCreateOption.VALIDITYCHECKTYPE_VALUE,alphaVV,GDALCreateOption.TYPE_STRING);
-		}
-
-		protected final int getCreateOptionsNumber() {
-			return 11;
+			addCreateOption(new GDALCreateOption("ALPHA",GDALCreateOption.VALIDITYCHECKTYPE_VALUE,alphaVV,GDALCreateOption.TYPE_STRING));
 		}
 	}

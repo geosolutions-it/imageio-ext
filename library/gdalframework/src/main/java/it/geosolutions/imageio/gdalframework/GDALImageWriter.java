@@ -200,7 +200,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 		final int dataType = GDALUtilities
 				.retrieveGDALDataBufferType(inputRenderedImage.getSampleModel()
 						.getDataType());
-		final Vector myOptions = ((GDALImageWriteParam) param)
+		final Vector myOptions = (Vector) ((GDALImageWriteParam) param)
 				.getGDALCreateOptionsHandler().getCreateOptions();
 
 		// /////////////////////////////////////////////////////////////////////

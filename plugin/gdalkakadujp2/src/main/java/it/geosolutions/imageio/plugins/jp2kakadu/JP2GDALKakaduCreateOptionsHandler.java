@@ -60,78 +60,76 @@ public class JP2GDALKakaduCreateOptionsHandler extends GDALCreateOptionsHandler 
 	 * considerable higher quality compared to the rest of the image.<BR />
 	 */
 	public JP2GDALKakaduCreateOptionsHandler() {
-		createOptions = new GDALCreateOption[getCreateOptionsNumber()];
-		int index = 0;
 
 		final String qualityVV[] = new String[2];
 		qualityVV[0] = "1";
 		qualityVV[1] = "100";
 
-		createOptions[index++] = new GDALCreateOption(
+		addCreateOption(new GDALCreateOption(
 				"QUALITY",
 				GDALCreateOption.VALIDITYCHECKTYPE_VALUE_BELONGINGRANGE_EXTREMESINCLUDED,
-				qualityVV, GDALCreateOption.TYPE_FLOAT);
+				qualityVV, GDALCreateOption.TYPE_FLOAT));
 		// createOptions[0].setDefaultValue("20");
 
 		final String blockXSizeMinVV[] = new String[1];
 		blockXSizeMinVV[0] = "0";
-		createOptions[index++] = new GDALCreateOption("BLOCKXSIZE",
+		addCreateOption(new GDALCreateOption("BLOCKXSIZE",
 				GDALCreateOption.VALIDITYCHECKTYPE_VALUE_GREATERTHAN,
-				blockXSizeMinVV, GDALCreateOption.TYPE_INT);
+				blockXSizeMinVV, GDALCreateOption.TYPE_INT));
 		// createOptions[1].setDefaultValue("20000");
 
 		final String blockYSizeMinVV[] = new String[1];
 		blockYSizeMinVV[0] = "0";
-		createOptions[index++] = new GDALCreateOption("BLOCKYSIZE",
+		addCreateOption( new GDALCreateOption("BLOCKYSIZE",
 				GDALCreateOption.VALIDITYCHECKTYPE_VALUE_GREATERTHAN,
-				blockYSizeMinVV, GDALCreateOption.TYPE_INT);
+				blockYSizeMinVV, GDALCreateOption.TYPE_INT));
 
 		final String gmljp2VV[] = new String[2];
 		gmljp2VV[0] = "YES";
 		gmljp2VV[1] = "NO";
-		createOptions[index++] = new GDALCreateOption("GMLJP2",
+		addCreateOption( new GDALCreateOption("GMLJP2",
 				GDALCreateOption.VALIDITYCHECKTYPE_ONEOF, gmljp2VV,
-				GDALCreateOption.TYPE_STRING);
+				GDALCreateOption.TYPE_STRING));
 
 		final String geojp2VV[] = new String[2];
 		geojp2VV[0] = "YES";
 		geojp2VV[1] = "NO";
-		createOptions[index++] = new GDALCreateOption("GeoJP2",
+		addCreateOption( new GDALCreateOption("GeoJP2",
 				GDALCreateOption.VALIDITYCHECKTYPE_ONEOF, geojp2VV,
-				GDALCreateOption.TYPE_STRING);
+				GDALCreateOption.TYPE_STRING));
 
 		final String layersVV[] = new String[2];
 		layersVV[0] = "1";
 		layersVV[1] = "65535";
-		createOptions[index++] = new GDALCreateOption(
+		addCreateOption( new GDALCreateOption(
 				"Clayers",
 				GDALCreateOption.VALIDITYCHECKTYPE_VALUE_BELONGINGRANGE_EXTREMESINCLUDED,
-				layersVV, GDALCreateOption.TYPE_INT);
+				layersVV, GDALCreateOption.TYPE_INT));
 
 		final String orgGen_pltVV[] = new String[2];
 		orgGen_pltVV[0] = "yes";
 		orgGen_pltVV[1] = "no";
-		createOptions[index++] = new GDALCreateOption("ORGgen_plt",
+		addCreateOption( new GDALCreateOption("ORGgen_plt",
 				GDALCreateOption.VALIDITYCHECKTYPE_ONEOF, orgGen_pltVV,
-				GDALCreateOption.TYPE_STRING);
+				GDALCreateOption.TYPE_STRING));
 
 		// TODO: Check the validity value. 0 ?? "GREATER THAN" OR "GREATER OR
 		// EQUAL THAN"?
 		final String orgGen_tlmVV[] = new String[1];
 		orgGen_tlmVV[0] = "0";
-		createOptions[index++] = new GDALCreateOption("ORGgen_tlm",
+		addCreateOption( new GDALCreateOption("ORGgen_tlm",
 				GDALCreateOption.VALIDITYCHECKTYPE_VALUE_GREATERTHANOREQUALTO,
-				orgGen_tlmVV, GDALCreateOption.TYPE_INT);
+				orgGen_tlmVV, GDALCreateOption.TYPE_INT));
 
 		final String cLevelsVV[] = new String[1];
 		cLevelsVV[0] = "1";
-		createOptions[index++] = new GDALCreateOption("Clevels",
+		addCreateOption( new GDALCreateOption("Clevels",
 				GDALCreateOption.VALIDITYCHECKTYPE_VALUE_GREATERTHANOREQUALTO,
-				cLevelsVV, GDALCreateOption.TYPE_INT);
+				cLevelsVV, GDALCreateOption.TYPE_INT));
 
-		createOptions[index++] = new GDALCreateOption("Cprecincts",
+		addCreateOption( new GDALCreateOption("Cprecincts",
 				GDALCreateOption.VALIDITYCHECKTYPE_NONE, null,
-				GDALCreateOption.TYPE_STRING);
+				GDALCreateOption.TYPE_STRING));
 
 		final String cOrderVV[] = new String[5];
 		cOrderVV[0] = "LRCP";
@@ -140,9 +138,9 @@ public class JP2GDALKakaduCreateOptionsHandler extends GDALCreateOptionsHandler 
 		cOrderVV[3] = "PCRL";
 		cOrderVV[4] = "CPRL";
 
-		createOptions[index++] = new GDALCreateOption("Corder",
+		addCreateOption( new GDALCreateOption("Corder",
 				GDALCreateOption.VALIDITYCHECKTYPE_ONEOF, cOrderVV,
-				GDALCreateOption.TYPE_STRING);
+				GDALCreateOption.TYPE_STRING));
 
 		final String cModesVV[] = new String[6];
 		cModesVV[0] = "BYPASS";
@@ -152,64 +150,64 @@ public class JP2GDALKakaduCreateOptionsHandler extends GDALCreateOptionsHandler 
 		cModesVV[4] = "ERTERM";
 		cModesVV[5] = "SEGMARK";
 
-		createOptions[index++] = new GDALCreateOption("Cmodes",
+		addCreateOption( new GDALCreateOption("Cmodes",
 				GDALCreateOption.VALIDITYCHECKTYPE_COMBINATIONOF, cModesVV,
-				GDALCreateOption.TYPE_STRING);
+				GDALCreateOption.TYPE_STRING));
 
 		final String cBlkVV[] = new String[1];
 		cBlkVV[0] = "{,}";
-		createOptions[index++] = new GDALCreateOption("Cblk",
+		addCreateOption( new GDALCreateOption("Cblk",
 				GDALCreateOption.VALIDITYCHECKTYPE_STRING_SYNTAX, cBlkVV,
-				GDALCreateOption.TYPE_STRING);
+				GDALCreateOption.TYPE_STRING));
 
 		// Add Combined values
 		final String orgTpartsVV[] = new String[15];
 		orgTpartsVV[0] = "R";
 		orgTpartsVV[1] = "C";
 		orgTpartsVV[2] = "L";
-		createOptions[index++] = new GDALCreateOption("ORGtparts",
+		addCreateOption( new GDALCreateOption("ORGtparts",
 				GDALCreateOption.VALIDITYCHECKTYPE_COMBINATIONOF, orgTpartsVV,
-				GDALCreateOption.TYPE_STRING);
+				GDALCreateOption.TYPE_STRING));
 
 		final String comsegVV[] = new String[2];
 		comsegVV[0] = "YES";
 		comsegVV[1] = "NO";
-		createOptions[index++] = new GDALCreateOption("COMSEG",
+		addCreateOption( new GDALCreateOption("COMSEG",
 				GDALCreateOption.VALIDITYCHECKTYPE_ONEOF, comsegVV,
-				GDALCreateOption.TYPE_STRING);
+				GDALCreateOption.TYPE_STRING));
 
 		// The Kakadu Documentation says that typical values for Qguard
 		// parameter are 1 or 2. Should eliminate constraints?
 		final String qGuardVV[] = new String[2];
 		qGuardVV[0] = "1";
 		qGuardVV[1] = "3";
-		createOptions[index++] = new GDALCreateOption(
+		addCreateOption( new GDALCreateOption(
 				"Qguard",
 				GDALCreateOption.VALIDITYCHECKTYPE_VALUE_BELONGINGRANGE_EXTREMESINCLUDED,
-				qGuardVV, GDALCreateOption.TYPE_INT);
+				qGuardVV, GDALCreateOption.TYPE_INT));
 
 		final String qStepVV[] = new String[2];
 		qStepVV[0] = "0";
 		qStepVV[1] = "2";
 
-		createOptions[index++] = new GDALCreateOption(
+		addCreateOption( new GDALCreateOption(
 				"Qstep",
 				GDALCreateOption.VALIDITYCHECKTYPE_VALUE_BELONGINGRANGE_EXTREMESINCLUDED,
-				qStepVV, GDALCreateOption.TYPE_FLOAT);
+				qStepVV, GDALCreateOption.TYPE_FLOAT));
 
 		final String flushVV[] = new String[2];
 		flushVV[0] = "YES";
 		flushVV[1] = "NO";
-		createOptions[index++] = new GDALCreateOption("FLUSH",
+		addCreateOption( new GDALCreateOption("FLUSH",
 				GDALCreateOption.VALIDITYCHECKTYPE_ONEOF, flushVV,
-				GDALCreateOption.TYPE_STRING);
+				GDALCreateOption.TYPE_STRING));
 
 		final String cYccVV[] = new String[2];
 		cYccVV[0] = "yes";
 		cYccVV[1] = "no";
-		createOptions[index++] = new GDALCreateOption("Cycc",
+		addCreateOption( new GDALCreateOption("Cycc",
 				GDALCreateOption.VALIDITYCHECKTYPE_ONEOF, cYccVV,
-				GDALCreateOption.TYPE_STRING);
+				GDALCreateOption.TYPE_STRING));
 
 		final String sProfileVV[] = new String[6];
 		sProfileVV[0] = "PROFILE0";
@@ -218,43 +216,37 @@ public class JP2GDALKakaduCreateOptionsHandler extends GDALCreateOptionsHandler 
 		sProfileVV[3] = "PART2";
 		sProfileVV[4] = "CINEMA2K";
 		sProfileVV[5] = "CINEMA4K";
-		createOptions[index++] = new GDALCreateOption("SProfile",
+		addCreateOption( new GDALCreateOption("SProfile",
 				GDALCreateOption.VALIDITYCHECKTYPE_ONEOF, sProfileVV,
-				GDALCreateOption.TYPE_STRING);
+				GDALCreateOption.TYPE_STRING));
 
 		final String roiVV[] = new String[1];
 		roiVV[0] = ",,,";
-		createOptions[index++] = new GDALCreateOption("ROI",
+		addCreateOption( new GDALCreateOption("ROI",
 				GDALCreateOption.VALIDITYCHECKTYPE_STRING_SYNTAX, roiVV,
-				GDALCreateOption.TYPE_STRING);
+				GDALCreateOption.TYPE_STRING));
 
 		//	TODO: Check the validity values!!!
 		final String rShiftVV[] = new String[1];
 		rShiftVV[0] = "0";
-		createOptions[index++] = new GDALCreateOption("Rshift",
+		addCreateOption( new GDALCreateOption("Rshift",
 				GDALCreateOption.VALIDITYCHECKTYPE_VALUE_GREATERTHANOREQUALTO, rShiftVV,
-				GDALCreateOption.TYPE_INT);
+				GDALCreateOption.TYPE_INT));
 
 //		TODO: Check the validity values!!!
 		final String rLevelsVV[] = new String[2];
 		rLevelsVV[0] = "0";
 		rLevelsVV[1] = "32";
-		createOptions[index++] = new GDALCreateOption("Rlevels",
+		addCreateOption( new GDALCreateOption("Rlevels",
 				GDALCreateOption.VALIDITYCHECKTYPE_VALUE_BELONGINGRANGE_EXTREMESINCLUDED, rLevelsVV,
-				GDALCreateOption.TYPE_INT);
+				GDALCreateOption.TYPE_INT));
 
 //		TODO: Check the validity values!!!
 		final String rWeightVV[] = new String[1];
 		rWeightVV[0] = "0";
-		createOptions[index++] = new GDALCreateOption("Rweight",
+		addCreateOption( new GDALCreateOption("Rweight",
 				GDALCreateOption.VALIDITYCHECKTYPE_VALUE_GREATERTHAN, rWeightVV,
-				GDALCreateOption.TYPE_FLOAT);
+				GDALCreateOption.TYPE_FLOAT));
 
-	}
-
-	protected final int getCreateOptionsNumber() {
-		// TODO: If you add more parameters/create options, change the return
-		// values!
-		return 24;
 	}
 }

@@ -51,10 +51,9 @@ public class MrSIDImageReader extends GDALImageReader {
 	}
 
 	public MrSIDImageReader(MrSIDImageReaderSpi originatingProvider) {
-		super(originatingProvider);
+		super(originatingProvider,0);
 		if (LOGGER.isLoggable(Level.FINE))
 			LOGGER.fine("MrSIDImageReader Constructor");
-		nSubdatasets = 0;
 	}
 
 	public IIOMetadata getImageMetadata(int imageIndex) throws IOException {

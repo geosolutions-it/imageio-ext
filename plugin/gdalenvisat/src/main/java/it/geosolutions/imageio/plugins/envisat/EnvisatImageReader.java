@@ -51,10 +51,9 @@ public class EnvisatImageReader extends GDALImageReader {
 	}
 
 	public EnvisatImageReader(EnvisatImageReaderSpi originatingProvider) {
-		super(originatingProvider);
+		super(originatingProvider,0);
 		if (LOGGER.isLoggable(Level.FINE))
 			LOGGER.fine("EnvisatImageReader Constructor");
-		nSubdatasets = 0;
 	}
 
 	public IIOMetadata getImageMetadata(int imageIndex) throws IOException {

@@ -33,11 +33,11 @@ import javax.imageio.ImageWriteParam;
  * 
  */
 public abstract class GDALImageWriteParam extends ImageWriteParam {
-	protected ImageWriteParam adaptee;
+	private final ImageWriteParam adaptee;
 
 	protected GDALCreateOptionsHandler createOptionsHandler;
 
-	public abstract GDALCreateOptionsHandler getGDALCreateOptionsHandler();
+	protected abstract GDALCreateOptionsHandler getGDALCreateOptionsHandler();
 
 	public boolean canWriteCompressed() {
 		return adaptee.canWriteCompressed();

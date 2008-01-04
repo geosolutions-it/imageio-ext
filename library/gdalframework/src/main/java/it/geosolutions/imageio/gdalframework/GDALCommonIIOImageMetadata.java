@@ -47,7 +47,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 	 * The internal {@link GDALDatasetWrapper} from which information will be
 	 * retrieved in order to expose metadata
 	 */
-	protected GDALDatasetWrapper dsWrapper;
+	protected final GDALDatasetWrapper dsWrapper;
 
 	/** Array containing noData value for each band */
 	private double[] noDataValues;

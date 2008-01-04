@@ -52,10 +52,9 @@ public class JP2GDALEcwImageReader extends GDALImageReader {
 			.getLogger("it.geosolutions.imageio.plugins.jp2ecw");
 
 	public JP2GDALEcwImageReader(JP2GDALEcwImageReaderSpi originatingProvider) {
-		super(originatingProvider);
+		super(originatingProvider,0);
 		if (LOGGER.isLoggable(Level.FINE))
 			LOGGER.fine("JP2GDALEcwImageReader Constructor");
-		nSubdatasets = 0;
 	}
 
 	public IIOMetadata getImageMetadata(int imageIndex) throws IOException {

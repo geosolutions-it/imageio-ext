@@ -52,10 +52,9 @@ public class JpegGDALImageReader extends GDALImageReader {
 			.getLogger("it.geosolutions.imageio.plugins.jpeg");
 
 	public JpegGDALImageReader(JpegGDALImageReaderSpi originatingProvider) {
-		super(originatingProvider);
+		super(originatingProvider,0);
 		if (LOGGER.isLoggable(Level.FINE))
 			LOGGER.fine("JpegGDALImageReader Constructor");
-		nSubdatasets = 0;
 	}
 
 	public IIOMetadata getImageMetadata(int imageIndex) throws IOException {

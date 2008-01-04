@@ -74,7 +74,7 @@ public final class GDALUtilities {
 	 * 
 	 * @return the proper <code>GDALDataType</code>
 	 */
-	public final static int retrieveGDALDataBufferType(final int dataBufferType) {
+	public static int retrieveGDALDataBufferType(final int dataBufferType) {
 		switch (dataBufferType) {
 		case DataBuffer.TYPE_BYTE:
 			return gdalconstConstants.GDT_Byte;
@@ -100,7 +100,7 @@ public final class GDALUtilities {
 	 * 
 	 * @return the maximum amount in bytes of memory available.
 	 */
-	public final static int getCacheMax() {
+	public static int getCacheMax() {
 		return gdal.GetCacheMax();
 	}
 
@@ -110,11 +110,11 @@ public final class GDALUtilities {
 	 * @return the amount (bytes) of memory currently in use by the GDAL memory
 	 *         caching mechanism.
 	 */
-	public final static int getCacheUsed() {
+	public static int getCacheUsed() {
 		return gdal.GetCacheUsed();
 	}
 
-	public final static List getJDKImageReaderWriterSPI(
+	public static List getJDKImageReaderWriterSPI(
 			ServiceRegistry registry, String formatName, boolean isReader) {
 
 		IIORegistry iioRegistry = (IIORegistry) registry;
@@ -153,7 +153,7 @@ public final class GDALUtilities {
 	 * 
 	 * @param maxCacheSize
 	 */
-	public final static void setCacheMax(int maxCacheSize) {
+	public static void setCacheMax(int maxCacheSize) {
 		gdal.SetCacheMax(maxCacheSize);
 	}
 
@@ -164,12 +164,12 @@ public final class GDALUtilities {
 	 *            <code>true</code> to enable GDAL caching. <code>false</code>
 	 *            to disable GDAL caching.
 	 */
-	public final static void setGdalCaching(boolean useCaching) {
+	public static void setGdalCaching(boolean useCaching) {
 		final String sOption = useCaching ? "YES" : "NO";
 		gdal.SetConfigOption("GDAL_FORCE_CACHING", sOption);
 	}
 
-	public final static synchronized Dataset acquireDataSet(String name, int accessType) {
+	public static synchronized Dataset acquireDataSet(String name, int accessType) {
 		return gdal.Open(name, accessType);
 	}
 
@@ -184,7 +184,7 @@ public final class GDALUtilities {
 	 * 
 	 * @return a <code>List</code> containing any metadata found.
 	 */
-	public final static List getGDALImageMetadata(String dataSetName) {
+	public static List getGDALImageMetadata(String dataSetName) {
 
 		final Dataset ds = acquireDataSet(dataSetName,
 				gdalconst.GA_ReadOnly);
@@ -193,7 +193,7 @@ public final class GDALUtilities {
 		return gdalImageMetadata;
 	}
 
-	public final static synchronized void closeDataSet(Dataset ds) {
+	public static synchronized void closeDataSet(Dataset ds) {
 		ds.delete();
 	}
 
@@ -207,7 +207,7 @@ public final class GDALUtilities {
 	 * @param datasetName
 	 * @return the value of the required metadata item.
 	 */
-	public final static String getStreamMetadataItem(String metadataName,
+	public static String getStreamMetadataItem(String metadataName,
 			String datasetName) {
 		return getMetadataItem(getGDALStreamMetadata(datasetName), metadataName);
 	}
@@ -223,7 +223,7 @@ public final class GDALUtilities {
 	 *            the name of the specified metadata item
 	 * @return the value of the specified metadata item
 	 */
-	public final static String getMetadataItem(List imageMetadata,
+	public static String getMetadataItem(List imageMetadata,
 			String metadataName) {
 		final Iterator it = imageMetadata.iterator();
 		// Metadata items scanning
@@ -247,7 +247,7 @@ public final class GDALUtilities {
 	 * @return a <code>List</code> containing metadata related to the
 	 *         stream.
 	 */
-	public final static List getGDALStreamMetadata(String datasetName) {
+	public static List getGDALStreamMetadata(String datasetName) {
 
 		final Dataset ds = acquireDataSet(datasetName,
 				gdalconst.GA_ReadOnly);
@@ -271,7 +271,7 @@ public final class GDALUtilities {
 	 * @param attributeType
 	 *            The type of the attribute we are going to set
 	 */
-	public final static void setNodeAttribute(String name, Object val,
+	public static void setNodeAttribute(String name, Object val,
 			IIOMetadataNode node, int attributeType) {
 
 		try {
@@ -376,7 +376,7 @@ public final class GDALUtilities {
 	 * that left as few empty pixels as possible).</li>
 	 * </ul>
 	 */
-	public final static Dimension toTileSize(final Dimension size) {
+	public static Dimension toTileSize(final Dimension size) {
 		Dimension defaultSize = JAI.getDefaultTileSize();
 		if (defaultSize == null) {
 			defaultSize = DEFAULT_TILE_SIZE;
@@ -404,7 +404,7 @@ public final class GDALUtilities {
 	 *            The preferred tile size, which is often
 	 *            {@value #DEFAULT_TILE_SIZE}.
 	 */
-	public final static int toTileSize(final int imageSize, final int tileSize) {
+	public static int toTileSize(final int imageSize, final int tileSize) {
 		final int MAX_TILE_SIZE = Math.min(tileSize * 2, imageSize);
 		final int stop = Math.max(tileSize - MIN_TILE_SIZE, MAX_TILE_SIZE
 				- tileSize);

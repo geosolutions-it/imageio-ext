@@ -41,10 +41,9 @@ public class GeoTiffImageReader extends GDALImageReader {
 			.getLogger("javax.imageio.plugins");
 
 	public GeoTiffImageReader(GeoTiffImageReaderSpi originatingProvider) {
-		super(originatingProvider);
+		super(originatingProvider,0);
 		if (LOGGER.isLoggable(Level.FINE))
 			LOGGER.fine("GeoTiffImageReader Constructor");
-		nSubdatasets = 0;
 	}
 
 	public IIOMetadata getImageMetadata(int imageIndex) throws IOException {

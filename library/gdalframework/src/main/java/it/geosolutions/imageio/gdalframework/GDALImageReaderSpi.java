@@ -42,8 +42,23 @@ import org.gdal.gdalconst.gdalconst;
  */
 
 public abstract class GDALImageReaderSpi extends ImageReaderSpi {
+	private static final Logger LOGGER = Logger
+			.getLogger("it.geosolutions.imageio.gdalframework");
+	private static boolean available;
 
-	protected static boolean available;
+	static {
+		try {
+			System.loadLibrary("gdaljni");
+			gdal.AllRegister();
+			GDALImageReaderSpi.available = true;
+		} catch (UnsatisfiedLinkError e) {
+
+			if (LOGGER.isLoggable(Level.SEVERE))
+				LOGGER.severe(new StringBuffer("Native library load failed.")
+						.append(e.toString()).toString());
+			GDALImageReaderSpi.available = false;
+		}
+	}
 
 	/** <code>true</code> if the specific format supports subdatasets */
 	protected boolean supportsSubDataSets;
@@ -83,22 +98,7 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
 	 */
 	protected abstract String getSupportedFormats();
 
-	private static final Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.gdalframework");
 
-	static {
-		try {
-			System.loadLibrary("gdaljni");
-			gdal.AllRegister();
-			GDALImageReaderSpi.available = true;
-		} catch (UnsatisfiedLinkError e) {
-
-			if (LOGGER.isLoggable(Level.SEVERE))
-				LOGGER.severe(new StringBuffer("Native library load failed.")
-						.append(e.toString()).toString());
-			GDALImageReaderSpi.available = false;
-		}
-	}
 
 	public GDALImageReaderSpi(String vendorName, String version,
 			String[] names, String[] suffixes, String[] MIMETypes,

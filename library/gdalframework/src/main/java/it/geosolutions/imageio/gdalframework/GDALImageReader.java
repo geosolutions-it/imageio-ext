@@ -89,31 +89,28 @@ public abstract class GDALImageReader extends ImageReader {
 			.getLogger("it.geosolutions.imageio.gdalframework");
 
 	public void setInput(Object input, boolean seekForwardOnly) {
-		this.setInput(input);
+		this.setInput(input,seekForwardOnly,false);
 	}
 
 	/** list of childs subdatasets names (if any) contained into the source */
-	protected String datasetNames[];
+	private String datasetNames[];
 
 	/** number of subdatasets */
-	protected int nSubdatasets = -1;
+	private int nSubdatasets = -1;
 
 	/** The ImageInputStream */
-	protected ImageInputStream imageInputStream;
+	private ImageInputStream imageInputStream;
 
-	/** The originating provider. It is used to retrieve supported formats */
-	protected GDALImageReaderSpi spi;
-
-	protected volatile boolean isInitialized = false;
+	private volatile boolean isInitialized = false;
 
 	/** Principal {@link ImageTypeSpecifier} */
-	protected ImageTypeSpecifier imageType = null;
+	private ImageTypeSpecifier imageType = null;
 
 	/** The dataset input source */
-	protected File datasetSource = null;
+	private File datasetSource = null;
 
-	/** Hashmap containing couples (datasetName, GDALDatasetWrapper). */
-	protected Map datasetMap = Collections.synchronizedMap(new HashMap(10));
+	/** {@link HashMap} containing couples (datasetName, GDALDatasetWrapper). */
+	private Map datasetMap = Collections.synchronizedMap(new HashMap(10));
 
 	/** Inner class used to store dataset useful information for later usage */
 	public class GDALDatasetWrapper {
@@ -128,31 +125,31 @@ public abstract class GDALImageReader extends ImageReader {
 		 * the name of the driver which has opened the dataset held by this
 		 * wrapper.
 		 */
-		protected String driverName;
+		private String driverName;
 
 		/**
 		 * The description of the driver which has opened the dataset held by
 		 * this wrapper.
 		 */
-		protected String driverDescription;
+		private String driverDescription;
 
 		/** The dataset name */
-		protected String datasetName;
+		private String datasetName;
 
 		/** The dataset description */
-		protected String datasetDescription;
+		private String datasetDescription;
 
 		/** The grid to world transformation. */
-		protected double[] geoTransformation = new double[6];
+		private double[] geoTransformation = new double[6];
 
 		/** The data set projection. */
-		protected String projection;
+		private String projection;
 
 		/** The number of Ground Control Points */
-		protected int gcpNumber;
+		private int gcpNumber;
 
 		/** The GCP's Projection */
-		protected String gcpProjection;
+		private String gcpProjection;
 
 		/**
 		 * The list of Ground Control Points. <BR>
@@ -168,25 +165,25 @@ public abstract class GDALImageReader extends ImageReader {
 		 * </UL>
 		 * 
 		 */
-		protected List gcps;
+		private List gcps;
 
 		/** The raster width */
-		protected int width;
+		private int width;
 
 		/** The raster height */
-		protected int height;
+		private int height;
 
 		/** The raster tile height */
-		protected int tileHeight;
+		private int tileHeight;
 
 		/** The raster tile width */
-		protected int tileWidth;
+		private int tileWidth;
 
 		/** The <code>ColorModel</code> used for the dataset */
-		protected ColorModel colorModel;
+		private ColorModel colorModel;
 
 		/** The <code>SampleModel</code> used for the dataset */
-		protected SampleModel sampleModel;
+		private SampleModel sampleModel;
 
 		// ////////////////////////////////////////////////
 		// 
@@ -195,30 +192,30 @@ public abstract class GDALImageReader extends ImageReader {
 		// ////////////////////////////////////////////////
 
 		/** Number of bands */
-		protected int bandsNumber;
+		private int bandsNumber;
 
 		/** Array to store the maximum value for each band */
-		protected Double[] maximums;
+		private Double[] maximums;
 
 		/** Array to store the minimum value for each band */
-		protected Double[] minimums;
+		private Double[] minimums;
 
 		/** Array to store the noData value for each band */
-		protected Double[] noDataValues;
+		private Double[] noDataValues;
 
 		/** Array to store the scale value for each band */
-		protected Double[] scales;
+		private Double[] scales;
 
 		/** Array to store the offset value for each band */
-		protected Double[] offsets;
+		private Double[] offsets;
 
 		/** Array to store the number of numOverviews for each band */
-		protected int[] numOverviews;
+		private int[] numOverviews;
 
 		/** Array to store the color interpretation for each band */
-		protected int[] colorInterpretations;
+		private int[] colorInterpretations;
 
-		protected IIOMetadata iioMetadata;
+		private IIOMetadata iioMetadata;
 
 		/**
 		 * <code>GDALDatasetWrapper</code> constructor. Firstly, it provides
@@ -304,7 +301,7 @@ public abstract class GDALImageReader extends ImageReader {
 			dataset.GetRasterBand(1).GetBlockSize(xBlockSize, yBlockSize);
 			tileHeight = yBlockSize[0];
 			tileWidth = xBlockSize[0];
-			if (GDALImageReader.this.spi.needsTilesTuning())
+			if (((GDALImageReaderSpi)GDALImageReader.this.getOriginatingProvider()).needsTilesTuning())
 				performTileSizeTuning(dataset);
 
 			// /////////////////////////////////////////////////////////////////
@@ -717,7 +714,21 @@ public abstract class GDALImageReader extends ImageReader {
 	 */
 	public GDALImageReader(GDALImageReaderSpi originatingProvider) {
 		super(originatingProvider);
-		spi = originatingProvider;
+	}
+	
+	/**
+	 * Constructs a
+	 * <code>GDALImageReader<code> using a {@link GDALImageReaderSpi}.
+	 * 
+	 * @param originatingProvider
+	 *            The {@link GDALImageReaderSpi} to use for building this
+	 *            <code>GDALImageReader<code>.
+	 */
+	public GDALImageReader(GDALImageReaderSpi originatingProvider, int numSubdatasets) {
+		super(originatingProvider);
+		if(numSubdatasets<0)
+			throw new IllegalArgumentException("The provided number of sub datasets is invalid");
+		this.nSubdatasets=numSubdatasets;
 	}
 
 	/**
@@ -733,7 +744,7 @@ public abstract class GDALImageReader extends ImageReader {
 	 */
 	protected void checkImageIndex(final int imageIndex) {
 		initialize();
-		final boolean isSupportingSubdatasets = spi.supportsSubdatasets();
+		final boolean isSupportingSubdatasets = ((GDALImageReaderSpi)this.originatingProvider).supportsSubdatasets();
 
 		// ////////////////////////////////////////////////////////////////////
 		// When is an imageIndex not valid? 1) When it is negative 2) When the
@@ -1357,7 +1368,7 @@ public abstract class GDALImageReader extends ImageReader {
 			Dataset dataSet = GDALUtilities.acquireDataSet(datasetSource
 					.getAbsolutePath(), gdalconstConstants.GA_ReadOnly);
 			if (dataSet != null) {
-				isInputDecodable = ((GDALImageReaderSpi) spi)
+				isInputDecodable = ((GDALImageReaderSpi) this.getOriginatingProvider())
 						.isDecodable(dataSet);
 				GDALUtilities.closeDataSet(dataSet);
 			} else
@@ -1513,7 +1524,7 @@ public abstract class GDALImageReader extends ImageReader {
 			LOGGER.fine("getting NumImages");
 		// If Format supports subdatasets and the subdatasets list is not empty
 		// returns the number of subdatasets.
-		if (!spi.supportsSubdatasets())
+		if (!((GDALImageReaderSpi)this.getOriginatingProvider()).supportsSubdatasets())
 			return 1;
 		initialize();
 		return nSubdatasets;

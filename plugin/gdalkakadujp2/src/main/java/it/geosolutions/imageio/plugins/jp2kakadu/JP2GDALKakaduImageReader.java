@@ -53,10 +53,9 @@ public class JP2GDALKakaduImageReader extends GDALImageReader {
 
 	public JP2GDALKakaduImageReader(
 			JP2GDALKakaduImageReaderSpi originatingProvider) {
-		super(originatingProvider);
+		super(originatingProvider,0);
 		if (LOGGER.isLoggable(Level.FINE))
 			LOGGER.fine("JP2GDALKakaduImageReader Constructor");
-		nSubdatasets = 0;
 	}
 
 	public IIOMetadata getImageMetadata(int imageIndex) throws IOException {

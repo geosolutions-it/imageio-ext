@@ -35,7 +35,7 @@ public class GDALCommonIIOStreamMetadata extends IIOMetadata {
 
 	public static final String nativeMetadataFormatClassName = "it.geosolutions.imageio.gdalframework.GDALCommonIIOStreamMetadata";
 
-	protected final String datasetNames[];
+	private final String datasetNames[];
 
 	public GDALCommonIIOStreamMetadata(String datasetNames[]) {
 		super(false, nativeMetadataFormatName, nativeMetadataFormatClassName,

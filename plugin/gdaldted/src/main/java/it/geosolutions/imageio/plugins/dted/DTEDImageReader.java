@@ -51,10 +51,9 @@ public class DTEDImageReader extends GDALImageReader {
 	}
 
 	public DTEDImageReader(DTEDImageReaderSpi originatingProvider) {
-		super(originatingProvider);
+		super(originatingProvider,0);
 		if (LOGGER.isLoggable(Level.FINE))
 			LOGGER.fine("DTEDImageReader Constructor");
-		nSubdatasets = 0;
 	}
 
 	public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
