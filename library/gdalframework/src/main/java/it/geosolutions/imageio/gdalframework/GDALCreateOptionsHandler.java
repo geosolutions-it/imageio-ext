@@ -71,6 +71,7 @@ import java.util.Vector;
  * Look at the proper format page to retrieve names and values.
  * 
  * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions
  */
 public abstract class GDALCreateOptionsHandler {
 
@@ -95,6 +96,8 @@ public abstract class GDALCreateOptionsHandler {
 		// approach 1
 		//
 		// ////
+		// TODO gdal actually requires Vector classes but it would be quite nice
+		// to move it to use a real list instead
 		final Vector options = new Vector();
 		synchronized (createOptionsMap) {
 			final Collection values = createOptionsMap.values();

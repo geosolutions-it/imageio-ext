@@ -17,17 +17,13 @@
 package it.geosolutions.imageio.plugins.jp2kakadu;
 
 import it.geosolutions.imageio.gdalframework.GDALImageWriterSpi;
-import it.geosolutions.imageio.gdalframework.GDALUtilities;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Locale;
 
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriter;
-import javax.imageio.spi.ImageWriterSpi;
-import javax.imageio.spi.ServiceRegistry;
 
 import org.gdal.gdal.gdal;
 

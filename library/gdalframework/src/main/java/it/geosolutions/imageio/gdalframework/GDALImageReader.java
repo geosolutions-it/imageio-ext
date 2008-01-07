@@ -915,7 +915,7 @@ public abstract class GDALImageReader extends ImageReader {
 		// //
 		//
 		// Retrieving Information about Source Region and doing
-		// additional intialization operations.
+		// additional initialization operations.
 		//
 		// //
 		Rectangle srcRegion = param.getSourceRegion();

@@ -20,9 +20,6 @@ import it.geosolutions.imageio.gdalframework.GDALImageWriter;
 
 import javax.imageio.ImageWriteParam;
 
-import org.gdal.gdal.Driver;
-import org.gdal.gdal.gdal;
-
 /**
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.

@@ -21,7 +21,6 @@ import java.awt.image.DataBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -71,7 +70,7 @@ public final class GDALUtilities {
 			.getLogger("it.geosolutions.imageio.gdalframework");
 	
 	/** is gdal available on this machine?.*/
-	private static boolean available;
+	private volatile static boolean available;
 
 	private static boolean init=false;
 

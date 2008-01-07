@@ -66,7 +66,7 @@ public class MrSIDIIOImageMetadata extends GDALCommonIIOImageMetadata {
 		
 		// ImageDescriptor
 		IIOMetadataNode node = new IIOMetadataNode("ImageDescriptor");
-		node.setAttribute("IMAGE__INPUT_NAME", dsWrapper.getDatasetName());
+		node.setAttribute("IMAGE__INPUT_NAME",dsWrapper.getDatasetName());
 		GDALUtilities.setNodeAttribute("IMAGE__INPUT_FILE_SIZE", gdalMetadata
 				.get("IMAGE__INPUT_FILE_SIZE"), node,
 				IIOMetadataFormat.DATATYPE_DOUBLE);

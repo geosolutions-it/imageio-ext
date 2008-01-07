@@ -19,7 +19,6 @@ import it.geosolutions.imageio.plugins.arcgrid.AsciiGridsImageReader;
 import it.geosolutions.imageio.plugins.arcgrid.raster.AsciiGridRaster;
 import it.geosolutions.imageio.plugins.arcgrid.raster.EsriAsciiGridRaster;
 import it.geosolutions.imageio.plugins.arcgrid.raster.GrassAsciiGridRaster;
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 
 import java.io.File;
 import java.io.IOException;

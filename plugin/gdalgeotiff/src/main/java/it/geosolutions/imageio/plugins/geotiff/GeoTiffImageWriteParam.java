@@ -16,7 +16,6 @@
  */
 package it.geosolutions.imageio.plugins.geotiff;
 
-import it.geosolutions.imageio.gdalframework.GDALCreateOptionsHandler;
 import it.geosolutions.imageio.gdalframework.GDALImageWriteParam;
 
 import java.util.Locale;

@@ -36,7 +36,6 @@ import javax.imageio.stream.ImageInputStream;
 
 import org.gdal.gdal.Dataset;
 import org.gdal.gdal.Driver;
-import org.gdal.gdal.gdal;
 import org.gdal.gdalconst.gdalconst;
 
 /**
@@ -213,6 +212,30 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
 			return getSupportedFormats().contains(sDriver);
 		}
 		return false;
+	}
+	
+
+	/**
+	 * This method tells us if this driver is available or not.
+	 * 
+	 * @return <code>true</code> if the driver is available,
+	 *         <code>false</code> otherwise.
+	 */
+	public boolean isAvailable(){
+		//check if gdal is available
+		if(! GDALUtilities.isGDALAvailable())
+			return false;
+		//now check that all the drivers are available
+		final List supportedFormats=getSupportedFormats();
+		final Iterator it= supportedFormats.iterator();
+		if(!it.hasNext())
+			return false;
+		while(it.hasNext()){
+			final String formatName=(String) it.next();
+			if(!GDALUtilities.isDriverAvailable(formatName))
+				return false;
+		}
+		return true;
 	}
 
 

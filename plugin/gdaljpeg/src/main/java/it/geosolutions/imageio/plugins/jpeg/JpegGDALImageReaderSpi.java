@@ -22,14 +22,11 @@ import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageReader;
-import javax.imageio.spi.ImageReaderSpi;
-import javax.imageio.spi.ServiceRegistry;
 
 /**
  * Service provider interface for jpeg images

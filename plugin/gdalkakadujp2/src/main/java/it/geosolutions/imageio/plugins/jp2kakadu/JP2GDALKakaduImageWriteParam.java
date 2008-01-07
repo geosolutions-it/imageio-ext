@@ -16,7 +16,6 @@
  */
 package it.geosolutions.imageio.plugins.jp2kakadu;
 
-import it.geosolutions.imageio.gdalframework.GDALCreateOptionsHandler;
 import it.geosolutions.imageio.gdalframework.GDALImageWriteParam;
 
 import java.util.Locale;
