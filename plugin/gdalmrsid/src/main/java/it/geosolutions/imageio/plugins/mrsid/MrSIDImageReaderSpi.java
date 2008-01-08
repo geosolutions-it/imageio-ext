@@ -126,9 +126,4 @@ public class MrSIDImageReaderSpi extends GDALImageReaderSpi {
 		return new StringBuffer("MrSID Image Reader, version ").append(version)
 				.toString();
 	}
-
-
-
-
-	
 }

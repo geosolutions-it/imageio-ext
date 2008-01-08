@@ -19,12 +19,14 @@ package it.geosolutions.imageio.plugins.ecw;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.resources.TestData;
 
+import java.awt.RenderingHints;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.imageio.ImageReadParam;
+import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
@@ -59,7 +61,11 @@ public class ECWTest extends AbstractECWTestCase {
 		pbjImageRead = new ParameterBlockJAI("ImageRead");
 		pbjImageRead.setParameter("Input", file);
 		pbjImageRead.setParameter("readParam", irp);
-		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+		final ImageLayout l = new ImageLayout();
+		l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512)
+				.setTileWidth(512);
+		RenderedOp image = JAI.create("ImageRead", pbjImageRead,
+				new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
 		if (TestData.isInteractiveTest())
 			Viewer.visualize(image, fileName);
 		else
@@ -85,7 +91,11 @@ public class ECWTest extends AbstractECWTestCase {
 		pbjImageRead = new ParameterBlockJAI("ImageRead");
 		pbjImageRead.setParameter("Input", file);
 		pbjImageRead.setParameter("readParam", irp);
-		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+		final ImageLayout l = new ImageLayout();
+		l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512)
+				.setTileWidth(512);
+		RenderedOp image = JAI.create("ImageRead", pbjImageRead,
+				new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
 		if (TestData.isInteractiveTest())
 			Viewer.visualize(image, fileName);
 		else

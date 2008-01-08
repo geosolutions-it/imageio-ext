@@ -19,12 +19,14 @@ package it.geosolutions.imageio.plugins.jp2mrsid;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.resources.TestData;
 
+import java.awt.RenderingHints;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageReadParam;
+import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
@@ -33,8 +35,8 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Testing reading capabilities for {@link JP2GDALMrSidImageReader} leveraging on
- * JAI.
+ * Testing reading capabilities for {@link JP2GDALMrSidImageReader} leveraging
+ * on JAI.
  * 
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
@@ -61,8 +63,13 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
 		final File file = TestData.file(this, fileName);
 		pbjImageRead = new ParameterBlockJAI("ImageRead");
 		pbjImageRead.setParameter("Input", file);
-
-		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+		pbjImageRead.setParameter("Reader", new JP2GDALMrSidImageReaderSpi()
+				.createReaderInstance());
+		final ImageLayout layout = new ImageLayout();
+		layout.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512)
+				.setTileWidth(512);
+		RenderedOp image = JAI.create("ImageRead", pbjImageRead,
+				new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout));
 		if (TestData.isInteractiveTest())
 			Viewer.visualize(image);
 		else
@@ -96,7 +103,13 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
 		pbjImageRead = new ParameterBlockJAI("ImageRead");
 		pbjImageRead.setParameter("Input", inputFile);
 		pbjImageRead.setParameter("readParam", irp);
-		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+		pbjImageRead.setParameter("Reader", new JP2GDALMrSidImageReaderSpi()
+				.createReaderInstance());
+		final ImageLayout layout = new ImageLayout();
+		layout.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512)
+				.setTileWidth(512);
+		RenderedOp image = JAI.create("ImageRead", pbjImageRead,
+				new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout));
 
 		if (TestData.isInteractiveTest())
 			Viewer.visualize(image, "subsampled");

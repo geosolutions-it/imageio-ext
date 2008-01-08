@@ -239,8 +239,9 @@ public abstract class GDALImageWriteParam extends ImageWriteParam {
 	}
 
 	public void setDestinationOffset(Point destinationOffset) {
-		throw new UnsupportedOperationException(
-				"This operation is not currently supported by this API");
+		adaptee.setDestinationOffset(destinationOffset);//only for tests
+//		throw new UnsupportedOperationException(
+//				"This operation is not currently supported by this API");
 	}
 
 	public void setSourceBands(int[] sourceBands) {
@@ -248,15 +249,13 @@ public abstract class GDALImageWriteParam extends ImageWriteParam {
 	}
 
 	public void setSourceRegion(Rectangle sourceRegion) {
-		throw new UnsupportedOperationException(
-				"This operation is not currently supported by this API");
+		adaptee.setSourceRegion(sourceRegion);
 	}
 
 	public void setSourceSubsampling(int sourceXSubsampling,
 			int sourceYSubsampling, int subsamplingXOffset,
 			int subsamplingYOffset) {
-		throw new UnsupportedOperationException(
-				"This operation is not currently supported by this API");
+		adaptee.setSourceSubsampling(sourceXSubsampling, sourceYSubsampling, subsamplingXOffset, subsamplingYOffset);
 	}
 
 	/**

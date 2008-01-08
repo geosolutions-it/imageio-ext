@@ -63,11 +63,15 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
 		JP2GDALKakaduImageReaderSpi.setReadMultithreadingLevel(15);
 		pbjImageRead = new ParameterBlockJAI("ImageRead");
 		pbjImageRead.setParameter("Input", file);
-		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi().createReaderInstance());
-
-		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
+				.createReaderInstance());
+		final ImageLayout layout = new ImageLayout();
+		layout.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512)
+				.setTileWidth(512);
+		RenderedOp image = JAI.create("ImageRead", pbjImageRead,
+				new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout));
 		if (TestData.isInteractiveTest())
-			Viewer.visualizeBothMetadata(image,"");
+			Viewer.visualizeBothMetadata(image, "");
 		else
 			assertNotNull(image.getTiles());
 	}
@@ -103,9 +107,12 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
 		pbjImageRead = new ParameterBlockJAI("ImageRead");
 		pbjImageRead.setParameter("Input", inputFile);
 		pbjImageRead.setParameter("readParam", irp);
-		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi().createReaderInstance());
+		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
+				.createReaderInstance());
 
 		final ImageLayout layout = new ImageLayout();
+		layout.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512)
+				.setTileWidth(512);
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead,
 				new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout));
 
