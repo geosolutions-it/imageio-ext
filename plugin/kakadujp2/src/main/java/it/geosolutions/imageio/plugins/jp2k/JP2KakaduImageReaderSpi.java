@@ -22,17 +22,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 
 import javax.imageio.ImageReader;
-import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
-import javax.imageio.spi.ImageReaderWriterSpi;
-import javax.imageio.spi.ImageWriterSpi;
-import javax.imageio.spi.ServiceRegistry;
 
 import kdu_jni.Jp2_family_src;
 import kdu_jni.Jpx_source;
@@ -48,7 +41,7 @@ import kdu_jni.Kdu_simple_file_source;
  */
 public class JP2KakaduImageReaderSpi extends ImageReaderSpi {
 
-	protected boolean registered = false;
+	// protected boolean registered = false;
 
 	static final String[] suffixes = { "jp2", "jp2k", "j2k" };
 
@@ -95,8 +88,7 @@ public class JP2KakaduImageReaderSpi extends ImageReaderSpi {
 				suffixes,
 				MIMETypes,
 				readerCN, // readerClassName
-				new Class[] 
-		        { File.class, FileImageInputStreamExt.class },
+				new Class[] { File.class, FileImageInputStreamExt.class },
 				wSN, // writer Spi Names
 				supportsStandardStreamMetadataFormat,
 				nativeStreamMetadataFormatName,
@@ -189,66 +181,68 @@ public class JP2KakaduImageReaderSpi extends ImageReaderSpi {
 				.toString();
 	}
 
-	/**
-	 * Upon registration, this method ensures that this SPI is listed at the top
-	 * of the ImageReaderSpi items, so that it will be invoked before the
-	 * default ImageReaderSpi
-	 * 
-	 * @param registry
-	 *            ServiceRegistry where this object has been registered.
-	 * @param category
-	 *            a Class object indicating the registry category under which
-	 *            this object has been registered.
-	 */
-	public void onRegistration(ServiceRegistry registry, Class category) {
-		super.onRegistration(registry, category);
-		if (registered) {
-			return;
-		}
-
-		registered = true;
-
-		final Iterator readers = getJDKImageReaderWriterSPI(registry,
-				"JPEG2000", true).iterator();
-		while (readers.hasNext()) {
-			final ImageReaderSpi spi = (ImageReaderSpi) readers.next();
-			if (spi == this)
-				continue;
-			registry.deregisterServiceProvider(spi);
-			registry.setOrdering(category, this, spi);
-
-		}
-	}
-
-	public static List getJDKImageReaderWriterSPI(ServiceRegistry registry,
-			String formatName, boolean isReader) {
-
-		IIORegistry iioRegistry = (IIORegistry) registry;
-
-		Class spiClass;
-		if (isReader)
-			spiClass = ImageReaderSpi.class;
-		else
-			spiClass = ImageWriterSpi.class;
-
-		final Iterator iter = iioRegistry.getServiceProviders(spiClass, true); // useOrdering
-		final ArrayList list = new ArrayList();
-		while (iter.hasNext()) {
-			final ImageReaderWriterSpi provider = (ImageReaderWriterSpi) iter
-					.next();
-
-			// Get the formatNames supported by this Spi
-			final String[] formatNames = provider.getFormatNames();
-			for (int i = 0; i < formatNames.length; i++) {
-				if (formatNames[i].equalsIgnoreCase(formatName)) {
-					// Must be a JDK provided ImageReader/ImageWriter
-					list.add(provider);
-					break;
-				}
-			}
-		}
-
-		return list;
-	}
+	// /**
+	// * Upon registration, this method ensures that this SPI is listed at the
+	// top
+	// * of the ImageReaderSpi items, so that it will be invoked before the
+	// * default ImageReaderSpi
+	// *
+	// * @param registry
+	// * ServiceRegistry where this object has been registered.
+	// * @param category
+	// * a Class object indicating the registry category under which
+	// * this object has been registered.
+	// */
+	// public void onRegistration(ServiceRegistry registry, Class category) {
+	// super.onRegistration(registry, category);
+	// if (registered) {
+	// return;
+	// }
+	//
+	// registered = true;
+	//
+	// final Iterator readers = getJDKImageReaderWriterSPI(registry,
+	// "JPEG2000", true).iterator();
+	// while (readers.hasNext()) {
+	// final ImageReaderSpi spi = (ImageReaderSpi) readers.next();
+	// if (spi == this)
+	// continue;
+	// registry.deregisterServiceProvider(spi);
+	// registry.setOrdering(category, this, spi);
+	//
+	// }
+	// }
+	//
+	// public static List getJDKImageReaderWriterSPI(ServiceRegistry registry,
+	// String formatName, boolean isReader) {
+	//
+	// IIORegistry iioRegistry = (IIORegistry) registry;
+	//
+	// Class spiClass;
+	// if (isReader)
+	// spiClass = ImageReaderSpi.class;
+	// else
+	// spiClass = ImageWriterSpi.class;
+	//
+	// final Iterator iter = iioRegistry.getServiceProviders(spiClass, true); //
+	// useOrdering
+	// final ArrayList list = new ArrayList();
+	// while (iter.hasNext()) {
+	// final ImageReaderWriterSpi provider = (ImageReaderWriterSpi) iter
+	// .next();
+	//
+	// // Get the formatNames supported by this Spi
+	// final String[] formatNames = provider.getFormatNames();
+	// for (int i = 0; i < formatNames.length; i++) {
+	// if (formatNames[i].equalsIgnoreCase(formatName)) {
+	// // Must be a JDK provided ImageReader/ImageWriter
+	// list.add(provider);
+	// break;
+	// }
+	// }
+	// }
+	//
+	// return list;
+	// }
 
 }

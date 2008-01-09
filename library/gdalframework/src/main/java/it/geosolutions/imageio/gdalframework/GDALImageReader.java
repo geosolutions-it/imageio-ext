@@ -19,6 +19,7 @@ package it.geosolutions.imageio.gdalframework;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
@@ -56,6 +57,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
@@ -903,87 +905,108 @@ public abstract class GDALImageReader extends ImageReader {
 		if (param == null)
 			param = getDefaultReadParam();
 
+		Rectangle srcRegion = new Rectangle(0, 0, 0, 0);
+		Rectangle destRegion = new Rectangle(0, 0, 0, 0);
+		srcRegion.setBounds(0, 0, width, height);
+		destRegion.setBounds(0, 0, width, height);
+		BufferedImage destinationImage = param.getDestination();
+		computeRegions(param, width, height, destinationImage, srcRegion,
+				destRegion);
+
 		int dstWidth = -1;
 		int dstHeight = -1;
 		int srcRegionWidth = -1;
 		int srcRegionHeight = -1;
 		int srcRegionXOffset = -1;
 		int srcRegionYOffset = -1;
-		int xSubsamplingFactor = -1;
-		int ySubsamplingFactor = -1;
+		dstWidth = destRegion.width;
+		dstHeight = destRegion.height;
+		srcRegionXOffset = srcRegion.x;
+		srcRegionYOffset = srcRegion.y;
+		srcRegionWidth = srcRegion.width;
+		srcRegionHeight = srcRegion.height;
 
+		// int dstWidth = -1;
+		// int dstHeight = -1;
+		// int srcRegionWidth = -1;
+		// int srcRegionHeight = -1;
+		// int srcRegionXOffset = -1;
+		// int srcRegionYOffset = -1;
+		// int xSubsamplingFactor = -1;
+		// int ySubsamplingFactor = -1;
+		//
+		// // //
 		// //
-		//
-		// Retrieving Information about Source Region and doing
-		// additional initialization operations.
-		//
+		// // Retrieving Information about Source Region and doing
+		// // additional initialization operations.
 		// //
-		Rectangle srcRegion = param.getSourceRegion();
-		if (srcRegion != null) {
-			srcRegionWidth = (int) srcRegion.getWidth();
-			srcRegionHeight = (int) srcRegion.getHeight();
-			srcRegionXOffset = (int) srcRegion.getX();
-			srcRegionYOffset = (int) srcRegion.getY();
-
-			// //
-			//
-			// Minimum correction for wrong source regions
-			//
-			// When you do subsampling or source subsetting it might happen that
-			// the given source region in the read param is uncorrect, which
-			// means it can be or a bit larger than the original file or can
-			// begin a bit before original limits.
-			//
-			// We got to be prepared to handle such case in order to avoid
-			// generating ArrayIndexOutOfBoundsException later in the code.
-			//
-			// //
-
-			if (srcRegionXOffset < 0)
-				srcRegionXOffset = 0;
-			if (srcRegionYOffset < 0)
-				srcRegionYOffset = 0;
-			if ((srcRegionXOffset + srcRegionWidth) > width) {
-				srcRegionWidth = width - srcRegionXOffset;
-			}
-			// initializing destWidth
-			dstWidth = srcRegionWidth;
-
-			if ((srcRegionYOffset + srcRegionHeight) > height) {
-				srcRegionHeight = height - srcRegionYOffset;
-			}
-			// initializing dstHeight
-			dstHeight = srcRegionHeight;
-
-		} else {
-			// Source Region not specified.
-			// Assuming Source Region Dimension equal to Source Image Dimension
-			dstWidth = width;
-			dstHeight = height;
-			srcRegionXOffset = srcRegionYOffset = 0;
-			srcRegionWidth = width;
-			srcRegionHeight = height;
-		}
-
-		// SubSampling variables initialization
-		xSubsamplingFactor = param.getSourceXSubsampling();
-		ySubsamplingFactor = param.getSourceYSubsampling();
-
-		// ////
+		// // //
+		// Rectangle sourceRegion = param.getSourceRegion();
+		// if (sourceRegion != null) {
+		// srcRegionWidth = (int) sourceRegion.getWidth();
+		// srcRegionHeight = (int) sourceRegion.getHeight();
+		// srcRegionXOffset = (int) sourceRegion.getX();
+		// srcRegionYOffset = (int) sourceRegion.getY();
 		//
-		// Updating the destination size in compliance with
-		// the subSampling parameters
+		// // //
+		// //
+		// // Minimum correction for wrong source regions
+		// //
+		// // When you do subsampling or source subsetting it might happen that
+		// // the given source region in the read param is uncorrect, which
+		// // means it can be or a bit larger than the original file or can
+		// // begin a bit before original limits.
+		// //
+		// // We got to be prepared to handle such case in order to avoid
+		// // generating ArrayIndexOutOfBoundsException later in the code.
+		// //
+		// // //
 		//
-		// ////
-
-		dstWidth = ((dstWidth - 1) / xSubsamplingFactor) + 1;
-		dstHeight = ((dstHeight - 1) / ySubsamplingFactor) + 1;
-
-		if ((xSubsamplingFactor > width) || (ySubsamplingFactor > height)) {
-			GDALUtilities.closeDataSet(dataset);
-			throw new IOException(
-					"The subSamplingFactor cannot be greater than image size!");
-		}
+		// if (srcRegionXOffset < 0)
+		// srcRegionXOffset = 0;
+		// if (srcRegionYOffset < 0)
+		// srcRegionYOffset = 0;
+		// if ((srcRegionXOffset + srcRegionWidth) > width) {
+		// srcRegionWidth = width - srcRegionXOffset;
+		// }
+		// // initializing destWidth
+		// dstWidth = srcRegionWidth;
+		//
+		// if ((srcRegionYOffset + srcRegionHeight) > height) {
+		// srcRegionHeight = height - srcRegionYOffset;
+		// }
+		// // initializing dstHeight
+		// dstHeight = srcRegionHeight;
+		//
+		// } else {
+		// // Source Region not specified.
+		// // Assuming Source Region Dimension equal to Source Image Dimension
+		// dstWidth = width;
+		// dstHeight = height;
+		// srcRegionXOffset = srcRegionYOffset = 0;
+		// srcRegionWidth = width;
+		// srcRegionHeight = height;
+		// }
+		//
+		// // SubSampling variables initialization
+		// xSubsamplingFactor = param.getSourceXSubsampling();
+		// ySubsamplingFactor = param.getSourceYSubsampling();
+		//
+		// // ////
+		// //
+		// // Updating the destination size in compliance with
+		// // the subSampling parameters
+		// //
+		// // ////
+		//
+		// dstWidth = ((dstWidth - 1) / xSubsamplingFactor) + 1;
+		// dstHeight = ((dstHeight - 1) / ySubsamplingFactor) + 1;
+		//
+		// if ((xSubsamplingFactor > width) || (ySubsamplingFactor > height)) {
+		//			GDALUtilities.closeDataSet(dataset);
+		//			throw new IOException(
+		//					"The subSamplingFactor cannot be greater than image size!");
+		//		}
 
 		// Band set-up
 		Band pBand = null;
@@ -1085,6 +1108,8 @@ public abstract class GDALImageReader extends ImageReader {
 				throw new RuntimeException(gdal.GetLastErrorMsg());
 			}
 		}
+
+		// TODO: recycle destination Image when setting data
 
 		// /////////////////////////////////////////////////////////////////////
 		//
@@ -1260,7 +1285,8 @@ public abstract class GDALImageReader extends ImageReader {
 		//
 		// ////////////////////////////////////////////////////////////////////
 		GDALUtilities.closeDataSet(dataset);
-		return Raster.createWritableRaster(sampleModel, imgBuffer, null);
+		return Raster.createWritableRaster(sampleModel, imgBuffer, new Point(
+				destRegion.x, destRegion.y));
 
 	}
 
@@ -1404,9 +1430,7 @@ public abstract class GDALImageReader extends ImageReader {
 
 			// Cleaning HashMap
 			datasetMap.clear();
-
 			datasetNames = null;
-
 		}
 	}
 
@@ -1462,25 +1486,29 @@ public abstract class GDALImageReader extends ImageReader {
 		// Retrieving the requested dataset
 		final GDALDatasetWrapper item = getDataSetWrapper(imageIndex);
 
-		// WritableRaster r=(WritableRaster) readDatasetRaster(item,
-		// param == null ? getDefaultReadParam() : param);
-		// BufferedImage oldImage = new BufferedImage(item.getColorModel(),
-		// r, false,
-		// null);
-		//		
-		// final BufferedImage rgb= new
-		// BufferedImage(r.getWidth(),r.getHeight(),BufferedImage.TYPE_INT_RGB);
-		// final Graphics2D g2d = (Graphics2D) rgb.getGraphics();
-		// g2d.drawImage(oldImage, null,null);
-		// g2d.dispose();
-		// oldImage.flush();
-		// oldImage=null;
+		BufferedImage bi = null;
+		if (param != null) {
+			bi = param.getDestination();
+			if (bi != null) {
+				// TODO: Maybe these checks should be less strict to allow
+				// color and format conversions
+				if (!bi.getColorModel().equals(item.getColorModel()))
+					throw new IIOException(
+							"Provided destination image has not a valid ColorModel or SampleModel");
 
-		return new BufferedImage(item.getColorModel(),
-				(WritableRaster) readDatasetRaster(item,
-						param == null ? getDefaultReadParam() : param), false,
-				null);
+			}
+		}
+		if (bi == null) {
+			bi = new BufferedImage(item.getColorModel(),
+					(WritableRaster) readDatasetRaster(item,
+							param == null ? getDefaultReadParam() : param),
+					false, null);
+		} else {
 
+			bi.setData((WritableRaster) readDatasetRaster(item,
+					param == null ? getDefaultReadParam() : param));
+		}
+		return bi;
 	}
 
 	/**
@@ -1497,7 +1525,8 @@ public abstract class GDALImageReader extends ImageReader {
 	 */
 	public Raster readRaster(int imageIndex, ImageReadParam param)
 			throws IOException {
-		return readDatasetRaster(getDataSetWrapper(imageIndex), param);
+		return read(imageIndex, param).getData();
+		// return readDatasetRaster(getDataSetWrapper(imageIndex), param);
 
 	}
 

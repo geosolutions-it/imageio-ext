@@ -62,6 +62,8 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
 		final ParameterBlockJAI pbjImageRead;
 		pbjImageRead = new ParameterBlockJAI("ImageRead");
 		pbjImageRead.setParameter("Input", file);
+		pbjImageRead.setParameter("Reader", new JP2KakaduImageReaderSpi()
+				.createReaderInstance());
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 		if (TestData.isInteractiveTest())
 			visualize(image,
@@ -81,11 +83,12 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
 		l.setTileHeight(512);
 		l.setTileWidth(512);
 
-
 		ImageReadParam rp = new JP2KakaduImageReadParam();
 		rp.setSourceSubsampling(1, 1, 0, 0);
 		pbjImageRead.setParameter("ReadParam", rp);
 		pbjImageRead.setParameter("Input", file);
+		pbjImageRead.setParameter("Reader", new JP2KakaduImageReaderSpi()
+				.createReaderInstance());
 		RenderedOp image = JAI.create("ImageReadMT", pbjImageRead,
 				new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
 		if (TestData.isInteractiveTest())

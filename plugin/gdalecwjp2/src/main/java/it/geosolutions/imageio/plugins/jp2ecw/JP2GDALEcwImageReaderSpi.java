@@ -80,7 +80,7 @@ public class JP2GDALEcwImageReaderSpi extends GDALImageReaderSpi {
 
 	static final String[] extraImageMetadataFormatClassNames = { null };
 
-	private boolean registered;
+//	private boolean registered;
 
 	public JP2GDALEcwImageReaderSpi() {
 		super(
