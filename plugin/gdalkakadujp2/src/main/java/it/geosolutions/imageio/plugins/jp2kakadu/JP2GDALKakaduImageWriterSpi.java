@@ -91,7 +91,7 @@ public final class JP2GDALKakaduImageWriterSpi extends GDALImageWriterSpi {
 				nativeImageMetadataFormatClassName,
 				extraImageMetadataFormatNames,
 				extraImageMetadataFormatClassNames,
-				Collections.singletonList("GTiff"));
+				Collections.singletonList("JP2KAK"));
 	}
 
 
