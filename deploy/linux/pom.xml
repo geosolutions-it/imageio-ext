@@ -44,7 +44,7 @@
   <!--                                                                                -->
 <profiles>
   <profile>
-  <id>windows</id>
+  <id>deploylibs</id>
     <build>
       <plugins>
         <plugin>
@@ -55,10 +55,10 @@
               <phase>install</phase>
               <configuration>
               <tasks>
-                  <!-- Copy al the gdal dlls to the right directory -->
-                  <copy todir="${path.native}">
-                     <fileset dir="." includes="*.so"/>
-                  </copy>
+                <exec  executable="sh">
+                  <arg value="-c"/>
+                  <arg value="sudo unzip libs.zip -d $JAVA_HOME/jre/lib/i386"/>
+                </exec>
               </tasks>
               </configuration>
               <goals>
