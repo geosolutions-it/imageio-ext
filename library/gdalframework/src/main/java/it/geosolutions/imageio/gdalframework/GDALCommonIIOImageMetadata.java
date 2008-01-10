@@ -78,7 +78,6 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 	}
 
 	private Node createCommonNativeTree() {
-		assert Thread.holdsLock(this);
 		// Create root node
 		final IIOMetadataNode root = new IIOMetadataNode(
 				nativeMetadataFormatName);
@@ -173,8 +172,6 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 		// ////////////////////////////////////////////////////////////////////
 		final int numBand = dsWrapper.getBandsNumber();
 		IIOMetadataNode bandsNode = new IIOMetadataNode("BandsInfo");
-
-		initBandValues();
 
 		// //
 		//
@@ -544,6 +541,4 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 			throw new IndexOutOfBoundsException(sb.toString());
 		}
 	}
-
-
 }
