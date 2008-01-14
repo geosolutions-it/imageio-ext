@@ -41,8 +41,9 @@ import org.gdal.gdal.Driver;
 import org.gdal.gdal.gdal;
 import org.gdal.gdalconst.gdalconst;
 import org.gdal.gdalconst.gdalconstConstants;
+
 /**
- * Utility class providing a set of static utility methods 
+ * Utility class providing a set of static utility methods
  * 
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
@@ -52,27 +53,26 @@ public final class GDALUtilities {
 	 * Simple placeholder for information about a driver's capabilities.
 	 * 
 	 * @author Simone Giannecchini, GeoSOlutions.
-	 *
+	 * 
 	 */
-	public final static class DriverCreateCapabilities{
-		/**{@link Driver} suports up to create.*/
-		public final static int CREATE=0;
-		
-		/**{@link Driver} suports up to create copy.*/
-		public final static int CREATE_COPY=1;
-		
-		/**{@link Driver} suports up to read only.*/
-		public final static int READ_ONLY=2;
+	public final static class DriverCreateCapabilities {
+		/** {@link Driver} supports up to create. */
+		public final static int CREATE = 0;
+
+		/** {@link Driver} supports up to create copy. */
+		public final static int CREATE_COPY = 1;
+
+		/** {@link Driver} supports up to read only. */
+		public final static int READ_ONLY = 2;
 	}
-	
-	
+
 	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.gdalframework");
-	
-	/** is gdal available on this machine?.*/
+
+	/** is gdal available on this machine?. */
 	private volatile static boolean available;
 
-	private static boolean init=false;
+	private static boolean init = false;
 
 	static {
 		try {
@@ -91,14 +91,13 @@ public final class GDALUtilities {
 	 * This {@link Map} link each driver with its writing capabilities.
 	 * 
 	 */
-	private final static Map driversWritingCapabilities= Collections.synchronizedMap(new HashMap());
-
-
-
+	private final static Map driversWritingCapabilities = Collections
+			.synchronizedMap(new HashMap());
 
 	/** private constructor to prevent instantiation */
-	private GDALUtilities(){}
-	
+	private GDALUtilities() {
+	}
+
 	/**
 	 * Simply provides to retrieve the corresponding <code>GDALDataType</code>
 	 * for the specified <code>dataBufferType</code>
@@ -126,7 +125,6 @@ public final class GDALUtilities {
 		default:
 			return gdalconstConstants.GDT_Unknown;
 		}
-
 	}
 
 	/**
@@ -149,8 +147,8 @@ public final class GDALUtilities {
 		return gdal.GetCacheUsed();
 	}
 
-	public static List getJDKImageReaderWriterSPI(
-			ServiceRegistry registry, String formatName, boolean isReader) {
+	public static List getJDKImageReaderWriterSPI(ServiceRegistry registry,
+			String formatName, boolean isReader) {
 
 		IIORegistry iioRegistry = (IIORegistry) registry;
 
@@ -204,7 +202,17 @@ public final class GDALUtilities {
 		gdal.SetConfigOption("GDAL_FORCE_CACHING", sOption);
 	}
 
-	public static synchronized Dataset acquireDataSet(String name, int accessType) {
+	/**
+	 * Acquires a {@link Dataset} and return it, given the name of the Dataset
+	 * source and the desired access type
+	 * 
+	 * @param name
+	 *            of the dataset source to be accessed (usually, a File name).
+	 * @param accessType
+	 * @return the acquired {@link Dataset}
+	 */
+	public static synchronized Dataset acquireDataSet(String name,
+			int accessType) {
 		return gdal.Open(name, accessType);
 	}
 
@@ -221,8 +229,7 @@ public final class GDALUtilities {
 	 */
 	public static List getGDALImageMetadata(String dataSetName) {
 
-		final Dataset ds = acquireDataSet(dataSetName,
-				gdalconst.GA_ReadOnly);
+		final Dataset ds = acquireDataSet(dataSetName, gdalconst.GA_ReadOnly);
 		final List gdalImageMetadata = ds.GetMetadata_List("");
 		closeDataSet(ds);
 		return gdalImageMetadata;
@@ -230,14 +237,15 @@ public final class GDALUtilities {
 
 	/**
 	 * Closes the given {@link Dataset}.
-	 * @param ds {@link Dataset} to close.
+	 * 
+	 * @param ds
+	 *            {@link Dataset} to close.
 	 */
 	public static synchronized void closeDataSet(Dataset ds) {
-		if(ds==null)
+		if (ds == null)
 			throw new NullPointerException("The provided dataset is null");
 		ds.delete();
 	}
-	
 
 	/**
 	 * Returns <code>true</code> if a driver for the specific format is
@@ -255,7 +263,7 @@ public final class GDALUtilities {
 			return false;
 		return true;
 	}
-	
+
 	/**
 	 * Tells us about the capabilities for a gdal driver .
 	 * 
@@ -268,45 +276,44 @@ public final class GDALUtilities {
 	 *         {@link GDALUtilities.DriverCreateCapabilities#READ_ONLY} for
 	 *         read-only drivers.
 	 */
-	public static int formatWritingCapabilities(final String driverName){
-		if(driverName==null)
+	public static int formatWritingCapabilities(final String driverName) {
+		if (driverName == null)
 			throw new NullPointerException("he provided driver name is null");
 		loadGDAL();
 		synchronized (driversWritingCapabilities) {
-			if(driversWritingCapabilities.containsKey(driverName))
-				return ((Integer)driversWritingCapabilities.get(driverName)).intValue();
-			final Driver driver=gdal.GetDriverByName(driverName);
-			if(driver==null)
-					throw new IllegalArgumentException("The requested driver does not exist");
+			if (driversWritingCapabilities.containsKey(driverName))
+				return ((Integer) driversWritingCapabilities.get(driverName))
+						.intValue();
+			final Driver driver = gdal.GetDriverByName(driverName);
+			if (driver == null)
+				throw new IllegalArgumentException(
+						"The requested driver does not exist");
 			// parse metadata
-			final Map metadata=driver.GetMetadata_Dict("");
-			final String create=(String) metadata.get("DCAP_CREATE");
-			final String createCopy=(String) metadata.get("DCAP_CREATECOPY");
-			final boolean createSupported=create!=null&&create.equalsIgnoreCase("yes");
-			final boolean createCopySupported=createCopy!=null&&createCopy.equalsIgnoreCase("yes");
+			final Map metadata = driver.GetMetadata_Dict("");
+			final String create = (String) metadata.get("DCAP_CREATE");
+			final String createCopy = (String) metadata.get("DCAP_CREATECOPY");
+			final boolean createSupported = create != null
+					&& create.equalsIgnoreCase("yes");
+			final boolean createCopySupported = createCopy != null
+					&& createCopy.equalsIgnoreCase("yes");
 			int retVal;
-			if(createSupported)
-			{
-				driversWritingCapabilities.put(driverName, new Integer(GDALUtilities.DriverCreateCapabilities.CREATE));
-				retVal=GDALUtilities.DriverCreateCapabilities.CREATE;
+			if (createSupported) {
+				driversWritingCapabilities.put(driverName, new Integer(
+						GDALUtilities.DriverCreateCapabilities.CREATE));
+				retVal = GDALUtilities.DriverCreateCapabilities.CREATE;
+			} else if (createCopySupported) {
+				driversWritingCapabilities.put(driverName, new Integer(
+						GDALUtilities.DriverCreateCapabilities.CREATE_COPY));
+				retVal = GDALUtilities.DriverCreateCapabilities.CREATE_COPY;
+			} else {
+				driversWritingCapabilities.put(driverName, new Integer(
+						GDALUtilities.DriverCreateCapabilities.READ_ONLY));
+				retVal = GDALUtilities.DriverCreateCapabilities.READ_ONLY;
 			}
-			else
-				if(createCopySupported)
-				{
-					driversWritingCapabilities.put(driverName, new Integer(GDALUtilities.DriverCreateCapabilities.CREATE_COPY));
-					retVal=GDALUtilities.DriverCreateCapabilities.CREATE_COPY;
-				}
-				else
-					{
-					driversWritingCapabilities.put(driverName, new Integer(GDALUtilities.DriverCreateCapabilities.READ_ONLY));
-					retVal=GDALUtilities.DriverCreateCapabilities.READ_ONLY;
-					}
 			return retVal;
-			
-			
+
 		}
 	}
-	
 
 	/**
 	 * Returns the value of a specific metadata item related to the stream. As
@@ -328,14 +335,13 @@ public final class GDALUtilities {
 	 * given as first input parameter
 	 * 
 	 * @param gdalImageMetadata
-	 *            the required metadata <code>List</code>
-	 *            (gdalStreamMetadata or gdalImageMetadata)
+	 *            the required metadata <code>List</code> (gdalStreamMetadata
+	 *            or gdalImageMetadata)
 	 * @param metadataName
 	 *            the name of the specified metadata item
 	 * @return the value of the specified metadata item
 	 */
-	public static String getMetadataItem(List imageMetadata,
-			String metadataName) {
+	public static String getMetadataItem(List imageMetadata, String metadataName) {
 		final Iterator it = imageMetadata.iterator();
 		// Metadata items scanning
 		while (it.hasNext()) {
@@ -355,13 +361,11 @@ public final class GDALUtilities {
 	 * 
 	 * @param datasetName
 	 * 
-	 * @return a <code>List</code> containing metadata related to the
-	 *         stream.
+	 * @return a <code>List</code> containing metadata related to the stream.
 	 */
 	public static List getGDALStreamMetadata(String datasetName) {
 
-		final Dataset ds = acquireDataSet(datasetName,
-				gdalconst.GA_ReadOnly);
+		final Dataset ds = acquireDataSet(datasetName, gdalconst.GA_ReadOnly);
 		List gdalStreamMetadata = ds.GetMetadata_List("SUBDATASETS");
 		closeDataSet(ds);
 		return gdalStreamMetadata;
@@ -595,9 +599,9 @@ public final class GDALUtilities {
 	/**
 	 * Forces loading of GDAL libs.
 	 */
-	public synchronized  static void loadGDAL() {
-		if(init==false)
-			init=true;
+	public synchronized static void loadGDAL() {
+		if (init == false)
+			init = true;
 		else
 			return;
 		try {
@@ -611,6 +615,6 @@ public final class GDALUtilities {
 						.append(e.toString()).toString());
 			GDALUtilities.available = false;
 		}
-		
+
 	}
 }
