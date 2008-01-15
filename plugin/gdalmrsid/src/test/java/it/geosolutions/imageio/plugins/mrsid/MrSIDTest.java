@@ -20,13 +20,19 @@ import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.resources.TestData;
 
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.imageio.ImageReadParam;
+import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
@@ -84,7 +90,6 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 		} catch (FileNotFoundException fnfe) {
 			warningMessage();
 		}
-
 	}
 
 	/**
@@ -148,7 +153,10 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 			pbjCrop.setParameter("height", cropHeigth);
 
 			final RenderedOp croppedImage = JAI.create("Crop", pbjCrop);
-			assertNotNull(croppedImage.getTiles());
+			if (TestData.isInteractiveTest())
+				Viewer.visualize(croppedImage, "Cropped Image");
+			else
+				assertNotNull(croppedImage.getTiles());
 
 			// ////////////////////////////////////////////////////////////////
 			// preparing to translate
@@ -165,7 +173,10 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 
 			final RenderedOp translatedImage = JAI.create("Translate",
 					pbjTranslate);
-			assertNotNull(image.getTiles());
+			if (TestData.isInteractiveTest())
+				Viewer.visualize(translatedImage, "Translated Image");
+			else
+				assertNotNull(image.getTiles());
 
 			// ////////////////////////////////////////////////////////////////
 			// preparing to rotate
@@ -195,18 +206,39 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 
 	public void testManualRead() throws IOException {
 		try {
-			MrSIDImageReader reader = new MrSIDImageReader(
-					new MrSIDImageReaderSpi());
-			final ImageReadParam irp = new ImageReadParam();
+			MrSIDImageReader reader = (MrSIDImageReader) new MrSIDImageReaderSpi()
+					.createReaderInstance();
+
 			final File file = TestData.file(this, fileName);
-			irp.setSourceSubsampling(8, 8, 0, 0);
 			reader.setInput(file);
-			final RenderedImage image = reader.readAsRenderedImage(0, irp);
+			ImageTypeSpecifier spec = (ImageTypeSpecifier) reader
+					.getImageTypes(0).next();
+			final int width = reader.getWidth(0);
+			final int height = reader.getHeight(0);
+
+			final ImageReadParam irp = new ImageReadParam();
+			irp.setSourceSubsampling(1, 1, 0, 0);
+			irp.setSourceRegion(new Rectangle(width / 2, height / 2, width / 2,
+					height / 2));
+			WritableRaster raster = Raster.createWritableRaster(spec
+					.getSampleModel()
+					.createCompatibleSampleModel(width, height), null);
+			BufferedImage bi = new BufferedImage(spec.getColorModel(), raster,
+					false, null);
+
+			irp.setDestination(bi);
+			irp.setDestinationOffset(new Point(width / 2, height / 2));
+			final RenderedImage image = reader.read(0, irp);
+			irp.setSourceRegion(new Rectangle(0, 0, width / 2, height / 2));
+			irp.setDestination((BufferedImage) image);
+			irp.setDestinationOffset(new Point(0, 0));
+			RenderedImage ri2 = reader.read(0, irp);
+
 			if (TestData.isInteractiveTest())
-				Viewer.visualize(image, "SubSampled MrSID ImageRead");
+				Viewer.visualize(ri2, "MrSID ImageRead");
 			else
 				assertNotNull(image);
-				
+
 			reader.dispose();
 		} catch (FileNotFoundException fnfe) {
 			warningMessage();
@@ -224,6 +256,9 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 
 		// Test read without exploiting JAI
 		suite.addTest(new MrSIDTest("testManualRead"));
+		
+		// Test read exploiting JAI when destination is provided
+		suite.addTest(new MrSIDTest("testReadOnDestination"));
 
 		return suite;
 	}
@@ -231,5 +266,4 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 	public static void main(java.lang.String[] args) {
 		junit.textui.TestRunner.run(suite());
 	}
-
 }

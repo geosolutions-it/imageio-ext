@@ -208,14 +208,14 @@ public class HDF4Test extends AbstractHDF4TestCase {
 		// Test reading of several subdatasets
 		suite.addTest(new HDF4Test("testSubDatasets"));
 
-		// Test read without exploiting JAI
-		suite.addTest(new HDF4Test("testManualRead"));
-
-		// Test reading of several subdatasets
-		suite.addTest(new HDF4Test("testRasterBandsProperties"));
-
-		// Test Image Metadata
-		suite.addTest(new HDF4Test("testMetadata"));
+//		// Test read without exploiting JAI
+//		suite.addTest(new HDF4Test("testManualRead"));
+//
+//		// Test reading of several subdatasets
+//		suite.addTest(new HDF4Test("testRasterBandsProperties"));
+//
+//		// Test Image Metadata
+//		suite.addTest(new HDF4Test("testMetadata"));
 
 		return suite;
 	}

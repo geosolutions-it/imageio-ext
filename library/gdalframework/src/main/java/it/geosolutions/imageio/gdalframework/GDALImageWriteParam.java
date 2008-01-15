@@ -239,7 +239,7 @@ public abstract class GDALImageWriteParam extends ImageWriteParam {
 	}
 
 	public void setDestinationOffset(Point destinationOffset) {
-		adaptee.setDestinationOffset(destinationOffset);//only for tests
+		 adaptee.setDestinationOffset(destinationOffset);//only for tests
 //		throw new UnsupportedOperationException(
 //				"This operation is not currently supported by this API");
 	}
@@ -255,23 +255,26 @@ public abstract class GDALImageWriteParam extends ImageWriteParam {
 	public void setSourceSubsampling(int sourceXSubsampling,
 			int sourceYSubsampling, int subsamplingXOffset,
 			int subsamplingYOffset) {
-		adaptee.setSourceSubsampling(sourceXSubsampling, sourceYSubsampling, subsamplingXOffset, subsamplingYOffset);
+		adaptee.setSourceSubsampling(sourceXSubsampling, sourceYSubsampling,
+				subsamplingXOffset, subsamplingYOffset);
 	}
 
 	/**
 	 * 
 	 */
-	public GDALImageWriteParam(final ImageWriteParam adaptee,final GDALCreateOptionsHandler optionsHandler) {
+	public GDALImageWriteParam(final ImageWriteParam adaptee,
+			final GDALCreateOptionsHandler optionsHandler) {
 		this(adaptee, optionsHandler, Locale.getDefault());
 	}
 
 	/**
 	 * @param locale
 	 */
-	public GDALImageWriteParam(final ImageWriteParam adaptee,final GDALCreateOptionsHandler optionsHandler, Locale locale) {
+	public GDALImageWriteParam(final ImageWriteParam adaptee,
+			final GDALCreateOptionsHandler optionsHandler, Locale locale) {
 		super(locale);
 		this.adaptee = adaptee;
-		this.createOptionsHandler=optionsHandler;
+		this.createOptionsHandler = optionsHandler;
 	}
 
 	public ImageWriteParam getAdaptee() {

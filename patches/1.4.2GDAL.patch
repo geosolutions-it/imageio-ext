@@ -1,6 +1,51 @@
+Index: frmts/jp2kak/makefile.vc
+===================================================================
+--- frmts/jp2kak/makefile.vc	(revision 11712)
++++ frmts/jp2kak/makefile.vc	(working copy)
+@@ -1,17 +1,36 @@
+-
+ GDAL_ROOT	=	..\..
+ 
+ !INCLUDE $(GDAL_ROOT)\nmake.opt
+ 
+ OBJ	=	jp2kakdataset.obj
+-EXTRAFLAGS = 	-I$(KAKDIR) /DKDU_PENTIUM_MSVC /GX
+ 
++EXTRAFLAGS = 	-I$(KAKDIR) -I$(KAKDIR)\coresys\common -I$(KAKDIR)\apps\compressed_io \
++	-I$(KAKDIR)\apps\jp2 -I$(KAKDIR)\apps\image -I$(KAKDIR)\apps\args -I$(KAKDIR)\apps\support  /DKDU_PENTIUM_MSVC /GX
++
++APPOBJ  = $(KAKDIR)\apps\make\args.obj $(KAKDIR)\apps\make\image_in.obj \
++	$(KAKDIR)\apps\make\image_out.obj $(KAKDIR)\apps\make\jp2.obj \
++	$(KAKDIR)\apps\make\mj2.obj $(KAKDIR)\apps\make\palette.obj \
++	$(KAKDIR)\apps\make\roi_sources.obj
++
++# The following are just for Kakadu 5.1 or later.
++APPOBJ = $(KAKDIR)/apps/make/kdu_tiff.obj $(KAKDIR)/apps/make/jpx.obj $(KAKDIR)/apps/make/kdu_stripe_decompressor.obj $APPOBJ
++
+ default:	$(OBJ) kakinstall
+-	xcopy /D  /Y *.obj ..\o
++	copy *.obj ..\o
+ 
+ kakinstall:
+-	copy $(KAKDIR)\*.obj ..\o
++	copy $(KAKDIR)\apps\make\args.obj ..\o
++	copy $(KAKDIR)\apps\make\image_in.obj ..\o
++	copy $(KAKDIR)\apps\make\image_out.obj ..\o
++	copy $(KAKDIR)\apps\make\jp2.obj ..\o
++	copy $(KAKDIR)\apps\make\mj2.obj ..\o
++	copy $(KAKDIR)\apps\make\palette.obj ..\o
++	copy $(KAKDIR)\apps\make\roi_sources.obj ..\o
++	copy $(KAKDIR)\apps\make\kdu_tiff.obj ..\o
++	copy $(KAKDIR)\apps\make\jpx.obj ..\o
++	copy $(KAKDIR)\apps\make\kdu_stripe_decompressor.obj ..\o
+ 
+ clean:
+ 	-del *.obj
+ 
++
 Index: frmts/jp2kak/jp2kakdataset.cpp
 ===================================================================
---- frmts/jp2kak/jp2kakdataset.cpp	(revision 11932)
+--- frmts/jp2kak/jp2kakdataset.cpp	(revision 11712)
 +++ frmts/jp2kak/jp2kakdataset.cpp	(working copy)
 @@ -39,6 +39,7 @@
  #include "kdu_params.h"
@@ -2171,52 +2216,9 @@ Index: frmts/jp2kak/jp2kakdataset.cpp
  
          poDriver->pfnOpen = JP2KAKDataset::Open;
          poDriver->pfnCreateCopy = JP2KAKCreateCopy;
-Index: frmts/jp2kak/makefile.vc
-===================================================================
---- frmts/jp2kak/makefile.vc	(revision 11932)
-+++ frmts/jp2kak/makefile.vc	(working copy)
-@@ -1,16 +1,34 @@
--
- GDAL_ROOT	=	..\..
- 
- !INCLUDE $(GDAL_ROOT)\nmake.opt
- 
- OBJ	=	jp2kakdataset.obj
--EXTRAFLAGS = 	-I$(KAKDIR) /DKDU_PENTIUM_MSVC /GX
- 
-+EXTRAFLAGS = 	-I$(KAKDIR) -I$(KAKDIR)\coresys\common -I$(KAKDIR)\apps\compressed_io \
-+	-I$(KAKDIR)\apps\jp2 -I$(KAKDIR)\apps\image -I$(KAKDIR)\apps\args -I$(KAKDIR)\apps\support  /DKDU_PENTIUM_MSVC /GX
-+
-+APPOBJ  = $(KAKDIR)\apps\make\args.obj $(KAKDIR)\apps\make\image_in.obj \
-+	$(KAKDIR)\apps\make\image_out.obj $(KAKDIR)\apps\make\jp2.obj \
-+	$(KAKDIR)\apps\make\mj2.obj $(KAKDIR)\apps\make\palette.obj \
-+	$(KAKDIR)\apps\make\roi_sources.obj
-+
-+# The following are just for Kakadu 5.1 or later.
-+APPOBJ = $(KAKDIR)/apps/make/kdu_tiff.obj $(KAKDIR)/apps/make/jpx.obj $(KAKDIR)/apps/make/kdu_stripe_decompressor.obj $APPOBJ
-+
- default:	$(OBJ) kakinstall
--	xcopy /D  /Y *.obj ..\o
-+	copy *.obj ..\o
- 
- kakinstall:
--	copy $(KAKDIR)\*.obj ..\o
-+	copy $(KAKDIR)\apps\make\args.obj ..\o
-+	copy $(KAKDIR)\apps\make\image_in.obj ..\o
-+	copy $(KAKDIR)\apps\make\image_out.obj ..\o
-+	copy $(KAKDIR)\apps\make\jp2.obj ..\o
-+	copy $(KAKDIR)\apps\make\mj2.obj ..\o
-+	copy $(KAKDIR)\apps\make\palette.obj ..\o
-+	copy $(KAKDIR)\apps\make\roi_sources.obj ..\o
-+	copy $(KAKDIR)\apps\make\kdu_tiff.obj ..\o
-+	copy $(KAKDIR)\apps\make\jpx.obj ..\o
-+	copy $(KAKDIR)\apps\make\kdu_stripe_decompressor.obj ..\o
- 
- clean:
- 	-del *.obj
 Index: swig/include/java/gdal_java.i
 ===================================================================
---- swig/include/java/gdal_java.i	(revision 11922)
+--- swig/include/java/gdal_java.i	(revision 11712)
 +++ swig/include/java/gdal_java.i	(working copy)
 @@ -36,6 +36,7 @@
    }
@@ -2226,7 +2228,7 @@ Index: swig/include/java/gdal_java.i
  
  %extend GDALRasterBandShadow {
    CPLErr ReadRaster_Direct( int xoff, int yoff, int xsize, int ysize,
-@@ -91,4 +92,43 @@
+@@ -91,4 +92,54 @@
    }
  %}
  
@@ -2269,5 +2271,17 @@ Index: swig/include/java/gdal_java.i
 +
 +}
 +
-+} /* extend */
++  CPLErr WriteRaster_Direct( int xoff, int yoff, int xsize, int ysize,
++                            int buf_xsize, int buf_ysize,
++                            GDALDataType buf_type, int bands, int pixelSpace, int lineSpace, int bandSpace, void *buf)
++{
 +
++
++   return GDALDatasetRasterIO( self, GF_Write, xoff, yoff, xsize, ysize,
++                                 buf, buf_xsize, buf_ysize, 
++                                 buf_type, bands, 0, pixelSpace, lineSpace, bandSpace);
++
++}
++
++} /* extend */
+\ No newline at end of file

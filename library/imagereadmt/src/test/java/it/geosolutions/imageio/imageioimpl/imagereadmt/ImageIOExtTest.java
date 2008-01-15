@@ -53,7 +53,6 @@ public class ImageIOExtTest extends TestCase {
 	}
 
 	public void testImageReadMT() {
-
 		ImageReadDescriptorMT.register(JAI.getDefaultInstance());
 		final ParameterBlockJAI pbj = new ParameterBlockJAI("ImageReadMT");
 		assertNotNull(pbj);

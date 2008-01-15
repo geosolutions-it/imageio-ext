@@ -52,7 +52,6 @@ public class MrSIDIIOImageMetadata extends GDALCommonIIOImageMetadata {
 		if (formatName.equalsIgnoreCase(mrsidImageMetadataName))
 			return getMrSIDMetadataTree();
 		return super.getAsTree(formatName);
-
 	}
 
 	private Node getMrSIDMetadataTree() {
@@ -62,7 +61,6 @@ public class MrSIDIIOImageMetadata extends GDALCommonIIOImageMetadata {
 		final Dataset ds = GDALUtilities.acquireDataSet(dsWrapper
 				.getDatasetName(), gdalconst.GA_ReadOnly);
 		final Map gdalMetadata = ds.GetMetadata_Dict("");
-		
 		
 		// ImageDescriptor
 		IIOMetadataNode node = new IIOMetadataNode("ImageDescriptor");

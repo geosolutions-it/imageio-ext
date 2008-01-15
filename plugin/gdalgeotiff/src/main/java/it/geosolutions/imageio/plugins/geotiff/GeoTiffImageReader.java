@@ -38,7 +38,7 @@ import org.gdal.gdal.Dataset;
 public class GeoTiffImageReader extends GDALImageReader {
 
 	private static final Logger LOGGER = Logger
-			.getLogger("javax.imageio.plugins");
+			.getLogger("it.geosolutions.imageio.plugins.geotiff");
 
 	public GeoTiffImageReader(GeoTiffImageReaderSpi originatingProvider) {
 		super(originatingProvider,0);

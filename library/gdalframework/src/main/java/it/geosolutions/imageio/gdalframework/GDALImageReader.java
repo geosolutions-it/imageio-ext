@@ -116,7 +116,6 @@ public abstract class GDALImageReader extends ImageReader {
 
 	/** Inner class used to store dataset useful information for later usage */
 	public class GDALDatasetWrapper {
-
 		// //////////////////////////////////////////////////////////////////////////////////
 		// 
 		// Start of GDALDatasetWrapper Class
@@ -878,12 +877,319 @@ public abstract class GDALImageReader extends ImageReader {
 	 * @param item
 	 *            a <code>GDALDatasetWrapper</code> related to the actual
 	 *            dataset
+	 * @return the read <code>Raster</code>
+	 */
+	private Raster readDatasetRaster(GDALDatasetWrapper item,
+			Rectangle srcRegion, Rectangle dstRegion) throws IOException {
+
+		SampleModel sampleModel = null;
+		DataBuffer imgBuffer = null;
+
+		// ////////////////////////////////////////////////////////////////////
+		//
+		// -------------------------------------------------------------------
+		// Raster Creation >>> Step 1: Initialization
+		// -------------------------------------------------------------------
+		//
+		// ////////////////////////////////////////////////////////////////////
+
+		final Dataset dataset = GDALUtilities.acquireDataSet(item
+				.getDatasetName(), gdalconst.GA_ReadOnly);
+
+		int dstWidth = dstRegion.width;
+		int dstHeight = dstRegion.height;
+		int srcRegionXOffset = srcRegion.x;
+		int srcRegionYOffset = srcRegion.y;
+		int srcRegionWidth = srcRegion.width;
+		int srcRegionHeight = srcRegion.height;
+
+		// Band set-up
+		Band pBand = null;
+
+		// Getting number of bands
+		final int nBands = item.getBandsNumber();
+
+		int[] banks = new int[nBands];
+		int[] offsets = new int[nBands];
+
+		// setting the number of pixels to read
+		final int pixels = dstWidth * dstHeight;
+		int bufferType = 0, bufferSize = 0;
+
+		// ////////////////////////////////////////////////////////////////////
+		//
+		// -------------------------------------------------------------------
+		// Raster Creation >>> Step 2: Data Read
+		// -------------------------------------------------------------------
+		//
+		// ////////////////////////////////////////////////////////////////////
+
+		// NOTE: Bands are not 0-base indexed, so we must add 1
+		pBand = dataset.GetRasterBand(1);
+
+		// setting buffer properties
+		bufferType = pBand.getDataType();
+		final int typeSizeInBytes = gdal.GetDataTypeSize(bufferType) / 8;
+		bufferSize = nBands * pixels * typeSizeInBytes;
+
+		// splitBands = false -> I read n Bands at once.
+		// splitBands = false -> I need to read 1 Band at a time.
+		boolean splitBands = false;
+
+		if (bufferSize < 0 || item.sampleModel instanceof BandedSampleModel) {
+			// The number resulting from the product
+			// "bandsNumber*pixels*gdal.GetDataTypeSize(buf_type) / 8"
+			// may be negative (A very high number which is not
+			// "int representable")
+			// In such a case, we will read 1 band at a time.
+			bufferSize = pixels * typeSizeInBytes;
+			splitBands = true;
+		}
+		int dataBufferType = -1;
+		ByteBuffer[] bands = new ByteBuffer[nBands];
+		for (int k = 0; k < nBands; k++) {
+
+			// If I'm reading n Bands at once and I performed the first read,
+			// I quit the loop
+			if (k > 0 && !splitBands)
+				break;
+
+			final ByteBuffer dataBuffer = ByteBuffer.allocateDirect(bufferSize);
+
+			final int returnVal;
+			if (!splitBands) {
+				// I can read bandsNumber at once.
+				returnVal = dataset.ReadRaster_Direct(srcRegionXOffset,
+						srcRegionYOffset, srcRegionWidth, srcRegionHeight,
+						dstWidth, dstHeight, bufferType, nBands, nBands
+								* typeSizeInBytes, dstWidth * nBands
+								* typeSizeInBytes, typeSizeInBytes, dataBuffer);
+				bands[k] = dataBuffer;
+
+			} else {
+				// I need to read 1 band at a time.
+				returnVal = dataset.GetRasterBand(k + 1).ReadRaster_Direct(
+						srcRegionXOffset, srcRegionYOffset, srcRegionWidth,
+						srcRegionHeight, dstWidth, dstHeight, bufferType,
+						dataBuffer);
+				bands[k] = dataBuffer;
+			}
+			if (returnVal == gdalconstConstants.CE_None) {
+				if (!splitBands)
+					for (int band = 0; band < nBands; band++) {
+						banks[band] = band;
+						offsets[band] = band;
+					}
+				else {
+					banks[k] = k;
+					offsets[k] = 0;
+				}
+			} else {
+				// The read operation was not successfully computed.
+				// Showing error messages.
+				LOGGER.info(new StringBuffer("Last error: ").append(
+						gdal.GetLastErrorMsg()).toString());
+				LOGGER.info(new StringBuffer("Last error number: ").append(
+						gdal.GetLastErrorNo()).toString());
+				LOGGER.info(new StringBuffer("Last error type: ").append(
+						gdal.GetLastErrorType()).toString());
+				GDALUtilities.closeDataSet(dataset);
+				throw new RuntimeException(gdal.GetLastErrorMsg());
+			}
+		}
+
+		// ////////////////////////////////////////////////////////////////////
+		//
+		// -------------------------------------------------------------------
+		// Raster Creation >>> Step 3: Setting DataBuffer
+		// -------------------------------------------------------------------
+		//
+		// ////////////////////////////////////////////////////////////////////
+
+		// /////////////////////////////////////////////////////////////////////
+		//
+		// TYPE BYTE
+		//
+		// /////////////////////////////////////////////////////////////////////
+		if (bufferType == gdalconstConstants.GDT_Byte) {
+			if (!splitBands) {
+				final byte[] bytes = new byte[nBands * pixels];
+				bands[0].get(bytes, 0, nBands * pixels);
+				imgBuffer = new DataBufferByte(bytes, nBands * pixels);
+			} else {
+				final byte[][] bytes = new byte[nBands][];
+				for (int i = 0; i < nBands; i++) {
+					bytes[i] = new byte[pixels];
+					bands[i].get(bytes[i], 0, pixels);
+				}
+				imgBuffer = new DataBufferByte(bytes, pixels);
+			}
+			dataBufferType = DataBuffer.TYPE_BYTE;
+		} else if (bufferType == gdalconstConstants.GDT_Int16
+				|| bufferType == gdalconstConstants.GDT_UInt16) {
+			// ////////////////////////////////////////////////////////////////
+			//
+			// TYPE SHORT
+			//
+			// ////////////////////////////////////////////////////////////////
+
+			if (!splitBands) {
+				// I get short values from the ByteBuffer using a view
+				// of the ByteBuffer as a ShortBuffer
+				// It is worth to create the view outside the loop.
+				short[] shorts = new short[nBands * pixels];
+				bands[0].order(ByteOrder.nativeOrder());
+				final ShortBuffer buff = bands[0].asShortBuffer();
+				buff.get(shorts, 0, nBands * pixels);
+				if (bufferType == gdalconstConstants.GDT_Int16)
+					imgBuffer = new DataBufferShort(shorts, nBands * pixels);
+				else
+					imgBuffer = new DataBufferUShort(shorts, nBands * pixels);
+			} else {
+				short[][] shorts = new short[nBands][];
+				for (int i = 0; i < nBands; i++) {
+					shorts[i] = new short[pixels];
+					bands[i].order(ByteOrder.nativeOrder());
+					bands[i].asShortBuffer().get(shorts[i], 0, pixels);
+				}
+				if (bufferType == gdalconstConstants.GDT_Int16)
+					imgBuffer = new DataBufferShort(shorts, pixels);
+				else
+					imgBuffer = new DataBufferUShort(shorts, pixels);
+			}
+			if (bufferType == gdalconstConstants.GDT_UInt16)
+				dataBufferType = DataBuffer.TYPE_USHORT;
+			else
+				dataBufferType = DataBuffer.TYPE_SHORT;
+		} else if (bufferType == gdalconstConstants.GDT_Int32
+				|| bufferType == gdalconstConstants.GDT_UInt32) {
+			// ////////////////////////////////////////////////////////////////
+			//
+			// TYPE INT
+			//
+			// ////////////////////////////////////////////////////////////////
+
+			if (!splitBands) {
+				// I get int values from the ByteBuffer using a view
+				// of the ByteBuffer as an IntBuffer
+				// It is worth to create the view outside the loop.
+				int[] ints = new int[nBands * pixels];
+				bands[0].order(ByteOrder.nativeOrder());
+				final IntBuffer buff = bands[0].asIntBuffer();
+				buff.get(ints, 0, nBands * pixels);
+				imgBuffer = new DataBufferInt(ints, nBands * pixels);
+			} else {
+				int[][] ints = new int[nBands][];
+				for (int i = 0; i < nBands; i++) {
+					ints[i] = new int[pixels];
+					bands[i].order(ByteOrder.nativeOrder());
+					bands[i].asIntBuffer().get(ints[i], 0, pixels);
+				}
+				imgBuffer = new DataBufferInt(ints, pixels);
+			}
+			dataBufferType = DataBuffer.TYPE_INT;
+
+		} else if (bufferType == gdalconstConstants.GDT_Float32) {
+			// /////////////////////////////////////////////////////////////////////
+			//
+			// TYPE FLOAT
+			//
+			// /////////////////////////////////////////////////////////////////////
+
+			if (!splitBands) {
+				// I get float values from the ByteBuffer using a view
+				// of the ByteBuffer as a FloatBuffer
+				// It is worth to create the view outside the loop.
+				float[] floats = new float[nBands * pixels];
+				bands[0].order(ByteOrder.nativeOrder());
+				final FloatBuffer buff = bands[0].asFloatBuffer();
+				buff.get(floats, 0, nBands * pixels);
+				imgBuffer = new DataBufferFloat(floats, nBands * pixels);
+			} else {
+				float[][] floats = new float[nBands][];
+				for (int i = 0; i < nBands; i++) {
+					floats[i] = new float[pixels];
+					bands[i].order(ByteOrder.nativeOrder());
+					bands[i].asFloatBuffer().get(floats[i], 0, pixels);
+				}
+				imgBuffer = new DataBufferFloat(floats, pixels);
+			}
+			dataBufferType = DataBuffer.TYPE_FLOAT;
+		} else if (bufferType == gdalconstConstants.GDT_Float64) {
+			// /////////////////////////////////////////////////////////////////////
+			//
+			// TYPE DOUBLE
+			//
+			// /////////////////////////////////////////////////////////////////////
+
+			if (!splitBands) {
+				// I get double values from the ByteBuffer using a view
+				// of the ByteBuffer as a DoubleBuffer
+				// It is worth to create the view outside the loop.
+				double[] doubles = new double[nBands * pixels];
+				bands[0].order(ByteOrder.nativeOrder());
+				final DoubleBuffer buff = bands[0].asDoubleBuffer();
+				buff.get(doubles, 0, nBands * pixels);
+				imgBuffer = new DataBufferDouble(doubles, nBands * pixels);
+			} else {
+				double[][] doubles = new double[nBands][];
+				for (int i = 0; i < nBands; i++) {
+					doubles[i] = new double[pixels];
+					bands[i].order(ByteOrder.nativeOrder());
+					bands[i].asDoubleBuffer().get(doubles[i], 0, pixels);
+				}
+				imgBuffer = new DataBufferDouble(doubles, pixels);
+			}
+			dataBufferType = DataBuffer.TYPE_DOUBLE;
+
+		} else {
+			// TODO: Handle other cases if needed.
+			LOGGER.info("More cases need to be handled");
+		}
+
+		if (LOGGER.isLoggable(Level.FINE))
+			LOGGER.fine((new Integer(GDALUtilities.getCacheUsed())).toString());
+
+		// ////////////////////////////////////////////////////////////////////
+		//
+		// -------------------------------------------------------------------
+		// Raster Creation >>> Step 4: Setting SampleModel
+		// -------------------------------------------------------------------
+		//
+		// ////////////////////////////////////////////////////////////////////
+		if (splitBands)
+			sampleModel = new BandedSampleModel(dataBufferType, dstWidth,
+					dstHeight, dstWidth, banks, offsets);
+		else
+			sampleModel = new PixelInterleavedSampleModel(dataBufferType,
+					dstWidth, dstHeight, nBands, dstWidth * nBands, offsets);
+
+		// ////////////////////////////////////////////////////////////////////
+		//
+		// -------------------------------------------------------------------
+		// Raster Creation >>> Final Step: Actual Raster Creation
+		// -------------------------------------------------------------------
+		//
+		// ////////////////////////////////////////////////////////////////////
+		GDALUtilities.closeDataSet(dataset);
+		return Raster.createWritableRaster(sampleModel, imgBuffer, new Point(
+				dstRegion.x, dstRegion.y));
+
+	}
+
+	/**
+	 * Provides to read data from the required region of the raster (the actual
+	 * dataset)
+	 * 
+	 * @param item
+	 *            a <code>GDALDatasetWrapper</code> related to the actual
+	 *            dataset
 	 * @param param
 	 *            an <code>ImageReadParam</code> used to control the reading
 	 *            process, or <code>null</code>.
 	 * @return the read <code>Raster</code>
 	 */
-	private Raster readDatasetRaster(GDALDatasetWrapper item,
+	private Raster previousreadDatasetRaster(GDALDatasetWrapper item,
 			ImageReadParam param) throws IOException {
 
 		SampleModel sampleModel = null;
@@ -913,18 +1219,12 @@ public abstract class GDALImageReader extends ImageReader {
 		computeRegions(param, width, height, destinationImage, srcRegion,
 				destRegion);
 
-		int dstWidth = -1;
-		int dstHeight = -1;
-		int srcRegionWidth = -1;
-		int srcRegionHeight = -1;
-		int srcRegionXOffset = -1;
-		int srcRegionYOffset = -1;
-		dstWidth = destRegion.width;
-		dstHeight = destRegion.height;
-		srcRegionXOffset = srcRegion.x;
-		srcRegionYOffset = srcRegion.y;
-		srcRegionWidth = srcRegion.width;
-		srcRegionHeight = srcRegion.height;
+		int dstWidth = destRegion.width;
+		int dstHeight = destRegion.height;
+		int srcRegionXOffset = srcRegion.x;
+		int srcRegionYOffset = srcRegion.y;
+		int srcRegionWidth = srcRegion.width;
+		int srcRegionHeight = srcRegion.height;
 
 		// int dstWidth = -1;
 		// int dstHeight = -1;
@@ -1003,10 +1303,10 @@ public abstract class GDALImageReader extends ImageReader {
 		// dstHeight = ((dstHeight - 1) / ySubsamplingFactor) + 1;
 		//
 		// if ((xSubsamplingFactor > width) || (ySubsamplingFactor > height)) {
-		//			GDALUtilities.closeDataSet(dataset);
-		//			throw new IOException(
-		//					"The subSamplingFactor cannot be greater than image size!");
-		//		}
+		// GDALUtilities.closeDataSet(dataset);
+		// throw new IOException(
+		// "The subSamplingFactor cannot be greater than image size!");
+		// }
 
 		// Band set-up
 		Band pBand = null;
@@ -1064,11 +1364,6 @@ public abstract class GDALImageReader extends ImageReader {
 
 			final int returnVal;
 			if (!splitBands) {
-				// // I can read bandsNumber at once.
-				// returnVal = dataset.ReadRaster_Direct(srcRegionXOffset,
-				// srcRegionYOffset, srcRegionWidth, srcRegionHeight,
-				// dstWidth, dstHeight, bufferType, nBands, dataBuffer);
-				// bands[k] = dataBuffer;
 				// I can read bandsNumber at once.
 				returnVal = dataset.ReadRaster_Direct(srcRegionXOffset,
 						srcRegionYOffset, srcRegionWidth, srcRegionHeight,
@@ -1315,7 +1610,7 @@ public abstract class GDALImageReader extends ImageReader {
 				// should never happen
 				throw new RuntimeException(
 						"Unable to retrieve the Data Source for"
-								+ "the provided input");
+								+ " the provided input");
 		}
 		return datasetSource;
 	}
@@ -1483,30 +1778,77 @@ public abstract class GDALImageReader extends ImageReader {
 
 	public BufferedImage read(int imageIndex, ImageReadParam param)
 			throws IOException {
+
+		// //
+		//
 		// Retrieving the requested dataset
+		//
+		// //
 		final GDALDatasetWrapper item = getDataSetWrapper(imageIndex);
+		final int width = item.getWidth();
+		final int height = item.getHeight();
 
 		BufferedImage bi = null;
-		if (param != null) {
-			bi = param.getDestination();
+		final ImageReadParam imageReadParam;
+		if (param == null)
+			imageReadParam = getDefaultReadParam();
+		else {
+			imageReadParam = param;
+			bi = imageReadParam.getDestination();
 			if (bi != null) {
 				// TODO: Maybe these checks should be less strict to allow
 				// color and format conversions
-				if (!bi.getColorModel().equals(item.getColorModel()))
+				if (!bi.getColorModel().equals(item.getColorModel())||bi.getSampleModel().getDataType()!=item.getSampleModel().getDataType())
 					throw new IIOException(
 							"Provided destination image has not a valid ColorModel or SampleModel");
-
 			}
 		}
-		if (bi == null) {
-			bi = new BufferedImage(item.getColorModel(),
-					(WritableRaster) readDatasetRaster(item,
-							param == null ? getDefaultReadParam() : param),
-					false, null);
-		} else {
 
-			bi.setData((WritableRaster) readDatasetRaster(item,
-					param == null ? getDefaultReadParam() : param));
+		// //
+		//
+		// Computing regions of interest
+		//
+		// //
+		Rectangle srcRegion = new Rectangle(0, 0, 0, 0);
+		Rectangle destRegion = new Rectangle(0, 0, 0, 0);
+		srcRegion.setBounds(0, 0, width, height);
+		destRegion.setBounds(0, 0, width, height);
+		computeRegions(imageReadParam, width, height, bi, srcRegion, destRegion);
+		int[] sourceBands = imageReadParam.getSourceBands();
+		if (sourceBands == null) {
+			final int nBands = item.getBandsNumber();
+			sourceBands = new int[nBands];
+			for (int i = 0; i < nBands; i++)
+				sourceBands[i] = i;
+		}
+		
+		// //
+		// 
+		// Getting data
+		//
+		// //
+		if (bi == null) {
+			// //
+			// No destination image has been specified.
+			// Creating a new BufferedImage
+			// //
+			bi = new BufferedImage(item.getColorModel(),
+					(WritableRaster) readDatasetRaster(item, srcRegion,
+							destRegion), false, null);
+		} else {
+			// //
+			// the destination image has been specified.
+			// //
+
+			// TODO: Set Directly data avoiding setRect(readDatasetRaster)
+			// TODO: Check thread safety and concurrency
+			WritableRaster raster = bi.getRaster().createWritableChild(
+					destRegion.x, destRegion.y, destRegion.width,
+					destRegion.height, destRegion.x, destRegion.y, null);
+			raster.setRect(readDatasetRaster(item, srcRegion, destRegion));
+
+			// bi.setData((WritableRaster) readDatasetRaster(item,srcRegion,
+			// destRegion));
 		}
 		return bi;
 	}

@@ -18,16 +18,10 @@ package it.geosolutions.imageio.gdalframework;
 
 import it.geosolutions.imageio.stream.output.FileImageOutputStreamExt;
 
+import java.awt.Dimension;
 import java.awt.Rectangle;
-import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferByte;
-import java.awt.image.DataBufferDouble;
-import java.awt.image.DataBufferFloat;
-import java.awt.image.DataBufferInt;
-import java.awt.image.DataBufferShort;
-import java.awt.image.DataBufferUShort;
+import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
-import java.awt.image.SampleModel;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -39,20 +33,15 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.util.Vector;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.IIOImage;
-import javax.imageio.ImageReadParam;
-import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.media.jai.PlanarImage;
-import javax.media.jai.RenderedOp;
-import javax.media.jai.operator.BandSelectDescriptor;
 
 import org.gdal.gdal.Dataset;
 import org.gdal.gdal.Driver;
@@ -70,26 +59,28 @@ import org.gdal.gdalconst.gdalconstConstants;
  */
 public abstract class GDALImageWriter extends ImageWriter {
 
+	// static final String IMAGE_METADATA_NAME =
+	// GDALWritableImageMetadata.nativeMetadataFormatName;
+	static final String IMAGE_METADATA_NAME = GDALCommonIIOImageMetadata.nativeMetadataFormatName;
+
 	private static final Logger LOGGER = Logger.getLogger(GDALImageWriter.class
 			.toString());
-
-	static {
-		try {
-			System.loadLibrary("gdaljni");
-			gdal.AllRegister();
-		} catch (UnsatisfiedLinkError e) {
-
-			if (LOGGER.isLoggable(Level.INFO))
-				LOGGER.info(new StringBuffer("Native library load failed.")
-						.append(e.toString()).toString());
-		}
-	}
 
 	/** Output File */
 	protected File outputFile;
 
 	/** Memory driver for creating {@link Dataset}s in memory. */
-	protected final static Driver memDriver = gdal.GetDriverByName("MEM");
+	private static class ThreadLocalMemoryDriver extends ThreadLocal {
+		public Object initialValue() {
+			return gdal.GetDriverByName("MEM");
+		}
+	}
+
+	private static ThreadLocalMemoryDriver memDriver = new ThreadLocalMemoryDriver();
+
+	protected static Driver getMemoryDriver() {
+		return (Driver) memDriver.get();
+	}
 
 	/**
 	 * Constructor for <code>GDALImageWriter</code>
@@ -107,15 +98,14 @@ public abstract class GDALImageWriter extends ImageWriter {
 	public void write(IIOMetadata streamMetadata, IIOImage image,
 			ImageWriteParam param) throws IOException {
 
-
 		// /////////////////////////////////////////////////////////////////////
 		//
 		// Initial check on the capabilities of this writer and on the provided
 		// parameters.
 		//
 		// /////////////////////////////////////////////////////////////////////
-		final String driverName=(String) ((GDALImageWriterSpi) this.originatingProvider)
-		.getSupportedFormats().get(0);
+		final String driverName = (String) ((GDALImageWriterSpi) this.originatingProvider)
+				.getSupportedFormats().get(0);
 		final int writingCapabilities = GDALUtilities
 				.formatWritingCapabilities(driverName);
 		if (writingCapabilities == GDALUtilities.DriverCreateCapabilities.READ_ONLY)
@@ -125,71 +115,52 @@ public abstract class GDALImageWriter extends ImageWriter {
 			throw new IllegalArgumentException(
 					"The provided input image is invalid.");
 
-		// Getting the source
+		// //
+		//
+		// Getting the source image and its main properties
+		//
+		// //
 		final PlanarImage inputRenderedImage = PlanarImage
 				.wrapRenderedImage(image.getRenderedImage());
 		final int sourceWidth = inputRenderedImage.getWidth();
 		final int sourceHeight = inputRenderedImage.getHeight();
-
-		int destinationWidth = -1;
-		int destinationHeight = -1;
-		int sourceRegionWidth = -1;
-		int sourceRegionHeight = -1;
-		int sourceRegionXOffset = -1;
-		int sourceRegionYOffset = -1;
-		int xSubsamplingFactor = -1;
-		int ySubsamplingFactor = -1;
-
-		if (param == null)
-			param = getDefaultWriteParam();
-
-		// //
-		// get Rectangle object which will be used to clip the source image's
-		// dimensions.
-		// //
-		Rectangle sourceRegion = param.getSourceRegion();
-		if (sourceRegion != null) {
-			sourceRegionWidth = (int) sourceRegion.getWidth();
-			sourceRegionHeight = (int) sourceRegion.getHeight();
-			sourceRegionXOffset = (int) sourceRegion.getX();
-			sourceRegionYOffset = (int) sourceRegion.getY();
-
-			//
-			// correct for overextended source regions
-			//
-			if (sourceRegionXOffset + sourceRegionWidth > sourceWidth)
-				destinationWidth = sourceWidth - sourceRegionXOffset;
-			else
-				destinationWidth = sourceRegionWidth;
-
-			if (sourceRegionYOffset + sourceRegionHeight > sourceHeight)
-				destinationHeight = sourceHeight - sourceRegionYOffset;
-			else
-				destinationHeight = sourceRegionHeight;
-		} else {
-			destinationWidth = sourceWidth;
-			destinationHeight = sourceHeight;
-			sourceRegionWidth = sourceWidth;
-			sourceRegionHeight = sourceHeight;
-			sourceRegionXOffset = sourceRegionYOffset = 0;
-			sourceRegion = new Rectangle(sourceRegionWidth, sourceRegionHeight);
-		}
-
-		// get subsampling factors
-		xSubsamplingFactor = param.getSourceXSubsampling();
-		ySubsamplingFactor = param.getSourceYSubsampling();
-
-		// get destination width and height
-		destinationWidth = (destinationWidth - 1) / xSubsamplingFactor + 1;
-		destinationHeight = (destinationHeight - 1) / ySubsamplingFactor + 1;
-
+		final int sourceMinX = inputRenderedImage.getMinX();
+		final int sourceMinY = inputRenderedImage.getMinY();
 		final int dataType = GDALUtilities
 				.retrieveGDALDataBufferType(inputRenderedImage.getSampleModel()
 						.getDataType());
+		final int nBands = inputRenderedImage.getNumBands();
+
+		// //
+		//
+		// Setting regions and sizes and retrieving parameters
+		//
+		// //
+		final int xSubsamplingFactor = param.getSourceXSubsampling();
+		final int ySubsamplingFactor = param.getSourceYSubsampling();
 		final Vector myOptions = (Vector) ((GDALImageWriteParam) param)
 				.getCreateOptionsHandler().getCreateOptions();
+		Rectangle imageBounds = new Rectangle(sourceMinX, sourceMinY,
+				sourceWidth, sourceHeight);
+		Dimension destSize = new Dimension();
+		computeRegions(imageBounds, destSize, param);
 
-		
+		// Destination sizes, needed for Dataset Creation
+		final int destinationWidth = destSize.width;
+		final int destinationHeight = destSize.height;
+
+		// getting metadata before deciding if Create or CreateCopy will be used
+		final IIOMetadata metadata = image.getMetadata();
+		GDALCommonIIOImageMetadata imageMetadata = null;
+		if (metadata != null) {
+			if (metadata instanceof GDALCommonIIOImageMetadata) {
+				imageMetadata = (GDALCommonIIOImageMetadata) metadata;
+			} else {
+				// convertMetadata(IMAGE_METADATA_NAME, metadata,
+				// imageMetadata);
+			}
+		}
+
 		// /////////////////////////////////////////////////////////////////////
 		//
 		// Some GDAL formats driver support both "Create" and "CreateCopy"
@@ -198,131 +169,137 @@ public abstract class GDALImageWriter extends ImageWriter {
 		// create a new File from an existing Dataset.
 		//
 		// /////////////////////////////////////////////////////////////////////
+		Dataset writeDataset;
+
 		if (writingCapabilities == GDALUtilities.DriverCreateCapabilities.CREATE) {
-			// Retrieving the number of bands
-			final int nBands = inputRenderedImage.getNumBands();
+			// /////////////////////////////////////////////////////////////////
+			//
+			// Create is supported
+			//
+			// /////////////////////////////////////////////////////////////////
 
 			// Retrieving the file name.
 			final String fileName = outputFile.getAbsolutePath();
 
+			// //
+			//
 			// Dataset creation
-			final Driver driver=gdal.GetDriverByName(driverName);
-			Dataset ds = driver.Create(fileName, destinationWidth,
+			//
+			// //
+			final Driver driver = gdal.GetDriverByName(driverName);
+			writeDataset = driver.Create(fileName, destinationWidth,
 					destinationHeight, nBands, dataType, myOptions);
 
+			// //
+			//
 			// Data Writing
-			ds = writeData(ds, inputRenderedImage, sourceRegion, nBands,
-					dataType, destinationWidth, destinationHeight, sourceWidth,
-					sourceHeight);
-			ds.FlushCache();
-			GDALUtilities.closeDataSet(ds);
-			return;
-
-			// TODO: Adding additional writing operation (CRS,metadata,...)
-		}
-
-		// //
-		// TODO: CHECK CRS & PROJECTIONS & ...
-		// //
-
-		// /////////////////////////////////////////////////////////////////
-		//
-		// Only create copy is supported
-		//
-		//
-		// //
-		// First of all, it is worth to point out that CreateCopy method
-		// allows to create a File from an existing Dataset.
-		// As first step, we need to retrieve the originary Dataset.
-		// If the source image comes from a "pure" read operation, where
-		// no parameters (like, as an instance, sourceRegion,
-		// sourceSubSamplingX/Y) was defined, we can directly use the
-		// Dataset which originated this image. The originating Dataset may
-		// be found using the ImageReader. Otherwise, we need to build a
-		// Dataset from the actual image using the memory driver.
-		//
-		// /////////////////////////////////////////////////////////////////
-		Dataset sourceDataset = null;
-		final Dataset writeDataset;
-		final RenderedImage ri = image.getRenderedImage();
-
-		// Getting the reader which read the coming image
-		ImageReader reader = null;
-		ImageReadParam readParam = null;
-		final String[] properties = ri.getPropertyNames();
-		if (properties != null) {
-			// //
-			//
-			// In case the RenderedImage is coming from a JAI ImageRead
-			// I can get the ImageReader as well as the ImageReadParam
 			//
 			// //
-			final Object imageReader = ri.getProperty("JAI.ImageReader");
-			if (imageReader != null && imageReader instanceof ImageReader)
-				reader = (ImageReader) imageReader;
+			writeDataset = writeData(writeDataset, inputRenderedImage,
+					imageBounds, nBands, dataType, xSubsamplingFactor,
+					ySubsamplingFactor);
 
-			// retrieving the ImageReadParam used by the read
-			final Object imageReadParam = ri.getProperty("JAI.ImageReadParam");
-			if (imageReadParam != null
-					&& imageReadParam instanceof ImageReadParam)
-				readParam = (ImageReadParam) imageReadParam;
-		}
-		boolean isAgdalImageReader = false;
-		if (reader != null && reader instanceof GDALImageReader) {
-			sourceDataset = ((GDALImageReader) reader)
-					.getLastRecentlyUsedDataset();
-			isAgdalImageReader = true;
-		}
-
-		// /////////////////////////////////////////////////////////////////
-		//
-		// Checking if the readParam contains parameters which changes
-		// some image properties such size, position,... or if the reader
-		// which originates the source image is not a GDALImageReader
-		//
-		// /////////////////////////////////////////////////////////////////
-		final Driver driver=gdal.GetDriverByName(driverName);
-		if ((readParam != null && isPreviousReadOperationParametrized(readParam))
-				|| !isAgdalImageReader) {
-			// create a Dataset from the originating image
-			final File tempFile = File.createTempFile("datasetTemp", ".ds", null);
-			tempFile.deleteOnExit();// TODO: Is needed?
-			final Dataset tempDataset = createDatasetFromImage(ri, tempFile
-					.getAbsolutePath());
-			if (isAgdalImageReader && sourceDataset != null) {
-				// Retrieving CRS and Projections from the original dataset
-				final String projection = sourceDataset.GetProjection();
-				final double geoTransform[] = new double[6];
-				sourceDataset.GetGeoTransform(geoTransform);
-				tempDataset.SetGeoTransform(geoTransform);
-				tempDataset.SetProjection(projection);
+			// //
+			//
+			// Metadata Setting
+			//
+			// //
+			if (imageMetadata != null) {
+				setMetadata(writeDataset, imageMetadata);
 			}
+		} else {
+
+			// /////////////////////////////////////////////////////////////////
+			//
+			// Only CreateCopy is supported
+			//
+			// First of all, it is worth to point out that CreateCopy method
+			// allows to create a File from an existing Dataset.
+			// /////////////////////////////////////////////////////////////////
+
+			final Driver driver = gdal.GetDriverByName(driverName);
+			// //
+			//
+			// Temporary Dataset creation from the originating image
+			//
+			// //
+			final File tempFile = File.createTempFile("datasetTemp", ".ds",
+					null);
+			final Dataset tempDataset = createDatasetFromImage(
+					inputRenderedImage, tempFile.getAbsolutePath(),
+					imageBounds, nBands, dataType, destinationWidth,
+					destinationHeight, xSubsamplingFactor, ySubsamplingFactor);
+			tempDataset.FlushCache();
+
+			// //
+			//
+			// Metadata Setting on the temporary dataset since setting metadata
+			// with createCopy is not supported
+			//
+			// //
+			if (imageMetadata != null) {
+				setMetadata(tempDataset, imageMetadata);
+			}
+
+			// //
+			//
+			// Copy back the temporary dataset to the requested dataset
+			//
+			// //
 			writeDataset = driver.CreateCopy(outputFile.getPath(), tempDataset,
 					0, myOptions);
-			tempDataset.FlushCache();
 			GDALUtilities.closeDataSet(tempDataset);
 			tempFile.delete();
-		} else {
-			// Originating image come from a "pure" read operation.
-			// I can use the Dataset coming from the reader as
-			// sourceDataset.
-			writeDataset = driver.CreateCopy(outputFile.getPath(),
-					sourceDataset, 0, myOptions);
 		}
 
+		// //
+		//
+		// Flushing and closing dataset
+		//
+		// //
 		writeDataset.FlushCache();
 		GDALUtilities.closeDataSet(writeDataset);
-		
-
 	}
+
+	/**
+	 * Set all the metadata available in the imageMetadata
+	 * <code>IIOMetadata</code> instance
+	 * 
+	 * @param dataset
+	 * @param imageMetadata
+	 */
+	private void setMetadata(Dataset dataset,
+			GDALCommonIIOImageMetadata imageMetadata) {
+
+		// Setting GeoTransformation
+		final double[] geoTransformation = imageMetadata.getGeoTransformation();
+		if (geoTransformation != null)
+			dataset.SetGeoTransform(geoTransformation);
+
+		// Setting Projection
+		final String projection = imageMetadata.getProjection();
+		if (projection != null && projection.trim().length() != 0)
+			dataset.SetProjection(projection);
+	}
+
+	// /**
+	// * Merges <code>inData</code> into <code>outData</code>. The supplied
+	// * metadata format name is attempted first and failing that the standard
+	// * metadata format name is attempted.
+	// */
+	// private void convertMetadata(String metadataFormatName, IIOMetadata
+	// inData,
+	// IIOMetadata outData) {
+	//
+	// }
 
 	/**
 	 * Given a previously created <code>Dataset</code>, containing no data,
 	 * provides to store required data coming from an input
 	 * <code>RenderedImage</code> in compliance with a set of parameter such
-	 * as destination size, source size.
+	 * as subSampling factors, SourceRegion.
 	 * 
-	 * @param ds
+	 * @param dataset
 	 *            the destination dataset
 	 * @param inputRenderedImage
 	 *            the input image containing data which need to be written
@@ -332,265 +309,945 @@ public abstract class GDALImageWriter extends ImageWriter {
 	 *            the number of bands need to be written
 	 * @param dataType
 	 *            the datatype
-	 * @param destinationWidth
-	 *            the width of the destination
-	 * @param destinationHeight
-	 *            the height of the destination
-	 * @param sourceWidth
-	 *            the widht of the original image
-	 * @param sourceHeight
-	 *            the height of the original image
+	 * @param xSubsamplingFactor
+	 *            the subsamplingFactor along X
 	 * @return the <code>Dataset</code> resulting after the write operation
+	 * 
+	 * TODO: minimize JNI calls by filling the databuffer before calling
+	 * writeDirect
 	 */
-	private Dataset writeData(Dataset ds, RenderedImage inputRenderedImage,
-			final Rectangle sourceRegion, final int nBands, final int dataType,
-			final int destinationWidth, final int destinationHeight,
-			final int sourceWidth, final int sourceHeight) {
-		final int dataTypeSizeInBytes = gdal.GetDataTypeSize(dataType) / 8;
-		final int pixels = destinationHeight * destinationWidth;
-		int capacity = pixels * dataTypeSizeInBytes * nBands;
+	private Dataset writeData(Dataset dataset,
+			RenderedImage inputRenderedImage, final Rectangle sourceRegion,
+			final int nBands, final int dataType, int xSubsamplingFactor,
+			int ySubsamplingFactor) {
+		final int typeSizeInBytes = gdal.GetDataTypeSize(dataType) / 8;
+
+		// ////////////////////////////////////////////////////////////////////
+		//
+		// Variables Initialization
+		//
+		// ////////////////////////////////////////////////////////////////////
+
+		// //
+		//
+		// Getting Source Region properties
+		//
+		// //
+		final int srcRegionXOffset = sourceRegion.x;
+		final int srcRegionYOffset = sourceRegion.y;
+		final int srcRegionWidth = sourceRegion.width;
+		final int srcRegionHeight = sourceRegion.height;
+		final int srcRegionXEnd = srcRegionWidth + srcRegionXOffset;
+		final int srcRegionYEnd = srcRegionHeight + srcRegionYOffset;
+
+		// //
+		//
+		// Getting original image properties
+		//
+		// //
+		final int minx_ = inputRenderedImage.getMinX();
+		final int miny_ = inputRenderedImage.getMinY();
+		final int srcW_ = inputRenderedImage.getWidth();
+		final int srcH_ = inputRenderedImage.getHeight();
+		final int maxx_ = minx_ + srcW_;
+		final int maxy_ = miny_ + srcH_;
+
+		// //
+		//
+		// Getting tiling properties
+		//
+		// //
+		final int minTileX = inputRenderedImage.getMinTileX();
+		final int minTileY = inputRenderedImage.getMinTileY();
+		final int maxTileX = minTileX + inputRenderedImage.getNumXTiles();
+		final int maxTileY = minTileY + inputRenderedImage.getNumYTiles();
+		int tileW = inputRenderedImage.getTileWidth();
+		int tileH = inputRenderedImage.getTileHeight();
+		tileW = tileW < srcW_ ? tileW : srcW_;
+		tileH = tileH < srcH_ ? tileH : srcH_;
+
+		// //
+		//
+		// Auxiliary variables
+		//
+		// //
 
 		// splitBands = false -> I read n Bands at once.
 		// splitBands = true -> I need to read 1 Band at a time.
 		boolean splitBands = false;
+		final boolean isSubSampled = ySubsamplingFactor > 1
+				|| xSubsamplingFactor > 1;
+		int dstWidth = 0;
+		int dstHeight = 0;
+		int xOff = 0;
+		int yOff = 0;
 
-		if (capacity < 0) {
-			// The number resulting from the product
-			// "nBands*pixels*dataTypeSizeInBytes"
-			// may be negative (A very high number which is not
-			// "int representable")
-			// In such a case, we will write 1 band at a time.
-			capacity = pixels * dataTypeSizeInBytes;
-			splitBands = true;
+		// ////////////////////////////////////////////////////////////////////
+		//
+		// Loop on tiles composing the source image
+		// 
+		// ////////////////////////////////////////////////////////////////////
+		for (int ty = minTileY; ty < maxTileY; ty++) {
+			xOff = 0;
+			for (int tx = minTileX; tx < maxTileX; tx++) {
+
+				// //
+				// 
+				// get the source raster for the current tile
+				// 
+				// //
+				final Raster raster = inputRenderedImage.getTile(tx, ty);
+				int minx = raster.getMinX();
+				int miny = raster.getMinY();
+
+				// //
+				//
+				// Cropping tiles if they have regions outside the original
+				// image
+				// 
+				// //
+				minx = minx < minx_ ? minx_ : minx;
+				miny = miny < miny_ ? miny_ : miny;
+				int maxx = minx + tileW;
+				int maxy = miny + tileH;
+				maxx = maxx > maxx_ ? maxx_ : maxx;
+				maxy = maxy > maxy_ ? maxy_ : maxy;
+				int offsetX = minx;
+				int offsetY = miny;
+				int newWidth = maxx - minx;
+				int newHeight = maxy - miny;
+
+				// //
+				//
+				// Offsets and sizes tunings.
+				// Comparing tile bounds with the specified source region
+				// 
+				// //
+				if (minx < srcRegionXOffset) {
+					if (maxx <= srcRegionXOffset)
+						continue; // Tile is outside the sourceRegion
+					else {
+						// SrcRegion X Offset is contained in the current tile
+						// I need to update the Offset X
+						offsetX = srcRegionXOffset;
+						if (srcRegionXEnd <= maxx)
+							newWidth = srcRegionWidth; // Tile is wider than
+						// the sourceRegion
+						else
+							newWidth = tileW - (offsetX - minx);
+					}
+				} else if (minx >= srcRegionXEnd)
+					break; // Tile is outside the sourceRegion
+				else if (maxx >= srcRegionXEnd) {
+					newWidth = srcRegionXEnd - minx;
+				}
+
+				if (miny < srcRegionYOffset) {
+					if (maxy <= srcRegionYOffset)
+						continue;// Tile is outside the sourceRegion
+					else {
+						// SrcRegion Y Offset is contained in the current tile
+						// I need to update the Offset Y
+						offsetY = srcRegionYOffset;
+						if (srcRegionYEnd <= maxy)
+							newHeight = srcRegionHeight;// Tile is higher than
+						// the sourceRegion
+						else
+							newHeight = tileH - (offsetY - miny);
+					}
+				} else if (miny >= srcRegionYEnd)
+					break; // Tile is outside the sourceRegion
+				else if (maxy >= srcRegionYEnd) {
+					newHeight = srcRegionYEnd - miny;
+				}
+
+				// Updating the last interesting pixel position along X and Y
+				int endX = offsetX + newWidth;
+				int endY = offsetY + newHeight;
+				dstHeight = dstWidth = 0;
+
+				// TODO: find an exact rule which allows to calculate dstHeight
+				// and dstWidth, given offsets and end positions, avoiding scan
+
+				// Setting the destination Width
+				if (ySubsamplingFactor > 1) {
+					for (int j = offsetY; j < endY; j++) {
+						if (((j - srcRegionYOffset) % ySubsamplingFactor) != 0)
+							continue;
+						dstHeight++;
+					}
+				} else
+					dstHeight = newHeight;
+
+				// Setting the destination Height
+				if (xSubsamplingFactor > 1) {
+					for (int i = offsetX; i < endX; i++) {
+						if (((i - srcRegionXOffset) % xSubsamplingFactor) != 0)
+							continue;
+						dstWidth++;
+					}
+				} else
+					dstWidth = newWidth;
+
+				// //
+				// 
+				// Checks on datasize
+				// 
+				// //
+				int capacity = dstWidth * dstHeight * typeSizeInBytes * nBands;
+				if (capacity < 0) {
+					splitBands = true;
+					capacity = dstWidth * dstHeight * typeSizeInBytes;
+				}
+
+				// ////////////////////////////////////////////////////////////////////
+				//
+				// Loading Data from the source Image
+				// 
+				// ////////////////////////////////////////////////////////////////////
+				ByteBuffer[] bandsBuffer;
+				if (!isSubSampled) {
+					bandsBuffer = getDataRegion(raster, offsetX, offsetY,
+							endX - 1, endY - 1, dataType, nBands, splitBands,
+							capacity);
+				} else
+					bandsBuffer = getSubSampledDataRegion(raster, offsetX,
+							offsetY, endX - 1, endY - 1, srcRegionXOffset,
+							srcRegionYOffset, xSubsamplingFactor,
+							ySubsamplingFactor, dataType, nBands, splitBands,
+							capacity);
+
+				// ////////////////////////////////////////////////////////////////////
+				//
+				// Writing Data in the destination dataset
+				// 
+				// ////////////////////////////////////////////////////////////////////
+				if (!splitBands) {
+					// I can perform a single Write operation.
+					dataset.WriteRaster_Direct(xOff, yOff, dstWidth, dstHeight,
+							dstWidth, dstHeight, dataType, nBands, nBands
+									* typeSizeInBytes, dstWidth * nBands
+									* typeSizeInBytes, 1, bandsBuffer[0]);
+				} else {
+					// I need to perform a write operation for each band.
+					for (int i = 0; i < nBands; i++)
+						dataset.GetRasterBand(i + 1).WriteRaster_Direct(xOff,
+								yOff, dstWidth, dstHeight, dstWidth, dstHeight,
+								dataType, bandsBuffer[i]);
+				}
+				xOff += dstWidth;
+			}
+			yOff += dstHeight;
 		}
-
-		ByteBuffer[] bands = new ByteBuffer[nBands];
-		DataBuffer db = null;
-
-		if (dataType == gdalconstConstants.GDT_Byte) {
-			if (!splitBands) {
-				bands[0] = ByteBuffer.allocateDirect(capacity);
-				for (int i = 0; i < nBands; i++) {
-					final RenderedOp bandi = BandSelectDescriptor.create(
-							inputRenderedImage, new int[] { i }, null);
-					db = bandi.getData(sourceRegion).getDataBuffer();
-					byte[] bytes = ((DataBufferByte) db).getData();
-					bands[0].put(bytes, 0, bytes.length);
-				}
-			} else {
-				for (int i = 0; i < nBands; i++) {
-					bands[i] = ByteBuffer.allocateDirect(capacity);
-					final RenderedOp bandi = BandSelectDescriptor.create(
-							inputRenderedImage, new int[] { i }, null);
-					db = bandi.getData(sourceRegion).getDataBuffer();
-					byte[] bytes = ((DataBufferByte) db).getData();
-					bands[i].put(bytes, 0, bytes.length);
-				}
-			}
-		} else if (dataType == gdalconstConstants.GDT_UInt16) {
-			if (!splitBands) {
-				bands[0] = ByteBuffer.allocateDirect(capacity);
-				bands[0].order(ByteOrder.nativeOrder());
-				ShortBuffer buff = bands[0].asShortBuffer();
-				for (int i = 0; i < nBands; i++) {
-					final RenderedOp bandi = BandSelectDescriptor.create(
-							inputRenderedImage, new int[] { i }, null);
-					db = bandi.getData(sourceRegion).getDataBuffer();
-					short[] shorts = ((DataBufferUShort) db).getData();
-					buff.put(shorts, 0, shorts.length);
-				}
-			} else {
-				for (int i = 0; i < nBands; i++) {
-					bands[i] = ByteBuffer.allocateDirect(capacity);
-					bands[i].order(ByteOrder.nativeOrder());
-					ShortBuffer buff = bands[i].asShortBuffer();
-					final RenderedOp bandi = BandSelectDescriptor.create(
-							inputRenderedImage, new int[] { i }, null);
-					db = bandi.getData(sourceRegion).getDataBuffer();
-					short[] shorts = ((DataBufferUShort) db).getData();
-					buff.put(shorts, 0, shorts.length);
-				}
-			}
-		} else if (dataType == gdalconstConstants.GDT_Int16) {
-			if (!splitBands) {
-				bands[0] = ByteBuffer.allocateDirect(capacity);
-				bands[0].order(ByteOrder.nativeOrder());
-				ShortBuffer buff = bands[0].asShortBuffer();
-				for (int i = 0; i < nBands; i++) {
-					final RenderedOp bandi = BandSelectDescriptor.create(
-							inputRenderedImage, new int[] { i }, null);
-					db = bandi.getData(sourceRegion).getDataBuffer();
-					short[] shorts = ((DataBufferShort) db).getData();
-					buff.put(shorts, 0, shorts.length);
-				}
-			} else {
-				for (int i = 0; i < nBands; i++) {
-					bands[i] = ByteBuffer.allocateDirect(capacity);
-					bands[i].order(ByteOrder.nativeOrder());
-					ShortBuffer buff = bands[i].asShortBuffer();
-					final RenderedOp bandi = BandSelectDescriptor.create(
-							inputRenderedImage, new int[] { i }, null);
-					db = bandi.getData(sourceRegion).getDataBuffer();
-					short[] shorts = ((DataBufferShort) db).getData();
-					buff.put(shorts, 0, shorts.length);
-				}
-			}
-		} else if (dataType == gdalconstConstants.GDT_Int32) {
-			if (!splitBands) {
-				bands[0] = ByteBuffer.allocateDirect(capacity);
-				bands[0].order(ByteOrder.nativeOrder());
-				IntBuffer buff = bands[0].asIntBuffer();
-				for (int i = 0; i < nBands; i++) {
-					final RenderedOp bandi = BandSelectDescriptor.create(
-							inputRenderedImage, new int[] { i }, null);
-					db = bandi.getData(sourceRegion).getDataBuffer();
-					int[] ints = ((DataBufferInt) db).getData();
-					buff.put(ints, 0, ints.length);
-				}
-			} else {
-				for (int i = 0; i < nBands; i++) {
-					bands[i] = ByteBuffer.allocateDirect(capacity);
-					bands[i].order(ByteOrder.nativeOrder());
-					IntBuffer buff = bands[i].asIntBuffer();
-					final RenderedOp bandi = BandSelectDescriptor.create(
-							inputRenderedImage, new int[] { i }, null);
-					db = bandi.getData(sourceRegion).getDataBuffer();
-					int[] ints = ((DataBufferInt) db).getData();
-					buff.put(ints, 0, ints.length);
-				}
-			}
-		} else if (dataType == gdalconstConstants.GDT_Float32) {
-
-			if (!splitBands) {
-				bands[0] = ByteBuffer.allocateDirect(capacity);
-				bands[0].order(ByteOrder.nativeOrder());
-				FloatBuffer buff = bands[0].asFloatBuffer();
-				for (int i = 0; i < nBands; i++) {
-					final RenderedOp bandi = BandSelectDescriptor.create(
-							inputRenderedImage, new int[] { i }, null);
-					db = bandi.getData(sourceRegion).getDataBuffer();
-					float[] floats = ((DataBufferFloat) db).getData();
-					buff.put(floats, 0, floats.length);
-				}
-			} else {
-				for (int i = 0; i < nBands; i++) {
-					bands[i] = ByteBuffer.allocateDirect(capacity);
-					bands[i].order(ByteOrder.nativeOrder());
-					FloatBuffer buff = bands[i].asFloatBuffer();
-					final RenderedOp bandi = BandSelectDescriptor.create(
-							inputRenderedImage, new int[] { i }, null);
-					db = bandi.getData(sourceRegion).getDataBuffer();
-					float[] floats = ((DataBufferFloat) db).getData();
-					buff.put(floats, 0, floats.length);
-				}
-			}
-
-		} else if (dataType == gdalconstConstants.GDT_Float64) {
-
-			if (!splitBands) {
-				bands[0] = ByteBuffer.allocateDirect(capacity);
-				bands[0].order(ByteOrder.nativeOrder());
-				DoubleBuffer buff = bands[0].asDoubleBuffer();
-				for (int i = 0; i < nBands; i++) {
-					final RenderedOp bandi = BandSelectDescriptor.create(
-							inputRenderedImage, new int[] { i }, null);
-					db = bandi.getData(sourceRegion).getDataBuffer();
-					double[] doubles = ((DataBufferDouble) db).getData();
-					buff.put(doubles, 0, doubles.length);
-				}
-			} else {
-				for (int i = 0; i < nBands; i++) {
-					bands[i] = ByteBuffer.allocateDirect(capacity);
-					bands[i].order(ByteOrder.nativeOrder());
-					DoubleBuffer buff = bands[i].asDoubleBuffer();
-					final RenderedOp bandi = BandSelectDescriptor.create(
-							inputRenderedImage, new int[] { i }, null);
-					db = bandi.getData(sourceRegion).getDataBuffer();
-					double[] doubles = ((DataBufferDouble) db).getData();
-					buff.put(doubles, 0, doubles.length);
-				}
-			}
-		} else {
-			// TODO: Throws exception
-		}
-		if (!splitBands)
-			// I can perform a single Write operation.
-			ds.WriteRaster_Direct(0, 0, destinationWidth, destinationHeight,
-					sourceWidth, sourceHeight, dataType, nBands, bands[0]);
-		else {
-			// I need to perform a write operation for each band.
-			for (int i = 0; i < nBands; i++)
-				ds.GetRasterBand(i + 1).WriteRaster_Direct(0, 0,
-						destinationWidth, destinationHeight, sourceWidth,
-						sourceHeight, dataType, bands[i]);
-		}
-		return ds;
+		return dataset;
 	}
 
 	/**
-	 * Given an input <code>ImageReadParam</code>, check if some properties
-	 * (like, as an instance, subsampling factor, source region) are different
-	 * than default values.
+	 * Returns a proper <code>ByteBuffer</code> array containing data loaded
+	 * from the input <code>Raster</code>. Requested portion of data is
+	 * specified by means of a set of index parameters. In case
+	 * <code>splitBands</code> is <code>true</code> the array will contain
+	 * <code>nBands</code> <code>ByteBuffer</code>'s, each one containing
+	 * data element for a single band. In case <code>splitBands</code> is
+	 * <code>false</code>, the returned array has a single
+	 * <code>ByteBuffer</code> containing data for different bands stored as
+	 * PixelInterleaved
 	 * 
-	 * @param param
-	 *            the <code>ImageReadParam</code> to be checked.
-	 * @return <code>false</code> if checked properties of provided
-	 *         imageReadParam have only default values.
+	 * @param raster
+	 *            the input <code>Raster</code> containing data to be
+	 *            retrieved for the future write operation
+	 * @param firstX
+	 *            X index of the first data element to be scanned
+	 * @param firstY
+	 *            Y index of the first data element to be scanned
+	 * @param lastX
+	 *            X index of the last data element to be scanned
+	 * @param lastY
+	 *            Y index of the last data element to be scanned
+	 * @param srcRegionXOffset
+	 *            the original sourceRegion X offset value
+	 * @param srcRegionYOffset
+	 *            the original sourceRegion Y offset value
+	 * @param xSubsamplingFactor
+	 *            the subSampling factor along X
+	 * @param ySubsamplingFactor
+	 *            the subSampling factor along Y
+	 * @param dataType
+	 *            the datatype
+	 * @param nBands
+	 *            the number of bands
+	 * @param splitBands
+	 *            when <code>false</code>, a single <code>ByteBuffer</code>
+	 *            is created. When <code>true</code>, a number of buffer
+	 *            equals to the number of bands will be created and each buffer
+	 *            will contain data elements for a single band
+	 * @param capacity
+	 *            the size of each <code>ByteBuffer</code> contained in the
+	 *            returned array
+	 * @return a proper <code>ByteBuffer</code> array containing data loaded
+	 *         from the input <code>Raster</code>.
 	 * 
+	 * @throws IllegalArgumentException
+	 *             in case the requested region is not valid. This could happen
+	 *             in the following cases: <code>
+	 *             <UL>
+	 *             <LI> firstX < srcRegionXOffset </LI>
+	 *             <LI> firstY < srcRegionYOffset </LI>
+	 *             <LI> firstX > lastX </LI>
+	 *             <LI> firstY > lastY </LI>
+	 * </UL>
+	 * </code>
 	 */
-	private final boolean isPreviousReadOperationParametrized(
-			ImageReadParam param) {
-		// TODO: Add more parameter to be checked.
-		if (param.getSourceXSubsampling() != 1
-				|| param.getSourceYSubsampling() != 1
-				|| param.getSubsamplingXOffset() != 0
-				|| param.getSubsamplingYOffset() != 0
-				|| param.getSourceRegion() != null)
-			return true;
-		return false;
+	private ByteBuffer[] getSubSampledDataRegion(Raster raster,
+			final int firstX, final int firstY, final int lastX,
+			final int lastY, final int srcRegionXOffset,
+			final int srcRegionYOffset, final int xSubsamplingFactor,
+			final int ySubsamplingFactor, final int dataType, final int nBands,
+			final boolean splitBands, final int capacity) {
+
+		if (firstX < srcRegionXOffset || firstX < srcRegionYOffset
+				|| firstX > lastX || firstY > lastY)
+			throw new IllegalArgumentException(
+					"The requested region is not valid");
+		// TODO: provide a more user-friendly error message containing ranges
+		// and values set.
+
+		// //
+		//
+		// ByteBuffer containing data
+		//
+		// //
+		ByteBuffer[] bandsBuffer;
+		if (splitBands)
+			bandsBuffer = new ByteBuffer[nBands];
+		else
+			bandsBuffer = new ByteBuffer[1];
+
+		// ////////////////////////////////////////////////////////////////
+		//
+		// DataType: Byte
+		//
+		// ////////////////////////////////////////////////////////////////
+		if (dataType == gdalconstConstants.GDT_Byte) {
+			// //
+			//
+			// Initializing Data Buffer
+			//
+			// //
+			for (int k = 0; k < nBands; k++) {
+				bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
+				if (!splitBands)
+					break;
+			}
+			byte[] data = new byte[nBands];
+			// //
+			//
+			// Getting Data from the specified region with the requested
+			// subsampling factors
+			//
+			// //
+			for (int j = firstY; j <= lastY; j++) {
+				if (((j - srcRegionYOffset) % ySubsamplingFactor) != 0) {
+					continue;
+				}
+
+				for (int i = firstX; i <= lastX; i++) {
+					if (((i - srcRegionXOffset) % xSubsamplingFactor) != 0) {
+						continue;
+					}
+					data = (byte[]) raster.getDataElements(i, j, data);
+					if (splitBands)
+						for (int k = 0; k < nBands; k++)
+							bandsBuffer[k].put(data, k, 1);
+					else
+						bandsBuffer[0].put(data, 0, nBands);
+				}
+			}
+		}
+		// ////////////////////////////////////////////////////////////////
+		//
+		// DataType: Int16 (short)
+		//
+		// ////////////////////////////////////////////////////////////////
+		else if (dataType == gdalconstConstants.GDT_Int16) {
+			// //
+			//
+			// Initializing Data Buffer
+			//
+			// //
+			final ShortBuffer buf[] = new ShortBuffer[nBands];
+			for (int k = 0; k < nBands; k++) {
+				bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
+				bandsBuffer[k].order(ByteOrder.nativeOrder());
+				buf[k] = bandsBuffer[k].asShortBuffer();
+				if (!splitBands)
+					break;
+			}
+			short[] data = new short[nBands];
+			// //
+			//
+			// Getting Data from the specified region with the requested
+			// subsampling factors
+			//
+			// //
+			for (int j = firstY; j <= lastY; j++) {
+				if (((j - srcRegionYOffset) % ySubsamplingFactor) != 0) {
+					continue;
+				}
+
+				for (int i = firstX; i <= lastX; i++) {
+					if (((i - srcRegionXOffset) % xSubsamplingFactor) != 0) {
+						continue;
+					}
+					data = (short[]) raster.getDataElements(i, j, data);
+					if (splitBands)
+						for (int k = 0; k < nBands; k++)
+							buf[k].put(data, k, 1);
+					else
+						buf[0].put(data, 0, nBands);
+				}
+			}
+		}
+		// ////////////////////////////////////////////////////////////////
+		//
+		// DataType: UInt16 (short)
+		//
+		// ////////////////////////////////////////////////////////////////
+		else if (dataType == gdalconstConstants.GDT_UInt16) {
+			// //
+			//
+			// Initializing Data Buffer
+			//
+			// //
+			final ShortBuffer buf[] = new ShortBuffer[nBands];
+			for (int k = 0; k < nBands; k++) {
+				bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
+				bandsBuffer[k].order(ByteOrder.nativeOrder());
+				buf[k] = bandsBuffer[k].asShortBuffer();
+				if (!splitBands)
+					break;
+			}
+			short[] data = new short[nBands];
+			// //
+			//
+			// Getting Data from the specified region with the requested
+			// subsampling factors
+			//
+			// //
+			for (int j = firstY; j <= lastY; j++) {
+				if (((j - srcRegionYOffset) % ySubsamplingFactor) != 0) {
+					continue;
+				}
+
+				for (int i = firstX; i <= lastX; i++) {
+					if (((i - srcRegionXOffset) % xSubsamplingFactor) != 0) {
+						continue;
+					}
+					data = (short[]) raster.getDataElements(i, j, data);
+
+					// Unsigned Conversion is needed?
+					// for (int k=0;k<nBands;k++){
+					// data[k]&=0xffff;
+					// }
+					if (splitBands)
+						for (int k = 0; k < nBands; k++)
+							buf[k].put(data, k, 1);
+					else
+						buf[0].put(data, 0, nBands);
+				}
+			}
+		}
+		// ////////////////////////////////////////////////////////////////
+		//
+		// DataType: Int32 (int)
+		//
+		// ////////////////////////////////////////////////////////////////
+		else if (dataType == gdalconstConstants.GDT_Int32) {
+			// //
+			//
+			// Initializing Data Buffer
+			//
+			// //
+			final IntBuffer buf[] = new IntBuffer[nBands];
+			for (int k = 0; k < nBands; k++) {
+				bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
+				bandsBuffer[k].order(ByteOrder.nativeOrder());
+				buf[k] = bandsBuffer[k].asIntBuffer();
+				if (!splitBands)
+					break;
+			}
+			int[] data = new int[nBands];
+			// //
+			//
+			// Getting Data from the specified region with the requested
+			// subsampling factors
+			//
+			// //
+			for (int j = firstY; j <= lastY; j++) {
+				if (((j - srcRegionYOffset) % ySubsamplingFactor) != 0) {
+					continue;
+				}
+
+				for (int i = firstX; i <= lastX; i++) {
+					if (((i - srcRegionXOffset) % xSubsamplingFactor) != 0) {
+						continue;
+					}
+					data = (int[]) raster.getDataElements(i, j, data);
+					if (splitBands)
+						for (int k = 0; k < nBands; k++)
+							buf[k].put(data, k, 1);
+					else
+						buf[0].put(data, 0, nBands);
+				}
+			}
+		}
+		// ////////////////////////////////////////////////////////////////
+		//
+		// DataType: Float32 (float)
+		//
+		// ////////////////////////////////////////////////////////////////
+		else if (dataType == gdalconstConstants.GDT_Float32) {
+			// //
+			//
+			// Initializing Data Buffer
+			//
+			// //
+			final FloatBuffer buf[] = new FloatBuffer[nBands];
+			for (int k = 0; k < nBands; k++) {
+				bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
+				bandsBuffer[k].order(ByteOrder.nativeOrder());
+				buf[k] = bandsBuffer[k].asFloatBuffer();
+				if (!splitBands)
+					break;
+			}
+			float[] data = new float[nBands];
+			// //
+			//
+			// Getting Data from the specified region with the requested
+			// subsampling factors
+			//
+			// //
+			for (int j = firstY; j <= lastY; j++) {
+				if (((j - srcRegionYOffset) % ySubsamplingFactor) != 0) {
+					continue;
+				}
+				for (int i = firstX; i <= lastX; i++) {
+					if (((i - srcRegionXOffset) % xSubsamplingFactor) != 0) {
+						continue;
+					}
+					data = (float[]) raster.getDataElements(i, j, data);
+					if (splitBands)
+						for (int k = 0; k < nBands; k++)
+							buf[k].put(data, k, 1);
+					else
+						buf[0].put(data, 0, nBands);
+				}
+			}
+		}
+		// ////////////////////////////////////////////////////////////////
+		//
+		// DataType: Float64 (double)
+		//
+		// ////////////////////////////////////////////////////////////////
+		else if (dataType == gdalconstConstants.GDT_Float64) {
+			// //
+			//
+			// Initializing Data Buffer
+			//
+			// //
+			final DoubleBuffer buf[] = new DoubleBuffer[nBands];
+			for (int k = 0; k < nBands; k++) {
+				bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
+				bandsBuffer[k].order(ByteOrder.nativeOrder());
+				buf[k] = bandsBuffer[k].asDoubleBuffer();
+				if (!splitBands)
+					break;
+			}
+			double[] data = new double[nBands];
+			// //
+			//
+			// Getting Data from the specified region with the requested
+			// subsampling factors
+			//
+			// //
+			for (int j = firstY; j <= lastY; j++) {
+				if (((j - srcRegionYOffset) % ySubsamplingFactor) != 0) {
+					continue;
+				}
+				for (int i = firstX; i <= lastX; i++) {
+					if (((i - srcRegionXOffset) % xSubsamplingFactor) != 0) {
+						continue;
+					}
+					data = (double[]) raster.getDataElements(i, j, data);
+					if (splitBands)
+						for (int k = 0; k < nBands; k++)
+							buf[k].put(data, k, 1);
+					else
+						buf[0].put(data, 0, nBands);
+				}
+			}
+		}
+		return bandsBuffer;
 	}
 
 	/**
-	 * Provides the ability to create a <code>Dataset</code> from an input
-	 * <code>RenderedImage</code>. This is needed when we have to perform a
-	 * GDAL <code>CreateCopy</code> which is based on an existing
-	 * <code>Dataset</code> containing data to write.
+	 * Returns a proper <code>ByteBuffer</code> array containing data loaded
+	 * from the input <code>Raster</code>. Requested portion of data is
+	 * specified by means of a set of index parameters. In case
+	 * <code>splitBands</code> is <code>true</code> the array will contain
+	 * <code>nBands</code> <code>ByteBuffer</code>'s, each one containing
+	 * data element for a single band. In case <code>splitBands</code> is
+	 * <code>false</code>, the returned array has a single
+	 * <code>ByteBuffer</code> containing data for different bands stored as
+	 * PixelInterleaved
+	 * 
+	 * @param raster
+	 *            the input <code>Raster</code> containing data to be
+	 *            retrieved for the future write operation
+	 * @param firstX
+	 *            X index of the first data element to be scanned
+	 * @param firstY
+	 *            Y index of the first data element to be scanned
+	 * @param lastX
+	 *            X index of the last data element to be scanned
+	 * @param lastY
+	 *            Y index of the last data element to be scanned
+	 * @param dataType
+	 *            the datatype
+	 * @param nBands
+	 *            the number of bands
+	 * @param splitBands
+	 *            when <code>false</code>, a single <code>ByteBuffer</code>
+	 *            is created. When <code>true</code>, a number of buffer
+	 *            equals to the number of bands will be created and each buffer
+	 *            will contain data elements for a single band
+	 * @param capacity
+	 *            the size of each <code>ByteBuffer</code> contained in the
+	 *            returned array
+	 * @return a proper <code>ByteBuffer</code> array containing data loaded
+	 *         from the input <code>Raster</code>.
+	 * 
+	 * @throws IllegalArgumentException
+	 *             in case the requested region is not valid. This could happen
+	 *             in the following cases: <code>
+	 *             <UL>
+	 *             <LI> firstX > lastX </LI>
+	 *             <LI> firstY > lastY </LI>
+	 * </UL>
+	 * </code>
+	 */
+	private ByteBuffer[] getDataRegion(Raster raster, final int firstX,
+			final int firstY, final int lastX, final int lastY,
+			final int dataType, final int nBands, final boolean splitBands,
+			final int capacity) {
+
+		if (firstX > lastX || firstY > lastY)
+			throw new IllegalArgumentException(
+					"The requested region is not valid");
+		// TODO: provide a more user-friendly error message containing ranges
+		// and values set.
+
+		// //
+		//
+		// ByteBuffer containing data
+		//
+		// //
+		ByteBuffer[] bandsBuffer;
+		if (splitBands)
+			bandsBuffer = new ByteBuffer[nBands];
+		else
+			bandsBuffer = new ByteBuffer[1];
+
+		// ////////////////////////////////////////////////////////////////
+		//
+		// DataType: Byte
+		//
+		// ////////////////////////////////////////////////////////////////
+		if (dataType == gdalconstConstants.GDT_Byte) {
+			// //
+			//
+			// Initializing Data Buffer
+			//
+			// //
+			for (int k = 0; k < nBands; k++) {
+				bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
+				if (!splitBands)
+					break;
+			}
+			byte[] data = new byte[nBands];
+			// //
+			//
+			// Getting Data from the specified region
+			//
+			// //
+			for (int j = firstY; j <= lastY; j++) {
+				for (int i = firstX; i <= lastX; i++) {
+					data = (byte[]) raster.getDataElements(i, j, data);
+					if (splitBands)
+						for (int k = 0; k < nBands; k++)
+							bandsBuffer[k].put(data, k, 1);
+					else
+						bandsBuffer[0].put(data, 0, nBands);
+				}
+			}
+		}
+		// ////////////////////////////////////////////////////////////////
+		//
+		// DataType: Int16 (short)
+		//
+		// ////////////////////////////////////////////////////////////////
+		else if (dataType == gdalconstConstants.GDT_Int16) {
+			// //
+			//
+			// Initializing Data Buffer
+			//
+			// //
+			final ShortBuffer buf[] = new ShortBuffer[nBands];
+			for (int k = 0; k < nBands; k++) {
+				bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
+				bandsBuffer[k].order(ByteOrder.nativeOrder());
+				buf[k] = bandsBuffer[k].asShortBuffer();
+				if (!splitBands)
+					break;
+			}
+			short[] data = new short[nBands];
+			// //
+			//
+			// Getting Data from the specified region
+			//
+			// //
+			for (int j = firstY; j <= lastY; j++) {
+				for (int i = firstX; i <= lastX; i++) {
+					data = (short[]) raster.getDataElements(i, j, data);
+					if (splitBands)
+						for (int k = 0; k < nBands; k++)
+							buf[k].put(data, k, 1);
+					else
+						buf[0].put(data, 0, nBands);
+				}
+			}
+		}
+		// ////////////////////////////////////////////////////////////////
+		//
+		// DataType: UInt16 (short)
+		//
+		// ////////////////////////////////////////////////////////////////
+		else if (dataType == gdalconstConstants.GDT_UInt16) {
+			// //
+			//
+			// Initializing Data Buffer
+			//
+			// //
+			final ShortBuffer buf[] = new ShortBuffer[nBands];
+			for (int k = 0; k < nBands; k++) {
+				bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
+				bandsBuffer[k].order(ByteOrder.nativeOrder());
+				buf[k] = bandsBuffer[k].asShortBuffer();
+				if (!splitBands)
+					break;
+			}
+			short[] data = new short[nBands];
+			// //
+			//
+			// Getting Data from the specified region
+			//
+			// //
+			for (int j = firstY; j <= lastY; j++) {
+				for (int i = firstX; i <= lastX; i++) {
+					data = (short[]) raster.getDataElements(i, j, data);
+
+					// Unsigned Conversion is needed?
+					// for (int k=0;k<nBands;k++){
+					// data[k]&=0xffff;
+					// }
+					if (splitBands)
+						for (int k = 0; k < nBands; k++)
+							buf[k].put(data, k, 1);
+					else
+						buf[0].put(data, 0, nBands);
+				}
+			}
+		}
+		// ////////////////////////////////////////////////////////////////
+		//
+		// DataType: Int32 (int)
+		//
+		// ////////////////////////////////////////////////////////////////
+		else if (dataType == gdalconstConstants.GDT_Int32) {
+			// //
+			//
+			// Initializing Data Buffer
+			//
+			// //
+			final IntBuffer buf[] = new IntBuffer[nBands];
+			for (int k = 0; k < nBands; k++) {
+				bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
+				bandsBuffer[k].order(ByteOrder.nativeOrder());
+				buf[k] = bandsBuffer[k].asIntBuffer();
+				if (!splitBands)
+					break;
+			}
+			int[] data = new int[nBands];
+			// //
+			//
+			// Getting Data from the specified region
+			//
+			// //
+			for (int j = firstY; j <= lastY; j++) {
+				for (int i = firstX; i <= lastX; i++) {
+					data = (int[]) raster.getDataElements(i, j, data);
+					if (splitBands)
+						for (int k = 0; k < nBands; k++)
+							buf[k].put(data, k, 1);
+					else
+						buf[0].put(data, 0, nBands);
+				}
+			}
+		}
+		// ////////////////////////////////////////////////////////////////
+		//
+		// DataType: Float32 (float)
+		//
+		// ////////////////////////////////////////////////////////////////
+		else if (dataType == gdalconstConstants.GDT_Float32) {
+			// //
+			//
+			// Initializing Data Buffer
+			//
+			// //
+			final FloatBuffer buf[] = new FloatBuffer[nBands];
+			for (int k = 0; k < nBands; k++) {
+				bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
+				bandsBuffer[k].order(ByteOrder.nativeOrder());
+				buf[k] = bandsBuffer[k].asFloatBuffer();
+				if (!splitBands)
+					break;
+			}
+			float[] data = new float[nBands];
+			// //
+			//
+			// Getting Data from the specified region
+			//
+			// //
+			for (int j = firstY; j <= lastY; j++) {
+				for (int i = firstX; i <= lastX; i++) {
+					data = (float[]) raster.getDataElements(i, j, data);
+					if (splitBands)
+						for (int k = 0; k < nBands; k++)
+							buf[k].put(data, k, 1);
+					else
+						buf[0].put(data, 0, nBands);
+				}
+			}
+		}
+		// ////////////////////////////////////////////////////////////////
+		//
+		// DataType: Float64 (double)
+		//
+		// ////////////////////////////////////////////////////////////////
+		else if (dataType == gdalconstConstants.GDT_Float64) {
+			// //
+			//
+			// Initializing Data Buffer
+			//
+			// //
+			final DoubleBuffer buf[] = new DoubleBuffer[nBands];
+			for (int k = 0; k < nBands; k++) {
+				bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
+				bandsBuffer[k].order(ByteOrder.nativeOrder());
+				buf[k] = bandsBuffer[k].asDoubleBuffer();
+				if (!splitBands)
+					break;
+			}
+			double[] data = new double[nBands];
+			// //
+			//
+			// Getting Data from the specified region
+			//
+			// //
+			for (int j = firstY; j <= lastY; j++) {
+				for (int i = firstX; i <= lastX; i++) {
+					data = (double[]) raster.getDataElements(i, j, data);
+					if (splitBands)
+						for (int k = 0; k < nBands; k++)
+							buf[k].put(data, k, 1);
+					else
+						buf[0].put(data, 0, nBands);
+				}
+			}
+		}
+		return bandsBuffer;
+	}
+
+	/**
+	 * Given an input <code>RenderedImage</code> builds a temporary
+	 * <code>Dataset</code> and fill it with data from the input image. Source
+	 * region settings are allowed in order to specify the desired portion of
+	 * input image which need to be used to populate the dataset.
 	 * 
 	 * @param inputRenderedImage
-	 *            <code>RenderedImage</code> containing originating data.
+	 *            the input <code>RenderedImage</code> from which to get data
 	 * @param tempFile
-	 *            A <code>String</code> representing the absolute path of the
-	 *            <code>File</code> where to store the "In Memory" dataset.
-	 * @return the created <code>dataset</code>
+	 *            a fileName where to store the temporary dataset
+	 * @param sourceRegion
+	 *            a <code>Rectangle</code> specifying the desired portion of
+	 *            the input image which need to be used to populate the dataset.
+	 * @param nBands
+	 *            the number of the bands of the created dataset
+	 * @param dataType
+	 *            the dataType of the created dataset.
+	 * @param width
+	 *            the width of the created dataset
+	 * @param height
+	 *            the height of the created dataset
+	 * @param xSubsamplingFactor
+	 *            the X subsampling factor which need to be used when loading
+	 *            data from the input image
+	 * @param ySubsamplingFactor
+	 *            the Y subsampling factor which need to be used when loading
+	 *            data from the input image
+	 * @return a <code>Dataset</code> containing data coming from the input
+	 *         image
 	 */
 	private Dataset createDatasetFromImage(RenderedImage inputRenderedImage,
-			String tempFile) {
-
-		final SampleModel sm = inputRenderedImage.getSampleModel();
-		final int nBands = sm.getNumBands();
-		final int dataBufferType = sm.getDataType();
-		final int eType = GDALUtilities
-				.retrieveGDALDataBufferType(dataBufferType);
+			final String tempFile, Rectangle sourceRegion, final int nBands,
+			final int dataType, final int width, final int height,
+			final int xSubsamplingFactor, final int ySubsamplingFactor) {
 
 		// //
 		//
-		// Preparing to build a "In memory" raster dataset
+		// Attempting to build a "In memory" raster dataset
 		//
 		// //
+		Dataset tempDs = getMemoryDriver().Create(tempFile, width, height,
+				nBands, dataType, null);
+		if (tempDs == null) {
+			// //
+			//
+			// Unable to allocate memory for In Memory Dataset .
+			// Using a GTiff driver
+			//
+			// //
+			final Driver driver = gdal.GetDriverByName("GTiff");
+			tempDs = driver.Create(tempFile, width, height, nBands, dataType,
+					null);
+		}
 
-		final int height = inputRenderedImage.getHeight();
-		final int width = inputRenderedImage.getWidth();
-		final Rectangle sourceRegion = new Rectangle(width, height);
-		final Dataset memDS = memDriver.Create(tempFile, width, height, nBands,
-				eType, null);
-		return writeData(memDS, inputRenderedImage, sourceRegion, nBands,
-				eType, width, height, width, height);
+		// //
+		//
+		// Writing data in the temp dataset and return it
+		//
+		// //
+		return writeData(tempDs, inputRenderedImage, sourceRegion, nBands,
+				dataType, xSubsamplingFactor, ySubsamplingFactor);
 	}
 
 	public IIOMetadata getDefaultImageMetadata(ImageTypeSpecifier imageType,
 			ImageWriteParam param) {
-		throw new UnsupportedOperationException(
-				"getDefaultImageMetadata not implemented yet.");
+		// TODO: use a GDALWritableImageMetadata constructor
+		GDALCommonIIOImageMetadata imageMetadata = new GDALCommonIIOImageMetadata(
+				null);
+		return imageMetadata;
 	}
 
 	public IIOMetadata convertStreamMetadata(IIOMetadata inData,
@@ -600,31 +1257,43 @@ public abstract class GDALImageWriter extends ImageWriter {
 		return null;
 	}
 
+	/**
+	 * Creates a default image metadata object and merges in the supplied
+	 * metadata.
+	 */
 	public IIOMetadata convertImageMetadata(IIOMetadata inData,
 			ImageTypeSpecifier imageType, ImageWriteParam param) {
-		// throw new UnsupportedOperationException(
-		// "convertImageMetadata not implemented yet.");
-		return null;
+		if (inData == null) {
+			throw new IllegalArgumentException("inData == null!");
+		}
+		if (imageType == null) {
+			throw new IllegalArgumentException("imageType == null!");
+		}
+		if (inData instanceof GDALCommonIIOImageMetadata)
+			return inData; // TODO: refactor this. Only for testing
+
+		GDALCommonIIOImageMetadata im = (GDALCommonIIOImageMetadata) getDefaultImageMetadata(
+				imageType, param);
+
+		// convertMetadata(IMAGE_METADATA_NAME, inData, im);
+
+		return im;
 	}
 
+	/**
+	 * Sets the destination to the given <code>Object</code>, usually a
+	 * <code>File</code> or a {@link FileImageOutputStreamExt}.
+	 * 
+	 * @param output
+	 *            the <code>Object</code> to use for future writing.
+	 */
 	public void setOutput(Object output) {
 		super.setOutput(output); // validates output
 		if (output instanceof File)
 			outputFile = (File) output;
-		else if (output instanceof FileImageOutputStreamExt) {
+		else if (output instanceof FileImageOutputStreamExt)
 			outputFile = ((FileImageOutputStreamExt) output).getFile();
-			/**
-			 * TODO: Uncomment this code to write ECW.
-			 */
-			// final FileImageOutputStreamExtImpl o =
-			// (FileImageOutputStreamExtImpl) output;
-			// try {
-			// o.close();
-			// } catch (IOException e) {
-			//
-			// }
-			// assert outputFile.delete();
-		} else if (output instanceof URL) {
+		else if (output instanceof URL) {
 			final URL tempURL = (URL) output;
 			if (tempURL.getProtocol().equalsIgnoreCase("file")) {
 				try {
@@ -644,5 +1313,49 @@ public abstract class GDALImageWriter extends ImageWriter {
 
 	public void write(RenderedImage image) throws IOException {
 		write(null, new IIOImage(image, null, null), null);
+	}
+
+	/**
+	 * Compute the source region and destination dimensions taking any parameter
+	 * settings into account.
+	 */
+	private static void computeRegions(Rectangle sourceBounds,
+			Dimension destSize, ImageWriteParam p) {
+		int periodX = 1;
+		int periodY = 1;
+		if (p != null) {
+			int[] sourceBands = p.getSourceBands();
+			if (sourceBands != null
+					&& (sourceBands.length != 1 || sourceBands[0] != 0)) {
+				throw new IllegalArgumentException("Cannot sub-band image!");
+			}
+
+			// Get source region and subsampling factors
+			Rectangle sourceRegion = p.getSourceRegion();
+			if (sourceRegion != null) {
+				// Clip to actual image bounds
+				sourceRegion = sourceRegion.intersection(sourceBounds);
+				sourceBounds.setBounds(sourceRegion);
+			}
+
+			// Adjust for subsampling offsets
+			int gridX = p.getSubsamplingXOffset();
+			int gridY = p.getSubsamplingYOffset();
+			sourceBounds.x += gridX;
+			sourceBounds.y += gridY;
+			sourceBounds.width -= gridX;
+			sourceBounds.height -= gridY;
+
+			// Get subsampling factors
+			periodX = p.getSourceXSubsampling();
+			periodY = p.getSourceYSubsampling();
+		}
+
+		// Compute output dimensions
+		destSize.setSize((sourceBounds.width + periodX - 1) / periodX,
+				(sourceBounds.height + periodY - 1) / periodY);
+		if (destSize.width <= 0 || destSize.height <= 0) {
+			throw new IllegalArgumentException("Empty source region!");
+		}
 	}
 }

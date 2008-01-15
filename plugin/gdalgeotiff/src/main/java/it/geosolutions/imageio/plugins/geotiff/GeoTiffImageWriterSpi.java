@@ -88,7 +88,7 @@ public final class GeoTiffImageWriterSpi extends GDALImageWriterSpi {
 				nativeImageMetadataFormatClassName,
 				extraImageMetadataFormatNames,
 				extraImageMetadataFormatClassNames,
-				Collections.singletonList("JP2KAK"));
+				Collections.singletonList("GTiff"));
 	}
 
 	/**

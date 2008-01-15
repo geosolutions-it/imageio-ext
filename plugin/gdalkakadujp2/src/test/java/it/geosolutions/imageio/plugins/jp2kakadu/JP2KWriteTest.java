@@ -16,23 +16,30 @@
  */
 package it.geosolutions.imageio.plugins.jp2kakadu;
 
+import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.stream.output.FileImageOutputStreamExtImpl;
 import it.geosolutions.resources.TestData;
 
+import java.awt.Rectangle;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
+import javax.imageio.metadata.IIOMetadata;
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
+import com.sun.media.jai.operator.ImageReadDescriptor;
+import com.sun.media.jai.operator.ImageWriteDescriptor;
 
 /**
  * Class for testing all supported Kakadu Create Options
@@ -111,7 +118,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 		}
 
 		// Reading
-		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi().createReaderInstance());
+		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
+				.createReaderInstance());
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 
 		// ////////////////////////////////////////////////////////////////////
@@ -206,7 +214,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 			pbjImageRead.setParameter("readParam", readParam);
 		}
 		// Reading
-		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi().createReaderInstance());
+		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
+				.createReaderInstance());
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 
 		// ////////////////////////////////////////////////////////////////////
@@ -294,7 +303,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 			readParam.setSourceSubsampling(4, 4, 0, 0);
 			pbjImageRead.setParameter("readParam", readParam);
 		}
-		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi().createReaderInstance());
+		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
+				.createReaderInstance());
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 
 		// ////////////////////////////////////////////////////////////////////
@@ -384,7 +394,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 			readParam.setSourceSubsampling(4, 4, 0, 0);
 			pbjImageRead.setParameter("readParam", readParam);
 		}
-		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi().createReaderInstance());
+		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
+				.createReaderInstance());
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 
 		// ////////////////////////////////////////////////////////////////////
@@ -495,7 +506,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 			readParam.setSourceSubsampling(4, 4, 0, 0);
 			pbjImageRead.setParameter("readParam", readParam);
 		}
-		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi().createReaderInstance());
+		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
+				.createReaderInstance());
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 
 		// ////////////////////////////////////////////////////////////////////
@@ -575,7 +587,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 			readParam.setSourceSubsampling(4, 4, 0, 0);
 			pbjImageRead.setParameter("readParam", readParam);
 		}
-		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi().createReaderInstance());
+		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
+				.createReaderInstance());
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 
 		// ////////////////////////////////////////////////////////////////////
@@ -654,7 +667,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 			readParam.setSourceSubsampling(4, 4, 0, 0);
 			pbjImageRead.setParameter("readParam", readParam);
 		}
-		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi().createReaderInstance());
+		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
+				.createReaderInstance());
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 
 		// ////////////////////////////////////////////////////////////////////
@@ -740,7 +754,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 			readParam.setSourceSubsampling(4, 4, 0, 0);
 			pbjImageRead.setParameter("readParam", readParam);
 		}
-		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi().createReaderInstance());
+		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
+				.createReaderInstance());
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 
 		// ////////////////////////////////////////////////////////////////////
@@ -826,7 +841,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 			readParam.setSourceSubsampling(4, 4, 0, 0);
 			pbjImageRead.setParameter("readParam", readParam);
 		}
-		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi().createReaderInstance());
+		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
+				.createReaderInstance());
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 
 		// ////////////////////////////////////////////////////////////////////
@@ -908,7 +924,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 			readParam.setSourceSubsampling(8, 8, 0, 0);
 			pbjImageRead.setParameter("readParam", readParam);
 		}
-		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi().createReaderInstance());
+		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
+				.createReaderInstance());
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 
 		// ////////////////////////////////////////////////////////////////////
@@ -994,7 +1011,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 			readParam.setSourceSubsampling(4, 4, 0, 0);
 			pbjImageRead.setParameter("readParam", readParam);
 		}
-		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi().createReaderInstance());
+		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
+				.createReaderInstance());
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 
 		// ////////////////////////////////////////////////////////////////////
@@ -1099,7 +1117,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 			readParam.setSourceSubsampling(4, 4, 0, 0);
 			pbjImageRead.setParameter("readParam", readParam);
 		}
-		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi().createReaderInstance());
+		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
+				.createReaderInstance());
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 
 		// ////////////////////////////////////////////////////////////////////
@@ -1158,7 +1177,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 			readParam.setSourceSubsampling(4, 4, 0, 0);
 			pbjImageRead.setParameter("readParam", readParam);
 		}
-		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi().createReaderInstance());
+		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
+				.createReaderInstance());
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 
 		// ////////////////////////////////////////////////////////////////////
@@ -1243,7 +1263,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 			readParam.setSourceSubsampling(4, 4, 0, 0);
 			pbjImageRead.setParameter("readParam", readParam);
 		}
-		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi().createReaderInstance());
+		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
+				.createReaderInstance());
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 
 		// ////////////////////////////////////////////////////////////////////
@@ -1336,7 +1357,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 			pbjImageRead.setParameter("readParam", readParam);
 		}
 		// Reading
-		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi().createReaderInstance());
+		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
+				.createReaderInstance());
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 
 		// ////////////////////////////////////////////////////////////////////
@@ -1425,7 +1447,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 			readParam.setSourceSubsampling(4, 4, 0, 0);
 			pbjImageRead.setParameter("readParam", readParam);
 		}
-		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi().createReaderInstance());
+		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
+				.createReaderInstance());
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 
 		// ////////////////////////////////////////////////////////////////////
@@ -1516,7 +1539,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 			readParam.setSourceSubsampling(4, 4, 0, 0);
 			pbjImageRead.setParameter("readParam", readParam);
 		}
-		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi().createReaderInstance());
+		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
+				.createReaderInstance());
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 
 		// ////////////////////////////////////////////////////////////////////
@@ -1611,7 +1635,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 			readParam.setSourceSubsampling(4, 4, 0, 0);
 			pbjImageRead.setParameter("readParam", readParam);
 		}
-		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi().createReaderInstance());
+		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
+				.createReaderInstance());
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 
 		// ////////////////////////////////////////////////////////////////////
@@ -1729,7 +1754,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 			readParam.setSourceSubsampling(4, 4, 0, 0);
 			pbjImageRead.setParameter("readParam", readParam);
 		}
-		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi().createReaderInstance());
+		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
+				.createReaderInstance());
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 
 		// ////////////////////////////////////////////////////////////////////
@@ -1815,7 +1841,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 			readParam.setSourceSubsampling(4, 4, 0, 0);
 			pbjImageRead.setParameter("readParam", readParam);
 		}
-		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi().createReaderInstance());
+		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
+				.createReaderInstance());
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 
 		// ////////////////////////////////////////////////////////////////////
@@ -1898,7 +1925,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 			readParam.setSourceSubsampling(4, 4, 0, 0);
 			pbjImageRead.setParameter("readParam", readParam);
 		}
-		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi().createReaderInstance());
+		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
+				.createReaderInstance());
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 
 		// ////////////////////////////////////////////////////////////////////
@@ -1941,73 +1969,151 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 
-		// Testing "Clevels" Create Option.
-		 suite.addTest(new JP2KWriteTest("testWrite_Clevels"));
+		if (TestData.isExtensiveTest()) {
+			// Testing "Clevels" Create Option.
+			suite.addTest(new JP2KWriteTest("testWrite_Clevels"));
 
-		// Testing "Clayers" Create Option.
-		suite.addTest(new JP2KWriteTest("testWrite_Clayers"));
+			// Testing "Clayers" Create Option.
+			suite.addTest(new JP2KWriteTest("testWrite_Clayers"));
 
-		// Testing "Cprecincts" Create Option.
-		suite.addTest(new JP2KWriteTest("testWrite_Cprecincts"));
+			// Testing "Cprecincts" Create Option.
+			suite.addTest(new JP2KWriteTest("testWrite_Cprecincts"));
 
-		// Testing "Corder" Create Option.
-		suite.addTest(new JP2KWriteTest("testWrite_Corder"));
+			// Testing "Corder" Create Option.
+			suite.addTest(new JP2KWriteTest("testWrite_Corder"));
 
-		// Testing "Cblk" Create Option.
-		suite.addTest(new JP2KWriteTest("testWrite_Cblk"));
+			// Testing "Cblk" Create Option.
+			suite.addTest(new JP2KWriteTest("testWrite_Cblk"));
 
-		// Testing "Cycc" Create Option.
-		suite.addTest(new JP2KWriteTest("testWrite_Cycc"));
+			// Testing "Cycc" Create Option.
+			suite.addTest(new JP2KWriteTest("testWrite_Cycc"));
 
-		// Testing "Cmodes" Create Option.
-		suite.addTest(new JP2KWriteTest("testWrite_Cmodes"));
+			// Testing "Cmodes" Create Option.
+			suite.addTest(new JP2KWriteTest("testWrite_Cmodes"));
 
-		// Testing "SProfile" Create Option.
-		suite.addTest(new JP2KWriteTest("testWrite_SProfile"));
+			// Testing "SProfile" Create Option.
+			suite.addTest(new JP2KWriteTest("testWrite_SProfile"));
 
-		// Testing "Quality" Create Option.
-		suite.addTest(new JP2KWriteTest("testWrite_Quality"));
+			// Testing "Quality" Create Option.
+			suite.addTest(new JP2KWriteTest("testWrite_Quality"));
 
-		// Testing "ORGtparts" Create Option.
-		suite.addTest(new JP2KWriteTest("testWrite_ORGtparts"));
+			// Testing "ORGtparts" Create Option.
+			suite.addTest(new JP2KWriteTest("testWrite_ORGtparts"));
 
-		// Testing "ORGgen_plt" Create Option.
-		suite.addTest(new JP2KWriteTest("testWrite_ORGgen_plt"));
+			// Testing "ORGgen_plt" Create Option.
+			suite.addTest(new JP2KWriteTest("testWrite_ORGgen_plt"));
 
-		// Testing "ORGgen_tlm" Create Option.
-		suite.addTest(new JP2KWriteTest("testWrite_ORGgen_tlm"));
+			// Testing "ORGgen_tlm" Create Option.
+			suite.addTest(new JP2KWriteTest("testWrite_ORGgen_tlm"));
 
-		// Testing "GMLJp2" Create Option.
-		suite.addTest(new JP2KWriteTest("testWrite_GMLJp2"));
+			// Testing "GMLJp2" Create Option.
+			suite.addTest(new JP2KWriteTest("testWrite_GMLJp2"));
 
-		// Testing "GeoJp2" Create Option.
-		suite.addTest(new JP2KWriteTest("testWrite_GeoJp2"));
+			// Testing "GeoJp2" Create Option.
+			suite.addTest(new JP2KWriteTest("testWrite_GeoJp2"));
 
-		// Testing "ROI" Create Option.
-		suite.addTest(new JP2KWriteTest("testWrite_ROI"));
+			// Testing "ROI" Create Option.
+			suite.addTest(new JP2KWriteTest("testWrite_ROI"));
 
-		// Testing "Qguard" Create Option.
-		suite.addTest(new JP2KWriteTest("testWrite_Qguard"));
+			// Testing "Qguard" Create Option.
+			suite.addTest(new JP2KWriteTest("testWrite_Qguard"));
 
-		// Testing "Qstep" Create Option.
-		suite.addTest(new JP2KWriteTest("testWrite_Qstep"));
+			// Testing "Qstep" Create Option.
+			suite.addTest(new JP2KWriteTest("testWrite_Qstep"));
 
-		// Testing "COMSEG" Create Option.
-		suite.addTest(new JP2KWriteTest("testWrite_COMSEG"));
+			// Testing "COMSEG" Create Option.
+			suite.addTest(new JP2KWriteTest("testWrite_COMSEG"));
 
-		// Testing "FLUSH" Create Option.
-		suite.addTest(new JP2KWriteTest("testWrite_FLUSH"));
+			// Testing "FLUSH" Create Option.
+			suite.addTest(new JP2KWriteTest("testWrite_FLUSH"));
 
-		// Testing "Tiling"
-		suite.addTest(new JP2KWriteTest("testWrite_Tiling"));
+			// Testing "Tiling"
+			suite.addTest(new JP2KWriteTest("testWrite_Tiling"));
 
-		// Testing multithreading capabilities.
-		suite.addTest(new JP2KWriteTest("testWrite_Multithreading"));
+			// Testing multithreading capabilities.
+			suite.addTest(new JP2KWriteTest("testWrite_Multithreading"));
+		}
 
+		suite.addTest(new JP2KWriteTest("testWrite_Parametrized"));
 		return suite;
+	}
+
+	// ////////////////////////////////////////////////////////////////////////
+	//
+	// Testing parameters-support capabilities for writer.
+	//
+	// ////////////////////////////////////////////////////////////////////////
+	public void testWrite_Parametrized() throws IOException,
+			FileNotFoundException {
+
+		final File outputFile = TestData.temp(this, "writetest.jp2", false);
+		outputFile.deleteOnExit();
+		final File inputFile = TestData.file(this, "sample.jp2");
+		assertTrue(inputFile.exists());
+
+		// ////////////////////////////////////////////////////////////////////
+		//
+		// Reading
+		//
+		// ////////////////////////////////////////////////////////////////////
+		final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+				"ImageRead");
+		ImageReader reader = new JP2GDALKakaduImageReaderSpi()
+				.createReaderInstance();
+		ImageReadParam param = new ImageReadParam();
+		param.setSourceSubsampling(2, 2, 0, 0);
+		pbjImageRead.setParameter("readParam", param);
+		pbjImageRead.setParameter("Input", inputFile);
+		pbjImageRead.setParameter("reader", reader);
+		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+		image.getRendering();
+		// ////////////////////////////////////////////////////////////////////
+		//
+		// preparing to write
+		//
+		// ////////////////////////////////////////////////////////////////////
+		// Setting output and writer
+		final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
+				"ImageWrite");
+		pbjImageWrite.setParameter("Output", outputFile);
+
+		ImageWriter writer = new JP2GDALKakaduImageWriterSpi()
+				.createWriterInstance();
+		pbjImageWrite.addSource(image);
+		ImageWriteParam param2 = writer.getDefaultWriteParam();
+		pbjImageWrite.setParameter("writer", writer);
+		pbjImageWrite.setParameter("ImageMetadata", reader.getImageMetadata(0));
+		pbjImageWrite.setParameter("Transcode", false);
+
+		param2.setSourceRegion(new Rectangle(1, 1, 3000, 3000));
+		param2.setSourceSubsampling(2, 3, 0, 0);
+
+		pbjImageWrite.setParameter("writeParam", param2);
+
+		// Writing
+		final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
+		final ImageWriter writer2 = (ImageWriter) op
+				.getProperty(ImageWriteDescriptor.PROPERTY_NAME_IMAGE_WRITER);
+		writer2.dispose();
+		// ////////////////////////////////////////////////////////////////
+		//
+		// preparing to read again
+		//
+		// ////////////////////////////////////////////////////////////////
+		final ParameterBlockJAI pbjImageReRead = new ParameterBlockJAI(
+				"ImageRead");
+		pbjImageReRead.setParameter("Input", outputFile);
+		pbjImageReRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
+				.createReaderInstance());
+		final RenderedOp image2 = JAI.create("ImageRead", pbjImageReRead);
+		if (TestData.isInteractiveTest())
+			Viewer.visualize(image2);
+		else
+			image2.getTiles();
 	}
 
 	public static void main(java.lang.String[] args) {
 		junit.textui.TestRunner.run(suite());
+
 	}
 }
