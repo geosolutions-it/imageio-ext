@@ -204,6 +204,12 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 		}
 	}
 
+	/**
+	 * Test read exploiting the setDestination on imageReadParam
+	 * 
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
 	public void testManualRead() throws IOException {
 		try {
 			MrSIDImageReader reader = (MrSIDImageReader) new MrSIDImageReaderSpi()
@@ -256,9 +262,6 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 
 		// Test read without exploiting JAI
 		suite.addTest(new MrSIDTest("testManualRead"));
-		
-		// Test read exploiting JAI when destination is provided
-		suite.addTest(new MrSIDTest("testReadOnDestination"));
 
 		return suite;
 	}
