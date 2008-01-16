@@ -32,6 +32,7 @@ import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
+import java.util.List;
 import java.util.Vector;
 import java.util.logging.Logger;
 
@@ -43,6 +44,7 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.media.jai.PlanarImage;
 
+import org.gdal.gdal.Band;
 import org.gdal.gdal.Dataset;
 import org.gdal.gdal.Driver;
 import org.gdal.gdal.gdal;
@@ -273,15 +275,49 @@ public abstract class GDALImageWriter extends ImageWriter {
 	private void setMetadata(Dataset dataset,
 			GDALCommonIIOImageMetadata imageMetadata) {
 
+		// //
+		//
 		// Setting GeoTransformation
+		//
+		// //
 		final double[] geoTransformation = imageMetadata.getGeoTransformation();
 		if (geoTransformation != null)
 			dataset.SetGeoTransform(geoTransformation);
 
+		// //
+		//
 		// Setting Projection
+		//
+		// //
 		final String projection = imageMetadata.getProjection();
 		if (projection != null && projection.trim().length() != 0)
 			dataset.SetProjection(projection);
+
+		// //
+		//
+		// Setting GCPs
+		//
+		// //
+		final int gcpNum = imageMetadata.getGcpNumber();
+		if (gcpNum != 0) {
+			final String gcpProj = imageMetadata.getGcpProjection();
+			List gcps = imageMetadata.getGCPs();
+			// TODO: set GCPs. Not all dataset support GCPs settings
+			dataset.SetGCPs(gcpNum, null, gcpProj);
+		}
+
+		// //
+		//
+		// Setting bands values
+		//
+		// //
+		final int nBands = imageMetadata.getBandsNumber();
+		for (int i = 0; i < nBands; i++) {
+			final Band band = dataset.GetRasterBand(i + 1);
+			final double noData = imageMetadata.getNoDataValue(i);
+			if (!Double.isNaN(noData))
+				band.SetNoDataValue(noData);
+		}
 	}
 
 	// /**

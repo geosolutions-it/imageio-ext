@@ -262,7 +262,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 		}
 		if (nativeMetadataFormatName.equalsIgnoreCase(formatName))
 			return createCommonNativeTree();
-		
+
 		throw new UnsupportedOperationException(formatName
 				+ " is not a supported format name");
 	}
@@ -377,6 +377,11 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 		return dsWrapper.getGcpProjection();
 	}
 
+	/** return the Ground Control Points */
+	public List getGCPs() {
+		return dsWrapper.getGcps();
+	}
+
 	// ////////////////////////////////////////////////////////////////////////
 	//
 	// Bands Properties
@@ -418,7 +423,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 	}
 
 	/** Initialize the array containing the minimum value for each band */
-	private  void initMinimums() {
+	private void initMinimums() {
 		assert Thread.holdsLock(this);
 		if (minimums == null) {
 			final Double[] minValues = dsWrapper.getMinimums();
@@ -442,7 +447,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 	}
 
 	/** Initialize the array containing the number of overviews for each band */
-	private  void initNumOverviews() {
+	private void initNumOverviews() {
 		assert Thread.holdsLock(this);
 		if (numOverviews == null) {
 			numOverviews = dsWrapper.getNumOverviews();
@@ -461,7 +466,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 	}
 
 	/** Initialize the array containing the scale value for each band */
-	private  void initScales() {
+	private void initScales() {
 		assert Thread.holdsLock(this);
 		if (scales == null) {
 			final Double[] scaleValues = dsWrapper.getScales();

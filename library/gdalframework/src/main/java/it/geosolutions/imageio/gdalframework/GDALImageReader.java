@@ -52,7 +52,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -164,7 +163,6 @@ public abstract class GDALImageReader extends ImageReader {
 		 * <LI>lat: GCPY -------> Y position of GCP in Georeferenced Space</LI>
 		 * <LI>elevation: GCPZ -> elevation of GCP in Georeferenced Space</LI>
 		 * </UL>
-		 * 
 		 */
 		private List gcps;
 
