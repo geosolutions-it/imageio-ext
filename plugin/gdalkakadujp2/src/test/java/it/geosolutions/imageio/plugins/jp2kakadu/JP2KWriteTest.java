@@ -2067,6 +2067,10 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 		pbjImageRead.setParameter("reader", reader);
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 		image.getRendering();
+		if (TestData.isInteractiveTest())
+			Viewer.visualize(image, "First Read Image");
+		else
+			image.getTiles();
 		// ////////////////////////////////////////////////////////////////////
 		//
 		// preparing to write
@@ -2085,7 +2089,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 		pbjImageWrite.setParameter("ImageMetadata", reader.getImageMetadata(0));
 		pbjImageWrite.setParameter("Transcode", false);
 
-		param2.setSourceRegion(new Rectangle(1, 1, 3000, 3000));
+		param2.setSourceRegion(new Rectangle(100, 100, 500, 500));
 		param2.setSourceSubsampling(2, 3, 0, 0);
 
 		pbjImageWrite.setParameter("writeParam", param2);
@@ -2107,7 +2111,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 				.createReaderInstance());
 		final RenderedOp image2 = JAI.create("ImageRead", pbjImageReRead);
 		if (TestData.isInteractiveTest())
-			Viewer.visualize(image2);
+			Viewer.visualize(image2, "Written Image");
 		else
 			image2.getTiles();
 	}

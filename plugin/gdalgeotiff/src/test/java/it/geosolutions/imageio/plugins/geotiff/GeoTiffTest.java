@@ -50,7 +50,6 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
 
 	public GeoTiffTest(String name) {
 		super(name);
-
 	}
 
 	/**

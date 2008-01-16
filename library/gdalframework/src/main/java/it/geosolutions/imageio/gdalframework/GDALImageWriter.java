@@ -51,8 +51,9 @@ import org.gdal.gdalconst.gdalconstConstants;
 /**
  * Main abstract class defining the main framework which needs to be used to
  * extend Image I/O architecture using <a href="http://www.gdal.org/"> GDAL
- * (Geospatial Data Abstraction Layer)</a> by means of SWIG (Simplified Wrapper
- * and Interface Generator) bindings in order to perform write operations.
+ * (Geospatial Data Abstraction Library)</a> by means of SWIG (Simplified
+ * Wrapper and Interface Generator) bindings in order to perform write
+ * operations.
  * 
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
@@ -213,6 +214,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 			//
 			// Only CreateCopy is supported
 			//
+			// ----------------------------------------------------------------
 			// First of all, it is worth to point out that CreateCopy method
 			// allows to create a File from an existing Dataset.
 			// /////////////////////////////////////////////////////////////////
@@ -371,7 +373,6 @@ public abstract class GDALImageWriter extends ImageWriter {
 		// Auxiliary variables
 		//
 		// //
-
 		// splitBands = false -> I read n Bands at once.
 		// splitBands = true -> I need to read 1 Band at a time.
 		boolean splitBands = false;
@@ -461,7 +462,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 					newHeight = srcRegionYEnd - miny;
 				}
 
-				// Updating the last interesting pixel position along X and Y
+				// Updating the first unuseful pixel along X and Y
 				int endX = offsetX + newWidth;
 				int endY = offsetY + newHeight;
 				dstHeight = dstWidth = 0;
@@ -491,7 +492,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 
 				// //
 				// 
-				// Checks on datasize
+				// Checks on data size
 				// 
 				// //
 				int capacity = dstWidth * dstHeight * typeSizeInBytes * nBands;
@@ -535,8 +536,10 @@ public abstract class GDALImageWriter extends ImageWriter {
 								yOff, dstWidth, dstHeight, dstWidth, dstHeight,
 								dataType, bandsBuffer[i]);
 				}
+				// Updating the X offset position for writing in the dataset
 				xOff += dstWidth;
 			}
+			// Updating the Y offset position for writing in the dataset
 			yOff += dstHeight;
 		}
 		return dataset;
@@ -1224,8 +1227,8 @@ public abstract class GDALImageWriter extends ImageWriter {
 		if (tempDs == null) {
 			// //
 			//
-			// Unable to allocate memory for In Memory Dataset .
-			// Using a GTiff driver
+			// Unable to allocate memory for In memory raster dataset
+			// Using a GTiff driver to create a temp dataset
 			//
 			// //
 			final Driver driver = gdal.GetDriverByName("GTiff");
@@ -1307,10 +1310,24 @@ public abstract class GDALImageWriter extends ImageWriter {
 		}
 	}
 
+	/**
+	 * This method is a shorthand for <code>write(null, image, null)</code>.
+	 * 
+	 * @param image
+	 *            an <code>IIOImage</code> object containing an image,
+	 *            thumbnails, and metadata to be written to the output.
+	 */
 	public void write(IIOImage image) throws IOException {
 		write(null, image, null);
 	}
 
+	/**
+	 * This method is a shorthand for <code>write(null, new IIOImage(image,
+	 * null, null), null)</code>.
+	 * 
+	 * @param image
+	 *            a <code>RenderedImage</code> to be written.
+	 */
 	public void write(RenderedImage image) throws IOException {
 		write(null, new IIOImage(image, null, null), null);
 	}
@@ -1330,13 +1347,21 @@ public abstract class GDALImageWriter extends ImageWriter {
 				throw new IllegalArgumentException("Cannot sub-band image!");
 			}
 
-			// Get source region and subsampling factors
+			// ////////////////////////////////////////////////////////////////
+			//
+			// Get source region and subsampling settings
+			//
+			// ////////////////////////////////////////////////////////////////
 			Rectangle sourceRegion = p.getSourceRegion();
 			if (sourceRegion != null) {
 				// Clip to actual image bounds
 				sourceRegion = sourceRegion.intersection(sourceBounds);
 				sourceBounds.setBounds(sourceRegion);
 			}
+
+			// Get subsampling factors
+			periodX = p.getSourceXSubsampling();
+			periodY = p.getSourceYSubsampling();
 
 			// Adjust for subsampling offsets
 			int gridX = p.getSubsamplingXOffset();
@@ -1345,13 +1370,13 @@ public abstract class GDALImageWriter extends ImageWriter {
 			sourceBounds.y += gridY;
 			sourceBounds.width -= gridX;
 			sourceBounds.height -= gridY;
-
-			// Get subsampling factors
-			periodX = p.getSourceXSubsampling();
-			periodY = p.getSourceYSubsampling();
 		}
 
+		// ////////////////////////////////////////////////////////////////////
+		//
 		// Compute output dimensions
+		//
+		// ////////////////////////////////////////////////////////////////////
 		destSize.setSize((sourceBounds.width + periodX - 1) / periodX,
 				(sourceBounds.height + periodY - 1) / periodY);
 		if (destSize.width <= 0 || destSize.height <= 0) {

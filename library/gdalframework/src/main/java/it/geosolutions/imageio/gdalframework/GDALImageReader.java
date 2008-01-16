@@ -1798,7 +1798,9 @@ public abstract class GDALImageReader extends ImageReader {
 			if (bi != null) {
 				// TODO: Maybe these checks should be less strict to allow
 				// color and format conversions
-				if (!bi.getColorModel().equals(item.getColorModel())||bi.getSampleModel().getDataType()!=item.getSampleModel().getDataType())
+				if (!bi.getColorModel().equals(item.getColorModel())
+						|| bi.getSampleModel().getDataType() != item
+								.getSampleModel().getDataType())
 					throw new IIOException(
 							"Provided destination image has not a valid ColorModel or SampleModel");
 			}
@@ -1821,7 +1823,7 @@ public abstract class GDALImageReader extends ImageReader {
 			for (int i = 0; i < nBands; i++)
 				sourceBands[i] = i;
 		}
-		
+
 		// //
 		// 
 		// Getting data
@@ -1829,15 +1831,19 @@ public abstract class GDALImageReader extends ImageReader {
 		// //
 		if (bi == null) {
 			// //
+			//
 			// No destination image has been specified.
 			// Creating a new BufferedImage
+			//			
 			// //
 			bi = new BufferedImage(item.getColorModel(),
 					(WritableRaster) readDatasetRaster(item, srcRegion,
 							destRegion), false, null);
 		} else {
 			// //
+			//			
 			// the destination image has been specified.
+			//			
 			// //
 
 			// TODO: Set Directly data avoiding setRect(readDatasetRaster)
@@ -1846,7 +1852,6 @@ public abstract class GDALImageReader extends ImageReader {
 					destRegion.x, destRegion.y, destRegion.width,
 					destRegion.height, destRegion.x, destRegion.y, null);
 			raster.setRect(readDatasetRaster(item, srcRegion, destRegion));
-
 			// bi.setData((WritableRaster) readDatasetRaster(item,srcRegion,
 			// destRegion));
 		}
@@ -2073,7 +2078,6 @@ public abstract class GDALImageReader extends ImageReader {
 		if (offset != null && offset[band] != null)
 			return offset[band].doubleValue();
 		throw new IllegalArgumentException();
-
 	}
 
 	/**
@@ -2148,17 +2152,17 @@ public abstract class GDALImageReader extends ImageReader {
 		throw new IllegalArgumentException();
 	}
 
-	public Dataset getLastRecentlyUsedDataset() {
-		synchronized (datasetMap) {
-			Set keys = datasetMap.keySet();
-			GDALDatasetWrapper myItem = (GDALDatasetWrapper) datasetMap
-					.get(keys.iterator().next());
-			if (myItem != null)
-				return GDALUtilities.acquireDataSet(myItem.datasetName,
-						gdalconst.GA_ReadOnly);
-		}
-		return null;
-	}
+//	public Dataset getLastRecentlyUsedDataset() {
+//		synchronized (datasetMap) {
+//			Set keys = datasetMap.keySet();
+//			GDALDatasetWrapper myItem = (GDALDatasetWrapper) datasetMap
+//					.get(keys.iterator().next());
+//			if (myItem != null)
+//				return GDALUtilities.acquireDataSet(myItem.datasetName,
+//						gdalconst.GA_ReadOnly);
+//		}
+//		return null;
+//	}
 
 	public IIOMetadata getStreamMetadata() throws IOException {
 		initialize();
