@@ -128,7 +128,6 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
 	public void testWrite() throws IOException, FileNotFoundException {
 
 		final File outputFile = TestData.temp(this, "writetest.tif", false);
-
 		outputFile.deleteOnExit();
 		final File inputFile = TestData.file(this, "bogota.tif");
 		ImageReadParam rparam = new ImageReadParam();
