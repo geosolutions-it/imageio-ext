@@ -17,6 +17,7 @@
 package it.geosolutions.imageio.plugins.hdf4;
 
 import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
+import it.geosolutions.imageio.gdalframework.GDALDatasetWrapper;
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
 
 import java.awt.image.RenderedImage;
@@ -36,21 +37,6 @@ import org.gdal.gdal.Dataset;
  */
 public class HDF4ImageReader extends GDALImageReader {
 
-	public class HDF4DataSetWrapper extends GDALDatasetWrapper {
-
-		// TODO: Check for subdatasettings
-		public HDF4DataSetWrapper(String sDatasetName) {
-			super(sDatasetName);
-		}
-
-		public HDF4DataSetWrapper(Dataset ds, String name) {
-			super(ds, name, false);
-		}
-	}
-
-	private static final Logger logger = Logger.getLogger(HDF4ImageReader.class
-			.toString());
-
 	public HDF4ImageReader(HDF4ImageReaderSpi originatingProvider) {
 		super(originatingProvider);
 	}
@@ -61,11 +47,11 @@ public class HDF4ImageReader extends GDALImageReader {
 
 	protected GDALDatasetWrapper createDataSetWrapper(Dataset mainDataset,
 			String mainDatasetFileName) {
-		return new HDF4DataSetWrapper(mainDataset, mainDatasetFileName);
+		return new HDF4DatasetWrapper(mainDataset, mainDatasetFileName);
 	}
 
 	protected GDALDatasetWrapper createDataSetWrapper(String string) {
-		return new HDF4DataSetWrapper(string);
+		return new HDF4DatasetWrapper(string);
 	}
 
 	protected IIOMetadata getIIOImageMetadata(GDALDatasetWrapper wrapper) {

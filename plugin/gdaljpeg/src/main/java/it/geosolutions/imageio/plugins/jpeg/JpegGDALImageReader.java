@@ -16,7 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.jpeg;
 
-import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
+import it.geosolutions.imageio.gdalframework.GDALDatasetWrapper;
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
 
 import java.awt.image.RenderedImage;
@@ -33,26 +33,15 @@ import org.gdal.gdal.Dataset;
  * {@link RenderedImage} from JPEG files.
  * 
  * @author Daniele Romagnoli, GeoSolutions.
- * @author Simone Giannecchini, GeoSolutions. 
+ * @author Simone Giannecchini, GeoSolutions.
  */
 public class JpegGDALImageReader extends GDALImageReader {
-
-	public class JPEGDataSetWrapper extends GDALDatasetWrapper {
-
-		public JPEGDataSetWrapper(String sDatasetName) {
-			super(sDatasetName);
-		}
-
-		public JPEGDataSetWrapper(Dataset ds, String name) {
-			super(ds, name);
-		}
-	}
 
 	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.plugins.jpeg");
 
 	public JpegGDALImageReader(JpegGDALImageReaderSpi originatingProvider) {
-		super(originatingProvider,0);
+		super(originatingProvider, 0);
 		if (LOGGER.isLoggable(Level.FINE))
 			LOGGER.fine("JpegGDALImageReader Constructor");
 	}
@@ -63,14 +52,10 @@ public class JpegGDALImageReader extends GDALImageReader {
 
 	protected GDALDatasetWrapper createDataSetWrapper(Dataset mainDataset,
 			String mainDatasetFileName) {
-		return new JPEGDataSetWrapper(mainDataset, mainDatasetFileName);
+		return new GDALDatasetWrapper(mainDataset, mainDatasetFileName);
 	}
 
 	protected GDALDatasetWrapper createDataSetWrapper(String string) {
-		return new JPEGDataSetWrapper(string);
-	}
-
-	protected IIOMetadata getIIOImageMetadata(GDALDatasetWrapper wrapper) {
-		return new GDALCommonIIOImageMetadata(wrapper);
+		return new GDALDatasetWrapper(string);
 	}
 }

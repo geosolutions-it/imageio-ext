@@ -16,7 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.geotiff;
 
-import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
+import it.geosolutions.imageio.gdalframework.GDALDatasetWrapper;
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
 
 import java.awt.image.RenderedImage;
@@ -41,7 +41,7 @@ public class GeoTiffImageReader extends GDALImageReader {
 			.getLogger("it.geosolutions.imageio.plugins.geotiff");
 
 	public GeoTiffImageReader(GeoTiffImageReaderSpi originatingProvider) {
-		super(originatingProvider,0);
+		super(originatingProvider, 0);
 		if (LOGGER.isLoggable(Level.FINE))
 			LOGGER.fine("GeoTiffImageReader Constructor");
 	}
@@ -50,17 +50,12 @@ public class GeoTiffImageReader extends GDALImageReader {
 		return getDataSetWrapper(imageIndex).getImageIOMetadata();
 	}
 
-	protected GDALDatasetWrapper createDataSetWrapper(String string) {
-		return new GDALDatasetWrapper(string);
-	}
-
 	protected GDALDatasetWrapper createDataSetWrapper(Dataset mainDataset,
 			String mainDatasetFileName) {
 		return new GDALDatasetWrapper(mainDataset, mainDatasetFileName);
 	}
 
-	protected IIOMetadata getIIOImageMetadata(GDALDatasetWrapper wrapper) {
-		// TODO: Change in GeoTIFF specific metadata
-		return new GDALCommonIIOImageMetadata(wrapper);
+	protected GDALDatasetWrapper createDataSetWrapper(String string) {
+		return new GDALDatasetWrapper(string);
 	}
 }

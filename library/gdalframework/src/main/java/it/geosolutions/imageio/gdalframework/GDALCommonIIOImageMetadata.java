@@ -16,8 +16,6 @@
  */
 package it.geosolutions.imageio.gdalframework;
 
-import it.geosolutions.imageio.gdalframework.GDALImageReader.GDALDatasetWrapper;
-
 import java.awt.image.IndexColorModel;
 import java.util.Iterator;
 import java.util.List;
@@ -274,7 +272,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 	public void mergeTree(String formatName, Node root)
 			throws IIOInvalidTreeException {
 		throw new UnsupportedOperationException(
-				"reset operation is not allowed");
+				"mergeTree operation is not allowed");
 	}
 
 	public void reset() {

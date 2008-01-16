@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.mrsid;
 
+import it.geosolutions.imageio.gdalframework.GDALDatasetWrapper;
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
 
 import java.awt.image.RenderedImage;
@@ -39,19 +40,8 @@ public class MrSIDImageReader extends GDALImageReader {
 	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.plugins.mrsid");
 
-	public class MRSIDDataSetWrapper extends GDALDatasetWrapper {
-
-		public MRSIDDataSetWrapper(String sDatasetName) {
-			super(sDatasetName);
-		}
-
-		public MRSIDDataSetWrapper(Dataset ds, String name) {
-			super(ds, name);
-		}
-	}
-
 	public MrSIDImageReader(MrSIDImageReaderSpi originatingProvider) {
-		super(originatingProvider,0);
+		super(originatingProvider, 0);
 		if (LOGGER.isLoggable(Level.FINE))
 			LOGGER.fine("MrSIDImageReader Constructor");
 	}
@@ -62,14 +52,10 @@ public class MrSIDImageReader extends GDALImageReader {
 
 	protected GDALDatasetWrapper createDataSetWrapper(Dataset mainDataset,
 			String mainDatasetFileName) {
-		return new MRSIDDataSetWrapper(mainDataset, mainDatasetFileName);
+		return new MrSIDDatasetWrapper(mainDataset, mainDatasetFileName);
 	}
 
 	protected GDALDatasetWrapper createDataSetWrapper(String string) {
-		return new MRSIDDataSetWrapper(string);
-	}
-
-	protected IIOMetadata getIIOImageMetadata(GDALDatasetWrapper wrapper) {
-		return new MrSIDIIOImageMetadata(wrapper);
+		return new MrSIDDatasetWrapper(string);
 	}
 }

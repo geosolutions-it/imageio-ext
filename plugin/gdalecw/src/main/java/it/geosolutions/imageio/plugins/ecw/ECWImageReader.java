@@ -16,7 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.ecw;
 
-import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
+import it.geosolutions.imageio.gdalframework.GDALDatasetWrapper;
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
 
 import java.awt.image.RenderedImage;
@@ -37,22 +37,11 @@ import org.gdal.gdal.Dataset;
  */
 public class ECWImageReader extends GDALImageReader {
 
-	public class ECWDataSetWrapper extends GDALDatasetWrapper {
-
-		public ECWDataSetWrapper(String sDatasetName) {
-			super(sDatasetName);
-		}
-
-		public ECWDataSetWrapper(Dataset ds, String name) {
-			super(ds, name);
-		}
-	}
-	
 	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.plugins.ecw");
 
 	public ECWImageReader(ECWImageReaderSpi originatingProvider) {
-		super(originatingProvider,0);
+		super(originatingProvider, 0);
 		if (LOGGER.isLoggable(Level.FINE))
 			LOGGER.fine("ECWImageReader Constructor");
 	}
@@ -63,14 +52,10 @@ public class ECWImageReader extends GDALImageReader {
 
 	protected GDALDatasetWrapper createDataSetWrapper(Dataset mainDataset,
 			String mainDatasetFileName) {
-		return new ECWDataSetWrapper(mainDataset, mainDatasetFileName);
+		return new GDALDatasetWrapper(mainDataset, mainDatasetFileName);
 	}
 
 	protected GDALDatasetWrapper createDataSetWrapper(String string) {
-		return new ECWDataSetWrapper(string);
-	}
-	
-	protected IIOMetadata getIIOImageMetadata(GDALDatasetWrapper wrapper) {
-		return new GDALCommonIIOImageMetadata(wrapper);
+		return new GDALDatasetWrapper(string);
 	}
 }

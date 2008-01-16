@@ -17,8 +17,8 @@
 package it.geosolutions.imageio.plugins.mrsid;
 
 import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
+import it.geosolutions.imageio.gdalframework.GDALDatasetWrapper;
 import it.geosolutions.imageio.gdalframework.GDALUtilities;
-import it.geosolutions.imageio.gdalframework.GDALImageReader.GDALDatasetWrapper;
 
 import java.util.Map;
 
@@ -36,7 +36,7 @@ import org.w3c.dom.Node;
  * provides the user with the specific MrSID metadata.
  * 
  * @author Daniele Romagnoli, GeoSolutions.
- * @author Simone Giannecchini, GeoSolutions. 
+ * @author Simone Giannecchini, GeoSolutions.
  */
 public class MrSIDIIOImageMetadata extends GDALCommonIIOImageMetadata {
 
@@ -61,10 +61,10 @@ public class MrSIDIIOImageMetadata extends GDALCommonIIOImageMetadata {
 		final Dataset ds = GDALUtilities.acquireDataSet(dsWrapper
 				.getDatasetName(), gdalconst.GA_ReadOnly);
 		final Map gdalMetadata = ds.GetMetadata_Dict("");
-		
+
 		// ImageDescriptor
 		IIOMetadataNode node = new IIOMetadataNode("ImageDescriptor");
-		node.setAttribute("IMAGE__INPUT_NAME",dsWrapper.getDatasetName());
+		node.setAttribute("IMAGE__INPUT_NAME", dsWrapper.getDatasetName());
 		GDALUtilities.setNodeAttribute("IMAGE__INPUT_FILE_SIZE", gdalMetadata
 				.get("IMAGE__INPUT_FILE_SIZE"), node,
 				IIOMetadataFormat.DATATYPE_DOUBLE);
@@ -80,42 +80,42 @@ public class MrSIDIIOImageMetadata extends GDALCommonIIOImageMetadata {
 		GDALUtilities.setNodeAttribute("IMAGE__TARGET_COMPRESSION_RATIO",
 				gdalMetadata.get("IMAGE__TARGET_COMPRESSION_RATIO"), node,
 				IIOMetadataFormat.DATATYPE_DOUBLE);
-		GDALUtilities.setNodeAttribute("IMAGE__COMPRESSION_NLEV",
-				gdalMetadata.get("IMAGE__COMPRESSION_NLEV"), node,
+		GDALUtilities.setNodeAttribute("IMAGE__COMPRESSION_NLEV", gdalMetadata
+				.get("IMAGE__COMPRESSION_NLEV"), node,
 				IIOMetadataFormat.DATATYPE_DOUBLE);
 		GDALUtilities.setNodeAttribute("IMAGE__COMPRESSION_WEIGHT",
 				gdalMetadata.get("IMAGE__COMPRESSION_WEIGHT"), node,
 				IIOMetadataFormat.DATATYPE_DOUBLE);
-		GDALUtilities.setNodeAttribute("IMAGE__COMPRESSION_GAMMA",
-				gdalMetadata.get("IMAGE__COMPRESSION_GAMMA"), node,
+		GDALUtilities.setNodeAttribute("IMAGE__COMPRESSION_GAMMA", gdalMetadata
+				.get("IMAGE__COMPRESSION_GAMMA"), node,
 				IIOMetadataFormat.DATATYPE_DOUBLE);
 		GDALUtilities.setNodeAttribute("IMAGE__COMPRESSION_BLOCK_SIZE",
 				gdalMetadata.get("IMAGE__COMPRESSION_BLOCK_SIZE"), node,
-				IIOMetadataFormat.DATATYPE_INTEGER);	
-		GDALUtilities.setNodeAttribute("IMAGE__CREATION_DATE",
-				gdalMetadata.get("IMAGE__CREATION_DATE"), node,
-				IIOMetadataFormat.DATATYPE_STRING);	
-		GDALUtilities.setNodeAttribute("IMAGE__WIDTH",
-				gdalMetadata.get("IMAGE__WIDTH"), node,
 				IIOMetadataFormat.DATATYPE_INTEGER);
-		GDALUtilities.setNodeAttribute("IMAGE__HEIGHT",
-				gdalMetadata.get("IMAGE__HEIGHT"), node,
-				IIOMetadataFormat.DATATYPE_INTEGER);
+		GDALUtilities.setNodeAttribute("IMAGE__CREATION_DATE", gdalMetadata
+				.get("IMAGE__CREATION_DATE"), node,
+				IIOMetadataFormat.DATATYPE_STRING);
+		GDALUtilities.setNodeAttribute("IMAGE__WIDTH", gdalMetadata
+				.get("IMAGE__WIDTH"), node, IIOMetadataFormat.DATATYPE_INTEGER);
+		GDALUtilities
+				.setNodeAttribute("IMAGE__HEIGHT", gdalMetadata
+						.get("IMAGE__HEIGHT"), node,
+						IIOMetadataFormat.DATATYPE_INTEGER);
 		GDALUtilities.setNodeAttribute("IMAGE__TRANSPARENT_DATA_VALUE",
 				gdalMetadata.get("IMAGE__TRANSPARENT_DATA_VALUE"), node,
-				IIOMetadataFormat.DATATYPE_STRING);	
-		GDALUtilities.setNodeAttribute("IMAGE__COLOR_SCHEME",
-				gdalMetadata.get("IMAGE__COLOR_SCHEME"), node,
+				IIOMetadataFormat.DATATYPE_STRING);
+		GDALUtilities.setNodeAttribute("IMAGE__COLOR_SCHEME", gdalMetadata
+				.get("IMAGE__COLOR_SCHEME"), node,
 				IIOMetadataFormat.DATATYPE_INTEGER);
-		GDALUtilities.setNodeAttribute("IMAGE__DATA_TYPE",
-				gdalMetadata.get("IMAGE__DATA_TYPE"), node,
+		GDALUtilities.setNodeAttribute("IMAGE__DATA_TYPE", gdalMetadata
+				.get("IMAGE__DATA_TYPE"), node,
 				IIOMetadataFormat.DATATYPE_INTEGER);
-		GDALUtilities.setNodeAttribute("IMAGE__BITS_PER_SAMPLE",
-				gdalMetadata.get("IMAGE__BITS_PER_SAMPLE"), node,
+		GDALUtilities.setNodeAttribute("IMAGE__BITS_PER_SAMPLE", gdalMetadata
+				.get("IMAGE__BITS_PER_SAMPLE"), node,
 				IIOMetadataFormat.DATATYPE_INTEGER);
 		root.appendChild(node);
-		
-		//Georeferencing
+
+		// Georeferencing
 		node = new IIOMetadataNode("Georeferencing");
 		GDALUtilities.setNodeAttribute("IMG__HORIZONTAL_UNITS", gdalMetadata
 				.get("IMG__HORIZONTAL_UNITS"), node,
@@ -132,14 +132,14 @@ public class MrSIDIIOImageMetadata extends GDALCommonIIOImageMetadata {
 		GDALUtilities.setNodeAttribute("IMG__SPHEROID_NAME", gdalMetadata
 				.get("IMG__SPHEROID_NAME"), node,
 				IIOMetadataFormat.DATATYPE_STRING);
-		GDALUtilities.setNodeAttribute("IMG__SPHEROID_SEMI_MAJOR_AXIS", gdalMetadata
-				.get("IMG__SPHEROID_SEMI_MAJOR_AXIS"), node,
+		GDALUtilities.setNodeAttribute("IMG__SPHEROID_SEMI_MAJOR_AXIS",
+				gdalMetadata.get("IMG__SPHEROID_SEMI_MAJOR_AXIS"), node,
 				IIOMetadataFormat.DATATYPE_DOUBLE);
-		GDALUtilities.setNodeAttribute("IMG__SPHEROID_SEMI_MINOR_AXIS", gdalMetadata
-				.get("IMG__SPHEROID_SEMI_MINOR_AXIS"), node,
+		GDALUtilities.setNodeAttribute("IMG__SPHEROID_SEMI_MINOR_AXIS",
+				gdalMetadata.get("IMG__SPHEROID_SEMI_MINOR_AXIS"), node,
 				IIOMetadataFormat.DATATYPE_DOUBLE);
-		GDALUtilities.setNodeAttribute("IMG__SPHEROID_ECCENTRICITY_SQUARED", gdalMetadata
-				.get("IMG__SPHEROID_ECCENTRICITY_SQUARED"), node,
+		GDALUtilities.setNodeAttribute("IMG__SPHEROID_ECCENTRICITY_SQUARED",
+				gdalMetadata.get("IMG__SPHEROID_ECCENTRICITY_SQUARED"), node,
 				IIOMetadataFormat.DATATYPE_DOUBLE);
 		GDALUtilities.setNodeAttribute("IMG__SPHEROID_RADIUS", gdalMetadata
 				.get("IMG__SPHEROID_RADIUS"), node,
@@ -154,10 +154,9 @@ public class MrSIDIIOImageMetadata extends GDALCommonIIOImageMetadata {
 				.get("IMAGE__Y_RESOLUTION"), node,
 				IIOMetadataFormat.DATATYPE_DOUBLE);
 		GDALUtilities.setNodeAttribute("IMAGE__WKT", gdalMetadata
-				.get("IMAGE__WKT"), node,
-				IIOMetadataFormat.DATATYPE_STRING);
+				.get("IMAGE__WKT"), node, IIOMetadataFormat.DATATYPE_STRING);
 		root.appendChild(node);
-		
+
 		return root;
 
 	}

@@ -16,8 +16,6 @@
  */
 package it.geosolutions.imageio.gdalframework;
 
-import it.geosolutions.imageio.gdalframework.GDALImageReader.GDALDatasetWrapper;
-
 import java.awt.BorderLayout;
 import java.awt.image.RenderedImage;
 import java.io.IOException;

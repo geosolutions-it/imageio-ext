@@ -127,15 +127,13 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
 	 */
 	public void testWrite() throws IOException, FileNotFoundException {
 
-//		final File outputFile = TestData.temp(this, "writetest.tif", false);
-		final File outputFile = new File("C:/work/data/geotiff/cippa3.tif");
+		final File outputFile = TestData.temp(this, "writetest.tif", false);
 
 		outputFile.deleteOnExit();
-//		final File inputFile = TestData.file(this, "bogota.tif");
-		final File inputFile = new File("C:/work/data/geotiff/cippa2.tif");
+		final File inputFile = TestData.file(this, "bogota.tif");
 		ImageReadParam rparam = new ImageReadParam();
-//		rparam.setSourceRegion(new Rectangle(1, 1, 200, 500));
-//		rparam.setSourceSubsampling(1, 2, 0, 0);
+		rparam.setSourceRegion(new Rectangle(1, 1, 200, 500));
+		rparam.setSourceSubsampling(1, 2, 0, 0);
 		final ImageLayout l = new ImageLayout();
 		l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512)
 				.setTileWidth(512);

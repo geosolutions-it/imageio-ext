@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
@@ -57,8 +58,8 @@ public class HDF4Test extends AbstractHDF4TestCase {
 			final ImageReadParam irp = new ImageReadParam();
 			irp.setSourceSubsampling(1, 1, 0, 0);
 
-			final HDF4ImageReader mReader = new HDF4ImageReader(
-					new HDF4ImageReaderSpi());
+			final ImageReader mReader = new HDF4ImageReaderSpi()
+					.createReaderInstance();
 			ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
 			final String fileName = "TOVS_DAILY_AM_870330_NG.HDF";
 			final File file = TestData.file(this, fileName);
@@ -94,11 +95,10 @@ public class HDF4Test extends AbstractHDF4TestCase {
 			RenderedImage ri = mReader.read(0);
 			if (TestData.isInteractiveTest())
 				Viewer.visualize(ri);
-			else
-				{
+			else {
 				assertNotNull(ri);
 				mReader.dispose();
-				}
+			}
 		} catch (FileNotFoundException fnfe) {
 			warningMessage();
 		}
@@ -208,14 +208,14 @@ public class HDF4Test extends AbstractHDF4TestCase {
 		// Test reading of several subdatasets
 		suite.addTest(new HDF4Test("testSubDatasets"));
 
-//		// Test read without exploiting JAI
-//		suite.addTest(new HDF4Test("testManualRead"));
-//
-//		// Test reading of several subdatasets
-//		suite.addTest(new HDF4Test("testRasterBandsProperties"));
-//
-//		// Test Image Metadata
-//		suite.addTest(new HDF4Test("testMetadata"));
+		// // Test read without exploiting JAI
+		// suite.addTest(new HDF4Test("testManualRead"));
+		//
+		// // Test reading of several subdatasets
+		// suite.addTest(new HDF4Test("testRasterBandsProperties"));
+		//
+		// // Test Image Metadata
+		// suite.addTest(new HDF4Test("testMetadata"));
 
 		return suite;
 	}

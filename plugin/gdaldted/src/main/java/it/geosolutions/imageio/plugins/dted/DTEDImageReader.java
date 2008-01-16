@@ -16,7 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.dted;
 
-import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
+import it.geosolutions.imageio.gdalframework.GDALDatasetWrapper;
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
 
 import java.awt.image.RenderedImage;
@@ -40,18 +40,8 @@ public class DTEDImageReader extends GDALImageReader {
 	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.plugins.dted");
 
-	public class DTEDDataSetWrapper extends GDALDatasetWrapper {
-		public DTEDDataSetWrapper(String sDatasetName) {
-			super(sDatasetName);
-		}
-
-		public DTEDDataSetWrapper(Dataset ds, String name) {
-			super(ds, name);
-		}
-	}
-
 	public DTEDImageReader(DTEDImageReaderSpi originatingProvider) {
-		super(originatingProvider,0);
+		super(originatingProvider, 0);
 		if (LOGGER.isLoggable(Level.FINE))
 			LOGGER.fine("DTEDImageReader Constructor");
 	}
@@ -62,14 +52,10 @@ public class DTEDImageReader extends GDALImageReader {
 
 	protected GDALDatasetWrapper createDataSetWrapper(Dataset mainDataset,
 			String mainDatasetFileName) {
-		return new DTEDDataSetWrapper(mainDataset, mainDatasetFileName);
+		return new GDALDatasetWrapper(mainDataset, mainDatasetFileName);
 	}
 
 	protected GDALDatasetWrapper createDataSetWrapper(String string) {
-		return new DTEDDataSetWrapper(string);
-	}
-
-	protected IIOMetadata getIIOImageMetadata(GDALDatasetWrapper wrapper) {
-		return new GDALCommonIIOImageMetadata(wrapper);
+		return new GDALDatasetWrapper(string);
 	}
 }

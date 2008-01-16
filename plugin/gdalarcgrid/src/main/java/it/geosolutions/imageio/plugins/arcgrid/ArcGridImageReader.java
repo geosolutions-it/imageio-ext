@@ -16,7 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.arcgrid;
 
-import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
+import it.geosolutions.imageio.gdalframework.GDALDatasetWrapper;
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
 
 import java.awt.image.RenderedImage;
@@ -38,17 +38,6 @@ import org.gdal.gdal.Dataset;
  */
 public class ArcGridImageReader extends GDALImageReader {
 
-	public class ArcGridDataSetWrapper extends GDALDatasetWrapper {
-
-		public ArcGridDataSetWrapper(String sDatasetName) {
-			super(sDatasetName);
-		}
-
-		public ArcGridDataSetWrapper(Dataset ds, String name) {
-			super(ds, name);
-		}
-	}
-
 	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.plugins.arcgrid");
 
@@ -64,14 +53,10 @@ public class ArcGridImageReader extends GDALImageReader {
 
 	protected GDALDatasetWrapper createDataSetWrapper(Dataset mainDataset,
 			String mainDatasetFileName) {
-		return new ArcGridDataSetWrapper(mainDataset, mainDatasetFileName);
+		return new GDALDatasetWrapper(mainDataset, mainDatasetFileName);
 	}
 
 	protected GDALDatasetWrapper createDataSetWrapper(String string) {
-		return new ArcGridDataSetWrapper(string);
-	}
-
-	protected IIOMetadata getIIOImageMetadata(GDALDatasetWrapper wrapper) {
-		return new GDALCommonIIOImageMetadata(wrapper);
+		return new GDALDatasetWrapper(string);
 	}
 }
