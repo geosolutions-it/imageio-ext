@@ -17,7 +17,6 @@
 package it.geosolutions.imageio.plugins.mrsid;
 
 import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
-import it.geosolutions.imageio.gdalframework.GDALDatasetWrapper;
 import it.geosolutions.imageio.gdalframework.GDALUtilities;
 
 import java.util.Map;
@@ -27,8 +26,6 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataFormat;
 import javax.imageio.metadata.IIOMetadataNode;
 
-import org.gdal.gdal.Dataset;
-import org.gdal.gdalconst.gdalconst;
 import org.w3c.dom.Node;
 
 /**

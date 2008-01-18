@@ -16,18 +16,11 @@
  */
 package it.geosolutions.imageio.plugins.envisat;
 
-import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
-import it.geosolutions.imageio.gdalframework.GDALDatasetWrapper;
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
 
 import java.awt.image.RenderedImage;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.imageio.metadata.IIOMetadata;
-
-import org.gdal.gdal.Dataset;
 
 /**
  * {@link EnvisatImageReader} is a {@link GDALImageReader} able to create
