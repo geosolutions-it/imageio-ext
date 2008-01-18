@@ -127,11 +127,9 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
 	 */
 	public void testWrite() throws IOException, FileNotFoundException {
 
-		final File outputFile = TestData.temp(this, "writetest.tif", false);
-		outputFile.deleteOnExit();
-		// final File inputFile = new File("c:/work/data/mrsid/22test.sid");
-		// final File outputFile = new File("c:/xml.tif");
-		final File inputFile = TestData.file(this, "bogota.tif");
+		 final File outputFile = TestData.temp(this, "writetest.tif", false);
+		 outputFile.deleteOnExit();
+		 final File inputFile = TestData.file(this, "bogota.tif");
 		ImageReadParam rparam = new ImageReadParam();
 		rparam.setSourceRegion(new Rectangle(1, 1, 200, 500));
 		rparam.setSourceSubsampling(1, 2, 0, 0);
