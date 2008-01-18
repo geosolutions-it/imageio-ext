@@ -2218,7 +2218,7 @@ Index: frmts/jp2kak/jp2kakdataset.cpp
          poDriver->pfnCreateCopy = JP2KAKCreateCopy;
 Index: swig/include/java/gdal_java.i
 ===================================================================
---- swig/include/java/gdal_java.i	(revision 11712)
+--- swig/include/java/gdal_java.i	(revision 13541)
 +++ swig/include/java/gdal_java.i	(working copy)
 @@ -36,6 +36,7 @@
    }
@@ -2228,7 +2228,7 @@ Index: swig/include/java/gdal_java.i
  
  %extend GDALRasterBandShadow {
    CPLErr ReadRaster_Direct( int xoff, int yoff, int xsize, int ysize,
-@@ -91,4 +92,54 @@
+@@ -91,4 +92,52 @@
    }
  %}
  
@@ -2239,8 +2239,6 @@ Index: swig/include/java/gdal_java.i
 +                            int buf_xsize, int buf_ysize,
 +                            GDALDataType buf_type, int bands, void *buf)
 +{
-+
-+
 +   return GDALDatasetRasterIO( self, GF_Read, xoff, yoff, xsize, ysize,
 +                                 buf, buf_xsize, buf_ysize, 
 +                                 buf_type, bands, 0,0,0,0);
@@ -2251,8 +2249,6 @@ Index: swig/include/java/gdal_java.i
 +                            int buf_xsize, int buf_ysize,
 +                            GDALDataType buf_type, int bands, int pixelSpace, int lineSpace, int bandSpace, void *buf)
 +{
-+
-+
 +   return GDALDatasetRasterIO( self, GF_Read, xoff, yoff, xsize, ysize,
 +                                 buf, buf_xsize, buf_ysize, 
 +                                 buf_type, bands, 0, pixelSpace, lineSpace, bandSpace);
@@ -2264,7 +2260,6 @@ Index: swig/include/java/gdal_java.i
 +                            int buf_xsize, int buf_ysize,
 +                            GDALDataType buf_type, int bands, void *buf)
 +{
-+
 +  return GDALDatasetRasterIO( self, GF_Write, xoff, yoff, xsize, ysize,
 +                                 buf, buf_xsize, buf_ysize, 
 +                                 buf_type, bands, 0,0,0,0);
@@ -2275,13 +2270,15 @@ Index: swig/include/java/gdal_java.i
 +                            int buf_xsize, int buf_ysize,
 +                            GDALDataType buf_type, int bands, int pixelSpace, int lineSpace, int bandSpace, void *buf)
 +{
-+
-+
 +   return GDALDatasetRasterIO( self, GF_Write, xoff, yoff, xsize, ysize,
 +                                 buf, buf_xsize, buf_ysize, 
 +                                 buf_type, bands, 0, pixelSpace, lineSpace, bandSpace);
 +
 +}
-+
 +} /* extend */
-\ No newline at end of file
++
++%extend  GDALMajorObjectShadow {
++  CPLErr SetMetadataItem( char * key , char * value, char * domain) {
++   return GDALSetMetadataItem( self, key, value, domain);
++  }
++} /* extend */

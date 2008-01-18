@@ -360,9 +360,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 				while (keysIt.hasNext()) {
 					final String key = (String) keysIt.next();
 					final String value = (String) metadataMap.get(key);
-					final String couple = new StringBuffer(key).append("=")
-							.append(value).toString();
-					dataset.SetMetadata(couple, domain);
+					dataset.SetMetadataItem(key,value,domain);
 				}
 			}
 		}
