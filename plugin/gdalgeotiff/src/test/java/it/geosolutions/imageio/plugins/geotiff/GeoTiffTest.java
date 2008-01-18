@@ -129,6 +129,8 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
 
 		final File outputFile = TestData.temp(this, "writetest.tif", false);
 		outputFile.deleteOnExit();
+		// final File inputFile = new File("c:/work/data/mrsid/22test.sid");
+		// final File outputFile = new File("c:/xml.tif");
 		final File inputFile = TestData.file(this, "bogota.tif");
 		ImageReadParam rparam = new ImageReadParam();
 		rparam.setSourceRegion(new Rectangle(1, 1, 200, 500));
@@ -204,6 +206,5 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
 
 	public static void main(java.lang.String[] args) {
 		junit.textui.TestRunner.run(suite());
-
 	}
 }

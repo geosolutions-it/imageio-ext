@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.envisat;
 
+import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
 import it.geosolutions.imageio.gdalframework.GDALDatasetWrapper;
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
 
@@ -44,18 +45,5 @@ public class EnvisatImageReader extends GDALImageReader {
 		super(originatingProvider, 0);
 		if (LOGGER.isLoggable(Level.FINE))
 			LOGGER.fine("EnvisatImageReader Constructor");
-	}
-
-	public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
-		return getDataSetWrapper(imageIndex).getImageIOMetadata();
-	}
-
-	protected GDALDatasetWrapper createDataSetWrapper(Dataset mainDataset,
-			String mainDatasetFileName) {
-		return new GDALDatasetWrapper(mainDataset, mainDatasetFileName);
-	}
-
-	protected GDALDatasetWrapper createDataSetWrapper(String string) {
-		return new GDALDatasetWrapper(string);
 	}
 }

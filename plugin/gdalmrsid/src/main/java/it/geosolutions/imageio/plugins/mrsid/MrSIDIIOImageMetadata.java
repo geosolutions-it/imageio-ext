@@ -43,8 +43,8 @@ public class MrSIDIIOImageMetadata extends GDALCommonIIOImageMetadata {
 	/** Name for these metadata. */
 	public final static String mrsidImageMetadataName = "org_gdal_imageio_mrsid_metadata";
 
-	public MrSIDIIOImageMetadata(GDALDatasetWrapper ds) {
-		super(ds, mrsidImageMetadataName,
+	public MrSIDIIOImageMetadata(final String dataseName) {
+		super(dataseName, mrsidImageMetadataName,
 				"it.geosolutions.imageio.gdalframework.MrSIDIIOImageMetadataFormat");
 	}
 
@@ -58,105 +58,106 @@ public class MrSIDIIOImageMetadata extends GDALCommonIIOImageMetadata {
 
 		// Create root node
 		final IIOMetadataNode root = new IIOMetadataNode(mrsidImageMetadataName);
-		final Dataset ds = GDALUtilities.acquireDataSet(dsWrapper
-				.getDatasetName(), gdalconst.GA_ReadOnly);
-		final Map gdalMetadata = ds.GetMetadata_Dict("");
+		// final Dataset ds = GDALUtilities.acquireDataSet(getDatasetName(),
+		// gdalconst.GA_ReadOnly);
+		// final Map gdalMetadataMap = ds.GetMetadata_Dict("");
 
+		final Map defaultDomainMap = getGdalMetadataDomain(GDALUtilities.GDALMetadataDomain.DEFAULT);
 		// ImageDescriptor
 		IIOMetadataNode node = new IIOMetadataNode("ImageDescriptor");
-		node.setAttribute("IMAGE__INPUT_NAME", dsWrapper.getDatasetName());
-		GDALUtilities.setNodeAttribute("IMAGE__INPUT_FILE_SIZE", gdalMetadata
-				.get("IMAGE__INPUT_FILE_SIZE"), node,
+		node.setAttribute("IMAGE__INPUT_NAME", getDatasetName());
+		GDALUtilities.setNodeAttribute("IMAGE__INPUT_FILE_SIZE",
+				defaultDomainMap.get("IMAGE__INPUT_FILE_SIZE"), node,
 				IIOMetadataFormat.DATATYPE_DOUBLE);
 		GDALUtilities.setNodeAttribute("IMAGE__DYNAMIC_RANGE_WINDOW",
-				gdalMetadata.get("IMAGE__DYNAMIC_RANGE_WINDOW"), node,
+				defaultDomainMap.get("IMAGE__DYNAMIC_RANGE_WINDOW"), node,
 				IIOMetadataFormat.DATATYPE_DOUBLE);
 		GDALUtilities.setNodeAttribute("IMAGE__DYNAMIC_RANGE_LEVEL",
-				gdalMetadata.get("IMAGE__DYNAMIC_RANGE_LEVEL"), node,
+				defaultDomainMap.get("IMAGE__DYNAMIC_RANGE_LEVEL"), node,
 				IIOMetadataFormat.DATATYPE_DOUBLE);
 		GDALUtilities.setNodeAttribute("IMAGE__COMPRESSION_VERSION",
-				gdalMetadata.get("IMAGE__COMPRESSION_VERSION"), node,
+				defaultDomainMap.get("IMAGE__COMPRESSION_VERSION"), node,
 				IIOMetadataFormat.DATATYPE_DOUBLE);
 		GDALUtilities.setNodeAttribute("IMAGE__TARGET_COMPRESSION_RATIO",
-				gdalMetadata.get("IMAGE__TARGET_COMPRESSION_RATIO"), node,
+				defaultDomainMap.get("IMAGE__TARGET_COMPRESSION_RATIO"), node,
 				IIOMetadataFormat.DATATYPE_DOUBLE);
-		GDALUtilities.setNodeAttribute("IMAGE__COMPRESSION_NLEV", gdalMetadata
-				.get("IMAGE__COMPRESSION_NLEV"), node,
+		GDALUtilities.setNodeAttribute("IMAGE__COMPRESSION_NLEV",
+				defaultDomainMap.get("IMAGE__COMPRESSION_NLEV"), node,
 				IIOMetadataFormat.DATATYPE_DOUBLE);
 		GDALUtilities.setNodeAttribute("IMAGE__COMPRESSION_WEIGHT",
-				gdalMetadata.get("IMAGE__COMPRESSION_WEIGHT"), node,
+				defaultDomainMap.get("IMAGE__COMPRESSION_WEIGHT"), node,
 				IIOMetadataFormat.DATATYPE_DOUBLE);
-		GDALUtilities.setNodeAttribute("IMAGE__COMPRESSION_GAMMA", gdalMetadata
-				.get("IMAGE__COMPRESSION_GAMMA"), node,
+		GDALUtilities.setNodeAttribute("IMAGE__COMPRESSION_GAMMA",
+				defaultDomainMap.get("IMAGE__COMPRESSION_GAMMA"), node,
 				IIOMetadataFormat.DATATYPE_DOUBLE);
 		GDALUtilities.setNodeAttribute("IMAGE__COMPRESSION_BLOCK_SIZE",
-				gdalMetadata.get("IMAGE__COMPRESSION_BLOCK_SIZE"), node,
+				defaultDomainMap.get("IMAGE__COMPRESSION_BLOCK_SIZE"), node,
 				IIOMetadataFormat.DATATYPE_INTEGER);
-		GDALUtilities.setNodeAttribute("IMAGE__CREATION_DATE", gdalMetadata
+		GDALUtilities.setNodeAttribute("IMAGE__CREATION_DATE", defaultDomainMap
 				.get("IMAGE__CREATION_DATE"), node,
 				IIOMetadataFormat.DATATYPE_STRING);
-		GDALUtilities.setNodeAttribute("IMAGE__WIDTH", gdalMetadata
+		GDALUtilities.setNodeAttribute("IMAGE__WIDTH", defaultDomainMap
 				.get("IMAGE__WIDTH"), node, IIOMetadataFormat.DATATYPE_INTEGER);
 		GDALUtilities
-				.setNodeAttribute("IMAGE__HEIGHT", gdalMetadata
+				.setNodeAttribute("IMAGE__HEIGHT", defaultDomainMap
 						.get("IMAGE__HEIGHT"), node,
 						IIOMetadataFormat.DATATYPE_INTEGER);
 		GDALUtilities.setNodeAttribute("IMAGE__TRANSPARENT_DATA_VALUE",
-				gdalMetadata.get("IMAGE__TRANSPARENT_DATA_VALUE"), node,
+				defaultDomainMap.get("IMAGE__TRANSPARENT_DATA_VALUE"), node,
 				IIOMetadataFormat.DATATYPE_STRING);
-		GDALUtilities.setNodeAttribute("IMAGE__COLOR_SCHEME", gdalMetadata
+		GDALUtilities.setNodeAttribute("IMAGE__COLOR_SCHEME", defaultDomainMap
 				.get("IMAGE__COLOR_SCHEME"), node,
 				IIOMetadataFormat.DATATYPE_INTEGER);
-		GDALUtilities.setNodeAttribute("IMAGE__DATA_TYPE", gdalMetadata
+		GDALUtilities.setNodeAttribute("IMAGE__DATA_TYPE", defaultDomainMap
 				.get("IMAGE__DATA_TYPE"), node,
 				IIOMetadataFormat.DATATYPE_INTEGER);
-		GDALUtilities.setNodeAttribute("IMAGE__BITS_PER_SAMPLE", gdalMetadata
-				.get("IMAGE__BITS_PER_SAMPLE"), node,
+		GDALUtilities.setNodeAttribute("IMAGE__BITS_PER_SAMPLE",
+				defaultDomainMap.get("IMAGE__BITS_PER_SAMPLE"), node,
 				IIOMetadataFormat.DATATYPE_INTEGER);
 		root.appendChild(node);
 
 		// Georeferencing
 		node = new IIOMetadataNode("Georeferencing");
-		GDALUtilities.setNodeAttribute("IMG__HORIZONTAL_UNITS", gdalMetadata
-				.get("IMG__HORIZONTAL_UNITS"), node,
+		GDALUtilities.setNodeAttribute("IMG__HORIZONTAL_UNITS",
+				defaultDomainMap.get("IMG__HORIZONTAL_UNITS"), node,
 				IIOMetadataFormat.DATATYPE_STRING);
-		GDALUtilities.setNodeAttribute("IMG__PROJECTION_TYPE", gdalMetadata
+		GDALUtilities.setNodeAttribute("IMG__PROJECTION_TYPE", defaultDomainMap
 				.get("IMG__PROJECTION_TYPE"), node,
 				IIOMetadataFormat.DATATYPE_STRING);
-		GDALUtilities.setNodeAttribute("IMG__PROJECTION_NUMBER", gdalMetadata
-				.get("IMG__PROJECTION_NUMBER"), node,
+		GDALUtilities.setNodeAttribute("IMG__PROJECTION_NUMBER",
+				defaultDomainMap.get("IMG__PROJECTION_NUMBER"), node,
 				IIOMetadataFormat.DATATYPE_INTEGER);
-		GDALUtilities.setNodeAttribute("IMG__PROJECTION_ZONE", gdalMetadata
+		GDALUtilities.setNodeAttribute("IMG__PROJECTION_ZONE", defaultDomainMap
 				.get("IMG__PROJECTION_ZONE"), node,
 				IIOMetadataFormat.DATATYPE_INTEGER);
-		GDALUtilities.setNodeAttribute("IMG__SPHEROID_NAME", gdalMetadata
+		GDALUtilities.setNodeAttribute("IMG__SPHEROID_NAME", defaultDomainMap
 				.get("IMG__SPHEROID_NAME"), node,
 				IIOMetadataFormat.DATATYPE_STRING);
 		GDALUtilities.setNodeAttribute("IMG__SPHEROID_SEMI_MAJOR_AXIS",
-				gdalMetadata.get("IMG__SPHEROID_SEMI_MAJOR_AXIS"), node,
+				defaultDomainMap.get("IMG__SPHEROID_SEMI_MAJOR_AXIS"), node,
 				IIOMetadataFormat.DATATYPE_DOUBLE);
 		GDALUtilities.setNodeAttribute("IMG__SPHEROID_SEMI_MINOR_AXIS",
-				gdalMetadata.get("IMG__SPHEROID_SEMI_MINOR_AXIS"), node,
+				defaultDomainMap.get("IMG__SPHEROID_SEMI_MINOR_AXIS"), node,
 				IIOMetadataFormat.DATATYPE_DOUBLE);
 		GDALUtilities.setNodeAttribute("IMG__SPHEROID_ECCENTRICITY_SQUARED",
-				gdalMetadata.get("IMG__SPHEROID_ECCENTRICITY_SQUARED"), node,
-				IIOMetadataFormat.DATATYPE_DOUBLE);
-		GDALUtilities.setNodeAttribute("IMG__SPHEROID_RADIUS", gdalMetadata
+				defaultDomainMap.get("IMG__SPHEROID_ECCENTRICITY_SQUARED"),
+				node, IIOMetadataFormat.DATATYPE_DOUBLE);
+		GDALUtilities.setNodeAttribute("IMG__SPHEROID_RADIUS", defaultDomainMap
 				.get("IMG__SPHEROID_RADIUS"), node,
 				IIOMetadataFormat.DATATYPE_DOUBLE);
-		GDALUtilities.setNodeAttribute("IMAGE__XY_ORIGIN", gdalMetadata
+		GDALUtilities.setNodeAttribute("IMAGE__XY_ORIGIN", defaultDomainMap
 				.get("IMAGE__XY_ORIGIN"), node,
 				IIOMetadataFormat.DATATYPE_STRING);
-		GDALUtilities.setNodeAttribute("IMAGE__X_RESOLUTION", gdalMetadata
+		GDALUtilities.setNodeAttribute("IMAGE__X_RESOLUTION", defaultDomainMap
 				.get("IMAGE__X_RESOLUTION"), node,
 				IIOMetadataFormat.DATATYPE_DOUBLE);
-		GDALUtilities.setNodeAttribute("IMAGE__Y_RESOLUTION", gdalMetadata
+		GDALUtilities.setNodeAttribute("IMAGE__Y_RESOLUTION", defaultDomainMap
 				.get("IMAGE__Y_RESOLUTION"), node,
 				IIOMetadataFormat.DATATYPE_DOUBLE);
-		GDALUtilities.setNodeAttribute("IMAGE__WKT", gdalMetadata
+		GDALUtilities.setNodeAttribute("IMAGE__WKT", defaultDomainMap
 				.get("IMAGE__WKT"), node, IIOMetadataFormat.DATATYPE_STRING);
 		root.appendChild(node);
-
+		// GDALUtilities.closeDataSet(ds);
 		return root;
 
 	}

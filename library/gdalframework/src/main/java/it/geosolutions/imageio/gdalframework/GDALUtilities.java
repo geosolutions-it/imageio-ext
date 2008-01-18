@@ -49,11 +49,33 @@ import org.gdal.gdalconst.gdalconstConstants;
  * @author Simone Giannecchini, GeoSolutions.
  */
 public final class GDALUtilities {
+
+	public final static String newLine = System.getProperty("line.separator");
+
+	/**
+	 * Simple placeholder for Strings representing GDAL metadata domains.
+	 */
+	public final static class GDALMetadataDomain {
+
+		public final static String IMAGESTRUCTURE = "IMAGE_STRUCTURE";
+
+		public final static String SUBDATASETS = "SUBDATASETS";
+
+		public final static String DEFAULT = "";
+
+		protected final static String DEFAULT_KEY_MAP = "DEF";
+
+		public final static String XML_PREFIX = "xml:";
+	}
+
+	/**
+	 * System property name to customize the max supported size of a GDAL In
+	 * Memory Raster Dataset to be created before using the createCopy method
+	 */
+	public final static String GDALMEMORYRASTER_MAXSIZE_KEY = "it.geosolutions.gdalmemoryrastermaxsize";
+
 	/**
 	 * Simple placeholder for information about a driver's capabilities.
-	 * 
-	 * @author Simone Giannecchini, GeoSOlutions.
-	 * 
 	 */
 	public final static class DriverCreateCapabilities {
 		/** {@link Driver} supports up to create. */
@@ -228,7 +250,6 @@ public final class GDALUtilities {
 	 * @return a <code>List</code> containing any metadata found.
 	 */
 	public static List getGDALImageMetadata(String dataSetName) {
-
 		final Dataset ds = acquireDataSet(dataSetName, gdalconst.GA_ReadOnly);
 		final List gdalImageMetadata = ds.GetMetadata_List("");
 		closeDataSet(ds);
@@ -609,12 +630,10 @@ public final class GDALUtilities {
 			gdal.AllRegister();
 			GDALUtilities.available = true;
 		} catch (UnsatisfiedLinkError e) {
-
 			if (LOGGER.isLoggable(Level.SEVERE))
 				LOGGER.severe(new StringBuffer("Native library load failed.")
 						.append(e.toString()).toString());
 			GDALUtilities.available = false;
 		}
-
 	}
 }

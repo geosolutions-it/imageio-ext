@@ -16,17 +16,11 @@
  */
 package it.geosolutions.imageio.plugins.arcgrid;
 
-import it.geosolutions.imageio.gdalframework.GDALDatasetWrapper;
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
 
 import java.awt.image.RenderedImage;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.imageio.metadata.IIOMetadata;
-
-import org.gdal.gdal.Dataset;
 
 /**
  * {@link ArcGridImageReader} is a {@link GDALImageReader} able to create
@@ -42,21 +36,9 @@ public class ArcGridImageReader extends GDALImageReader {
 			.getLogger("it.geosolutions.imageio.plugins.arcgrid");
 
 	public ArcGridImageReader(ArcGridImageReaderSpi originatingProvider) {
-		super(originatingProvider);
+		super(originatingProvider,0);
 		if (LOGGER.isLoggable(Level.FINE))
 			LOGGER.fine("ArcGridImageReader Constructor");
 	}
 
-	public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
-		return getDataSetWrapper(imageIndex).getImageIOMetadata();
-	}
-
-	protected GDALDatasetWrapper createDataSetWrapper(Dataset mainDataset,
-			String mainDatasetFileName) {
-		return new GDALDatasetWrapper(mainDataset, mainDatasetFileName);
-	}
-
-	protected GDALDatasetWrapper createDataSetWrapper(String string) {
-		return new GDALDatasetWrapper(string);
-	}
 }

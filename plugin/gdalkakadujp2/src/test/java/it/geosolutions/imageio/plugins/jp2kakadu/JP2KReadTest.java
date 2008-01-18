@@ -43,7 +43,7 @@ import junit.framework.TestSuite;
  */
 public class JP2KReadTest extends AbstractJP2KTestCase {
 
-	public final static String fileName = "sample.jp2";
+	public final static String fileName = "test.jp2";
 
 	public JP2KReadTest(String name) {
 		super(name);
@@ -66,8 +66,8 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
 		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
 				.createReaderInstance());
 		final ImageLayout layout = new ImageLayout();
-		layout.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512)
-				.setTileWidth(512);
+		layout.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(256)
+				.setTileWidth(256);
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead,
 				new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout));
 		if (TestData.isInteractiveTest())
@@ -95,7 +95,7 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
 		final ParameterBlockJAI pbjImageRead;
 		final ImageReadParam irp = new ImageReadParam();
 
-		Integer xSubSampling = new Integer(1);
+		Integer xSubSampling = new Integer(2);
 		Integer ySubSampling = new Integer(1);
 		Integer xSubSamplingOffset = new Integer(0);
 		Integer ySubSamplingOffset = new Integer(0);

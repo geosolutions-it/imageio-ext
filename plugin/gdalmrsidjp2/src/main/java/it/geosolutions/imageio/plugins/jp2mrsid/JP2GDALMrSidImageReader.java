@@ -16,17 +16,11 @@
  */
 package it.geosolutions.imageio.plugins.jp2mrsid;
 
-import it.geosolutions.imageio.gdalframework.GDALDatasetWrapper;
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
 
 import java.awt.image.RenderedImage;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.imageio.metadata.IIOMetadata;
-
-import org.gdal.gdal.Dataset;
 
 /**
  * {@link JP2GDALMrSidImageReader} is a {@link GDALImageReader} able to create
@@ -47,16 +41,4 @@ public class JP2GDALMrSidImageReader extends GDALImageReader {
 			LOGGER.fine("JP2GDALMrSidImageReader Constructor");
 	}
 
-	public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
-		return getDataSetWrapper(imageIndex).getImageIOMetadata();
-	}
-
-	protected GDALDatasetWrapper createDataSetWrapper(Dataset mainDataset,
-			String mainDatasetFileName) {
-		return new GDALDatasetWrapper(mainDataset, mainDatasetFileName);
-	}
-
-	protected GDALDatasetWrapper createDataSetWrapper(String string) {
-		return new GDALDatasetWrapper(string);
-	}
 }

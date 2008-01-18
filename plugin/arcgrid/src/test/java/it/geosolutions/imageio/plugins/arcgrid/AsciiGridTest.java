@@ -37,9 +37,12 @@ import javax.media.jai.widget.ScrollingImagePanel;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import junit.framework.Test;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import com.sun.media.jai.operator.ImageWriteDescriptor;
+
 /**
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
@@ -58,12 +61,27 @@ public class AsciiGridTest extends TestCase {
 		assertTrue(file.exists());
 
 		// unzip it
-		ShareableTestData.unzipFile(this, "arcgrid.zip");
+		TestData.unzipFile(this, "arcgrid.zip");
 
 	}
 
+	public static Test suite() {
+		TestSuite suite = new TestSuite();
+
+		// Read a file using subSampling and sourceRegion settings
+		suite.addTest(new AsciiGridTest("testReadRegion"));
+
+		// Read a GRASS, compressed (GZ) file
+		suite.addTest(new AsciiGridTest("testReadGrassGZ"));
+
+		// Read an ArcGrid file and write it back to another file
+		suite.addTest(new AsciiGridTest("testReadWrite"));
+
+		return suite;
+	}
+
 	public static void main(java.lang.String[] args) {
-		junit.textui.TestRunner.run(AsciiGridTest.class);
+		junit.textui.TestRunner.run(suite());
 	}
 
 	/**
@@ -83,18 +101,10 @@ public class AsciiGridTest extends TestCase {
 		});
 	}
 
-
 	/**
-	 * Main test of the {@link AsciiGridTest} class
+	 * Read an ArcGrid file and write it back to another file
 	 */
-	public void testReadWriter() throws FileNotFoundException, IOException {
-		// ////////////////////////////////////////////////////////////////////
-		//
-		// TEST 1:
-		// --------------------------------------------------------------------
-		// Read an ArcGrid file and write it back to another file
-		//
-		// ////////////////////////////////////////////////////////////////////
+	public void testReadWrite() throws FileNotFoundException, IOException {
 		String title = new String("Simple JAI ImageRead operation test");
 		LOGGER.info("\n\n " + title + " \n");
 		File inputFile = TestData.file(this, "hsign.asc");
@@ -148,34 +158,33 @@ public class AsciiGridTest extends TestCase {
 		assertEquals(image2.getWidth(), image.getWidth());
 		assertEquals(image2.getHeight(), image.getHeight());
 
-		// ////////////////////////////////////////////////////////////////////
-		//
-		// TEST 2:
-		// --------------------------------------------------------------------
-		// Read a GRASS, compressed (GZ) file
-		//
-		// ////////////////////////////////////////////////////////////////////
-		title = new String("JAI ImageRead on a GRASS GZipped file ");
+	}
+
+	/**
+	 * Read a GRASS, compressed (GZ) file
+	 */
+	public void testReadGrassGZ() throws FileNotFoundException, IOException {
+		String title = new String("JAI ImageRead on a GRASS GZipped file ");
 		LOGGER.info("\n\n " + title + " \n");
-		inputFile = TestData.file(this, "spearfish.asc.gz");
+		File inputFile = TestData.file(this, "spearfish.asc.gz");
 		final GZIPInputStream stream = new GZIPInputStream(new FileInputStream(
 				inputFile));
-		pbjImageRead = new ParameterBlockJAI("ImageRead");
+		ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
 		pbjImageRead.setParameter("Input", stream);
-		image = JAI.create("ImageRead", pbjImageRead);
+		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 		if (ShareableTestData.isInteractiveTest())
 			visualize(image, title);
 		else
 			assertNotNull(image.getTiles());
 
-		// ////////////////////////////////////////////////////////////////////
-		//
-		// TEST 3:
-		// --------------------------------------------------------------------
-		// Read a file using subSampling and sourceRegion settings
-		//
-		// ////////////////////////////////////////////////////////////////////
-		title = new String("JAI ImageRead using subSampling and sourceRegion ");
+	}
+
+	/**
+	 * Read a file using subSampling and sourceRegion settings
+	 */
+	public void testReadRegion() throws FileNotFoundException, IOException {
+		String title = new String(
+				"JAI ImageRead using subSampling and sourceRegion ");
 		LOGGER.info("\n\n " + title + " \n");
 
 		// //
@@ -183,18 +192,18 @@ public class AsciiGridTest extends TestCase {
 		// Preparing ImageRead parameters
 		//
 		// //
-		inputFile = TestData.file(this, "aust.asc");
-		pbjImageRead = new ParameterBlockJAI("ImageRead");
+		File inputFile = TestData.file(this, "aust.asc");
+		ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
 		pbjImageRead.setParameter("Input", inputFile);
 		final ImageReadParam irp = new ImageReadParam();
 
-		//Setting sourceRegion on the original image
-		irp.setSourceRegion(new Rectangle(500, 400, 2000, 1500));
+		// Setting sourceRegion on the original image
+		irp.setSourceRegion(new Rectangle(800, 400, 1600, 1200));
 
-		//Setting subSampling factors
-		irp.setSourceSubsampling(4, 4, 0, 0);
+		// Setting subSampling factors
+		irp.setSourceSubsampling(8, 8, 0, 0);
 		pbjImageRead.setParameter("ReadParam", irp);
-		image = JAI.create("ImageRead", pbjImageRead);
+		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 		if (ShareableTestData.isInteractiveTest())
 			visualize(image, title);
 		else

@@ -677,8 +677,8 @@ public final class Viewer {
 	// TODO: change with the new ImageIO - Metadata Capabilities
 	private static String getImageMetadata(GDALImageReader reader,
 			final int index) {
-		final GDALDatasetWrapper dsw = reader.getDataSetWrapper(index);
-		final List metadata = GDALUtilities.getGDALImageMetadata(dsw
+		final GDALCommonIIOImageMetadata mt = reader.getDatasetMetadata(index);
+		final List metadata = GDALUtilities.getGDALImageMetadata(mt
 				.getDatasetName());
 		final int size = metadata.size();
 		StringBuffer sb = new StringBuffer("Image Metadata:").append(newLine);
@@ -692,10 +692,11 @@ public final class Viewer {
 	// returns a String containing stream metadata from the provided reader
 	//
 	// ////////////////////////////////////////////////////////////////////////
-	private static String getStreamMetadata(GDALImageReader reader) throws IOException {
-		final GDALDatasetWrapper dsw = reader
-				.getDataSetWrapper(reader.getNumImages(true)-1);
-		final List metadata = GDALUtilities.getGDALStreamMetadata(dsw
+	private static String getStreamMetadata(GDALImageReader reader)
+			throws IOException {
+		final GDALCommonIIOImageMetadata mt = reader.getDatasetMetadata(reader
+				.getNumImages(true) - 1);
+		final List metadata = GDALUtilities.getGDALStreamMetadata(mt
 				.getDatasetName());
 		final int size = metadata.size();
 

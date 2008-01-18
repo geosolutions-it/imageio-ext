@@ -16,17 +16,12 @@
  */
 package it.geosolutions.imageio.plugins.mrsid;
 
-import it.geosolutions.imageio.gdalframework.GDALDatasetWrapper;
+import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
 
 import java.awt.image.RenderedImage;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.imageio.metadata.IIOMetadata;
-
-import org.gdal.gdal.Dataset;
 
 /**
  * {@link MrSIDImageReader} is a {@link GDALImageReader} able to create
@@ -45,17 +40,17 @@ public class MrSIDImageReader extends GDALImageReader {
 		if (LOGGER.isLoggable(Level.FINE))
 			LOGGER.fine("MrSIDImageReader Constructor");
 	}
-
-	public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
-		return getDataSetWrapper(imageIndex).getImageIOMetadata();
+	
+	/**
+	 * Build a proper {@link GDALCommonIIOImageMetadata} given the name of a
+	 * dataset
+	 * 
+	 * @param datasetName
+	 *            the name of the dataset
+	 */
+	protected GDALCommonIIOImageMetadata createDatasetMetadata(
+			String datasetName) {
+		return new MrSIDIIOImageMetadata(datasetName);
 	}
 
-	protected GDALDatasetWrapper createDataSetWrapper(Dataset mainDataset,
-			String mainDatasetFileName) {
-		return new MrSIDDatasetWrapper(mainDataset, mainDatasetFileName);
-	}
-
-	protected GDALDatasetWrapper createDataSetWrapper(String string) {
-		return new MrSIDDatasetWrapper(string);
-	}
 }

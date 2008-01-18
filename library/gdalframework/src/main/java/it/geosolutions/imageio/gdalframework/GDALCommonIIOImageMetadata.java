@@ -16,63 +16,468 @@
  */
 package it.geosolutions.imageio.gdalframework;
 
+import java.awt.Dimension;
+import java.awt.Transparency;
+import java.awt.color.ColorSpace;
+import java.awt.image.BandedSampleModel;
+import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.DataBuffer;
 import java.awt.image.IndexColorModel;
+import java.awt.image.PixelInterleavedSampleModel;
+import java.awt.image.SampleModel;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
+import java.util.logging.Logger;
 
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
+import javax.media.jai.RasterFactory;
 
+import org.gdal.gdal.Band;
+import org.gdal.gdal.Dataset;
 import org.gdal.gdal.GCP;
+import org.gdal.gdal.gdal;
+import org.gdal.gdalconst.gdalconst;
+import org.gdal.gdalconst.gdalconstConstants;
 import org.w3c.dom.Node;
 
+import com.sun.media.imageioimpl.common.ImageUtil;
+
 /**
- * Class representing common image metadata returned by a
- * {@link GDALImageReader}. A wide set of getters method allow to retrieve
- * several information directly from the metadata instance, without need of
- * getting the XML DOM nodes tree.
+ * Class needed to store all available information of a GDAL Dataset with the
+ * add of additional information. For convenience and future re-use this class
+ * also represents an {@link IIOMetadata}. A wide set of getters method allow
+ * to retrieve several information directly from the metadata instance, without
+ * need of getting the XML DOM nodes tree.
  * 
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
  */
 public class GDALCommonIIOImageMetadata extends IIOMetadata {
+	/** The LOGGER for this class. */
+	private static final Logger LOGGER = Logger
+			.getLogger("it.geosolutions.imageio.gdalframework");
+
 	public static final String nativeMetadataFormatName = "it.geosolutions.imageio.gdalframework.commonImageMetadata_1.0";
 
 	public static final String nativeMetadataFormatClassName = "it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadataFormat";
 
 	/**
-	 * The internal {@link GDALDatasetWrapper} from which information will be
-	 * retrieved in order to expose metadata
+	 * the name of the driver which has opened the dataset held by this wrapper.
 	 */
-	protected final GDALDatasetWrapper dsWrapper;
+	private String driverName;
 
-	/** Array containing noData value for each band */
-	private double[] noDataValues;
+	/**
+	 * The description of the driver which has opened the dataset held by this
+	 * wrapper.
+	 */
+	private String driverDescription;
 
-	/** Array containing maximum value for each band */
-	private double[] maximums;
+	/** The dataset name */
+	private String datasetName;
 
-	/** Array containing minimum value for each band */
-	private double[] minimums;
+	/** The dataset description */
+	private String datasetDescription;
 
-	/** Array containing scale value for each band */
-	private double[] scales;
+	/** The data set projection. */
+	protected String projection;
 
-	/** Array containing offset value for each band */
-	private double[] offsets;
+	/** The number of Ground Control Points */
+	private int gcpNumber;
 
-	/** Array containing the number of overviews for each band */
+	/** The GCP's Projection */
+	private String gcpProjection;
+
+	/** The grid to world transformation. */
+	protected double[] geoTransformation = new double[6];
+
+	/** A map containing a Map for each domain */
+	protected Map gdalMetadataMap;
+
+	/**
+	 * The list of Ground Control Points. <BR>
+	 * Any Ground Control Point has the following fields:<BR>
+	 * <UL>
+	 * <LI>ID: Unique Identifier</LI>
+	 * <LI>Info: Informational message/description</LI>
+	 * <LI>x: GCPPixel -----> Pixel (x) location of GCP on Raster</LI>
+	 * <LI>y: GCPLine ------> Line(y) location of GCP on Raster</LI>
+	 * <LI>lon: GCPX -------> X position of GCP in Georeferenced Space</LI>
+	 * <LI>lat: GCPY -------> Y position of GCP in Georeferenced Space</LI>
+	 * <LI>elevation: GCPZ -> elevation of GCP in Georeferenced Space</LI>
+	 * </UL>
+	 */
+	private List gcps;
+
+	/** The raster width */
+	private int width;
+
+	/** The raster height */
+	private int height;
+
+	/** The raster tile height */
+	private int tileHeight;
+
+	/** The raster tile width */
+	private int tileWidth;
+
+	/** The <code>ColorModel</code> used for the dataset */
+	private ColorModel colorModel;
+
+	/** The <code>SampleModel</code> used for the dataset */
+	private SampleModel sampleModel;
+
+	// ////////////////////////////////////////////////
+	// 
+	// Band Properties
+	//
+	// ////////////////////////////////////////////////
+
+	/** Number of bands */
+	private int bandsNumber;
+
+	/** Array to store the maximum value for each band */
+	private Double[] maximums;
+
+	/** Array to store the minimum value for each band */
+	private Double[] minimums;
+
+	/** Array to store the noData value for each band */
+	private Double[] noDataValues;
+
+	/** Array to store the scale value for each band */
+	private Double[] scales;
+
+	/** Array to store the offset value for each band */
+	private Double[] offsets;
+
+	/** Array to store the number of numOverviews for each band */
 	private int[] numOverviews;
 
-	public GDALCommonIIOImageMetadata(final GDALDatasetWrapper ds) {
-		this(ds, nativeMetadataFormatName, nativeMetadataFormatClassName);
+	/** Array to store the color interpretation for each band */
+	private int[] colorInterpretations;
+
+	/**
+	 * <code>GDALCommonIIOImageMetadata</code> constructor. Firstly, it
+	 * provides to open a dataset from the specified input dataset name. Then,
+	 * it call the constructor which initializes all fields with dataset
+	 * properties, such as raster size, raster tiling properties, projection,
+	 * and more.
+	 * 
+	 * @param sDatasetName
+	 *            The name (usually a File path or a subdataset name when the
+	 *            format supports subdatasets) of the dataset we want to open.
+	 */
+	public GDALCommonIIOImageMetadata(String sDatasetName) {
+		this(sDatasetName, nativeMetadataFormatName,
+				nativeMetadataFormatClassName);
 	}
 
-	public GDALCommonIIOImageMetadata(final GDALDatasetWrapper ds,
-			String formatName, String formatClass) {
-		super(false, formatName, formatClass, null, null);
-		this.dsWrapper = ds;
+	/**
+	 * <code>GDALCommonIIOImageMetadata</code> constructor. Firstly, it
+	 * provides to open a dataset from the specified input dataset name. Then,
+	 * it call the constructor which initializes all fields with dataset
+	 * properties, such as raster size, raster tiling properties, projection,
+	 * and more.
+	 * 
+	 * @param sDatasetName
+	 *            The name (usually a File path or a subdataset name when the
+	 *            format supports subdatasets) of the dataset we want to open.
+	 * @param formatName
+	 *            the name of the native metadata format
+	 * @param formatClassName
+	 *            the name of the class of the native metadata format
+	 */
+	public GDALCommonIIOImageMetadata(String sDatasetName, String formatName,
+			String formatClassName) {
+		this(GDALUtilities.acquireDataSet(sDatasetName, gdalconst.GA_ReadOnly),
+				sDatasetName, formatName, formatClassName);
+	}
+
+	/**
+	 * <code>GDALCommonIIOImageMetadata</code> constructor.
+	 * 
+	 * @param dataset
+	 *            the input <code>Dataset</code> on which build the wrapper.
+	 * @param name
+	 *            the name to be set for the dataset contained on this wrapper.
+	 * @param initializationRequired
+	 *            specify if initializing wrapper members is required or not.
+	 * @param formatName
+	 *            the name of the native metadata format
+	 * @param formatClassName
+	 *            the name of the class of the native metadata format
+	 */
+	public GDALCommonIIOImageMetadata(Dataset dataset, String name,
+			final boolean initializationRequired, final String formatName,
+			final String formatClassName) {
+		super(false, formatName, formatClassName, null, null);
+		datasetName = name;
+		datasetDescription = dataset.GetDescription();
+		driverDescription = dataset.GetDriver().GetDescription();
+		driverName = dataset.GetDriver().getShortName();
+		gdalMetadataMap = Collections.synchronizedMap(new HashMap(2));
+		Map defMap = dataset
+				.GetMetadata_Dict(GDALUtilities.GDALMetadataDomain.DEFAULT);
+		if (defMap != null && defMap.size() > 0) {
+			gdalMetadataMap.put(
+					GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP, defMap);
+		}
+		Map imageStMap = dataset
+				.GetMetadata_Dict(GDALUtilities.GDALMetadataDomain.IMAGESTRUCTURE);
+		if (imageStMap != null && imageStMap.size() > 0) {
+			gdalMetadataMap
+					.put(GDALUtilities.GDALMetadataDomain.IMAGESTRUCTURE,
+							imageStMap);
+		}
+		if (initializationRequired)
+			setMembers(dataset);
+		setGeoreferencingInfo(dataset);
+		// clean up data set in order to avoid keeping them around for a lot
+		// of time.
+		GDALUtilities.closeDataSet(dataset);
+	}
+
+	/**
+	 * Constructor which initializes fields by retrieving properties such as
+	 * raster size, raster tiling properties, projection, and more from a given
+	 * input <code>Dataset</code>.
+	 * 
+	 * @param dataset
+	 *            the <code>Dataset</code> used to initialize all
+	 *            {@link GDALDatasetWrapper}'s fields.
+	 * @param name
+	 *            the dataset name
+	 * @param formatName
+	 *            the name of the native metadata format
+	 * @param formatClassName
+	 *            the name of the class of the native metadata format
+	 */
+	public GDALCommonIIOImageMetadata(Dataset dataset, String name,
+			final String formatName, final String formatClassName) {
+		this(dataset, name, true, formatName, formatClassName);
+	}
+
+	/**
+	 * Constructor which initializes fields by retrieving properties such as
+	 * raster size, raster tiling properties, projection, and more from a given
+	 * input <code>Dataset</code>.
+	 * 
+	 * @param dataset
+	 *            the <code>Dataset</code> used to initialize all
+	 *            {@link GDALDatasetWrapper}'s fields.
+	 * @param name
+	 *            the dataset name
+	 * 
+	 */
+	public GDALCommonIIOImageMetadata(Dataset dataset, String name,
+			final boolean initializationRequired) {
+		this(dataset, name, initializationRequired, nativeMetadataFormatName,
+				nativeMetadataFormatClassName);
+	}
+
+	/**
+	 * Given an input <code>Dataset</code>, sets georeferencing information
+	 * 
+	 * @param dataset
+	 *            a <code>Dataset</code> from where to retrieve all
+	 *            georeferencing information available
+	 */
+	private void setGeoreferencingInfo(Dataset dataset) {
+		// Setting CRS's related information
+		dataset.GetGeoTransform(geoTransformation);
+		projection = dataset.GetProjection();
+		gcpProjection = dataset.GetGCPProjection();
+		gcpNumber = dataset.GetGCPCount();
+	}
+
+	/**
+	 * A kind of initialization method which provides to set all fields of the
+	 * {@link GDALDatasetWrapper}
+	 * 
+	 * @param dataset
+	 *            the <code>Dataset</code> which will be used for the
+	 *            initialization
+	 * @return <code>true</code> if the initialization was successfully
+	 *         completed. <code>false</code> if some field wasn't properly
+	 *         initialized
+	 */
+	private boolean setMembers(Dataset dataset) {
+		// Retrieving raster properties
+		width = dataset.getRasterXSize();
+		height = dataset.getRasterYSize();
+
+		// Retrieving block size
+		final int[] xBlockSize = new int[1];
+		final int[] yBlockSize = new int[1];
+
+		// Remember: RasterBand numeration starts from 1
+		dataset.GetRasterBand(1).GetBlockSize(xBlockSize, yBlockSize);
+		tileHeight = yBlockSize[0];
+		tileWidth = xBlockSize[0];
+		if (((long) tileHeight) * ((long) tileWidth) > Integer.MAX_VALUE)
+			performTileSizeTuning(dataset);
+
+		// /////////////////////////////////////////////////////////////////
+		//
+		// Getting dataset main properties
+		//
+		// /////////////////////////////////////////////////////////////////
+		bandsNumber = dataset.getRasterCount();
+		if (bandsNumber <= 0)
+			return false;
+		// final int xsize = dataset.getRasterXSize();
+		// final int ysize = dataset.getRasterYSize();
+
+		// If the image is very big, its size expressed as the number of
+		// bytes needed to store pixels, may be a negative number
+		final int tileSize = tileWidth
+				* tileHeight
+				* bandsNumber
+				* (gdal.GetDataTypeSize(dataset.GetRasterBand(1).getDataType()) / 8);
+
+		// bands variables
+		final int[] banks = new int[bandsNumber];
+		final int[] offsetsR = new int[bandsNumber];
+		noDataValues = new Double[bandsNumber];
+		scales = new Double[bandsNumber];
+		offsets = new Double[bandsNumber];
+		minimums = new Double[bandsNumber];
+		maximums = new Double[bandsNumber];
+		numOverviews = new int[bandsNumber];
+		colorInterpretations = new int[bandsNumber];
+		int buf_type = 0;
+
+		Band pBand = null;
+
+		// scanning bands
+		final Double tempD[] = new Double[1];
+		final int bandsOffset[] = new int[bandsNumber];
+		for (int band = 0; band < bandsNumber; band++) {
+			/* Bands are not 0-base indexed, so we must add 1 */
+			pBand = dataset.GetRasterBand(band + 1);
+			buf_type = pBand.getDataType();
+			banks[band] = band;
+			offsetsR[band] = 0;
+			pBand.GetNoDataValue(tempD);
+			noDataValues[band] = tempD[0];
+			pBand.GetOffset(tempD);
+			offsets[band] = tempD[0];
+			pBand.GetScale(tempD);
+			scales[band] = tempD[0];
+			pBand.GetMinimum(tempD);
+			minimums[band] = tempD[0];
+			pBand.GetMaximum(tempD);
+			maximums[band] = tempD[0];
+			colorInterpretations[band] = pBand.GetRasterColorInterpretation();
+			numOverviews[band] = pBand.GetOverviewCount();
+			bandsOffset[band] = band;
+		}
+
+		// /////////////////////////////////////////////////////////////////
+		//
+		// Variable used to specify the data type for the storing samples
+		// of the SampleModel
+		//
+		// /////////////////////////////////////////////////////////////////
+		int buffer_type = 0;
+		if (buf_type == gdalconstConstants.GDT_Byte)
+			buffer_type = DataBuffer.TYPE_BYTE;
+		else if (buf_type == gdalconstConstants.GDT_UInt16)
+			buffer_type = DataBuffer.TYPE_USHORT;
+		else if (buf_type == gdalconstConstants.GDT_Int16)
+			buffer_type = DataBuffer.TYPE_SHORT;
+		else if ((buf_type == gdalconstConstants.GDT_Int32)
+				|| (buf_type == gdalconstConstants.GDT_UInt32))
+			buffer_type = DataBuffer.TYPE_INT;
+		else if (buf_type == gdalconstConstants.GDT_Float32)
+			buffer_type = DataBuffer.TYPE_FLOAT;
+		else if (buf_type == gdalconstConstants.GDT_Float64)
+			buffer_type = DataBuffer.TYPE_DOUBLE;
+		else
+			return false;
+
+		// //
+		//
+		// Setting the Sample Model
+		//
+		// Here you have a nice trick. If you check the SampleMOdel class
+		// you'll see that there is an actual limitation on the width and
+		// height of an image that we can create that is it the product
+		// width*height cannot be bigger than the maximum integer.
+		//
+		// Well a way to pass beyond that is to use TileWidth and TileHeight
+		// instead of the real width and height when creating the sample
+		// model. It will work!
+		// //
+		if (tileSize < 0)
+			sampleModel = new BandedSampleModel(buffer_type, tileWidth,
+					tileHeight, tileWidth, banks, offsetsR);
+		else
+			sampleModel = new PixelInterleavedSampleModel(buffer_type,
+					tileWidth, tileHeight, bandsNumber,
+					tileWidth * bandsNumber, bandsOffset);
+
+		// //
+		//
+		// Setting the Color Model
+		//
+		// //
+		if (pBand.GetRasterColorInterpretation() == gdalconstConstants.GCI_PaletteIndex) {
+			colorModel = pBand.GetRasterColorTable().getIndexColorModel(
+					gdal.GetDataTypeSize(buf_type));
+		} else {
+			ColorSpace cs = null;
+			if (bandsNumber > 1) {
+				// /////////////////////////////////////////////////////////////////
+				//
+				// Number of Bands > 1.
+				// ImageUtil.createColorModel provides to Creates a
+				// ColorModel that may be used with the specified
+				// SampleModel
+				//
+				// /////////////////////////////////////////////////////////////////
+				colorModel = ImageUtil.createColorModel(sampleModel);
+				if (colorModel == null) {
+					LOGGER.severe("No ColorModels found");
+					return false;
+				}
+
+			} else if ((buffer_type == DataBuffer.TYPE_BYTE)
+					|| (buffer_type == DataBuffer.TYPE_USHORT)
+					|| (buffer_type == DataBuffer.TYPE_INT)
+					|| (buffer_type == DataBuffer.TYPE_FLOAT)
+					|| (buffer_type == DataBuffer.TYPE_DOUBLE)) {
+
+				// Just one band. Using the built-in Gray Scale Color Space
+				cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
+				colorModel = RasterFactory.createComponentColorModel(
+						buffer_type, // dataType
+						cs, // color space
+						false, // has alpha
+						false, // is alphaPremultiplied
+						Transparency.OPAQUE); // transparency
+			} else {
+				if (buffer_type == DataBuffer.TYPE_SHORT) {
+					// Just one band. Using the built-in Gray Scale Color
+					// Space
+					cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
+					colorModel = new ComponentColorModel(cs, false, false,
+							Transparency.OPAQUE, DataBuffer.TYPE_SHORT);
+				}
+			}
+		}
+		if (colorModel == null || sampleModel == null)
+			return false;
+		return true;
 	}
 
 	private Node createCommonNativeTree() {
@@ -86,17 +491,13 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 		//
 		// ////////////////////////////////////////////////////////////////////
 		IIOMetadataNode node = new IIOMetadataNode("DatasetDescriptor");
-		node.setAttribute("name", dsWrapper.getDatasetName());
-		node.setAttribute("description", dsWrapper.getDatasetDescription());
-		node.setAttribute("driverName", dsWrapper.getDriverName());
-		node
-				.setAttribute("driverDescription", dsWrapper
-						.getDriverDescription());
-		node.setAttribute("projection", dsWrapper.getProjection());
-		node
-				.setAttribute("numGCPs", Integer.toString(dsWrapper
-						.getGcpNumber()));
-		node.setAttribute("gcpProjection", dsWrapper.getGcpProjection());
+		node.setAttribute("name", datasetName);
+		node.setAttribute("description", datasetDescription);
+		node.setAttribute("driverName", driverName);
+		node.setAttribute("driverDescription", driverDescription);
+		node.setAttribute("projection", projection);
+		node.setAttribute("numGCPs", Integer.toString(gcpNumber));
+		node.setAttribute("gcpProjection", gcpProjection);
 		root.appendChild(node);
 
 		// ////////////////////////////////////////////////////////////////////
@@ -105,14 +506,11 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 		//
 		// ////////////////////////////////////////////////////////////////////
 		node = new IIOMetadataNode("RasterDimensions");
-		node.setAttribute("width", Integer.toString(dsWrapper.getWidth()));
-		node.setAttribute("height", Integer.toString(dsWrapper.getHeight()));
-		node.setAttribute("tileWidth", Integer.toString(dsWrapper
-				.getTileHeight()));
-		node.setAttribute("tileHeight", Integer.toString(dsWrapper
-				.getTileWidth()));
-		node.setAttribute("numBands", Integer.toString(dsWrapper
-				.getBandsNumber()));
+		node.setAttribute("width", Integer.toString(width));
+		node.setAttribute("height", Integer.toString(height));
+		node.setAttribute("tileWidth", Integer.toString(tileWidth));
+		node.setAttribute("tileHeight", Integer.toString(tileHeight));
+		node.setAttribute("numBands", Integer.toString(bandsNumber));
 		root.appendChild(node);
 
 		// ////////////////////////////////////////////////////////////////////
@@ -121,21 +519,20 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 		//
 		// ////////////////////////////////////////////////////////////////////
 		node = new IIOMetadataNode("GeoTransform");
-		final double[] geotransform = dsWrapper.getGeoTransformation();
-		final boolean hasgeoTransform = geotransform != null
-				&& geotransform.length > 0;
+		final boolean hasgeoTransform = geoTransformation != null
+				&& geoTransformation.length > 0;
 		node.setAttribute("m0", hasgeoTransform ? Double
-				.toString(geotransform[0]) : null);
+				.toString(geoTransformation[0]) : null);
 		node.setAttribute("m1", hasgeoTransform ? Double
-				.toString(geotransform[1]) : null);
+				.toString(geoTransformation[1]) : null);
 		node.setAttribute("m2", hasgeoTransform ? Double
-				.toString(geotransform[2]) : null);
+				.toString(geoTransformation[2]) : null);
 		node.setAttribute("m3", hasgeoTransform ? Double
-				.toString(geotransform[3]) : null);
+				.toString(geoTransformation[3]) : null);
 		node.setAttribute("m4", hasgeoTransform ? Double
-				.toString(geotransform[4]) : null);
+				.toString(geoTransformation[4]) : null);
 		node.setAttribute("m5", hasgeoTransform ? Double
-				.toString(geotransform[5]) : null);
+				.toString(geoTransformation[5]) : null);
 		root.appendChild(node);
 
 		// ////////////////////////////////////////////////////////////////////
@@ -143,10 +540,9 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 		// GCPS
 		//
 		// ////////////////////////////////////////////////////////////////////
-		final int gcpNumber = dsWrapper.getGcpNumber();
 		if (gcpNumber > 0) {
 			IIOMetadataNode nodeGCPs = new IIOMetadataNode("GCPS");
-			final List gcps = dsWrapper.getGcps();
+			final List gcps = getGcps();
 			final Iterator it = gcps.iterator();
 			while (it.hasNext()) {
 				node = new IIOMetadataNode("GCP");
@@ -168,7 +564,6 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 		// BandsInfo
 		//
 		// ////////////////////////////////////////////////////////////////////
-		final int numBand = dsWrapper.getBandsNumber();
 		IIOMetadataNode bandsNode = new IIOMetadataNode("BandsInfo");
 
 		// //
@@ -176,32 +571,27 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 		// BandInfos -> BandInfo
 		//
 		// //
-		for (int i = 0; i < numBand; i++) {
+		for (int i = 0; i < bandsNumber; i++) {
 			node = new IIOMetadataNode("BandInfo");
 			node.setAttribute("index", Integer.toString(i));
-			node.setAttribute("colorInterpretation", dsWrapper
-					.getColorInterpretations() != null
-					& dsWrapper.getColorInterpretations().length > i ? Integer
-					.toBinaryString(dsWrapper.getColorInterpretations()[i])
-					: "");
-			node.setAttribute("noData", noDataValues != null
-					&& noDataValues.length > i
-					&& !Double.isNaN(noDataValues[i]) ? Double
-					.toString(noDataValues[i]) : null);
-			node.setAttribute("maximum",
-					maximums != null && maximums.length > i
-							&& !Double.isNaN(maximums[i]) ? Double
-							.toString(maximums[i]) : null);
-			node.setAttribute("minimum",
-					minimums != null && minimums.length > i
-							&& !Double.isNaN(minimums[i]) ? Double
-							.toString(minimums[i]) : null);
+			node.setAttribute("colorInterpretation",
+					colorInterpretations != null
+							& colorInterpretations.length > i ? Integer
+							.toBinaryString(colorInterpretations[i]) : "");
+			node.setAttribute("noData",
+					noDataValues != null && noDataValues.length > i
+							&& noDataValues[i] != null ? noDataValues[i]
+							.toString() : null);
+			node.setAttribute("maximum", maximums != null
+					&& maximums.length > i && maximums[i] != null ? maximums[i]
+					.toString() : null);
+			node.setAttribute("minimum", minimums != null
+					&& minimums.length > i && minimums[i] != null ? minimums[i]
+					.toString() : null);
 			node.setAttribute("scale", scales != null && scales.length > i
-					&& !Double.isNaN(scales[i]) ? Double.toString(scales[i])
-					: null);
+					&& scales[i] != null ? scales[i].toString() : null);
 			node.setAttribute("offset", offsets != null && offsets.length > i
-					&& !Double.isNaN(offsets[i]) ? Double.toString(offsets[i])
-					: null);
+					&& offsets[i] != null ? offsets[i].toString() : null);
 			node.setAttribute("numOverviews", numOverviews != null
 					&& numOverviews.length > i ? Integer
 					.toString(numOverviews[i]) : null);
@@ -213,9 +603,8 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 		// BandInfos -> BandInfo -> ColorTable
 		//
 		// ////////////////////////////////////////////////////////////////////
-		if (dsWrapper.getColorModel() instanceof IndexColorModel) {
-			final IndexColorModel icm = (IndexColorModel) dsWrapper
-					.getColorModel();
+		if (colorModel instanceof IndexColorModel) {
+			final IndexColorModel icm = (IndexColorModel) colorModel;
 			final int mapSize = icm.getMapSize();
 			IIOMetadataNode node1 = new IIOMetadataNode("ColorTable");
 			node1.setAttribute("sizeOfLocalColorTable", Integer
@@ -240,27 +629,9 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 		return root;
 	}
 
-	/**
-	 * Init all Bands properties (NoData, Maximums, Minimums, Scales and Offsets
-	 * values)
-	 */
-	private void initBandValues() {
-		assert Thread.holdsLock(this);
-		initNoDataValues();
-		initMaximums();
-		initMinimums();
-		initNumOverviews();
-		initScales();
-		initOffsets();
-	}
-
 	public Node getAsTree(String formatName) {
-		synchronized (this) {
-			initBandValues();
-		}
 		if (nativeMetadataFormatName.equalsIgnoreCase(formatName))
 			return createCommonNativeTree();
-
 		throw new UnsupportedOperationException(formatName
 				+ " is not a supported format name");
 	}
@@ -289,8 +660,8 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 	 * Return the name of the dataset which is the source for this
 	 * {@code IIOMetadata}
 	 */
-	public String getName() {
-		return dsWrapper.getDatasetName();
+	public String getDatasetName() {
+		return datasetName;
 	}
 
 	/**
@@ -298,7 +669,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 	 * <code>IIOMetadata</code>
 	 */
 	public String getDescription() {
-		return dsWrapper.getDatasetDescription();
+		return datasetDescription;
 	}
 
 	/**
@@ -306,7 +677,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 	 * this <code>IIOMetadata</code>
 	 */
 	public String getDriverName() {
-		return dsWrapper.getDriverName();
+		return driverName;
 	}
 
 	/**
@@ -314,7 +685,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 	 * for this <code>IIOMetadata</code>
 	 */
 	public String getDriverDescription() {
-		return dsWrapper.getDriverDescription();
+		return driverDescription;
 	}
 
 	// ////////////////////////////////////////////////////////////////////////
@@ -327,27 +698,42 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 	 * <code>IIOMetadata</code>
 	 */
 	public int getBandsNumber() {
-		return dsWrapper.getBandsNumber();
+		return bandsNumber;
 	}
 
 	/** Return the width of the image */
 	public int getWidth() {
-		return dsWrapper.getWidth();
+		return width;
 	}
 
 	/** Return the height of the image */
 	public int getHeight() {
-		return dsWrapper.getHeight();
+		return height;
 	}
 
 	/** Return the tile height of the image */
 	public int getTileHeight() {
-		return dsWrapper.getTileHeight();
+		return tileHeight;
 	}
 
 	/** Return the tile width of the image */
 	public int getTileWidth() {
-		return dsWrapper.getTileWidth();
+		return tileWidth;
+	}
+
+	/**
+	 * return the <code>ColorModel</code> for the dataset held by this object.
+	 */
+	public final ColorModel getColorModel() {
+		return colorModel;
+	}
+
+	/**
+	 * return the <code>SampleModel</code> for the dataset held by this
+	 * object.
+	 */
+	public final SampleModel getSampleModel() {
+		return sampleModel;
 	}
 
 	// ////////////////////////////////////////////////////////////////////////
@@ -357,27 +743,34 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 	// ////////////////////////////////////////////////////////////////////////
 	/** Return the projection */
 	public String getProjection() {
-		return dsWrapper.getProjection();
+		return projection;
 	}
 
 	/** Return the grid to world transformation of the image */
 	public double[] getGeoTransformation() {
-		return (double[]) dsWrapper.getGeoTransformation().clone();
+		return (double[]) geoTransformation.clone();
 	}
 
 	/** Return the number of Ground Control Points */
 	public int getGcpNumber() {
-		return dsWrapper.getGcpNumber();
+		return gcpNumber;
 	}
 
 	/** return the Ground Control Point's projection */
 	public String getGcpProjection() {
-		return dsWrapper.getGcpProjection();
+		return gcpProjection;
 	}
 
 	/** return the Ground Control Points */
-	public List getGCPs() {
-		return dsWrapper.getGcps();
+	public synchronized final List getGcps() {
+		if (gcps == null) {
+			gcps = new Vector(gcpNumber);
+			final Dataset ds = GDALUtilities.acquireDataSet(datasetName,
+					gdalconst.GA_ReadOnly);
+			ds.GetGCPs((Vector) gcps);
+			GDALUtilities.closeDataSet(ds);
+		}
+		return Collections.unmodifiableList(gcps);
 	}
 
 	// ////////////////////////////////////////////////////////////////////////
@@ -385,54 +778,6 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 	// Bands Properties
 	// 
 	// ////////////////////////////////////////////////////////////////////////
-	/**
-	 * Returns the maximum value for the specified band
-	 * 
-	 * @param bandIndex
-	 *            the index of the required band
-	 */
-	public double getMaximum(final int bandIndex) {
-		checkBandIndex(bandIndex);
-		return maximums[bandIndex];
-	}
-
-	/** Initialize the array containing the maximum value for each band */
-	private void initMaximums() {
-		assert Thread.holdsLock(this);
-		if (maximums == null) {
-			final Double[] maxValues = dsWrapper.getMaximums();
-			final int nMaximums = maxValues.length;
-			maximums = new double[nMaximums];
-			for (int i = 0; i < nMaximums; i++)
-				maximums[i] = maxValues[i] != null ? maxValues[i].doubleValue()
-						: Double.NaN;
-		}
-	}
-
-	/**
-	 * Returns the minimum value for the specified band
-	 * 
-	 * @param bandIndex
-	 *            the index of the required band
-	 */
-	public double getMinimum(final int bandIndex) {
-		checkBandIndex(bandIndex);
-		return minimums[bandIndex];
-	}
-
-	/** Initialize the array containing the minimum value for each band */
-	private void initMinimums() {
-		assert Thread.holdsLock(this);
-		if (minimums == null) {
-			final Double[] minValues = dsWrapper.getMinimums();
-			final int nMinimums = minValues.length;
-			minimums = new double[nMinimums];
-			for (int i = 0; i < nMinimums; i++)
-				minimums[i] = minValues[i] != null ? minValues[i].doubleValue()
-						: Double.NaN;
-		}
-	}
-
 	/**
 	 * Returns the number of overviews for the specified band
 	 * 
@@ -444,12 +789,46 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 		return numOverviews[bandIndex];
 	}
 
-	/** Initialize the array containing the number of overviews for each band */
-	private void initNumOverviews() {
-		assert Thread.holdsLock(this);
-		if (numOverviews == null) {
-			numOverviews = dsWrapper.getNumOverviews();
-		}
+	/**
+	 * Returns the maximum value for the specified band
+	 * 
+	 * @param bandIndex
+	 *            the index of the required band
+	 * @throws IllegalArgumentException
+	 *             in case the specified band number is out of range or maximum
+	 *             value has not been found
+	 */
+	public double getMaximum(final int bandIndex)
+			throws IllegalArgumentException {
+		checkBandIndex(bandIndex);
+		Double maximum = maximums[bandIndex];
+		if (maximum != null)
+			return maximum.doubleValue();
+		else
+			throw new IllegalArgumentException(
+					"no maximum value available for the specified band "
+							+ bandIndex);
+	}
+
+	/**
+	 * Returns the minimum value for the specified band
+	 * 
+	 * @param bandIndex
+	 *            the index of the required band
+	 * @throws IllegalArgumentException
+	 *             in case the specified band number is out of range or minimum
+	 *             value has not been found
+	 */
+	public double getMinimum(final int bandIndex)
+			throws IllegalArgumentException {
+		checkBandIndex(bandIndex);
+		Double minimum = minimums[bandIndex];
+		if (minimum != null)
+			return minimum.doubleValue();
+		else
+			throw new IllegalArgumentException(
+					"no minimum value available for the specified band "
+							+ bandIndex);
 	}
 
 	/**
@@ -457,23 +836,19 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 	 * 
 	 * @param bandIndex
 	 *            the index of the required band
+	 * @throws IllegalArgumentException
+	 *             in case the specified band number is out of range or scale
+	 *             value has not been found
 	 */
-	public double getScale(final int bandIndex) {
+	public double getScale(final int bandIndex) throws IllegalArgumentException {
 		checkBandIndex(bandIndex);
-		return scales[bandIndex];
-	}
-
-	/** Initialize the array containing the scale value for each band */
-	private void initScales() {
-		assert Thread.holdsLock(this);
-		if (scales == null) {
-			final Double[] scaleValues = dsWrapper.getScales();
-			final int nScales = scaleValues.length;
-			scales = new double[nScales];
-			for (int i = 0; i < nScales; i++)
-				scales[i] = scaleValues[i] != null ? scaleValues[i]
-						.doubleValue() : Double.NaN;
-		}
+		Double scale = scales[bandIndex];
+		if (scale != null)
+			return scale.doubleValue();
+		else
+			throw new IllegalArgumentException(
+					"no scale value available for the specified band "
+							+ bandIndex);
 	}
 
 	/**
@@ -481,47 +856,41 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 	 * 
 	 * @param bandIndex
 	 *            the index of the required band
+	 * @throws IllegalArgumentException
+	 *             in case the specified band number is out of range or offset
+	 *             value has not been found
 	 */
-	public double getOffset(final int bandIndex) {
+	public double getOffset(final int bandIndex)
+			throws IllegalArgumentException {
 		checkBandIndex(bandIndex);
-		return offsets[bandIndex];
-	}
-
-	/** Initialize the array containing the offset value for each band */
-	private void initOffsets() {
-		assert Thread.holdsLock(this);
-		if (offsets == null) {
-			final Double[] offsetValues = dsWrapper.getOffsets();
-			final int nOffsets = offsetValues.length;
-			offsets = new double[nOffsets];
-			for (int i = 0; i < nOffsets; i++)
-				offsets[i] = offsetValues[i] != null ? offsetValues[i]
-						.doubleValue() : Double.NaN;
-		}
+		Double offset = offsets[bandIndex];
+		if (offset != null)
+			return offset.doubleValue();
+		else
+			throw new IllegalArgumentException(
+					"no Offset value available for the specified band "
+							+ bandIndex);
 	}
 
 	/**
-	 * Returns the noData value for the specified band
+	 * Returns the noDataValue value for the specified band
 	 * 
 	 * @param bandIndex
 	 *            the index of the required band
+	 * @throws IllegalArgumentException
+	 *             in case the specified band number is out of range or
+	 *             noDataValue has not been found
 	 */
-	public double getNoDataValue(final int bandIndex) {
+	public double getNoDataValue(final int bandIndex)
+			throws IllegalArgumentException {
 		checkBandIndex(bandIndex);
-		return noDataValues[bandIndex];
-	}
-
-	/** Initialize the array containing the noData value for each band */
-	private void initNoDataValues() {
-		assert Thread.holdsLock(this);
-		if (noDataValues == null) {
-			final Double[] noDataVals = dsWrapper.getNoDataValues();
-			final int nNoDataValues = noDataVals.length;
-			noDataValues = new double[nNoDataValues];
-			for (int i = 0; i < nNoDataValues; i++)
-				noDataValues[i] = noDataVals[i] != null ? noDataVals[i]
-						.doubleValue() : Double.NaN;
-		}
+		Double noDataValue = noDataValues[bandIndex];
+		if (noDataValue != null)
+			return noDataValue.doubleValue();
+		else
+			throw new IllegalArgumentException(
+					"no noDataValue available for the specified band "
+							+ bandIndex);
 	}
 
 	/**
@@ -530,18 +899,105 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 	 * 
 	 * @param bandIndex
 	 *            the band index to be validated.
-	 * @throws IndexOutOfBoundsException
+	 * @throws IllegalArgumentException
 	 *             in case the specified band index isn't in the valid range
 	 */
-	private synchronized void checkBandIndex(final int bandIndex) {
-		initBandValues();
-		final int bandsNum = dsWrapper.getBandsNumber();
-		if (bandIndex < 0 || bandIndex > bandsNum) {
+	private void checkBandIndex(final int bandIndex)
+			throws IllegalArgumentException {
+		if (bandIndex < 0 || bandIndex > bandsNumber) {
 			final StringBuffer sb = new StringBuffer("Specified band index (")
 					.append(bandIndex).append(
 							") is out of range. It should be in the range [0,")
-					.append(bandsNum - 1).append("]");
-			throw new IndexOutOfBoundsException(sb.toString());
+					.append(bandsNumber - 1).append("]");
+			throw new IllegalArgumentException(sb.toString());
 		}
+	}
+
+	/**
+	 * Provides to increase data access performances. In many cases, the block
+	 * size for a raster band is a single line of N pixels, where N is the width
+	 * of the raster.
+	 * 
+	 * The Java Advanced Imaging allows to load and manipulate data only when
+	 * they are needed (The Deferred Execution Model). This is done by working
+	 * only on tiles containing the required data.
+	 * 
+	 * However, reading a big image composed of tiles having a size of Nx1 (The
+	 * most commonly used block size) would be not optimized because for each
+	 * tile, a read operation is computed (very small tiles -> very high read
+	 * operations number)
+	 * 
+	 * In order to optimize data access operations, it would be better to make
+	 * tiles a little bit greater than just a single line of pixels.
+	 * 
+	 * @param dataset
+	 */
+	private void performTileSizeTuning(Dataset dataset) {
+		final int width = dataset.getRasterXSize();
+		final int height = dataset.getRasterYSize();
+		final Dimension imageSize = new Dimension(width, height);
+		final Dimension tileSize = GDALUtilities.toTileSize(imageSize);
+		tileHeight = tileSize.height;
+		tileWidth = tileSize.width;
+	}
+
+	/**
+	 * Returns a Map representing metadata elements (key,value) for a specific
+	 * domain of GDAL metadata.
+	 * 
+	 * @param metadataDomain
+	 *            the requested GDAL metadata domain.
+	 * 
+	 * @see GDALUtilities.GDALMetadataDomain
+	 * @return the metadata mapping for the specified domain or
+	 *         <code>null</code> in case no metadata is available for the
+	 *         domain or the specified domain is unsupported.
+	 */
+	protected Map getGdalMetadataDomain(final String metadataDomain) {
+		if (metadataDomain
+				.equalsIgnoreCase(GDALUtilities.GDALMetadataDomain.DEFAULT)) {
+			if (gdalMetadataMap
+					.containsKey(GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP))
+				return (Map) gdalMetadataMap
+						.get(GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP);
+		} else if (metadataDomain
+				.equalsIgnoreCase(GDALUtilities.GDALMetadataDomain.IMAGESTRUCTURE)
+				|| metadataDomain
+						.startsWith(GDALUtilities.GDALMetadataDomain.XML_PREFIX)) {
+			if (gdalMetadataMap.containsKey(metadataDomain))
+				return (Map) gdalMetadataMap.get(metadataDomain);
+		}
+		return null;
+	}
+
+	/**
+	 * Return all the available metadata domains.
+	 * 
+	 * @return a list of <code>String</code>s representing metadata domains
+	 *         defined for the dataset on which this instance is based.
+	 */
+	protected List getGdalMetadataDomainsList() {
+		final Set keys = gdalMetadataMap.keySet();
+		List list = null;
+		// //
+		// 
+		// Since the GDAL default metadata domain is an empty String (which 
+		// can't be used as a key of a map), I need a minor tuning 
+		// 
+		//
+		// //
+		if (keys != null) {
+			final Iterator keysIt = keys.iterator();
+			list = new ArrayList(keys.size());
+			while (keysIt.hasNext()) {
+				final String key = (String) keysIt.next();
+				if (key
+						.equals(GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP))
+					list.add(GDALUtilities.GDALMetadataDomain.DEFAULT);
+				else
+					list.add(key);
+			}
+		}
+		return list;
 	}
 }

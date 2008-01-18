@@ -16,17 +16,11 @@
  */
 package it.geosolutions.imageio.plugins.ecw;
 
-import it.geosolutions.imageio.gdalframework.GDALDatasetWrapper;
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
 
 import java.awt.image.RenderedImage;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.imageio.metadata.IIOMetadata;
-
-import org.gdal.gdal.Dataset;
 
 /**
  * {@link ECWImageReader} is a {@link GDALImageReader} able to create
@@ -46,16 +40,4 @@ public class ECWImageReader extends GDALImageReader {
 			LOGGER.fine("ECWImageReader Constructor");
 	}
 
-	public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
-		return getDataSetWrapper(imageIndex).getImageIOMetadata();
-	}
-
-	protected GDALDatasetWrapper createDataSetWrapper(Dataset mainDataset,
-			String mainDatasetFileName) {
-		return new GDALDatasetWrapper(mainDataset, mainDatasetFileName);
-	}
-
-	protected GDALDatasetWrapper createDataSetWrapper(String string) {
-		return new GDALDatasetWrapper(string);
-	}
 }

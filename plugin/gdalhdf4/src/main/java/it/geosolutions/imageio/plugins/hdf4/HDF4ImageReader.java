@@ -16,17 +16,9 @@
  */
 package it.geosolutions.imageio.plugins.hdf4;
 
-import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
-import it.geosolutions.imageio.gdalframework.GDALDatasetWrapper;
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
 
 import java.awt.image.RenderedImage;
-import java.io.IOException;
-import java.util.logging.Logger;
-
-import javax.imageio.metadata.IIOMetadata;
-
-import org.gdal.gdal.Dataset;
 
 /**
  * {@link HDF4ImageReader} is a {@link GDALImageReader} able to create
@@ -40,23 +32,4 @@ public class HDF4ImageReader extends GDALImageReader {
 	public HDF4ImageReader(HDF4ImageReaderSpi originatingProvider) {
 		super(originatingProvider);
 	}
-
-	public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
-		return getDataSetWrapper(imageIndex).getImageIOMetadata();
-	}
-
-	protected GDALDatasetWrapper createDataSetWrapper(Dataset mainDataset,
-			String mainDatasetFileName) {
-		return new HDF4DatasetWrapper(mainDataset, mainDatasetFileName);
-	}
-
-	protected GDALDatasetWrapper createDataSetWrapper(String string) {
-		return new HDF4DatasetWrapper(string);
-	}
-
-	protected IIOMetadata getIIOImageMetadata(GDALDatasetWrapper wrapper) {
-		// TODO: in the future, we could define a specific HDF4 metadata format
-		return new GDALCommonIIOImageMetadata(wrapper);
-	}
-
 }

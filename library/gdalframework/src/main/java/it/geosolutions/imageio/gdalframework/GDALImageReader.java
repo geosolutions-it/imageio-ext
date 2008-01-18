@@ -101,29 +101,33 @@ public abstract class GDALImageReader extends ImageReader {
 	/** The dataset input source */
 	private File datasetSource = null;
 
-	/** {@link HashMap} containing couples (datasetName, GDALDatasetWrapper). */
+	/**
+	 * {@link HashMap} containing couples (datasetName,
+	 * {@link GDALCommonIIOImageMetadata}).
+	 */
 	private Map datasetMap = Collections.synchronizedMap(new HashMap(10));
 
 	/**
-	 * Retrieves a {@link GDALDatasetWrapper} by index.
+	 * Retrieves a {@link GDALCommonIIOImageMetadata} by index.
 	 * 
 	 * @param imageIndex
-	 *            is the index of the required {@link GDALDatasetWrapper}.
-	 * @return a {@link GDALDatasetWrapper}
+	 *            is the index of the required
+	 *            {@link GDALCommonIIOImageMetadata}.
+	 * @return a {@link GDALCommonIIOImageMetadata}
 	 */
-	public GDALDatasetWrapper getDataSetWrapper(int imageIndex) {
+	public GDALCommonIIOImageMetadata getDatasetMetadata(int imageIndex) {
 		checkImageIndex(imageIndex);
 		// getting dataset name
 		final String datasetName = datasetNames[imageIndex];
 		synchronized (datasetMap) {
-
 			if (datasetMap.containsKey(datasetName))
-				return ((GDALDatasetWrapper) datasetMap.get(datasetName));
+				return ((GDALCommonIIOImageMetadata) datasetMap
+						.get(datasetName));
 			else {
-				// Add a new GDALDatasetWrapper to the HashMap
-				GDALDatasetWrapper wrapper = new GDALDatasetWrapper(datasetName);
-				datasetMap.put(datasetName, wrapper);
-				return wrapper;
+				// Add a new GDALCommonIIOImageMetadata to the HashMap
+				GDALCommonIIOImageMetadata datasetMetadata = createDatasetMetadata(datasetName);
+				datasetMap.put(datasetName, datasetMetadata);
+				return datasetMetadata;
 			}
 		}
 	}
@@ -184,7 +188,6 @@ public abstract class GDALImageReader extends ImageReader {
 		// ////////////////////////////////////////////////////////////////////
 
 		if (imageIndex < 0 || imageIndex > nSubdatasets) {
-
 			// The specified imageIndex is not valid.
 			// Retrieving the valid image index range.
 			final int maxImageIndex = nSubdatasets;
@@ -229,7 +232,7 @@ public abstract class GDALImageReader extends ImageReader {
 				//
 				// /////////////////////////////////////////////////////////////
 				final List subdatasets = mainDataset
-						.GetMetadata_List("SUBDATASETS");
+						.GetMetadata_List(GDALUtilities.GDALMetadataDomain.SUBDATASETS);
 
 				// /////////////////////////////////////////////////////////////
 				//
@@ -254,7 +257,7 @@ public abstract class GDALImageReader extends ImageReader {
 					nSubdatasets = 1;
 					datasetNames = new String[1];
 					datasetNames[0] = datasetSource.getAbsolutePath();
-					final GDALDatasetWrapper myItem = createDataSetWrapper(datasetNames[0]);
+					final GDALCommonIIOImageMetadata myItem = createDatasetMetadata(datasetNames[0]);
 					datasetMap.put(datasetNames[0], myItem);
 				} else {
 					datasetNames = new String[nSubdatasets + 1];
@@ -266,7 +269,7 @@ public abstract class GDALImageReader extends ImageReader {
 						datasetNames[i] = subdatasetName.substring(nameStartAt);
 					}
 					datasetNames[nSubdatasets] = mainDatasetFileName;
-					datasetMap.put(mainDatasetFileName, createDataSetWrapper(
+					datasetMap.put(mainDatasetFileName, createDatasetMetadata(
 							mainDataset, mainDatasetFileName));
 					subdatasets.clear();
 				}
@@ -278,31 +281,40 @@ public abstract class GDALImageReader extends ImageReader {
 	}
 
 	/**
-	 * Build a proper {@link GDALDatasetWrapper} given the name of a dataset
+	 * Build a proper {@link GDALCommonIIOImageMetadata} given the name of a
+	 * dataset. The default implementation return a
+	 * {@link GDALCommonIIOImageMetadata} instance.This method should be
+	 * overridden by the specialized {@link GDALImageReader} in case you need to
+	 * obtain a specific {@link GDALCommonIIOImageMetadata}'s subclass
 	 * 
 	 * @param datasetName
 	 *            the name of the dataset
 	 */
-	protected abstract GDALDatasetWrapper createDataSetWrapper(
-			String datasetName);
+	protected GDALCommonIIOImageMetadata createDatasetMetadata(
+			String datasetName) {
+		return new GDALCommonIIOImageMetadata(datasetName);
+	}
 
 	/**
-	 * Build a proper {@link GDALDatasetWrapper} given an input dataset as well
-	 * as the file name containing such a dataset
+	 * Build a proper {@link GDALCommonIIOImageMetadata} given an input dataset
+	 * as well as the file name containing such a dataset.
 	 */
-	protected abstract GDALDatasetWrapper createDataSetWrapper(
-			Dataset mainDataset, String mainDatasetFileName);
+	protected GDALCommonIIOImageMetadata createDatasetMetadata(
+			Dataset mainDataset, String mainDatasetFileName) {
+		return new GDALCommonIIOImageMetadata(mainDataset, mainDatasetFileName,
+				false);
+	}
 
 	/**
 	 * Provides to read data from the required region of the raster (the actual
 	 * dataset)
 	 * 
 	 * @param item
-	 *            a <code>GDALDatasetWrapper</code> related to the actual
-	 *            dataset
+	 *            a <code>GDALCommonIIOImageMetadata</code> related to the
+	 *            actual dataset
 	 * @return the read <code>Raster</code>
 	 */
-	private Raster readDatasetRaster(GDALDatasetWrapper item,
+	private Raster readDatasetRaster(GDALCommonIIOImageMetadata item,
 			Rectangle srcRegion, Rectangle dstRegion) throws IOException {
 
 		SampleModel sampleModel = null;
@@ -359,7 +371,8 @@ public abstract class GDALImageReader extends ImageReader {
 		// splitBands = false -> I need to read 1 Band at a time.
 		boolean splitBands = false;
 
-		if (bufferSize < 0 || item.getSampleModel() instanceof BandedSampleModel) {
+		if (bufferSize < 0
+				|| item.getSampleModel() instanceof BandedSampleModel) {
 			// The number resulting from the product
 			// "bandsNumber*pixels*gdal.GetDataTypeSize(buf_type) / 8"
 			// may be negative (A very high number which is not
@@ -601,414 +614,6 @@ public abstract class GDALImageReader extends ImageReader {
 	}
 
 	/**
-	 * Provides to read data from the required region of the raster (the actual
-	 * dataset)
-	 * 
-	 * @param item
-	 *            a <code>GDALDatasetWrapper</code> related to the actual
-	 *            dataset
-	 * @param param
-	 *            an <code>ImageReadParam</code> used to control the reading
-	 *            process, or <code>null</code>.
-	 * @return the read <code>Raster</code>
-	 */
-	private Raster previousreadDatasetRaster(GDALDatasetWrapper item,
-			ImageReadParam param) throws IOException {
-
-		SampleModel sampleModel = null;
-		DataBuffer imgBuffer = null;
-
-		// ////////////////////////////////////////////////////////////////////
-		//
-		// -------------------------------------------------------------------
-		// Raster Creation >>> Step 1: Initialization
-		// -------------------------------------------------------------------
-		//
-		// ////////////////////////////////////////////////////////////////////
-
-		final int width = item.getWidth();
-		final int height = item.getHeight();
-		final Dataset dataset = GDALUtilities.acquireDataSet(item
-				.getDatasetName(), gdalconst.GA_ReadOnly);
-
-		if (param == null)
-			param = getDefaultReadParam();
-
-		Rectangle srcRegion = new Rectangle(0, 0, 0, 0);
-		Rectangle destRegion = new Rectangle(0, 0, 0, 0);
-		srcRegion.setBounds(0, 0, width, height);
-		destRegion.setBounds(0, 0, width, height);
-		BufferedImage destinationImage = param.getDestination();
-		computeRegions(param, width, height, destinationImage, srcRegion,
-				destRegion);
-
-		int dstWidth = destRegion.width;
-		int dstHeight = destRegion.height;
-		int srcRegionXOffset = srcRegion.x;
-		int srcRegionYOffset = srcRegion.y;
-		int srcRegionWidth = srcRegion.width;
-		int srcRegionHeight = srcRegion.height;
-
-		// int dstWidth = -1;
-		// int dstHeight = -1;
-		// int srcRegionWidth = -1;
-		// int srcRegionHeight = -1;
-		// int srcRegionXOffset = -1;
-		// int srcRegionYOffset = -1;
-		// int xSubsamplingFactor = -1;
-		// int ySubsamplingFactor = -1;
-		//
-		// // //
-		// //
-		// // Retrieving Information about Source Region and doing
-		// // additional initialization operations.
-		// //
-		// // //
-		// Rectangle sourceRegion = param.getSourceRegion();
-		// if (sourceRegion != null) {
-		// srcRegionWidth = (int) sourceRegion.getWidth();
-		// srcRegionHeight = (int) sourceRegion.getHeight();
-		// srcRegionXOffset = (int) sourceRegion.getX();
-		// srcRegionYOffset = (int) sourceRegion.getY();
-		//
-		// // //
-		// //
-		// // Minimum correction for wrong source regions
-		// //
-		// // When you do subsampling or source subsetting it might happen that
-		// // the given source region in the read param is uncorrect, which
-		// // means it can be or a bit larger than the original file or can
-		// // begin a bit before original limits.
-		// //
-		// // We got to be prepared to handle such case in order to avoid
-		// // generating ArrayIndexOutOfBoundsException later in the code.
-		// //
-		// // //
-		//
-		// if (srcRegionXOffset < 0)
-		// srcRegionXOffset = 0;
-		// if (srcRegionYOffset < 0)
-		// srcRegionYOffset = 0;
-		// if ((srcRegionXOffset + srcRegionWidth) > width) {
-		// srcRegionWidth = width - srcRegionXOffset;
-		// }
-		// // initializing destWidth
-		// dstWidth = srcRegionWidth;
-		//
-		// if ((srcRegionYOffset + srcRegionHeight) > height) {
-		// srcRegionHeight = height - srcRegionYOffset;
-		// }
-		// // initializing dstHeight
-		// dstHeight = srcRegionHeight;
-		//
-		// } else {
-		// // Source Region not specified.
-		// // Assuming Source Region Dimension equal to Source Image Dimension
-		// dstWidth = width;
-		// dstHeight = height;
-		// srcRegionXOffset = srcRegionYOffset = 0;
-		// srcRegionWidth = width;
-		// srcRegionHeight = height;
-		// }
-		//
-		// // SubSampling variables initialization
-		// xSubsamplingFactor = param.getSourceXSubsampling();
-		// ySubsamplingFactor = param.getSourceYSubsampling();
-		//
-		// // ////
-		// //
-		// // Updating the destination size in compliance with
-		// // the subSampling parameters
-		// //
-		// // ////
-		//
-		// dstWidth = ((dstWidth - 1) / xSubsamplingFactor) + 1;
-		// dstHeight = ((dstHeight - 1) / ySubsamplingFactor) + 1;
-		//
-		// if ((xSubsamplingFactor > width) || (ySubsamplingFactor > height)) {
-		// GDALUtilities.closeDataSet(dataset);
-		// throw new IOException(
-		// "The subSamplingFactor cannot be greater than image size!");
-		// }
-
-		// Band set-up
-		Band pBand = null;
-
-		// Getting number of bands
-		// final int nBands = dataset.getRasterCount();
-		final int nBands = item.getBandsNumber();
-
-		int[] banks = new int[nBands];
-		int[] offsets = new int[nBands];
-
-		// setting the number of pixels to read
-		final int pixels = dstWidth * dstHeight;
-		int bufferType = 0, bufferSize = 0;
-
-		// ////////////////////////////////////////////////////////////////////
-		//
-		// -------------------------------------------------------------------
-		// Raster Creation >>> Step 2: Data Read
-		// -------------------------------------------------------------------
-		//
-		// ////////////////////////////////////////////////////////////////////
-
-		// NOTE: Bands are not 0-base indexed, so we must add 1
-		pBand = dataset.GetRasterBand(1);
-
-		// setting buffer properties
-		bufferType = pBand.getDataType();
-		final int typeSizeInBytes = gdal.GetDataTypeSize(bufferType) / 8;
-		bufferSize = nBands * pixels * typeSizeInBytes;
-
-		// splitBands = false -> I read n Bands at once.
-		// splitBands = false -> I need to read 1 Band at a time.
-		boolean splitBands = false;
-
-		if (bufferSize < 0 || item.getSampleModel() instanceof BandedSampleModel) {
-			// The number resulting from the product
-			// "bandsNumber*pixels*gdal.GetDataTypeSize(buf_type) / 8"
-			// may be negative (A very high number which is not
-			// "int representable")
-			// In such a case, we will read 1 band at a time.
-			bufferSize = pixels * typeSizeInBytes;
-			splitBands = true;
-		}
-		int dataBufferType = -1;
-		ByteBuffer[] bands = new ByteBuffer[nBands];
-		for (int k = 0; k < nBands; k++) {
-
-			// If I'm reading n Bands at once and I performed the first read,
-			// I quit the loop
-			if (k > 0 && !splitBands)
-				break;
-
-			final ByteBuffer dataBuffer = ByteBuffer.allocateDirect(bufferSize);
-
-			final int returnVal;
-			if (!splitBands) {
-				// I can read bandsNumber at once.
-				returnVal = dataset.ReadRaster_Direct(srcRegionXOffset,
-						srcRegionYOffset, srcRegionWidth, srcRegionHeight,
-						dstWidth, dstHeight, bufferType, nBands, nBands
-								* typeSizeInBytes, dstWidth * nBands
-								* typeSizeInBytes, typeSizeInBytes, dataBuffer);
-				bands[k] = dataBuffer;
-
-			} else {
-				// I need to read 1 band at a time.
-				returnVal = dataset.GetRasterBand(k + 1).ReadRaster_Direct(
-						srcRegionXOffset, srcRegionYOffset, srcRegionWidth,
-						srcRegionHeight, dstWidth, dstHeight, bufferType,
-						dataBuffer);
-				bands[k] = dataBuffer;
-			}
-			if (returnVal == gdalconstConstants.CE_None) {
-				if (!splitBands)
-					for (int band = 0; band < nBands; band++) {
-						banks[band] = band;
-						offsets[band] = band;
-					}
-				else {
-					banks[k] = k;
-					offsets[k] = 0;
-				}
-			} else {
-				// The read operation was not successfully computed.
-				// Showing error messages.
-				LOGGER.info(new StringBuffer("Last error: ").append(
-						gdal.GetLastErrorMsg()).toString());
-				LOGGER.info(new StringBuffer("Last error number: ").append(
-						gdal.GetLastErrorNo()).toString());
-				LOGGER.info(new StringBuffer("Last error type: ").append(
-						gdal.GetLastErrorType()).toString());
-				GDALUtilities.closeDataSet(dataset);
-				throw new RuntimeException(gdal.GetLastErrorMsg());
-			}
-		}
-
-		// TODO: recycle destination Image when setting data
-
-		// /////////////////////////////////////////////////////////////////////
-		//
-		// TYPE BYTE
-		//
-		// /////////////////////////////////////////////////////////////////////
-		if (bufferType == gdalconstConstants.GDT_Byte) {
-			if (!splitBands) {
-				final byte[] bytes = new byte[nBands * pixels];
-				bands[0].get(bytes, 0, nBands * pixels);
-				imgBuffer = new DataBufferByte(bytes, nBands * pixels);
-			} else {
-				final byte[][] bytes = new byte[nBands][];
-				for (int i = 0; i < nBands; i++) {
-					bytes[i] = new byte[pixels];
-					bands[i].get(bytes[i], 0, pixels);
-				}
-				imgBuffer = new DataBufferByte(bytes, pixels);
-			}
-			dataBufferType = DataBuffer.TYPE_BYTE;
-		} else if (bufferType == gdalconstConstants.GDT_Int16
-				|| bufferType == gdalconstConstants.GDT_UInt16) {
-			// ////////////////////////////////////////////////////////////////
-			//
-			// TYPE SHORT
-			//
-			// ////////////////////////////////////////////////////////////////
-
-			if (!splitBands) {
-				// I get short values from the ByteBuffer using a view
-				// of the ByteBuffer as a ShortBuffer
-				// It is worth to create the view outside the loop.
-				short[] shorts = new short[nBands * pixels];
-				bands[0].order(ByteOrder.nativeOrder());
-				final ShortBuffer buff = bands[0].asShortBuffer();
-				buff.get(shorts, 0, nBands * pixels);
-				if (bufferType == gdalconstConstants.GDT_Int16)
-					imgBuffer = new DataBufferShort(shorts, nBands * pixels);
-				else
-					imgBuffer = new DataBufferUShort(shorts, nBands * pixels);
-			} else {
-				short[][] shorts = new short[nBands][];
-				for (int i = 0; i < nBands; i++) {
-					shorts[i] = new short[pixels];
-					bands[i].order(ByteOrder.nativeOrder());
-					bands[i].asShortBuffer().get(shorts[i], 0, pixels);
-				}
-				if (bufferType == gdalconstConstants.GDT_Int16)
-					imgBuffer = new DataBufferShort(shorts, pixels);
-				else
-					imgBuffer = new DataBufferUShort(shorts, pixels);
-			}
-			if (bufferType == gdalconstConstants.GDT_UInt16)
-				dataBufferType = DataBuffer.TYPE_USHORT;
-			else
-				dataBufferType = DataBuffer.TYPE_SHORT;
-		} else if (bufferType == gdalconstConstants.GDT_Int32
-				|| bufferType == gdalconstConstants.GDT_UInt32) {
-			// ////////////////////////////////////////////////////////////////
-			//
-			// TYPE INT
-			//
-			// ////////////////////////////////////////////////////////////////
-
-			if (!splitBands) {
-				// I get int values from the ByteBuffer using a view
-				// of the ByteBuffer as an IntBuffer
-				// It is worth to create the view outside the loop.
-				int[] ints = new int[nBands * pixels];
-				bands[0].order(ByteOrder.nativeOrder());
-				final IntBuffer buff = bands[0].asIntBuffer();
-				buff.get(ints, 0, nBands * pixels);
-				imgBuffer = new DataBufferInt(ints, nBands * pixels);
-			} else {
-				int[][] ints = new int[nBands][];
-				for (int i = 0; i < nBands; i++) {
-					ints[i] = new int[pixels];
-					bands[i].order(ByteOrder.nativeOrder());
-					bands[i].asIntBuffer().get(ints[i], 0, pixels);
-				}
-				imgBuffer = new DataBufferInt(ints, pixels);
-			}
-			dataBufferType = DataBuffer.TYPE_INT;
-
-		} else if (bufferType == gdalconstConstants.GDT_Float32) {
-			// /////////////////////////////////////////////////////////////////////
-			//
-			// TYPE FLOAT
-			//
-			// /////////////////////////////////////////////////////////////////////
-
-			if (!splitBands) {
-				// I get float values from the ByteBuffer using a view
-				// of the ByteBuffer as an FloatBuffer
-				// It is worth to create the view outside the loop.
-				float[] floats = new float[nBands * pixels];
-				bands[0].order(ByteOrder.nativeOrder());
-				final FloatBuffer buff = bands[0].asFloatBuffer();
-				buff.get(floats, 0, nBands * pixels);
-				imgBuffer = new DataBufferFloat(floats, nBands * pixels);
-			} else {
-				float[][] floats = new float[nBands][];
-				for (int i = 0; i < nBands; i++) {
-					floats[i] = new float[pixels];
-					bands[i].order(ByteOrder.nativeOrder());
-					bands[i].asFloatBuffer().get(floats[i], 0, pixels);
-				}
-				imgBuffer = new DataBufferFloat(floats, pixels);
-			}
-			dataBufferType = DataBuffer.TYPE_FLOAT;
-		} else if (bufferType == gdalconstConstants.GDT_Float64) {
-			// /////////////////////////////////////////////////////////////////////
-			//
-			// TYPE DOUBLE
-			//
-			// /////////////////////////////////////////////////////////////////////
-
-			if (!splitBands) {
-				// // I get double values from the ByteBuffer using a view
-				// of the ByteBuffer as an DoubleBuffer
-				// It is worth to create the view outside the loop.
-				double[] doubles = new double[nBands * pixels];
-				bands[0].order(ByteOrder.nativeOrder());
-				final DoubleBuffer buff = bands[0].asDoubleBuffer();
-				buff.get(doubles, 0, nBands * pixels);
-				imgBuffer = new DataBufferDouble(doubles, nBands * pixels);
-			} else {
-				double[][] doubles = new double[nBands][];
-				for (int i = 0; i < nBands; i++) {
-					doubles[i] = new double[pixels];
-					bands[i].order(ByteOrder.nativeOrder());
-					bands[i].asDoubleBuffer().get(doubles[i], 0, pixels);
-				}
-				imgBuffer = new DataBufferDouble(doubles, pixels);
-			}
-			dataBufferType = DataBuffer.TYPE_DOUBLE;
-
-		} else {
-			// TODO: Handle other cases if needed.
-			LOGGER.info("More cases need to be handled");
-		}
-
-		// ////////////////////////////////////////////////////////////////////
-		//
-		// -------------------------------------------------------------------
-		// Raster Creation >>> Step 3: Setting DataBuffer
-		// -------------------------------------------------------------------
-		//
-		// ////////////////////////////////////////////////////////////////////
-
-		if (LOGGER.isLoggable(Level.FINE))
-			LOGGER.fine((new Integer(GDALUtilities.getCacheUsed())).toString());
-
-		// ////////////////////////////////////////////////////////////////////
-		//
-		// -------------------------------------------------------------------
-		// Raster Creation >>> Step 4: Setting SampleModel
-		// -------------------------------------------------------------------
-		//
-		// ////////////////////////////////////////////////////////////////////
-		if (splitBands)
-			sampleModel = new BandedSampleModel(dataBufferType, dstWidth,
-					dstHeight, dstWidth, banks, offsets);
-		else
-			sampleModel = new PixelInterleavedSampleModel(dataBufferType,
-					dstWidth, dstHeight, nBands, dstWidth * nBands, offsets);
-
-		// ////////////////////////////////////////////////////////////////////
-		//
-		// -------------------------------------------------------------------
-		// Raster Creation >>> Final Step: Actual Raster Creation
-		// -------------------------------------------------------------------
-		//
-		// ////////////////////////////////////////////////////////////////////
-		GDALUtilities.closeDataSet(dataset);
-		return Raster.createWritableRaster(sampleModel, imgBuffer, new Point(
-				destRegion.x, destRegion.y));
-
-	}
-
-	/**
 	 * Tries to retrieve the Dataset Source for the ImageReader's input.
 	 */
 	protected File getDatasetSource(Object myInput) {
@@ -1181,7 +786,7 @@ public abstract class GDALImageReader extends ImageReader {
 
 	public Iterator getImageTypes(int imageIndex) throws IOException {
 		final List l = new java.util.ArrayList(4);
-		final GDALDatasetWrapper item = getDataSetWrapper(imageIndex);
+		final GDALCommonIIOImageMetadata item = getDatasetMetadata(imageIndex);
 		imageType = new ImageTypeSpecifier(item.getColorModel(), item
 				.getSampleModel());
 		l.add(imageType);
@@ -1207,7 +812,7 @@ public abstract class GDALImageReader extends ImageReader {
 		// Retrieving the requested dataset
 		//
 		// //
-		final GDALDatasetWrapper item = getDataSetWrapper(imageIndex);
+		GDALCommonIIOImageMetadata item = getDatasetMetadata(imageIndex);
 		final int width = item.getWidth();
 		final int height = item.getHeight();
 
@@ -1333,7 +938,7 @@ public abstract class GDALImageReader extends ImageReader {
 	 * @return raster width
 	 */
 	public int getWidth(int imageIndex) throws IOException {
-		return getDataSetWrapper(imageIndex).getWidth();
+		return getDatasetMetadata(imageIndex).getWidth();
 
 	}
 
@@ -1346,7 +951,7 @@ public abstract class GDALImageReader extends ImageReader {
 	 * @return raster height
 	 */
 	public int getHeight(int imageIndex) throws IOException {
-		return getDataSetWrapper(imageIndex).getHeight();
+		return getDatasetMetadata(imageIndex).getHeight();
 	}
 
 	/**
@@ -1359,7 +964,7 @@ public abstract class GDALImageReader extends ImageReader {
 	 */
 
 	public int getTileHeight(int imageIndex) throws IOException {
-		return getDataSetWrapper(imageIndex).getTileHeight();
+		return getDatasetMetadata(imageIndex).getTileHeight();
 	}
 
 	/**
@@ -1372,7 +977,7 @@ public abstract class GDALImageReader extends ImageReader {
 	 */
 
 	public int getTileWidth(int imageIndex) throws IOException {
-		return getDataSetWrapper(imageIndex).getTileWidth();
+		return getDatasetMetadata(imageIndex).getTileWidth();
 	}
 
 	// ////////////////////////////////////////////////////////////////////////
@@ -1391,7 +996,7 @@ public abstract class GDALImageReader extends ImageReader {
 	 *         <code>Dataset</code> at index <code>imageIndex</code>.
 	 */
 	public String getProjection(final int imageIndex) {
-		return getDataSetWrapper(imageIndex).getProjection();
+		return getDatasetMetadata(imageIndex).getProjection();
 	}
 
 	/**
@@ -1404,7 +1009,7 @@ public abstract class GDALImageReader extends ImageReader {
 	 */
 	public double[] getGeoTransform(final int imageIndex) {
 		checkImageIndex(imageIndex);
-		return getDataSetWrapper(imageIndex).getGeoTransformation();
+		return getDatasetMetadata(imageIndex).getGeoTransformation();
 	}
 
 	/**
@@ -1419,7 +1024,7 @@ public abstract class GDALImageReader extends ImageReader {
 	 */
 	public List getGCPs(final int imageIndex) {
 		checkImageIndex(imageIndex);
-		return getDataSetWrapper(imageIndex).getGcps();
+		return getDatasetMetadata(imageIndex).getGcps();
 	}
 
 	/**
@@ -1433,7 +1038,7 @@ public abstract class GDALImageReader extends ImageReader {
 	 */
 	public String getGCPProjection(final int imageIndex) {
 		checkImageIndex(imageIndex);
-		return getDataSetWrapper(imageIndex).getGcpProjection();
+		return getDatasetMetadata(imageIndex).getGcpProjection();
 	}
 
 	/**
@@ -1447,7 +1052,7 @@ public abstract class GDALImageReader extends ImageReader {
 	 */
 	public int getGCPCount(final int imageIndex) {
 		checkImageIndex(imageIndex);
-		return getDataSetWrapper(imageIndex).getGcpNumber();
+		return getDatasetMetadata(imageIndex).getGcpNumber();
 	}
 
 	// ///////////////////////////////////////////////////////////////////
@@ -1455,7 +1060,6 @@ public abstract class GDALImageReader extends ImageReader {
 	// Raster Band Properties Retrieval METHODS
 	//
 	// ///////////////////////////////////////////////////////////////////
-
 	/**
 	 * Returns the NoDataValue of the specified Band of the specified image
 	 * 
@@ -1463,20 +1067,14 @@ public abstract class GDALImageReader extends ImageReader {
 	 *            the specified image
 	 * @param band
 	 *            the specified band
-	 * @return the Band NoDataValue if available, <code>Double.NaN</code>
-	 *         otherwise.
+	 * @return the Band NoDataValue if available
 	 * @throws IllegalArgumentException
 	 *             in case the specified band number is out of range or noData
 	 *             value has not been found
 	 */
 	public double getNoDataValue(int imageIndex, int band) {
-		final GDALDatasetWrapper item = getDataSetWrapper(imageIndex);
-		if (band > item.getBandsNumber())
-			throw new IllegalArgumentException("Invalid band number");
-		final Double[] noDataValue = item.getNoDataValues();
-		if (noDataValue != null && noDataValue[band] != null)
-			return noDataValue[band].doubleValue();
-		throw new IllegalArgumentException();
+		final GDALCommonIIOImageMetadata item = getDatasetMetadata(imageIndex);
+		return item.getNoDataValue(band);
 	}
 
 	/**
@@ -1487,20 +1085,14 @@ public abstract class GDALImageReader extends ImageReader {
 	 *            the index of the specified <code>Dataset</code>
 	 * @param band
 	 *            the specified band
-	 * @return the Band Offset Value if available, <code>Double.NaN</code>
-	 *         otherwise.
+	 * @return the Band Offset Value if available
 	 * @throws IllegalArgumentException
 	 *             in case the specified band number is out of range or Offset
 	 *             value has not been found
 	 */
 	public double getOffset(int imageIndex, int band) {
-		final GDALDatasetWrapper item = getDataSetWrapper(imageIndex);
-		if (band > item.getBandsNumber())
-			throw new IllegalArgumentException("Invalid band number");
-		final Double[] offset = item.getOffsets();
-		if (offset != null && offset[band] != null)
-			return offset[band].doubleValue();
-		throw new IllegalArgumentException();
+		final GDALCommonIIOImageMetadata item = getDatasetMetadata(imageIndex);
+		return item.getOffset(band);
 	}
 
 	/**
@@ -1511,20 +1103,14 @@ public abstract class GDALImageReader extends ImageReader {
 	 *            the index of the specified <code>Dataset</code>
 	 * @param band
 	 *            the specified band
-	 * @return the Band Scale Value if available, <code>Double.NaN</code>
-	 *         otherwise.
+	 * @return the Band Scale Value if available
 	 * @throws IllegalArgumentException
 	 *             in case the specified band number is out of range or scale
 	 *             value has not been found
 	 */
 	public double getScale(int imageIndex, int band) {
-		final GDALDatasetWrapper item = getDataSetWrapper(imageIndex);
-		if (band > item.getBandsNumber())
-			throw new IllegalArgumentException("Invalid band number");
-		final Double[] scale = item.getScales();
-		if (scale != null && scale[band] != null)
-			return scale[band].doubleValue();
-		throw new IllegalArgumentException();
+		final GDALCommonIIOImageMetadata item = getDatasetMetadata(imageIndex);
+		return item.getScale(band);
 	}
 
 	/**
@@ -1535,20 +1121,14 @@ public abstract class GDALImageReader extends ImageReader {
 	 *            the index of the specified <code>Dataset</code>
 	 * @param band
 	 *            the specified band
-	 * @return the Band Minimum Value if available, <code>Double.NaN</code>
-	 *         otherwise.
+	 * @return the Band Minimum Value if available
 	 * @throws IllegalArgumentException
 	 *             in case the specified band number is out of range or minimum
 	 *             value has not been found
 	 */
 	public double getMinimum(int imageIndex, int band) {
-		final GDALDatasetWrapper item = getDataSetWrapper(imageIndex);
-		if (band > item.getBandsNumber())
-			throw new IllegalArgumentException("Invalid band number");
-		final Double[] minimums = item.getMinimums();
-		if (minimums != null && minimums[band] != null)
-			return minimums[band].doubleValue();
-		throw new IllegalArgumentException();
+		final GDALCommonIIOImageMetadata item = getDatasetMetadata(imageIndex);
+		return item.getMinimum(band);
 	}
 
 	/**
@@ -1559,37 +1139,24 @@ public abstract class GDALImageReader extends ImageReader {
 	 *            the index of the specified <code>Dataset</code>
 	 * @param band
 	 *            the specified band
-	 * @return the Band Maximum Value if available, <code>Double.NaN</code>
-	 *         otherwise.
+	 * @return the Band Maximum Value if available
 	 * @throws IllegalArgumentException
 	 *             in case the specified band number is out of range or maximum
 	 *             value has not been found
 	 */
 	public double getMaximum(int imageIndex, int band) {
-		final GDALDatasetWrapper item = getDataSetWrapper(imageIndex);
-		if (band > item.getBandsNumber())
-			throw new IllegalArgumentException("Invalid band number");
-		final Double[] maximums = item.getMaximums();
-		if (maximums != null && maximums[band] != null)
-			return maximums[band].doubleValue();
-		throw new IllegalArgumentException();
+		final GDALCommonIIOImageMetadata item = getDatasetMetadata(imageIndex);
+		return item.getMaximum(band);
 	}
-
-//	public Dataset getLastRecentlyUsedDataset() {
-//		synchronized (datasetMap) {
-//			Set keys = datasetMap.keySet();
-//			GDALDatasetWrapper myItem = (GDALDatasetWrapper) datasetMap
-//					.get(keys.iterator().next());
-//			if (myItem != null)
-//				return GDALUtilities.acquireDataSet(myItem.datasetName,
-//						gdalconst.GA_ReadOnly);
-//		}
-//		return null;
-//	}
 
 	public IIOMetadata getStreamMetadata() throws IOException {
 		initialize();
 		return new GDALCommonIIOStreamMetadata(datasetNames);
+	}
+
+	public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
+		//TODO: return a cloned copy?
+		return getDatasetMetadata(imageIndex);
 	}
 
 }

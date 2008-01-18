@@ -32,7 +32,10 @@ import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Logger;
 
@@ -61,6 +64,21 @@ import org.gdal.gdalconst.gdalconstConstants;
  * @author Simone Giannecchini, GeoSolutions.
  */
 public abstract class GDALImageWriter extends ImageWriter {
+
+	protected final static int getMaxMemorySizeForGDALMemoryDataset() {
+		Integer maxSize = Integer
+				.getInteger(GDALUtilities.GDALMEMORYRASTER_MAXSIZE_KEY);
+		if (maxSize != null)
+			return maxSize.intValue();
+		else
+			return DEFAULT_GDALMEMORYRASTER_MAXSIZE;
+	}
+
+	/**
+	 * The maximum amount of memory which should be requested to use an "In
+	 * Memory" Dataset in case of createcopy
+	 */
+	private static final int DEFAULT_GDALMEMORYRASTER_MAXSIZE = 1024 * 1024 * 32;
 
 	// static final String IMAGE_METADATA_NAME =
 	// GDALWritableImageMetadata.nativeMetadataFormatName;
@@ -301,7 +319,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 		final int gcpNum = imageMetadata.getGcpNumber();
 		if (gcpNum != 0) {
 			final String gcpProj = imageMetadata.getGcpProjection();
-			List gcps = imageMetadata.getGCPs();
+			List gcps = imageMetadata.getGcps();
 			// TODO: set GCPs. Not all dataset support GCPs settings
 			dataset.SetGCPs(gcpNum, null, gcpProj);
 		}
@@ -314,10 +332,41 @@ public abstract class GDALImageWriter extends ImageWriter {
 		final int nBands = imageMetadata.getBandsNumber();
 		for (int i = 0; i < nBands; i++) {
 			final Band band = dataset.GetRasterBand(i + 1);
-			final double noData = imageMetadata.getNoDataValue(i);
-			if (!Double.isNaN(noData))
-				band.SetNoDataValue(noData);
+			try {
+				final double noData = imageMetadata.getNoDataValue(i);
+				if (!Double.isNaN(noData))
+					band.SetNoDataValue(noData);
+			} catch (IllegalArgumentException iae) {
+				// NoDataValue not found or wrong bandIndex specified. Go on
+			}
 		}
+
+		// //
+		//
+		// Setting metadata
+		//
+		// TODO: Requires SWIG bindings extending since actually only
+		// a single metadata value is supported and HashTable as parameter
+		// crashes the JVM
+		//
+		// //
+		final List domains = imageMetadata.getGdalMetadataDomainsList();
+		final int nDomains = domains.size();
+		for (int i = 0; i < nDomains; i++) {
+			final String domain = (String) domains.get(i);
+			Map metadataMap = imageMetadata.getGdalMetadataDomain(domain);
+			if (metadataMap != null) {
+				Iterator keysIt = metadataMap.keySet().iterator();
+				while (keysIt.hasNext()) {
+					final String key = (String) keysIt.next();
+					final String value = (String) metadataMap.get(key);
+					final String couple = new StringBuffer(key).append("=")
+							.append(value).toString();
+					dataset.SetMetadata(couple, domain);
+				}
+			}
+		}
+
 	}
 
 	// /**
@@ -1258,8 +1307,16 @@ public abstract class GDALImageWriter extends ImageWriter {
 		// Attempting to build a "In memory" raster dataset
 		//
 		// //
-		Dataset tempDs = getMemoryDriver().Create(tempFile, width, height,
-				nBands, dataType, null);
+
+		Dataset tempDs = null;
+		final int threshold = getMaxMemorySizeForGDALMemoryDataset();
+		final int neededMemory = width * height * nBands
+				* gdal.GetDataTypeSize(dataType) / 8;
+
+		if (neededMemory <= threshold) {
+			tempDs = getMemoryDriver().Create(tempFile, width, height, nBands,
+					dataType, null);
+		}
 		if (tempDs == null) {
 			// //
 			//

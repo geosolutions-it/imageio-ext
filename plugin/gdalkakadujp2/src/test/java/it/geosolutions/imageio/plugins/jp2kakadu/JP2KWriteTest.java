@@ -30,7 +30,6 @@ import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
-import javax.imageio.metadata.IIOMetadata;
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
@@ -38,7 +37,6 @@ import javax.media.jai.RenderedOp;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import com.sun.media.jai.operator.ImageReadDescriptor;
 import com.sun.media.jai.operator.ImageWriteDescriptor;
 
 /**
@@ -57,7 +55,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 
 	final static boolean deleteTempFilesOnExit = !Boolean
 			.getBoolean(HOLD_WRITTEN);
-	final static String testFileName = "sample.jp2";
+	final static String testFileName = "test.jp2";
 
 	// When testing write operations on very big images, performing subsampled
 	// read may be useful.
@@ -2048,7 +2046,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 
 		final File outputFile = TestData.temp(this, "writetest.jp2", false);
 		outputFile.deleteOnExit();
-		final File inputFile = TestData.file(this, "sample.jp2");
+		final File inputFile = TestData.file(this, "sampleless.jp2");
 		assertTrue(inputFile.exists());
 
 		// ////////////////////////////////////////////////////////////////////
