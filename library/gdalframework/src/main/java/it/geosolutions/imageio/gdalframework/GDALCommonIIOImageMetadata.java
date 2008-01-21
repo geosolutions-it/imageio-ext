@@ -33,7 +33,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 import java.util.logging.Logger;
 
 import javax.imageio.metadata.IIOInvalidTreeException;
@@ -82,10 +81,10 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 	private String driverDescription;
 
 	/** The dataset name */
-	private String datasetName;
+	protected String datasetName;
 
 	/** The dataset description */
-	private String datasetDescription;
+	protected String datasetDescription;
 
 	/** The data set projection. */
 	protected String projection;
@@ -99,7 +98,10 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 	/** The grid to world transformation. */
 	protected double[] geoTransformation = new double[6];
 
-	/** A map containing a Map for each domain */
+	/**
+	 * A map containing an HashMap for each domain if available (the Default
+	 * domain, the ImageStructure domain, as well as any xml prefixed domain)
+	 */
 	protected Map gdalMetadataMap;
 
 	/**
@@ -118,16 +120,16 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 	private List gcps;
 
 	/** The raster width */
-	private int width;
+	protected int width;
 
 	/** The raster height */
-	private int height;
+	protected int height;
 
 	/** The raster tile height */
-	private int tileHeight;
+	protected int tileHeight;
 
 	/** The raster tile width */
-	private int tileWidth;
+	protected int tileWidth;
 
 	/** The <code>ColorModel</code> used for the dataset */
 	private ColorModel colorModel;
@@ -142,7 +144,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 	// ////////////////////////////////////////////////
 
 	/** Number of bands */
-	private int bandsNumber;
+	protected int bandsNumber;
 
 	/** Array to store the maximum value for each band */
 	private Double[] maximums;
@@ -221,23 +223,36 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 			final String formatClassName) {
 		super(false, formatName, formatClassName, null, null);
 		datasetName = name;
+		if (dataset == null)
+			return;
 		datasetDescription = dataset.GetDescription();
 		driverDescription = dataset.GetDriver().GetDescription();
 		driverName = dataset.GetDriver().getShortName();
 		gdalMetadataMap = Collections.synchronizedMap(new HashMap(2));
+
+		// //
+		//
+		// Getting Metadata from Default domain and Image_structure domain
+		//
+		// //
 		Map defMap = dataset
 				.GetMetadata_Dict(GDALUtilities.GDALMetadataDomain.DEFAULT);
-		if (defMap != null && defMap.size() > 0) {
+		if (defMap != null && defMap.size() > 0)
 			gdalMetadataMap.put(
 					GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP, defMap);
-		}
+
 		Map imageStMap = dataset
 				.GetMetadata_Dict(GDALUtilities.GDALMetadataDomain.IMAGESTRUCTURE);
-		if (imageStMap != null && imageStMap.size() > 0) {
+		if (imageStMap != null && imageStMap.size() > 0)
 			gdalMetadataMap
 					.put(GDALUtilities.GDALMetadataDomain.IMAGESTRUCTURE,
 							imageStMap);
-		}
+
+		// //
+		//
+		// Initializing member if needed
+		//
+		// //
 		if (initializationRequired)
 			setMembers(dataset);
 		setGeoreferencingInfo(dataset);
@@ -269,7 +284,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 	/**
 	 * Constructor which initializes fields by retrieving properties such as
 	 * raster size, raster tiling properties, projection, and more from a given
-	 * input <code>Dataset</code>.
+	 * input <code>Dataset</code> if not null.
 	 * 
 	 * @param dataset
 	 *            the <code>Dataset</code> used to initialize all
@@ -417,6 +432,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 		// Well a way to pass beyond that is to use TileWidth and TileHeight
 		// instead of the real width and height when creating the sample
 		// model. It will work!
+		//
 		// //
 		if (tileSize < 0)
 			sampleModel = new BandedSampleModel(buffer_type, tileWidth,
@@ -450,7 +466,6 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 					LOGGER.severe("No ColorModels found");
 					return false;
 				}
-
 			} else if ((buffer_type == DataBuffer.TYPE_BYTE)
 					|| (buffer_type == DataBuffer.TYPE_USHORT)
 					|| (buffer_type == DataBuffer.TYPE_INT)
@@ -568,7 +583,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 
 		// //
 		//
-		// BandInfos -> BandInfo
+		// BandsInfo -> BandInfo
 		//
 		// //
 		for (int i = 0; i < bandsNumber; i++) {
@@ -600,7 +615,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 
 		// ////////////////////////////////////////////////////////////////////
 		//
-		// BandInfos -> BandInfo -> ColorTable
+		// BandsInfo -> BandInfo -> ColorTable
 		//
 		// ////////////////////////////////////////////////////////////////////
 		if (colorModel instanceof IndexColorModel) {
@@ -658,7 +673,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 	// ////////////////////////////////////////////////////////////////////////
 	/**
 	 * Return the name of the dataset which is the source for this
-	 * {@code IIOMetadata}
+	 * <code>IIOMetadata</code>
 	 */
 	public String getDatasetName() {
 		return datasetName;
@@ -763,14 +778,20 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 
 	/** return the Ground Control Points */
 	public synchronized final List getGcps() {
-		if (gcps == null) {
-			gcps = new Vector(gcpNumber);
-			final Dataset ds = GDALUtilities.acquireDataSet(datasetName,
-					gdalconst.GA_ReadOnly);
-			ds.GetGCPs((Vector) gcps);
-			GDALUtilities.closeDataSet(ds);
-		}
-		return Collections.unmodifiableList(gcps);
+		// TODO: actually the Java bindings do not work properly when getting
+		// GCPs (the JVM crash). Uncomment the following code when the method
+		// getting GCPs works fine
+		//
+		//
+		// if (gcps == null) {
+		// gcps = new Vector(gcpNumber);
+		// final Dataset ds = GDALUtilities.acquireDataSet(datasetName,
+		// gdalconst.GA_ReadOnly);
+		// ds.GetGCPs((Vector) gcps);
+		// GDALUtilities.closeDataSet(ds);
+		// }
+		// return Collections.unmodifiableList(gcps);
+		return null;
 	}
 
 	// ////////////////////////////////////////////////////////////////////////
@@ -981,9 +1002,10 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 		List list = null;
 		// //
 		// 
-		// Since the GDAL default metadata domain is an empty String (which 
-		// can't be used as a key of a map), I need a minor tuning 
-		// 
+		// Since the GDAL default metadata domain is an empty String (which
+		// can't be used as a key of a map), I need a minor tuning leveraging
+		// on a valid String (see
+		// GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP)
 		//
 		// //
 		if (keys != null) {

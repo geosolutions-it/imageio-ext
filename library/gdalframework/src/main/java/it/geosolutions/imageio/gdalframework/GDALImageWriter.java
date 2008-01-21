@@ -22,6 +22,7 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -32,7 +33,6 @@ import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +43,7 @@ import javax.imageio.IIOImage;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
+import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.media.jai.PlanarImage;
@@ -52,6 +53,7 @@ import org.gdal.gdal.Dataset;
 import org.gdal.gdal.Driver;
 import org.gdal.gdal.gdal;
 import org.gdal.gdalconst.gdalconstConstants;
+import org.w3c.dom.Node;
 
 /**
  * Main abstract class defining the main framework which needs to be used to
@@ -65,6 +67,17 @@ import org.gdal.gdalconst.gdalconstConstants;
  */
 public abstract class GDALImageWriter extends ImageWriter {
 
+	/**
+	 * Utility method which checks if a system property has been specified to
+	 * set the maximum allowed size to create a GDAL "In Memory Raster" Dataset
+	 * in case of CreateCopy. In case of the system property has been set,
+	 * returns this value, otherwise it returns a default value.
+	 * 
+	 * @see GDALImageWriter#DEFAULT_GDALMEMORYRASTER_MAXSIZE
+	 * 
+	 * @return the maximum allowed size to create a GDAL "In Memory Raster"
+	 *         Dataset in case of CreateCopy.
+	 */
 	protected final static int getMaxMemorySizeForGDALMemoryDataset() {
 		Integer maxSize = Integer
 				.getInteger(GDALUtilities.GDALMEMORYRASTER_MAXSIZE_KEY);
@@ -80,9 +93,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 	 */
 	private static final int DEFAULT_GDALMEMORYRASTER_MAXSIZE = 1024 * 1024 * 32;
 
-	// static final String IMAGE_METADATA_NAME =
-	// GDALWritableImageMetadata.nativeMetadataFormatName;
-	static final String IMAGE_METADATA_NAME = GDALCommonIIOImageMetadata.nativeMetadataFormatName;
+	private static final String IMAGE_METADATA_NAME = GDALWritableCommonIIOImageMetadata.nativeMetadataFormatName;
 
 	private static final Logger LOGGER = Logger.getLogger(GDALImageWriter.class
 			.toString());
@@ -99,6 +110,10 @@ public abstract class GDALImageWriter extends ImageWriter {
 
 	private static ThreadLocalMemoryDriver memDriver = new ThreadLocalMemoryDriver();
 
+	/**
+	 * return a "In Memory" Driver which need to be used when using the
+	 * CreateCopy method.
+	 */
 	protected static Driver getMemoryDriver() {
 		return (Driver) memDriver.get();
 	}
@@ -108,7 +123,6 @@ public abstract class GDALImageWriter extends ImageWriter {
 	 */
 	public GDALImageWriter(ImageWriterSpi originatingProvider) {
 		super(originatingProvider);
-
 	}
 
 	public IIOMetadata getDefaultStreamMetadata(ImageWriteParam param) {
@@ -116,13 +130,54 @@ public abstract class GDALImageWriter extends ImageWriter {
 				"getDefaultStreamMetadata not implemented yet.");
 	}
 
+	/**
+	 * Write the input image to the output.
+	 * <p>
+	 * The output must have been set beforehand using the <code>setOutput</code>
+	 * method.
+	 * 
+	 * <p>
+	 * An <code>ImageWriteParam</code> may optionally be supplied to control
+	 * the writing process. If <code>param</code> is <code>null</code>, a
+	 * default write param will be used.
+	 * 
+	 * <p>
+	 * If the supplied <code>ImageWriteParam</code> contains optional setting
+	 * values not supported by this writer (<i>e.g.</i> progressive encoding
+	 * or any format-specific settings), they will be ignored.
+	 * 
+	 * @param streamMetadata
+	 *            an <code>IIOMetadata</code> object representing stream
+	 *            metadata, or <code>null</code> to use default values.
+	 * @param image
+	 *            an <code>IIOImage</code> object containing an image, and
+	 *            metadata to be written. Note that metadata is actually
+	 *            supposed to be an instance of
+	 *            {@link GDALWritableCommonIIOImageMetadata} which can be used
+	 *            to convert any type of ImageMetadata to a format which is
+	 *            understood by this writer.
+	 * @param param
+	 *            an <code>ImageWriteParam</code>, or <code>null</code> to
+	 *            use a default <code>ImageWriteParam</code>.
+	 * 
+	 * @exception IllegalStateException
+	 *                if the output has not been set.
+	 * @exception IllegalArgumentException
+	 *                if <code>image</code> is <code>null</code>.
+	 * @exception IOException
+	 *                if an error occurs during writing.
+	 */
 	public void write(IIOMetadata streamMetadata, IIOImage image,
 			ImageWriteParam param) throws IOException {
 
+		if (outputFile == null) {
+			throw new IllegalStateException("the output is null!");
+		}
+
 		// /////////////////////////////////////////////////////////////////////
 		//
-		// Initial check on the capabilities of this writer and on the provided
-		// parameters.
+		// Initial check on the capabilities of this writer as well as the
+		// provided parameters.
 		//
 		// /////////////////////////////////////////////////////////////////////
 		final String driverName = (String) ((GDALImageWriterSpi) this.originatingProvider)
@@ -177,17 +232,18 @@ public abstract class GDALImageWriter extends ImageWriter {
 			if (metadata instanceof GDALCommonIIOImageMetadata) {
 				imageMetadata = (GDALCommonIIOImageMetadata) metadata;
 			} else {
-				// convertMetadata(IMAGE_METADATA_NAME, metadata,
-				// imageMetadata);
+				// TODO: build a metadata conversion to obtain an understandable
+				// metadata object.
+				imageMetadata = new GDALWritableCommonIIOImageMetadata();
+				convertMetadata(IMAGE_METADATA_NAME, metadata, imageMetadata);
 			}
 		}
 
 		// /////////////////////////////////////////////////////////////////////
 		//
 		// Some GDAL formats driver support both "Create" and "CreateCopy"
-		// methods.
-		// Some others simply support "CreateCopy" method which only allows to
-		// create a new File from an existing Dataset.
+		// methods. Some others simply support "CreateCopy" method which only
+		// allows to create a new File from an existing Dataset.
 		//
 		// /////////////////////////////////////////////////////////////////////
 		Dataset writeDataset;
@@ -196,6 +252,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 			// /////////////////////////////////////////////////////////////////
 			//
 			// Create is supported
+			// -------------------
 			//
 			// /////////////////////////////////////////////////////////////////
 
@@ -230,14 +287,14 @@ public abstract class GDALImageWriter extends ImageWriter {
 			}
 		} else {
 
-			// /////////////////////////////////////////////////////////////////
+			// ////////////////////////////////////////////////////////////////
 			//
 			// Only CreateCopy is supported
-			//
 			// ----------------------------------------------------------------
+			//
 			// First of all, it is worth to point out that CreateCopy method
 			// allows to create a File from an existing Dataset.
-			// /////////////////////////////////////////////////////////////////
+			// ////////////////////////////////////////////////////////////////
 
 			final Driver driver = gdal.GetDriverByName(driverName);
 			// //
@@ -288,6 +345,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 	 * <code>IIOMetadata</code> instance
 	 * 
 	 * @param dataset
+	 *            the dataset on which
 	 * @param imageMetadata
 	 */
 	private void setMetadata(Dataset dataset,
@@ -320,8 +378,10 @@ public abstract class GDALImageWriter extends ImageWriter {
 		if (gcpNum != 0) {
 			final String gcpProj = imageMetadata.getGcpProjection();
 			List gcps = imageMetadata.getGcps();
+
+			// TODO: Fix getGCPs access in SWIG's Java Bindings
 			// TODO: set GCPs. Not all dataset support GCPs settings
-			dataset.SetGCPs(gcpNum, null, gcpProj);
+			// dataset.SetGCPs(1, gcps, gcpProj);
 		}
 
 		// //
@@ -345,9 +405,8 @@ public abstract class GDALImageWriter extends ImageWriter {
 		//
 		// Setting metadata
 		//
-		// TODO: Requires SWIG bindings extending since actually only
-		// a single metadata value is supported and HashTable as parameter
-		// crashes the JVM
+		// TODO: Requires SWIG bindings extending since an HashTable as
+		// parameter crashes the JVM
 		//
 		// //
 		final List domains = imageMetadata.getGdalMetadataDomainsList();
@@ -360,23 +419,30 @@ public abstract class GDALImageWriter extends ImageWriter {
 				while (keysIt.hasNext()) {
 					final String key = (String) keysIt.next();
 					final String value = (String) metadataMap.get(key);
-					dataset.SetMetadataItem(key,value,domain);
+					dataset.SetMetadataItem(key, value, domain);
 				}
 			}
 		}
 
 	}
 
-	// /**
-	// * Merges <code>inData</code> into <code>outData</code>. The supplied
-	// * metadata format name is attempted first and failing that the standard
-	// * metadata format name is attempted.
-	// */
-	// private void convertMetadata(String metadataFormatName, IIOMetadata
-	// inData,
-	// IIOMetadata outData) {
-	//
-	// }
+	/**
+	 * Merges <code>inData</code> into <code>outData</code>.
+	 */
+	private void convertMetadata(String metadataFormatName, IIOMetadata inData,
+			IIOMetadata outData) {
+
+		String formatName = null;
+		if (inData.isStandardMetadataFormatSupported()) {
+			formatName = GDALUtilities.STANDARD_METADATA_NAME;
+			try {
+				Node root = inData.getAsTree(formatName);
+				outData.mergeTree(formatName, root);
+			} catch (IIOInvalidTreeException e) {
+				// ignore
+			}
+		}
+	}
 
 	/**
 	 * Given a previously created <code>Dataset</code>, containing no data,
@@ -1338,9 +1404,31 @@ public abstract class GDALImageWriter extends ImageWriter {
 
 	public IIOMetadata getDefaultImageMetadata(ImageTypeSpecifier imageType,
 			ImageWriteParam param) {
-		// TODO: use a GDALWritableImageMetadata constructor
-		GDALCommonIIOImageMetadata imageMetadata = new GDALCommonIIOImageMetadata(
-				null);
+		GDALWritableCommonIIOImageMetadata imageMetadata = new GDALWritableCommonIIOImageMetadata();
+		SampleModel sm = imageType.getSampleModel();
+
+		final int sourceWidth = sm.getWidth();
+		final int sourceHeight = sm.getHeight();
+		final int sourceMinX = 0;
+		final int sourceMinY = 0;
+		final int dataType = GDALUtilities.retrieveGDALDataBufferType(sm
+				.getDataType());
+		final int nBands = sm.getNumBands();
+
+		// //
+		//
+		// Setting regions and sizes and retrieving parameters
+		//
+		// //
+		Rectangle imageBounds = new Rectangle(sourceMinX, sourceMinY,
+				sourceWidth, sourceHeight);
+		Dimension destSize = new Dimension();
+		computeRegions(imageBounds, destSize, param);
+		imageMetadata.setWidth(destSize.width);
+		imageMetadata.setHeight(destSize.height);
+		imageMetadata.setBandsNumber(nBands);
+		// TODO:provides additional settings
+
 		return imageMetadata;
 	}
 
@@ -1369,7 +1457,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 		GDALCommonIIOImageMetadata im = (GDALCommonIIOImageMetadata) getDefaultImageMetadata(
 				imageType, param);
 
-		// convertMetadata(IMAGE_METADATA_NAME, inData, im);
+		convertMetadata(IMAGE_METADATA_NAME, inData, im);
 
 		return im;
 	}

@@ -101,25 +101,6 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
 	}
 
 	/**
-	 * Test Read exploiting JAI-ImageIO tools capabilities
-	 * 
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-
-	public void testReadDirect() throws FileNotFoundException, IOException {
-		String fileName = "bogota.tif";
-		final File file = TestData.file(this, fileName);
-		assertTrue(new GeoTiffImageReaderSpi().canDecodeInput(file));
-		ImageReader reader = new GeoTiffImageReaderSpi().createReaderInstance();
-		reader.setInput(file);
-		final RenderedImage image = reader.read(0);
-		assertNotNull(image);
-		if (TestData.isInteractiveTest())
-			Viewer.visualizeAllInformation(image, "", true);
-	}
-
-	/**
 	 * Test Writing capabilities.
 	 * 
 	 * @throws FileNotFoundException
@@ -127,15 +108,15 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
 	 */
 	public void testWrite() throws IOException, FileNotFoundException {
 
-		 final File outputFile = TestData.temp(this, "writetest.tif", false);
-		 outputFile.deleteOnExit();
-		 final File inputFile = TestData.file(this, "bogota.tif");
+		final File outputFile = TestData.temp(this, "writetest.tif", false);
+		outputFile.deleteOnExit();
+		final File inputFile = TestData.file(this, "bogota.tif");
 		ImageReadParam rparam = new ImageReadParam();
-		rparam.setSourceRegion(new Rectangle(1, 1, 200, 500));
+		rparam.setSourceRegion(new Rectangle(1, 1, 300, 500));
 		rparam.setSourceSubsampling(1, 2, 0, 0);
 		final ImageLayout l = new ImageLayout();
-		l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512)
-				.setTileWidth(512);
+		l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(256)
+				.setTileWidth(256);
 
 		ImageReader reader = new GeoTiffImageReaderSpi().createReaderInstance();
 
