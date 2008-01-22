@@ -22,6 +22,7 @@ import it.geosolutions.resources.TestData;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.imageio.ImageReadParam;
 import javax.media.jai.JAI;
@@ -68,7 +69,7 @@ public class EnvisatTest extends AbstractEnvisatTestCase {
 		final ParameterBlockJAI pbjImageRead;
 		final ImageReadParam irp = new ImageReadParam();
 
-		// subsample by 8 on both dimensions
+		// subsample by 2 on both dimensions
 		final int xSubSampling = 2;
 		final int ySubSampling = 2;
 		final int xSubSamplingOffset = 0;

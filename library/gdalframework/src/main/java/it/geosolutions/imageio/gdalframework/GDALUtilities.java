@@ -50,7 +50,7 @@ import org.gdal.gdalconst.gdalconstConstants;
  * @author Simone Giannecchini, GeoSolutions.
  */
 public final class GDALUtilities {
-	
+
 	public static final String STANDARD_METADATA_NAME = IIOMetadataFormatImpl.standardMetadataFormatName;
 
 	public final static String newLine = System.getProperty("line.separator");
@@ -254,8 +254,12 @@ public final class GDALUtilities {
 	 */
 	public static List getGDALImageMetadata(String dataSetName) {
 		final Dataset ds = acquireDataSet(dataSetName, gdalconst.GA_ReadOnly);
-		final List gdalImageMetadata = ds.GetMetadata_List("");
-		closeDataSet(ds);
+		final List gdalImageMetadata;
+		if (ds != null) {
+			gdalImageMetadata = ds.GetMetadata_List("");
+			closeDataSet(ds);
+		} else
+			gdalImageMetadata = null;
 		return gdalImageMetadata;
 	}
 

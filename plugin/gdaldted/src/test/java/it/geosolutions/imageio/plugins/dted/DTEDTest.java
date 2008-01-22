@@ -17,7 +17,6 @@
 package it.geosolutions.imageio.plugins.dted;
 
 import it.geosolutions.imageio.gdalframework.Viewer;
-import it.geosolutions.imageio.plugins.dted.DTEDImageReader;
 import it.geosolutions.resources.TestData;
 
 import java.io.File;
@@ -31,6 +30,10 @@ import javax.media.jai.RenderedOp;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
+import org.gdal.gdal.Dataset;
+import org.gdal.gdal.gdal;
+import org.gdal.gdalconst.gdalconst;
 
 /**
  * Testing reading capabilities for {@link DTEDImageReader}.

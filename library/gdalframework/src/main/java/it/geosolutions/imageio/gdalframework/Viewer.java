@@ -680,11 +680,15 @@ public final class Viewer {
 		final GDALCommonIIOImageMetadata mt = reader.getDatasetMetadata(index);
 		final List metadata = GDALUtilities.getGDALImageMetadata(mt
 				.getDatasetName());
-		final int size = metadata.size();
-		StringBuffer sb = new StringBuffer("Image Metadata:").append(newLine);
-		for (int i = 0; i < size; i++)
-			sb.append(metadata.get(i)).append(newLine);
-		return sb.toString();
+		if (metadata != null) {
+			final int size = metadata.size();
+			StringBuffer sb = new StringBuffer("Image Metadata:")
+					.append(newLine);
+			for (int i = 0; i < size; i++)
+				sb.append(metadata.get(i)).append(newLine);
+			return sb.toString();
+		}
+		return "Image Metadata not found";
 	}
 
 	// ////////////////////////////////////////////////////////////////////////
@@ -698,12 +702,15 @@ public final class Viewer {
 				.getNumImages(true) - 1);
 		final List metadata = GDALUtilities.getGDALStreamMetadata(mt
 				.getDatasetName());
-		final int size = metadata.size();
-
-		StringBuffer sb = new StringBuffer("Stream Metadata:").append(newLine);
-		for (int i = 0; i < size; i++)
-			sb.append(metadata.get(i)).append(newLine);
-		return sb.toString();
+		if (metadata != null) {
+			final int size = metadata.size();
+			StringBuffer sb = new StringBuffer("Stream Metadata:")
+					.append(newLine);
+			for (int i = 0; i < size; i++)
+				sb.append(metadata.get(i)).append(newLine);
+			return sb.toString();
+		}
+		return "Stream Metadata not found";
 	}
 
 	// ////////////////////////////////////////////////////////////////////////

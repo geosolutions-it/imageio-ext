@@ -19,6 +19,7 @@ package it.geosolutions.imageio.plugins.hdf4;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.resources.TestData;
 
+import java.awt.RenderingHints;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.io.File;
@@ -29,6 +30,7 @@ import java.util.Iterator;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
+import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
@@ -46,49 +48,44 @@ public class HDF4Test extends AbstractHDF4TestCase {
 		super(name);
 	}
 
-	/**
-	 * This test method uses an HDF4 file containing several subdatasets
-	 */
-
-	public void testSubDatasets() throws FileNotFoundException, IOException {
-		try {
-			final int initialIndex = 2;
-			final int nSubdatasetsLoop = 3;
-
-			final ImageReadParam irp = new ImageReadParam();
-			irp.setSourceSubsampling(1, 1, 0, 0);
-
-			final ImageReader mReader = new HDF4ImageReaderSpi()
-					.createReaderInstance();
-			ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
-			final String fileName = "TOVS_DAILY_AM_870330_NG.HDF";
-			final File file = TestData.file(this, fileName);
-
-			pbjImageRead.setParameter("Input", file);
-			pbjImageRead.setParameter("Reader", mReader);
-			pbjImageRead.setParameter("readParam", irp);
-
-			for (int i = initialIndex; i < initialIndex + nSubdatasetsLoop; i++) {
-				pbjImageRead.setParameter("ImageChoice", new Integer(i));
-				RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-				if (TestData.isInteractiveTest())
-					Viewer.visualizeImageMetadata(image, fileName, i);
-				else
-					assertNotNull(image.getTiles());
-
-				HDF4ImageReader reader = (HDF4ImageReader) image
-						.getProperty("JAI.ImageReader");
-				pbjImageRead.setParameter("Reader", reader);
-			}
-		} catch (FileNotFoundException fnfe) {
-			warningMessage();
-		}
-	}
+//	/**
+//	 * This test method uses an HDF4 file containing several subdatasets
+//	 */
+//
+//	public void testSubDataset() throws FileNotFoundException, IOException {
+//		try {
+//			final int index = 2;
+//			final ImageReadParam irp = new ImageReadParam();
+//			irp.setSourceSubsampling(1, 2, 0, 0);
+//			final String fileName = "TOVS_DAILY_AM_870330_NG.HDF";
+//			final File file = TestData.file(this, fileName);
+//			ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
+//			final ImageReader mReader = new HDF4ImageReaderSpi()
+//					.createReaderInstance();
+//			pbjImageRead.setParameter("Input", file);
+//			pbjImageRead.setParameter("Reader", mReader);
+//			pbjImageRead.setParameter("readParam", irp);
+//			pbjImageRead.setParameter("ImageChoice", new Integer(index));
+//			final ImageLayout l = new ImageLayout();
+//			l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(256)
+//					.setTileWidth(256);
+//			// get a RenderedImage
+//			RenderedOp image = JAI.create("ImageRead", pbjImageRead,
+//					new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
+//
+//			if (TestData.isInteractiveTest())
+//				Viewer.visualize(image, fileName);
+//			else
+//				assertNotNull(image.getTiles());
+//		} catch (FileNotFoundException fnfe) {
+//			warningMessage();
+//		}
+//	}
 
 	public void testManualRead() throws FileNotFoundException, IOException {
 		try {
-			HDF4ImageReader mReader = new HDF4ImageReader(
-					new HDF4ImageReaderSpi());
+			ImageReader mReader = new HDF4ImageReaderSpi()
+					.createReaderInstance();
 			final String fileName = "TOVS_DAILY_AM_870330_NG.HDF";
 			final File file = TestData.file(this, fileName);
 			mReader.setInput(file);
@@ -111,17 +108,17 @@ public class HDF4Test extends AbstractHDF4TestCase {
 	public void testRasterBandsProperties() throws FileNotFoundException,
 			IOException {
 		try {
-			HDF4ImageReader mReader = new HDF4ImageReader(
-					new HDF4ImageReaderSpi());
+			ImageReader reader = new HDF4ImageReaderSpi()
+					.createReaderInstance();
 			String fileName = "TOVS_DAILY_AM_870330_NG.HDF";
 			File file = TestData.file(this, fileName);
-			mReader.setInput(file);
+			reader.setInput(file);
 			final int numImages = 3;
 			int bands;
 			Iterator it;
 			SampleModel sm;
 			for (int i = 1; i < numImages; i++) {
-				it = mReader.getImageTypes(i);
+				it = reader.getImageTypes(i);
 				ImageTypeSpecifier its;
 				if (it.hasNext()) {
 					its = (ImageTypeSpecifier) it.next();
@@ -131,6 +128,7 @@ public class HDF4Test extends AbstractHDF4TestCase {
 					StringBuffer sb = new StringBuffer(
 							"RasterBands properties retrieval").append(
 							" Image: ").append(i);
+					HDF4ImageReader mReader = (HDF4ImageReader) reader;
 					for (int j = 0; j < bands; j++) {
 						sb.append(" \n\t Band: ").append(j).append(" --- ");
 						try {
@@ -167,55 +165,23 @@ public class HDF4Test extends AbstractHDF4TestCase {
 					LOGGER.info(sb.toString());
 				}
 			}
+			reader.dispose();
 		} catch (FileNotFoundException fnfe) {
 			warningMessage();
 		}
-	}
-
-	/**
-	 * This test method retrieves and visualizes specified image metadata and
-	 * stream metadata for a dataset containing several subdatasets
-	 */
-	public void testMetadata() throws FileNotFoundException, IOException {
-		try {
-			final String fileName = "TOVS_DAILY_AM_870330_NG.HDF";
-			final File file = TestData.file(this, fileName);
-			final ParameterBlockJAI pbjImageRead;
-			final ImageReadParam irp = new ImageReadParam();
-
-			irp.setSourceSubsampling(1, 1, 0, 0);
-			pbjImageRead = new ParameterBlockJAI("ImageRead");
-			pbjImageRead.setParameter("Input", file);
-			pbjImageRead.setParameter("readParam", irp);
-
-			int imageIndex = 2;
-			pbjImageRead.setParameter("imageChoice", imageIndex);
-			RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-			if (TestData.isInteractiveTest()) {
-				Viewer.visualizeImageMetadata(image, fileName, imageIndex,
-						false);
-				Viewer.visualizeStreamMetadata(image, fileName, false);
-			}
-		} catch (FileNotFoundException fnfe) {
-			warningMessage();
-		}
-
 	}
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 
-		// Test reading of several subdatasets
-		suite.addTest(new HDF4Test("testSubDatasets"));
+//		// Test reading of several subdatasets
+//		suite.addTest(new HDF4Test("testSubDataset"));
 
-		// // Test read without exploiting JAI
-		// suite.addTest(new HDF4Test("testManualRead"));
-		//
-		// // Test reading of several subdatasets
-		// suite.addTest(new HDF4Test("testRasterBandsProperties"));
-		//
-		// // Test Image Metadata
-		// suite.addTest(new HDF4Test("testMetadata"));
+//		// Test read without exploiting JAI
+//		suite.addTest(new HDF4Test("testManualRead"));
+
+		// Test reading of several subdatasets
+		suite.addTest(new HDF4Test("testRasterBandsProperties"));
 
 		return suite;
 	}

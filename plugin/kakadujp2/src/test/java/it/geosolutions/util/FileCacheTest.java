@@ -25,7 +25,7 @@ public class FileCacheTest extends TestCase {
 
 		/** getting File from the first URL */
 		final URL url = new URL(
-				"http://www.microimages.com/gallery/jp2/Otoe_OrthoImage8.jp2");
+				"http://www.microimages.com/gallery/jp2/1.jp2");
 		LOGGER.info(new StringBuffer("Getting File from URL:").append(
 				url.toString()).toString());
 		for (int i = 0; i < 3; i++) {
@@ -42,7 +42,7 @@ public class FileCacheTest extends TestCase {
 
 		/** getting File from the second URL */
 		final URL url2 = new URL(
-				"http://www.microimages.com/gallery/jp2/CB_TM432.jp2");
+				"http://www.microimages.com/gallery/jp2/potholes2.jp2");
 		LOGGER.info(new StringBuffer("Getting File from URL:").append(
 				url2.toString()).toString());
 		for (int i = 0; i < 3; i++) {
