@@ -144,7 +144,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 	// ////////////////////////////////////////////////
 
 	/** Number of bands */
-	protected int bandsNumber;
+	protected int numBands;
 
 	/** Array to store the maximum value for each band */
 	private Double[] maximums;
@@ -346,8 +346,8 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 		// Getting dataset main properties
 		//
 		// /////////////////////////////////////////////////////////////////
-		bandsNumber = dataset.getRasterCount();
-		if (bandsNumber <= 0)
+		numBands = dataset.getRasterCount();
+		if (numBands <= 0)
 			return false;
 		// final int xsize = dataset.getRasterXSize();
 		// final int ysize = dataset.getRasterYSize();
@@ -356,27 +356,27 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 		// bytes needed to store pixels, may be a negative number
 		final int tileSize = tileWidth
 				* tileHeight
-				* bandsNumber
+				* numBands
 				* (gdal.GetDataTypeSize(dataset.GetRasterBand(1).getDataType()) / 8);
 
 		// bands variables
-		final int[] banks = new int[bandsNumber];
-		final int[] offsetsR = new int[bandsNumber];
-		noDataValues = new Double[bandsNumber];
-		scales = new Double[bandsNumber];
-		offsets = new Double[bandsNumber];
-		minimums = new Double[bandsNumber];
-		maximums = new Double[bandsNumber];
-		numOverviews = new int[bandsNumber];
-		colorInterpretations = new int[bandsNumber];
+		final int[] banks = new int[numBands];
+		final int[] offsetsR = new int[numBands];
+		noDataValues = new Double[numBands];
+		scales = new Double[numBands];
+		offsets = new Double[numBands];
+		minimums = new Double[numBands];
+		maximums = new Double[numBands];
+		numOverviews = new int[numBands];
+		colorInterpretations = new int[numBands];
 		int buf_type = 0;
 
 		Band pBand = null;
 
 		// scanning bands
 		final Double tempD[] = new Double[1];
-		final int bandsOffset[] = new int[bandsNumber];
-		for (int band = 0; band < bandsNumber; band++) {
+		final int bandsOffset[] = new int[numBands];
+		for (int band = 0; band < numBands; band++) {
 			/* Bands are not 0-base indexed, so we must add 1 */
 			pBand = dataset.GetRasterBand(band + 1);
 			buf_type = pBand.getDataType();
@@ -439,8 +439,8 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 					tileHeight, tileWidth, banks, offsetsR);
 		else
 			sampleModel = new PixelInterleavedSampleModel(buffer_type,
-					tileWidth, tileHeight, bandsNumber,
-					tileWidth * bandsNumber, bandsOffset);
+					tileWidth, tileHeight, numBands,
+					tileWidth * numBands, bandsOffset);
 
 		// //
 		//
@@ -452,7 +452,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 					gdal.GetDataTypeSize(buf_type));
 		} else {
 			ColorSpace cs = null;
-			if (bandsNumber > 1) {
+			if (numBands > 1) {
 				// /////////////////////////////////////////////////////////////////
 				//
 				// Number of Bands > 1.
@@ -525,7 +525,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 		node.setAttribute("height", Integer.toString(height));
 		node.setAttribute("tileWidth", Integer.toString(tileWidth));
 		node.setAttribute("tileHeight", Integer.toString(tileHeight));
-		node.setAttribute("numBands", Integer.toString(bandsNumber));
+		node.setAttribute("numBands", Integer.toString(numBands));
 		root.appendChild(node);
 
 		// ////////////////////////////////////////////////////////////////////
@@ -586,7 +586,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 		// BandsInfo -> BandInfo
 		//
 		// //
-		for (int i = 0; i < bandsNumber; i++) {
+		for (int i = 0; i < numBands; i++) {
 			node = new IIOMetadataNode("BandInfo");
 			node.setAttribute("index", Integer.toString(i));
 			node.setAttribute("colorInterpretation",
@@ -712,8 +712,8 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 	 * Return the number of bands of the dataset which is the source for this
 	 * <code>IIOMetadata</code>
 	 */
-	public int getBandsNumber() {
-		return bandsNumber;
+	public int getNumBands() {
+		return numBands;
 	}
 
 	/** Return the width of the image */
@@ -925,11 +925,11 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 	 */
 	private void checkBandIndex(final int bandIndex)
 			throws IllegalArgumentException {
-		if (bandIndex < 0 || bandIndex > bandsNumber) {
+		if (bandIndex < 0 || bandIndex > numBands) {
 			final StringBuffer sb = new StringBuffer("Specified band index (")
 					.append(bandIndex).append(
 							") is out of range. It should be in the range [0,")
-					.append(bandsNumber - 1).append("]");
+					.append(numBands - 1).append("]");
 			throw new IllegalArgumentException(sb.toString());
 		}
 	}

@@ -389,7 +389,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 		// Setting bands values
 		//
 		// //
-		final int nBands = imageMetadata.getBandsNumber();
+		final int nBands = imageMetadata.getNumBands();
 		for (int i = 0; i < nBands; i++) {
 			final Band band = dataset.GetRasterBand(i + 1);
 			try {

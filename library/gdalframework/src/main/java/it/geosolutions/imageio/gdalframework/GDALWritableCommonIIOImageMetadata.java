@@ -67,7 +67,7 @@ public class GDALWritableCommonIIOImageMetadata extends
 	}
 
 	public void setBandsNumber(final int nBands) {
-		this.bandsNumber = nBands;
+		this.numBands = nBands;
 	}
 
 	/**

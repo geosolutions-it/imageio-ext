@@ -35,6 +35,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
+import javax.imageio.ImageTypeSpecifier;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
@@ -102,10 +103,10 @@ public class JPEGReadTest extends AbstractJPEGTestCase {
 		// Preparing srcRegion constants
 		//
 		// //
-		final int srcRegionX = 0;
-		final int srcRegionY = 0;
-		final int srcRegionWidth = 400;
-		final int srcRegionHeight = 200;
+		final int srcRegionX = 100;
+		final int srcRegionY = 100;
+		final int srcRegionWidth = 500;
+		final int srcRegionHeight = 300;
 		final int subSamplingX = 2;
 		final int subSamplingY = 1;
 
@@ -137,14 +138,12 @@ public class JPEGReadTest extends AbstractJPEGTestCase {
 
 		final int destWidth = srcRegionWidth / subSamplingX;
 		final int destHeight = srcRegionHeight / subSamplingY;
-		assertEquals(destWidth, 200);
-		assertEquals(destHeight, 200);
+		assertEquals(destWidth, 250);
+		assertEquals(destHeight, 300);
 
 		final SampleModel sm = cm.createCompatibleSampleModel(destWidth,
 				destHeight);
-		rparam.setDestination(new BufferedImage(cm,
-				javax.media.jai.RasterFactory.createWritableRaster(sm,
-						new Point(0, 0)), false, null));
+		rparam.setDestinationType(new ImageTypeSpecifier(cm,sm));
 
 		// //
 		//
@@ -159,8 +158,8 @@ public class JPEGReadTest extends AbstractJPEGTestCase {
 		pbjImageRead.setParameter("reader", reader);
 		pbjImageRead.setParameter("readParam", rparam);
 		final ImageLayout l = new ImageLayout();
-		l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(256)
-				.setTileWidth(256).setSampleModel(sm);
+		l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(128)
+				.setTileWidth(128);
 
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead,
 				new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
@@ -174,8 +173,8 @@ public class JPEGReadTest extends AbstractJPEGTestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 
-//		// Test reading of a simple image
-//		suite.addTest(new JPEGReadTest("testRead"));
+		// Test reading of a simple image
+		suite.addTest(new JPEGReadTest("testRead"));
 
 		// Test reading of a simple image
 		suite.addTest(new JPEGReadTest("testSourceBands"));
