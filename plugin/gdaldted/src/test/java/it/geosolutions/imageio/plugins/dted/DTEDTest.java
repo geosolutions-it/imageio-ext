@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.dted;
 
+import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.resources.TestData;
 
@@ -25,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
@@ -40,7 +42,7 @@ import junit.framework.TestSuite;
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class DTEDTest extends AbstractTestCase {
-	public final static String fileName = "n54.max";
+	public final static String fileName = "n54.dt0";
 
 	public DTEDTest(String name) {
 		super(name);
@@ -70,12 +72,6 @@ public class DTEDTest extends AbstractTestCase {
 		final ParameterBlockJAI pbjImageRead;
 		final ImageReadParam irp = new ImageReadParam();
 
-		final int xSubSampling = 1;
-		final int ySubSampling = 1;
-		final int xSubSamplingOffset = 0;
-		final int ySubSamplingOffset = 0;
-		irp.setSourceSubsampling(xSubSampling, ySubSampling,
-				xSubSamplingOffset, ySubSamplingOffset);
 		pbjImageRead = new ParameterBlockJAI("ImageRead");
 		pbjImageRead.setParameter("Input", file);
 		pbjImageRead.setParameter("readParam", irp);
@@ -87,10 +83,26 @@ public class DTEDTest extends AbstractTestCase {
 		// get a RenderedImage
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead,
 				new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
-		if (TestData.isInteractiveTest())
-			Viewer.visualizeRescaled(image, "test", -32767);
-		else
+
+		if (TestData.isInteractiveTest()) {
+			image.getRendering();
+			ImageReader reader = (ImageReader) image
+					.getProperty("JAI.ImageReader");
+			int noDataValue = -32767;
+			if (reader != null) {
+				GDALCommonIIOImageMetadata metadata = (GDALCommonIIOImageMetadata) reader
+						.getImageMetadata(0);
+				try {
+					double d = metadata.getNoDataValue(0);
+					noDataValue = (int) d;
+				} catch (IllegalArgumentException iae) {
+				}
+			}
+			Viewer.visualizeRescaled(image, "test", noDataValue);
+		} else
 			assertNotNull(image.getTiles());
+		assertEquals(61, image.getWidth());
+		assertEquals(121, image.getHeight());
 	}
 
 	public static Test suite() {
