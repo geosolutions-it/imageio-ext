@@ -119,28 +119,7 @@ public final class JP2GDALKakaduImageWriterSpi extends GDALImageWriterSpi {
 		// TODO is this correct?
 		return true;
 	}
-	
-//	public synchronized  void onRegistration(ServiceRegistry registry, Class category) {
-//		super.onRegistration(registry, category);
-//		if (registered) {
-//			return;
-//		}
-//
-//		registered = true;
-//		Iterator writers = GDALUtilities.getJDKImageReaderWriterSPI(registry, "JPEG2000",
-//				false).iterator();
-//
-//		ImageWriterSpi spi;
-//		while (writers.hasNext()) {
-//			spi = (ImageWriterSpi) writers.next();
-//			if(spi==this)
-//				continue;
-//			registry.deregisterServiceProvider(spi);
-//			registry.setOrdering(category, this, spi);
-//
-//		}
-//	}
-	
+
 	public final static void setWriteMultithreadingLevel(
 			final int threadsNum) {
 		if (threadsNum>0)

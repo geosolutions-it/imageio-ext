@@ -63,7 +63,7 @@ public class JP2GDALKakaduImageReaderSpi extends GDALImageReaderSpi {
 	static final String vendorName = "GeoSolutions";
 
 	// writerSpiNames
-	static final String[] wSN = {/* "it.geosolutions.imageio.plugins.jp2kakadu.JP2GDALKakaduImageReaderSpi" */null };
+	static final String[] wSN = {/* "it.geosolutions.imageio.plugins.jp2kakadu.JP2GDALKakaduImageWriterSpi" */null };
 
 	// StreamMetadataFormatNames and StreamMetadataFormatClassNames
 	static final boolean supportsStandardStreamMetadataFormat = false;
@@ -141,40 +141,6 @@ public class JP2GDALKakaduImageReaderSpi extends GDALImageReaderSpi {
 				.toString();
 	}
 
-
-
-//	/**
-//	 * Upon registration, this method ensures that this SPI is listed at the top
-//	 * of the ImageReaderSpi items, so that it will be invoked before the
-//	 * default ImageReaderSpi
-//	 * 
-//	 * @param registry
-//	 *            ServiceRegistry where this object has been registered.
-//	 * @param category
-//	 *            a Class object indicating the registry category under which
-//	 *            this object has been registered.
-//	 */
-//	public void onRegistration(ServiceRegistry registry, Class category) {
-//		super.onRegistration(registry, category);
-//		if (registered) {
-//			return;
-//		}
-//
-//		registered = true;
-//
-//		Iterator readers = GDALUtilities.getJDKImageReaderWriterSPI(registry, "JPEG2000",
-//				true).iterator();
-//
-//		ImageReaderSpi spi;
-//		while (readers.hasNext()) {
-//			spi = (ImageReaderSpi) readers.next();
-//			if (spi == this)
-//				continue;
-//			registry.deregisterServiceProvider(spi);
-//			registry.setOrdering(category, this, spi);
-//		}
-//	}
-
 	/**
 	 * Allows to customize kakadu error management.
 	 * 
@@ -197,7 +163,6 @@ public class JP2GDALKakaduImageReaderSpi extends GDALImageReaderSpi {
 			throw new IllegalArgumentException(
 					"KAKADU_ERROR_LEVEL_MANAGEMENT unknown! Provided value is "
 							+ errorManagement);
-
 		}
 	}
 

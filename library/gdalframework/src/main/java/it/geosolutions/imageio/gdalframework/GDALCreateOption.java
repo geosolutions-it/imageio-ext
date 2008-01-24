@@ -42,6 +42,10 @@ public class GDALCreateOption {
 	 * values can't accept a value of 99, while a create option accepting an
 	 * integer value belonging [1-100] can't accept an "ENABLED" String value.
 	 * 
+	 * Some drivers could accept a create option without any value. The
+	 * existence of that create option in the create options list represents
+	 * itself the specific setting.
+	 * 
 	 * The actually supported values for this field are listed below as a
 	 * <code>public final static int</code> items list.
 	 */
@@ -59,6 +63,9 @@ public class GDALCreateOption {
 
 	/** Tag for Floating Point Type */
 	public final static int TYPE_FLOAT = 51;
+
+	/** Tag for Create options without a value */
+	public final static int TYPE_NONE = 55;
 
 	/** Tag for Char Type */
 	public final static int TYPE_CHAR = 58;
@@ -130,6 +137,12 @@ public class GDALCreateOption {
 	/** Accepted values are greater than a predefined one */
 	public final static int VALIDITYCHECKTYPE_VALUE_GREATERTHAN = 24;
 
+	/** Accepted values are multiple of a predefined one */
+	public final static int VALIDITYCHECKTYPE_VALUE_MULTIPLEOF = 25;
+
+	/** Accepted values are power of a predefined one */
+	public final static int VALIDITYCHECKTYPE_VALUE_POWEROF = 26;
+
 	/** Accepted values are strings which need to respect a predefined syntax */
 	public final static int VALIDITYCHECKTYPE_STRING_SYNTAX = 100;
 
@@ -138,8 +151,8 @@ public class GDALCreateOption {
 
 	/**
 	 * <code>validityValues</code> is an array of String representing the
-	 * control values will be used during value coherence checks in compliance
-	 * with <code>validityCheckType</code> field. <BR>
+	 * control values which will be used during value coherence checks in
+	 * compliance with <code>validityCheckType</code> field. <BR>
 	 * 
 	 * If validityCheckType is <code>VALIDITYCHECKTYPE_VALUE</code>, you need
 	 * to set the only supported value.<BR>
@@ -156,8 +169,13 @@ public class GDALCreateOption {
 	 * <code>VALIDITYCHECKTYPE_VALUE_LESSTHAN</code>,
 	 * <code>VALIDITYCHECKTYPE_VALUE_LESSTHANOREQUALTO</code>,
 	 * <code>VALIDITYCHECKTYPE_VALUE_GREATERTHANOREQUALTO</code>,
-	 * <code>VALIDITYCHECKTYPE_VALUE_GREATERTHAN</code><BR>
+	 * <code>VALIDITYCHECKTYPE_VALUE_GREATERTHAN</code>
+	 * <code>VALIDITYCHECKTYPE_VALUE_POWEROF</code>
+	 * <code>VALIDITYCHECKTYPE_VALUE_MULTIPLEOF</code><BR>
 	 * you need to set the reference value.
+	 * 
+	 * If validityCheckType is <code>VALIDITYCHECKTYPE_NONE</code> no checks
+	 * are performed.
 	 */
 	private String[] validityValues;
 
@@ -368,6 +386,8 @@ public class GDALCreateOption {
 		case VALIDITYCHECKTYPE_VALUE_LESSTHAN:
 		case VALIDITYCHECKTYPE_VALUE_GREATERTHANOREQUALTO:
 		case VALIDITYCHECKTYPE_VALUE_GREATERTHAN:
+		case VALIDITYCHECKTYPE_VALUE_MULTIPLEOF:
+		case VALIDITYCHECKTYPE_VALUE_POWEROF:
 			switch (representedValueType) {
 			case TYPE_INT:
 				return checkIntValue(checkingValue);
@@ -375,6 +395,7 @@ public class GDALCreateOption {
 				return checkFloatValue(checkingValue);
 			}
 			break;
+			
 		// //
 		// 
 		// The specified value is a String which must respect a predefined
@@ -511,27 +532,39 @@ public class GDALCreateOption {
 	 *         reference value
 	 */
 	private boolean checkIntValue(String checkingValue) {
-		final int limit = Integer.parseInt(validityValues[0]);
+		final int reference = Integer.parseInt(validityValues[0]);
 		final int parsedValue = Integer.parseInt(checkingValue);
 
 		switch (validityCheckType) {
 		case VALIDITYCHECKTYPE_VALUE_LESSTHANOREQUALTO:
-			if (parsedValue <= limit)
+			if (parsedValue <= reference)
 				return true;
 			break;
 
 		case VALIDITYCHECKTYPE_VALUE_LESSTHAN:
-			if (parsedValue < limit)
+			if (parsedValue < reference)
 				return true;
 			break;
 
 		case VALIDITYCHECKTYPE_VALUE_GREATERTHANOREQUALTO:
-			if (parsedValue >= limit)
+			if (parsedValue >= reference)
 				return true;
 			break;
 
 		case VALIDITYCHECKTYPE_VALUE_GREATERTHAN:
-			if (parsedValue > limit)
+			if (parsedValue > reference)
+				return true;
+			break;
+		case VALIDITYCHECKTYPE_VALUE_POWEROF:
+			int result = 1;
+			while (result < Integer.MAX_VALUE){
+				result*=reference;
+				if( result==parsedValue)
+					return true;
+			}
+			break;
+		case VALIDITYCHECKTYPE_VALUE_MULTIPLEOF:
+			if (parsedValue%reference==0)
 				return true;
 			break;
 		}
@@ -585,27 +618,32 @@ public class GDALCreateOption {
 	 *         reference value
 	 */
 	private boolean checkFloatValue(String checkingValue) {
-		final float limit = Float.parseFloat(validityValues[0]);
+		final float reference = Float.parseFloat(validityValues[0]);
 		final float parsedValue = Float.parseFloat(checkingValue);
 
 		switch (validityCheckType) {
 		case VALIDITYCHECKTYPE_VALUE_LESSTHANOREQUALTO:
-			if (parsedValue <= limit)
+			if (parsedValue <= reference)
 				return true;
 			break;
 
 		case VALIDITYCHECKTYPE_VALUE_LESSTHAN:
-			if (parsedValue < limit)
+			if (parsedValue < reference)
 				return true;
 			break;
 
 		case VALIDITYCHECKTYPE_VALUE_GREATERTHANOREQUALTO:
-			if (parsedValue >= limit)
+			if (parsedValue >= reference)
 				return true;
 			break;
 
 		case VALIDITYCHECKTYPE_VALUE_GREATERTHAN:
-			if (parsedValue > limit)
+			if (parsedValue > reference)
+				return true;
+			break;
+		case VALIDITYCHECKTYPE_VALUE_MULTIPLEOF:
+			//TODO: can I apply this rule to floating numbers?
+			if (parsedValue%reference==0)
 				return true;
 			break;
 		}
