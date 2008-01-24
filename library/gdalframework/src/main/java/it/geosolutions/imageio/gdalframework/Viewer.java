@@ -17,10 +17,15 @@
 package it.geosolutions.imageio.gdalframework;
 
 import java.awt.BorderLayout;
+import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
+import java.awt.image.renderable.ParameterBlock;
 import java.io.IOException;
 import java.util.List;
 
+import javax.media.jai.JAI;
+import javax.media.jai.ROI;
+import javax.media.jai.RenderedOp;
 import javax.media.jai.widget.ScrollingImagePanel;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -76,6 +81,60 @@ public final class Viewer {
 
 	private final static String newLine = System.getProperty("line.separator");
 
+	/**
+	 * Visualize the image, after rescaling its values, given a threshold for
+	 * the ROI. This is useful to rescale an image coming from a source which
+	 * may contain noDataValues. The ROI threshold allows to set a minimal value
+	 * to be included in the computation of the future JAI extrema operation
+	 * used before the JAI rescale operation.
+	 * 
+	 * @param image
+	 *            RenderedImage to visualize
+	 * @param title
+	 *            title for the frame
+	 * @param roiThreshold
+	 *            the threshold for the inner ROI
+	 */
+	public static void visualizeRescaled(RenderedImage image, String title,
+			int roiThreshold) throws IOException {
+
+		ROI roi = new ROI(image, roiThreshold);
+		ParameterBlock pb = new ParameterBlock();
+		pb.addSource(image); // The source image
+		if (roi != null)
+			pb.add(roi); // The region of the image to scan
+
+		// Perform the extrema operation on the source image
+		RenderedOp op = JAI.create("extrema", pb);
+
+		// Retrieve both the maximum and minimum pixel value
+		double[][] extrema = (double[][]) op.getProperty("extrema");
+
+		final double[] scale = new double[] { (255) / (extrema[1][0] - extrema[0][0]) };
+		final double[] offset = new double[] { ((255) * extrema[0][0])
+				/ (extrema[0][0] - extrema[1][0]) };
+
+		// Preparing to rescaling values
+		ParameterBlock pbRescale = new ParameterBlock();
+		pbRescale.add(scale);
+		pbRescale.add(offset);
+		pbRescale.addSource(image);
+		RenderedOp rescaledImage = JAI.create("Rescale", pbRescale);
+
+		ParameterBlock pbConvert = new ParameterBlock();
+		pbConvert.addSource(rescaledImage);
+		pbConvert.add(DataBuffer.TYPE_BYTE);
+		RenderedOp destImage = JAI.create("format", pbConvert);
+		visualize(destImage, title);
+	}
+
+	/**
+	 * base method used to simply visualize RenderedImage without further
+	 * information
+	 * 
+	 * @param ri
+	 *            RenderedImage to visualize
+	 */
 	public static void visualize(final RenderedImage ri) {
 		visualize(ri, "");
 	}
@@ -95,7 +154,6 @@ public final class Viewer {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		SwingUtilities.invokeLater(new Runnable() {
-
 			public void run() {
 				frame.pack();
 				frame.setSize(1024, 768);

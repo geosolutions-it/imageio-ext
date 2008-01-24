@@ -19,21 +19,19 @@ package it.geosolutions.imageio.plugins.dted;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.resources.TestData;
 
+import java.awt.RenderingHints;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.imageio.ImageReadParam;
+import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
-import org.gdal.gdal.Dataset;
-import org.gdal.gdal.gdal;
-import org.gdal.gdalconst.gdalconst;
 
 /**
  * Testing reading capabilities for {@link DTEDImageReader}.
@@ -42,7 +40,7 @@ import org.gdal.gdalconst.gdalconst;
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class DTEDTest extends AbstractTestCase {
-	public final static String fileName = "n54.dt0";
+	public final static String fileName = "n54.max";
 
 	public DTEDTest(String name) {
 		super(name);
@@ -72,7 +70,6 @@ public class DTEDTest extends AbstractTestCase {
 		final ParameterBlockJAI pbjImageRead;
 		final ImageReadParam irp = new ImageReadParam();
 
-		// subsample by 8 on both dimensions
 		final int xSubSampling = 1;
 		final int ySubSampling = 1;
 		final int xSubSamplingOffset = 0;
@@ -83,11 +80,15 @@ public class DTEDTest extends AbstractTestCase {
 		pbjImageRead.setParameter("Input", file);
 		pbjImageRead.setParameter("readParam", irp);
 
-		// get a RenderedImage
-		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+		final ImageLayout l = new ImageLayout();
+		l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(32)
+				.setTileWidth(32);
 
+		// get a RenderedImage
+		RenderedOp image = JAI.create("ImageRead", pbjImageRead,
+				new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
 		if (TestData.isInteractiveTest())
-			Viewer.visualize(image, "Subsampling Read");
+			Viewer.visualizeRescaled(image, "test", -32767);
 		else
 			assertNotNull(image.getTiles());
 	}

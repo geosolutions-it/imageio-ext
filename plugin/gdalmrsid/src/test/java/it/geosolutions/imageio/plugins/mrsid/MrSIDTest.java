@@ -32,6 +32,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.media.jai.ImageLayout;
@@ -212,7 +213,7 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 	 */
 	public void testManualRead() throws IOException {
 		try {
-			MrSIDImageReader reader = (MrSIDImageReader) new MrSIDImageReaderSpi()
+			ImageReader reader = new MrSIDImageReaderSpi()
 					.createReaderInstance();
 
 			final File file = TestData.file(this, fileName);
@@ -220,12 +221,13 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 			ImageTypeSpecifier spec = (ImageTypeSpecifier) reader
 					.getImageTypes(0).next();
 			final int width = reader.getWidth(0);
+			final int halfWidth = width / 2;
 			final int height = reader.getHeight(0);
+			final int halfHeight = height / 2;
 
 			final ImageReadParam irp = new ImageReadParam();
-			irp.setSourceSubsampling(1, 1, 0, 0);
-			irp.setSourceRegion(new Rectangle(width / 2, height / 2, width / 2,
-					height / 2));
+			irp.setSourceRegion(new Rectangle(halfWidth, halfHeight, halfWidth,
+					halfHeight));
 			WritableRaster raster = Raster.createWritableRaster(spec
 					.getSampleModel()
 					.createCompatibleSampleModel(width, height), null);
@@ -233,15 +235,20 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 					false, null);
 
 			irp.setDestination(bi);
-			irp.setDestinationOffset(new Point(width / 2, height / 2));
+			irp.setDestinationOffset(new Point(halfWidth, halfHeight));
 			final RenderedImage image = reader.read(0, irp);
-			irp.setSourceRegion(new Rectangle(0, 0, width / 2, height / 2));
-			irp.setDestination((BufferedImage) image);
+			irp.setSourceRegion(new Rectangle(0, 0, halfWidth, halfHeight));
+			irp.setDestination(bi);
 			irp.setDestinationOffset(new Point(0, 0));
-			RenderedImage ri2 = reader.read(0, irp);
+			final RenderedImage ri2 = reader.read(0, irp);
+			irp.setSourceRegion(new Rectangle(halfWidth, halfHeight / 2,
+					halfWidth, halfHeight / 4));
+			irp.setDestination(bi);
+			irp.setDestinationOffset(new Point(halfWidth, halfHeight / 2));
+			final RenderedImage ri3 = reader.read(0, irp);
 
 			if (TestData.isInteractiveTest())
-				Viewer.visualize(ri2, "MrSID ImageRead");
+				Viewer.visualize(ri3, "MrSID ImageRead");
 			else
 				assertNotNull(image);
 
