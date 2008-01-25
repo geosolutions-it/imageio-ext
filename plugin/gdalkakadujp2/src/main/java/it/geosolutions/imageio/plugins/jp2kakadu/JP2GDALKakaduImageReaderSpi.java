@@ -38,7 +38,7 @@ import org.gdal.gdal.gdal;
  */
 public class JP2GDALKakaduImageReaderSpi extends GDALImageReaderSpi {
 
-	public static abstract class KakaduErrorManagement {
+	public final static class KakaduErrorManagement {
 
 		public static final int FUSSY = 0;
 
@@ -50,9 +50,9 @@ public class JP2GDALKakaduImageReaderSpi extends GDALImageReaderSpi {
 	private static final Logger logger = Logger
 			.getLogger("it.geosolutions.imageio.plugins.jp2kakadu");
 
-	static final String[] suffixes = { "jp2", "jp2" };
+	static final String[] suffixes = { "JP2", "J2C" };
 
-	static final String[] formatNames = { "JPEG2000" };
+	static final String[] formatNames = { "JP2", "JPEG 2000", "JP2K"};
 
 	static final String[] MIMETypes = { "image/jp2", "image/jp2k" };
 
@@ -63,7 +63,7 @@ public class JP2GDALKakaduImageReaderSpi extends GDALImageReaderSpi {
 	static final String vendorName = "GeoSolutions";
 
 	// writerSpiNames
-	static final String[] wSN = {/* "it.geosolutions.imageio.plugins.jp2kakadu.JP2GDALKakaduImageWriterSpi" */null };
+	static final String[] wSN = {"it.geosolutions.imageio.plugins.jp2kakadu.JP2GDALKakaduImageWriterSpi"  };
 
 	// StreamMetadataFormatNames and StreamMetadataFormatClassNames
 	static final boolean supportsStandardStreamMetadataFormat = false;
@@ -86,8 +86,6 @@ public class JP2GDALKakaduImageReaderSpi extends GDALImageReaderSpi {
 	static final String[] extraImageMetadataFormatNames = { null };
 
 	static final String[] extraImageMetadataFormatClassNames = { null };
-
-//	private boolean registered;
 
 	public JP2GDALKakaduImageReaderSpi() {
 		super(
@@ -165,14 +163,4 @@ public class JP2GDALKakaduImageReaderSpi extends GDALImageReaderSpi {
 							+ errorManagement);
 		}
 	}
-
-	public final static void setReadMultithreadingLevel(final int threadsNum) {
-		if (threadsNum > 0)
-			gdal.SetConfigOption("KAKADU_READ_MULTITHREADING_LEVEL", Integer
-					.toString(threadsNum));
-		else
-			throw new IllegalArgumentException(
-				"KAKADU_READ_MULTITHREADING_LEVEL must be positive!");
-	}
-
 }

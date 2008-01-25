@@ -73,8 +73,6 @@ public final class JP2GDALKakaduImageWriterSpi extends GDALImageWriterSpi {
 
 	static final String[] extraImageMetadataFormatClassNames = { null };
 
-//	private boolean registered;
-	
 	/**
 	 * 
 	 */
@@ -94,8 +92,6 @@ public final class JP2GDALKakaduImageWriterSpi extends GDALImageWriterSpi {
 				Collections.singletonList("JP2KAK"));
 	}
 
-
-
 	/**
 	 * 
 	 * @see javax.imageio.spi.ImageWriterSpi#createWriterInstance(java.lang.Object)
@@ -113,21 +109,9 @@ public final class JP2GDALKakaduImageWriterSpi extends GDALImageWriterSpi {
 		return "SPI for JPEG 2000 ImageWriter";
 	}
 
-
-
 	public boolean canEncodeImage(ImageTypeSpecifier type) {
 		// TODO is this correct?
 		return true;
-	}
-
-	public final static void setWriteMultithreadingLevel(
-			final int threadsNum) {
-		if (threadsNum>0)
-			gdal.SetConfigOption("KAKADU_WRITE_MULTITHREADING_LEVEL", Integer.toString(threadsNum));
-		else
-			throw new IllegalArgumentException(
-				"KAKADU_WRITE_MULTITHREADING_LEVEL must be positive!");
-	
 	}
 }
 

@@ -60,7 +60,6 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
 		final File file = TestData.file(this, fileName);
 		JP2GDALKakaduImageReaderSpi
 				.setKakaduInputErrorManagement(KakaduErrorManagement.FAST);
-		JP2GDALKakaduImageReaderSpi.setReadMultithreadingLevel(15);
 		pbjImageRead = new ParameterBlockJAI("ImageRead");
 		pbjImageRead.setParameter("Input", file);
 		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
@@ -87,7 +86,6 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
 
 		JP2GDALKakaduImageReaderSpi
 				.setKakaduInputErrorManagement(KakaduErrorManagement.FAST);
-		JP2GDALKakaduImageReaderSpi.setReadMultithreadingLevel(5);
 
 		// ////////////////////////////////////////////////////////////////
 		// preparing to read

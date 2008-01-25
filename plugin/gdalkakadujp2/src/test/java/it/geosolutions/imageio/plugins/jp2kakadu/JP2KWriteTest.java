@@ -69,9 +69,6 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		// multithreading settings
-		JP2GDALKakaduImageReaderSpi.setReadMultithreadingLevel(2);
-		JP2GDALKakaduImageWriterSpi.setWriteMultithreadingLevel(2);
 	}
 
 	// ////////////////////////////////////////////////////////////////////////
@@ -1894,76 +1891,6 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 		final RenderedOp op2 = JAI.create("ImageWrite", pbjImageWrite2);
 	}
 
-	// ////////////////////////////////////////////////////////////////////////
-	//
-	// Testing multithreading capabilities.
-	//
-	// ////////////////////////////////////////////////////////////////////////
-	public void testWrite_Multithreading() throws IOException,
-			FileNotFoundException {
-
-		LOGGER.info("Testing JP2 Write operation with multithreading");
-		// Preparing input/output files
-		final File inputFile = TestData.file(this, testFileName);
-		final File outputFile = TestData.temp(this, "multithreadingwrite.jp2",
-				deleteTempFilesOnExit);
-		assertTrue(inputFile.exists());
-
-		// Setting read-multithreading capabilities
-		JP2GDALKakaduImageReaderSpi.setReadMultithreadingLevel(5);
-		// Setting write-multithreading capabilities
-		JP2GDALKakaduImageWriterSpi.setWriteMultithreadingLevel(5);
-
-		// Reading
-		final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
-				"ImageRead");
-		pbjImageRead.setParameter("Input", inputFile);
-		if (ENABLE_SUBSAMPLING) {
-			ImageReadParam readParam = new ImageReadParam();
-			readParam.setSourceSubsampling(4, 4, 0, 0);
-			pbjImageRead.setParameter("readParam", readParam);
-		}
-		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
-				.createReaderInstance());
-		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-
-		// ////////////////////////////////////////////////////////////////////
-		//
-		// preparing to write
-		//
-		// ////////////////////////////////////////////////////////////////////
-		// Setting output and writer
-		final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
-				"ImageWrite");
-		pbjImageWrite.setParameter("Output", new FileImageOutputStreamExtImpl(
-				outputFile));
-		ImageWriter writer = new JP2GDALKakaduImageWriterSpi()
-				.createWriterInstance();
-		pbjImageWrite.setParameter("Writer", writer);
-
-		// Specifying image source to write
-		pbjImageWrite.addSource(image);
-		ImageWriteParam param = writer.getDefaultWriteParam();
-		pbjImageWrite.setParameter("writeParam", param);
-
-		// Writing
-		final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
-
-		if (!deleteTempFilesOnExit) {
-			final String message = new StringBuffer(
-					"------------------------------------------------------------------------\n")
-					.append(
-							"Files written during write operations tests will not be automatically deleted.\n")
-					.append("Several tests will reduce you free disk space.\n")
-					.append(
-							"Be sure of deleting written test data files when they are no more needed.\n")
-					.append(
-							"------------------------------------------------------------------------------\n")
-					.toString();
-			LOGGER.info(message);
-		}
-	}
-
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 
@@ -2028,11 +1955,24 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 			// Testing "Tiling"
 			suite.addTest(new JP2KWriteTest("testWrite_Tiling"));
 
-			// Testing multithreading capabilities.
-			suite.addTest(new JP2KWriteTest("testWrite_Multithreading"));
 		}
 
 		suite.addTest(new JP2KWriteTest("testWrite_Parametrized"));
+		
+		if (!deleteTempFilesOnExit) {
+			final String message = new StringBuffer(
+					"------------------------------------------------------------------------\n")
+					.append(
+							"Files written during write operations tests will not be automatically deleted.\n")
+					.append("Several tests will reduce you free disk space.\n")
+					.append(
+							"Be sure of deleting written test data files when they are no more needed.\n")
+					.append(
+							"------------------------------------------------------------------------------\n")
+					.toString();
+			LOGGER.info(message);
+		}
+		
 		return suite;
 	}
 
