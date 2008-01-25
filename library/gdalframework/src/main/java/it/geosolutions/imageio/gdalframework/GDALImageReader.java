@@ -865,9 +865,11 @@ public abstract class GDALImageReader extends ImageReader {
 		// Retrieving the requested dataset
 		//
 		// //
-		GDALCommonIIOImageMetadata item = getDatasetMetadata(imageIndex);
+		final GDALCommonIIOImageMetadata item = getDatasetMetadata(imageIndex);
 		final int width = item.getWidth();
 		final int height = item.getHeight();
+		final SampleModel itemSampleModel = item.getSampleModel();
+		int itemNBands = itemSampleModel.getNumBands();
 		int nDestBands;
 
 		BufferedImage bi = null;
@@ -892,7 +894,7 @@ public abstract class GDALImageReader extends ImageReader {
 			if (bi != null)
 				nDestBands = bi.getSampleModel().getNumBands();
 			else
-				nDestBands = item.getNumBands();
+				nDestBands = itemNBands;
 		}
 
 		// //
@@ -900,8 +902,7 @@ public abstract class GDALImageReader extends ImageReader {
 		// Second, bands settings check
 		//
 		// //
-		checkReadParamBandSettings(imageReadParam, item.getNumBands(),
-				nDestBands);
+		checkReadParamBandSettings(imageReadParam, itemNBands, nDestBands);
 		int[] srcBands = imageReadParam.getSourceBands();
 		int[] destBands = imageReadParam.getDestinationBands();
 
@@ -911,15 +912,14 @@ public abstract class GDALImageReader extends ImageReader {
 		//
 		// //
 		if (bi != null && imageType == null) {
-			// TODO: Maybe these checks should be less strict to allow
-			// color and format conversions
-			if ((srcBands == null)
-					&& (destBands == null)
-					&& (!bi.getColorModel().equals(item.getColorModel()) || bi
-							.getSampleModel().getDataType() != item
-							.getSampleModel().getDataType()))
-				throw new IllegalArgumentException(
-						"Provided destination image has not a valid ColorModel or SampleModel");
+			if ((srcBands == null) && (destBands == null)) {
+				SampleModel biSampleModel = bi.getSampleModel();
+				if (!bi.getColorModel().equals(item.getColorModel())
+						|| biSampleModel.getDataType() != itemSampleModel
+								.getDataType())
+					throw new IllegalArgumentException(
+							"Provided destination image has not a valid ColorModel or SampleModel");
+			}
 		}
 
 		// //
@@ -929,9 +929,8 @@ public abstract class GDALImageReader extends ImageReader {
 		// //
 		Rectangle srcRegion = new Rectangle(0, 0, 0, 0);
 		Rectangle destRegion = new Rectangle(0, 0, 0, 0);
-		srcRegion.setBounds(0, 0, width, height);
-		destRegion.setBounds(0, 0, width, height);
 		computeRegions(imageReadParam, width, height, bi, srcRegion, destRegion);
+		
 
 		// ////////////////////////////////////////////////////////////////////
 		// 
@@ -965,7 +964,7 @@ public abstract class GDALImageReader extends ImageReader {
 			//			
 			// //
 
-			// TODO: Set Directly data avoiding setRect(readDatasetRaster)
+			// TODO: Set data directly, avoiding setRect(readDatasetRaster)??
 			// TODO: Check thread safety and concurrency
 			Raster readRaster = readDatasetRaster(item, srcRegion, destRegion,
 					srcBands);
@@ -973,8 +972,6 @@ public abstract class GDALImageReader extends ImageReader {
 					destRegion.x, destRegion.y, destRegion.width,
 					destRegion.height, destRegion.x, destRegion.y, null);
 			raster.setRect(readRaster);
-			// bi.setData((WritableRaster) readDatasetRaster(item,srcRegion,
-			// destRegion));
 		}
 		return bi;
 	}

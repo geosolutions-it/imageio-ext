@@ -109,7 +109,7 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 			final ParameterBlockJAI pbjImageRead;
 			final ImageReadParam irp = new ImageReadParam();
 
-			// subsample by 8 on both dimensions
+			// subsample by 2 on both dimensions
 			final int xSubSampling = 2;
 			final int ySubSampling = 2;
 			final int xSubSamplingOffset = 0;
@@ -231,26 +231,26 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 			WritableRaster raster = Raster.createWritableRaster(spec
 					.getSampleModel()
 					.createCompatibleSampleModel(width, height), null);
-			BufferedImage bi = new BufferedImage(spec.getColorModel(), raster,
-					false, null);
+			final BufferedImage bi = new BufferedImage(spec.getColorModel(),
+					raster, false, null);
 
 			irp.setDestination(bi);
 			irp.setDestinationOffset(new Point(halfWidth, halfHeight));
-			final RenderedImage image = reader.read(0, irp);
+			reader.read(0, irp);
 			irp.setSourceRegion(new Rectangle(0, 0, halfWidth, halfHeight));
 			irp.setDestination(bi);
 			irp.setDestinationOffset(new Point(0, 0));
-			final RenderedImage ri2 = reader.read(0, irp);
+			reader.read(0, irp);
 			irp.setSourceRegion(new Rectangle(halfWidth, halfHeight / 2,
 					halfWidth, halfHeight / 4));
 			irp.setDestination(bi);
 			irp.setDestinationOffset(new Point(halfWidth, halfHeight / 2));
-			final RenderedImage ri3 = reader.read(0, irp);
+			RenderedImage ri = reader.read(0, irp);
 
 			if (TestData.isInteractiveTest())
-				Viewer.visualize(ri3, "MrSID ImageRead");
+				Viewer.visualize(ri, "MrSID ImageRead");
 			else
-				assertNotNull(image);
+				assertNotNull(ri);
 
 			reader.dispose();
 		} catch (FileNotFoundException fnfe) {
