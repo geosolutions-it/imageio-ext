@@ -71,7 +71,7 @@ public class GDALWritableCommonIIOImageMetadata extends
 	}
 
 	/**
-	 * Set the metadata for a specific domain
+	 * Set the metadata for a specific domain.
 	 * 
 	 * @param metadataNameValuePairs
 	 *            a <code>Map</code> containing name-value pairs where each

@@ -70,8 +70,6 @@ public final class GeoTiffImageWriterSpi extends GDALImageWriterSpi {
 
 	static final String[] extraImageMetadataFormatClassNames = { null };
 
-//	private boolean registered;
-	
 	/**
 	 * 
 	 */
@@ -107,7 +105,6 @@ public final class GeoTiffImageWriterSpi extends GDALImageWriterSpi {
 	}
 
 	public boolean canEncodeImage(ImageTypeSpecifier type) {
-		// XXX
 		return true;
 	}
 }

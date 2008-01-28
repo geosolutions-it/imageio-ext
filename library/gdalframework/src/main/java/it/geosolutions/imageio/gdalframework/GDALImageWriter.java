@@ -79,12 +79,53 @@ public abstract class GDALImageWriter extends ImageWriter {
 	 *         Dataset in case of CreateCopy.
 	 */
 	protected final static int getMaxMemorySizeForGDALMemoryDataset() {
+		int size = DEFAULT_GDALMEMORYRASTER_MAXSIZE;
+
+		// //
+		//
+		// Checking for a simple integer value (size in bytes)
+		//
+		// //
 		Integer maxSize = Integer
 				.getInteger(GDALUtilities.GDALMEMORYRASTER_MAXSIZE_KEY);
 		if (maxSize != null)
-			return maxSize.intValue();
-		else
-			return DEFAULT_GDALMEMORYRASTER_MAXSIZE;
+			size = maxSize.intValue();
+		else {
+			// //
+			//
+			// Checking for a properly formatted string value.
+			// Valid values should end with one of M,m,K,k
+			//
+			// //
+			final String maxSizes = System
+					.getProperty(GDALUtilities.GDALMEMORYRASTER_MAXSIZE_KEY);
+			if (maxSizes != null) {
+				final int length = maxSizes.length();
+				final String value = maxSizes.substring(0, length - 1);
+				final String suffix = maxSizes.substring(length - 1, length);
+
+				// //
+				//
+				// Checking for valid multiplier suffix
+				//
+				// //
+				if (suffix.equalsIgnoreCase("M")
+						|| suffix.equalsIgnoreCase("K")) {
+					int val;
+					try {
+						val = Integer.parseInt(value);
+						if (suffix.equalsIgnoreCase("M"))
+							val *= (1024 * 1024); // Size in MegaBytes
+						else
+							val *= 1024; // Size in KiloBytes
+						size = val;
+					} catch (NumberFormatException nfe) {
+						// not a valid value
+					}
+				}
+			}
+		}
+		return size;
 	}
 
 	/**
@@ -233,9 +274,11 @@ public abstract class GDALImageWriter extends ImageWriter {
 				imageMetadata = (GDALCommonIIOImageMetadata) metadata;
 			} else {
 				// TODO: build a metadata conversion to obtain an understandable
-				// metadata object.
-				imageMetadata = new GDALWritableCommonIIOImageMetadata();
-				convertMetadata(IMAGE_METADATA_NAME, metadata, imageMetadata);
+				// metadata object. Standard plugin-neutral format does not
+				// contain really useful fields to be converted.
+				// imageMetadata = new GDALWritableCommonIIOImageMetadata();
+				// convertMetadata(IMAGE_METADATA_NAME, metadata,
+				// imageMetadata);
 			}
 		}
 
@@ -247,6 +290,9 @@ public abstract class GDALImageWriter extends ImageWriter {
 		//
 		// /////////////////////////////////////////////////////////////////////
 		Dataset writeDataset;
+		
+		// TODO: send some warning when setting georeferencing or size
+		// properties, if cropping or sourceregion has been defined.
 
 		if (writingCapabilities == GDALUtilities.DriverCreateCapabilities.CREATE) {
 			// /////////////////////////////////////////////////////////////////
@@ -345,11 +391,16 @@ public abstract class GDALImageWriter extends ImageWriter {
 	 * <code>IIOMetadata</code> instance
 	 * 
 	 * @param dataset
-	 *            the dataset on which
+	 *            the dataset on which to set metadata and properties
 	 * @param imageMetadata
+	 *            an instance of a {@link GDALCommonIIOImageMetadata} containing
+	 *            metadata
+	 * 
 	 */
 	private void setMetadata(Dataset dataset,
 			GDALCommonIIOImageMetadata imageMetadata) {
+		// TODO: which metadata should be copied in the dataset?
+		// Should width, height and similar properties to be copied?
 
 		// //
 		//
@@ -423,7 +474,6 @@ public abstract class GDALImageWriter extends ImageWriter {
 				}
 			}
 		}
-
 	}
 
 	/**
@@ -611,13 +661,13 @@ public abstract class GDALImageWriter extends ImageWriter {
 					newHeight = srcRegionYEnd - miny;
 				}
 
-				// Updating the first unuseful pixel along X and Y
+				// Updating the first useless pixel along X and Y
 				int endX = offsetX + newWidth;
 				int endY = offsetY + newHeight;
 				dstHeight = dstWidth = 0;
 
-				// TODO: find an exact rule which allows to calculate dstHeight
-				// and dstWidth, given offsets and end positions, avoiding scan
+				// TODO: subst with an exact rule which allows to calculate
+				// dst Height and Width, given offsets and ends, avoiding scan
 
 				// Setting the destination Width
 				if (ySubsamplingFactor > 1) {
@@ -1378,6 +1428,9 @@ public abstract class GDALImageWriter extends ImageWriter {
 				* gdal.GetDataTypeSize(dataType) / 8;
 
 		if (neededMemory <= threshold) {
+			// TODO: the real Memory Raster Driver use should create a Memory
+			// Dataset from data in memory by specifying the address of the
+			// memory containing data.
 			tempDs = getMemoryDriver().Create(tempFile, width, height, nBands,
 					dataType, null);
 		}

@@ -504,7 +504,7 @@ public class SwanRaster {
 
 		for (int band = 0; band < nBands; band++) {
 
-			// Skipping unuseful rows if Source Region Offset Y is not zero.
+			// Skipping useless rows if Source Region Offset Y is not zero.
 			if (srcRegionYOffset != 0)
 				imageIS.skipBytes(charsToThrowAwayBeforeFirstUsefulRow);
 

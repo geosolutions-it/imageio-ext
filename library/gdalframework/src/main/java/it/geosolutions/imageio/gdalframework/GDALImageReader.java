@@ -930,7 +930,6 @@ public abstract class GDALImageReader extends ImageReader {
 		Rectangle srcRegion = new Rectangle(0, 0, 0, 0);
 		Rectangle destRegion = new Rectangle(0, 0, 0, 0);
 		computeRegions(imageReadParam, width, height, bi, srcRegion, destRegion);
-		
 
 		// ////////////////////////////////////////////////////////////////////
 		// 

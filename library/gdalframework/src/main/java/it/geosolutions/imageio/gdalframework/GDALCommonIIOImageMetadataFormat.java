@@ -24,8 +24,8 @@ import javax.imageio.metadata.IIOMetadataFormatImpl;
  * @author Daniele Romagnoli, GeoSolutions
  * @author Simone Giannecchini, GeoSolutions
  */
-public class GDALCommonIIOImageMetadataFormat extends IIOMetadataFormatImpl implements
-		IIOMetadataFormat {
+public class GDALCommonIIOImageMetadataFormat extends IIOMetadataFormatImpl
+		implements IIOMetadataFormat {
 
 	private static GDALCommonIIOImageMetadataFormat commonInstace;
 
@@ -37,15 +37,19 @@ public class GDALCommonIIOImageMetadataFormat extends IIOMetadataFormatImpl impl
 	}
 
 	public GDALCommonIIOImageMetadataFormat() {
-		super(GDALCommonIIOImageMetadata.nativeMetadataFormatName, CHILD_POLICY_SOME);
+		super(GDALCommonIIOImageMetadata.nativeMetadataFormatName,
+				CHILD_POLICY_SOME);
 
 		// root -> DatasetDescriptor
 		addElement("DatasetDescriptor",
-				GDALCommonIIOImageMetadata.nativeMetadataFormatName, CHILD_POLICY_EMPTY);
+				GDALCommonIIOImageMetadata.nativeMetadataFormatName,
+				CHILD_POLICY_EMPTY);
 		addAttribute("DatasetDescriptor", "name", DATATYPE_STRING, true, null);
-		addAttribute("DatasetDescriptor", "description", DATATYPE_STRING, true, null);
-		addAttribute("DatasetDescriptor", "driverDescription", DATATYPE_STRING, true, null);
-		
+		addAttribute("DatasetDescriptor", "description", DATATYPE_STRING, true,
+				null);
+		addAttribute("DatasetDescriptor", "driverDescription", DATATYPE_STRING,
+				true, null);
+
 		addAttribute("DatasetDescriptor", "driverName", DATATYPE_STRING, true,
 				null);
 		addAttribute("DatasetDescriptor", "projection", DATATYPE_STRING, true,
@@ -54,12 +58,13 @@ public class GDALCommonIIOImageMetadataFormat extends IIOMetadataFormatImpl impl
 				"0", "0", null, true, false);
 		addAttribute("DatasetDescriptor", "gcpProjection", DATATYPE_STRING,
 				true, "");
-		
+
 		// root -> RasterDimensions
 		addElement("RasterDimensions",
-				GDALCommonIIOImageMetadata.nativeMetadataFormatName, CHILD_POLICY_EMPTY);
-		addAttribute("RasterDimensions", "width", DATATYPE_INTEGER, true,
-				null, "0", null, false, false);
+				GDALCommonIIOImageMetadata.nativeMetadataFormatName,
+				CHILD_POLICY_EMPTY);
+		addAttribute("RasterDimensions", "width", DATATYPE_INTEGER, true, null,
+				"0", null, false, false);
 		addAttribute("RasterDimensions", "height", DATATYPE_INTEGER, true,
 				null, "0", null, false, false);
 		addAttribute("RasterDimensions", "tileWidth", DATATYPE_INTEGER, true,
@@ -68,9 +73,10 @@ public class GDALCommonIIOImageMetadataFormat extends IIOMetadataFormatImpl impl
 				null, "1", null, true, false);
 		addAttribute("RasterDimensions", "numBands", DATATYPE_INTEGER, true,
 				"1", "1", null, true, false);
-		
+
 		// root -> GeoTransform
-		addElement("GeoTransform", GDALCommonIIOImageMetadata.nativeMetadataFormatName,
+		addElement("GeoTransform",
+				GDALCommonIIOImageMetadata.nativeMetadataFormatName,
 				CHILD_POLICY_EMPTY);
 		addAttribute("GeoTransform", "m0", DATATYPE_DOUBLE, false, null);
 		addAttribute("GeoTransform", "m1", DATATYPE_DOUBLE, false, null);
@@ -82,8 +88,7 @@ public class GDALCommonIIOImageMetadataFormat extends IIOMetadataFormatImpl impl
 		// root -> GCPS
 		addElement("GCPS", GDALCommonIIOImageMetadata.nativeMetadataFormatName,
 				CHILD_POLICY_REPEAT);
-		addElement("GCP", "GCPS",
-				CHILD_POLICY_EMPTY);
+		addElement("GCP", "GCPS", CHILD_POLICY_EMPTY);
 		addAttribute("GCP", "x", DATATYPE_INTEGER, true, null, "0", null, true,
 				false);
 		addAttribute("GCP", "y", DATATYPE_INTEGER, true, null, "0", null, true,
@@ -93,35 +98,35 @@ public class GDALCommonIIOImageMetadataFormat extends IIOMetadataFormatImpl impl
 		addAttribute("GCP", "lon", DATATYPE_DOUBLE, true, null);
 		addAttribute("GCP", "lat", DATATYPE_DOUBLE, true, null);
 		addAttribute("GCP", "elevation", DATATYPE_DOUBLE, true, null);
-		
-		addElement("BandsInfo", GDALCommonIIOImageMetadata.nativeMetadataFormatName,
+
+		addElement("BandsInfo",
+				GDALCommonIIOImageMetadata.nativeMetadataFormatName,
 				CHILD_POLICY_REPEAT);
 		// root -> BandsInfo -> BandInfo
-		addElement("BandInfo", "BandsInfo",
-				CHILD_POLICY_SOME);
-		addAttribute("BandInfo", "index", DATATYPE_INTEGER, true, null, null, null, false,
-				false);
-		addAttribute("BandInfo", "colorInterpretation", DATATYPE_INTEGER, true, null, null, null, false,
-				false);
-		addAttribute( "BandInfo", "noData",DATATYPE_DOUBLE, false, Double
+		addElement("BandInfo", "BandsInfo", CHILD_POLICY_SOME);
+		addAttribute("BandInfo", "index", DATATYPE_INTEGER, true, null, null,
+				null, false, false);
+		addAttribute("BandInfo", "colorInterpretation", DATATYPE_INTEGER, true,
+				null, null, null, false, false);
+		addAttribute("BandInfo", "noData", DATATYPE_DOUBLE, false, Double
 				.toString(Double.NaN), null, null, false, false);
 		addAttribute("BandInfo", "scale", DATATYPE_DOUBLE, false, "1.0", "0.0",
 				null, false, false);
 		addAttribute("BandInfo", "offset", DATATYPE_DOUBLE, false, "0.0", null,
 				null, false, false);
-		addAttribute("BandInfo", "minimum", DATATYPE_DOUBLE, false, null,
-				null, null, false, false);
-		addAttribute("BandInfo", "maximum", DATATYPE_DOUBLE, false, null,
-				null, null, false, false);
+		addAttribute("BandInfo", "minimum", DATATYPE_DOUBLE, false, null, null,
+				null, false, false);
+		addAttribute("BandInfo", "maximum", DATATYPE_DOUBLE, false, null, null,
+				null, false, false);
 		addAttribute("BandInfo", "numOverviews", DATATYPE_INTEGER, false, null,
 				null, null, false, false);
 		addAttribute("BandInfo", "unit", DATATYPE_STRING, false, "");
 
-		// root -> BandInfo -> ColorTable
+		// root -> BandsInfo ->BandInfo -> ColorTable
 		addElement("ColorTable", "BandInfo", 0, 256);
 		addAttribute("ColorTable", "sizeOfLocalColorTable", DATATYPE_INTEGER,
 				true, null);
-		// root -> BandInfo -> ColorTable -> ColorTableEntry
+		// root -> BandsInfo -> BandInfo -> ColorTable -> ColorTableEntry
 		addElement("ColorTableEntry", "ColorTable", CHILD_POLICY_EMPTY);
 		addAttribute("ColorTableEntry", "index", DATATYPE_INTEGER, true, null,
 				"0", "255", true, true);
@@ -137,7 +142,7 @@ public class GDALCommonIIOImageMetadataFormat extends IIOMetadataFormatImpl impl
 
 	public boolean canNodeAppear(String elementName,
 			ImageTypeSpecifier imageType) {
-		//TODO implement me
+		// TODO implement me
 		return true;
 	}
 
