@@ -864,6 +864,8 @@ public abstract class GDALImageReader extends ImageReader {
 		//
 		// //
 		final GDALCommonIIOImageMetadata item = getDatasetMetadata(imageIndex);
+		final int width = item.getWidth();
+		final int height = item.getHeight();
 		final SampleModel itemSampleModel = item.getSampleModel();
 		int itemNBands = itemSampleModel.getNumBands();
 		int nDestBands;
@@ -924,10 +926,8 @@ public abstract class GDALImageReader extends ImageReader {
 		//
 		// //
 		Rectangle srcRegion = new Rectangle(0, 0, 0, 0);
-		final int srcWidth = item.getWidth();
-		final int srcHeight = item.getHeight();
-		Rectangle destRegion = getSizes(imageReadParam, srcWidth, srcHeight,
-				bi, srcRegion);
+		Rectangle destRegion = new Rectangle(0, 0, 0, 0);
+		computeRegions(imageReadParam, width, height, bi, srcRegion, destRegion);
 
 		// ////////////////////////////////////////////////////////////////////
 		// 
@@ -971,25 +971,6 @@ public abstract class GDALImageReader extends ImageReader {
 			raster.setRect(readRaster);
 		}
 		return bi;
-	}
-
-	public Rectangle getDestinationSize(ImageReadParam imageReadParam,
-			int srcWidth, int srcHeight) {
-		return getSizes(imageReadParam, srcWidth, srcHeight, null, null);
-	}
-
-	protected Rectangle getSizes(ImageReadParam imageReadParam, int srcWidth,
-			int srcHeight, BufferedImage bi, Rectangle source) {
-		final Rectangle destRegion = new Rectangle(0, 0, 0, 0);
-		final Rectangle srcRegion;
-		if (source != null)
-			srcRegion = source;
-		else
-			srcRegion = new Rectangle(0, 0, 0, 0);
-		computeRegions(imageReadParam, srcWidth, srcHeight, bi, srcRegion,
-				destRegion);
-		return destRegion;
-
 	}
 
 	/**
