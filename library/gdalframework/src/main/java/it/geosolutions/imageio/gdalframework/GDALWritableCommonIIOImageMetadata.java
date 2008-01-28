@@ -104,6 +104,8 @@ public class GDALWritableCommonIIOImageMetadata extends
 
 			// TODO: attempt to merge standard metadata info in the
 			// writable metadata
+			
+			
 		}
 	}
 

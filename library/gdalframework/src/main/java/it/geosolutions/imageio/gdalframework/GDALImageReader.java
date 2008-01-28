@@ -1240,8 +1240,17 @@ public abstract class GDALImageReader extends ImageReader {
 	}
 
 	public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
-		// TODO: return a cloned copy?
 		return getDatasetMetadata(imageIndex);
+		
+//		TODO: Clone??
+//		GDALCommonIIOImageMetadata metadata=null;
+//		try{
+//			metadata = (GDALCommonIIOImageMetadata) getDatasetMetadata(imageIndex).clone();
+//		}
+//		catch (CloneNotSupportedException cnse){
+//			
+//		}
+//		return metadata;
 	}
 
 }

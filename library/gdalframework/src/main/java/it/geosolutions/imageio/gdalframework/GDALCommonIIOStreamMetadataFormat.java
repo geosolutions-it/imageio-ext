@@ -37,14 +37,21 @@ public class GDALCommonIIOStreamMetadataFormat extends IIOMetadataFormatImpl {
 	private GDALCommonIIOStreamMetadataFormat() {
 		super(GDALCommonIIOStreamMetadata.nativeMetadataFormatName,
 				CHILD_POLICY_SOME);
-
+		// //
+		//
 		// root -> DataSets
+		//
+		// //
 		addElement("DataSets",
 				GDALCommonIIOStreamMetadata.nativeMetadataFormatName,
 				CHILD_POLICY_REPEAT);
 		addAttribute("DataSets", "number", DATATYPE_STRING, true, null);
 
+		// //
+		//
 		// DataSets -> DataSet
+		//
+		// //
 		addElement("DataSet", "DataSets", CHILD_POLICY_EMPTY);
 		addAttribute("DataSet", "name", DATATYPE_STRING, true, null);
 	}

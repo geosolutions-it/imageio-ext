@@ -80,6 +80,8 @@ public class JP2GDALKakaduImageWriteParam extends GDALImageWriteParam {
 	 * 
 	 * FLUSH=YES/NO: Indicates wheter multiple flush operations should be
 	 * enabled during tiles writing. Defaults to YES.
+	 * 
+	 * 
 	 */
 
 	/**
@@ -199,7 +201,7 @@ public class JP2GDALKakaduImageWriteParam extends GDALImageWriteParam {
 	}
 
 	/**
-	 * Setting SProfile Create Option
+	 * Setting SProfile Create Option using an int identifier
 	 */
 
 	public void setSProfile(final int sProfile) {
@@ -230,6 +232,9 @@ public class JP2GDALKakaduImageWriteParam extends GDALImageWriteParam {
 		createOptionsHandler.setCreateOption("SProfile", profile);
 	}
 
+	/**
+	 * Setting SProfile Create Option using a String identifier
+	 */
 	public void setSProfile(final String sProfile) {
 		createOptionsHandler.setCreateOption("SProfile", sProfile);
 	}

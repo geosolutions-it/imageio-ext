@@ -60,7 +60,61 @@ import com.sun.media.imageioimpl.common.ImageUtil;
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
  */
-public class GDALCommonIIOImageMetadata extends IIOMetadata {
+public class GDALCommonIIOImageMetadata extends IIOMetadata implements
+		Cloneable {
+
+//	protected Object clone() throws CloneNotSupportedException {
+//		GDALCommonIIOImageMetadata metadata = new GDALCommonIIOImageMetadata();
+//		metadata.driverName = this.driverName;
+//		metadata.driverDescription = this.driverDescription;
+//		metadata.datasetName = this.datasetName;
+//		metadata.datasetDescription = this.datasetDescription;
+//		metadata.projection = this.projection;
+//		metadata.gcpNumber = this.gcpNumber;
+//		metadata.gcpProjection = this.gcpProjection;
+//		metadata.geoTransformation = (double[]) this.geoTransformation.clone();
+//		if (this.gdalMetadataMap != null) {
+//			Map inputMap = this.gdalMetadataMap;
+//			Map map = Collections.synchronizedMap(new HashMap(inputMap.size()));
+//			final Iterator outKeys = inputMap.keySet().iterator();
+//			while (outKeys.hasNext()) {
+//				final String key = (String) outKeys.next();
+//				final Map valuesMap = (Map) inputMap.get(key);
+//				final Iterator inKeys = valuesMap.keySet().iterator();
+//				final Map innerMap = new HashMap(valuesMap.size());
+//				while (inKeys.hasNext()) {
+//					final String ikey = (String) inKeys.next();
+//					final String value = (String) valuesMap.get(ikey);
+//					innerMap.put(ikey, value);
+//				}
+//				map.put(key, innerMap);
+//			}
+//			metadata.gdalMetadataMap = map;
+//		}
+//		// TODO: Need to clone GCPs ... but actually JVM crashes when getting
+//		// GCPs
+//		metadata.width = this.width;
+//		metadata.height = this.height;
+//		metadata.tileHeight = this.tileHeight;
+//		metadata.tileWidth = this.tileWidth;
+//
+//		// TODO: clone sampleModel and color Model
+//		// metadata.colorModel = new ColorModel()
+//		// metadata.sampleModel= new SampleModel()
+//		metadata.numBands = this.numBands;
+//
+//		metadata.maximums = (Double[]) this.maximums.clone();
+//		metadata.minimums = (Double[]) this.minimums.clone();
+//		metadata.noDataValues = (Double[]) this.noDataValues.clone();
+//		metadata.scales = (Double[]) this.scales.clone();
+//		metadata.offsets = (Double[]) this.offsets.clone();
+//
+//		metadata.numOverviews = (int[]) this.numOverviews.clone();
+//		metadata.colorInterpretations = (int[]) this.colorInterpretations
+//				.clone();
+//		return metadata;
+//	}
+
 	/** The LOGGER for this class. */
 	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.gdalframework");
@@ -299,6 +353,9 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 				nativeMetadataFormatClassName);
 	}
 
+	private GDALCommonIIOImageMetadata() {
+	}
+
 	/**
 	 * Given an input <code>Dataset</code>, sets georeferencing information
 	 * 
@@ -439,8 +496,8 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 					tileHeight, tileWidth, banks, offsetsR);
 		else
 			sampleModel = new PixelInterleavedSampleModel(buffer_type,
-					tileWidth, tileHeight, numBands,
-					tileWidth * numBands, bandsOffset);
+					tileWidth, tileHeight, numBands, tileWidth * numBands,
+					bandsOffset);
 
 		// //
 		//

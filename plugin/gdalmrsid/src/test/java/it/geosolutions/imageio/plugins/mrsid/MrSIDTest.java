@@ -23,9 +23,13 @@ import it.geosolutions.resources.TestData;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Transparency;
+import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -38,6 +42,7 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
+import javax.media.jai.RasterFactory;
 import javax.media.jai.RenderedOp;
 
 import junit.framework.Test;
@@ -206,6 +211,96 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 	}
 
 	/**
+	 * Test read exploiting the setSourceBands and setDestinationType on
+	 * imageReadParam
+	 * 
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	public void testSubBandsRead() throws IOException {
+		try {
+			ImageReader reader = new MrSIDImageReaderSpi()
+					.createReaderInstance();
+			final File file = TestData.file(this, fileName);
+			reader.setInput(file);
+
+			// //
+			//
+			// Getting image properties
+			//
+			// //
+			ImageTypeSpecifier spec = (ImageTypeSpecifier) reader
+					.getImageTypes(0).next();
+			SampleModel sm = spec.getSampleModel();
+			final int width = reader.getWidth(0);
+			final int height = reader.getHeight(0);
+
+			// //
+			//
+			// Setting a ColorModel
+			//
+			// //
+			ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
+			ColorModel cm = RasterFactory.createComponentColorModel(
+					sm.getDataType(), // dataType
+					cs, // color space
+					false, // has alpha
+					false, // is alphaPremultiplied
+					Transparency.OPAQUE); // transparency
+
+			// //
+			// 
+			// Setting Image Read Parameters
+			//
+			// //
+			final ImageReadParam param = new ImageReadParam();
+			final int ssx = 2;
+			final int ssy = 2;
+			param.setSourceSubsampling(ssx, ssy, 0, 0);
+			final Rectangle sourceRegion = new Rectangle(50, 50, 300, 300);
+			param.setSourceRegion(sourceRegion);
+			param.setSourceBands(new int[] { 0 });
+			Rectangle intersRegion = new Rectangle(0, 0, width, height);
+			intersRegion = intersRegion.intersection(sourceRegion);
+
+			int subsampledWidth = (intersRegion.width + ssx - 1) / ssx;
+			int subsampledHeight = (intersRegion.height + ssy - 1) / ssy;
+			param.setDestinationType(new ImageTypeSpecifier(cm,
+					sm.createCompatibleSampleModel(
+							subsampledWidth, subsampledHeight)
+							.createSubsetSampleModel(new int[] { 0 })));
+
+			// //
+			//
+			// Preparing the ImageRead operation
+			//
+			// //
+			ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
+			pbjImageRead.setParameter("Input", file);
+			pbjImageRead.setParameter("readParam", param);
+			pbjImageRead.setParameter("reader", reader);
+
+			// //
+			//
+			// Setting a Layout
+			//
+			// //
+			final ImageLayout l = new ImageLayout();
+			l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(256)
+					.setTileWidth(256);
+			RenderedOp image = JAI.create("ImageRead", pbjImageRead,
+					new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
+
+			if (TestData.isInteractiveTest())
+				Viewer.visualize(image, "MrSID ImageRead");
+			else
+				assertNotNull(image.getTiles());
+		} catch (FileNotFoundException fnfe) {
+			warningMessage();
+		}
+	}
+
+	/**
 	 * Test read exploiting the setDestination on imageReadParam
 	 * 
 	 * @throws FileNotFoundException
@@ -261,14 +356,17 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 
-		// Test read exploiting common JAI operations (Crop-Translate-Rotate)
-		suite.addTest(new MrSIDTest("testJaiOperations"));
-
-		// Test reading metadata information
-		suite.addTest(new MrSIDTest("testMetadata"));
+		 // Test read exploiting common JAI operations (Crop-Translate-Rotate)
+		 suite.addTest(new MrSIDTest("testJaiOperations"));
+		
+		 // Test reading metadata information
+		 suite.addTest(new MrSIDTest("testMetadata"));
+		
+		 // Test read without exploiting JAI
+		 suite.addTest(new MrSIDTest("testManualRead"));
 
 		// Test read without exploiting JAI
-		suite.addTest(new MrSIDTest("testManualRead"));
+		suite.addTest(new MrSIDTest("testSubBandsRead"));
 
 		return suite;
 	}

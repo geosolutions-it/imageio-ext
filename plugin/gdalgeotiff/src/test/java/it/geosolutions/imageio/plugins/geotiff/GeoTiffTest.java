@@ -155,7 +155,7 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
 		pbjImageWrite.setParameter("Output", outputFile);
 		pbjImageWrite.setParameter("writer", writer);
 		pbjImageWrite.setParameter("ImageMetadata", reader.getImageMetadata(0));
-		pbjImageWrite.setParameter("Transcode", false);
+//		pbjImageWrite.setParameter("Transcode", false);
 		ImageWriteParam param = new ImageWriteParam(Locale.getDefault());
 		pbjImageWrite.setParameter("writeParam", param);
 		param.setSourceRegion(new Rectangle(10, 10, 100, 100));
@@ -185,11 +185,11 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 
-		// // Test Read exploiting JAI-ImageIO tools capabilities
-		// suite.addTest(new GeoTiffTest("testRead"));
-		//
-		// // Test Read without exploiting JAI-ImageIO tools capabilities
-		// suite.addTest(new GeoTiffTest("testManualRead"));
+		 // Test Read exploiting JAI-ImageIO tools capabilities
+		suite.addTest(new GeoTiffTest("testRead"));
+
+		// Test Read without exploiting JAI-ImageIO tools capabilities
+		suite.addTest(new GeoTiffTest("testManualRead"));
 
 		// Test Write
 		suite.addTest(new GeoTiffTest("testWrite"));

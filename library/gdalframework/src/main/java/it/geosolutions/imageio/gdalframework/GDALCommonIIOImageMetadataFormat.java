@@ -27,20 +27,23 @@ import javax.imageio.metadata.IIOMetadataFormatImpl;
 public class GDALCommonIIOImageMetadataFormat extends IIOMetadataFormatImpl
 		implements IIOMetadataFormat {
 
-	private static GDALCommonIIOImageMetadataFormat commonInstace;
+	private static GDALCommonIIOImageMetadataFormat commonInstance;
 
 	public static synchronized IIOMetadataFormat getInstance() {
-		if (commonInstace == null) {
-			commonInstace = new GDALCommonIIOImageMetadataFormat();
+		if (commonInstance == null) {
+			commonInstance = new GDALCommonIIOImageMetadataFormat();
 		}
-		return commonInstace;
+		return commonInstance;
 	}
 
 	public GDALCommonIIOImageMetadataFormat() {
 		super(GDALCommonIIOImageMetadata.nativeMetadataFormatName,
 				CHILD_POLICY_SOME);
-
+		// //
+		//
 		// root -> DatasetDescriptor
+		//
+		// //
 		addElement("DatasetDescriptor",
 				GDALCommonIIOImageMetadata.nativeMetadataFormatName,
 				CHILD_POLICY_EMPTY);
@@ -59,7 +62,11 @@ public class GDALCommonIIOImageMetadataFormat extends IIOMetadataFormatImpl
 		addAttribute("DatasetDescriptor", "gcpProjection", DATATYPE_STRING,
 				true, "");
 
+		// //
+		//
 		// root -> RasterDimensions
+		//
+		// //
 		addElement("RasterDimensions",
 				GDALCommonIIOImageMetadata.nativeMetadataFormatName,
 				CHILD_POLICY_EMPTY);
@@ -74,7 +81,11 @@ public class GDALCommonIIOImageMetadataFormat extends IIOMetadataFormatImpl
 		addAttribute("RasterDimensions", "numBands", DATATYPE_INTEGER, true,
 				"1", "1", null, true, false);
 
+		// //
+		//
 		// root -> GeoTransform
+		//
+		// //
 		addElement("GeoTransform",
 				GDALCommonIIOImageMetadata.nativeMetadataFormatName,
 				CHILD_POLICY_EMPTY);
@@ -85,7 +96,11 @@ public class GDALCommonIIOImageMetadataFormat extends IIOMetadataFormatImpl
 		addAttribute("GeoTransform", "m4", DATATYPE_DOUBLE, false, null);
 		addAttribute("GeoTransform", "m5", DATATYPE_DOUBLE, false, null);
 
+		// //
+		//
 		// root -> GCPS
+		//
+		// //
 		addElement("GCPS", GDALCommonIIOImageMetadata.nativeMetadataFormatName,
 				CHILD_POLICY_REPEAT);
 		addElement("GCP", "GCPS", CHILD_POLICY_EMPTY);
@@ -102,7 +117,11 @@ public class GDALCommonIIOImageMetadataFormat extends IIOMetadataFormatImpl
 		addElement("BandsInfo",
 				GDALCommonIIOImageMetadata.nativeMetadataFormatName,
 				CHILD_POLICY_REPEAT);
+		// //
+		//
 		// root -> BandsInfo -> BandInfo
+		//
+		// //
 		addElement("BandInfo", "BandsInfo", CHILD_POLICY_SOME);
 		addAttribute("BandInfo", "index", DATATYPE_INTEGER, true, null, null,
 				null, false, false);
@@ -122,11 +141,19 @@ public class GDALCommonIIOImageMetadataFormat extends IIOMetadataFormatImpl
 				null, null, false, false);
 		addAttribute("BandInfo", "unit", DATATYPE_STRING, false, "");
 
+		// //
+		//
 		// root -> BandsInfo ->BandInfo -> ColorTable
+		//
+		// //
 		addElement("ColorTable", "BandInfo", 0, 256);
 		addAttribute("ColorTable", "sizeOfLocalColorTable", DATATYPE_INTEGER,
 				true, null);
+		// //
+		//
 		// root -> BandsInfo -> BandInfo -> ColorTable -> ColorTableEntry
+		//
+		// //
 		addElement("ColorTableEntry", "ColorTable", CHILD_POLICY_EMPTY);
 		addAttribute("ColorTableEntry", "index", DATATYPE_INTEGER, true, null,
 				"0", "255", true, true);

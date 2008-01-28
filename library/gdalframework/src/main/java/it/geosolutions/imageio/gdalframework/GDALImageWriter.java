@@ -290,7 +290,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 		//
 		// /////////////////////////////////////////////////////////////////////
 		Dataset writeDataset;
-		
+
 		// TODO: send some warning when setting georeferencing or size
 		// properties, if cropping or sourceregion has been defined.
 
@@ -1504,8 +1504,17 @@ public abstract class GDALImageWriter extends ImageWriter {
 		if (imageType == null) {
 			throw new IllegalArgumentException("imageType == null!");
 		}
-		if (inData instanceof GDALCommonIIOImageMetadata)
-			return inData; // TODO: refactor this. Only for testing
+		if (inData instanceof GDALCommonIIOImageMetadata) {
+			IIOMetadata md;
+//			try {
+//				md = (GDALCommonIIOImageMetadata) ((GDALCommonIIOImageMetadata) inData)
+//						.clone();
+//			} catch (CloneNotSupportedException e) {
+//				// TODO: change this behavior
+				md = inData;
+//			}
+			return md;
+		}
 
 		GDALCommonIIOImageMetadata im = (GDALCommonIIOImageMetadata) getDefaultImageMetadata(
 				imageType, param);
