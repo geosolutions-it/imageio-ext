@@ -64,10 +64,8 @@
               <phase>install</phase>
               <configuration>
               <tasks>
-                  <!-- Copy al the dlls to the right directory -->
-                  <copy overwrite="true" todir="${path.native}">
-                     <fileset dir="." includes="*.dll"/>
-                  </copy>
+                <unzip src="jmagick.zip" dest="${path.native}">
+                </unzip>
               </tasks>
               </configuration>
               <goals>

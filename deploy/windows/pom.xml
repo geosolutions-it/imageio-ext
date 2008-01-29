@@ -44,7 +44,7 @@
   <!--                                                                                -->
 <profiles>
   <profile>
-  <id>windows</id>
+  <id>deploylibs</id>
     <build>
       <plugins>
         <plugin>
@@ -54,11 +54,19 @@
             <execution>
               <phase>install</phase>
               <configuration>
-              <tasks>
-                  <!-- Copy al the gdal dlls to the right directory -->
-                  <copy overwrite="true" todir="${path.native}">
-                     <fileset dir="." includes="*.dll"/>
-                  </copy>
+               <tasks>
+                <unzip src="gdal.zip" dest="${path.native}">
+                </unzip>
+                 <unzip src="msvc.zip" dest="${path.native}">
+                </unzip>
+                 <unzip src="hdf.zip" dest="${path.native}">
+                </unzip>
+                 <unzip src="kdu.zip" dest="${path.native}">
+                </unzip>
+                 <unzip src="ecw.zip" dest="${path.native}">
+                </unzip>
+                 <unzip src="mrsid.zip" dest="${path.native}">
+                </unzip>
               </tasks>
               </configuration>
               <goals>

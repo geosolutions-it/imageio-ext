@@ -98,7 +98,12 @@
         </modules>
     </profile>
     <profile>
-        <id>windows</id>
+      <id>windows</id>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
         <modules>
            <module>gdalmrsidjp2</module>
         </modules>
@@ -108,6 +113,7 @@
     <module>gdalgeotiff</module>
     <module>gdalhdf4</module>
     <module>gdalenvisat</module>
+    <module>gdalehdr</module>
     <module>gdalmrsid</module>
     <module>gdalecw</module>
     <module>gdalecwjp2</module>

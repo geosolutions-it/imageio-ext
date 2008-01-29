@@ -37,7 +37,7 @@ import javax.imageio.ImageReader;
 public class GeoTiffImageReaderSpi extends GDALImageReaderSpi {
 
 		private static final Logger logger = Logger
-				.getLogger(GeoTiffImageReaderSpi.class.toString());
+				.getLogger("it.geosolutions.imageio.plugins.geotiff");
 
 		static final String[] suffixes = { "GeoTiff", "tiff" };
 
@@ -52,7 +52,7 @@ public class GeoTiffImageReaderSpi extends GDALImageReaderSpi {
 		static final String vendorName = "GeoSolutions";
 
 		// writerSpiNames
-		static final String[] wSN = {/* "it.geosolutions.imageio.plugins.geotiff.GeoTiffImageReaderSpi" */null };
+		static final String[] wSN = {null };
 
 		// StreamMetadataFormatNames and StreamMetadataFormatClassNames
 		static final boolean supportsStandardStreamMetadataFormat = false;
@@ -75,8 +75,6 @@ public class GeoTiffImageReaderSpi extends GDALImageReaderSpi {
 		static final String[] extraImageMetadataFormatNames = { null };
 
 		static final String[] extraImageMetadataFormatClassNames = { null };
-
-//		private boolean registered;
 
 		public GeoTiffImageReaderSpi() {
 			super(
@@ -103,8 +101,6 @@ public class GeoTiffImageReaderSpi extends GDALImageReaderSpi {
 
 			if (logger.isLoggable(Level.FINE))
 				logger.fine("GeoTiffImageReaderSpi Constructor");
-
-
 		}
 
 		/**
@@ -123,41 +119,4 @@ public class GeoTiffImageReaderSpi extends GDALImageReaderSpi {
 			return new StringBuffer("GeoTiff Image Reader, version ").append(version)
 					.toString();
 		}
-
-
-
-//		/**
-//		 * Upon registration, this method ensures that this SPI is listed at the top
-//		 * of the ImageReaderSpi items, so that it will be invoked before the
-//		 * default ImageReaderSpi
-//		 * 
-//		 * @param registry
-//		 *            ServiceRegistry where this object has been registered.
-//		 * @param category
-//		 *            a Class object indicating the registry category under which
-//		 *            this object has been registered.
-//		 */
-//		public void onRegistration(ServiceRegistry registry, Class category) {
-//			 super.onRegistration(registry, category);
-//			if (registered) {
-//				return;
-//			}
-//
-//			registered = true;
-//
-//			Iterator readers = GDALUtilities.getJDKImageReaderWriterSPI(registry, "TIFF",
-//					true).iterator();
-//
-//			ImageReaderSpi spi;
-//			while (readers.hasNext()) {
-//				spi = (ImageReaderSpi) readers.next();
-//				if(spi==this)
-//					continue;
-//				registry.deregisterServiceProvider(spi);
-//				registry.setOrdering(category, this, spi);
-//
-//			}
-//		
-//
-//		}
 }

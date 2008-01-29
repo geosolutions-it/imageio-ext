@@ -42,7 +42,10 @@
   <!-- We assume that you have maven 2 installed in the path. Note that maven version -->
   <!-- must be >=2.05.                                                                -->
   <!--                                                                                -->
-   <build>
+  <profiles>
+   <profile>
+    <id>deploylibs</id>
+     <build>
       <plugins>
         <plugin>
           <artifactId>maven-antrun-plugin</artifactId>
@@ -91,4 +94,6 @@
         </plugin>
       </plugins>
     </build>
+  </profile>
+ </profiles>
 </project>

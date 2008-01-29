@@ -101,12 +101,6 @@ public class JPEGReadTest extends AbstractJPEGTestCase {
 			jf.getContentPane().add(new ScrollingImagePanel(image, 1024, 768));
 			jf.pack();
 			jf.show();
-
-			System.out.println(image.getWidth());
-			System.out.println(image.getHeight());
-			System.out.println(image.getTileWidth());
-			System.out.println(image.getTileHeight());
-
 		} else {
 			assertNotNull(image.getTiles());
 			// remember that if we do not explictly provide an Imagereader to
@@ -155,12 +149,6 @@ public class JPEGReadTest extends AbstractJPEGTestCase {
 			jf.getContentPane().add(new ScrollingImagePanel(image, 1024, 768));
 			jf.pack();
 			jf.show();
-
-			System.out.println(image.getWidth());
-			System.out.println(image.getHeight());
-			System.out.println(image.getTileWidth());
-			System.out.println(image.getTileHeight());
-
 		} else {
 			assertNotNull(image);
 			// remember that if we do not explictly provide an Imagereader to
