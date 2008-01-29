@@ -18,10 +18,10 @@
   <version>1.0-SNAPSHOT</version>
   <name>Image I/O-Extensions Linux Native Libraries Dependency Deployer</name>
   <scm>
-    <connection>
-      scm:svn:https://www.geo-solutions.it/svn/repo/imageio_extension/trunk
-    </connection>
-    <url>https://www.geo-solutions.it/svn/repo/imageio_extension/trunk</url>
+     <connection>
+       scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/deploy/linux
+     </connection>
+     <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/deploy/linux</url>
   </scm>
   <organization>
     <name>GeoSolutions</name>

@@ -10,6 +10,7 @@
   <!--                    -->
   <properties>
     <path.native>${env.JAVA_HOME}/bin</path.native>
+    <gdal.data>${env.GDAL_DATA}</gdal.data>
     <extensive.tests>false</extensive.tests>
     <interactive.tests>false</interactive.tests>
     <test.maxHeapSize>512M</test.maxHeapSize>

@@ -47,9 +47,11 @@
   <!--                                                             -->
   <!--     Modules for the build in approximate order   -->
   <!--                                                             -->
-
+
+
  <modules>
     <module>jar</module>
+    <module>data</module>
  </modules>
     <profiles>
       <profile>
