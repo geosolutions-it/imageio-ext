@@ -97,6 +97,12 @@
            <module>jmagickjpeg</module>
         </modules>
     </profile>
+    <profile>
+        <id>windows</id>
+        <modules>
+           <module>gdalmrsidjp2</module>
+        </modules>
+    </profile>
   </profiles>
   <modules>
     <module>gdalgeotiff</module>
@@ -105,7 +111,6 @@
     <module>gdalmrsid</module>
     <module>gdalecw</module>
     <module>gdalecwjp2</module>
-    <module>gdalmrsidjp2</module>
     <module>gdalkakadujp2</module>
     <module>kakadujp2</module>
     <module>gdaljpeg</module>

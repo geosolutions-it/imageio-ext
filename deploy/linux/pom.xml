@@ -54,12 +54,12 @@
             <execution>
               <phase>install</phase>
               <configuration>
-              <tasks>
+               <tasks>
                 <exec  executable="sh">
                   <arg value="-c"/>
-                  <arg value="sudo unzip libs.zip -d $JAVA_HOME/jre/lib/i386"/>
+                  <arg value="unzip libs.zip -d $JAVA_HOME/jre/lib/i386"/>
                 </exec>
-              </tasks>
+               </tasks>-->
               </configuration>
               <goals>
                 <goal>run</goal>
