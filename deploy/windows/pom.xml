@@ -61,8 +61,6 @@
                 </unzip>
                  <unzip src="hdf.zip" dest="${path.native}">
                 </unzip>
-                 <unzip src="kdu.zip" dest="${path.native}">
-                </unzip>
                  <unzip src="ecw.zip" dest="${path.native}">
                 </unzip>
                  <unzip src="mrsid.zip" dest="${path.native}">
