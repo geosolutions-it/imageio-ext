@@ -15,7 +15,7 @@
     <artifactId>imageio-ext-deployer</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-
+  <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-jmagickdll</artifactId>
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
