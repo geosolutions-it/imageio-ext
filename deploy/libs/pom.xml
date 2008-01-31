@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <project xmlns="http://maven.apache.org/POM/4.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                               http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+
+
+  <!-- ==========================================================  -->
+  <!--     Project Description                                     -->
+  <!-- =========================================================== -->
+  <parent>
+    <groupId>it.geosolutions.imageio-ext</groupId>
+    <artifactId>imageio-ext-deployer</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <groupId>it.geosolutions.imageio-ext</groupId>
+  <artifactId>imageio-ext-nativelibsdeployer</artifactId>
+  <packaging>pom</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>-Native Depdendency Libraries Deployer</name>
+
+  <scm>
+    <connection>
+      scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/deploy/libs
+    </connection>
+    <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/deploy/libs</url>
+  </scm>
+
+  <description>Native Dependency Libraries Deployer</description>
+
+  <organization>
+    <name>GeoSolutions</name>
+    <url>http://www.geo-solutions.it</url>
+  </organization>
+  <inceptionYear>2006</inceptionYear>
+
+  <licenses>
+    <license>
+      <name>Lesser General Public License (LGPL)</name>
+      <url>http://www.gnu.org/copyleft/lesser.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <!--                                                             -->
+  <!--     Modules for the build in approximate order   -->
+  <!--                                                             -->
+
+<profiles>
+  <profile>
+      <id>windows</id>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+    <modules>
+      <module>windows</module>
+    </modules>
+  </profile>
+  <profile>
+  <id>linux</id>
+    <modules>
+      <module>linux</module>
+    </modules>
+  </profile>
+  <profile>
+  <id>jmagick</id>
+    <modules>
+      <module>jmagick</module>
+    </modules>
+  </profile>
+ </profiles>
+</project>
