@@ -16,7 +16,7 @@
   <artifactId>imageio-ext-jardeployer</artifactId>
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
-  <name>JAR Dependency Deployer</name>
+  <name>-JAR Dependency Deployer</name>
   <scm>
     <connection>
       scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/deploy/jar
@@ -57,11 +57,15 @@
                 <tasks>
                 <exec  executable="sh">
                   <arg value="-c"/>
-                  <arg value="mvn install:install-file  -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-gdal -Dversion=1.0-SNAPSHOT -Dpackaging=jar -Dfile=./gdal-1.4.2.jar"/>
+                  <arg value="mvn install:install-file -DgroupId=org.geotools -DartifactId=gt2-jar-collector -Dversion=2.3.1-SNAPSHOT -Dpackaging=jar -Dfile=./gt2-jar-collector-2.3.1-SNAPSHOT.jar"/>
                 </exec>
                 <exec  executable="sh">
                   <arg value="-c"/>
-                  <arg value="mvn install:install-file  -DgroupId=org.geotools   -DartifactId=gt2-jar-collector -Dversion=2.3.1-SNAPSHOT -Dpackaging=jar -Dfile=./gt2-jar-collector-2.3.1-SNAPSHOT.jar"/>
+                  <arg value="mvn install:install-file -DgroupId=jmagick -DartifactId=jmagick -Dversion=6.2.6.0 -Dpackaging=jar -Dfile=./jmagick.jar"/>
+                </exec>
+                <!--<exec  executable="sh">
+                  <arg value="-c"/>
+                  <arg value="mvn install:install-file  -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-gdal -Dversion=1.0-SNAPSHOT -Dpackaging=jar -Dfile=./gdal-1.4.2.jar"/>
                 </exec>
                 <exec  executable="sh">
                   <arg value="-c"/>
@@ -74,11 +78,7 @@
                 <exec  executable="sh">
                   <arg value="-c"/>
                   <arg value="mvn install:install-file -DgroupId=ncsa -DartifactId=jhdf -Dversion=4.1r5 -Dpackaging=jar -Dfile=./ncsa_jhdf.jar"/>
-                </exec>
-                <exec  executable="sh">
-                  <arg value="-c"/>
-                  <arg value="mvn install:install-file -DgroupId=jmagick -DartifactId=jmagick -Dversion=6.2.6.0 -Dpackaging=jar -Dfile=./jmagick.jar"/>
-                </exec>
+                </exec>-->
                 </tasks>
               </configuration>
               <goals>
@@ -133,14 +133,18 @@
               <execution>
               <phase>install</phase>
               <configuration>
-                <tasks>
+               <tasks>
                 <exec  executable="cmd">
                   <arg value="/c"/>
-                  <arg value="mvn install:install-file  -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-gdal -Dversion=1.0-SNAPSHOT -Dpackaging=jar -Dfile=./gdal-1.4.2.jar"/>
+                  <arg value="mvn install:install-file -DgroupId=org.geotools -DartifactId=gt2-jar-collector -Dversion=2.3.1-SNAPSHOT -Dpackaging=jar -Dfile=./gt2-jar-collector-2.3.1-SNAPSHOT.jar"/>
                 </exec>
                 <exec  executable="cmd">
                   <arg value="/c"/>
-                  <arg value="mvn install:install-file  -DgroupId=org.geotools   -DartifactId=gt2-jar-collector -Dversion=2.3.1-SNAPSHOT -Dpackaging=jar -Dfile=./gt2-jar-collector-2.3.1-SNAPSHOT.jar"/>
+                  <arg value="mvn install:install-file -DgroupId=jmagick -DartifactId=jmagick -Dversion=6.2.6.0 -Dpackaging=jar -Dfile=./jmagick.jar"/>
+                </exec>
+                <!--<exec  executable="cmd">
+                  <arg value="/c"/>
+                  <arg value="mvn install:install-file -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-gdal -Dversion=1.0-SNAPSHOT -Dpackaging=jar -Dfile=./gdal-1.4.2.jar"/>
                 </exec>
                 <exec  executable="cmd">
                   <arg value="/c"/>
@@ -153,11 +157,7 @@
                 <exec  executable="cmd">
                   <arg value="/c"/>
                   <arg value="mvn install:install-file -DgroupId=ncsa -DartifactId=jhdf -Dversion=4.1r5 -Dpackaging=jar -Dfile=./ncsa_jhdf.jar"/>
-                </exec>
-                <exec  executable="cmd">
-                  <arg value="/c"/>
-                  <arg value="mvn install:install-file -DgroupId=jmagick -DartifactId=jmagick -Dversion=6.2.6.0 -Dpackaging=jar -Dfile=./jmagick.jar"/>
-                </exec>
+                </exec>-->
                 </tasks>
               </configuration>
               <goals>

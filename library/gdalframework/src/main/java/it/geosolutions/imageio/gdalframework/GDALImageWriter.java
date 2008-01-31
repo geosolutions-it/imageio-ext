@@ -194,9 +194,10 @@ public abstract class GDALImageWriter extends ImageWriter {
 	 *            an <code>IIOImage</code> object containing an image, and
 	 *            metadata to be written. Note that metadata is actually
 	 *            supposed to be an instance of
-	 *            {@link GDALWritableCommonIIOImageMetadata} which can be used
-	 *            to convert any type of ImageMetadata to a format which is
-	 *            understood by this writer.
+	 *            {@link GDALCommonIIOImageMetadata}.
+	 *            {@link GDALWritableCommonIIOImageMetadata} may be used to
+	 *            set properties from other type of ImageMetadata
+	 *            to a format which is understood by this writer.
 	 * @param param
 	 *            an <code>ImageWriteParam</code>, or <code>null</code> to
 	 *            use a default <code>ImageWriteParam</code>.
@@ -472,24 +473,6 @@ public abstract class GDALImageWriter extends ImageWriter {
 					final String value = (String) metadataMap.get(key);
 					dataset.SetMetadataItem(key, value, domain);
 				}
-			}
-		}
-	}
-
-	/**
-	 * Merges <code>inData</code> into <code>outData</code>.
-	 */
-	private void convertMetadata(String metadataFormatName, IIOMetadata inData,
-			IIOMetadata outData) {
-
-		String formatName = null;
-		if (inData.isStandardMetadataFormatSupported()) {
-			formatName = GDALUtilities.STANDARD_METADATA_NAME;
-			try {
-				Node root = inData.getAsTree(formatName);
-				outData.mergeTree(formatName, root);
-			} catch (IIOInvalidTreeException e) {
-				// ignore
 			}
 		}
 	}
@@ -1487,41 +1470,32 @@ public abstract class GDALImageWriter extends ImageWriter {
 
 	public IIOMetadata convertStreamMetadata(IIOMetadata inData,
 			ImageWriteParam param) {
-		// throw new UnsupportedOperationException(
-		// "convertStreamMetadata not implemented yet.");
-		return null;
+		 throw new UnsupportedOperationException(
+		 "convertStreamMetadata not supported yet.");
 	}
 
-	/**
-	 * Creates a default image metadata object and merges in the supplied
-	 * metadata.
-	 */
 	public IIOMetadata convertImageMetadata(IIOMetadata inData,
 			ImageTypeSpecifier imageType, ImageWriteParam param) {
-		if (inData == null) {
-			throw new IllegalArgumentException("inData == null!");
-		}
-		if (imageType == null) {
-			throw new IllegalArgumentException("imageType == null!");
-		}
-		if (inData instanceof GDALCommonIIOImageMetadata) {
-			IIOMetadata md;
-//			try {
-//				md = (GDALCommonIIOImageMetadata) ((GDALCommonIIOImageMetadata) inData)
-//						.clone();
-//			} catch (CloneNotSupportedException e) {
-//				// TODO: change this behavior
-				md = inData;
-//			}
-			return md;
-		}
-
-		GDALCommonIIOImageMetadata im = (GDALCommonIIOImageMetadata) getDefaultImageMetadata(
-				imageType, param);
-
-		convertMetadata(IMAGE_METADATA_NAME, inData, im);
-
-		return im;
+		
+		throw new UnsupportedOperationException(
+		 "convertImageMetadata not supported yet. Create a new GDALWritableCommonIIOImageMetadata and set required fields");
+		
+//		if (inData == null) {
+//			throw new IllegalArgumentException("inData == null!");
+//		}
+//		if (imageType == null) {
+//			throw new IllegalArgumentException("imageType == null!");
+//		}
+//		if (inData instanceof GDALCommonIIOImageMetadata) {
+//			return inData;
+//		}
+//
+//		GDALCommonIIOImageMetadata im = (GDALCommonIIOImageMetadata) getDefaultImageMetadata(
+//				imageType, param);
+//
+//		convertMetadata(IMAGE_METADATA_NAME, inData, im);
+//
+//		return im;
 	}
 
 	/**

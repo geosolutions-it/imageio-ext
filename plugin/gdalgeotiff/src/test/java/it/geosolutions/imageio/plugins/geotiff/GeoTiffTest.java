@@ -20,26 +20,19 @@ import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 import it.geosolutions.resources.TestData;
 
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.Transparency;
-import java.awt.color.ColorSpace;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
-import java.awt.image.SampleModel;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Locale;
 
-import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
+import javax.imageio.metadata.IIOMetadata;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
@@ -48,8 +41,6 @@ import javax.media.jai.RenderedOp;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import com.sun.imageio.plugins.jpeg.JPEGImageReaderSpi;
-import com.sun.media.jai.codecimpl.util.RasterFactory;
 import com.sun.media.jai.operator.ImageWriteDescriptor;
 
 /**
@@ -126,7 +117,8 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
 				300, 500));
 		rparam.setSourceSubsampling(1,2,0,0);
 		ImageReader reader = new GeoTiffImageReaderSpi().createReaderInstance();
-		// Viewer.visualize(reader.read(0,rparam));
+		reader.setInput(inputFile);
+		final IIOMetadata metadata = reader.getImageMetadata(0);
 
 		final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
 				"ImageRead");
@@ -141,8 +133,6 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead,
 				new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
 
-		// RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-
 		if (TestData.isInteractiveTest())
 			Viewer.visualize(image);
 
@@ -154,8 +144,8 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
 		ImageWriter writer = new GeoTiffImageWriterSpi().createWriterInstance();
 		pbjImageWrite.setParameter("Output", outputFile);
 		pbjImageWrite.setParameter("writer", writer);
-		pbjImageWrite.setParameter("ImageMetadata", reader.getImageMetadata(0));
-//		pbjImageWrite.setParameter("Transcode", false);
+		pbjImageWrite.setParameter("ImageMetadata", metadata);
+		pbjImageWrite.setParameter("Transcode", false);
 		ImageWriteParam param = new ImageWriteParam(Locale.getDefault());
 		pbjImageWrite.setParameter("writeParam", param);
 		param.setSourceRegion(new Rectangle(10, 10, 100, 100));
@@ -186,10 +176,10 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
 		TestSuite suite = new TestSuite();
 
 		 // Test Read exploiting JAI-ImageIO tools capabilities
-		suite.addTest(new GeoTiffTest("testRead"));
-
-		// Test Read without exploiting JAI-ImageIO tools capabilities
-		suite.addTest(new GeoTiffTest("testManualRead"));
+		 suite.addTest(new GeoTiffTest("testRead"));
+		
+		 // Test Read without exploiting JAI-ImageIO tools capabilities
+		 suite.addTest(new GeoTiffTest("testManualRead"));
 
 		// Test Write
 		suite.addTest(new GeoTiffTest("testWrite"));

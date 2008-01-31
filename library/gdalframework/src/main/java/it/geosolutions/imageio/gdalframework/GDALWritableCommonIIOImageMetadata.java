@@ -96,17 +96,4 @@ public class GDALWritableCommonIIOImageMetadata extends
 			domain = GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP;
 		gdalMetadataMap.put(domain, metadataNameValuePairs);
 	}
-
-	public void mergeTree(String formatName, Node root)
-			throws IIOInvalidTreeException {
-		if (formatName.equals(GDALUtilities.STANDARD_METADATA_NAME)) {
-			NodeList childs = root.getChildNodes();
-
-			// TODO: attempt to merge standard metadata info in the
-			// writable metadata
-			
-			
-		}
-	}
-
 }

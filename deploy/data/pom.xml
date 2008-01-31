@@ -8,6 +8,9 @@
   <!-- ==========================================================  -->
   <!--     Project Description                                     -->
   <!-- =========================================================== -->
+  <properties>
+      <gdal.data>${env.GDAL_DATA}</gdal.data>
+  </properties>
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-deployer</artifactId>
@@ -17,7 +20,7 @@
   <artifactId>imageio-ext-data</artifactId>
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
-  <name>Image I/O-Extensions GDAL DATA Deployer</name>
+  <name>-GDAL DATA Deployer</name>
   <scm>
      <connection>
        scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/deploy/data

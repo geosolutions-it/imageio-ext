@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <project xmlns="http://maven.apache.org/POM/4.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                               http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <!-- ==========================================================  -->
+  <!--     Project Description                                     -->
+  <!-- =========================================================== -->
+  <properties>
+    <m2.localrepo>${env.M2_REPO}</m2.localrepo>
+    <dllpath.prefix>it/geosolutions/imageio-ext</dllpath.prefix>
+    <base.dll>imageio-ext-gdalbasedll</base.dll>
+    <full.dll>imageio-ext-gdalfulldll</full.dll>
+    <msvc.dll>imageio-ext-gdalmsvcdll</msvc.dll>
+    <ecw.dll>imageio-ext-gdalecwdll</ecw.dll>
+    <mrsid.dll>imageio-ext-gdalmrsiddll</mrsid.dll>
+    <hdf.dll>imageio-ext-gdalhdfdll</hdf.dll>
+  </properties>
+  <parent>
+    <groupId>it.geosolutions.imageio-ext</groupId>
+    <artifactId>imageio-ext-nativelibsdeployer</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <groupId>it.geosolutions.imageio-ext</groupId>
+  <artifactId>imageio-ext-windows</artifactId>
+  <packaging>pom</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>-Windows Native Libraries Dependency Deployer</name>
+  <scm>
+     <connection>
+       scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/deploy/libs/windows
+     </connection>
+     <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/deploy/libs/windows</url>
+  </scm>
+  <description>Windows Native Libraries Dependency Deployer</description>
+  <organization>
+    <name>GeoSolutions</name>
+    <url>http://www.geo-solutions.it</url>
+  </organization>
+  <inceptionYear>2006</inceptionYear>
+  <licenses>
+    <license>
+      <name>Lesser General Public License (LGPL)</name>
+      <url>http://www.gnu.org/copyleft/lesser.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <!--                                                                                -->
+  <!--        BUILD                                                                   -->
+  <!--                                                                                -->
+  <!-- We are going to install some basic jar using some specialized ant  tasks.      -->
+  <!-- We assume that you have maven 2 installed in the path. Note that maven version -->
+  <!-- must be >=2.05.                                                                -->
+  <!--                                                                                -->
+<profiles>
+  <profile>
+  <id>base</id>
+   <dependencies>
+   <dependency>
+     <groupId>it.geosolutions.imageio-ext</groupId>
+     <artifactId>imageio-ext-gdalmsvcdll</artifactId>
+     <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+     <groupId>it.geosolutions.imageio-ext</groupId>
+     <artifactId>imageio-ext-gdalbasedll</artifactId>
+     <version>1.0-SNAPSHOT</version>
+    </dependency>
+   </dependencies>
+    <build>
+       <plugins>
+        <plugin>
+        <dependencies>
+            <dependency>
+              <groupId>ant</groupId>
+              <artifactId>ant-antlr</artifactId>
+              <version>1.6.5</version>
+            </dependency>
+            <dependency>
+              <groupId>antlr</groupId>
+              <artifactId>antlrall</artifactId>
+              <version>2.7.4</version>
+            </dependency>
+            <dependency>
+             <groupId>it.geosolutions.imageio-ext</groupId>
+             <artifactId>imageio-ext-gdalbasedll</artifactId>
+             <version>1.0-SNAPSHOT</version>
+            </dependency>
+        </dependencies>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <version>1.1</version>
+          <executions>
+            <execution>
+              <phase>install</phase>
+              <configuration>
+               <tasks>
+               <unzip src="${m2.localrepo}/${dllpath.prefix}/${base.dll}/${version}/${base.dll}-${version}.jar" dest="${path.native}" overwrite="true">
+                </unzip>
+                 <unzip src="${m2.localrepo}/${dllpath.prefix}/${msvc.dll}/${version}/${msvc.dll}-${version}.jar" dest="${path.native}" overwrite="true">
+                </unzip>
+               </tasks>
+              </configuration>
+              <goals>
+                <goal>run</goal>
+              </goals>
+            </execution>
+          </executions>
+         </plugin>
+         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>2.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>2.0-beta-5</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-eclipse-plugin</artifactId>
+          <version>2.3</version>
+        </plugin>
+      </plugins>
+    </build>
+  </profile>
+  <profile>
+  <id>full</id>
+   <dependencies>
+     <dependency>
+     <groupId>it.geosolutions.imageio-ext</groupId>
+     <artifactId>imageio-ext-gdalmsvcdll</artifactId>
+     <version>1.0-SNAPSHOT</version>
+    </dependency>
+     <dependency>
+      <groupId>it.geosolutions.imageio-ext</groupId>
+      <artifactId>imageio-ext-gdalfulldll</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>it.geosolutions.imageio-ext</groupId>
+      <artifactId>imageio-ext-gdalecwdll</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>it.geosolutions.imageio-ext</groupId>
+      <artifactId>imageio-ext-gdalmrsiddll</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>it.geosolutions.imageio-ext</groupId>
+      <artifactId>imageio-ext-gdalhdfdll</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+   </dependencies>
+   <build>
+       <plugins>
+        <plugin>
+         <dependencies>
+            <dependency>
+              <groupId>ant</groupId>
+              <artifactId>ant-antlr</artifactId>
+              <version>1.6.5</version>
+            </dependency>
+            <dependency>
+              <groupId>antlr</groupId>
+              <artifactId>antlrall</artifactId>
+              <version>2.7.4</version>
+            </dependency>
+         </dependencies>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <version>1.1</version>
+          <executions>
+            <execution>
+              <phase>install</phase>
+              <configuration>
+               <tasks>
+               <unzip src="${m2.localrepo}/${dllpath.prefix}/${full.dll}/${version}/${full.dll}-${version}.jar" dest="${path.native}" overwrite="true">
+                </unzip>
+               <unzip src="${m2.localrepo}/${dllpath.prefix}/${ecw.dll}/${version}/${ecw.dll}-${version}.jar" dest="${path.native}" overwrite="true">
+                </unzip>
+              <unzip src="${m2.localrepo}/${dllpath.prefix}/${mrsid.dll}/${version}/${mrsid.dll}-${version}.jar" dest="${path.native}" overwrite="true">
+                </unzip>
+                <unzip src="${m2.localrepo}/${dllpath.prefix}/${hdf.dll}/${version}/${hdf.dll}-${version}.jar" dest="${path.native}" overwrite="true">
+                </unzip>
+                 <unzip src="${m2.localrepo}/${dllpath.prefix}/${msvc.dll}/${version}/${msvc.dll}-${version}.jar" dest="${path.native}" overwrite="true">
+                </unzip>
+               </tasks>
+              </configuration>
+              <goals>
+                <goal>run</goal>
+              </goals>
+            </execution>
+          </executions>
+          </plugin>
+         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>2.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>2.0-beta-5</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-eclipse-plugin</artifactId>
+          <version>2.3</version>
+        </plugin>
+      </plugins>
+    </build>
+  </profile>
+</profiles>
+</project>

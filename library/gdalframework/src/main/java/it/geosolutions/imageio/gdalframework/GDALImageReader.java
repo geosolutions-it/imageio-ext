@@ -51,7 +51,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
@@ -219,7 +218,6 @@ public abstract class GDALImageReader extends ImageReader {
 					"GDAL native libraries are not available.");
 		synchronized (datasetMap) {
 			if (!isInitialized) {
-
 				// Retrieving the fileName in order to open the main dataset
 				final String mainDatasetFileName = getDatasetSource(
 						super.getInput()).getAbsolutePath();
@@ -1241,16 +1239,17 @@ public abstract class GDALImageReader extends ImageReader {
 
 	public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
 		return getDatasetMetadata(imageIndex);
-		
-//		TODO: Clone??
-//		GDALCommonIIOImageMetadata metadata=null;
-//		try{
-//			metadata = (GDALCommonIIOImageMetadata) getDatasetMetadata(imageIndex).clone();
-//		}
-//		catch (CloneNotSupportedException cnse){
-//			
-//		}
-//		return metadata;
+
+		// TODO: Clone??
+		// GDALCommonIIOImageMetadata metadata=null;
+		// try{
+		// metadata = (GDALCommonIIOImageMetadata)
+		// getDatasetMetadata(imageIndex).clone();
+		// }
+		// catch (CloneNotSupportedException cnse){
+		//			
+		// }
+		// return metadata;
 	}
 
 }

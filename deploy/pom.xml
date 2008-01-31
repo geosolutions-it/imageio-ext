@@ -51,37 +51,19 @@
 
  <modules>
     <module>jar</module>
-    <module>data</module>
  </modules>
     <profiles>
       <profile>
-      <id>windows</id>
-      <activation>
-        <os>
-          <family>windows</family>
-        </os>
+       <activation>
+       <property>
+        <name>deploylibs</name>
+        <value>true</value>
+       </property>
       </activation>
-        <modules>
-          <module>windows</module>
-        </modules>
-      </profile>
-      <profile>
-      <id>linux</id>
-        <activation>
-          <os>
-            <family>linux</family>
-          </os>
-        </activation>
-        <modules>
-          <module>linux</module>
-        </modules>
-      </profile>
-      <profile>
-            <id>jmagick</id>
-              <modules>
-                <module>jmagick</module>
-              </modules>
+      <modules>
+        <module>libs</module>
+        <module>data</module>
+      </modules>
       </profile>
     </profiles>
-    
 </project>

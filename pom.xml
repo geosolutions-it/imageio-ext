@@ -10,27 +10,10 @@
   <!--                    -->
   <properties>
     <path.native>${env.JAVA_HOME}/bin</path.native>
-    <gdal.data>${env.GDAL_DATA}</gdal.data>
     <extensive.tests>false</extensive.tests>
     <interactive.tests>false</interactive.tests>
     <test.maxHeapSize>512M</test.maxHeapSize>
   </properties>
-
-  <!-- Profiles set on the command-line overwrite default properties. -->
-  <profiles>
-    <profile>
-      <id>extensive.tests</id>
-      <properties>
-        <extensive.tests>true</extensive.tests>
-      </properties>
-    </profile>
-    <profile>
-      <id>interactive.tests</id>
-      <properties>
-        <interactive.tests>true</interactive.tests>
-      </properties>
-    </profile>
-  </profiles>
 
   <!-- ======================================================== -->
   <!--                    Project Description                   -->
@@ -66,18 +49,62 @@
   <!-- ======================================================== -->
   <!--                 Deployment Repository                    -->
   <!-- ======================================================== -->
- 
+  
+  <profiles>
+    <profile>
+     <id>deployrefraction</id>
   <!--..................................-->
   <!--      Refractions Repository      -->
+  <!--..................................-->   
+     <distributionManagement>
+      <repository>
+       <uniqueVersion>false</uniqueVersion>
+       <id>refractions</id>
+       <name>Refractions Research - Maven 2 repo</name>
+       <url>dav:http://lists.refractions.net/m2</url>
+      </repository>
+     </distributionManagement>
+   </profile>
+   <profile>
+    <id>testrepo</id>
+     <distributionManagement>  
   <!--..................................-->
-  <distributionManagement>
-    <repository>
-      <uniqueVersion>false</uniqueVersion>
-      <id>refractions</id>
-      <name>Refractions Research - Maven 2 repo</name>
-      <url>dav:http://lists.refractions.net/m2</url>
-    </repository>
-  </distributionManagement>
+  <!--      test Repository     -->
+  <!--..................................-->
+      <repository>
+       <uniqueVersion>false</uniqueVersion>
+       <id>testrepo</id>
+       <url>file:///C:/Users/Daniele/.m2/repository</url>
+      </repository>
+    </distributionManagement>
+   </profile>
+   <profile>
+    <id>deploygeosolutions</id>
+     <distributionManagement>  
+  <!--..................................-->
+  <!--      GeoSolutions Repository     -->
+  <!--..................................-->
+      <repository>
+       <uniqueVersion>false</uniqueVersion>
+       <id>geosolutions</id>
+       <url>ftp://ftp.geo-solutions.it</url>
+      </repository>
+    </distributionManagement>
+   </profile>
+     <!-- Profiles set on the command-line overwrite default properties. -->
+    <profile>
+      <id>extensive.tests</id>
+      <properties>
+        <extensive.tests>true</extensive.tests>
+      </properties>
+    </profile>
+    <profile>
+      <id>interactive.tests</id>
+      <properties>
+        <interactive.tests>true</interactive.tests>
+      </properties>
+    </profile>
+  </profiles>
 
   <!--..................................-->
   <!--    java.net Maven2 Repository    -->
@@ -163,6 +190,11 @@
       <id>ibiblio</id>
       <name>ibiblio</name>
       <url>http://www.ibiblio.org/maven2/</url>
+    </repository>
+    <repository>
+      <id>geosolutions</id>
+      <name>GeoSolutions libraries repository</name>
+      <url>http://www.geo-solutions.it/maven_repo/</url>
     </repository>
     <repository>
       <id>codehaus</id>
@@ -300,16 +332,24 @@
     <!--  <artifactId>wagon-svn</artifactId>     -->
     <!--  <version>RELEASE</version>             -->
     <!-- </extension>                            -->
-   
     
+    <!--.............................................-->
+    <!--       geo-solutions (using wagon ftp)       -->
+    <!--.............................................-->
+      <extension>                                  
+       <groupId>org.apache.maven.wagon</groupId>   
+       <artifactId>wagon-ftp</artifactId>           
+       <version>1.0-beta-2</version>               
+      </extension>                                
+   
     <!--....................................-->
     <!-- Refractions (using wagon webdav)   -->
     <!--....................................-->
-    <extension>
-      <groupId>org.apache.maven.wagon</groupId>
-      <artifactId>wagon-webdav</artifactId>
-      <version>1.0-beta-2</version>
-    </extension>
+      <extension>
+       <groupId>org.apache.maven.wagon</groupId>
+       <artifactId>wagon-webdav</artifactId>
+       <version>1.0-beta-2</version>
+     </extension>
    </extensions>
   </build>
   
