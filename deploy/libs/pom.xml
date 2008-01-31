@@ -4,12 +4,12 @@
            xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                                http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
-
-
   <!-- ==========================================================  -->
   <!--     Project Description                                     -->
   <!-- =========================================================== -->
+  <properties>
+    <m2.localrepo>${settings.localRepository}</m2.localrepo>
+   </properties>
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-deployer</artifactId>
@@ -29,7 +29,6 @@
   </scm>
 
   <description>Native Dependency Libraries Deployer</description>
-
   <organization>
     <name>GeoSolutions</name>
     <url>http://www.geo-solutions.it</url>

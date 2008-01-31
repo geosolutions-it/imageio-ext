@@ -8,7 +8,6 @@
   <!--     Project Description                                     -->
   <!-- =========================================================== -->
   <properties>
-    <m2.localrepo>${env.M2_REPO}</m2.localrepo>
     <dllpath.prefix>it/geosolutions/imageio-ext</dllpath.prefix>
     <base.dll>imageio-ext-gdalbasedll</base.dll>
     <full.dll>imageio-ext-gdalfulldll</full.dll>
