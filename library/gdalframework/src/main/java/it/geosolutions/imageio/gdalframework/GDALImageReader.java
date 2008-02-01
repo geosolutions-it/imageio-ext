@@ -964,6 +964,7 @@ public abstract class GDALImageReader extends ImageReader {
 			WritableRaster raster = bi.getRaster().createWritableChild(
 					destRegion.x, destRegion.y, destRegion.width,
 					destRegion.height, destRegion.x, destRegion.y, null);
+			//TODO: Work directly on a Databuffer avoiding setRect?
 			raster.setRect(readRaster);
 		}
 		return bi;

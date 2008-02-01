@@ -292,7 +292,7 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 					new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
 
 			if (TestData.isInteractiveTest())
-				Viewer.visualize(image, "MrSID ImageRead");
+				Viewer.visualize(image, "SourceBand selection");
 			else
 				assertNotNull(image.getTiles());
 		} catch (FileNotFoundException fnfe) {
@@ -343,7 +343,7 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 			RenderedImage ri = reader.read(0, irp);
 
 			if (TestData.isInteractiveTest())
-				Viewer.visualize(ri, "MrSID ImageRead");
+				Viewer.visualize(ri, "MrSID Destination settings");
 			else
 				assertNotNull(ri);
 
