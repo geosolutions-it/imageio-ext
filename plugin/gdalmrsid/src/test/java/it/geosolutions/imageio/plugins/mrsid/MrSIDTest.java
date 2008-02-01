@@ -241,8 +241,8 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 			//
 			// //
 			ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
-			ColorModel cm = RasterFactory.createComponentColorModel(
-					sm.getDataType(), // dataType
+			ColorModel cm = RasterFactory.createComponentColorModel(sm
+					.getDataType(), // dataType
 					cs, // color space
 					false, // has alpha
 					false, // is alphaPremultiplied
@@ -265,10 +265,10 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 
 			int subsampledWidth = (intersRegion.width + ssx - 1) / ssx;
 			int subsampledHeight = (intersRegion.height + ssy - 1) / ssy;
-			param.setDestinationType(new ImageTypeSpecifier(cm,
-					sm.createCompatibleSampleModel(
-							subsampledWidth, subsampledHeight)
-							.createSubsetSampleModel(new int[] { 0 })));
+			param.setDestinationType(new ImageTypeSpecifier(cm, sm
+					.createCompatibleSampleModel(subsampledWidth,
+							subsampledHeight).createSubsetSampleModel(
+							new int[] { 0 })));
 
 			// //
 			//
@@ -353,20 +353,59 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 		}
 	}
 
+	public void testP() throws IOException {
+		try {
+			ImageReader reader = new MrSIDImageReaderSpi()
+					.createReaderInstance();
+
+			final File file = TestData.file(this, fileName);
+			reader.setInput(file);
+			ImageTypeSpecifier spec = (ImageTypeSpecifier) reader
+					.getImageTypes(0).next();
+			final ImageReadParam irp = reader.getDefaultReadParam();
+			WritableRaster raster = Raster.createWritableRaster(spec
+					.getSampleModel(), null);
+			final BufferedImage bi = new BufferedImage(spec.getColorModel(),
+					raster, false, null);
+
+			irp.setDestination(bi);
+			ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
+			pbjImageRead.setParameter("Input", file);
+			pbjImageRead.setParameter("readParam", irp);
+			final ImageLayout l = new ImageLayout();
+			l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(64)
+					.setTileWidth(64);
+			// get a RenderedImage
+			RenderedOp image = JAI.create("ImageRead", pbjImageRead,
+					new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
+
+			if (TestData.isInteractiveTest())
+				Viewer.visualize(image, "MrSID ImageRead");
+			else
+				assertNotNull(image);
+
+			reader.dispose();
+		} catch (FileNotFoundException fnfe) {
+			warningMessage();
+		}
+	}
+
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 
-		 // Test read exploiting common JAI operations (Crop-Translate-Rotate)
-		 suite.addTest(new MrSIDTest("testJaiOperations"));
-		
-		 // Test reading metadata information
-		 suite.addTest(new MrSIDTest("testMetadata"));
-		
-		 // Test read without exploiting JAI
-		 suite.addTest(new MrSIDTest("testManualRead"));
+		// // Test read exploiting common JAI operations (Crop-Translate-Rotate)
+		// suite.addTest(new MrSIDTest("testJaiOperations"));
+		//		
+		// // Test reading metadata information
+		// suite.addTest(new MrSIDTest("testMetadata"));
+		//		
+		// // Test read without exploiting JAI
+		// suite.addTest(new MrSIDTest("testManualRead"));
+		//
+		// // Test read without exploiting JAI
+		// suite.addTest(new MrSIDTest("testSubBandsRead"));
 
-		// Test read without exploiting JAI
-		suite.addTest(new MrSIDTest("testSubBandsRead"));
+		suite.addTest(new MrSIDTest("testP"));
 
 		return suite;
 	}
