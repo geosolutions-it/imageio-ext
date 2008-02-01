@@ -60,7 +60,7 @@
     </modules>
   </profile>
   <profile>
-  <id>linux</id>
+    <id>linux</id>
     <modules>
       <module>linux</module>
     </modules>
