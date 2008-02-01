@@ -67,7 +67,7 @@
                <mkdir dir="${temp.dir}" />
                <exec executable="sh">
                   <arg value="-c"/>
-                  <arg value="echo downloading libraries ~ 2 MB "/>
+                  <arg value="echo downloading libraries [2 MB] "/>
                 </exec>
                <get src="${remote.url}/${path.prefix}/${base.lib}/${version}/${base.lib}-${version}.jar" dest="${temp.dir}/${base.lib}-${version}.jar"/>
                 <exec executable="sh">
@@ -127,7 +127,7 @@
                <mkdir dir="${temp.dir}" />
 	       <exec executable="sh">
                   <arg value="-c"/>
-                  <arg value="echo downloading libraries ~ 3.5 MB "/>
+                  <arg value="echo downloading libraries [3.5 MB]"/>
                 </exec>
                <get src="${remote.url}/${path.prefix}/${full.lib}/${version}/${full.lib}-${version}.jar" dest="${temp.dir}/${full.lib}-${version}.jar"/>
                 <exec executable="sh">

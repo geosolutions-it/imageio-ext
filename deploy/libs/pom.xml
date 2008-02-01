@@ -61,6 +61,11 @@
   </profile>
   <profile>
     <id>linux</id>
+    <activation>
+        <os>
+          <name>Linux</name>
+        </os>
+      </activation>
     <modules>
       <module>linux</module>
     </modules>
