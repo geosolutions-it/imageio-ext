@@ -959,8 +959,6 @@ public abstract class GDALImageReader extends ImageReader {
 			//			
 			// //
 
-			// TODO: Set data directly, avoiding setRect(readDatasetRaster)??
-			// TODO: Check thread safety and concurrency
 			Raster readRaster = readDatasetRaster(item, srcRegion, destRegion,
 					srcBands);
 			WritableRaster raster = bi.getRaster().createWritableChild(
