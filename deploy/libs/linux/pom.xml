@@ -13,8 +13,7 @@
     <path.prefix>it/geosolutions/imageio-ext</path.prefix>
     <base.lib>imageio-ext-gdalbaselinuxlib</base.lib>
     <full.lib>imageio-ext-gdalfulllinuxlib</full.lib>
-    <temp.dir>C:\work\prova</temp.dir>
-    <!--<temp.dir>${user.home}/temp</temp.dir>-->
+    <temp.dir>${user.home}/temp</temp.dir>
   </properties>
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
@@ -65,13 +64,75 @@
               <phase>generate-resources</phase>
               <configuration>
                <tasks>
-               <!-- <available property="temp.defined" file="${temp.dir}" type="dir" /> -->
-               <!-- add an if on the temp.defined property before launch exec -->
                <mkdir dir="${temp.dir}" />
-               <get src="${remote.url}/${path.prefix}/${base.lib}/${version}/${base.lib}-${version}.jar" dest="${temp.dir}/${base.lib}-${version}.jar" verbose="true" />
+               <exec executable="sh">
+                  <arg value="-c"/>
+                  <arg value="echo downloading libraries ~ 2 MB "/>
+                </exec>
+               <get src="${remote.url}/${path.prefix}/${base.lib}/${version}/${base.lib}-${version}.jar" dest="${temp.dir}/${base.lib}-${version}.jar"/>
                 <exec executable="sh">
                   <arg value="-c"/>
-                  <arg value="unzip libs.zip -d $JAVA_HOME/jre/lib/i386"/>
+                  <arg value="unzip -o ${temp.dir}/${base.lib}-${version}.jar -d ${dest.path}"/>
+                </exec>
+               </tasks>
+              </configuration>
+              <goals>
+                <goal>run</goal>
+              </goals>
+            </execution>
+          </executions>
+          <dependencies>
+            <dependency>
+              <groupId>ant</groupId>
+              <artifactId>ant-antlr</artifactId>
+              <version>1.6.5</version>
+            </dependency>
+            <dependency>
+              <groupId>antlr</groupId>
+              <artifactId>antlrall</artifactId>
+              <version>2.7.4</version>
+            </dependency>
+        </dependencies>
+         </plugin>
+         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>2.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>2.0-beta-5</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-eclipse-plugin</artifactId>
+          <version>2.3</version>
+        </plugin>
+      </plugins>
+    </build>
+  </profile>
+  <profile>
+  <id>full</id>
+    <build>
+       <plugins>
+        <plugin>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <version>1.1</version>
+          <executions>
+            <execution>
+              <phase>generate-resources</phase>
+              <configuration>
+               <tasks>
+               <mkdir dir="${temp.dir}" />
+	       <exec executable="sh">
+                  <arg value="-c"/>
+                  <arg value="echo downloading libraries ~ 3.5 MB "/>
+                </exec>
+               <get src="${remote.url}/${path.prefix}/${full.lib}/${version}/${full.lib}-${version}.jar" dest="${temp.dir}/${full.lib}-${version}.jar"/>
+                <exec executable="sh">
+                  <arg value="-c"/>
+                  <arg value="unzip -o ${temp.dir}/${full.lib}-${version}.jar -d ${dest.path}"/>
                 </exec>
                </tasks>
               </configuration>

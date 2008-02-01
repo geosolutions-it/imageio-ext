@@ -17,20 +17,16 @@
 package it.geosolutions.imageio.plugins.jp2mrsid;
 
 import it.geosolutions.imageio.gdalframework.GDALImageReaderSpi;
-import it.geosolutions.imageio.gdalframework.GDALUtilities;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageReader;
-import javax.imageio.spi.ImageReaderSpi;
-import javax.imageio.spi.ServiceRegistry;
 
 /**
  * Service provider interface for the jp2k image
@@ -80,8 +76,6 @@ public class JP2GDALMrSidImageReaderSpi extends GDALImageReaderSpi {
 
 	static final String[] extraImageMetadataFormatClassNames = { null };
 
-//	private boolean registered;
-
 	public JP2GDALMrSidImageReaderSpi() {
 		super(
 				vendorName,
@@ -90,8 +84,7 @@ public class JP2GDALMrSidImageReaderSpi extends GDALImageReaderSpi {
 				suffixes,
 				MIMETypes,
 				readerCN, // readerClassName
-				new Class[] 
-					        { File.class, FileImageInputStreamExt.class },
+				new Class[] { File.class, FileImageInputStreamExt.class },
 				wSN, // writer Spi Names
 				supportsStandardStreamMetadataFormat,
 				nativeStreamMetadataFormatName,
@@ -102,8 +95,8 @@ public class JP2GDALMrSidImageReaderSpi extends GDALImageReaderSpi {
 				nativeImageMetadataFormatName,
 				nativeImageMetadataFormatClassName,
 				extraImageMetadataFormatNames,
-				extraImageMetadataFormatClassNames,
-				Collections.singletonList("JP2MrSID"));
+				extraImageMetadataFormatClassNames, Collections
+						.singletonList("JP2MrSID"));
 
 		if (logger.isLoggable(Level.FINE))
 			logger.fine("JP2GDALMrSidImageReaderSpi Constructor");
@@ -132,37 +125,4 @@ public class JP2GDALMrSidImageReaderSpi extends GDALImageReaderSpi {
 		return new StringBuffer("JP2K Image Reader, version ").append(version)
 				.toString();
 	}
-
-
-//	/**
-//	 * Upon registration, this method ensures that this SPI is listed at the top
-//	 * of the ImageReaderSpi items, so that it will be invoked before the
-//	 * default ImageReaderSpi
-//	 * 
-//	 * @param registry
-//	 *            ServiceRegistry where this object has been registered.
-//	 * @param category
-//	 *            a Class object indicating the registry category under which
-//	 *            this object has been registered.
-//	 */
-//	public void onRegistration(ServiceRegistry registry, Class category) {
-//		super.onRegistration(registry, category);
-//		if (registered) {
-//			return;
-//		}
-//
-//		registered = true;
-//
-//		Iterator readers = GDALUtilities.getJDKImageReaderWriterSPI(registry,
-//				"JPEG2000", true).iterator();
-//
-//		ImageReaderSpi spi;
-//		while (readers.hasNext()) {
-//			spi = (ImageReaderSpi) readers.next();
-//			if (spi == this)
-//				continue;
-//			registry.deregisterServiceProvider(spi);
-//			registry.setOrdering(category, this, spi);
-//		}
-//	}
 }

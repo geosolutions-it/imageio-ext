@@ -18,6 +18,7 @@ package it.geosolutions.imageio.plugins.jp2mrsid;
 
 import javax.media.jai.JAI;
 
+import org.gdal.gdal.Driver;
 import org.gdal.gdal.gdal;
 
 import junit.framework.TestCase;
@@ -27,14 +28,26 @@ import junit.framework.TestCase;
  * @author Simone Giannecchini, GeoSolutions. 
  */
 public class AbstractJP2KTestCase extends TestCase {
-
+	static{
+		gdal.AllRegister();
+		final Driver driverkak = gdal.GetDriverByName("JP2KAK");
+		final Driver driverecw = gdal.GetDriverByName("JP2ECW");
+		if (driverkak!=null || driverecw!=null){
+			final StringBuffer skipDriver = new StringBuffer("");
+			if (driverkak!=null)
+				skipDriver.append("JP2KAK ");
+			if (driverecw!=null)
+				skipDriver.append("JP2ECW");
+			gdal.SetConfigOption("GDAL_SKIP", skipDriver.toString());
+		}
+	}
+	
 	public AbstractJP2KTestCase(String name) {
 		super(name);
 	}
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		gdal.SetConfigOption("GDAL_SKIP", "JP2KAK JP2ECW");
 		// general settings
 		JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
 				64 * 1024 * 1024);

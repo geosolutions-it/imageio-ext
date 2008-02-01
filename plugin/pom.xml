@@ -86,7 +86,6 @@
       </plugin>
     </plugins>
   </build>
-
   <!-- =========================================================== -->
   <!--     Modules for the build in approximate dependency order   -->
   <!-- =========================================================== -->
@@ -147,23 +146,6 @@
         <module>gdalkakadujp2</module>
         <module>kakadujp2</module>
       </modules>
-    </profile>
-    <profile>
-      <id>linuxfull</id>
-      <modules>
-        <module>gdalenvisat</module>
-        <module>gdalehdr</module>
-        <module>gdalmrsid</module>
-        <module>gdalecw</module>
-        <module>gdalecwjp2</module>
-        <module>gdalmrsidjp2</module>
-        <module>gdaljpeg</module>
-        <module>gdalarcgrid</module>
-        <module>arcgrid</module>
-        <module>swan</module>
-        <module>gdaldted</module>
-        <module>gdalgeotiff</module>
-       </modules>
     </profile>
   </profiles>
 </project>

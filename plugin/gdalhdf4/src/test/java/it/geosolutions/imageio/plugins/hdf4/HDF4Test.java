@@ -48,39 +48,39 @@ public class HDF4Test extends AbstractHDF4TestCase {
 		super(name);
 	}
 
-//	/**
-//	 * This test method uses an HDF4 file containing several subdatasets
-//	 */
-//
-//	public void testSubDataset() throws FileNotFoundException, IOException {
-//		try {
-//			final int index = 2;
-//			final ImageReadParam irp = new ImageReadParam();
-//			irp.setSourceSubsampling(1, 2, 0, 0);
-//			final String fileName = "TOVS_DAILY_AM_870330_NG.HDF";
-//			final File file = TestData.file(this, fileName);
-//			ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
-//			final ImageReader mReader = new HDF4ImageReaderSpi()
-//					.createReaderInstance();
-//			pbjImageRead.setParameter("Input", file);
-//			pbjImageRead.setParameter("Reader", mReader);
-//			pbjImageRead.setParameter("readParam", irp);
-//			pbjImageRead.setParameter("ImageChoice", new Integer(index));
-//			final ImageLayout l = new ImageLayout();
-//			l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(256)
-//					.setTileWidth(256);
-//			// get a RenderedImage
-//			RenderedOp image = JAI.create("ImageRead", pbjImageRead,
-//					new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
-//
-//			if (TestData.isInteractiveTest())
-//				Viewer.visualize(image, fileName);
-//			else
-//				assertNotNull(image.getTiles());
-//		} catch (FileNotFoundException fnfe) {
-//			warningMessage();
-//		}
-//	}
+	// /**
+	// * This test method uses an HDF4 file containing several subdatasets
+	// */
+	//
+	// public void testSubDataset() throws FileNotFoundException, IOException {
+	// try {
+	// final int index = 2;
+	// final ImageReadParam irp = new ImageReadParam();
+	// irp.setSourceSubsampling(1, 2, 0, 0);
+	// final String fileName = "TOVS_DAILY_AM_870330_NG.HDF";
+	// final File file = TestData.file(this, fileName);
+	// ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
+	// final ImageReader mReader = new HDF4ImageReaderSpi()
+	// .createReaderInstance();
+	// pbjImageRead.setParameter("Input", file);
+	// pbjImageRead.setParameter("Reader", mReader);
+	// pbjImageRead.setParameter("readParam", irp);
+	// pbjImageRead.setParameter("ImageChoice", new Integer(index));
+	// final ImageLayout l = new ImageLayout();
+	// l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(256)
+	// .setTileWidth(256);
+	// // get a RenderedImage
+	// RenderedOp image = JAI.create("ImageRead", pbjImageRead,
+	// new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
+	//
+	// if (TestData.isInteractiveTest())
+	// Viewer.visualize(image, fileName);
+	// else
+	// assertNotNull(image.getTiles());
+	// } catch (FileNotFoundException fnfe) {
+	// warningMessage();
+	// }
+	// }
 
 	public void testManualRead() throws FileNotFoundException, IOException {
 		try {
@@ -174,11 +174,11 @@ public class HDF4Test extends AbstractHDF4TestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 
-//		// Test reading of several subdatasets
-//		suite.addTest(new HDF4Test("testSubDataset"));
+		// // Test reading of several subdatasets
+		// suite.addTest(new HDF4Test("testSubDataset"));
 
-//		// Test read without exploiting JAI
-//		suite.addTest(new HDF4Test("testManualRead"));
+		// // Test read without exploiting JAI
+		// suite.addTest(new HDF4Test("testManualRead"));
 
 		// Test reading of several subdatasets
 		suite.addTest(new HDF4Test("testRasterBandsProperties"));
@@ -187,7 +187,10 @@ public class HDF4Test extends AbstractHDF4TestCase {
 	}
 
 	public static void main(java.lang.String[] args) {
+		// Actually, HDF4 on Linux is not tested. Test are disabled.
+		final String osName = System.getProperty("os.name");
+		if (osName.equalsIgnoreCase("Linux"))
+			return;
 		junit.textui.TestRunner.run(suite());
 	}
-
 }
