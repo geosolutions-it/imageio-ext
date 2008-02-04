@@ -356,8 +356,7 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 
-		 // Test read exploiting common JAI operations
-		// (Crop-Translate-Rotate)
+		// Test read exploiting common JAI operations (Crop-Translate-Rotate)
 		suite.addTest(new MrSIDTest("testJaiOperations"));
 
 		// Test reading metadata information

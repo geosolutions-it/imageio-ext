@@ -102,8 +102,7 @@ public abstract class GDALImageWriterSpi extends ImageWriterSpi {
 	 * instance: "HDF4;HDF4Image"
 	 * 
 	 */
-	public List getSupportedFormats()
-	{
+	public List getSupportedFormats(){
 		return Collections.unmodifiableList(this.supportedFormats);
 	}
 

@@ -66,8 +66,7 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
 		String fileName = "bogota.tif";
 		final File inputFile = TestData.file(this, fileName);
 		irp.setSourceSubsampling(2, 2, 0, 0);
-		GeoTiffImageReader reader = new GeoTiffImageReader(
-				new GeoTiffImageReaderSpi());
+		ImageReader reader = new GeoTiffImageReaderSpi().createReaderInstance();
 		reader.setInput(inputFile);
 		final RenderedImage image = reader.readAsRenderedImage(0, irp);
 		if (TestData.isInteractiveTest())
@@ -110,12 +109,11 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
 	public void testWrite() throws IOException, FileNotFoundException {
 		final File outputFile = TestData.temp(this, "writetest.tif", false);
 		outputFile.deleteOnExit();
-		 final File inputFile = TestData.file(this, "bogota.tif");
+		final File inputFile = TestData.file(this, "bogota.tif");
 
 		ImageReadParam rparam = new ImageReadParam();
-		rparam.setSourceRegion(new Rectangle(1, 1,
-				300, 500));
-		rparam.setSourceSubsampling(1,2,0,0);
+		rparam.setSourceRegion(new Rectangle(1, 1, 300, 500));
+		rparam.setSourceSubsampling(1, 2, 0, 0);
 		ImageReader reader = new GeoTiffImageReaderSpi().createReaderInstance();
 		reader.setInput(inputFile);
 		final IIOMetadata metadata = reader.getImageMetadata(0);
@@ -136,7 +134,7 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
 		if (TestData.isInteractiveTest())
 			Viewer.visualize(image);
 
-		 // ////////////////////////////////////////////////////////////////
+		// ////////////////////////////////////////////////////////////////
 		// preparing to write
 		// ////////////////////////////////////////////////////////////////
 		final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
@@ -175,11 +173,11 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 
-		 // Test Read exploiting JAI-ImageIO tools capabilities
-		 suite.addTest(new GeoTiffTest("testRead"));
-		
-		 // Test Read without exploiting JAI-ImageIO tools capabilities
-		 suite.addTest(new GeoTiffTest("testManualRead"));
+		// Test Read exploiting JAI-ImageIO tools capabilities
+		suite.addTest(new GeoTiffTest("testRead"));
+
+		// Test Read without exploiting JAI-ImageIO tools capabilities
+		suite.addTest(new GeoTiffTest("testManualRead"));
 
 		// Test Write
 		suite.addTest(new GeoTiffTest("testWrite"));

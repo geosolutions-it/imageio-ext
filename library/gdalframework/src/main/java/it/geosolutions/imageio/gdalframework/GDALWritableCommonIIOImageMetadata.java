@@ -4,11 +4,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.imageio.metadata.IIOInvalidTreeException;
-
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 /**
  * Class extending {@link GDALCommonIIOImageMetadata} in order to provide write
  * capabilities to the metadata instance. It is worth to point out that this
@@ -66,7 +61,7 @@ public class GDALWritableCommonIIOImageMetadata extends
 		this.tileWidth = tileWidth;
 	}
 
-	public void setBandsNumber(final int nBands) {
+	public void setNumBands(final int nBands) {
 		this.numBands = nBands;
 	}
 
@@ -86,13 +81,15 @@ public class GDALWritableCommonIIOImageMetadata extends
 	 */
 	public synchronized void setGdalMetadataDomain(Map metadataNameValuePairs,
 			String domain) {
-		if (!domain.equals(GDALUtilities.GDALMetadataDomain.DEFAULT)
+		if (domain == null || domain.length() > 0 && 
+				(!domain.equals(GDALUtilities.GDALMetadataDomain.DEFAULT)
 				|| !domain
 						.equals(GDALUtilities.GDALMetadataDomain.IMAGESTRUCTURE)
 				|| !domain
-						.startsWith(GDALUtilities.GDALMetadataDomain.XML_PREFIX))
+						.startsWith(GDALUtilities.GDALMetadataDomain.XML_PREFIX)))
 			throw new IllegalArgumentException("Unsupported domain");
-		if (domain.equals(GDALUtilities.GDALMetadataDomain.DEFAULT))
+		if (domain.equals(GDALUtilities.GDALMetadataDomain.DEFAULT)
+				|| domain.length() == 0)
 			domain = GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP;
 		gdalMetadataMap.put(domain, metadataNameValuePairs);
 	}

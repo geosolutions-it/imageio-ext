@@ -43,7 +43,6 @@ import javax.imageio.IIOImage;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
-import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.media.jai.PlanarImage;
@@ -53,7 +52,6 @@ import org.gdal.gdal.Dataset;
 import org.gdal.gdal.Driver;
 import org.gdal.gdal.gdal;
 import org.gdal.gdalconst.gdalconstConstants;
-import org.w3c.dom.Node;
 
 /**
  * Main abstract class defining the main framework which needs to be used to
@@ -134,10 +132,9 @@ public abstract class GDALImageWriter extends ImageWriter {
 	 */
 	private static final int DEFAULT_GDALMEMORYRASTER_MAXSIZE = 1024 * 1024 * 32;
 
-	private static final String IMAGE_METADATA_NAME = GDALWritableCommonIIOImageMetadata.nativeMetadataFormatName;
+//	private static final String IMAGE_METADATA_NAME = GDALWritableCommonIIOImageMetadata.nativeMetadataFormatName;
 
-	private static final Logger LOGGER = Logger.getLogger(GDALImageWriter.class
-			.toString());
+	private static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.gdalframework");
 
 	/** Output File */
 	protected File outputFile;
@@ -195,9 +192,9 @@ public abstract class GDALImageWriter extends ImageWriter {
 	 *            metadata to be written. Note that metadata is actually
 	 *            supposed to be an instance of
 	 *            {@link GDALCommonIIOImageMetadata}.
-	 *            {@link GDALWritableCommonIIOImageMetadata} may be used to
-	 *            set properties from other type of ImageMetadata
-	 *            to a format which is understood by this writer.
+	 *            {@link GDALWritableCommonIIOImageMetadata} may be used to set
+	 *            properties from other type of ImageMetadata to a format which
+	 *            is understood by this writer.
 	 * @param param
 	 *            an <code>ImageWriteParam</code>, or <code>null</code> to
 	 *            use a default <code>ImageWriteParam</code>.
@@ -215,6 +212,8 @@ public abstract class GDALImageWriter extends ImageWriter {
 		if (outputFile == null) {
 			throw new IllegalStateException("the output is null!");
 		}
+		 if (param == null)
+	            param = getDefaultWriteParam();
 
 		// /////////////////////////////////////////////////////////////////////
 		//
@@ -1462,7 +1461,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 		computeRegions(imageBounds, destSize, param);
 		imageMetadata.setWidth(destSize.width);
 		imageMetadata.setHeight(destSize.height);
-		imageMetadata.setBandsNumber(nBands);
+		imageMetadata.setNumBands(nBands);
 		// TODO:provides additional settings
 
 		return imageMetadata;
@@ -1470,32 +1469,33 @@ public abstract class GDALImageWriter extends ImageWriter {
 
 	public IIOMetadata convertStreamMetadata(IIOMetadata inData,
 			ImageWriteParam param) {
-		 throw new UnsupportedOperationException(
-		 "convertStreamMetadata not supported yet.");
+		throw new UnsupportedOperationException(
+				"convertStreamMetadata not supported yet.");
 	}
 
 	public IIOMetadata convertImageMetadata(IIOMetadata inData,
 			ImageTypeSpecifier imageType, ImageWriteParam param) {
-		
+
 		throw new UnsupportedOperationException(
-		 "convertImageMetadata not supported yet. Create a new GDALWritableCommonIIOImageMetadata and set required fields");
-		
-//		if (inData == null) {
-//			throw new IllegalArgumentException("inData == null!");
-//		}
-//		if (imageType == null) {
-//			throw new IllegalArgumentException("imageType == null!");
-//		}
-//		if (inData instanceof GDALCommonIIOImageMetadata) {
-//			return inData;
-//		}
-//
-//		GDALCommonIIOImageMetadata im = (GDALCommonIIOImageMetadata) getDefaultImageMetadata(
-//				imageType, param);
-//
-//		convertMetadata(IMAGE_METADATA_NAME, inData, im);
-//
-//		return im;
+				"convertImageMetadata not supported yet. Create a new GDALWritableCommonIIOImageMetadata and set required fields");
+
+		// if (inData == null) {
+		// throw new IllegalArgumentException("inData == null!");
+		// }
+		// if (imageType == null) {
+		// throw new IllegalArgumentException("imageType == null!");
+		// }
+		// if (inData instanceof GDALCommonIIOImageMetadata) {
+		// return inData;
+		// }
+		//
+		// GDALCommonIIOImageMetadata im = (GDALCommonIIOImageMetadata)
+		// getDefaultImageMetadata(
+		// imageType, param);
+		//
+		// convertMetadata(IMAGE_METADATA_NAME, inData, im);
+		//
+		// return im;
 	}
 
 	/**

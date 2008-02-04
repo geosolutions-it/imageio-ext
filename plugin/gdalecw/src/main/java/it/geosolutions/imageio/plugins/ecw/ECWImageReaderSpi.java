@@ -84,8 +84,7 @@ public class ECWImageReaderSpi extends GDALImageReaderSpi {
 				suffixes,
 				MIMETypes,
 				readerCN, // readerClassName
-				new Class[] 
-					        { File.class, FileImageInputStreamExt.class },
+				new Class[] { File.class, FileImageInputStreamExt.class },
 				wSN, // writer Spi Names
 				supportsStandardStreamMetadataFormat,
 				nativeStreamMetadataFormatName,
@@ -96,13 +95,11 @@ public class ECWImageReaderSpi extends GDALImageReaderSpi {
 				nativeImageMetadataFormatName,
 				nativeImageMetadataFormatClassName,
 				extraImageMetadataFormatNames,
-				extraImageMetadataFormatClassNames,
-				Collections.singletonList("ECW"));
+				extraImageMetadataFormatClassNames, Collections
+						.singletonList("ECW"));
 
 		if (LOGGER.isLoggable(Level.FINE))
 			LOGGER.fine("ECWImageReaderSpi Constructor");
-		
-
 	}
 
 	/**
@@ -128,6 +125,5 @@ public class ECWImageReaderSpi extends GDALImageReaderSpi {
 		return new StringBuffer("ECW Image Reader, version ").append(version)
 				.toString();
 	}
-
 
 }

@@ -63,57 +63,57 @@ import com.sun.media.imageioimpl.common.ImageUtil;
 public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 		Cloneable {
 
-//	protected Object clone() throws CloneNotSupportedException {
-//		GDALCommonIIOImageMetadata metadata = new GDALCommonIIOImageMetadata();
-//		metadata.driverName = this.driverName;
-//		metadata.driverDescription = this.driverDescription;
-//		metadata.datasetName = this.datasetName;
-//		metadata.datasetDescription = this.datasetDescription;
-//		metadata.projection = this.projection;
-//		metadata.gcpNumber = this.gcpNumber;
-//		metadata.gcpProjection = this.gcpProjection;
-//		metadata.geoTransformation = (double[]) this.geoTransformation.clone();
-//		if (this.gdalMetadataMap != null) {
-//			Map inputMap = this.gdalMetadataMap;
-//			Map map = Collections.synchronizedMap(new HashMap(inputMap.size()));
-//			final Iterator outKeys = inputMap.keySet().iterator();
-//			while (outKeys.hasNext()) {
-//				final String key = (String) outKeys.next();
-//				final Map valuesMap = (Map) inputMap.get(key);
-//				final Iterator inKeys = valuesMap.keySet().iterator();
-//				final Map innerMap = new HashMap(valuesMap.size());
-//				while (inKeys.hasNext()) {
-//					final String ikey = (String) inKeys.next();
-//					final String value = (String) valuesMap.get(ikey);
-//					innerMap.put(ikey, value);
-//				}
-//				map.put(key, innerMap);
-//			}
-//			metadata.gdalMetadataMap = map;
-//		}
-//		// TODO: Need to clone GCPs ... but actually JVM crashes when getting
-//		// GCPs
-//		metadata.width = this.width;
-//		metadata.height = this.height;
-//		metadata.tileHeight = this.tileHeight;
-//		metadata.tileWidth = this.tileWidth;
-//
-//		// TODO: clone sampleModel and color Model
-//		// metadata.colorModel = new ColorModel()
-//		// metadata.sampleModel= new SampleModel()
-//		metadata.numBands = this.numBands;
-//
-//		metadata.maximums = (Double[]) this.maximums.clone();
-//		metadata.minimums = (Double[]) this.minimums.clone();
-//		metadata.noDataValues = (Double[]) this.noDataValues.clone();
-//		metadata.scales = (Double[]) this.scales.clone();
-//		metadata.offsets = (Double[]) this.offsets.clone();
-//
-//		metadata.numOverviews = (int[]) this.numOverviews.clone();
-//		metadata.colorInterpretations = (int[]) this.colorInterpretations
-//				.clone();
-//		return metadata;
-//	}
+	// protected Object clone() throws CloneNotSupportedException {
+	// GDALCommonIIOImageMetadata metadata = new GDALCommonIIOImageMetadata();
+	// metadata.driverName = this.driverName;
+	// metadata.driverDescription = this.driverDescription;
+	// metadata.datasetName = this.datasetName;
+	// metadata.datasetDescription = this.datasetDescription;
+	// metadata.projection = this.projection;
+	// metadata.gcpNumber = this.gcpNumber;
+	// metadata.gcpProjection = this.gcpProjection;
+	// metadata.geoTransformation = (double[]) this.geoTransformation.clone();
+	// if (this.gdalMetadataMap != null) {
+	// Map inputMap = this.gdalMetadataMap;
+	// Map map = Collections.synchronizedMap(new HashMap(inputMap.size()));
+	// final Iterator outKeys = inputMap.keySet().iterator();
+	// while (outKeys.hasNext()) {
+	// final String key = (String) outKeys.next();
+	// final Map valuesMap = (Map) inputMap.get(key);
+	// final Iterator inKeys = valuesMap.keySet().iterator();
+	// final Map innerMap = new HashMap(valuesMap.size());
+	// while (inKeys.hasNext()) {
+	// final String ikey = (String) inKeys.next();
+	// final String value = (String) valuesMap.get(ikey);
+	// innerMap.put(ikey, value);
+	// }
+	// map.put(key, innerMap);
+	// }
+	// metadata.gdalMetadataMap = map;
+	// }
+	// // TODO: Need to clone GCPs ... but actually JVM crashes when getting
+	// // GCPs
+	// metadata.width = this.width;
+	// metadata.height = this.height;
+	// metadata.tileHeight = this.tileHeight;
+	// metadata.tileWidth = this.tileWidth;
+	//
+	// // TODO: clone sampleModel and color Model
+	// // metadata.colorModel = new ColorModel()
+	// // metadata.sampleModel= new SampleModel()
+	// metadata.numBands = this.numBands;
+	//
+	// metadata.maximums = (Double[]) this.maximums.clone();
+	// metadata.minimums = (Double[]) this.minimums.clone();
+	// metadata.noDataValues = (Double[]) this.noDataValues.clone();
+	// metadata.scales = (Double[]) this.scales.clone();
+	// metadata.offsets = (Double[]) this.offsets.clone();
+	//
+	// metadata.numOverviews = (int[]) this.numOverviews.clone();
+	// metadata.colorInterpretations = (int[]) this.colorInterpretations
+	// .clone();
+	// return metadata;
+	// }
 
 	/** The LOGGER for this class. */
 	private static final Logger LOGGER = Logger
@@ -879,13 +879,14 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 	public double getMaximum(final int bandIndex)
 			throws IllegalArgumentException {
 		checkBandIndex(bandIndex);
-		Double maximum = maximums[bandIndex];
-		if (maximum != null)
-			return maximum.doubleValue();
-		else
-			throw new IllegalArgumentException(
-					"no maximum value available for the specified band "
-							+ bandIndex);
+		if (maximums != null) {
+			Double maximum = maximums[bandIndex];
+			if (maximum != null)
+				return maximum.doubleValue();
+		}
+		throw new IllegalArgumentException(
+				"no maximum value available for the specified band "
+						+ bandIndex);
 	}
 
 	/**
@@ -900,13 +901,14 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 	public double getMinimum(final int bandIndex)
 			throws IllegalArgumentException {
 		checkBandIndex(bandIndex);
-		Double minimum = minimums[bandIndex];
-		if (minimum != null)
-			return minimum.doubleValue();
-		else
-			throw new IllegalArgumentException(
-					"no minimum value available for the specified band "
-							+ bandIndex);
+		if (minimums != null) {
+			Double minimum = minimums[bandIndex];
+			if (minimum != null)
+				return minimum.doubleValue();
+		}
+		throw new IllegalArgumentException(
+				"no minimum value available for the specified band "
+						+ bandIndex);
 	}
 
 	/**
@@ -920,13 +922,13 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 	 */
 	public double getScale(final int bandIndex) throws IllegalArgumentException {
 		checkBandIndex(bandIndex);
-		Double scale = scales[bandIndex];
-		if (scale != null)
-			return scale.doubleValue();
-		else
-			throw new IllegalArgumentException(
-					"no scale value available for the specified band "
-							+ bandIndex);
+		if (scales != null) {
+			Double scale = scales[bandIndex];
+			if (scale != null)
+				return scale.doubleValue();
+		}
+		throw new IllegalArgumentException(
+				"no scale value available for the specified band " + bandIndex);
 	}
 
 	/**
@@ -941,13 +943,13 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 	public double getOffset(final int bandIndex)
 			throws IllegalArgumentException {
 		checkBandIndex(bandIndex);
-		Double offset = offsets[bandIndex];
-		if (offset != null)
-			return offset.doubleValue();
-		else
-			throw new IllegalArgumentException(
-					"no Offset value available for the specified band "
-							+ bandIndex);
+		if (offsets != null) {
+			Double offset = offsets[bandIndex];
+			if (offset != null)
+				return offset.doubleValue();
+		}
+		throw new IllegalArgumentException(
+				"no Offset value available for the specified band " + bandIndex);
 	}
 
 	/**
@@ -962,13 +964,13 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 	public double getNoDataValue(final int bandIndex)
 			throws IllegalArgumentException {
 		checkBandIndex(bandIndex);
-		Double noDataValue = noDataValues[bandIndex];
-		if (noDataValue != null)
-			return noDataValue.doubleValue();
-		else
-			throw new IllegalArgumentException(
-					"no noDataValue available for the specified band "
-							+ bandIndex);
+		if (noDataValues != null) {
+			Double noDataValue = noDataValues[bandIndex];
+			if (noDataValue != null)
+				return noDataValue.doubleValue();
+		}
+		throw new IllegalArgumentException(
+				"no noDataValue available for the specified band " + bandIndex);
 	}
 
 	/**

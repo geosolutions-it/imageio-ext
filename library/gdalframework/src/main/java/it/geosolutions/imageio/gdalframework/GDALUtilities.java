@@ -226,6 +226,18 @@ public final class GDALUtilities {
 		final String sOption = useCaching ? "YES" : "NO";
 		gdal.SetConfigOption("GDAL_FORCE_CACHING", sOption);
 	}
+	
+	/**
+	 * Allows to enable/disable GDAL Persistable Auxiliary Metadata.
+	 * 
+	 * @param usePAM
+	 *            <code>true</code> to enable GDAL PAM. <code>false</code>
+	 *            to disable GDAL PAM.
+	 */
+	public static void setGdalPAM(boolean usePAM) {
+		final String sOption = usePAM ? "YES" : "NO";
+		gdal.SetConfigOption("GDAL_PAM_ENABLED", sOption);
+	}
 
 	/**
 	 * Acquires a {@link Dataset} and return it, given the name of the Dataset

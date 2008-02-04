@@ -22,7 +22,6 @@ import it.geosolutions.resources.TestData;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URL;
 
 import javax.imageio.ImageReadParam;
 import javax.media.jai.JAI;

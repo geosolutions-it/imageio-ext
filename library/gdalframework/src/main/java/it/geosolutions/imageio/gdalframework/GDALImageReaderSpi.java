@@ -82,12 +82,9 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
 	 * instance: "HDF4;HDF4Image"
 	 * 
 	 */
-	public List getSupportedFormats()
-	{
+	public List getSupportedFormats() {
 		return Collections.unmodifiableList(this.supportedFormats);
 	}
-
-
 
 	public GDALImageReaderSpi(String vendorName, String version,
 			String[] names, String[] suffixes, String[] MIMETypes,
@@ -124,7 +121,7 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
 				nativeImageMetadataFormatClassName,
 				extraImageMetadataFormatNames,
 				extraImageMetadataFormatClassNames);
-		this.supportedFormats= new  ArrayList(supportedFormats);
+		this.supportedFormats = new ArrayList(supportedFormats);
 	}
 
 	/**
@@ -142,7 +139,6 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
 
 		if (input instanceof ImageInputStream)
 			((ImageInputStream) input).mark();
-
 
 		// if input source is a string,
 		// convert input from String to File
@@ -169,13 +165,14 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
 			final String s = ((FileImageInputStreamExtImpl) input).getFile()
 					.getAbsolutePath();
 
-			final Dataset ds = GDALUtilities.acquireDataSet(s, gdalconst.GA_ReadOnly);
+			final Dataset ds = GDALUtilities.acquireDataSet(s,
+					gdalconst.GA_ReadOnly);
 			isInputDecodable = isDecodable(ds);
 
 			// Closing the dataset
 			GDALUtilities.closeDataSet(ds);
 		} catch (Exception e) {
-		} catch (NoClassDefFoundError missingDLLs){			
+		} catch (NoClassDefFoundError missingDLLs) {
 		}
 		return isInputDecodable;
 	}
@@ -213,7 +210,6 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
 		}
 		return false;
 	}
-	
 
 	/**
 	 * This method tells us if this driver is available or not.
@@ -221,22 +217,20 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
 	 * @return <code>true</code> if the driver is available,
 	 *         <code>false</code> otherwise.
 	 */
-	public boolean isAvailable(){
-		//check if gdal is available
-		if(! GDALUtilities.isGDALAvailable())
+	public boolean isAvailable() {
+		// check if gdal is available
+		if (!GDALUtilities.isGDALAvailable())
 			return false;
-		//now check that all the drivers are available
-		final List supportedFormats=getSupportedFormats();
-		final Iterator it= supportedFormats.iterator();
-		if(!it.hasNext())
+		// now check that all the drivers are available
+		final List supportedFormats = getSupportedFormats();
+		final Iterator it = supportedFormats.iterator();
+		if (!it.hasNext())
 			return false;
-		while(it.hasNext()){
-			final String formatName=(String) it.next();
-			if(!GDALUtilities.isDriverAvailable(formatName))
+		while (it.hasNext()) {
+			final String formatName = (String) it.next();
+			if (!GDALUtilities.isDriverAvailable(formatName))
 				return false;
 		}
 		return true;
 	}
-
-
 }
