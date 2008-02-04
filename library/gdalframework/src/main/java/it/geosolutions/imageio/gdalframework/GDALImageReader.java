@@ -651,8 +651,9 @@ public abstract class GDALImageReader extends ImageReader {
 		//
 		// ////////////////////////////////////////////////////////////////////
 		GDALUtilities.closeDataSet(dataset);
-		return Raster.createWritableRaster(sampleModel, imgBuffer, new Point(
-				dstRegion.x, dstRegion.y));
+//		 return Raster.createWritableRaster(sampleModel, imgBuffer, new Point(
+//		 dstRegion.x, dstRegion.y));
+		return Raster.createWritableRaster(sampleModel, imgBuffer, null);
 	}
 
 	/**
@@ -822,7 +823,6 @@ public abstract class GDALImageReader extends ImageReader {
 	 *         which the given image may be decoded, in the form of
 	 *         <code>ImageTypeSpecifiers</code>s
 	 */
-
 	public Iterator getImageTypes(int imageIndex) throws IOException {
 		final List l = new java.util.ArrayList(4);
 		final GDALCommonIIOImageMetadata item = getDatasetMetadata(imageIndex);
@@ -852,7 +852,6 @@ public abstract class GDALImageReader extends ImageReader {
 	 *             if an error occurs when acquiring access to the underlying
 	 *             datasource
 	 */
-
 	public BufferedImage read(int imageIndex, ImageReadParam param)
 			throws IOException {
 
@@ -907,16 +906,17 @@ public abstract class GDALImageReader extends ImageReader {
 		// Third, destination image check
 		//
 		// //
-		if (bi != null && imageType == null) {
-			if ((srcBands == null) && (destBands == null)) {
-				SampleModel biSampleModel = bi.getSampleModel();
-				if (!bi.getColorModel().equals(item.getColorModel())
-						|| biSampleModel.getDataType() != itemSampleModel
-								.getDataType())
-					throw new IllegalArgumentException(
-							"Provided destination image has not a valid ColorModel or SampleModel");
-			}
-		}
+		// if (bi != null && imageType == null) {
+		// if ((srcBands == null) && (destBands == null)) {
+		// SampleModel biSampleModel = bi.getSampleModel();
+		// if (!bi.getColorModel().equals(item.getColorModel())
+		// || biSampleModel.getDataType() != itemSampleModel
+		// .getDataType())
+		// throw new IllegalArgumentException(
+		// "Provided destination image does not have a valid ColorModel or
+		// SampleModel");
+		// }
+		// }
 
 		// //
 		//
@@ -958,14 +958,23 @@ public abstract class GDALImageReader extends ImageReader {
 			// the destination image has been specified.
 			//			
 			// //
+			// Rectangle destSize = (Rectangle) destRegion.clone();
+			// destSize.setLocation(0, 0);
 
 			Raster readRaster = readDatasetRaster(item, srcRegion, destRegion,
 					srcBands);
-			WritableRaster raster = bi.getRaster().createWritableChild(
-					destRegion.x, destRegion.y, destRegion.width,
-					destRegion.height, destRegion.x, destRegion.y, null);
-			//TODO: Work directly on a Databuffer avoiding setRect?
-			raster.setRect(readRaster);
+			WritableRaster raster = bi.getRaster().createWritableChild(0, 0,
+					bi.getWidth(), bi.getHeight(), 0, 0, null);
+//			 TODO: Work directly on a Databuffer avoiding setRect?
+			raster.setRect(destRegion.x, destRegion.y, readRaster);
+			
+//			Raster readRaster = readDatasetRaster(item, srcRegion, destRegion,
+//					srcBands);
+//			WritableRaster raster = bi.getRaster().createWritableChild(
+//					destRegion.x, destRegion.y, destRegion.width,
+//					destRegion.height, destRegion.x, destRegion.y, null);
+//			//TODO: Work directly on a Databuffer avoiding setRect?
+//			raster.setRect(readRaster);
 		}
 		return bi;
 	}

@@ -28,7 +28,7 @@ public class GDALWritableCommonIIOImageMetadata extends
 		super(null, datasetName, false);
 		gdalMetadataMap = Collections.synchronizedMap(new HashMap(2));
 	}
-
+	
 	public void setProjection(String projection) {
 		this.projection = projection;
 	}

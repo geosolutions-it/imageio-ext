@@ -61,6 +61,7 @@
 package it.geosolutions.imageio.imageioimpl.imagereadmt;
 
 import java.util.ArrayList;
+
 import javax.media.jai.CollectionImage;
 
 /**

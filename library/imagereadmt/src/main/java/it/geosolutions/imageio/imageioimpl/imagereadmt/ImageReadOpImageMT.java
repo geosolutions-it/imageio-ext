@@ -616,12 +616,15 @@ final class ImageReadOpImageMT extends OpImage {
 		 * java.awt.geom.AffineTransform(scaleX, 0, 0, scaleY, transX, transY);
 		 */
 		Rectangle srcRect = computeSourceRect(destRect);
+		WritableRaster readerTile = null;
 		try {
 
 			final ImageReadParam param = (ImageReadParam) this.param.clone();
 			param.setSourceRegion(srcRect);
-			WritableRaster ras = reader.read(imageIndex, param).getRaster();
-			return ras.createWritableChild(0, 0, ras.getWidth(), ras
+			 param.setDestinationOffset(org);
+			BufferedImage bi = reader.read(imageIndex, param);
+			WritableRaster ras = bi.getRaster();
+			readerTile = ras.createWritableChild(0, 0, ras.getWidth(), ras
 					.getHeight(), org.x, org.y, null);
 
 		} catch (IOException e) {
@@ -630,6 +633,14 @@ final class ImageReadOpImageMT extends OpImage {
 			throw new RuntimeException(e);
 		}
 
+		WritableRaster tile = null;
+		if (sampleModel == readerTile.getSampleModel()) {
+			tile = readerTile;
+		} else {
+			tile = Raster.createWritableRaster(sampleModel, org);
+			tile.setRect(readerTile);
+		}
+		return tile;
 	}
 
 	/**
