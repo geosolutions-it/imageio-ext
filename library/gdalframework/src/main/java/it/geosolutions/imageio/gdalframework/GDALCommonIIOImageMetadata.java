@@ -172,10 +172,10 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 	protected String projection;
 
 	/** The number of Ground Control Points */
-	private int gcpNumber;
+	protected int gcpNumber;
 
 	/** The GCP's Projection */
-	private String gcpProjection;
+	protected String gcpProjection;
 
 	/** The grid to world transformation. */
 	protected double[] geoTransformation = new double[6];
@@ -214,10 +214,10 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 	protected int tileWidth;
 
 	/** The <code>ColorModel</code> used for the dataset */
-	private ColorModel colorModel;
+	protected ColorModel colorModel;
 
 	/** The <code>SampleModel</code> used for the dataset */
-	private SampleModel sampleModel;
+	protected SampleModel sampleModel;
 
 	// ////////////////////////////////////////////////
 	// 
@@ -229,25 +229,25 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 	protected int numBands;
 
 	/** Array to store the maximum value for each band */
-	private Double[] maximums;
+	protected Double[] maximums;
 
 	/** Array to store the minimum value for each band */
-	private Double[] minimums;
+	protected Double[] minimums;
 
 	/** Array to store the noData value for each band */
-	private Double[] noDataValues;
+	protected Double[] noDataValues;
 
 	/** Array to store the scale value for each band */
-	private Double[] scales;
+	protected Double[] scales;
 
 	/** Array to store the offset value for each band */
-	private Double[] offsets;
+	protected Double[] offsets;
 
 	/** Array to store the number of numOverviews for each band */
-	private int[] numOverviews;
+	protected int[] numOverviews;
 
 	/** Array to store the color interpretation for each band */
-	private int[] colorInterpretations;
+	protected int[] colorInterpretations;
 
 	/**
 	 * <code>GDALCommonIIOImageMetadata</code> constructor. Firstly, it
@@ -873,7 +873,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 	 * Returns the number of overviews for the specified band
 	 * 
 	 * @param bandIndex
-	 *            the index of the required band 
+	 *            the index of the required band
 	 * @throws IllegalArgumentException
 	 *             in case the specified band number is out of range
 	 */
@@ -1108,5 +1108,95 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 			}
 		}
 		return list;
+	}
+
+	/**
+	 * return a copy of this <code>GDALCommonIIOImageMetadata</code> as a
+	 * <code>GDALWritableCommonIIOImageMetadata</code> instance, with setting
+	 * capabilities
+	 */
+	public GDALWritableCommonIIOImageMetadata asWritable() {
+		GDALWritableCommonIIOImageMetadata metadata = new GDALWritableCommonIIOImageMetadata(
+				datasetName);
+		metadata.datasetName = this.datasetName;
+		metadata.datasetDescription = this.datasetDescription;
+		metadata.projection = this.projection;
+		metadata.gcpNumber = this.gcpNumber;
+		metadata.gcpProjection = this.gcpProjection;
+		metadata.geoTransformation = (double[]) this.geoTransformation.clone();
+		if (this.gdalMetadataMap != null) {
+			Map inputMap = this.gdalMetadataMap;
+			Map map = Collections.synchronizedMap(new HashMap(inputMap.size()));
+			final Iterator outKeys = inputMap.keySet().iterator();
+			while (outKeys.hasNext()) {
+				final String key = (String) outKeys.next();
+				final Map valuesMap = (Map) inputMap.get(key);
+				final Iterator inKeys = valuesMap.keySet().iterator();
+				final Map innerMap = new HashMap(valuesMap.size());
+				while (inKeys.hasNext()) {
+					final String ikey = (String) inKeys.next();
+					final String value = (String) valuesMap.get(ikey);
+					innerMap.put(ikey, value);
+				}
+				map.put(key, innerMap);
+			}
+			metadata.gdalMetadataMap = map;
+		}
+		// TODO: Need to clone GCPs ... but actually JVM crashes when getting
+		// GCPs
+		metadata.width = this.width;
+		metadata.height = this.height;
+		metadata.tileHeight = this.tileHeight;
+		metadata.tileWidth = this.tileWidth;
+
+		metadata.sampleModel = null;
+		if (this.sampleModel != null) {
+			final int smWidth = this.sampleModel.getWidth();
+			final int smHeight = this.sampleModel.getHeight();
+			metadata.sampleModel = this.sampleModel
+					.createCompatibleSampleModel(smWidth, smHeight);
+		}
+		metadata.numBands = this.numBands;
+
+		metadata.colorModel = null;
+		ColorModel cm = this.colorModel;
+		if (cm != null) {
+			if (cm instanceof IndexColorModel) {
+				// //
+				// TODO: Check this approach
+				// //
+				IndexColorModel icm = (IndexColorModel) cm;
+				final int mapSize = icm.getMapSize();
+				byte[] r = new byte[mapSize];
+				byte[] g = new byte[mapSize];
+				byte[] b = new byte[mapSize];
+
+				icm.getBlues(b);
+				icm.getReds(r);
+				icm.getGreens(g);
+
+				if (icm.hasAlpha()) {
+					byte[] a = new byte[mapSize];
+					icm.getAlphas(a);
+					metadata.colorModel = new IndexColorModel(icm
+							.getPixelSize(), mapSize, r, g, b, a);
+				} else
+					metadata.colorModel = new IndexColorModel(icm
+							.getPixelSize(), mapSize, r, g, b);
+			} else
+				metadata.colorModel = GDALUtilities
+						.buildColorModel(sampleModel);
+		}
+
+		metadata.maximums = (Double[]) this.maximums.clone();
+		metadata.minimums = (Double[]) this.minimums.clone();
+		metadata.noDataValues = (Double[]) this.noDataValues.clone();
+		metadata.scales = (Double[]) this.scales.clone();
+		metadata.offsets = (Double[]) this.offsets.clone();
+
+		metadata.numOverviews = (int[]) this.numOverviews.clone();
+		metadata.colorInterpretations = (int[]) this.colorInterpretations
+				.clone();
+		return metadata;
 	}
 }

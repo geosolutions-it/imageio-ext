@@ -94,7 +94,7 @@ public class GDALWritableCommonIIOImageMetadata extends
 	public void setWidth(final int width) {
 		this.width = width;
 	}
-
+	
 	/**
 	 * Set the height for this object
 	 * 
@@ -134,7 +134,7 @@ public class GDALWritableCommonIIOImageMetadata extends
 	public void setNumBands(final int numBands) {
 		this.numBands = numBands;
 	}
-
+	
 	/**
 	 * Set the metadata for a specific domain.
 	 * 
