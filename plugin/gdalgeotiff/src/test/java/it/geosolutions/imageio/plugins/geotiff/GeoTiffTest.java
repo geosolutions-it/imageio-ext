@@ -82,7 +82,6 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-
 	public void testRead() throws FileNotFoundException, IOException {
 		final ParameterBlockJAI pbjImageRead;
 		String fileName = "bogota.tif";
@@ -145,9 +144,9 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
 		pbjImageWrite.setParameter("ImageMetadata", metadata);
 		pbjImageWrite.setParameter("Transcode", false);
 		ImageWriteParam param = new ImageWriteParam(Locale.getDefault());
-		pbjImageWrite.setParameter("writeParam", param);
 		param.setSourceRegion(new Rectangle(10, 10, 100, 100));
 		param.setSourceSubsampling(2, 1, 0, 0);
+		pbjImageWrite.setParameter("writeParam", param);
 
 		pbjImageWrite.addSource(image);
 		final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
@@ -170,17 +169,81 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
 			assertNotNull(image2.getTiles());
 	}
 
+	/**
+	 * Test Read on a Paletted Image
+	 * 
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	public void testPaletted() throws FileNotFoundException, IOException {
+		final File outputFile = TestData.temp(this, "writetest.tif", false);
+		outputFile.deleteOnExit();
+		final File inputFile = TestData.file(this, "paletted.tif");
+
+		ImageReader reader = new GeoTiffImageReaderSpi().createReaderInstance();
+		reader.setInput(inputFile);
+		final IIOMetadata metadata = reader.getImageMetadata(0);
+
+		final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+				"ImageRead");
+		pbjImageRead.setParameter("Input", inputFile);
+		pbjImageRead.setParameter("reader", reader);
+
+		final ImageLayout l = new ImageLayout();
+		l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(256)
+				.setTileWidth(256);
+
+		RenderedOp image = JAI.create("ImageRead", pbjImageRead,
+				new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
+
+		if (TestData.isInteractiveTest())
+			Viewer.visualize(image, "Paletted image read");
+
+		// ////////////////////////////////////////////////////////////////
+		// preparing to write
+		// ////////////////////////////////////////////////////////////////
+		final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
+				"ImageWrite");
+		ImageWriter writer = new GeoTiffImageWriterSpi().createWriterInstance();
+		pbjImageWrite.setParameter("Output", outputFile);
+		pbjImageWrite.setParameter("writer", writer);
+		pbjImageWrite.setParameter("ImageMetadata", metadata);
+		pbjImageWrite.setParameter("Transcode", false);
+		pbjImageWrite.addSource(image);
+		final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
+		final ImageWriter writer2 = (ImageWriter) op
+				.getProperty(ImageWriteDescriptor.PROPERTY_NAME_IMAGE_WRITER);
+		writer2.dispose();
+
+		// ////////////////////////////////////////////////////////////////
+		// preparing to read again
+		// ////////////////////////////////////////////////////////////////
+		final ParameterBlockJAI pbjImageReRead = new ParameterBlockJAI(
+				"ImageRead");
+		pbjImageReRead.setParameter("Input", outputFile);
+		pbjImageReRead.setParameter("Reader", new GeoTiffImageReaderSpi()
+				.createReaderInstance());
+		final RenderedOp image2 = JAI.create("ImageRead", pbjImageReRead);
+		if (TestData.isInteractiveTest())
+			Viewer.visualize(image2, "Paletted image read back after writing");
+		else
+			assertNotNull(image2.getTiles());
+	}
+
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 
-		// Test Read exploiting JAI-ImageIO tools capabilities
-		suite.addTest(new GeoTiffTest("testRead"));
+		 // Test Read exploiting JAI-ImageIO tools capabilities
+		 suite.addTest(new GeoTiffTest("testRead"));
+		
+		 // Test Read without exploiting JAI-ImageIO tools capabilities
+		 suite.addTest(new GeoTiffTest("testManualRead"));
+		
+		 // Test Write
+		 suite.addTest(new GeoTiffTest("testWrite"));
 
-		// Test Read without exploiting JAI-ImageIO tools capabilities
-		suite.addTest(new GeoTiffTest("testManualRead"));
-
-		// Test Write
-		suite.addTest(new GeoTiffTest("testWrite"));
+		// Test read and write of a paletted image
+		suite.addTest(new GeoTiffTest("testPaletted"));
 
 		return suite;
 	}

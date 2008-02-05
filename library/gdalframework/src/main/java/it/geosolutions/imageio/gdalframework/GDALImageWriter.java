@@ -18,8 +18,11 @@ package it.geosolutions.imageio.gdalframework;
 
 import it.geosolutions.imageio.stream.output.FileImageOutputStreamExt;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.awt.image.ColorModel;
+import java.awt.image.IndexColorModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
@@ -48,6 +51,7 @@ import javax.imageio.spi.ImageWriterSpi;
 import javax.media.jai.PlanarImage;
 
 import org.gdal.gdal.Band;
+import org.gdal.gdal.ColorTable;
 import org.gdal.gdal.Dataset;
 import org.gdal.gdal.Driver;
 import org.gdal.gdal.gdal;
@@ -132,9 +136,11 @@ public abstract class GDALImageWriter extends ImageWriter {
 	 */
 	private static final int DEFAULT_GDALMEMORYRASTER_MAXSIZE = 1024 * 1024 * 32;
 
-//	private static final String IMAGE_METADATA_NAME = GDALWritableCommonIIOImageMetadata.nativeMetadataFormatName;
+	// private static final String IMAGE_METADATA_NAME =
+	// GDALWritableCommonIIOImageMetadata.nativeMetadataFormatName;
 
-	private static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.gdalframework");
+	private static final Logger LOGGER = Logger
+			.getLogger("it.geosolutions.imageio.gdalframework");
 
 	/** Output File */
 	protected File outputFile;
@@ -212,8 +218,8 @@ public abstract class GDALImageWriter extends ImageWriter {
 		if (outputFile == null) {
 			throw new IllegalStateException("the output is null!");
 		}
-		 if (param == null)
-	            param = getDefaultWriteParam();
+		if (param == null)
+			param = getDefaultWriteParam();
 
 		// /////////////////////////////////////////////////////////////////////
 		//
@@ -443,6 +449,36 @@ public abstract class GDALImageWriter extends ImageWriter {
 		final int nBands = imageMetadata.getNumBands();
 		for (int i = 0; i < nBands; i++) {
 			final Band band = dataset.GetRasterBand(i + 1);
+			final int colorInterpretation = imageMetadata
+					.getColorInterpretations(i);
+			band.SetRasterColorInterpretation(colorInterpretation);
+			if (i == 0 && nBands == 1) {
+
+				// //
+				//
+				// Setting color table and color interpretations
+				//
+				// //
+				if (colorInterpretation == gdalconstConstants.GCI_PaletteIndex) {
+					ColorModel cm = imageMetadata.getColorModel();
+					if (cm instanceof IndexColorModel) {
+						IndexColorModel icm = (IndexColorModel) cm;
+
+						// //
+						//
+						// Setting color table
+						//
+						// //
+						final int size = icm.getMapSize();
+						ColorTable ct = new ColorTable(
+								gdalconstConstants.GPI_RGB);
+						int j = 0;
+						for (; j < size; j++)
+							ct.SetColorEntry(j, new Color(icm.getRGB(j)));
+						band.SetRasterColorTable(ct);
+					}
+				}
+			}
 			try {
 				final double noData = imageMetadata.getNoDataValue(i);
 				if (!Double.isNaN(noData))

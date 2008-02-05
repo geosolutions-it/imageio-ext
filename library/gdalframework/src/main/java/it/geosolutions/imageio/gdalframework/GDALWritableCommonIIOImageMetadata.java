@@ -20,49 +20,119 @@ public class GDALWritableCommonIIOImageMetadata extends
 
 	private static final String DEFAULT_DATASET_NAME = "dummydataset";
 
+	/**
+	 * Default constructor of <code>GDALWritableCommonIIOImageMetadata</code>.
+	 */
 	public GDALWritableCommonIIOImageMetadata() {
 		this(DEFAULT_DATASET_NAME);
 	}
 
+	/**
+	 * Constructor of <code>GDALWritableCommonIIOImageMetadata</code>.
+	 */
 	public GDALWritableCommonIIOImageMetadata(final String datasetName) {
 		super(null, datasetName, false);
 		gdalMetadataMap = Collections.synchronizedMap(new HashMap(2));
 	}
-	
-	public void setProjection(String projection) {
+
+	/**
+	 * Set the projection for this object
+	 * 
+	 * @param projection
+	 *            a <code>String</code> specifying the projection expressed as
+	 *            a WKT.
+	 */
+	public void setProjection(final String projection) {
 		this.projection = projection;
 	}
 
+	/**
+	 * Set the geoTransformation for this object
+	 * 
+	 * @param geoTransformation
+	 *            an array containing the 6 coefficients defining the
+	 *            geoTransformation
+	 */
 	public void setGeoTransformation(double[] geoTransformation) {
-		this.geoTransformation = (double[]) geoTransformation.clone();
+		if (geoTransformation != null) {
+			if (geoTransformation.length != 6)
+				throw new IllegalArgumentException(
+						"The specified geoTransformation is invalid.\n"
+								+ "A valid geoTransformation is composed of 6"
+								+ " coefficients while the specified array has"
+								+ "length " + geoTransformation.length);
+			this.geoTransformation = (double[]) geoTransformation.clone();
+		}
 	}
 
-	public void setDatasetName(String datasetName) {
+	/**
+	 * Set the dataset name for this object
+	 * 
+	 * @param datasetName
+	 *            the name to be associated to this object
+	 */
+	public void setDatasetName(final String datasetName) {
 		this.datasetName = datasetName;
 	}
 
+	/**
+	 * Set the description for this object
+	 * 
+	 * @param datasetDescription
+	 *            the description to be associated to this object
+	 */
 	public void setDatasetDescription(String datasetDescription) {
 		this.datasetDescription = datasetDescription;
 	}
 
+	/**
+	 * Set the width for this object
+	 * 
+	 * @param width
+	 *            the width to be associated to this object
+	 */
 	public void setWidth(final int width) {
 		this.width = width;
 	}
 
+	/**
+	 * Set the height for this object
+	 * 
+	 * @param height
+	 *            the height to be associated to this object
+	 */
 	public void setHeight(final int height) {
 		this.height = height;
 	}
 
+	/**
+	 * Set the tile height for this object
+	 * 
+	 * @param tileHeight
+	 *            the tile height to be associated to this object
+	 */
 	public void setTileHeight(final int tileHeight) {
 		this.tileHeight = tileHeight;
 	}
 
+	/**
+	 * Set the tile width for this object
+	 * 
+	 * @param tileWidth
+	 *            the tile width to be associated to this object
+	 */
 	public void setTileWidth(final int tileWidth) {
 		this.tileWidth = tileWidth;
 	}
 
-	public void setNumBands(final int nBands) {
-		this.numBands = nBands;
+	/**
+	 * Set the number of bands for this object
+	 * 
+	 * @param numBands
+	 *            the number of bands to be associated to this object
+	 */
+	public void setNumBands(final int numBands) {
+		this.numBands = numBands;
 	}
 
 	/**
@@ -81,11 +151,11 @@ public class GDALWritableCommonIIOImageMetadata extends
 	 */
 	public synchronized void setGdalMetadataDomain(Map metadataNameValuePairs,
 			String domain) {
-		if (domain == null || domain.length() > 0 && 
-				(!domain.equals(GDALUtilities.GDALMetadataDomain.DEFAULT)
-				|| !domain
-						.equals(GDALUtilities.GDALMetadataDomain.IMAGESTRUCTURE)
-				|| !domain
+		if (domain == null
+				|| domain.length() > 0
+				&& (!domain.equals(GDALUtilities.GDALMetadataDomain.DEFAULT)
+						|| !domain
+								.equals(GDALUtilities.GDALMetadataDomain.IMAGESTRUCTURE) || !domain
 						.startsWith(GDALUtilities.GDALMetadataDomain.XML_PREFIX)))
 			throw new IllegalArgumentException("Unsupported domain");
 		if (domain.equals(GDALUtilities.GDALMetadataDomain.DEFAULT)

@@ -18,7 +18,6 @@ package it.geosolutions.imageio.gdalframework;
 
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BandedSampleModel;
 import java.awt.image.BufferedImage;
@@ -651,8 +650,8 @@ public abstract class GDALImageReader extends ImageReader {
 		//
 		// ////////////////////////////////////////////////////////////////////
 		GDALUtilities.closeDataSet(dataset);
-//		 return Raster.createWritableRaster(sampleModel, imgBuffer, new Point(
-//		 dstRegion.x, dstRegion.y));
+		// return Raster.createWritableRaster(sampleModel, imgBuffer, new Point(
+		// dstRegion.x, dstRegion.y));
 		return Raster.createWritableRaster(sampleModel, imgBuffer, null);
 	}
 
@@ -813,11 +812,12 @@ public abstract class GDALImageReader extends ImageReader {
 	 * Returns an <code>Iterator</code> containing possible image types to
 	 * which the given image may be decoded, in the form of
 	 * <code>ImageTypeSpecifiers</code>s. At least one legal image type will
-	 * be returned.
+	 * be returned. This implementation simply returns an
+	 * <code>ImageTypeSpecifier</code> set in compliance with the property of
+	 * the dataset contained within the underlying data source.
 	 * 
 	 * @param imageIndex
 	 *            the index of the image to be retrieved.
-	 * 
 	 * 
 	 * @return an <code>Iterator</code> containing possible image types to
 	 *         which the given image may be decoded, in the form of
@@ -965,16 +965,17 @@ public abstract class GDALImageReader extends ImageReader {
 					srcBands);
 			WritableRaster raster = bi.getRaster().createWritableChild(0, 0,
 					bi.getWidth(), bi.getHeight(), 0, 0, null);
-//			 TODO: Work directly on a Databuffer avoiding setRect?
+			// TODO: Work directly on a Databuffer avoiding setRect?
 			raster.setRect(destRegion.x, destRegion.y, readRaster);
-			
-//			Raster readRaster = readDatasetRaster(item, srcRegion, destRegion,
-//					srcBands);
-//			WritableRaster raster = bi.getRaster().createWritableChild(
-//					destRegion.x, destRegion.y, destRegion.width,
-//					destRegion.height, destRegion.x, destRegion.y, null);
-//			//TODO: Work directly on a Databuffer avoiding setRect?
-//			raster.setRect(readRaster);
+
+			// Raster readRaster = readDatasetRaster(item, srcRegion,
+			// destRegion,
+			// srcBands);
+			// WritableRaster raster = bi.getRaster().createWritableChild(
+			// destRegion.x, destRegion.y, destRegion.width,
+			// destRegion.height, destRegion.x, destRegion.y, null);
+			// //TODO: Work directly on a Databuffer avoiding setRect?
+			// raster.setRect(readRaster);
 		}
 		return bi;
 	}
@@ -1247,17 +1248,6 @@ public abstract class GDALImageReader extends ImageReader {
 
 	public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
 		return getDatasetMetadata(imageIndex);
-
-		// TODO: Clone??
-		// GDALCommonIIOImageMetadata metadata=null;
-		// try{
-		// metadata = (GDALCommonIIOImageMetadata)
-		// getDatasetMetadata(imageIndex).clone();
-		// }
-		// catch (CloneNotSupportedException cnse){
-		//			
-		// }
-		// return metadata;
 	}
 
 }

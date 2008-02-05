@@ -17,11 +17,8 @@
 package it.geosolutions.imageio.gdalframework;
 
 import java.awt.Dimension;
-import java.awt.Transparency;
-import java.awt.color.ColorSpace;
 import java.awt.image.BandedSampleModel;
 import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.IndexColorModel;
 import java.awt.image.PixelInterleavedSampleModel;
@@ -38,7 +35,6 @@ import java.util.logging.Logger;
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
-import javax.media.jai.RasterFactory;
 
 import org.gdal.gdal.Band;
 import org.gdal.gdal.Dataset;
@@ -47,8 +43,6 @@ import org.gdal.gdal.gdal;
 import org.gdal.gdalconst.gdalconst;
 import org.gdal.gdalconst.gdalconstConstants;
 import org.w3c.dom.Node;
-
-import com.sun.media.imageioimpl.common.ImageUtil;
 
 /**
  * Class needed to store all available information of a GDAL Dataset with the
@@ -98,10 +92,6 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 		metadata.tileHeight = this.tileHeight;
 		metadata.tileWidth = this.tileWidth;
 
-		// TODO: Set colorModel
-		metadata.colorModel = null;
-		ColorModel cm = this.colorModel;
-	
 		metadata.sampleModel = null;
 		if (this.sampleModel != null) {
 			final int smWidth = this.sampleModel.getWidth();
@@ -109,8 +99,37 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 			metadata.sampleModel = this.sampleModel
 					.createCompatibleSampleModel(smWidth, smHeight);
 		}
-
 		metadata.numBands = this.numBands;
+
+		metadata.colorModel = null;
+		ColorModel cm = this.colorModel;
+		if (cm != null) {
+			if (cm instanceof IndexColorModel) {
+				// //
+				// TODO: Check this approach
+				// //
+				IndexColorModel icm = (IndexColorModel) cm;
+				final int mapSize = icm.getMapSize();
+				byte[] r = new byte[mapSize];
+				byte[] g = new byte[mapSize];
+				byte[] b = new byte[mapSize];
+
+				icm.getBlues(b);
+				icm.getReds(r);
+				icm.getGreens(g);
+
+				if (icm.hasAlpha()) {
+					byte[] a = new byte[mapSize];
+					icm.getAlphas(a);
+					metadata.colorModel = new IndexColorModel(icm
+							.getPixelSize(), mapSize, r, g, b, a);
+				} else
+					metadata.colorModel = new IndexColorModel(icm
+							.getPixelSize(), mapSize, r, g, b);
+			} else
+				metadata.colorModel = GDALUtilities
+						.buildColorModel(sampleModel);
+		}
 
 		metadata.maximums = (Double[]) this.maximums.clone();
 		metadata.minimums = (Double[]) this.minimums.clone();
@@ -149,7 +168,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 	/** The dataset description */
 	protected String datasetDescription;
 
-	/** The data set projection. */
+	/** The dataset projection. */
 	protected String projection;
 
 	/** The number of Ground Control Points */
@@ -513,49 +532,34 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 		// Setting the Color Model
 		//
 		// //
-		if (pBand.GetRasterColorInterpretation() == gdalconstConstants.GCI_PaletteIndex) {
-			colorModel = pBand.GetRasterColorTable().getIndexColorModel(
-					gdal.GetDataTypeSize(buf_type));
-		} else {
-			ColorSpace cs = null;
-			if (numBands > 1) {
-				// /////////////////////////////////////////////////////////////////
-				//
-				// Number of Bands > 1.
-				// ImageUtil.createColorModel provides to Creates a
-				// ColorModel that may be used with the specified
-				// SampleModel
-				//
-				// /////////////////////////////////////////////////////////////////
-				colorModel = ImageUtil.createColorModel(sampleModel);
-				if (colorModel == null) {
-					LOGGER.severe("No ColorModels found");
-					return false;
-				}
-			} else if ((buffer_type == DataBuffer.TYPE_BYTE)
-					|| (buffer_type == DataBuffer.TYPE_USHORT)
-					|| (buffer_type == DataBuffer.TYPE_INT)
-					|| (buffer_type == DataBuffer.TYPE_FLOAT)
-					|| (buffer_type == DataBuffer.TYPE_DOUBLE)) {
+		if (colorInterpretations[0] == gdalconstConstants.GCI_PaletteIndex) {
+			IndexColorModel icm = pBand.GetRasterColorTable()
+					.getIndexColorModel(gdal.GetDataTypeSize(buf_type));
 
-				// Just one band. Using the built-in Gray Scale Color Space
-				cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
-				colorModel = RasterFactory.createComponentColorModel(
-						buffer_type, // dataType
-						cs, // color space
-						false, // has alpha
-						false, // is alphaPremultiplied
-						Transparency.OPAQUE); // transparency
-			} else {
-				if (buffer_type == DataBuffer.TYPE_SHORT) {
-					// Just one band. Using the built-in Gray Scale Color
-					// Space
-					cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
-					colorModel = new ComponentColorModel(cs, false, false,
-							Transparency.OPAQUE, DataBuffer.TYPE_SHORT);
+			// TODO: fix the SWIG wrapper to avoid alpha setting when undefined
+			final int size = icm.getMapSize();
+			byte[] alpha = new byte[size];
+			icm.getAlphas(alpha);
+			boolean hasAlpha = false;
+			for (int i = 0; i < size; i++)
+				if (alpha[i] != 0) {
+					hasAlpha = true;
+					break;
 				}
+			if (!hasAlpha) {
+				final int nBits = icm.getPixelSize();
+				byte[] r = new byte[size];
+				byte[] g = new byte[size];
+				byte[] b = new byte[size];
+				icm.getReds(r);
+				icm.getGreens(g);
+				icm.getBlues(b);
+				icm = new IndexColorModel(nBits, size, r, g, b);
 			}
-		}
+			colorModel = icm;
+		} else
+			colorModel = GDALUtilities.buildColorModel(sampleModel);
+
 		if (colorModel == null || sampleModel == null)
 			return false;
 		return true;
@@ -869,11 +873,26 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 	 * Returns the number of overviews for the specified band
 	 * 
 	 * @param bandIndex
-	 *            the index of the required band
+	 *            the index of the required band 
+	 * @throws IllegalArgumentException
+	 *             in case the specified band number is out of range
 	 */
 	public int getNumOverviews(final int bandIndex) {
 		checkBandIndex(bandIndex);
 		return numOverviews[bandIndex];
+	}
+
+	/**
+	 * Returns the colorInterpretation for the specified band
+	 * 
+	 * @param bandIndex
+	 *            the index of the required band
+	 * @throws IllegalArgumentException
+	 *             in case the specified band number is out of range
+	 */
+	public int getColorInterpretations(final int bandIndex) {
+		checkBandIndex(bandIndex);
+		return colorInterpretations[bandIndex];
 	}
 
 	/**

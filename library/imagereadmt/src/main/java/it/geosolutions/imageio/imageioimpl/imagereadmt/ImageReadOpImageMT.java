@@ -621,7 +621,7 @@ final class ImageReadOpImageMT extends OpImage {
 
 			final ImageReadParam param = (ImageReadParam) this.param.clone();
 			param.setSourceRegion(srcRect);
-			 param.setDestinationOffset(org);
+			param.setDestinationOffset(org);
 			BufferedImage bi = reader.read(imageIndex, param);
 			WritableRaster ras = bi.getRaster();
 			readerTile = ras.createWritableChild(0, 0, ras.getWidth(), ras

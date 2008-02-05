@@ -17,7 +17,12 @@
 package it.geosolutions.imageio.gdalframework;
 
 import java.awt.Dimension;
+import java.awt.Transparency;
+import java.awt.color.ColorSpace;
+import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
+import java.awt.image.SampleModel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,12 +41,15 @@ import javax.imageio.spi.ImageReaderWriterSpi;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.spi.ServiceRegistry;
 import javax.media.jai.JAI;
+import javax.media.jai.RasterFactory;
 
 import org.gdal.gdal.Dataset;
 import org.gdal.gdal.Driver;
 import org.gdal.gdal.gdal;
 import org.gdal.gdalconst.gdalconst;
 import org.gdal.gdalconst.gdalconstConstants;
+
+import com.sun.media.imageioimpl.common.ImageUtil;
 
 /**
  * Utility class providing a set of static utility methods
@@ -226,7 +234,7 @@ public final class GDALUtilities {
 		final String sOption = useCaching ? "YES" : "NO";
 		gdal.SetConfigOption("GDAL_FORCE_CACHING", sOption);
 	}
-	
+
 	/**
 	 * Allows to enable/disable GDAL Persistable Auxiliary Metadata.
 	 * 
@@ -654,5 +662,57 @@ public final class GDALUtilities {
 						.append(e.toString()).toString());
 			GDALUtilities.available = false;
 		}
+	}
+
+	/**
+	 * Builds a proper <code>ColorModel</code> for a specified
+	 * <code>SampleModel</code>
+	 * 
+	 * @param sampleModel
+	 *            the sampleModel to be used as reference.
+	 * @return a proper <code>ColorModel</code> for the input
+	 *         <code>SampleModel</code>
+	 */
+	public static ColorModel buildColorModel(final SampleModel sampleModel) {
+		ColorSpace cs = null;
+		ColorModel colorModel = null;
+		final int buffer_type = sampleModel.getDataType();
+		final int numBands = sampleModel.getNumBands();
+		if (numBands > 1) {
+			// /////////////////////////////////////////////////////////////////
+			//
+			// Number of Bands > 1.
+			// ImageUtil.createColorModel provides to Creates a
+			// ColorModel that may be used with the specified
+			// SampleModel
+			//
+			// /////////////////////////////////////////////////////////////////
+			colorModel = ImageUtil.createColorModel(sampleModel);
+			if (colorModel == null) {
+				LOGGER.severe("No ColorModels found");
+			}
+		} else if ((buffer_type == DataBuffer.TYPE_BYTE)
+				|| (buffer_type == DataBuffer.TYPE_USHORT)
+				|| (buffer_type == DataBuffer.TYPE_INT)
+				|| (buffer_type == DataBuffer.TYPE_FLOAT)
+				|| (buffer_type == DataBuffer.TYPE_DOUBLE)) {
+
+			// Just one band. Using the built-in Gray Scale Color Space
+			cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
+			colorModel = RasterFactory.createComponentColorModel(buffer_type, // dataType
+					cs, // color space
+					false, // has alpha
+					false, // is alphaPremultiplied
+					Transparency.OPAQUE); // transparency
+		} else {
+			if (buffer_type == DataBuffer.TYPE_SHORT) {
+				// Just one band. Using the built-in Gray Scale Color
+				// Space
+				cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
+				colorModel = new ComponentColorModel(cs, false, false,
+						Transparency.OPAQUE, DataBuffer.TYPE_SHORT);
+			}
+		}
+		return colorModel;
 	}
 }

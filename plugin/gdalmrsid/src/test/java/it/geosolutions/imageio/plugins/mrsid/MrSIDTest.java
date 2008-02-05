@@ -333,19 +333,17 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 			irp.setDestinationOffset(new Point(halfWidth, halfHeight));
 			reader.read(0, irp);
 			irp.setSourceRegion(new Rectangle(0, 0, halfWidth, halfHeight));
-			irp.setDestination(bi);
 			irp.setDestinationOffset(new Point(0, 0));
 			reader.read(0, irp);
 			irp.setSourceRegion(new Rectangle(halfWidth, halfHeight / 2,
 					halfWidth, halfHeight / 4));
-			irp.setDestination(bi);
 			irp.setDestinationOffset(new Point(halfWidth, halfHeight / 2));
-			RenderedImage ri = reader.read(0, irp);
+			reader.read(0, irp);
 
 			if (TestData.isInteractiveTest())
-				Viewer.visualize(ri, "MrSID Destination settings");
+				Viewer.visualize(bi, "MrSID Destination settings");
 			else
-				assertNotNull(ri);
+				assertNotNull(bi);
 
 			reader.dispose();
 		} catch (FileNotFoundException fnfe) {
