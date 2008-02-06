@@ -1,11 +1,8 @@
 Index: frmts/jp2kak/makefile.vc
 ===================================================================
---- frmts/jp2kak/makefile.vc	(revision 13622)
+--- frmts/jp2kak/makefile.vc	(revision 13697)
 +++ frmts/jp2kak/makefile.vc	(working copy)
-@@ -1,17 +1,34 @@
--
- GDAL_ROOT	=	..\..
- 
+@@ -4,14 +4,32 @@
  !INCLUDE $(GDAL_ROOT)\nmake.opt
  
  OBJ	=	jp2kakdataset.obj
@@ -44,20 +41,26 @@ Index: frmts/jp2kak/makefile.vc
 -
 Index: frmts/jp2kak/GNUmakefile
 ===================================================================
---- frmts/jp2kak/GNUmakefile	(revision 13622)
+--- frmts/jp2kak/GNUmakefile	(revision 13697)
 +++ frmts/jp2kak/GNUmakefile	(working copy)
-@@ -10,7 +10,7 @@
+@@ -10,12 +10,12 @@
  OBJ	=	jp2kakdataset.o
  
  KAKINC = -I$(KAKDIR)/coresys/common -I$(KAKDIR)/apps/compressed_io \
 -	-I$(KAKDIR)/apps/jp2 -I$(KAKDIR)/apps/image -I$(KAKDIR)/apps/args 
-+	-I$(KAKDIR)/apps/jp2 -I$(KAKDIR)/apps/image -I$(KAKDIR)/apps/args -I$(KAKDIR)/apps/support 
++	-I$(KAKDIR)/apps/jp2 -I$(KAKDIR)/apps/image -I$(KAKDIR)/apps/args -I$(KAKDIR)/apps/support
  
  APPOBJ  = $(KAK_OBJ)
  
+ # The following are just for Kakadu 5.1 or later.
+-APPOBJ +=	$(KAKDIR)/apps/make/kdu_tiff.o $(KAKDIR)/apps/make/jpx.o
++APPOBJ +=	$(KAKDIR)/apps/make/kdu_tiff.o $(KAKDIR)/apps/make/jpx.o $(KAKDIR)/apps/make/kdu_stripe_decompressor.o
+ 
+ INSTOBJ = $(foreach d,$(APPOBJ),../o/$(notdir $(d)))
+ 
 Index: frmts/jp2kak/jp2kakdataset.cpp
 ===================================================================
---- frmts/jp2kak/jp2kakdataset.cpp	(revision 13622)
+--- frmts/jp2kak/jp2kakdataset.cpp	(revision 13697)
 +++ frmts/jp2kak/jp2kakdataset.cpp	(working copy)
 @@ -39,6 +39,7 @@
  #include "kdu_params.h"
@@ -494,9 +497,47 @@ Index: frmts/jp2kak/jp2kakdataset.cpp
  "   <Option name='Rshift' type='string'/>"
 Index: swig/include/java/gdal_java.i
 ===================================================================
---- swig/include/java/gdal_java.i	(revision 13622)
+--- swig/include/java/gdal_java.i	(revision 13697)
 +++ swig/include/java/gdal_java.i	(working copy)
-@@ -92,3 +92,62 @@
+@@ -77,18 +77,92 @@
+     byte[] greens = new byte[size];
+     byte[] blues = new byte[size];
+     byte[] alphas = new byte[size];
++    int noAlphas = 0;
++    int zeroAlphas = 0;
++    int lastAlphaIndex = -1;
+ 
+     Color entry = null;
+     for(int i = 0; i < size; i++) {
+       entry = GetColorEntry(i);
+-      reds[i] = (byte)entry.getRed();
+-      greens[i] = (byte)entry.getGreen();
+-      blues[i] = (byte)entry.getBlue();
+-      byte alpha = (byte)entry.getAlpha();
+-      alphas[i] = (alpha != -1) ? alpha : 0;
++      reds[i] = (byte)(entry.getRed()&0xff);
++      greens[i] = (byte)(entry.getGreen()&0xff);
++      blues[i] = (byte)(entry.getBlue()&0xff);
++      byte alpha = (byte)(entry.getAlpha()&0xff);
++      if (alpha == 255) 
++          noAlphas ++;
++      else{
++        if (alpha == 0){
++           zeroAlphas++;
++           lastAlphaIndex = i;
++        }
++      }
++      alphas[i] = alpha;
+     }
+-    return new IndexColorModel(bits, size, reds, greens, blues, alphas);
+-  }
++    if (noAlphas == size)
++        return new IndexColorModel(bits, size, reds, greens, blues);
++    else if (noAlphas == (size - 1) && zeroAlphas == 1)
++        return new IndexColorModel(bits, size, reds, greens, blues, lastAlphaIndex);
++    else 
++        return new IndexColorModel(bits, size, reds, greens, blues, alphas);
++ }
  %}
  
  %include typemaps_java.i
@@ -558,4 +599,3 @@ Index: swig/include/java/gdal_java.i
 +   return GDALSetMetadataItem( self, name, value, domain);
 +  }
 +} /* extend */
-+

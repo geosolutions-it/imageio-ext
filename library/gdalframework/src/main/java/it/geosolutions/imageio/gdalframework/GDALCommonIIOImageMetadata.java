@@ -57,91 +57,91 @@ import org.w3c.dom.Node;
 public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 		Cloneable {
 
-	protected Object clone() throws CloneNotSupportedException {
-		GDALCommonIIOImageMetadata metadata = new GDALCommonIIOImageMetadata();
-		metadata.driverName = this.driverName;
-		metadata.driverDescription = this.driverDescription;
-		metadata.datasetName = this.datasetName;
-		metadata.datasetDescription = this.datasetDescription;
-		metadata.projection = this.projection;
-		metadata.gcpNumber = this.gcpNumber;
-		metadata.gcpProjection = this.gcpProjection;
-		metadata.geoTransformation = (double[]) this.geoTransformation.clone();
-		if (this.gdalMetadataMap != null) {
-			Map inputMap = this.gdalMetadataMap;
-			Map map = Collections.synchronizedMap(new HashMap(inputMap.size()));
-			final Iterator outKeys = inputMap.keySet().iterator();
-			while (outKeys.hasNext()) {
-				final String key = (String) outKeys.next();
-				final Map valuesMap = (Map) inputMap.get(key);
-				final Iterator inKeys = valuesMap.keySet().iterator();
-				final Map innerMap = new HashMap(valuesMap.size());
-				while (inKeys.hasNext()) {
-					final String ikey = (String) inKeys.next();
-					final String value = (String) valuesMap.get(ikey);
-					innerMap.put(ikey, value);
-				}
-				map.put(key, innerMap);
-			}
-			metadata.gdalMetadataMap = map;
-		}
-		// TODO: Need to clone GCPs ... but actually JVM crashes when getting
-		// GCPs
-		metadata.width = this.width;
-		metadata.height = this.height;
-		metadata.tileHeight = this.tileHeight;
-		metadata.tileWidth = this.tileWidth;
-
-		metadata.sampleModel = null;
-		if (this.sampleModel != null) {
-			final int smWidth = this.sampleModel.getWidth();
-			final int smHeight = this.sampleModel.getHeight();
-			metadata.sampleModel = this.sampleModel
-					.createCompatibleSampleModel(smWidth, smHeight);
-		}
-		metadata.numBands = this.numBands;
-
-		metadata.colorModel = null;
-		ColorModel cm = this.colorModel;
-		if (cm != null) {
-			if (cm instanceof IndexColorModel) {
-				// //
-				// TODO: Check this approach
-				// //
-				IndexColorModel icm = (IndexColorModel) cm;
-				final int mapSize = icm.getMapSize();
-				byte[] r = new byte[mapSize];
-				byte[] g = new byte[mapSize];
-				byte[] b = new byte[mapSize];
-
-				icm.getBlues(b);
-				icm.getReds(r);
-				icm.getGreens(g);
-
-				if (icm.hasAlpha()) {
-					byte[] a = new byte[mapSize];
-					icm.getAlphas(a);
-					metadata.colorModel = new IndexColorModel(icm
-							.getPixelSize(), mapSize, r, g, b, a);
-				} else
-					metadata.colorModel = new IndexColorModel(icm
-							.getPixelSize(), mapSize, r, g, b);
-			} else
-				metadata.colorModel = GDALUtilities
-						.buildColorModel(sampleModel);
-		}
-
-		metadata.maximums = (Double[]) this.maximums.clone();
-		metadata.minimums = (Double[]) this.minimums.clone();
-		metadata.noDataValues = (Double[]) this.noDataValues.clone();
-		metadata.scales = (Double[]) this.scales.clone();
-		metadata.offsets = (Double[]) this.offsets.clone();
-
-		metadata.numOverviews = (int[]) this.numOverviews.clone();
-		metadata.colorInterpretations = (int[]) this.colorInterpretations
-				.clone();
-		return metadata;
-	}
+//	protected Object clone() throws CloneNotSupportedException {
+//		GDALCommonIIOImageMetadata metadata = new GDALCommonIIOImageMetadata();
+//		metadata.driverName = this.driverName;
+//		metadata.driverDescription = this.driverDescription;
+//		metadata.datasetName = this.datasetName;
+//		metadata.datasetDescription = this.datasetDescription;
+//		metadata.projection = this.projection;
+//		metadata.gcpNumber = this.gcpNumber;
+//		metadata.gcpProjection = this.gcpProjection;
+//		metadata.geoTransformation = (double[]) this.geoTransformation.clone();
+//		if (this.gdalMetadataMap != null) {
+//			Map inputMap = this.gdalMetadataMap;
+//			Map map = Collections.synchronizedMap(new HashMap(inputMap.size()));
+//			final Iterator outKeys = inputMap.keySet().iterator();
+//			while (outKeys.hasNext()) {
+//				final String key = (String) outKeys.next();
+//				final Map valuesMap = (Map) inputMap.get(key);
+//				final Iterator inKeys = valuesMap.keySet().iterator();
+//				final Map innerMap = new HashMap(valuesMap.size());
+//				while (inKeys.hasNext()) {
+//					final String ikey = (String) inKeys.next();
+//					final String value = (String) valuesMap.get(ikey);
+//					innerMap.put(ikey, value);
+//				}
+//				map.put(key, innerMap);
+//			}
+//			metadata.gdalMetadataMap = map;
+//		}
+//		// TODO: Need to clone GCPs ... but actually JVM crashes when getting
+//		// GCPs
+//		metadata.width = this.width;
+//		metadata.height = this.height;
+//		metadata.tileHeight = this.tileHeight;
+//		metadata.tileWidth = this.tileWidth;
+//
+//		metadata.sampleModel = null;
+//		if (this.sampleModel != null) {
+//			final int smWidth = this.sampleModel.getWidth();
+//			final int smHeight = this.sampleModel.getHeight();
+//			metadata.sampleModel = this.sampleModel
+//					.createCompatibleSampleModel(smWidth, smHeight);
+//		}
+//		metadata.numBands = this.numBands;
+//
+//		metadata.colorModel = null;
+//		ColorModel cm = this.colorModel;
+//		if (cm != null) {
+//			if (cm instanceof IndexColorModel) {
+//				// //
+//				// TODO: Check this approach
+//				// //
+//				 IndexColorModel icm = (IndexColorModel) cm;
+//				 final int mapSize = icm.getMapSize();
+//				 byte[] r = new byte[mapSize];
+//				 byte[] g = new byte[mapSize];
+//				 byte[] b = new byte[mapSize];
+//				
+//				 icm.getBlues(b);
+//				 icm.getReds(r);
+//				 icm.getGreens(g);
+//				
+//				 if (icm.hasAlpha()) {
+//				 byte[] a = new byte[mapSize];
+//				 icm.getAlphas(a);
+//				 metadata.colorModel = new IndexColorModel(icm
+//				 .getPixelSize(), mapSize, r, g, b, a);
+//				 } else
+//				 metadata.colorModel = new IndexColorModel(icm
+//											.getPixelSize(), mapSize, r, g, b);
+//			} else
+//				metadata.colorModel = GDALUtilities
+//						.buildColorModel(sampleModel);
+//		}
+//
+//		metadata.maximums = (Double[]) this.maximums.clone();
+//		metadata.minimums = (Double[]) this.minimums.clone();
+//		metadata.noDataValues = (Double[]) this.noDataValues.clone();
+//		metadata.scales = (Double[]) this.scales.clone();
+//		metadata.offsets = (Double[]) this.offsets.clone();
+//
+//		metadata.numOverviews = (int[]) this.numOverviews.clone();
+//		metadata.colorInterpretations = (int[]) this.colorInterpretations
+//				.clone();
+//		return metadata;
+//	}
 
 	/** The LOGGER for this class. */
 	private static final Logger LOGGER = Logger
@@ -537,25 +537,25 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 					.getIndexColorModel(gdal.GetDataTypeSize(buf_type));
 
 			// TODO: fix the SWIG wrapper to avoid alpha setting when undefined
-			final int size = icm.getMapSize();
-			byte[] alpha = new byte[size];
-			icm.getAlphas(alpha);
-			boolean hasAlpha = false;
-			for (int i = 0; i < size; i++)
-				if (alpha[i] != 0) {
-					hasAlpha = true;
-					break;
-				}
-			if (!hasAlpha) {
-				final int nBits = icm.getPixelSize();
-				byte[] r = new byte[size];
-				byte[] g = new byte[size];
-				byte[] b = new byte[size];
-				icm.getReds(r);
-				icm.getGreens(g);
-				icm.getBlues(b);
-				icm = new IndexColorModel(nBits, size, r, g, b);
-			}
+//			final int size = icm.getMapSize();
+//			byte[] alpha = new byte[size];
+//			icm.getAlphas(alpha);
+//			boolean hasAlpha = false;
+//			for (int i = 0; i < size; i++)
+//				if (alpha[i] != 0) {
+//					hasAlpha = true;
+//					break;
+//				}
+//			if (!hasAlpha) {
+//				final int nBits = icm.getPixelSize();
+//				byte[] r = new byte[size];
+//				byte[] g = new byte[size];
+//				byte[] b = new byte[size];
+//				icm.getReds(r);
+//				icm.getGreens(g);
+//				icm.getBlues(b);
+//				icm = new IndexColorModel(nBits, size, r, g, b);
+//			}
 			colorModel = icm;
 		} else
 			colorModel = GDALUtilities.buildColorModel(sampleModel);
