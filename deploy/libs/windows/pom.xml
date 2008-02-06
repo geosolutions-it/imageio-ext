@@ -8,7 +8,6 @@
   <!--     Project Description                                     -->
   <!-- =========================================================== -->
   <properties>
-    <dllpath.prefix>it/geosolutions/imageio-ext</dllpath.prefix>
     <base.dll>imageio-ext-gdalbasedll</base.dll>
     <full.dll>imageio-ext-gdalfulldll</full.dll>
     <msvc.dll>imageio-ext-gdalmsvcdll</msvc.dll>
@@ -22,7 +21,7 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
   <groupId>it.geosolutions.imageio-ext</groupId>
-  <artifactId>imageio-ext-windows</artifactId>
+  <artifactId>imageio-ext-windowsdeployer</artifactId>
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>-Windows Native Libraries Dependency Deployer</name>
@@ -80,11 +79,6 @@
               <groupId>antlr</groupId>
               <artifactId>antlrall</artifactId>
               <version>2.7.4</version>
-            </dependency>
-            <dependency>
-             <groupId>it.geosolutions.imageio-ext</groupId>
-             <artifactId>imageio-ext-gdalbasedll</artifactId>
-             <version>1.0-SNAPSHOT</version>
             </dependency>
         </dependencies>
           <artifactId>maven-antrun-plugin</artifactId>

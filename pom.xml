@@ -10,6 +10,8 @@
   <!--                    -->
   <properties>
     <path.native>${env.JAVA_HOME}/bin</path.native>
+    <java.lib>${env.JAVA_HOME}/jre/lib/ext</java.lib>
+    <m2.localrepo>${settings.localRepository}</m2.localrepo>
     <extensive.tests>false</extensive.tests>
     <interactive.tests>false</interactive.tests>
     <test.maxHeapSize>512M</test.maxHeapSize>

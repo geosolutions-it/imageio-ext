@@ -4,19 +4,19 @@
            xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                                http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
-
-
   <!-- ==========================================================  -->
   <!--     Project Description                                     -->
   <!-- =========================================================== -->
+  <properties>
+    <jmagick.dll>imageio-ext-jmagickdll</jmagick.dll>
+  </properties>
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
-    <artifactId>imageio-ext-deployer</artifactId>
+    <artifactId>imageio-ext-nativelibsdeployer</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
   <groupId>it.geosolutions.imageio-ext</groupId>
-  <artifactId>imageio-ext-jmagickdll</artifactId>
+  <artifactId>imageio-ext-jmagickdeployer</artifactId>
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>-JMagick Native Libraries Dependency Deployer</name>
@@ -54,26 +54,17 @@
 <profiles>
   <profile>
   <id>jmagick</id>
+  <dependencies>
+   <dependency>
+     <groupId>it.geosolutions.imageio-ext</groupId>
+     <artifactId>imageio-ext-jmagickdll</artifactId>
+     <version>1.0-SNAPSHOT</version>
+    </dependency>
+    </dependencies>
     <build>
       <plugins>
         <plugin>
-          <artifactId>maven-antrun-plugin</artifactId>
-          <version>1.1</version>
-          <executions>
-            <execution>
-              <phase>install</phase>
-              <configuration>
-              <tasks>
-                <unzip src="jmagick.zip" dest="${path.native}">
-                </unzip>
-              </tasks>
-              </configuration>
-              <goals>
-                <goal>run</goal>
-              </goals>
-            </execution>
-          </executions>
-          <dependencies>
+        <dependencies>
             <dependency>
               <groupId>ant</groupId>
               <artifactId>ant-antlr</artifactId>
@@ -84,8 +75,29 @@
               <artifactId>antlrall</artifactId>
               <version>2.7.4</version>
             </dependency>
-          </dependencies>
-        </plugin>
+        </dependencies>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <version>1.1</version>
+          <executions>
+            <execution>
+              <phase>install</phase>
+              <configuration>
+               <tasks>
+               <unzip src="${m2.localrepo}/${dllpath.prefix}/${jmagick.dll}/${version}/${jmagick.dll}-${version}.jar" dest="${path.native}" overwrite="true">
+                </unzip>
+                <copy file="${m2.localrepo}/jmagick/jmagick/6.2.6.0/jmagick-6.2.6.0.jar" tofile="${java.lib}\jmagick.jar"/>
+               <!--<exec  executable="cmd">
+                  <arg value="/c"/>
+                  <arg value="copy ${m2.localrepo}/jmagick/jmagick/6.2.6.0/jmagick-6.2.6.0.jar ${java.lib}"/>
+                </exec>-->
+               </tasks>
+              </configuration>
+              <goals>
+                <goal>run</goal>
+              </goals>
+            </execution>
+          </executions>
+         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-install-plugin</artifactId>

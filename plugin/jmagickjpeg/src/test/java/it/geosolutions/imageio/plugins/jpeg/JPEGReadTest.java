@@ -80,7 +80,7 @@ public class JPEGReadTest extends AbstractJPEGTestCase {
 		// do an image read with jai
 		final ParameterBlockJAI pbjImageRead;
 		final ImageReadParam irp = reader.getDefaultReadParam();
-		irp.setSourceSubsampling(2, 2, 0, 0);
+		irp.setSourceSubsampling(4, 4, 0, 0);
 		pbjImageRead = new ParameterBlockJAI("ImageReadMT");
 		pbjImageRead.setParameter("Input", file);
 		pbjImageRead.setParameter("Reader", reader);
@@ -157,7 +157,6 @@ public class JPEGReadTest extends AbstractJPEGTestCase {
 			image.flush();
 		}
 	}
-
 	
 	public static Test suite() {
 		TestSuite suite = new TestSuite();

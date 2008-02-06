@@ -234,13 +234,13 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
 		TestSuite suite = new TestSuite();
 
 		 // Test Read exploiting JAI-ImageIO tools capabilities
-		 suite.addTest(new GeoTiffTest("testRead"));
-		
-		 // Test Read without exploiting JAI-ImageIO tools capabilities
-		 suite.addTest(new GeoTiffTest("testManualRead"));
-		
-		 // Test Write
-		 suite.addTest(new GeoTiffTest("testWrite"));
+		suite.addTest(new GeoTiffTest("testRead"));
+
+		// Test Read without exploiting JAI-ImageIO tools capabilities
+		suite.addTest(new GeoTiffTest("testManualRead"));
+
+		// Test Write
+		suite.addTest(new GeoTiffTest("testWrite"));
 
 		// Test read and write of a paletted image
 		suite.addTest(new GeoTiffTest("testPaletted"));

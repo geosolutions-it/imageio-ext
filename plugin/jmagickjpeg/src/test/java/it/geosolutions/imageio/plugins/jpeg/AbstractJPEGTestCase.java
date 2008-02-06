@@ -40,9 +40,5 @@ public class AbstractJPEGTestCase extends TestCase {
 		JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
 		JAI.getDefaultInstance().getTileScheduler().setParallelism(5);
 		JAI.getDefaultInstance().getTileScheduler().setPriority(5);
-		// final TCTool tc= new TCTool();
-
-
-
 	}
 }

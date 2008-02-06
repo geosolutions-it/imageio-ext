@@ -8,8 +8,8 @@
   <!--     Project Description                                     -->
   <!-- =========================================================== -->
   <properties>
-    <m2.localrepo>${settings.localRepository}</m2.localrepo>
-   </properties>
+    <dllpath.prefix>it/geosolutions/imageio-ext</dllpath.prefix>
+  </properties>
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-deployer</artifactId>
