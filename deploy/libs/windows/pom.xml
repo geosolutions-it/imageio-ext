@@ -14,7 +14,6 @@
     <ecw.dll>imageio-ext-gdalecwdll</ecw.dll>
     <mrsid.dll>imageio-ext-gdalmrsiddll</mrsid.dll>
     <hdf.dll>imageio-ext-gdalhdfdll</hdf.dll>
-    <sign.tag>imageio-ext-deployed.sgn</sign.tag>
   </properties>
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
@@ -93,7 +92,7 @@
                 </unzip>
                  <unzip src="${m2.localrepo}/${dllpath.prefix}/${msvc.dll}/${version}/${msvc.dll}-${version}.jar" dest="${path.native}" overwrite="true">
                 </unzip>
-                <copy file="${path.native}\msvcp71.dll" tofile="${path.native}\xiodtest.dll" />
+                <copy file="${path.native}\msvcp71.dll" tofile="${path.native}\xiodtest.dll" failonerror="false"/>
                 <available file="${path.native}\xiodtest.dll" property="sign.present"/>
                 <fail message="Unable to deploy required libs on ${path.native}. See the setup guide for further information." unless="sign.present" />
                 <delete file="${path.native}\xiodtest.dll" failonerror="false" verbose="false" />
@@ -184,6 +183,10 @@
                 </unzip>
                  <unzip src="${m2.localrepo}/${dllpath.prefix}/${msvc.dll}/${version}/${msvc.dll}-${version}.jar" dest="${path.native}" overwrite="true">
                 </unzip>
+                <copy file="${path.native}\msvcp71.dll" tofile="${path.native}\deployedD.dll" failonerror="false"/>
+                <available file="${path.native}\deployedD.dll" property="sign.present"/>
+                <fail message="Unable to deploy required libs on ${path.native}. See the setup guide for further information." unless="sign.present" />
+                <delete file="${path.native}\deployedD.dll" failonerror="false" verbose="false" />
                </tasks>
               </configuration>
               <goals>
