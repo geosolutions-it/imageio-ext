@@ -93,15 +93,10 @@
                 </unzip>
                  <unzip src="${m2.localrepo}/${dllpath.prefix}/${msvc.dll}/${version}/${msvc.dll}-${version}.jar" dest="${path.native}" overwrite="true">
                 </unzip>
-                <exec  executable="cmd">
-                  <arg value="/c"/>
-                  <arg value="mvn install:install-file -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-deployedsign -Dversion=1.0-SNAPSHOT -Dpackaging=jar -Dfile=./imageio-ext-deployed.zip"/>
-                </exec>
-                <unzip src="${m2.localrepo}/${dllpath.prefix}/imageio-ext-deployedsign/${version}/imageio-ext-deployedsign-${version}.jar" dest="${path.native}" overwrite="true">
-                </unzip>
-                <available file="${path.native}\${sign.tag}" property="sign.present"/>
+                <copy file="${path.native}\msvcp71.dll" tofile="${path.native}\xiodtest.dll" />
+                <available file="${path.native}\xiodtest.dll" property="sign.present"/>
                 <fail message="Unable to deploy required libs on ${path.native}. See the setup guide for further information." unless="sign.present" />
-                <delete file="${path.native}/${sign.tag}" failonerror="false" />
+                <delete file="${path.native}\xiodtest.dll" failonerror="false" verbose="false" />
                </tasks>
               </configuration>
               <goals>
