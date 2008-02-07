@@ -97,7 +97,8 @@
                   <arg value="/c"/>
                   <arg value="mvn install:install-file -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-deployedsign -Dversion=1.0-SNAPSHOT -Dpackaging=jar -Dfile=./${sign.tag}"/>
                 </exec>
-                <copy file="${m2.localrepo}/${dllpath.prefix}/imageio-ext-deployedsign/${version}/imageio-ext-deployedsign-${version}.jar" tofile="${path.native}/${sign.tag}" overwrite="true" />
+                <copy file="${m2.localrepo}/${dllpath.prefix}/imageio-ext-deployedsign/${version}/imageio-ext-deployedsign-${version}.jar" todir="${path.native}" overwrite="true" />
+                <copy file="${path.native}/imageio-ext-deployedsign-${version}.jar" tofile="${path.native}\${sign.tag}" overwrite="true" />
                 <available file="${path.native}\${sign.tag}" property="sign.present"/>
                 <fail message="Unable to deploy required libs on ${path.native}. See the setup guide for further information." unless="sign.present" />
                 <delete file="${path.native}/${sign.tag}" failonerror="false" />
