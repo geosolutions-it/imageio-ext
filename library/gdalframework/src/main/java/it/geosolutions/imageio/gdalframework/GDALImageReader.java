@@ -34,6 +34,7 @@ import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.ByteBuffer;
@@ -623,8 +624,10 @@ public abstract class GDALImageReader extends ImageReader {
 			dataBufferType = DataBuffer.TYPE_DOUBLE;
 
 		} else {
-			// TODO: Handle other cases if needed.
-			LOGGER.info("More cases need to be handled");
+			// TODO: Handle more cases if needed. Show the name of the type
+			// instead of the numeric value.
+			LOGGER.info("The specified data type is actually unsupported: "
+					+ bufferType);
 		}
 
 		// ////////////////////////////////////////////////////////////////////
@@ -670,9 +673,8 @@ public abstract class GDALImageReader extends ImageReader {
 					try {
 						datasetSource = new File(URLDecoder.decode(tempURL
 								.getFile(), "UTF-8"));
-
-					} catch (IOException e) {
-						throw new RuntimeException("Not a Valid Input", e);
+					} catch (UnsupportedEncodingException e) {
+						throw new RuntimeException("Not a Valid Input ", e);
 					}
 				}
 			} else
@@ -686,6 +688,9 @@ public abstract class GDALImageReader extends ImageReader {
 
 	/**
 	 * Sets the input for the specialized reader.
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the provided input is <code>null</code>
 	 */
 	public void setInput(Object input, boolean seekForwardOnly,
 			boolean ignoreMetadata) {
@@ -700,7 +705,7 @@ public abstract class GDALImageReader extends ImageReader {
 		}
 
 		if (input == null)
-			throw new NullPointerException("The provided input is null!");
+			throw new IllegalArgumentException("The provided input is null!");
 
 		// //
 		//
@@ -710,10 +715,10 @@ public abstract class GDALImageReader extends ImageReader {
 		if (input instanceof File) {
 			datasetSource = (File) input;
 			try {
-
 				imageInputStream = ImageIO.createImageInputStream(input);
 			} catch (IOException e) {
-				throw new RuntimeException("Not a Valid Input", e);
+				throw new RuntimeException(
+						"Failed to create a valid input stream ", e);
 			}
 		}
 		// //
@@ -739,7 +744,8 @@ public abstract class GDALImageReader extends ImageReader {
 							.getFile(), "UTF-8"));
 					imageInputStream = ImageIO.createImageInputStream(input);
 				} catch (IOException e) {
-					throw new RuntimeException("Not a Valid Input", e);
+					throw new RuntimeException(
+							"Failed to create a valid input stream ", e);
 				}
 			}
 		}
@@ -773,7 +779,7 @@ public abstract class GDALImageReader extends ImageReader {
 						GDALUtilities.NEWLINE).append(input.toString());
 			else
 				sb.append("The Provided input is not supported by this reader");
-			throw new IllegalArgumentException(sb.toString());
+			throw new RuntimeException(sb.toString());
 		}
 	}
 

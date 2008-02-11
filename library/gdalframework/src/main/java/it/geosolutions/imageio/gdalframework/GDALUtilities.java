@@ -313,7 +313,7 @@ public final class GDALUtilities {
 	}
 
 	/**
-	 * Tells us about the capabilities for a gdal driver .
+	 * Tells us about the capabilities for a GDAL driver.
 	 * 
 	 * @param driverName
 	 *            name of the {@link Driver} we want to get info about.
@@ -323,10 +323,14 @@ public final class GDALUtilities {
 	 *         case the driver supports only create copy and eventually
 	 *         {@link GDALUtilities.DriverCreateCapabilities#READ_ONLY} for
 	 *         read-only drivers.
+	 * @throws IllegalArgumentException
+	 *             in case the specified driver name is <code>null</code> or a
+	 *             Driver for the specified name is unavailable.
 	 */
 	public static int formatWritingCapabilities(final String driverName) {
 		if (driverName == null)
-			throw new NullPointerException("he provided driver name is null");
+			throw new IllegalArgumentException(
+					"The provided driver name is null");
 		loadGDAL();
 		synchronized (driversWritingCapabilities) {
 			if (driversWritingCapabilities.containsKey(driverName))
@@ -335,7 +339,9 @@ public final class GDALUtilities {
 			final Driver driver = gdal.GetDriverByName(driverName);
 			if (driver == null)
 				throw new IllegalArgumentException(
-						"The requested driver does not exist");
+						"A Driver with the specified name is unavailable. "
+								+ "Check the specified name or be sure this "
+								+ "Driver is supported");
 			// parse metadata
 			final Map metadata = driver.GetMetadata_Dict("");
 			final String create = (String) metadata.get("DCAP_CREATE");
@@ -469,15 +475,17 @@ public final class GDALUtilities {
 					return;
 				}
 			}
-		} catch (Exception e) {
-			// do nothing simply proceed.
+		} catch (NumberFormatException nfe) {
+			LOGGER
+					.fine("The specified value has not been successfully parsed: "
+							+ (String) val);
 		}
 		// DEFAULT VALUE FOR ATTRIBUTES IS ""
 		node.setAttribute(name, "");
 	}
 
 	/**
-	 * The default tile size. This default tile size can be overriden with a
+	 * The default tile size. This default tile size can be overridden with a
 	 * call to {@link JAI#setDefaultTileSize}.
 	 */
 	public static final Dimension DEFAULT_TILE_SIZE = new Dimension(512, 512);
