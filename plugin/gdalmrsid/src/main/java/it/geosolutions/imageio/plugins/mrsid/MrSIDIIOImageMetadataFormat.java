@@ -21,14 +21,28 @@ import javax.imageio.metadata.IIOMetadataFormat;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
 
 /**
+ * Class defining the structure of metadata documents describing MrSID specific
+ * image metadata returned from <code>getAsTree</code> method.
+ * 
  * @author Daniele Romagnoli, GeoSolutions.
- * @author Simone Giannecchini, GeoSolutions. 
+ * @author Simone Giannecchini, GeoSolutions.
  */
-public class MrSIDIIOImageMetadataFormat extends IIOMetadataFormatImpl implements
-		IIOMetadataFormat {
+public class MrSIDIIOImageMetadataFormat extends IIOMetadataFormatImpl
+		implements IIOMetadataFormat {
 
+	/**
+	 * A single instance of the <code>MrSIDIIOImageMetadataFormat</code>
+	 * class.
+	 */
 	protected static MrSIDIIOImageMetadataFormat mrsidMetadataInstance;
 
+	/**
+	 * Returns an instance of the <code>MrSIDIIOImageMetadataFormat</code>
+	 * class. We build only a single instance and we cache it for future uses.
+	 * 
+	 * @return an instance of the <code>MrSIDIIOImageMetadataFormat</code>
+	 *         class.
+	 */
 	public static synchronized IIOMetadataFormat getInstance() {
 		if (mrsidMetadataInstance == null) {
 			mrsidMetadataInstance = new MrSIDIIOImageMetadataFormat();
@@ -37,15 +51,19 @@ public class MrSIDIIOImageMetadataFormat extends IIOMetadataFormatImpl implement
 	}
 
 	/**
-	 * @param rootName
-	 * @param childPolicy
+	 * Constructs a <code>MrSIDIIOImageMetadataFormat</code> instance.
 	 */
 	protected MrSIDIIOImageMetadataFormat() {
 		super(MrSIDIIOImageMetadata.mrsidImageMetadataName, CHILD_POLICY_SOME);
 
+		// //
+		//
 		// root -> ImageDescriptor
+		//
+		// //
 		addElement("ImageDescriptor",
-				MrSIDIIOImageMetadata.mrsidImageMetadataName, CHILD_POLICY_EMPTY);
+				MrSIDIIOImageMetadata.mrsidImageMetadataName,
+				CHILD_POLICY_EMPTY);
 		addAttribute("ImageDescriptor", "IMAGE__INPUT_NAME", DATATYPE_STRING,
 				true, null);
 		addAttribute("ImageDescriptor", "IMAGE__INPUT_FILE_SIZE",
@@ -66,24 +84,28 @@ public class MrSIDIIOImageMetadataFormat extends IIOMetadataFormatImpl implement
 				DATATYPE_DOUBLE, false, null);
 		addAttribute("ImageDescriptor", "IMAGE__COMPRESSION_BLOCK_SIZE",
 				DATATYPE_INTEGER, true, null, null, null, false, false);
-		addAttribute("ImageDescriptor", "IMAGE__CREATION_DATE", DATATYPE_STRING, false,
-				null, null, null, false, false);
+		addAttribute("ImageDescriptor", "IMAGE__CREATION_DATE",
+				DATATYPE_STRING, false, null, null, null, false, false);
 		addAttribute("ImageDescriptor", "IMAGE__WIDTH", DATATYPE_INTEGER, true,
 				null, null, null, false, false);
 		addAttribute("ImageDescriptor", "IMAGE__HEIGHT", DATATYPE_INTEGER,
 				true, null, null, null, false, false);
-		addAttribute("ImageDescriptor", "IMAGE__TRANSPARENT_DATA_VALUE", DATATYPE_STRING,
-				false, null, null, null, false, false);
+		addAttribute("ImageDescriptor", "IMAGE__TRANSPARENT_DATA_VALUE",
+				DATATYPE_STRING, false, null, null, null, false, false);
 		addAttribute("ImageDescriptor", "IMAGE__COLOR_SCHEME",
 				DATATYPE_INTEGER, true, null, null, null, false, false);
 		addAttribute("ImageDescriptor", "IMAGE__DATA_TYPE", DATATYPE_INTEGER,
 				true, null, null, null, false, false);
 		addAttribute("ImageDescriptor", "IMAGE__BITS_PER_SAMPLE",
 				DATATYPE_INTEGER, true, null, null, null, false, false);
-
+		// //
+		//
 		// root -> Georeferenncing
+		//
+		// //
 		addElement("Georeferenncing",
-				MrSIDIIOImageMetadata.mrsidImageMetadataName, CHILD_POLICY_EMPTY);
+				MrSIDIIOImageMetadata.mrsidImageMetadataName,
+				CHILD_POLICY_EMPTY);
 		addAttribute("Georeferenncing", "IMG__HORIZONTAL_UNITS",
 				DATATYPE_STRING, true, null);
 		addAttribute("Georeferenncing", "IMG__PROJECTION_TYPE",
@@ -112,12 +134,9 @@ public class MrSIDIIOImageMetadataFormat extends IIOMetadataFormatImpl implement
 				false, null);
 		addAttribute("Georeferenncing", "IMAGE__WKT", DATATYPE_STRING, true,
 				null);
-
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see javax.imageio.metadata.IIOMetadataFormatImpl#canNodeAppear(java.lang.String,
 	 *      javax.imageio.ImageTypeSpecifier)
 	 */

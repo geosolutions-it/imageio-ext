@@ -34,6 +34,15 @@ public class JP2GDALKakaduImageReader extends GDALImageReader {
 	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.plugins.jp2kakadu");
 
+	/**
+	 * Constructs a
+	 * <code>JP2GDALKakaduImageReader<code> using a 
+	 * {@link JP2GDALKakaduImageReaderSpi}.
+	 * 
+	 * @param originatingProvider
+	 *            The {@link JP2GDALKakaduImageReaderSpi} to use for building 
+	 *            this <code>JP2GDALKakaduImageReader<code>.
+	 */
 	public JP2GDALKakaduImageReader(
 			JP2GDALKakaduImageReaderSpi originatingProvider) {
 		super(originatingProvider, 0);

@@ -37,20 +37,52 @@ import org.w3c.dom.Node;
  */
 public class MrSIDIIOImageMetadata extends GDALCommonIIOImageMetadata {
 
-	/** Name for these metadata. */
+	/**
+	 * The name of the metadata format for this object.
+	 */
 	public final static String mrsidImageMetadataName = "org_gdal_imageio_mrsid_metadata";
 
+	/**
+	 * The name of the class implementing <code>IIOMetadataFormat</code> and
+	 * representing the metadata format for this object.
+	 */
+	public static final String mrsidImageMetadataFormatClassName = "it.geosolutions.imageio.gdalframework.MrSIDIIOImageMetadataFormat";
+
+	/**
+	 * <code>MrSIDIIOImageMetadata</code> constructor. 
+	 * 
+	 * @param sDatasetName
+	 *            The name (usually a File path or a subdataset name when the
+	 *            format supports subdatasets) of the dataset we want to open.
+	 */
 	public MrSIDIIOImageMetadata(final String dataseName) {
 		super(dataseName, mrsidImageMetadataName,
-				"it.geosolutions.imageio.gdalframework.MrSIDIIOImageMetadataFormat");
+				mrsidImageMetadataFormatClassName);
 	}
-
+	
+	/**
+	 * Returns an XML DOM <code>Node</code> object that represents the root of
+	 * a tree of common stream metadata contained within this object according
+	 * to the conventions defined by a given metadata format name.
+	 * 
+	 * @param formatName
+	 *            the name of the requested metadata format. Actually supported format 
+	 *            name are {@link #mrsidImageMetadataName} and {@link GDALCommonIIOImageMetadata#nativeMetadataFormatName}. 
+	 */
 	public Node getAsTree(String formatName) {
 		if (formatName.equalsIgnoreCase(mrsidImageMetadataName))
 			return getMrSIDMetadataTree();
 		return super.getAsTree(formatName);
 	}
 
+	/**
+	 * Returns the XML DOM <code>Node</code> object that represents the
+     * root of a tree of metadata contained within this object on its 
+     * native format, which contains MrSID specific information.
+	 * 
+	 * @return a root node containing common metadata exposed on its native
+	 *         format.
+	 */
 	private Node getMrSIDMetadataTree() {
 
 		// Create root node
@@ -60,7 +92,12 @@ public class MrSIDIIOImageMetadata extends GDALCommonIIOImageMetadata {
 		// final Map gdalMetadataMap = ds.GetMetadata_Dict("");
 
 		final Map defaultDomainMap = getGdalMetadataDomain(GDALUtilities.GDALMetadataDomain.DEFAULT);
+		
+		// //
+		//
 		// ImageDescriptor
+		//
+		// //
 		IIOMetadataNode node = new IIOMetadataNode("ImageDescriptor");
 		node.setAttribute("IMAGE__INPUT_NAME", getDatasetName());
 		GDALUtilities.setNodeAttribute("IMAGE__INPUT_FILE_SIZE",
@@ -113,7 +150,11 @@ public class MrSIDIIOImageMetadata extends GDALCommonIIOImageMetadata {
 				IIOMetadataFormat.DATATYPE_INTEGER);
 		root.appendChild(node);
 
+		// //
+		//
 		// Georeferencing
+		//
+		// //
 		node = new IIOMetadataNode("Georeferencing");
 		GDALUtilities.setNodeAttribute("IMG__HORIZONTAL_UNITS",
 				defaultDomainMap.get("IMG__HORIZONTAL_UNITS"), node,
@@ -159,20 +200,40 @@ public class MrSIDIIOImageMetadata extends GDALCommonIIOImageMetadata {
 
 	}
 
+	/**
+	 * Returns <code>true</code> since this object does not support the
+	 * <code>mergeTree</code>, <code>setFromTree</code>, and
+	 * <code>reset</code> methods.
+	 * 
+	 * @return <code>true</code> since this <code>IIOMetadata</code> object
+	 *         cannot be modified.
+	 */
 	public boolean isReadOnly() {
-		// TODO change this
 		return true;
 	}
 
+	/**
+	 * Method unsupported. Calling this method will throws an
+	 * <code>UnsupportedOperationException</code>
+	 * @see javax.imageio.metadata.IIOMetadata#mergeTree()
+	 * 
+	 * @see #isReadOnly()
+	 */
 	public void mergeTree(String formatName, Node root)
 			throws IIOInvalidTreeException {
-		// TODO change this
-		throw new UnsupportedOperationException("");
+		throw new UnsupportedOperationException(
+				"mergeTree operation is not allowed");
 	}
 
+	/**
+	 * Method unsupported. Calling this method will throws an
+	 * <code>UnsupportedOperationException</code>
+	 * @see javax.imageio.metadata.IIOMetadata#reset()
+	 * 
+	 * @see #isReadOnly()
+	 */
 	public void reset() {
-		// TODO change this
-		throw new UnsupportedOperationException("");
-
+		throw new UnsupportedOperationException(
+				"reset operation is not allowed");
 	}
 }

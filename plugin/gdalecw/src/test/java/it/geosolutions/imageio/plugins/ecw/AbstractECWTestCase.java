@@ -17,6 +17,9 @@
 package it.geosolutions.imageio.plugins.ecw;
 
 import javax.media.jai.JAI;
+import javax.media.jai.TileCache;
+import javax.media.jai.TileScheduler;
+
 import junit.framework.TestCase;
 
 /**
@@ -34,7 +37,7 @@ public class AbstractECWTestCase extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		// general settings
-		JAI.getDefaultInstance().getTileScheduler().setParallelism(5);
+		 JAI.getDefaultInstance().getTileScheduler().setParallelism(5);
 		JAI.getDefaultInstance().getTileScheduler().setPriority(4);
 		JAI.getDefaultInstance().getTileScheduler().setPrefetchPriority(2);
 		JAI.getDefaultInstance().getTileScheduler().setPrefetchParallelism(5);

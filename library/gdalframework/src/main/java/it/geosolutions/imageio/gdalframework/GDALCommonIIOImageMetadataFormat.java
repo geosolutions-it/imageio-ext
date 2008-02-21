@@ -21,14 +21,28 @@ import javax.imageio.metadata.IIOMetadataFormat;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
 
 /**
+ * Class defining the structure of metadata documents describing common image
+ * metadata returned from <code>getAsTree</code> method.
+ * 
  * @author Daniele Romagnoli, GeoSolutions
  * @author Simone Giannecchini, GeoSolutions
  */
 public class GDALCommonIIOImageMetadataFormat extends IIOMetadataFormatImpl
 		implements IIOMetadataFormat {
 
+	/**
+	 * A single instance of the <code>GDALCommonIIOImageMetadataFormat</code> 
+	 * class.
+	 */
 	private static GDALCommonIIOImageMetadataFormat commonInstance;
 
+	/**
+	 * Returns an instance of the <code>GDALCommonIIOImageMetadataFormat</code>
+	 * class. We build only a single instance and we cache it for future uses.
+	 * 
+	 * @return an instance of the <code>GDALCommonIIOImageMetadataFormat</code>
+	 *         class.
+	 */
 	public static synchronized IIOMetadataFormat getInstance() {
 		if (commonInstance == null) {
 			commonInstance = new GDALCommonIIOImageMetadataFormat();
@@ -36,7 +50,10 @@ public class GDALCommonIIOImageMetadataFormat extends IIOMetadataFormatImpl
 		return commonInstance;
 	}
 
-	public GDALCommonIIOImageMetadataFormat() {
+	/**
+	 * Constructs a <code>GDALCommonIIOImageMetadataFormat</code> instance.
+	 */
+	private GDALCommonIIOImageMetadataFormat() {
 		super(GDALCommonIIOImageMetadata.nativeMetadataFormatName,
 				CHILD_POLICY_SOME);
 		// //
@@ -167,10 +184,13 @@ public class GDALCommonIIOImageMetadataFormat extends IIOMetadataFormatImpl
 				"0", "255", true, true);
 	}
 
+	/**
+	 * @see javax.imageio.metadata.IIOMetadataFormatImpl#canNodeAppear(java.lang.String,
+	 *      javax.imageio.ImageTypeSpecifier)
+	 */
 	public boolean canNodeAppear(String elementName,
 			ImageTypeSpecifier imageType) {
 		// TODO implement me
 		return true;
 	}
-
 }

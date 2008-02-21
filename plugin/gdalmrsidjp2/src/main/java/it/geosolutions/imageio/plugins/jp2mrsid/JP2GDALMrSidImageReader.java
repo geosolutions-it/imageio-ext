@@ -17,6 +17,7 @@
 package it.geosolutions.imageio.plugins.jp2mrsid;
 
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
+import it.geosolutions.imageio.gdalframework.GDALImageReaderSpi;
 
 import java.awt.image.RenderedImage;
 import java.util.logging.Level;
@@ -34,6 +35,14 @@ public class JP2GDALMrSidImageReader extends GDALImageReader {
 	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.plugins.jp2mrsid");
 
+	/**
+	 * Constructs a <code>JP2GDALMrSidImageReader<code> using a 
+	 * {@link JP2GDALMrSidImageReaderSpi}.
+	 * 
+	 * @param originatingProvider
+	 *            The {@link JP2GDALMrSidImageReaderSpi} to use for building 
+	 *            this <code>JP2GDALMrSidImageReader<code>.
+	 */
 	public JP2GDALMrSidImageReader(
 			JP2GDALMrSidImageReaderSpi originatingProvider) {
 		super(originatingProvider, 0);

@@ -34,6 +34,14 @@ public class GeoTiffImageReader extends GDALImageReader {
 	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.plugins.geotiff");
 
+	/**
+	 * Constructs a
+	 * <code>GeoTiffImageReader<code> using a {@link GeoTiffImageReaderSpi}.
+	 * 
+	 * @param originatingProvider
+	 *            The {@link GeoTiffImageReaderSpi} to use for building this
+	 *            <code>GeoTiffImageReader<code>.
+	 */
 	public GeoTiffImageReader(GeoTiffImageReaderSpi originatingProvider) {
 		super(originatingProvider, 0);
 		if (LOGGER.isLoggable(Level.FINE))

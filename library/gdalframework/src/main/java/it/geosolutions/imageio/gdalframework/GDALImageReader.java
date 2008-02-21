@@ -133,8 +133,8 @@ public abstract class GDALImageReader extends ImageReader {
 	}
 
 	/**
-	 * Constructs a
-	 * <code>GDALImageReader<code> using a {@link GDALImageReaderSpi}.
+	 * Constructs a <code>GDALImageReader<code> using a 
+	 * {@link GDALImageReaderSpi}.
 	 * 
 	 * @param originatingProvider
 	 *            The {@link GDALImageReaderSpi} to use for building this

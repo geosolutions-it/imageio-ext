@@ -35,14 +35,22 @@ public class MrSIDImageReader extends GDALImageReader {
 	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.plugins.mrsid");
 
+	/**
+	 * Constructs a
+	 * <code>MrSIDImageReader<code> using a {@link MrSIDImageReaderSpi}.
+	 * 
+	 * @param originatingProvider
+	 *            The {@link MrSIDImageReaderSpi} to use for building this
+	 *            <code>MrSIDImageReader<code>.
+	 */
 	public MrSIDImageReader(MrSIDImageReaderSpi originatingProvider) {
 		super(originatingProvider, 0);
 		if (LOGGER.isLoggable(Level.FINE))
 			LOGGER.fine("MrSIDImageReader Constructor");
 	}
-	
+
 	/**
-	 * Build a proper {@link GDALCommonIIOImageMetadata} given the name of a
+	 * Build a proper {@link MrSIDIIOImageMetadata} given the name of a
 	 * dataset
 	 * 
 	 * @param datasetName

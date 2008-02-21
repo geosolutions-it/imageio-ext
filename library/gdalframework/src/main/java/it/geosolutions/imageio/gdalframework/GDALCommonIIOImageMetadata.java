@@ -54,111 +54,32 @@ import org.w3c.dom.Node;
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
  */
-public class GDALCommonIIOImageMetadata extends IIOMetadata implements
-		Cloneable {
-
-//	protected Object clone() throws CloneNotSupportedException {
-//		GDALCommonIIOImageMetadata metadata = new GDALCommonIIOImageMetadata();
-//		metadata.driverName = this.driverName;
-//		metadata.driverDescription = this.driverDescription;
-//		metadata.datasetName = this.datasetName;
-//		metadata.datasetDescription = this.datasetDescription;
-//		metadata.projection = this.projection;
-//		metadata.gcpNumber = this.gcpNumber;
-//		metadata.gcpProjection = this.gcpProjection;
-//		metadata.geoTransformation = (double[]) this.geoTransformation.clone();
-//		if (this.gdalMetadataMap != null) {
-//			Map inputMap = this.gdalMetadataMap;
-//			Map map = Collections.synchronizedMap(new HashMap(inputMap.size()));
-//			final Iterator outKeys = inputMap.keySet().iterator();
-//			while (outKeys.hasNext()) {
-//				final String key = (String) outKeys.next();
-//				final Map valuesMap = (Map) inputMap.get(key);
-//				final Iterator inKeys = valuesMap.keySet().iterator();
-//				final Map innerMap = new HashMap(valuesMap.size());
-//				while (inKeys.hasNext()) {
-//					final String ikey = (String) inKeys.next();
-//					final String value = (String) valuesMap.get(ikey);
-//					innerMap.put(ikey, value);
-//				}
-//				map.put(key, innerMap);
-//			}
-//			metadata.gdalMetadataMap = map;
-//		}
-//		// TODO: Need to clone GCPs ... but actually JVM crashes when getting
-//		// GCPs
-//		metadata.width = this.width;
-//		metadata.height = this.height;
-//		metadata.tileHeight = this.tileHeight;
-//		metadata.tileWidth = this.tileWidth;
-//
-//		metadata.sampleModel = null;
-//		if (this.sampleModel != null) {
-//			final int smWidth = this.sampleModel.getWidth();
-//			final int smHeight = this.sampleModel.getHeight();
-//			metadata.sampleModel = this.sampleModel
-//					.createCompatibleSampleModel(smWidth, smHeight);
-//		}
-//		metadata.numBands = this.numBands;
-//
-//		metadata.colorModel = null;
-//		ColorModel cm = this.colorModel;
-//		if (cm != null) {
-//			if (cm instanceof IndexColorModel) {
-//				// //
-//				// TODO: Check this approach
-//				// //
-//				 IndexColorModel icm = (IndexColorModel) cm;
-//				 final int mapSize = icm.getMapSize();
-//				 byte[] r = new byte[mapSize];
-//				 byte[] g = new byte[mapSize];
-//				 byte[] b = new byte[mapSize];
-//				
-//				 icm.getBlues(b);
-//				 icm.getReds(r);
-//				 icm.getGreens(g);
-//				
-//				 if (icm.hasAlpha()) {
-//				 byte[] a = new byte[mapSize];
-//				 icm.getAlphas(a);
-//				 metadata.colorModel = new IndexColorModel(icm
-//				 .getPixelSize(), mapSize, r, g, b, a);
-//				 } else
-//				 metadata.colorModel = new IndexColorModel(icm
-//											.getPixelSize(), mapSize, r, g, b);
-//			} else
-//				metadata.colorModel = GDALUtilities
-//						.buildColorModel(sampleModel);
-//		}
-//
-//		metadata.maximums = (Double[]) this.maximums.clone();
-//		metadata.minimums = (Double[]) this.minimums.clone();
-//		metadata.noDataValues = (Double[]) this.noDataValues.clone();
-//		metadata.scales = (Double[]) this.scales.clone();
-//		metadata.offsets = (Double[]) this.offsets.clone();
-//
-//		metadata.numOverviews = (int[]) this.numOverviews.clone();
-//		metadata.colorInterpretations = (int[]) this.colorInterpretations
-//				.clone();
-//		return metadata;
-//	}
+public class GDALCommonIIOImageMetadata extends IIOMetadata {
 
 	/** The LOGGER for this class. */
 	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.gdalframework");
 
+	 /**
+     * The name of the native metadata format for this object.
+     */
 	public static final String nativeMetadataFormatName = "it.geosolutions.imageio.gdalframework.commonImageMetadata_1.0";
 
+	/**
+	 * The name of the class implementing <code>IIOMetadataFormat</code>
+     * and representing the native metadata format for this object.
+	 */
 	public static final String nativeMetadataFormatClassName = "it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadataFormat";
 
 	/**
-	 * the name of the driver which has opened the dataset held by this wrapper.
+	 * the name of the driver which has opened the dataset represented by this
+	 * common metadata object.
 	 */
 	private String driverName;
 
 	/**
-	 * The description of the driver which has opened the dataset held by this
-	 * wrapper.
+	 * The description of the driver which has opened the dataset represented by
+	 * this common metadata object.
 	 */
 	private String driverDescription;
 
@@ -290,11 +211,13 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 	 * <code>GDALCommonIIOImageMetadata</code> constructor.
 	 * 
 	 * @param dataset
-	 *            the input <code>Dataset</code> on which build the wrapper.
+	 *            the input <code>Dataset</code> on which build the common
+	 *            metadata object.
 	 * @param name
-	 *            the name to be set for the dataset contained on this wrapper.
+	 *            the name to be set for the dataset represented by this common
+	 *            metadata object.
 	 * @param initializationRequired
-	 *            specify if initializing wrapper members is required or not.
+	 *            specify if initializing fields is required or not.
 	 * @param formatName
 	 *            the name of the native metadata format
 	 * @param formatClassName
@@ -349,8 +272,8 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 	 * input <code>Dataset</code>.
 	 * 
 	 * @param dataset
-	 *            the <code>Dataset</code> used to initialize all
-	 *            {@link GDALDatasetWrapper}'s fields.
+	 *            the <code>Dataset</code> used to initialize all the common
+	 *            metadata fields.
 	 * @param name
 	 *            the dataset name
 	 * @param formatName
@@ -369,8 +292,8 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 	 * input <code>Dataset</code> if not null.
 	 * 
 	 * @param dataset
-	 *            the <code>Dataset</code> used to initialize all
-	 *            {@link GDALDatasetWrapper}'s fields.
+	 *            the <code>Dataset</code> used to initialize all the common
+	 *            metadata fields.
 	 * @param name
 	 *            the dataset name
 	 * 
@@ -381,11 +304,13 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 				nativeMetadataFormatClassName);
 	}
 
+	/** Private constructor */
 	private GDALCommonIIOImageMetadata() {
+		
 	}
 
 	/**
-	 * Given an input <code>Dataset</code>, sets georeferencing information
+	 * Set georeferencing information from an input <code>Dataset</code>
 	 * 
 	 * @param dataset
 	 *            a <code>Dataset</code> from where to retrieve all
@@ -400,8 +325,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 	}
 
 	/**
-	 * A kind of initialization method which provides to set all fields of the
-	 * {@link GDALDatasetWrapper}
+	 * Set all the fields of the common metadata object.
 	 * 
 	 * @param dataset
 	 *            the <code>Dataset</code> which will be used for the
@@ -537,25 +461,6 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 					.getIndexColorModel(gdal.GetDataTypeSize(buf_type));
 
 			// TODO: fix the SWIG wrapper to avoid alpha setting when undefined
-//			final int size = icm.getMapSize();
-//			byte[] alpha = new byte[size];
-//			icm.getAlphas(alpha);
-//			boolean hasAlpha = false;
-//			for (int i = 0; i < size; i++)
-//				if (alpha[i] != 0) {
-//					hasAlpha = true;
-//					break;
-//				}
-//			if (!hasAlpha) {
-//				final int nBits = icm.getPixelSize();
-//				byte[] r = new byte[size];
-//				byte[] g = new byte[size];
-//				byte[] b = new byte[size];
-//				icm.getReds(r);
-//				icm.getGreens(g);
-//				icm.getBlues(b);
-//				icm = new IndexColorModel(nBits, size, r, g, b);
-//			}
 			colorModel = icm;
 		} else
 			colorModel = GDALUtilities.buildColorModel(sampleModel);
@@ -565,6 +470,14 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 		return true;
 	}
 
+	/**
+	 * Returns the XML DOM <code>Node</code> object that represents the
+     * root of a tree of metadata contained within this object on its 
+     * native format.
+	 * 
+	 * @return a root node containing common metadata exposed on its native
+	 *         format.
+	 */
 	private Node createCommonNativeTree() {
 		// Create root node
 		final IIOMetadataNode root = new IIOMetadataNode(
@@ -714,23 +627,57 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 		return root;
 	}
 
+	/**
+	 * Returns an XML DOM <code>Node</code> object that represents the root of
+	 * a tree of common stream metadata contained within this object according
+	 * to the conventions defined by a given metadata format name.
+	 * 
+	 * @param formatName
+	 *            the name of the requested metadata format. Note that actually,
+	 *            the only supported format name is the
+	 *            {@link GDALCommonIIOImageMetadata#nativeMetadataFormatName}.
+	 *            Requesting other format names will result in an
+	 *            <code>IllegalArgumentException</code>
+	 */
 	public Node getAsTree(String formatName) {
 		if (nativeMetadataFormatName.equalsIgnoreCase(formatName))
 			return createCommonNativeTree();
-		throw new UnsupportedOperationException(formatName
+		throw new IllegalArgumentException(formatName
 				+ " is not a supported format name");
 	}
 
+	/**
+	 * Returns <code>true</code> since this object does not support the
+	 * <code>mergeTree</code>, <code>setFromTree</code>, and
+	 * <code>reset</code> methods.
+	 * 
+	 * @return <code>true</code> since this <code>IIOMetadata</code> object
+	 *         cannot be modified.
+	 */
 	public boolean isReadOnly() {
 		return true;
 	}
 
+	/**
+	 * Method unsupported. Calling this method will throws an
+	 * <code>UnsupportedOperationException</code>
+	 * @see javax.imageio.metadata.IIOMetadata#mergeTree()
+	 * 
+	 * @see #isReadOnly()
+	 */
 	public void mergeTree(String formatName, Node root)
 			throws IIOInvalidTreeException {
 		throw new UnsupportedOperationException(
 				"mergeTree operation is not allowed");
 	}
 
+	/**
+	 * Method unsupported. Calling this method will throws an
+	 * <code>UnsupportedOperationException</code>
+	 * @see javax.imageio.metadata.IIOMetadata#reset()
+	 * 
+	 * @see #isReadOnly()
+	 */
 	public void reset() {
 		throw new UnsupportedOperationException(
 				"reset operation is not allowed");
@@ -742,7 +689,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 	// 
 	// ////////////////////////////////////////////////////////////////////////
 	/**
-	 * Return the name of the dataset which is the source for this
+	 * Returns the name of the dataset which is the source for this
 	 * <code>IIOMetadata</code>
 	 */
 	public String getDatasetName() {
@@ -750,7 +697,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 	}
 
 	/**
-	 * Return the description of the dataset which is the source for this
+	 * Returns the description of the dataset which is the source for this
 	 * <code>IIOMetadata</code>
 	 */
 	public String getDescription() {
@@ -758,7 +705,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 	}
 
 	/**
-	 * Return the name of the GDAL driver used to open the source dataset for
+	 * Returns the name of the GDAL driver used to open the source dataset for
 	 * this <code>IIOMetadata</code>
 	 */
 	public String getDriverName() {
@@ -766,7 +713,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 	}
 
 	/**
-	 * Return the description of the GDAL driver used to open the source dataset
+	 * Returns the description of the GDAL driver used to open the source dataset
 	 * for this <code>IIOMetadata</code>
 	 */
 	public String getDriverDescription() {
@@ -779,42 +726,42 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 	// 
 	// ////////////////////////////////////////////////////////////////////////
 	/**
-	 * Return the number of bands of the dataset which is the source for this
+	 * Returns the number of bands of the dataset which is the source for this
 	 * <code>IIOMetadata</code>
 	 */
 	public int getNumBands() {
 		return numBands;
 	}
 
-	/** Return the width of the image */
+	/** Returns the width of the image */
 	public int getWidth() {
 		return width;
 	}
 
-	/** Return the height of the image */
+	/** Returns the height of the image */
 	public int getHeight() {
 		return height;
 	}
 
-	/** Return the tile height of the image */
+	/** Returns the tile height of the image */
 	public int getTileHeight() {
 		return tileHeight;
 	}
 
-	/** Return the tile width of the image */
+	/** Returns the tile width of the image */
 	public int getTileWidth() {
 		return tileWidth;
 	}
 
 	/**
-	 * return the <code>ColorModel</code> for the dataset held by this object.
+	 * Returns the <code>ColorModel</code> for the dataset held by this object.
 	 */
 	public final ColorModel getColorModel() {
 		return colorModel;
 	}
 
 	/**
-	 * return the <code>SampleModel</code> for the dataset held by this
+	 * Returns the <code>SampleModel</code> for the dataset held by this
 	 * object.
 	 */
 	public final SampleModel getSampleModel() {
@@ -826,27 +773,27 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 	// Referencing
 	// 
 	// ////////////////////////////////////////////////////////////////////////
-	/** Return the projection */
+	/** Returns the projection */
 	public String getProjection() {
 		return projection;
 	}
 
-	/** Return the grid to world transformation of the image */
+	/** Returns the grid to world transformation of the image */
 	public double[] getGeoTransformation() {
 		return (double[]) geoTransformation.clone();
 	}
 
-	/** Return the number of Ground Control Points */
+	/** Returns the number of Ground Control Points */
 	public int getGcpNumber() {
 		return gcpNumber;
 	}
 
-	/** return the Ground Control Point's projection */
+	/** Returns the Ground Control Point's projection */
 	public String getGcpProjection() {
 		return gcpProjection;
 	}
 
-	/** return the Ground Control Points */
+	/** Returns the Ground Control Points */
 	public synchronized final List getGcps() {
 		// TODO: actually the Java bindings do not work properly when getting
 		// GCPs (the JVM crash). Uncomment the following code when the method
@@ -1111,7 +1058,7 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata implements
 	}
 
 	/**
-	 * return a copy of this <code>GDALCommonIIOImageMetadata</code> as a
+	 * Returns a copy of this <code>GDALCommonIIOImageMetadata</code> as a
 	 * <code>GDALWritableCommonIIOImageMetadata</code> instance, with setting
 	 * capabilities
 	 */

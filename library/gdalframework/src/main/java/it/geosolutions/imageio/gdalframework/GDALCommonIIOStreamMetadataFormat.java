@@ -21,19 +21,23 @@ import javax.imageio.metadata.IIOMetadataFormat;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
 
 /**
+ * Class defining the structure of metadata documents describing common stream
+ * metadata returned from <code>getAsTree</code> method.
+ * 
  * @author Daniele Romagnoli, GeoSolutions
  * @author Simone Giannecchini, GeoSolutions
  */
 public class GDALCommonIIOStreamMetadataFormat extends IIOMetadataFormatImpl {
 
+	/**
+	 * A single instance of the <code>GDALCommonIIOStreamMetadataFormat</code> 
+	 * class.
+	 */
 	private static GDALCommonIIOStreamMetadataFormat theInstance = null;
 
-	public boolean canNodeAppear(String elementName,
-			ImageTypeSpecifier imageType) {
-		// TODO implement me
-		return false;
-	}
-
+	/**
+	 * Constructs a <code>GDALCommonIIOStreamMetadataFormat</code> instance.
+	 */
 	private GDALCommonIIOStreamMetadataFormat() {
 		super(GDALCommonIIOStreamMetadata.nativeMetadataFormatName,
 				CHILD_POLICY_SOME);
@@ -56,11 +60,28 @@ public class GDALCommonIIOStreamMetadataFormat extends IIOMetadataFormatImpl {
 		addAttribute("DataSet", "name", DATATYPE_STRING, true, null);
 	}
 
+	/**
+	 * Returns an instance of the <code>GDALCommonIIOStreamMetadataFormat</code>
+	 * class. We build only a single instance and we cache it for future uses.
+	 * 
+	 * @return an instance of the <code>GDALCommonIIOStreamMetadataFormat</code>
+	 *         class.
+	 */
 	public static synchronized IIOMetadataFormat getInstance() {
 		if (theInstance == null) {
 			theInstance = new GDALCommonIIOStreamMetadataFormat();
 		}
 		return theInstance;
+	}
+	
+	/**
+	 * @see javax.imageio.metadata.IIOMetadataFormatImpl#canNodeAppear(java.lang.String,
+	 *      javax.imageio.ImageTypeSpecifier)
+	 */
+	public boolean canNodeAppear(String elementName,
+			ImageTypeSpecifier imageType) {
+		// TODO implement me
+		return true;
 	}
 
 }

@@ -34,6 +34,14 @@ public class JpegGDALImageReader extends GDALImageReader {
 	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.plugins.jpeg");
 
+	/**
+	 * Constructs a
+	 * <code>JpegGDALImageReader<code> using a {@link JpegGDALImageReaderSpi}.
+	 * 
+	 * @param originatingProvider
+	 *            The {@link JpegGDALImageReaderSpi} to use for building this
+	 *            <code>JpegGDALImageReader<code>.
+	 */
 	public JpegGDALImageReader(JpegGDALImageReaderSpi originatingProvider) {
 		super(originatingProvider, 0);
 		if (LOGGER.isLoggable(Level.FINE))

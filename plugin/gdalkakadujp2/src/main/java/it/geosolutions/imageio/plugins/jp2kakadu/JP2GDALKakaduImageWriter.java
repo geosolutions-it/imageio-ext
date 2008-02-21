@@ -25,6 +25,15 @@ import javax.imageio.ImageWriteParam;
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class JP2GDALKakaduImageWriter extends GDALImageWriter {
+
+	/**
+	 * Constructs a <code>JP2GDALKakaduImageWriter<code> using a 
+	 * {@link JP2GDALKakaduImageWriterSpi}.
+	 * 
+	 * @param originatingProvider
+	 *            The {@link JP2GDALKakaduImageWriterSpi} to use for building 
+	 *            this <code>JP2GDALKakaduImageWriter<code>.
+	 */
 	public JP2GDALKakaduImageWriter(
 			JP2GDALKakaduImageWriterSpi originatingProvider) {
 		super(originatingProvider);
