@@ -371,6 +371,9 @@ public abstract class GDALImageReader extends ImageReader {
 		int srcRegionWidth = srcRegion.width;
 		int srcRegionHeight = srcRegion.height;
 
+		if (LOGGER.isLoggable(Level.FINE))
+			LOGGER.fine("SourceRegion = " + srcRegion.toString());
+		
 		// Band set-up
 		Band pBand = null;
 
@@ -932,7 +935,10 @@ public abstract class GDALImageReader extends ImageReader {
 		Rectangle srcRegion = new Rectangle(0, 0, 0, 0);
 		Rectangle destRegion = new Rectangle(0, 0, 0, 0);
 		computeRegions(imageReadParam, width, height, bi, srcRegion, destRegion);
-
+		if (LOGGER.isLoggable(Level.FINE)){
+			LOGGER.fine("Source Region = " + srcRegion.toString());
+			LOGGER.fine("Destination Region = " + destRegion.toString());
+		}
 		// ////////////////////////////////////////////////////////////////////
 		// 
 		// Getting data
@@ -1247,11 +1253,25 @@ public abstract class GDALImageReader extends ImageReader {
 		return item.getMaximum(band);
 	}
 
+	/**
+	 * Returns an <code>IIOMetadata</code> object representing the
+     * metadata associated with the input source as a whole.
+     *  
+	 * @return an <code>IIOMetadata</code> object.
+	 */
 	public IIOMetadata getStreamMetadata() throws IOException {
 		initialize();
 		return new GDALCommonIIOStreamMetadata(datasetNames);
 	}
 
+	/**
+	 * Returns an <code>IIOMetadata</code> object containing metadata
+     * associated with the given image, specified by the <code>imageIndex</code>
+     * parameter
+     * 
+     * @param imageIndex the index of the required image
+     * @return an <code>IIOMetadata</code> object
+	 */
 	public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
 		return getDatasetMetadata(imageIndex);
 	}
