@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package it.geosolutions.imageio.plugins.envisat;
+package it.geosolutions.imageio.plugins.erdasimg;
 
 import java.util.logging.Logger;
 
@@ -26,12 +26,12 @@ import junit.framework.TestCase;
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
-public class AbstractEnvisatTestCase extends TestCase {
+public class AbstractErdasImgTestCase extends TestCase {
 
 	private static final Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.plugins.envisat");
+			.getLogger("it.geosolutions.imageio.plugins.erdasimg");
 
-	public AbstractEnvisatTestCase(String name) {
+	public AbstractErdasImgTestCase(String name) {
 		super(name);
 	}
 
