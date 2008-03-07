@@ -554,7 +554,7 @@ import com.sun.media.jai.util.PropertyGeneratorImpl;
  */
 public class ImageReadDescriptorMT extends OperationDescriptorImpl {
     /**
-     * Register the "SampleTranscode" image operation to the operation registry of
+     * Register the "ImageReadMT" image operation to the operation registry of
      * the specified JAI instance. This method is invoked by the static initializer
      * of {@link GridSampleDimension}.
      */
@@ -596,9 +596,7 @@ public class ImageReadDescriptorMT extends OperationDescriptorImpl {
     public static final String PROPERTY_NAME_RENDERABLE_INPUT =
         "JAI.RenderableInput";
 
-    
-
-    /**
+     /**
      * The name of the operation.
      */
     private static final String OPERATION_NAME = "ImageReadMT";

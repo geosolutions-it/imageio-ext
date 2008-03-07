@@ -57,7 +57,8 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
 	 */
 	public void testRead() throws FileNotFoundException, IOException {
 		final ParameterBlockJAI pbjImageRead;
-		final File file = TestData.file(this, fileName);
+//		final File file = TestData.file(this, fileName);
+		final File file = new File("C:/work/data/jp2/simo.jp2");
 		JP2GDALKakaduImageReaderSpi
 				.setKakaduInputErrorManagement(KakaduErrorManagement.FAST);
 		pbjImageRead = new ParameterBlockJAI("ImageRead");
@@ -191,8 +192,8 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 
-		// Test read exploiting common JAI operations (Crop-Translate-Rotate)
-		suite.addTest(new JP2KReadTest("testJaiOperations"));
+//		// Test read exploiting common JAI operations (Crop-Translate-Rotate)
+//		suite.addTest(new JP2KReadTest("testJaiOperations"));
 
 		// Test reading of a simple image
 		suite.addTest(new JP2KReadTest("testRead"));
