@@ -13,9 +13,9 @@
   <name>Erdas Imagine Plugin that internally uses GDAL</name>
    <scm>
      <connection>
-       scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/gdalerdasimagine
+       scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/gdalerdasimg
      </connection>
-     <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/gdalerdasimagine</url>
+     <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/gdalerdasimg</url>
   </scm>
   <!-- ===================================================================== -->
   <!--     Dependencies management.                                          -->
