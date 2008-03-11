@@ -101,6 +101,7 @@
        <modules>
         <module>gdalenvisat</module>
         <module>gdalerdasimg</module>
+	<module>gdalnitf</module>
         <module>gdalehdr</module>
         <module>gdaljpeg</module>
         <module>gdalarcgrid</module>
@@ -116,6 +117,7 @@
         <module>gdalhdf4</module>
         <module>gdalenvisat</module>
         <module>gdalerdasimg</module>
+        <module>gdalnitf</module>
         <module>gdalehdr</module>
         <module>gdalmrsid</module>
         <module>gdalecw</module>
@@ -135,6 +137,7 @@
         <module>gdalhdf4</module>
         <module>gdalenvisat</module>
         <module>gdalerdasimg</module>
+	<module>gdalnitf</module>
         <module>gdalehdr</module>
         <module>gdalmrsid</module>
         <module>gdalecw</module>
