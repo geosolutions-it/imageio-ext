@@ -36,11 +36,12 @@ import javax.imageio.ImageReader;
  */
 public class NITFImageReaderSpi extends GDALImageReaderSpi {
 
-	private static final Logger logger = Logger
+	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.plugins.nitf");
 
-	//TODO: check the suffixes list and mimetypes
-	static final String[] suffixes = { "on1", "on2", "on5" };
+	//suffixes are unspecified due to the wide number of file extensions (>100)
+	//related to NITF files.
+	static final String[] suffixes = { "" };
 
 	static final String[] formatNames = { "NITF" };
 
@@ -99,8 +100,8 @@ public class NITFImageReaderSpi extends GDALImageReaderSpi {
 				extraImageMetadataFormatNames,
 				extraImageMetadataFormatClassNames,
 				Collections.singletonList("NITF"));
-		if (logger.isLoggable(Level.FINE))
-			logger.fine("NITFImageReaderSpi Constructor");
+		if (LOGGER.isLoggable(Level.FINE))
+			LOGGER.fine("NITFImageReaderSpi Constructor");
 
 	}
 

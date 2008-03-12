@@ -47,7 +47,7 @@ public class JP2GDALKakaduImageReaderSpi extends GDALImageReaderSpi {
 		public static final int FAST = 2;
 	}
 
-	private static final Logger logger = Logger
+	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.plugins.jp2kakadu");
 
 	static final String[] suffixes = { "JP2", "J2C" };
@@ -110,8 +110,8 @@ public class JP2GDALKakaduImageReaderSpi extends GDALImageReaderSpi {
 				extraImageMetadataFormatClassNames,
 				Collections.singletonList("JP2KAK"));
 
-		if (logger.isLoggable(Level.FINE))
-			logger.fine("JP2GDALKakaduImageReaderSpi Constructor");
+		if (LOGGER.isLoggable(Level.FINE))
+			LOGGER.fine("JP2GDALKakaduImageReaderSpi Constructor");
 
 	}
 

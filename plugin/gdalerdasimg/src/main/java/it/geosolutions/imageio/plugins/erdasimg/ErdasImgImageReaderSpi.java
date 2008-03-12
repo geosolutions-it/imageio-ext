@@ -36,7 +36,7 @@ import javax.imageio.ImageReader;
  */
 public class ErdasImgImageReaderSpi extends GDALImageReaderSpi {
 
-	private static final Logger logger = Logger
+	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.plugins.erdasimg");
 
 	static final String[] suffixes = { "img" };
@@ -98,8 +98,8 @@ public class ErdasImgImageReaderSpi extends GDALImageReaderSpi {
 				extraImageMetadataFormatNames,
 				extraImageMetadataFormatClassNames,
 				Collections.singletonList("HFA"));
-		if (logger.isLoggable(Level.FINE))
-			logger.fine("ErdasImgImageReaderSpi Constructor");
+		if (LOGGER.isLoggable(Level.FINE))
+			LOGGER.fine("ErdasImgImageReaderSpi Constructor");
 
 	}
 

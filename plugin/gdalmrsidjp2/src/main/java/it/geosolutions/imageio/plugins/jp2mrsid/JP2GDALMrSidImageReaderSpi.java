@@ -36,7 +36,7 @@ import javax.imageio.ImageReader;
  */
 public class JP2GDALMrSidImageReaderSpi extends GDALImageReaderSpi {
 
-	private static final Logger logger = Logger
+	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.plugins.jp2mrsid");
 
 	static final String[] suffixes = { "jp2", "jp2" };
@@ -98,8 +98,8 @@ public class JP2GDALMrSidImageReaderSpi extends GDALImageReaderSpi {
 				extraImageMetadataFormatClassNames, Collections
 						.singletonList("JP2MrSID"));
 
-		if (logger.isLoggable(Level.FINE))
-			logger.fine("JP2GDALMrSidImageReaderSpi Constructor");
+		if (LOGGER.isLoggable(Level.FINE))
+			LOGGER.fine("JP2GDALMrSidImageReaderSpi Constructor");
 	}
 
 	/**

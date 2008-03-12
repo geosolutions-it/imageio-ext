@@ -36,7 +36,7 @@ import javax.imageio.ImageReader;
  */
 public class JP2GDALEcwImageReaderSpi extends GDALImageReaderSpi {
 
-	private static final Logger logger = Logger
+	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.plugins.jp2ecw");
 
 	static final String[] suffixes = { "jp2", "jp2" };
@@ -98,8 +98,8 @@ public class JP2GDALEcwImageReaderSpi extends GDALImageReaderSpi {
 				extraImageMetadataFormatClassNames, Collections
 						.singletonList("JP2ECW"));
 
-		if (logger.isLoggable(Level.FINE))
-			logger.fine("JP2GDALEcwImageReaderSpi Constructor");
+		if (LOGGER.isLoggable(Level.FINE))
+			LOGGER.fine("JP2GDALEcwImageReaderSpi Constructor");
 	}
 
 	/**

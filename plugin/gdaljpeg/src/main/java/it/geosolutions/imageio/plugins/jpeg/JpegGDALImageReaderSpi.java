@@ -36,7 +36,7 @@ import javax.imageio.ImageReader;
  */
 public class JpegGDALImageReaderSpi extends GDALImageReaderSpi {
 
-	private static final Logger logger = Logger
+	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.plugins.jpeg");
 
 	static final String[] suffixes = { "jpg", "jpeg" };
@@ -101,8 +101,8 @@ public class JpegGDALImageReaderSpi extends GDALImageReaderSpi {
 				extraImageMetadataFormatClassNames,
 				Collections.singletonList("JPEG"));
 
-		if (logger.isLoggable(Level.FINE))
-			logger.fine("JpegGDALImageReaderSpi Constructor");
+		if (LOGGER.isLoggable(Level.FINE))
+			LOGGER.fine("JpegGDALImageReaderSpi Constructor");
 
 	}
 

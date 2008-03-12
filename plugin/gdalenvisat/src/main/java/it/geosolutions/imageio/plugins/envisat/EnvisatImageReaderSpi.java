@@ -36,7 +36,7 @@ import javax.imageio.ImageReader;
  */
 public class EnvisatImageReaderSpi extends GDALImageReaderSpi {
 
-	private static final Logger logger = Logger
+	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.plugins.envisat");
 
 	static final String[] suffixes = { "n1" };
@@ -98,8 +98,8 @@ public class EnvisatImageReaderSpi extends GDALImageReaderSpi {
 				extraImageMetadataFormatNames,
 				extraImageMetadataFormatClassNames,
 				Collections.singletonList("ESAT"));
-		if (logger.isLoggable(Level.FINE))
-			logger.fine("EnvisatImageReaderSpi Constructor");
+		if (LOGGER.isLoggable(Level.FINE))
+			LOGGER.fine("EnvisatImageReaderSpi Constructor");
 
 	}
 

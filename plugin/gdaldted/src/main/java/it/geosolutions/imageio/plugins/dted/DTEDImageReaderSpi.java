@@ -36,7 +36,7 @@ import javax.imageio.ImageReader;
  */
 public class DTEDImageReaderSpi extends GDALImageReaderSpi {
 
-	private static final Logger logger = Logger
+	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.plugins.dted");
 
 	static final String[] suffixes = { "n1" };
@@ -98,8 +98,8 @@ public class DTEDImageReaderSpi extends GDALImageReaderSpi {
 				extraImageMetadataFormatNames,
 				extraImageMetadataFormatClassNames,
 				Collections.singletonList("DTED"));
-		if (logger.isLoggable(Level.FINE))
-			logger.fine("EnvisatImageReaderSpi Constructor");
+		if (LOGGER.isLoggable(Level.FINE))
+			LOGGER.fine("EnvisatImageReaderSpi Constructor");
 	}
 
 	/**

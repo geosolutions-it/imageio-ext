@@ -37,7 +37,7 @@ import javax.imageio.ImageReader;
  */
 public class ArcGridImageReaderSpi extends GDALImageReaderSpi {
 
-	private static final Logger logger = Logger
+	private static final Logger LOGGER = Logger
 			.getLogger(ArcGridImageReaderSpi.class.toString());
 
 	static final String[] suffixes = { "asc" };
@@ -100,8 +100,8 @@ public class ArcGridImageReaderSpi extends GDALImageReaderSpi {
 				extraImageMetadataFormatClassNames,
 				Collections.singletonList("AAIGrid"));
 
-		if (logger.isLoggable(Level.FINE))
-			logger.fine("ArcGridImageReaderSpi Constructor");
+		if (LOGGER.isLoggable(Level.FINE))
+			LOGGER.fine("ArcGridImageReaderSpi Constructor");
 
 	}
 
