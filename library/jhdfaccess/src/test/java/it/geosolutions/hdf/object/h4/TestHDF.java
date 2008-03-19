@@ -50,7 +50,7 @@ import com.sun.media.jai.codecimpl.util.RasterFactory;
  * http://eosweb.larc.nasa.gov/PRODOCS/misr/level3/download_data.html</a><BR>
  * (Year 2005: Winter - Land/Surface Data)<BR>
  * 
- * -------------------------------------------------------------------<BR>
+ * ------------------------------------------------------------------------<BR>
  * 2) MODPM2007027121858.L3_000_EAST_MED.hdf<BR>
  * Available at:<BR>
  * <a
@@ -58,7 +58,7 @@ import com.sun.media.jai.codecimpl.util.RasterFactory;
  * ftp://ftp.geo-solutions.it/incoming/MODPM2007027121858.L3_000_EAST_MED.hdf</a><BR>
  * (as anonymous ftp access, using active mode)<BR>
  * 
- * -------------------------------------------------------------------<BR>
+ * ------------------------------------------------------------------------<BR>
  * 3) TOVS_BROWSE_MONTHLY_AM_B861001.E861031_NF.HDF<BR>
  * 4) TOVS_5DAYS_AM_B870511.E870515_NG.HDF<BR>
  * 5) TOVS_BROWSE_DAILY_AM_861031_NF.HDF<BR>
@@ -1083,7 +1083,7 @@ public class TestHDF extends TestCase {
 			sb
 					.append("\nANNOTATION INFO\n--------------------------\n")
 					.append("annotation Type = ")
-					.append(ann.getAnnotationTypeString(ann.getType()))
+					.append(H4Annotation.getAnnotationTypeString(ann.getType()))
 					.append("\nID = ")
 					.append(ann.getIdentifier())
 					.append("\nTAG = ")
