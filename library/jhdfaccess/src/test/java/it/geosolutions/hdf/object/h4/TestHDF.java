@@ -559,13 +559,7 @@ public class TestHDF extends TestCase {
 	 */
 	public void testVisualizePalettedGRImage() throws HDFException, IOException {
 		StringBuffer outSb = new StringBuffer();
-		File file = null;
-		try {
-			file = TestData.file(this, "TOVS_BROWSE_DAILY_AM_861031_NF.HDF");
-		} catch (FileNotFoundException fnfe) {
-			warningMessage("TOVS_BROWSE_DAILY_AM_861031_NF.HDF");
-			return;
-		}
+		final File file = TestData.file(this, "palette.hdf4");
 
 		final H4File myFile;
 		H4GRImage grImage;
@@ -600,7 +594,7 @@ public class TestHDF extends TestCase {
 				if (paletteData != null) {
 					byte[][] myPalette = new byte[3][numEntries];
 					if (paletteInterlace == HDFConstants.MFGR_INTERLACE_PIXEL) {
-						// color conponents are arranged in RGB, RGB, RGB, ...
+						// color components are arranged in RGB, RGB, RGB, ...
 						for (int i = 0; i < numEntries; i++) {
 							myPalette[0][i] = paletteData[i * 3];
 							myPalette[1][i] = paletteData[i * 3 + 1];
@@ -702,8 +696,9 @@ public class TestHDF extends TestCase {
 			// Visualize image
 			wr = Raster.createWritableRaster(sm, dataBuffer, null);
 			BufferedImage bimage = new BufferedImage(cm, wr, false, null);
+			final String name = grImage.getName();
 			if (TestData.isInteractiveTest())
-				visualize("", bimage, im);
+				visualize(name, bimage, im);
 		}
 		LOGGER.info("\n" + outSb.toString());
 		myFile.close();
