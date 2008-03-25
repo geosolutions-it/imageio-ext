@@ -19,6 +19,8 @@ package it.geosolutions.imageio.imageioimpl.imagereadmt;
 import javax.imageio.ImageReadParam;
 
 /**
+ * A class to be used to allows {@link ImageReadParam}s to be cloned.
+ * 
  * @author Simone Giannecchini, GeoSolutions.
  */
 public abstract class CloneableImageReadParam extends ImageReadParam implements
