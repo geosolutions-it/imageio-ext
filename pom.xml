@@ -53,11 +53,11 @@
   <!-- ======================================================== -->
   
   <profiles>
-    <profile>
-     <id>deployrefraction</id>
   <!--..................................-->
   <!--      Refractions Repository      -->
   <!--..................................-->   
+   <profile>
+    <id>deployrefraction</id>
      <distributionManagement>
       <repository>
        <uniqueVersion>false</uniqueVersion>
@@ -67,12 +67,12 @@
       </repository>
      </distributionManagement>
    </profile>
-   <profile>
-    <id>testrepo</id>
-     <distributionManagement>  
   <!--..................................-->
   <!--      test Repository     -->
   <!--..................................-->
+   <profile>
+    <id>testrepo</id>
+     <distributionManagement>  
       <repository>
        <uniqueVersion>false</uniqueVersion>
        <id>testrepo</id>
@@ -80,16 +80,16 @@
       </repository>
     </distributionManagement>
    </profile>
-   <profile>
-    <id>deploygeosolutions</id>
-     <distributionManagement>  
   <!--..................................-->
   <!--      GeoSolutions Repository     -->
   <!--..................................-->
+   <profile>
+    <id>deploygeosolutions</id>
+     <distributionManagement>  
       <repository>
        <uniqueVersion>false</uniqueVersion>
        <id>geosolutions</id>
-       <url>ftp://ftp.geo-solutions.it</url>
+       <url>ftp://geo-solutions.it</url>
       </repository>
     </distributionManagement>
    </profile>
@@ -107,6 +107,138 @@
       </properties>
     </profile>
   </profiles>
+
+  <reporting>
+    <plugins>
+      <!-- ======================================================= -->
+      <!--     Javadoc generation.                                 -->
+      <!--                                                         -->
+      <!--     Notes:                                              -->
+      <!--       Do NOT enable deep copying of "doc-files"         -->
+      <!--       directories ("-docfilessubdirs" option), because  -->
+      <!--       it has the unwanted side effect to copy .svn      -->
+      <!--       directories as well.                              -->
+      <!--                                                         -->
+      <!--       Do NOT link source code, because it duplicates    -->
+      <!--       jxr-maven-plugin.                                 -->
+      <!--                                                         -->
+      <!--       <sourcepath/> and <subpackages/> elements do not  -->
+      <!--       seem to work with aggregated javadoc.             -->
+      <!--                                                         -->
+      <!-- ======================================================= -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        
+        <configuration>
+            <!-- Necessary to enable javadoc to handle J2SE 1.4 features. -->
+          <source>1.4</source>
+            <!-- Specifies whether or not the version text is included.-->
+          <version>false</version>
+            <!-- Omit qualifying package name before class names in output.-->
+          <noqualifier>all</noqualifier>
+            <!-- Shuts off non-error and non-warning messages.-->
+          <quiet>true</quiet>
+            <!-- The maximum Java heap size to be used to run javadoc. -->
+          <maxmemory>512M</maxmemory>
+            <!-- Specifies the encoding name of the source files.-->
+          <encoding>ISO-8859-1</encoding>
+            <!-- Whether to build an aggregated report at the root.-->
+          <aggregate>true</aggregate>
+          
+          <!-- Set an additional parameter for the command line. -->
+          <additionalparam>-keywords</additionalparam> 
+          <breakiterator>true</breakiterator>
+          <excludePackageNames>
+            org.geotools.resources:org.geotools.maven:com
+          </excludePackageNames>
+
+          <!-- Enables the Javadoc tool to interpret a simple, one-argument -->
+          <!-- custom block tag tagname in doc comments. Note: <placement/> -->
+          <!-- should be a combinaison of the letters Xaoptcmf.             -->
+          <tags>
+            <tag>
+              <name>todo</name>
+              <placement>a</placement>
+              <head>TODO:</head>
+            </tag>
+            <tag>
+              <name>todo:</name>
+              <placement>a</placement>
+              <head>TODO:</head>
+            </tag>
+            <tag>
+              <name>TODO</name>
+              <placement>a</placement>
+              <head>TODO:</head>
+            </tag>
+            <tag>
+              <name>task</name>
+              <placement>tfmc</placement>
+              <head>TODO:</head>
+            </tag>
+            <tag>
+              <name>UML</name>
+              <placement>a</placement>
+              <head>UML:</head>
+            </tag>
+            <tag>
+              <name>uml.property</name>
+              <placement>a</placement>
+              <head>UML property:</head>
+            </tag>
+          </tags>
+
+          <!-- Separates packages on the overview page into the    -->
+          <!-- groups  specified.                                  -->
+          <groups>
+            <group>
+              <title>GDAL Framework</title>
+              <packages>
+                it.geosolutions.imageio.gdalframework
+              </packages>
+            </group>
+            <group>
+              <title>Revisited JHDF Access Libraries</title>
+              <packages>
+                it.geosolutions.hdf.object*
+              </packages>
+            </group>
+            <group>
+              <title>Multithreaded ImageRead</title>
+              <packages>
+               it.geosolutions.imageio.imageioimpl.imagereadmt*
+              </packages>
+            </group>
+            <group>
+              <title>Plugins</title>
+              <packages>
+                it.geosolutions.imageio.plugins*
+              </packages>
+            </group>
+            <group>
+              <title>Custom Streams</title>
+              <packages>it.geosolutions.imageio.stream*:it.geosolutions.io*</packages>
+            </group>
+           </groups>
+        </configuration>
+      </plugin>
+
+
+
+      <!-- ======================================================= -->
+      <!--     Web site generation.                                -->
+      <!-- ======================================================= -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <configuration>
+          <locales>en</locales>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+
 
   <!--..................................-->
   <!--    java.net Maven2 Repository    -->
