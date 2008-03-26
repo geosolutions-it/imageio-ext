@@ -316,16 +316,6 @@
   <!-- ======================================================== -->
   <repositories>
     <repository>
-      <id>ibiblio mirror</id>
-      <name>ibiblio mirror</name>
-      <url>http://mirrors.ibiblio.org/pub/mirrors/maven2</url>
-    </repository>
-    <repository>
-      <id>ibiblio</id>
-      <name>ibiblio</name>
-      <url>http://www.ibiblio.org/maven2/</url>
-    </repository>
-    <repository>
       <id>geosolutions</id>
       <name>GeoSolutions libraries repository</name>
       <url>http://www.geo-solutions.it/maven_repo</url>
