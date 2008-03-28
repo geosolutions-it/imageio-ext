@@ -1,220 +1,324 @@
-<html>
-	<head>
-		<title>Project Home Page</title>
-		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-	</head>
-	<body bgcolor="#ffffff" text="#000000">
-		<p>The Image I/O-Ext is a project which aims to extend the Java Sun's ImageI/O 
-			framework capabilities. It is an extensibile tool of libraries to mainly 
-			support a wide set of data formats
-		</p>
-		<h3><a name="Main_Features"></a>Main Features</h3>
-		<p>The main core module of the project is <b>gdalframework</b>, a&nbsp;framework 
-			leveraging on the Geospatial Data Abstraction Library (<a href="http://www.gdal.org/">GDAL</a>) 
-			via SWIG's generated JAVA bindings to provide support for a reach set of data 
-			formats. Here below there is a brief list of the actually supported formats:</p>
-		<h4><a name="Supported_Formats"></a>Supported Formats</h4>
-		<TABLE BORDER="1" CELLSPACING="1" CELLPADDING="1">
-			<TR>
-				<TD><b>Format Name</b></TD>
-				<TD><b>Data access capabilities*</b></TD>
-			</TR>
-			<TR>
-				<TD>Arc/Info ASCII Grid</TD>
-				<TD>R</TD>
-			</TR>
-			<TR>
-				<TD>DTED</TD>
-				<TD>R</TD>
-			</TR>
-			<TR>
-				<TD>ECW</TD>
-				<TD>R</TD>
-			</TR>
-			<TR>
-				<TD>EHdr</TD>
-				<TD>R</TD>
-			</TR>
-			<TR>
-				<TD>Envisat</TD>
-				<TD>R</TD>
-			</TR>
-			<TR>
-				<TD>Erdas Imagine HFA</TD>
-				<TD>R</TD>
-			</TR>
-			<TR>
-				<TD>NITF</TD>
-				<TD>R</TD>
-			</TR>
-			<TR>
-				<TD>GeoTiff</TD>
-				<TD>R/W</TD>
-			</TR>
-			<TR>
-				<TD>HDF4</TD>
-				<TD>R</TD>
-			</TR>
-			<TR>
-				<TD>JPEG</TD>
-				<TD>R</TD>
-			</TR>
-			<TR>
-				<TD>JPEG 2000 (Kakadu)</TD>
-				<TD>R/W</TD>
-			</TR>
-			<TR>
-				<TD>JPEG 2000 (MrSID)</TD>
-				<TD>R</TD>
-			</TR>
-			<TR>
-				<TD>JPEG 2000 (ECW)</TD>
-				<TD>R</TD>
-			</TR>
-			<TR>
-				<TD>MrSID</TD>
-				<TD>R</TD>
-			</TR>
-		</TABLE>
-		<P>Beside of this, there are some additional main modules:</P>
-		<ul>
-			<LI>
-				<B>imagereadmt</B>
-			providing a specific ImageRead operation implementation with support for 
-			multithreading.
-			<LI>
-				<B>customstreams</B>
-			is another main module containing a wide set of extended input/output streams
-			<LI>
-				<B>jhdfaccess</B> is a revisited version of the ncsa JHDF libraries which 
-				provide access to HDF format. The actuall state of our access library provides 
-				read access to the HDF4 format.</LI>
-		</ul>
-		<p>Finally, Image I/O-Ext provides a set of additional plugins (which dont rely on 
-			GDAL):</p>
-		<br>
-		<table BORDER="1" CELLSPACING="1" CELLPADDING="1">
-			<TR>
-				<TD><b>Format Name</b></TD>
-				<TD><b>Data access capabilities*</b></TD>
-				<TD><b>Additional Notes</b></TD>
-			</TR>
-			<TR>
-				<TD>Arc/Info ASCII Grid</TD>
-				<TD>R/W</TD>
-				<TD></TD>
-			</TR>
-			<TR>
-				<TD>JPEG</TD>
-				<TD>R</TD>
-				<TD>Built on the JMagick library</TD>
-			</TR>
-			<TR>
-				<TD>JPEG 2000</TD>
-				<TD>R</TD>
-				<TD>Built on the Kakadu library. This plugin version leverages on<br>
-					the powerful multithreading capabilities provided by<br>
-					the <B>imagereadmt</B> module.</TD>
-			</TR>
-		</table>
-		<p>Data access capabilities*: R=Readonly capabilities; R/W=Read and write 
-			capabilities</p>
-		<h3><a name="Documentation"></a>Documentation</h3>
-		<p>The actual documentation contains a step-to-step guide in order to set-up the 
-			project as well as all the tools/software needed for this purpose. This guide 
-			is available for download in 2 formats:
-		</p>
-		<ul>
-			<li>
-				<a href="https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/documentation/ImageioExt-SetupGuide.odt">
-					Image I/O-Ext Setup Guide V. 1.0</a>
-			(OpenOffice document .odt)
-			<li>
-				<a href="https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/documentation/ImageioExt-SetupGuide.pdf">
-					Image I/O-Ext Setup Guide V. 1.0</a> (PDF)</li>
-		</ul>
-		<P>A preliminar User-Guide is available at:</P>
-		<ul>
-			<LI>
-				<A href="https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/documentation/ImageioExt-UserGuide.odt">
-					Image I/O-Ext&nbsp;User Guide V. 1.0</A>
-			(OpenOffice document .odt)
-			<LI>
-				<A href="https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/documentation/ImageioExt-UserGuide.pdf">
-					Image I/O-Ext&nbsp;User Guide V. 1.0</A> (PDF)</LI>
-		</ul>
-		<P>The User-Guide is actually a "WORK in PROGRESS". (It may contains some errors as 
-			well as empty chapters...)</P>
-		<P>The API javadoc as well as a tutorial and some use examples will be available 
-			soon with the first release of the project.
-		</P>
-		<P>Finally, a brief document on the JHDF revisited libraries has been written. It 
-			is available at: <a href="https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/library/jhdfaccess/doc/HDFAccessDoc.pdf">
-				HDF Access revisited Framework Report</a>
-		</P>
-		<P><STRONG><EM>NOTE</EM>:</STRONG> In case you haven't a java.net account, you can 
-			use the "guest" user ID without password to access these documents.</P>
-		<h3><a name="Downloads"></a>Downloads</h3>
-		<p>
-			Image I/O-Ext Project source code is available for download via <a href="https://imageio-ext.dev.java.net/source/browse/imageio-ext/">
-				subversion</a>.
-		</p>
-		<h3><a name="Licenses"></a>Licenses</h3>
-		<p>The source code for the Image I/O-Ext Project is licensed under the terms of the 
-			GNU Lesser General Public License as published by the Free Software Foundation, 
-			version 2.1 of the License.
-		</p>
-		<h3><a name="Reporting_Issues"></a>Reporting Issues<br>
-		</h3>
-		<p>Please use the
-			<span style="FONT-STYLE: italic">Issue Tracker</span>
-			to track issues (bugs, feature requests, etc.) for Image I/O-Ext project.
-			<br>
-		</p>
-		<p>Before filing a new issue, please check to see if your issue has already been 
-			reported: search the "summary" fields of open bugs in the Issue Tracker system. 
-			If you're new to Issue tracking, you might want to take a moment to browse 
-			these introductory docs:</p>
-		<ul>
-			<li>
-				<a href="https://javadesktop.dev.java.net/reportbug.html">A Step by Step Guide</a>
-			to filing a useful bug report
-			<li>
-				<a href="https://www.dev.java.net/nonav/docs/ddIssues_EnterModify.html#entryfields">
-					A Quick Introduction to Issue Tracking</a></li>
-		</ul>
-		<h3><a name="Feedback_and_Discussion"></a>Feedback and Discussion</h3>
-		<p>Five main Image I/O-Ext mailing lists are available in this project:&nbsp;<span style="COLOR: blue">dev 'at'
-imageio-ext.dev.java.net</span>,
-			<span style="COLOR: blue">announce 'at' imageio-ext.dev.java.net</span>,
-			<span style="COLOR: blue">issues 'at' imageio-ext.dev.java.net</span>,
-			<span style="COLOR: blue">commits 'at' imageio-ext.dev.java.net</span>, and
-			<span style="COLOR: blue">users 'at' imageio-ext.dev.java.net</span>
-			(replace 'at' with @). <a href="https://imageio-ext.dev.java.net/servlets/ProjectMailingListList">
-				Click here to subscribe</a> to any of these lists.
-			<blockquote>
-			The
-			<span style="FONT-STYLE: italic">dev</span>
-			list is a list for developers to discuss project development issues/artifacts 
-			and requirements.<br>
-			The
-			<span style="FONT-STYLE: italic">announce</span>
-			list is a low-volume moderated mailing list for announcing Image I/O-Ext news 
-			and information.<br>
-			The
-			<span style="FONT-STYLE: italic">issues</span>
-			list is for automated issues tracking and the
-			<span style="FONT-STYLE: italic">commits</span>
-			list is for automated subversion commits messages.<br>
-			Lastly, the
-			<span style="FONT-STYLE: italic">users</span>
-			is a general discussion list for the projects end users.
-			</blockquote></P>
-		<P></P>
-		<h3><a name="Project_History"></a>Project History<br>
-		</h3>
-		<p>This work has been started with the Google Summer of Code in 2006 by Daniele 
-			Romagnoli mentored by Simone Giannecchini (GeoSolutions).
-		</p>
-	</body>
-</html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1252">
+	<TITLE>Project Home Page</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.3  (Win32)">
+	<META NAME="CREATED" CONTENT="0;0">
+	<META NAME="CHANGEDBY" CONTENT="Simone Giannecchini">
+	<META NAME="CHANGED" CONTENT="20080328;18024597">
+	<STYLE TYPE="text/css">
+	<!--
+		@page { size: 21cm 29.7cm }
+		P { color: #000000 }
+		TD P { color: #000000 }
+		H3 { color: #000000 }
+		H3.western { font-family: "Albany", sans-serif }
+		H3.cjk { font-family: "HG Mincho Light J" }
+		H3.ctl { font-family: "Arial Unicode MS" }
+		H4 { color: #000000 }
+		H4.western { font-family: "Albany", sans-serif; font-size: 11pt; font-style: italic }
+		H4.cjk { font-family: "HG Mincho Light J"; font-size: 11pt; font-style: italic }
+		H4.ctl { font-family: "Arial Unicode MS"; font-size: 11pt; font-style: italic }
+		BLOCKQUOTE { color: #000000 }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="en-GB" TEXT="#000000" BGCOLOR="#ffffff" DIR="LTR">
+<P ALIGN=JUSTIFY>The Image I/O-Ext project extends the Java Sun's
+ImageI/O framework capabilities by providing access to new raster
+formats directly or through the integration of other frameworks and
+libraries, like GDAL, JMAgick (experimental) and Kakadu
+(experimental).</P>
+<H3 CLASS="western"><A NAME="Main_Features"></A>Main Features</H3>
+<P ALIGN=JUSTIFY>The core module of the project is the <B>gdalframework
+</B><SPAN STYLE="font-weight: medium">module which provide a bridge
+between the Java imaeio framework and t</SPAN>he Geospatial Data
+Abstraction Library (<A HREF="http://www.gdal.org/">GDAL</A>) via
+SWIG's generated Java bindings to provide support for a reach set of
+data formats. Here below a brief list of the current supported
+formats si provided. Note that for each of these formats an
+imageio-ext plugin is provided which integrates into the the standa
+SUN imageio SPI mechanism.</P>
+<H4 CLASS="western"><A NAME="Supported_Formats"></A><FONT FACE="Times New Roman, serif">GDAL
+Supported Formats</FONT></H4>
+<TABLE BORDER=1 CELLPADDING=2 CELLSPACING=1>
+	<TR>
+		<TD>
+			<P><B>Format Name</B></P>
+		</TD>
+		<TD>
+			<P><B>Access capabilities*</B></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>Arc/Info ASCII Grid</P>
+		</TD>
+		<TD>
+			<P>R</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>DTED</P>
+		</TD>
+		<TD>
+			<P>R</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>ECW</P>
+		</TD>
+		<TD>
+			<P>R</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>EHdr</P>
+		</TD>
+		<TD>
+			<P>R</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>Envisat</P>
+		</TD>
+		<TD>
+			<P>R</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>Erdas Imagine HFA</P>
+		</TD>
+		<TD>
+			<P>R</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>NITF</P>
+		</TD>
+		<TD>
+			<P>R</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>GeoTiff</P>
+		</TD>
+		<TD>
+			<P>R/W</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>HDF4</P>
+		</TD>
+		<TD>
+			<P>R</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>JPEG</P>
+		</TD>
+		<TD>
+			<P>R</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>JPEG 2000 (Kakadu)</P>
+		</TD>
+		<TD>
+			<P>R/W</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>JPEG 2000 (MrSID)</P>
+		</TD>
+		<TD>
+			<P>R</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>JPEG 2000 (ECW)</P>
+		</TD>
+		<TD>
+			<P>R</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>MrSID</P>
+		</TD>
+		<TD>
+			<P>R</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><BR><BR>
+</P>
+<H4 CLASS="western">Utility modules</H4>
+<P>The Image I/O-Ext project provides some additional utility modules
+as desribe here below.</P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0cm"><B>imagereadmt</B> provides a
+	specific ImageRead operation implementation with support for
+	multithreading. 
+	</P>
+	<LI><P STYLE="margin-bottom: 0cm"><B>customstreams</B> contains a
+	wide set of extended input/output streams 
+	</P>
+	<LI><P><B>jhdfaccess</B> revisited version of the ncsa JHDF
+	libraries which provide access to HDF format. It currently provides
+	onlt read access to the HDF4 format but write access capabilities
+	are under development. 
+	</P>
+</UL>
+<P><BR><BR>
+</P>
+<H4 CLASS="western">Additional Supported Modules</H4>
+<P>Image I/O-Ext provides a set of additional plugins (which dont
+rely on GDAL):</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<TABLE BORDER=1 CELLPADDING=2 CELLSPACING=1>
+	<TR>
+		<TD>
+			<P><B>Format Name</B></P>
+		</TD>
+		<TD>
+			<P><B>Data access capabilities*</B></P>
+		</TD>
+		<TD>
+			<P><B>Additional Notes</B></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>Arc/Info ASCII Grid</P>
+		</TD>
+		<TD>
+			<P>R/W</P>
+		</TD>
+		<TD></TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>JPEG</P>
+		</TD>
+		<TD>
+			<P>R</P>
+		</TD>
+		<TD>
+			<P>Built on the JMagick library</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P>JPEG 2000</P>
+		</TD>
+		<TD>
+			<P>R</P>
+		</TD>
+		<TD>
+			<P>Built on the Kakadu library. This plugin version leverages
+			on<BR>the powerful multithreading capabilities provided by<BR>the
+			<B>imagereadmt</B> module.</P>
+		</TD>
+	</TR>
+</TABLE>
+<P>Data access capabilities*: R=Readonly capabilities; R/W=Read and
+write capabilities</P>
+<H3 CLASS="western"><A NAME="Documentation"></A>Documentation</H3>
+<P>The documentation contains a step-to-step guide in order to set-up
+the project as well as all the tools/software needed for this
+purpose. This guide is available for download in 2 formats: 
+</P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0cm"><A HREF="https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/documentation/ImageioExt-SetupGuide.odt">Image
+	I/O-Ext Setup Guide V. 1.0</A> (OpenOffice document .odt) 
+	</P>
+	<LI><P><A HREF="https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/documentation/ImageioExt-SetupGuide.pdf">Image
+	I/O-Ext Setup Guide V. 1.0</A> (PDF) 
+	</P>
+</UL>
+<P>A preliminar User-Guide is available at:</P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0cm"><A HREF="https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/documentation/ImageioExt-UserGuide.odt">Image
+	I/O-Ext&nbsp;User Guide V. 1.0</A> (OpenOffice document .odt) 
+	</P>
+	<LI><P><A HREF="https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/documentation/ImageioExt-UserGuide.pdf">Image
+	I/O-Ext&nbsp;User Guide V. 1.0</A> (PDF) 
+	</P>
+</UL>
+<P>The User-Guide should be considered a &quot;WORK in PROGRESS&quot;.
+(It may contains some errors as well as empty chapters...)</P>
+<P>The API javadoc as well as a tutorial and some use examples will
+be available soon with the first release of the project. 
+</P>
+<P>Finally, a brief document on the JHDF revisited libraries has been
+written. It is available at: <A HREF="https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/library/jhdfaccess/doc/HDFAccessDoc.pdf">HDF
+Access revisited Framework Report</A> 
+</P>
+<P><STRONG><EM>NOTE</EM></STRONG><STRONG>:</STRONG> In case you
+haven't a java.net account, you can use the &quot;guest&quot; user ID
+without password to access these documents.</P>
+<H3 CLASS="western"><A NAME="Downloads"></A>Downloads</H3>
+<P>Image I/O-Ext Project source code is available for download via
+<A HREF="https://imageio-ext.dev.java.net/source/browse/imageio-ext/">subversion</A>.
+</P>
+<H3 CLASS="western"><A NAME="Licenses"></A>Licenses</H3>
+<P>The source code for the Image I/O-Ext Project is licensed under
+the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, version 2.1 of the License. 
+</P>
+<H3 CLASS="western"><A NAME="Reporting_Issues"></A>Reporting Issues</H3>
+<P>Please use the <I>Issue Tracker</I> to track issues (bugs, feature
+requests, etc.) for Image I/O-Ext project. 
+</P>
+<P>Before filing a new issue, please check to see if your issue has
+already been reported: search the &quot;summary&quot; fields of open
+bugs in the Issue Tracker system. If you're new to Issue tracking,
+you might want to take a moment to browse these introductory docs:</P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0cm"><A HREF="https://javadesktop.dev.java.net/reportbug.html">A
+	Step by Step Guide</A> to filing a useful bug report 
+	</P>
+	<LI><P><A HREF="https://www.dev.java.net/nonav/docs/ddIssues_EnterModify.html#entryfields">A
+	Quick Introduction to Issue Tracking</A> 
+	</P>
+</UL>
+<H3 CLASS="western"><A NAME="Feedback_and_Discussion"></A>Feedback
+and Discussion</H3>
+<P>Five main Image I/O-Ext mailing lists are available in this
+project:&nbsp;<FONT COLOR="#0000ff">dev 'at'
+imageio-ext.dev.java.net</FONT>, <FONT COLOR="#0000ff">announce 'at'
+imageio-ext.dev.java.net</FONT>, <FONT COLOR="#0000ff">issues 'at'
+imageio-ext.dev.java.net</FONT>, <FONT COLOR="#0000ff">commits 'at'
+imageio-ext.dev.java.net</FONT>, and <FONT COLOR="#0000ff">users 'at'
+imageio-ext.dev.java.net</FONT> (replace 'at' with @). <A HREF="https://imageio-ext.dev.java.net/servlets/ProjectMailingListList">Click
+here to subscribe</A> to any of these lists. 
+</P>
+<BLOCKQUOTE>The <I>dev</I> list is a list for developers to discuss
+project development issues/artifacts and requirements.<BR>The
+<I>announce</I> list is a low-volume moderated mailing list for
+announcing Image I/O-Ext news and information.<BR>The <I>issues</I>
+list is for automated issues tracking and the <I>commits</I> list is
+for automated subversion commits messages.<BR>Lastly, the <I>users</I>
+is a general discussion list for the projects end users. 
+</BLOCKQUOTE>
+<H3 CLASS="western"><A NAME="Project_History"></A>Project History</H3>
+<P>This work has been started with the Google Summer of Code in 2006
+by Daniele Romagnoli mentored by Simone Giannecchini (GeoSolutions). 
+</P>
+</BODY>
+</HTML>
