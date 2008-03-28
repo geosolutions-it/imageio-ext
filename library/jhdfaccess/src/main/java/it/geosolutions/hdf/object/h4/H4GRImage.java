@@ -27,7 +27,7 @@ import ncsa.hdf.hdflib.HDFLibrary;
 /**
  * Class representing a General Raster Image.
  * 
- * @author Daniele Romagnoli
+ * @author Daniele Romagnoli, GeoSolutions
  */
 public class H4GRImage extends H4Variable implements IH4ReferencedObject {
 

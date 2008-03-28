@@ -21,7 +21,7 @@ import ncsa.hdf.hdflib.HDFConstants;
 /**
  * Main abstract class representing a HDF Object.
  * 
- * @author Daniele Romagnoli
+ * @author Daniele Romagnoli, GeoSolutions
  */
 public abstract class AbstractHObject implements IHObject{
 

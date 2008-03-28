@@ -17,7 +17,9 @@
 package it.geosolutions.hdf.object.h4;
 
 /**
- * @author Romagnoli Daniele
+ * Main class representing an HDF4 Object with a reference.
+ * 
+ * @author Daniele Romagnoli, GeoSolutions
  */
 public class H4ReferencedObject implements IH4ReferencedObject {
 

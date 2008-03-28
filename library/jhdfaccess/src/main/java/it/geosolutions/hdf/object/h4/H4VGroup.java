@@ -28,7 +28,7 @@ import ncsa.hdf.hdflib.HDFLibrary;
 /**
  * Class representing a HDF VGroup.
  * 
- * @author Daniele Romagnoli
+ * @author Daniele Romagnoli, GeoSolutions
  */
 public class H4VGroup extends H4Variable implements IHObject,
 		IH4ReferencedObject {

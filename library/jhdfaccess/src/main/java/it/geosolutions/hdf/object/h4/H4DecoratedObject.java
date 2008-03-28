@@ -29,7 +29,7 @@ import it.geosolutions.hdf.object.IHObject;
 /**
  * Class which need to be extended by any object which may have attached attributes.
  * 
- * @author Daniele Romagnoli
+ * @author Daniele Romagnoli, GeoSolutions
  */
 public abstract class H4DecoratedObject extends AbstractHObject implements
 		IHObject {
@@ -193,7 +193,6 @@ public abstract class H4DecoratedObject extends AbstractHObject implements
 			}
 			return (H4Attribute) indexToAttributesMap.get(Integer
 					.valueOf(attributeIndex));
-
 		}
 	}
 
@@ -219,10 +218,12 @@ public abstract class H4DecoratedObject extends AbstractHObject implements
 	}
 	
 	public void dispose(){
-		if (attributes != null)
-			attributes.clear();
-		if (indexToAttributesMap!=null)
-			attributes.clear();
+		synchronized (mutex) {
+			if (attributes != null)
+				attributes.clear();
+			if (indexToAttributesMap!=null)
+				attributes.clear();
+		}
 	}
 	
 	protected void finalize() throws Throwable {

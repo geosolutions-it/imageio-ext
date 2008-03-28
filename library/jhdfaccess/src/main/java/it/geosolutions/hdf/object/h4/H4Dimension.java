@@ -27,7 +27,7 @@ import ncsa.hdf.hdflib.HDFLibrary;
 /**
  * Class representing a SDS Dimension.
  * 
- * @author Daniele Romagnoli
+ * @author Daniele Romagnoli, GeoSolutions
  */
 public class H4Dimension extends H4Variable implements IHObject {
 

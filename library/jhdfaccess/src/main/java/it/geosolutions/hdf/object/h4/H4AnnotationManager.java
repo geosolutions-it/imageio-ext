@@ -31,7 +31,7 @@ import ncsa.hdf.hdflib.HDFLibrary;
  * does not internally store any instance of {@link H4Annotation} but simply
  * allows to build them when required.
  * 
- * @author Romagnoli Daniele
+ * @author Daniele Romagnoli, GeoSolutions
  */
 public class H4AnnotationManager extends AbstractHObject implements IHObject {
 	// XXX: Add Synchronization?

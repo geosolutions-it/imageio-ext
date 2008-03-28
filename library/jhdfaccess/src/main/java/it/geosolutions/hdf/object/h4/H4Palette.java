@@ -25,7 +25,7 @@ import ncsa.hdf.hdflib.HDFLibrary;
 /**
  * Class representing a Palette.
  * 
- * @author Daniele Romagnoli
+ * @author Daniele Romagnoli, GeoSolutions
  */
 public class H4Palette extends AbstractHObject implements IH4ReferencedObject,
 		IHObject {

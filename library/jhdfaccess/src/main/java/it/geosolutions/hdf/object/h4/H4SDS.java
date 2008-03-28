@@ -31,7 +31,7 @@ import ncsa.hdf.hdflib.HDFLibrary;
 /**
  * Class representing a HDF Scientific Dataset.
  * 
- * @author Daniele Romagnoli
+ * @author Daniele Romagnoli, GeoSolutions
  */
 public class H4SDS extends H4Variable implements IH4ReferencedObject, IHObject {
 

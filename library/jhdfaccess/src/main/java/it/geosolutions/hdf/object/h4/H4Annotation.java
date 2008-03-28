@@ -25,20 +25,24 @@ import ncsa.hdf.hdflib.HDFLibrary;
 /**
  * Class representing a HDF annotation.
  * 
- * @author Romagnoli Daniele
+ * @author Daniele Romagnoli, GeoSolutions
  */
 public class H4Annotation extends AbstractHObject implements IH4ReferencedObject, IHObject{
 
 	/** Annotation types as Strings */
-
+	/** Data Object Label */
 	public final static String AN_DATA_LABEL = "Data Object Label";
 
+	/** Data Object Description */
 	public final static String AN_DATA_DESC = "Data Object Description";
 
+	/** File Label */
 	public final static String AN_FILE_LABEL = "File Label";
 
+	/** File Description */
 	public final static String AN_FILE_DESC = "File Description";
 
+	/** Unrecognized Annotation Type*/
 	public final static String AN_UNDEFINED = "WARNING!!!";
 
 	/**
@@ -47,7 +51,7 @@ public class H4Annotation extends AbstractHObject implements IH4ReferencedObject
 	 * 
 	 * @param annotationType
 	 *            the annotation type
-	 * @return
+	 * @return the Annotation Type as <code>String</code>
 	 */
 	public static String getAnnotationTypeString(final int annotationType) {
 		switch (annotationType) {

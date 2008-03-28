@@ -24,7 +24,7 @@ import ncsa.hdf.hdflib.HDFConstants;
  * Utility abstract class for retrieving datatype information and building
  * properly typed and properly sized data array where to load data values.
  * 
- * @author Daniele Romagnoli
+ * @author Daniele Romagnoli, GeoSolutions
  */
 public class H4DatatypeUtilities {
 

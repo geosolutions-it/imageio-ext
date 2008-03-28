@@ -24,9 +24,8 @@ import ncsa.hdf.hdflib.HDFLibrary;
 /**
  * Class representing an HDF attribute.
  * 
- * @author Romagnoli Daniele
+ * @author Daniele Romagnoli, GeoSolutions
  */
-
 public class H4Attribute {
 
 	/**

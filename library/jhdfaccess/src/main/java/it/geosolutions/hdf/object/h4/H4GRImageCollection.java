@@ -20,9 +20,12 @@ import it.geosolutions.hdf.object.AbstractHObject;
 import it.geosolutions.hdf.object.IHObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import ncsa.hdf.hdflib.HDFConstants;
@@ -32,9 +35,10 @@ import ncsa.hdf.hdflib.HDFLibrary;
 /**
  * Class providing access to HDF General Raster Images.
  * 
- * @author Romagnoli Daniele
+ * @author Daniele Romagnoli, GeoSolutions
  */
-public class H4GRImageCollection extends H4DecoratedObject implements IHObject {
+public class H4GRImageCollection extends H4DecoratedObject implements IHObject,
+		List {
 
 	private int[] mutex = new int[1];
 
@@ -73,7 +77,7 @@ public class H4GRImageCollection extends H4DecoratedObject implements IHObject {
 	 * @return the number of images available by means of this image collection
 	 * @uml.property name="numImages"
 	 */
-	public int getNumImages() {
+	public int size() {
 		return numImages;
 	}
 
@@ -140,11 +144,12 @@ public class H4GRImageCollection extends H4DecoratedObject implements IHObject {
 	 * close this {@link H4GRImageCollection} and dispose allocated objects.
 	 */
 	public void dispose() {
-		super.dispose();
-		if (grImagesNamesToIndexes != null)
-			grImagesNamesToIndexes.clear();
-		close();
-
+		synchronized (mutex) {
+			super.dispose();
+			if (grImagesNamesToIndexes != null)
+				grImagesNamesToIndexes.clear();
+			close();
+		}
 	}
 
 	protected void finalize() throws Throwable {
@@ -179,13 +184,15 @@ public class H4GRImageCollection extends H4DecoratedObject implements IHObject {
 	 * Returns the {@link H4GRImage} related to the index-TH image. Prior to
 	 * call this method, be sure that some images are available from this
 	 * {@link H4GRImageCollection} by querying the
-	 * {@link H4GRImageCollection#getNumImages()} method.
+	 * {@link H4GRImageCollection#getNumImages()} method. otherwise an 
+	 * <code>IndexOutOfBoundsException</code> will be thrown.
 	 * 
 	 * @param index
 	 *            the index of the requested image.
 	 * @return the requested {@link H4GRImage}
+	 * @throws IndexOutOfBoundsException
 	 */
-	public H4GRImage getH4GRImage(final int index) {
+	public Object get(final int index) {
 		if (index > numImages || index < 0)
 			throw new IndexOutOfBoundsException(
 					"Specified index is not valid. It should be greater than zero and belower than "
@@ -206,7 +213,7 @@ public class H4GRImageCollection extends H4DecoratedObject implements IHObject {
 	 * @return the requested {@link H4GRImage} or <code>null</code> if the
 	 *         specified image does not exist
 	 */
-	public H4GRImage getH4GRImage(final String sName) {
+	public H4GRImage get(final String sName) {
 		H4GRImage grImage = null;
 		if (grImagesNamesToIndexes.containsKey(sName)) {
 			grImage = (H4GRImage) grImagesList
@@ -215,6 +222,194 @@ public class H4GRImageCollection extends H4DecoratedObject implements IHObject {
 			// grImage.open();
 		}
 		return grImage;
+	}
+
+	/**
+	 * Returns <code>true</code> if this list contains no GR Images.
+	 * 
+	 * @return <code>true</code> if this list contains no GR Images.
+	 */
+	public boolean isEmpty() {
+		return size() > 0 ? false : true;
+	}
+
+	/**
+     * Returns an iterator over the GR Images in this list.
+     *
+     * @return an iterator.
+     */
+	public Iterator iterator() {
+		return Collections.unmodifiableCollection(grImagesList).iterator();
+	}
+	
+	/**
+     * Returns a list iterator of the GR Images in this list.
+     *
+     * @return a list iterator.
+     */
+	public ListIterator listIterator() {
+		return Collections.unmodifiableList(grImagesList).listIterator();
+	}
+
+	/**
+     * Returns a list iterator of the GR Images in this list, starting at the 
+     * specified position in this list
+     *
+     * @return a list iterator.
+     */
+	public ListIterator listIterator(int index) {
+		return Collections.unmodifiableList(grImagesList).listIterator(index);
+	}
+
+	/**
+     * Removes the first occurrence in this list of the specified element.
+     * Since this method is actually unsupported, an 
+     * <code>UnsupportedOperationException</code> will be thrown.
+     * @throws UnsupportedOperationException 
+     */
+	public boolean remove(Object o) {
+		throw new UnsupportedOperationException();
+	}
+
+    /**
+     * Removes the element at the specified position in this list.
+     * Since this method is actually unsupported, an 
+     * <code>UnsupportedOperationException</code> will be thrown.
+     * @throws UnsupportedOperationException 
+     */
+	public Object remove(int index) {
+		throw new UnsupportedOperationException();
+	}
+
+	/** 
+	 * Removes from the list all the elements.
+	 * Since this method is actually unsupported, an 
+     * <code>UnsupportedOperationException</code> will be thrown.
+     * @throws UnsupportedOperationException 
+     */ 
+	public boolean removeAll(Collection arg0) {
+		throw new UnsupportedOperationException();
+	}
+	
+	/** 
+	 * Removes from the list all the elements that are not contained in the
+	 * specified collection.
+	 * Since this method is actually unsupported, an 
+     * <code>UnsupportedOperationException</code> will be thrown.
+     * @throws UnsupportedOperationException 
+     */ 
+	public boolean retainAll(Collection arg0) {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * This method is actually unsupported, an
+	 * <code>UnsupportedOperationException</code> will be thrown.
+	 * 
+	 * @throws UnsupportedOperationException
+	 */
+	public Object set(int arg0, Object arg1) {
+		throw new UnsupportedOperationException();
+	}
+	
+	public List subList(int fromIndex, int toIndex) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/** 
+	 * This method is actually unsupported, an 
+     * <code>UnsupportedOperationException</code> will be thrown.
+     * @throws UnsupportedOperationException 
+	 */
+	public Object[] toArray() {
+		throw new UnsupportedOperationException();
+	}
+
+	/** 
+	 * This method is actually unsupported, an 
+     * <code>UnsupportedOperationException</code> will be thrown.
+     * @throws UnsupportedOperationException 
+	 */
+	public Object[] toArray(Object[] arg0) {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Appends the specified element to the end of this list.
+	 * Since this method is actually unsupported, an 
+     * <code>UnsupportedOperationException</code> will be thrown.
+     * @throws UnsupportedOperationException 
+	 */
+	public boolean add(Object arg0) {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Inserts the specified element at the specified position in this list.
+	 * Since this method is actually unsupported, an 
+    * <code>UnsupportedOperationException</code> will be thrown.
+    * @throws UnsupportedOperationException 
+	 */
+	public void add(int arg0, Object arg1) {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Appends all of the elements contained in the specified collection to 
+	 * the end of this list.
+	 * Since this method is actually unsupported, an 
+    * <code>UnsupportedOperationException</code> will be thrown.
+    * @throws UnsupportedOperationException 
+	 */
+	public boolean addAll(Collection arg0) {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Inserts all of the elements contained in the specified collection at the 
+	 * specified position in this list.
+	 * Since this method is actually unsupported, an 
+    * <code>UnsupportedOperationException</code> will be thrown.
+    * @throws UnsupportedOperationException 
+	 */
+	public boolean addAll(int arg0, Collection arg1) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void clear() {
+		// TODO Auto-generated method stub
+	}
+
+	/**
+	 * Returns <code>true</code> if this list contains the specified GR Image.
+	 */
+	public boolean contains(Object image) {
+		return grImagesList.contains(image);
+	}
+
+	/**
+	 * Returns <code>true</code> if this list contains all of the elements of the
+     * specified collection.
+	 */
+	public boolean containsAll(Collection collection) {
+		return grImagesList.containsAll(collection);
+	}
+
+	/**
+	 * Returns the index in this list of the first occurrence of the specified
+     * GR Image, or -1 if this list does not contain it.
+	 */
+	public int indexOf(Object image) {
+		return grImagesList.indexOf(image);
+	}
+	
+	/**
+	 * Returns the index in this list of the last occurrence of the specified
+     * GR Image, or -1 if this list does not contain it.
+	 */
+	public int lastIndexOf(Object image) {
+		return grImagesList.lastIndexOf(image);
 	}
 
 	// /**

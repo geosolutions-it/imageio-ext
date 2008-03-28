@@ -29,7 +29,7 @@ import ncsa.hdf.hdflib.HDFLibrary;
 /**
  * Main class needed to access any HDF source.
  * 
- * @author Daniele Romagnoli
+ * @author Daniele Romagnoli, GeoSolutions
  */
 public class H4File extends AbstractHObject implements IHObject {
 
@@ -266,7 +266,7 @@ public class H4File extends AbstractHObject implements IHObject {
 	}
 
 	/**
-	 * Close access to this H4File and attempt to close all other related
+	 * Close access to this H4File and try to close all other related
 	 * opened/accessed interfaces and items.
 	 */
 	public synchronized void close() {

@@ -72,18 +72,6 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.geotools</groupId>
-        <artifactId>gt2-jar-collector</artifactId>
-        <version>2.3.1-SNAPSHOT</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>collect</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
   <!-- =========================================================== -->

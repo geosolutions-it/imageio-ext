@@ -21,7 +21,7 @@ import it.geosolutions.hdf.object.IHObject;
 /**
  * Abstract class representing a HDF variable
  * 
- * @author Daniele Romagnoli
+ * @author Daniele Romagnoli, GeoSolutions
  */
 public abstract class H4Variable extends H4DecoratedObject implements IHObject {
 

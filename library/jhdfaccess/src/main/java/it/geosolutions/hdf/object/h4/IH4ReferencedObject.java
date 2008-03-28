@@ -17,7 +17,9 @@
 package it.geosolutions.hdf.object.h4;
 
 /**
- * @author Romagnoli Daniele
+ * Interface related to HDF4 Objects with a reference.
+ * 
+ * @author Daniele Romagnoli, GeoSolutions
  */
 public interface IH4ReferencedObject {
 	public int getReference();

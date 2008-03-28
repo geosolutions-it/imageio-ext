@@ -17,7 +17,9 @@
 package it.geosolutions.hdf.object;
 
 /**
- * @author Daniele Romagnoli
+ * Interface for HDF Objects.
+ * 
+ * @author Daniele Romagnoli, GeoSolutions
  */
 public interface IHObject {
 	
