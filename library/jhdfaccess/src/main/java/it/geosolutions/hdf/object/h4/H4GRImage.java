@@ -471,7 +471,7 @@ public class H4GRImage extends H4Variable implements IH4ReferencedObject {
 			case HDFConstants.AN_DATA_LABEL:
 				if (nLabels == -1) {
 					// Searching data object label annotations related to this
-					// SDS using the new TAG.
+					// GR Image.
 					List listLabels = annotationManager.getH4Annotations(
 							HDFConstants.AN_DATA_LABEL,
 							(short) HDFConstants.DFTAG_RIG, (short) reference
@@ -486,7 +486,7 @@ public class H4GRImage extends H4Variable implements IH4ReferencedObject {
 			case HDFConstants.AN_DATA_DESC:
 				if (nDescriptions == -1) {
 					// Searching data object label annotations related to this
-					// SDS using the new TAG.
+					// GR Image.
 					List listDescriptions = annotationManager.getH4Annotations(
 							HDFConstants.AN_DATA_DESC,
 							(short) HDFConstants.DFTAG_RIG, (short) reference

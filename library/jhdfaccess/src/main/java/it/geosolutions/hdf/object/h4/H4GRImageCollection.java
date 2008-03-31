@@ -48,6 +48,9 @@ public class H4GRImageCollection extends H4DecoratedObject implements IHObject,
 	 */
 	private List grImagesList;
 
+	/**
+	 * Mapping between named images and related indexes in the list.
+	 */
 	private Map grImagesNamesToIndexes;
 
 	/**
@@ -72,10 +75,7 @@ public class H4GRImageCollection extends H4DecoratedObject implements IHObject,
 	// ////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Getter of the property <code>numImages</code>
-	 * 
-	 * @return the number of images available by means of this image collection
-	 * @uml.property name="numImages"
+	 * Returns the number of GR Images available in this collection
 	 */
 	public int size() {
 		return numImages;
@@ -302,23 +302,35 @@ public class H4GRImageCollection extends H4DecoratedObject implements IHObject,
 		throw new UnsupportedOperationException();
 	}
 
-	/**
-	 * This method is actually unsupported, an
-	 * <code>UnsupportedOperationException</code> will be thrown.
-	 * 
-	 * @throws UnsupportedOperationException
+	/** 
+	 * This method is actually unsupported: an 
+     * <code>UnsupportedOperationException</code> will be thrown.
+     * @throws UnsupportedOperationException 
 	 */
 	public Object set(int arg0, Object arg1) {
 		throw new UnsupportedOperationException();
 	}
 	
+	/** 
+	 * This method is actually unsupported: an 
+     * <code>UnsupportedOperationException</code> will be thrown.
+     * @throws UnsupportedOperationException 
+	 */
+	public void clear() {
+		throw new UnsupportedOperationException();	
+	}
+	
+	/** 
+	 * This method is actually unsupported: an 
+     * <code>UnsupportedOperationException</code> will be thrown.
+     * @throws UnsupportedOperationException 
+	 */
 	public List subList(int fromIndex, int toIndex) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	/** 
-	 * This method is actually unsupported, an 
+	 * This method is actually unsupported: an 
      * <code>UnsupportedOperationException</code> will be thrown.
      * @throws UnsupportedOperationException 
 	 */
@@ -327,7 +339,7 @@ public class H4GRImageCollection extends H4DecoratedObject implements IHObject,
 	}
 
 	/** 
-	 * This method is actually unsupported, an 
+	 * This method is actually unsupported: an 
      * <code>UnsupportedOperationException</code> will be thrown.
      * @throws UnsupportedOperationException 
 	 */
@@ -375,10 +387,6 @@ public class H4GRImageCollection extends H4DecoratedObject implements IHObject,
 	 */
 	public boolean addAll(int arg0, Collection arg1) {
 		throw new UnsupportedOperationException();
-	}
-
-	public void clear() {
-		// TODO Auto-generated method stub
 	}
 
 	/**

@@ -82,27 +82,27 @@ public class HDFTest extends TestCase {
 	public static TestSuite suite() {
 		TestSuite suite = new TestSuite();
 
-		// Testing File Annotations (Label/Description), Data Object
-		// (SDS/GRImage) Annotations (Label/Description)
-		suite.addTest(new HDFTest("testAnnotations"));
-
-		// Test attributes management
-		suite.addTest(new HDFTest("testAttributes"));
-
-		// Test group Structure
-		suite.addTest(new HDFTest("testGroups"));
-
-		// Test Dimension scales management
-		suite.addTest(new HDFTest("testDimensionScales"));
+//		// Testing File Annotations (Label/Description), Data Object
+//		// (SDS/GRImage) Annotations (Label/Description)
+//		suite.addTest(new HDFTest("testAnnotations"));
+//
+//		// Test attributes management
+//		suite.addTest(new HDFTest("testAttributes"));
+//
+//		// Test group Structure
+//		suite.addTest(new HDFTest("testGroups"));
+//
+//		// Test Dimension scales management
+//		suite.addTest(new HDFTest("testDimensionScales"));
 
 		// SDS Data Read/Visualization Test
 		suite.addTest(new HDFTest("testSDSReadAndVisualize"));
 
-		// Test a MISR HDF source
-		suite.addTest(new HDFTest("testMisrSDS"));
-
-		// Test Paletted GR Images
-		suite.addTest(new HDFTest("testVisualizePalettedGRImage"));
+//		// Test a MISR HDF source
+//		suite.addTest(new HDFTest("testMisrSDS"));
+//
+//		// Test Paletted GR Images
+//		suite.addTest(new HDFTest("testVisualizePalettedGRImage"));
 
 		return suite;
 	}

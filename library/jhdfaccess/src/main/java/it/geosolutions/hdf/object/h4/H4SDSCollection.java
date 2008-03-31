@@ -86,18 +86,8 @@ public class H4SDSCollection extends H4DecoratedObject implements IHObject,
 	 */
 	private H4File h4File;
 
-	// ////////////////////////////////////////////////////////////////////////
-	//
-	// SET of Getters
-	// 
-	// ////////////////////////////////////////////////////////////////////////
-
 	/**
-	 * Getter of the property <code>numSDS</code>
-	 * 
-	 * @return the number of Scientific DataSets available by mean of this SDS
-	 *         collection
-	 * @uml.property name="numSDS"
+	 * Returns the number of SDS available in this collection
 	 */
 	public int size() {
 		return numSDS;
@@ -107,6 +97,12 @@ public class H4SDSCollection extends H4DecoratedObject implements IHObject,
 	// return sdsSizesList;
 	// }
 
+	// ////////////////////////////////////////////////////////////////////////
+	//
+	// SET of Getters
+	// 
+	// ////////////////////////////////////////////////////////////////////////
+	
 	/**
 	 * Getter of the property <code>h4File</code>
 	 * 
@@ -315,10 +311,6 @@ public class H4SDSCollection extends H4DecoratedObject implements IHObject,
 		throw new UnsupportedOperationException();
 	}
 
-	public void clear() {
-		// TODO Auto-generated method stub
-	}
-
 	/**
 	 * Returns <code>true</code> if this list contains the specified SDS.
 	 */
@@ -430,12 +422,22 @@ public class H4SDSCollection extends H4DecoratedObject implements IHObject,
 		throw new UnsupportedOperationException();
 	}
 	
-	/**
-	 * 
+	/** 
+	 * This method is actually unsupported: an 
+     * <code>UnsupportedOperationException</code> will be thrown.
+     * @throws UnsupportedOperationException 
+	 */
+	public void clear() {
+		throw new UnsupportedOperationException();	
+	}
+	
+	/** 
+	 * This method is actually unsupported: an 
+     * <code>UnsupportedOperationException</code> will be thrown.
+     * @throws UnsupportedOperationException 
 	 */
 	public List subList(int fromIndex, int toIndex) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	/**

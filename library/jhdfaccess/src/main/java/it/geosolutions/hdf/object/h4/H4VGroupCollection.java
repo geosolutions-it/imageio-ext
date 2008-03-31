@@ -58,10 +58,7 @@ public class H4VGroupCollection extends AbstractHObject implements IHObject, Lis
 	private H4File h4File;
 
 	/**
-	 * Getter of the property <code>numLoneVgroups</code>
-	 * 
-	 * @return the number of lone vgroups of this Group collection.
-	 * @uml.property name="numLoneVgroups"
+	 * Returns the number of lone VGroups available in this collection
 	 */
 	public int size() {
 		return numLoneVgroups;
@@ -218,11 +215,6 @@ public class H4VGroupCollection extends AbstractHObject implements IHObject, Lis
 		throw new UnsupportedOperationException();
 	}
 
-	public void clear() {
-		// TODO Auto-generated method stub
-		
-	}
-
 	/**
 	 * Returns <code>true</code> if this list contains the specified lone 
 	 * VGroup.
@@ -322,23 +314,35 @@ public class H4VGroupCollection extends AbstractHObject implements IHObject, Lis
 		throw new UnsupportedOperationException();
 	}
 
-	/**
-	 * This method is actually unsupported, an
-	 * <code>UnsupportedOperationException</code> will be thrown.
-	 * 
-	 * @throws UnsupportedOperationException
+	/** 
+	 * This method is actually unsupported: an 
+     * <code>UnsupportedOperationException</code> will be thrown.
+     * @throws UnsupportedOperationException 
 	 */
 	public Object set(int arg0, Object arg1) {
 		throw new UnsupportedOperationException();
 	}
 
+	/** 
+	 * This method is actually unsupported: an 
+     * <code>UnsupportedOperationException</code> will be thrown.
+     * @throws UnsupportedOperationException 
+	 */
+	public void clear() {
+		throw new UnsupportedOperationException();	
+	}
+	
+	/** 
+	 * This method is actually unsupported: an 
+     * <code>UnsupportedOperationException</code> will be thrown.
+     * @throws UnsupportedOperationException 
+	 */
 	public List subList(int fromIndex, int toIndex) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	/** 
-	 * This method is actually unsupported, an 
+	 * This method is actually unsupported: an 
      * <code>UnsupportedOperationException</code> will be thrown.
      * @throws UnsupportedOperationException 
 	 */
@@ -347,7 +351,7 @@ public class H4VGroupCollection extends AbstractHObject implements IHObject, Lis
 	}
 
 	/** 
-	 * This method is actually unsupported, an 
+	 * This method is actually unsupported: an 
      * <code>UnsupportedOperationException</code> will be thrown.
      * @throws UnsupportedOperationException 
 	 */

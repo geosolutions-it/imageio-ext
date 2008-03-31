@@ -23,7 +23,19 @@ package it.geosolutions.hdf.object;
  */
 public interface IHObject {
 	
+	/** 
+	 * Close method to end access to the underlying HDF4 object which could
+	 * represent, as an instance, a GR Image, a SDS, a GR Images interface 
+	 * (The object which allows to get access to several GR Images contained
+	 * within a HDF data source). 
+	 */
 	public void close();
 
+	/**
+	 * Returns the idenfitier related to an underlying HDF element (a SDS, a 
+	 * GR Image, a SDS Interface ...) 
+	 * 
+	 * @return the identifier related to the underlying HDF element. 
+	 */
 	public int getIdentifier();
 }
