@@ -133,12 +133,12 @@ public abstract class GDALImageReader extends ImageReader {
 	}
 
 	/**
-	 * Constructs a <code>GDALImageReader<code> using a 
+	 * Constructs a <code>GDALImageReader</code> using a 
 	 * {@link GDALImageReaderSpi}.
 	 * 
 	 * @param originatingProvider
 	 *            The {@link GDALImageReaderSpi} to use for building this
-	 *            <code>GDALImageReader<code>.
+	 *            <code>GDALImageReader</code>.
 	 */
 	public GDALImageReader(GDALImageReaderSpi originatingProvider) {
 		super(originatingProvider);
@@ -146,11 +146,11 @@ public abstract class GDALImageReader extends ImageReader {
 
 	/**
 	 * Constructs a
-	 * <code>GDALImageReader<code> using a {@link GDALImageReaderSpi}.
+	 * <code>GDALImageReader</code> using a {@link GDALImageReaderSpi}.
 	 * 
 	 * @param originatingProvider
 	 *            The {@link GDALImageReaderSpi} to use for building this
-	 *            <code>GDALImageReader<code>.
+	 *            <code>GDALImageReader</code>.
 	 */
 	public GDALImageReader(GDALImageReaderSpi originatingProvider,
 			int numSubdatasets) {
@@ -207,7 +207,7 @@ public abstract class GDALImageReader extends ImageReader {
 
 	/**
 	 * Initializes the
-	 * <code>GDALImageReader<code> and return <code>true</code> if the source of this reader contains several subdatasets.
+	 * <code>GDALImageReader</code> and return <code>true</code> if the source of this reader contains several subdatasets.
 	 * 
 	 * @return <code>true</code> if the source of this reader has several 
 	 * subDatasets.
