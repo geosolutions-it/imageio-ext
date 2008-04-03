@@ -16,6 +16,10 @@
  */
 package it.geosolutions.imageio.plugins.jp2mrsid;
 
+import it.geosolutions.imageio.gdalframework.GDALUtilities;
+
+import java.util.logging.Logger;
+
 import javax.media.jai.JAI;
 
 import org.gdal.gdal.Driver;
@@ -25,33 +29,47 @@ import junit.framework.TestCase;
 
 /**
  * @author Daniele Romagnoli, GeoSolutions.
- * @author Simone Giannecchini, GeoSolutions. 
+ * @author Simone Giannecchini, GeoSolutions.
  */
 public class AbstractJP2KTestCase extends TestCase {
-	static{
+
+	/** A simple flag set to true in case the JP2 MrSID driver is available */
+	protected final static boolean isDriverAvailable;
+	private final static String msg = "JP2 MRSID Tests are skipped due to missing Driver.\n"
+			+ "Be sure GDAL has been built against MRSID and the required"
+			+ " lib is in the classpath";
+
+	protected static final Logger LOGGER = Logger
+			.getLogger("it.geosolutions.imageio.plugins.jp2mrsid");
+
+	static {
 		gdal.AllRegister();
 		final Driver driverkak = gdal.GetDriverByName("JP2KAK");
 		final Driver driverecw = gdal.GetDriverByName("JP2ECW");
-		if (driverkak!=null || driverecw!=null){
+		if (driverkak != null || driverecw != null) {
 			final StringBuffer skipDriver = new StringBuffer("");
-			if (driverkak!=null)
+			if (driverkak != null)
 				skipDriver.append("JP2KAK ");
-			if (driverecw!=null)
+			if (driverecw != null)
 				skipDriver.append("JP2ECW");
 			gdal.SetConfigOption("GDAL_SKIP", skipDriver.toString());
 		}
+		isDriverAvailable = GDALUtilities.isDriverAvailable("JP2MrSID");
 	}
-	
+
 	public AbstractJP2KTestCase(String name) {
 		super(name);
 	}
 
 	protected void setUp() throws Exception {
 		super.setUp();
+		if (!isDriverAvailable) {
+			LOGGER.warning(msg);
+			return;
+		}
 		// general settings
 		JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
 				64 * 1024 * 1024);
 		JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
-
 	}
 }

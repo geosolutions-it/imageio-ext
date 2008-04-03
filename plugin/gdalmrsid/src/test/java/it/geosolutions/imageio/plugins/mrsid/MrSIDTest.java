@@ -28,7 +28,6 @@ import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.Raster;
-import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.File;
@@ -60,12 +59,9 @@ import com.sun.media.jai.operator.ImageReadDescriptor;
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class MrSIDTest extends AbstractMrSIDTestCase {
+	
 	public MrSIDTest(String name) {
 		super(name);
-	}
-
-	protected void setUp() throws Exception {
-		super.setUp();
 	}
 
 	/**
@@ -75,6 +71,9 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 	 * @throws IOException
 	 */
 	public void testMetadata() throws FileNotFoundException, IOException {
+		if (!isDriverAvailable){
+			return;
+		}
 		try {
 			final File file = TestData.file(this, fileName);
 			final ParameterBlockJAI pbjImageRead;
@@ -105,6 +104,9 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 	 * @throws IOException
 	 */
 	public void testJaiOperations() throws FileNotFoundException, IOException {
+		if (!isDriverAvailable){
+			return;
+		}
 		try {
 			final File file = TestData.file(this, fileName);
 
@@ -218,6 +220,9 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 	 * @throws IOException
 	 */
 	public void testSubBandsRead() throws IOException {
+		if (!isDriverAvailable){
+			return;
+		}
 		try {
 			ImageReader reader = new MrSIDImageReaderSpi()
 					.createReaderInstance();
@@ -307,6 +312,9 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 	 * @throws IOException
 	 */
 	public void testManualRead() throws IOException {
+		if (!isDriverAvailable){
+			return;
+		}
 		try {
 			ImageReader reader = new MrSIDImageReaderSpi()
 					.createReaderInstance();

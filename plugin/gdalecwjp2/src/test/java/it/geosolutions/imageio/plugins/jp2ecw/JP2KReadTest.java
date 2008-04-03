@@ -59,6 +59,9 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
 	 * @throws IOException
 	 */
 	public void testRead() throws FileNotFoundException, IOException {
+		if (!isDriverAvailable){
+			return;
+		}
 		final ParameterBlockJAI pbjImageRead;
 		final File file = TestData.file(this, fileName);
 		pbjImageRead = new ParameterBlockJAI("ImageRead");
@@ -83,6 +86,9 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
 	 * @throws IOException
 	 */
 	public void testJaiOperations() throws IOException {
+		if (!isDriverAvailable){
+			return;
+		}
 		final File inputFile = TestData.file(this, fileName);
 
 		// ////////////////////////////////////////////////////////////////

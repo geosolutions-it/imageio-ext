@@ -89,7 +89,7 @@
        <modules>
         <module>gdalenvisat</module>
         <module>gdalerdasimg</module>
-	<module>gdalnitf</module>
+	      <module>gdalnitf</module>
         <module>gdalehdr</module>
         <module>gdaljpeg</module>
         <module>gdalarcgrid</module>
@@ -111,6 +111,8 @@
         <module>gdalecw</module>
         <module>gdalecwjp2</module>
         <module>gdalmrsidjp2</module>
+        <module>gdalkakadujp2</module>
+        <module>kakadujp2</module>
         <module>gdaljpeg</module>
         <module>gdalarcgrid</module>
         <module>arcgrid</module>
@@ -118,28 +120,6 @@
         <module>gdaldted</module>
         <module>gdalgeotiff</module>
        </modules>
-    </profile>
-    <profile>
-      <id>fullkakadu</id>
-      <modules>
-        <module>gdalhdf4</module>
-        <module>gdalenvisat</module>
-        <module>gdalerdasimg</module>
-	<module>gdalnitf</module>
-        <module>gdalehdr</module>
-        <module>gdalmrsid</module>
-        <module>gdalecw</module>
-        <module>gdalecwjp2</module>
-        <module>gdalmrsidjp2</module>
-        <module>gdaljpeg</module>
-        <module>gdalarcgrid</module>
-        <module>arcgrid</module>
-        <module>swan</module>
-        <module>gdaldted</module>
-        <module>gdalgeotiff</module>
-        <module>gdalkakadujp2</module>
-        <module>kakadujp2</module>
-      </modules>
     </profile>
   </profiles>
 </project>

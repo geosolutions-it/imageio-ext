@@ -49,21 +49,22 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
 		super(name);
 
 	}
-
+	
 	/**
 	 * Test Read exploiting Linear Interpolation
 	 * 
 	 * @throws IOException
 	 */
 	public void testJaiReadFromUrl() throws IOException {
+		if (!isLibraryAvailable) {
+			return;
+		}
 		final URL url = new URL(
 				"http://www.microimages.com/gallery/jp2/CB_TM432.jp2");
 		final File file = fileCache.getFile(url);
 		final ParameterBlockJAI pbjImageRead;
 		pbjImageRead = new ParameterBlockJAI("ImageRead");
 		pbjImageRead.setParameter("Input", file);
-		pbjImageRead.setParameter("Reader", new JP2KakaduImageReaderSpi()
-				.createReaderInstance());
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 		if (TestData.isInteractiveTest())
 			visualize(image,
@@ -73,7 +74,9 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
 	}
 
 	public void testJaiReadFromFile() throws IOException {
-
+		if (!isLibraryAvailable) {
+			return;
+		}
 		final File file = TestData.file(this, "CB_TM432.jp2");
 		ImageReadDescriptorMT.register(JAI.getDefaultInstance());
 
@@ -87,15 +90,12 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
 		rp.setSourceSubsampling(1, 1, 0, 0);
 		pbjImageRead.setParameter("ReadParam", rp);
 		pbjImageRead.setParameter("Input", file);
-		pbjImageRead.setParameter("Reader", new JP2KakaduImageReaderSpi()
-				.createReaderInstance());
 		RenderedOp image = JAI.create("ImageReadMT", pbjImageRead,
 				new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
 		if (TestData.isInteractiveTest())
 			visualize(image, 800, 600);
 		else
 			assertNotNull(image.getTiles());
-
 	}
 
 	/**
@@ -104,7 +104,9 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
 	 * @throws IOException
 	 */
 	public void testManualRead() throws IOException {
-
+		if (!isLibraryAvailable) {
+			return;
+		}
 		final File file = TestData.file(this, "CB_TM432.jp2");
 		JP2KakaduImageReader reader = new JP2KakaduImageReader(
 				new JP2KakaduImageReaderSpi());
@@ -127,8 +129,8 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
 		suite.addTest(new JP2KakaduReadTest("testJaiReadFromFile"));
 
 		suite.addTest(new JP2KakaduReadTest("testManualRead"));
-		//
-		// suite.addTest(new JP2KakaduReadTest("testJaiReadFromUrl"));
+		
+		suite.addTest(new JP2KakaduReadTest("testJaiReadFromUrl"));
 
 		return suite;
 	}
@@ -136,5 +138,8 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
 	public static void main(java.lang.String[] args) {
 		junit.textui.TestRunner.run(suite());
 	}
-
+	
+	public static void visualize(RenderedImage ri, String title) {
+		visualize(ri, 800, 600);
+	}
 }

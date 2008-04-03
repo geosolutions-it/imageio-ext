@@ -41,6 +41,9 @@ import junit.framework.TestSuite;
  * @author Daniele Romagnoli, GeoSolutions.
  */
 public class ECWTest extends AbstractECWTestCase {
+	
+	/** @todo optimize logic for test skipping */
+	
 	public ECWTest(String name) {
 		super(name);
 	}
@@ -52,6 +55,9 @@ public class ECWTest extends AbstractECWTestCase {
 	 * @throws IOException
 	 */
 	public void testImageRead() throws FileNotFoundException, IOException {
+		if (!isDriverAvailable){
+			return;
+		}
 		final ParameterBlockJAI pbjImageRead;
 		final ImageReadParam irp = new ImageReadParam();
 		final String fileName = "dq2807ne.ecw";
@@ -82,6 +88,9 @@ public class ECWTest extends AbstractECWTestCase {
 	 */
 	public void testGrayScaleImageRead() throws FileNotFoundException,
 			IOException {
+		if (!isDriverAvailable){
+			return;
+		}
 		final ParameterBlockJAI pbjImageRead;
 		final ImageReadParam irp = new ImageReadParam();
 		final String fileName = "wing.ecw";
@@ -105,6 +114,9 @@ public class ECWTest extends AbstractECWTestCase {
 	}
 
 	public void testManualRead() throws FileNotFoundException, IOException {
+		if (!isDriverAvailable){
+			return;
+		}
 		final ECWImageReaderSpi spi = new ECWImageReaderSpi();
 		final ECWImageReader mReader = new ECWImageReader(spi);
 		final String fileName = "samplergb.ecw";

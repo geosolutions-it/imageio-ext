@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.mrsid;
 
+import it.geosolutions.imageio.gdalframework.GDALUtilities;
+
 import java.util.logging.Logger;
 
 import javax.media.jai.JAI;
@@ -30,7 +32,15 @@ public class AbstractMrSIDTestCase extends TestCase {
 
 	protected static final String fileName = "n13250i.sid";
 	
-	private static final Logger LOGGER = Logger
+	/** A simple flag set to true in case the MrSID driver is available */
+	protected final static boolean isDriverAvailable = GDALUtilities
+			.isDriverAvailable("MRSID"); 
+	
+	private final static String msg = "MRSID Tests are skipped due to missing Driver.\n"
+		+ "Be sure GDAL has been built against MRSID and the required"
+		+ " lib is in the classpath";
+	
+	protected static final Logger LOGGER = Logger
 	.getLogger("it.geosolutions.imageio.plugins.mrsid");
 	
 	public AbstractMrSIDTestCase(String name) {
@@ -39,6 +49,10 @@ public class AbstractMrSIDTestCase extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
+		if (!isDriverAvailable){
+			LOGGER.warning(msg);
+			return;
+		}
 		// general settings
 		JAI.getDefaultInstance().getTileScheduler().setParallelism(10);
 		JAI.getDefaultInstance().getTileScheduler().setPriority(4);
