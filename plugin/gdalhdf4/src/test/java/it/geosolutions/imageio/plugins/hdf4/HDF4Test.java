@@ -43,7 +43,9 @@ import junit.framework.TestSuite;
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class HDF4Test extends AbstractHDF4TestCase {
-
+	// Actually, HDF on Linux is not tested. Test are disabled.
+	private final static boolean runTests = ((String)System.getProperty("os.name")).equalsIgnoreCase("Linux")?false:true;
+	
 	public HDF4Test(String name) {
 		super(name);
 	}
@@ -52,6 +54,8 @@ public class HDF4Test extends AbstractHDF4TestCase {
 	 * This test method uses an HDF4 file containing several subdatasets
 	 */
 	public void testSubDataset() throws FileNotFoundException, IOException {
+		if(!runTests)
+			return;
 		try {
 			final int startIndex = 0;
 			final int loopLength = 5;
@@ -86,6 +90,8 @@ public class HDF4Test extends AbstractHDF4TestCase {
 	}
 
 	public void testManualRead() throws FileNotFoundException, IOException {
+		if(!runTests)
+			return;
 		try {
 			ImageReader mReader = new HDF4ImageReaderSpi()
 					.createReaderInstance();
@@ -110,6 +116,8 @@ public class HDF4Test extends AbstractHDF4TestCase {
 	 */
 	public void testRasterBandsProperties() throws FileNotFoundException,
 			IOException {
+		if(!runTests)
+			return;
 		try {
 			ImageReader reader = new HDF4ImageReaderSpi()
 					.createReaderInstance();
@@ -191,9 +199,7 @@ public class HDF4Test extends AbstractHDF4TestCase {
 	}
 
 	public static void main(java.lang.String[] args) {
-		// Actually, HDF4 on Linux is not tested. Test are disabled.
-		final String osName = System.getProperty("os.name");
-		if (osName.equalsIgnoreCase("Linux"))
+		if(!runTests)
 			return;
 		junit.textui.TestRunner.run(suite());
 	}

@@ -72,6 +72,10 @@ import com.sun.media.jai.codecimpl.util.RasterFactory;
  * @author Romagnoli Daniele
  */
 public class HDFTest extends TestCase {
+	// Actually, HDF on Linux is not tested. Test are disabled.
+	private final static boolean runTests = ((String)System.getProperty("os.name")).equalsIgnoreCase("Linux")?false:true;
+	
+	
 	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.hdf.object.h4");
 
@@ -108,9 +112,7 @@ public class HDFTest extends TestCase {
 	}
 
 	public static void main(java.lang.String[] args) throws HDFException {
-		// Actually, HDF4 on Linux is not tested. Test are disabled.
-		final String osName = System.getProperty("os.name");
-		if (osName.equalsIgnoreCase("Linux"))
+		if(!runTests)
 			return;
 		junit.textui.TestRunner.run(suite());
 	}
@@ -119,6 +121,8 @@ public class HDFTest extends TestCase {
 	 * Test a MISR HDF source
 	 */
 	public void testMisrSDS() throws HDFException, IOException {
+		if(!runTests)
+			return;
 		StringBuffer outSb = new StringBuffer();
 		File file = null;
 		try {
@@ -236,6 +240,8 @@ public class HDFTest extends TestCase {
 	 * Annotations (Label/Description)
 	 */
 	public void testAnnotations() throws HDFException, IOException {
+		if(!runTests)
+			return;
 		StringBuffer outSb = new StringBuffer();
 		File file = null;
 		File file2 = null;
@@ -402,6 +408,8 @@ public class HDFTest extends TestCase {
 	 * Test attributes management from various object.
 	 */
 	public void testAttributes() throws HDFException, IOException {
+		if(!runTests)
+			return;
 		StringBuffer outSb = new StringBuffer();
 		File file = null;
 		try {
@@ -491,6 +499,8 @@ public class HDFTest extends TestCase {
 	 * Test group Structure
 	 */
 	public void testGroups() throws HDFException, IOException {
+		if(!runTests)
+			return;
 		StringBuffer outSb = new StringBuffer();
 		File file = null;
 		try {
@@ -540,6 +550,8 @@ public class HDFTest extends TestCase {
 	 * Test Dimension scales management
 	 */
 	public void testDimensionScales() throws HDFException, IOException {
+		if(!runTests)
+			return;
 		StringBuffer outSb = new StringBuffer();
 		File file = null;
 		try {
@@ -592,6 +604,8 @@ public class HDFTest extends TestCase {
 	 * Test Paletted GR Images
 	 */
 	public void testVisualizePalettedGRImage() throws HDFException, IOException {
+		if(!runTests)
+			return;
 		StringBuffer outSb = new StringBuffer();
 		final File file = TestData.file(this, "palette.hdf4");
 
@@ -742,6 +756,8 @@ public class HDFTest extends TestCase {
 	 * SDS Data Read/Visualization Test
 	 */
 	public void testSDSReadAndVisualize() throws HDFException, IOException {
+		if(!runTests)
+			return;
 		StringBuffer outSb = new StringBuffer();
 		File file = null;
 		try {
