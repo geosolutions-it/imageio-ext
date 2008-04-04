@@ -44,7 +44,6 @@ import org.gdal.gdalconst.gdalconst;
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
-
 public abstract class GDALImageReaderSpi extends ImageReaderSpi {
 	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.gdalframework");
@@ -53,7 +52,7 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
 	}
 
 	/**
-	 * {@link List} of gdal formats supported by this plugin.
+	 * <code>List</code> of gdal formats supported by this plugin.
 	 */
 	private List supportedFormats;
 
@@ -130,8 +129,7 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
 	 * <code>getSupportedFormat</coded> abstract method.
 	 * 
 	 * @return 
-	 * 		true if the input can be successfully decoded.
-	 *
+	 * 		<code>true</code> if the input can be successfully decoded.
 	 */
 	public boolean canDecodeInput(Object input) throws IOException {
 		if (LOGGER.isLoggable(Level.FINE))

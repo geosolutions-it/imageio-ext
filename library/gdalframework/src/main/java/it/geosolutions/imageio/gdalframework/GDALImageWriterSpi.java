@@ -23,10 +23,10 @@ import java.util.List;
 import javax.imageio.spi.ImageWriterSpi;
 
 /**
- * The abstract service provider interface (SPI) for
- * <code>GDALImageWriter</code>s.
+ * The abstract service provider interface (SPI) for {@link GDALImageWriter}s.
  * 
- * @author Daniele Romagnoli.
+ * @author Daniele Romagnoli, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions.
  */
 public abstract class GDALImageWriterSpi extends ImageWriterSpi {
 	
@@ -35,7 +35,7 @@ public abstract class GDALImageWriterSpi extends ImageWriterSpi {
 	}
 
 	/**
-	 * {@link List}  of gdal formats supported by this plugin.
+	 * <code>List</code> of gdal formats supported by this plugin.
 	 */
 	private List supportedFormats;
 

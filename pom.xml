@@ -199,26 +199,26 @@
               </packages>
             </group>
             <group>
+              <title>Plugins</title>
+              <packages>
+                it.geosolutions.imageio.plugins.*
+              </packages>
+            </group>
+	    <group>
               <title>Revisited JHDF Access Libraries</title>
               <packages>
                 it.geosolutions.hdf.object*
               </packages>
-            </group>
+            </group>            
             <group>
+              <title>Custom Streams</title>
+              <packages>it.geosolutions.imageio.stream*:it.geosolutions.io*</packages>
+            </group>
+	    <group>
               <title>Multithreaded ImageRead</title>
               <packages>
                it.geosolutions.imageio.imageioimpl.imagereadmt*
               </packages>
-            </group>
-            <group>
-              <title>Plugins</title>
-              <packages>
-                it.geosolutions.imageio.plugins*
-              </packages>
-            </group>
-            <group>
-              <title>Custom Streams</title>
-              <packages>it.geosolutions.imageio.stream*:it.geosolutions.io*</packages>
             </group>
            </groups>
         </configuration>
