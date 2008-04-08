@@ -78,9 +78,8 @@ public class H4SDSCollection extends H4DecoratedObject implements IHObject,
 	 */
 	private int numSDS = 0;
 
-	/**
+	/** 
 	 * the {@link H4File} to which this collection is attached
-	 * 
 	 * @uml.property name="h4File"
 	 * @uml.associationEnd inverse="h4SdsCollection:it.geosolutions.hdf.object.h4.H4File"
 	 */
@@ -103,11 +102,10 @@ public class H4SDSCollection extends H4DecoratedObject implements IHObject,
 	// 
 	// ////////////////////////////////////////////////////////////////////////
 	
-	/**
+	/** 
 	 * Getter of the property <code>h4File</code>
-	 * 
 	 * @return Returns the h4File.
-	 * @uml.property name="h4File"
+	 * @uml.property  name="h4File"
 	 */
 	public H4File getH4File() {
 		return h4File;

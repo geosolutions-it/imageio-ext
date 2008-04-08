@@ -49,8 +49,6 @@ public class H4File extends AbstractHObject implements IHObject {
 
 	/**
 	 * the number of file labels annotations related to this file.
-	 * 
-	 * @uml.property name="nLabels"
 	 */
 	private int nLabels = -1;
 
@@ -61,15 +59,12 @@ public class H4File extends AbstractHObject implements IHObject {
 
 	/**
 	 * the number of file description annotations related to this file.
-	 * 
-	 * @uml.property name="nDescriptions"
 	 */
 	private int nDescriptions = -1;
 
 	/**
 	 * the {@link H4AnnotationManager} instance of this {@link H4File}
 	 * 
-	 * @uml.property name="h4AnnotationManager"
 	 * @uml.associationEnd inverse="h4File:it.geosolutions.hdf.object.h4.H4AnnotationManager"
 	 */
 	private H4AnnotationManager h4AnnotationManager = null;
@@ -77,7 +72,6 @@ public class H4File extends AbstractHObject implements IHObject {
 	/**
 	 * the {@link H4SDSCollection} instance of this {@link H4File}
 	 * 
-	 * @uml.property name="h4SdsCollection"
 	 * @uml.associationEnd inverse="h4File:it.geosolutions.hdf.object.h4.H4SDSCollection"
 	 */
 	private H4SDSCollection h4SdsCollection = null;
@@ -85,7 +79,6 @@ public class H4File extends AbstractHObject implements IHObject {
 	/**
 	 * the {@link H4GRImageCollection} instance of this {@link H4File}
 	 * 
-	 * @uml.property name="h4GRImageCollection"
 	 * @uml.associationEnd inverse="h4File:it.geosolutions.hdf.object.h4.H4GRImageCollection"
 	 */
 	private H4GRImageCollection h4GRImageCollection = null;
@@ -93,15 +86,12 @@ public class H4File extends AbstractHObject implements IHObject {
 	/**
 	 * the {@link H4VGroupCollection} instance of this {@link H4File}
 	 * 
-	 * @uml.property name="h4VGroupCollection"
 	 * @uml.associationEnd inverse="h4File:it.geosolutions.hdf.object.h4.H4VGroupCollection"
 	 */
 	private H4VGroupCollection h4VGroupCollection = null;
 
 	/**
 	 * The file path of HDF file referred by this {@link H4File} instance
-	 * 
-	 * @uml.property name="filePath"
 	 */
 	private final String filePath;
 
@@ -114,7 +104,6 @@ public class H4File extends AbstractHObject implements IHObject {
 	 * Getter of the property <code>h4AnnotationManager</code>
 	 * 
 	 * @return the {@link H4AnnotationManager} instance of this {@link H4File}
-	 * @uml.property name="h4AnnotationManager"
 	 */
 	public synchronized H4AnnotationManager getH4AnnotationManager() {
 		try {
@@ -133,7 +122,6 @@ public class H4File extends AbstractHObject implements IHObject {
 	 * Getter of the property <code>h4GRImageCollection</code>
 	 * 
 	 * @return the {@link H4GRImageCollection} instance of this {@link H4File}
-	 * @uml.property name="h4GRImageCollection"
 	 */
 	public synchronized H4GRImageCollection getH4GRImageCollection() {
 		try {
@@ -152,7 +140,6 @@ public class H4File extends AbstractHObject implements IHObject {
 	 * Getter of the property <code>h4SdsCollection</code>
 	 * 
 	 * @return the {@link H4SDSCollection} instance of this {@link H4File}
-	 * @uml.property name="h4SdsCollection"
 	 */
 	public synchronized H4SDSCollection getH4SdsCollection() {
 		if (h4SdsCollection == null)
@@ -164,7 +151,6 @@ public class H4File extends AbstractHObject implements IHObject {
 	 * Getter of the property <code>h4VGroupCollection</code>
 	 * 
 	 * @return the {@link H4VGroupCollection} instance of this {@link H4File}
-	 * @uml.property name="h4VGroupCollection"
 	 */
 	public synchronized H4VGroupCollection getH4VGroupCollection() {
 		try {
@@ -183,7 +169,6 @@ public class H4File extends AbstractHObject implements IHObject {
 	 * Getter of the property <code>nDescriptions</code>
 	 * 
 	 * @return the number of file description annotations related to this File.
-	 * @uml.property name="nDescriptions"
 	 */
 	public synchronized int getNDescriptions() {
 		if (nDescriptions == -1)
@@ -199,7 +184,6 @@ public class H4File extends AbstractHObject implements IHObject {
 	 * Getter of the property <code>nLabels</code>
 	 * 
 	 * @return the number of file label annotations related to this File.
-	 * @uml.property name="nLabels"
 	 */
 	public synchronized int getNLabels() {
 		if (nLabels == -1)
@@ -215,7 +199,6 @@ public class H4File extends AbstractHObject implements IHObject {
 	 * Getter of the property <code>filePath</code>
 	 * 
 	 * @return the filePath.
-	 * @uml.property name="filePath"
 	 */
 	public String getFilePath() {
 		return filePath;
