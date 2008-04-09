@@ -57,15 +57,11 @@ public class H4SDSCollection extends H4DecoratedObject implements IHObject,
 	 * file. For this reason, if you need to retrieve a SDS with a name equals
 	 * to the name of another SDS, you should specify the required SDS by index
 	 * since keys in map are all different. <BR>
-	 * 
-	 * @uml.property name="sdsNamesToIndexes"
 	 */
 	private Map sdsNamesToIndexes;
 
 	/**
 	 * The list of {@link H4SDS} available by mean of this SDS collection
-	 * 
-	 * @uml.property name="sdsList"
 	 * @uml.associationEnd inverse="h4SdsCollectionOwner:it.geosolutions.hdf.object.h4.H4SDS"
 	 */
 	private List sdsList;
@@ -73,14 +69,11 @@ public class H4SDSCollection extends H4DecoratedObject implements IHObject,
 	/**
 	 * the number of Scientific DataSets available by mean of this SDS
 	 * collection
-	 * 
-	 * @uml.property name="numSDS"
 	 */
 	private int numSDS = 0;
 
 	/** 
 	 * the {@link H4File} to which this collection is attached
-	 * @uml.property name="h4File"
 	 * @uml.associationEnd inverse="h4SdsCollection:it.geosolutions.hdf.object.h4.H4File"
 	 */
 	private H4File h4File;
@@ -103,9 +96,8 @@ public class H4SDSCollection extends H4DecoratedObject implements IHObject,
 	// ////////////////////////////////////////////////////////////////////////
 	
 	/** 
-	 * Getter of the property <code>h4File</code>
+	 * getter of <code>h4File</code>
 	 * @return Returns the h4File.
-	 * @uml.property  name="h4File"
 	 */
 	public H4File getH4File() {
 		return h4File;

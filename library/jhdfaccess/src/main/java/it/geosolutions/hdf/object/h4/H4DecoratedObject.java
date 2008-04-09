@@ -38,30 +38,23 @@ public abstract class H4DecoratedObject extends AbstractHObject implements
 
 	/**
 	 * The map of attributes related to this object
-	 * 
-	 * @uml.property name="attributes"
 	 */
 	protected Map attributes;
 
 	/**
 	 * An index to attributes map
-	 * 
-	 * @uml.property name="indexToAttributesMap"
 	 */
 	protected Map indexToAttributesMap;
 
 	/**
 	 * The number of attributes related to this object.
-	 * 
-	 * @uml.property name="numAttributes"
 	 */
 	protected int numAttributes;
 
 	/**
-	 * Getter of the property <code>numAttributes</code>
+	 * getter of <code>numAttributes</code>
 	 * 
 	 * @return the number of attributes associated to this object
-	 * @uml.property name="numAttributes"
 	 */
 	public int getNumAttributes() {
 		return numAttributes;

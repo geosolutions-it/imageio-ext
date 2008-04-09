@@ -35,7 +35,6 @@ public class H4VGroup extends H4Variable implements IHObject,
 	/**
 	 * TODO: Need to be improved (VGroup classes management)
 	 */
-
 	private int[] mutex = new int[] { 1 };
 
 	/**
@@ -45,29 +44,21 @@ public class H4VGroup extends H4Variable implements IHObject,
 
 	/**
 	 * the number of pairs TAG/REF referred by this group
-	 * 
-	 * @uml.property name="numObjects"
 	 */
 	private int numObjects;
 
 	/**
 	 * the tag of this group
-	 * 
-	 * @uml.property name="tag"
 	 */
 	private int tag;
 
 	/**
 	 * the reference of this group
-	 * 
-	 * @uml.property name="reference"
 	 */
 	private H4ReferencedObject reference;
 
 	/**
 	 * the class name of this group
-	 * 
-	 * @uml.property name="className"
 	 */
 	private String className = "";
 
@@ -78,51 +69,46 @@ public class H4VGroup extends H4Variable implements IHObject,
 	// ////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Getter of the property <code>reference</code>
+	 * getter of <code>reference</code>
 	 * 
 	 * @return the reference of this group.
-	 * @uml.property name="reference"
 	 */
 	public int getReference() {
 		return reference.getReference();
 	}
 
 	/**
-	 * Getter of the property <code>tag</code>
+	 * getter of <code>tag</code>
 	 * 
 	 * @return the tag of this group
-	 * @uml.property name="tag"
 	 */
 	public int getTag() {
 		return tag;
 	}
 
 	/**
-	 * Getter of the property <code>className</code>
+	 * getter of <code>className</code>
 	 * 
 	 * @return the class name of this group
-	 * @uml.property name="className"
 	 */
 	public String getClassName() {
 		return className;
 	}
 
 	/**
-	 * Getter of the property <code>numObjects</code>
+	 * getter of <code>numObjects</code>
 	 * 
 	 * @return the number of pairs TAG/REF referred by this group
-	 * @uml.property name="numObjects"
 	 */
 	public int getNumObjects() {
 		return numObjects;
 	}
 
 	/**
-	 * Getter of the property <code>h4VGroupCollectionOwner</code>
+	 * getter of <code>h4VGroupCollectionOwner</code>
 	 * 
 	 * @return the {@link H4VGroupCollection} to which this {@link H4VGroup}
 	 *         belongs.
-	 * @uml.property name="h4VGroupCollectionOwner"
 	 */
 	public H4VGroupCollection getH4VGroupCollectionOwner() {
 		return h4VGroupCollectionOwner;
@@ -131,7 +117,6 @@ public class H4VGroup extends H4Variable implements IHObject,
 	/**
 	 * The {@link H4VGroupCollection} to which this {@link H4VGroup} belongs.
 	 * 
-	 * @uml.property name="h4VGroupCollectionOwner"
 	 * @uml.associationEnd inverse="H4VGroupCollection:it.geosolutions.hdf.object.h4.H4VGroupCollection"
 	 */
 	private H4VGroupCollection h4VGroupCollectionOwner = null;

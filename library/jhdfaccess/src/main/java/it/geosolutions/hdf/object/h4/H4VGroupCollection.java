@@ -39,8 +39,6 @@ public class H4VGroupCollection extends AbstractHObject implements IHObject, Lis
 
 	/**
 	 * the number of lone vgroups of this Group collection
-	 * 
-	 * @uml.property name="numLoneVgroups"
 	 */
 	private int numLoneVgroups = 0;
 
@@ -52,7 +50,6 @@ public class H4VGroupCollection extends AbstractHObject implements IHObject, Lis
 	/**
 	 * {@link H4File} to which this collection is attached
 	 * 
-	 * @uml.property name="h4File"
 	 * @uml.associationEnd inverse="h4VgroupCollection:it.geosolutions.hdf.object.h4.H4File"
 	 */
 	private H4File h4File;
@@ -65,10 +62,9 @@ public class H4VGroupCollection extends AbstractHObject implements IHObject, Lis
 	}
 
 	/**
-	 * Getter of the property <code>h4File</code>
+	 * getter of <code>h4File</code>
 	 * 
 	 * @return the {@link H4File} to which this collection is attached.
-	 * @uml.property name="h4File"
 	 */
 	public H4File getH4File() {
 		return h4File;

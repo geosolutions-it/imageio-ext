@@ -101,7 +101,7 @@ public class H4File extends AbstractHObject implements IHObject {
 	// 
 	// ////////////////////////////////////////////////////////////////////////
 	/**
-	 * Getter of the property <code>h4AnnotationManager</code>
+	 * getter of <code>h4AnnotationManager</code>
 	 * 
 	 * @return the {@link H4AnnotationManager} instance of this {@link H4File}
 	 */
@@ -119,7 +119,7 @@ public class H4File extends AbstractHObject implements IHObject {
 	}
 
 	/**
-	 * Getter of the property <code>h4GRImageCollection</code>
+	 * getter of <code>h4GRImageCollection</code>
 	 * 
 	 * @return the {@link H4GRImageCollection} instance of this {@link H4File}
 	 */
@@ -137,7 +137,7 @@ public class H4File extends AbstractHObject implements IHObject {
 	}
 
 	/**
-	 * Getter of the property <code>h4SdsCollection</code>
+	 * getter of <code>h4SdsCollection</code>
 	 * 
 	 * @return the {@link H4SDSCollection} instance of this {@link H4File}
 	 */
@@ -148,7 +148,7 @@ public class H4File extends AbstractHObject implements IHObject {
 	}
 
 	/**
-	 * Getter of the property <code>h4VGroupCollection</code>
+	 * getter of <code>h4VGroupCollection</code>
 	 * 
 	 * @return the {@link H4VGroupCollection} instance of this {@link H4File}
 	 */
@@ -166,7 +166,7 @@ public class H4File extends AbstractHObject implements IHObject {
 	}
 
 	/**
-	 * Getter of the property <code>nDescriptions</code>
+	 * getter of <code>nDescriptions</code>
 	 * 
 	 * @return the number of file description annotations related to this File.
 	 */
@@ -181,7 +181,7 @@ public class H4File extends AbstractHObject implements IHObject {
 	}
 
 	/**
-	 * Getter of the property <code>nLabels</code>
+	 * getter of <code>nLabels</code>
 	 * 
 	 * @return the number of file label annotations related to this File.
 	 */
@@ -196,7 +196,7 @@ public class H4File extends AbstractHObject implements IHObject {
 	}
 
 	/**
-	 * Getter of the property <code>filePath</code>
+	 * getter of <code>filePath</code>
 	 * 
 	 * @return the filePath.
 	 */

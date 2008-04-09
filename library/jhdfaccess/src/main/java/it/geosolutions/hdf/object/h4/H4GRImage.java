@@ -39,8 +39,6 @@ public class H4GRImage extends H4Variable implements IH4ReferencedObject {
 
 	/**
 	 * The list of {@link H4Palette} available for this image
-	 * 
-	 * @uml.property name="palettes"
 	 */
 	private List palettes;
 
@@ -50,51 +48,36 @@ public class H4GRImage extends H4Variable implements IH4ReferencedObject {
 	 * HDFConstants.MFGR_INTERLACE_PIXEL<BR>
 	 * HDFConstants.MFGR_INTERLACE_LINE<BR>
 	 * HDFConstants.MFGR_INTERLACE_COMPONENT<BR>
-	 * 
-	 * @uml.property name="interlaceMode"
 	 */
 	private int interlaceMode;
 
 	/**
 	 * the pixel datatype of this image
-	 * 
-	 * @uml.property name="datatype"
 	 */
-
 	private int datatype;
 
 	/**
 	 * The number of components in this image
-	 * 
-	 * @uml.property name="numComponents"
 	 */
 	private int numComponents;
 
 	/**
 	 * the number of palettes available for this image
-	 * 
-	 * @uml.property name="numPalettes"
 	 */
 	private int numPalettes;
 
 	/**
 	 * the dimension sizes of this image
-	 * 
-	 * @uml.property name="dimSizes"
 	 */
 	private int[] dimSizes = new int[2];
 
 	/**
 	 * the reference of this image
-	 * 
-	 * @uml.property name="reference"
 	 */
 	private H4ReferencedObject reference;
 
 	/**
 	 * The index of this image.
-	 * 
-	 * @uml.property name="index"
 	 */
 	private int index;
 
@@ -105,8 +88,6 @@ public class H4GRImage extends H4Variable implements IH4ReferencedObject {
 
 	/**
 	 * The number of data object label annotations related to this Image.
-	 * 
-	 * @uml.property name="nLabels"
 	 */
 	private int nLabels = -1;
 
@@ -117,8 +98,6 @@ public class H4GRImage extends H4Variable implements IH4ReferencedObject {
 
 	/**
 	 * The number of data object description annotations related to this Image.
-	 * 
-	 * @uml.property name="nDescriptions"
 	 */
 	private int nDescriptions = -1;
 
@@ -128,81 +107,73 @@ public class H4GRImage extends H4Variable implements IH4ReferencedObject {
 	// 
 	// ////////////////////////////////////////////////////////////////////////
 	/**
-	 * Getter of the property <code>reference</code>
+	 * getter of <code>reference</code>
 	 * 
 	 * @return the reference of this image
-	 * @uml.property name="reference"
 	 */
 	public int getReference() {
 		return reference.getReference();
 	}
 
 	/**
-	 * Getter of the property <code>datatype</code>
+	 * getter of <code>datatype</code>
 	 * 
 	 * @return the pixel datatype of this image
-	 * @uml.property name="datatype"
 	 */
 	public int getDatatype() {
 		return datatype;
 	}
 
 	/**
-	 * Getter of the property <code>dimSizes</code>
+	 * getter of <code>dimSizes</code>
 	 * 
 	 * @return the dimension sizes of this image
-	 * @uml.property name="dimSizes"
 	 */
 	public int[] getDimSizes() {
 		return dimSizes;
 	}
 
 	/**
-	 * Getter of the property <code>interlaceMode</code>
+	 * getter of <code>interlaceMode</code>
 	 * 
 	 * @return the interlace mode associated to this image.
-	 * @uml.property name="interlaceMode"
 	 */
 	public int getInterlaceMode() {
 		return interlaceMode;
 	}
 
 	/**
-	 * Getter of the property <code>numComponents</code>
+	 * getter of <code>numComponents</code>
 	 * 
 	 * @return the number of components in this image
-	 * @uml.property name="numComponents"
 	 */
 	public int getNumComponents() {
 		return numComponents;
 	}
 
 	/**
-	 * Getter of the property <code>numPalettes</code>
+	 * getter of <code>numPalettes</code>
 	 * 
 	 * @return the number of palettes available for this image
-	 * @uml.property name="numPalettes"
 	 */
 	public int getNumPalettes() {
 		return numPalettes;
 	}
 
 	/**
-	 * Getter of the property <code>index</code>
+	 * getter of <code>index</code>
 	 * 
 	 * @return the index of this image
-	 * @uml.property name="index"
 	 */
 	public int getIndex() {
 		return index;
 	}
 
 	/**
-	 * Getter of the property <code>nDescriptions</code>
+	 * getter of <code>nDescriptions</code>
 	 * 
 	 * @return number of data object description annotations related to this
 	 *         Image.
-	 * @uml.property name="nDescriptions"
 	 */
 	public int getNDescriptions() {
 		synchronized (mutex) {
@@ -217,11 +188,10 @@ public class H4GRImage extends H4Variable implements IH4ReferencedObject {
 	}
 
 	/**
-	 * Getter of the property <code>nLabels</code>
+	 * getter of <code>nLabels</code>
 	 * 
 	 * @return the number of data object label annotations related to this
 	 *         Image.
-	 * @uml.property name="nLabels"
 	 */
 	public int getNLabels() {
 		synchronized (mutex) {
@@ -236,11 +206,10 @@ public class H4GRImage extends H4Variable implements IH4ReferencedObject {
 	}
 
 	/**
-	 * Getter of the property <code>h4GRImageCollectionOwner</code>
+	 * getter of <code>h4GRImageCollectionOwner</code>
 	 * 
 	 * @return the {@link H4GRImageCollection} to which this {@link H4GRImage}
 	 *         belongs.
-	 * @uml.property name="h4GRImageCollectionOwner"
 	 */
 	public H4GRImageCollection getH4GRImageCollectionOwner() {
 		return h4GRImageCollectionOwner;
@@ -261,7 +230,6 @@ public class H4GRImage extends H4Variable implements IH4ReferencedObject {
 	/**
 	 * The {@link H4GRImageCollection} to which this {@link H4GRImage} belongs.
 	 * 
-	 * @uml.property name="h4GRImageCollectionOwner"
 	 * @uml.associationEnd inverse="grImages:it.geosolutions.hdf.object.h4.H4GRImageCollection"
 	 */
 	private H4GRImageCollection h4GRImageCollectionOwner = null;

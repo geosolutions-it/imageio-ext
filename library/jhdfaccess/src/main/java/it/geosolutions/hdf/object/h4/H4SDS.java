@@ -66,36 +66,26 @@ public class H4SDS extends H4Variable implements IH4ReferencedObject, IHObject {
 
 	/**
 	 * The index of this SDS within the source File.
-	 * 
-	 * @uml.property name="index"
 	 */
 	private int index;
 
 	/**
 	 * The dimension sizes of this SDS.
-	 * 
-	 * @uml.property name="dimSizes"
 	 */
 	private int[] dimSizes;
 
 	/**
 	 * The chunk sizes of this SDS.
-	 * 
-	 * @uml.property name="chunkSizes"
 	 */
 	private int[] chunkSizes;
 
 	/**
 	 * The rank of this SDS
-	 * 
-	 * @uml.property name="rank"
 	 */
 	private int rank = -1;
 
 	/**
 	 * the reference of this SDS
-	 * 
-	 * @uml.property name="reference"
 	 */
 	private H4ReferencedObject reference = null;
 
@@ -106,8 +96,6 @@ public class H4SDS extends H4Variable implements IH4ReferencedObject, IHObject {
 
 	/**
 	 * The number of data object label annotations related to this SDS. <br>
-	 * 
-	 * @uml.property name="nLabels"
 	 */
 	private int nLabels = -1;
 
@@ -119,8 +107,6 @@ public class H4SDS extends H4Variable implements IH4ReferencedObject, IHObject {
 	/**
 	 * The number of data object description annotations related to this SDS.
 	 * <br>
-	 * 
-	 * @uml.property name="nDescriptions"
 	 */
 	private int nDescriptions = -1;
 
@@ -135,30 +121,24 @@ public class H4SDS extends H4Variable implements IH4ReferencedObject, IHObject {
 
 	/**
 	 * the datatype of this sds
-	 * 
-	 * @uml.property name="datatype"
 	 */
 	private int datatype = HDFConstants.FAIL;
 
 	/**
 	 * The list of dimensions related to this SDS
 	 * 
-	 * @uml.property name="dimensions"
 	 * @uml.associationEnd inverse="h4sds:it.geosolutions.hdf.object.h4.H4Dimension"
 	 */
 	private List dimensions;
 
 	/**
 	 * A boolean flag which tells whether the SDS has been opened.
-	 * 
-	 * @uml.property name="isOpened"
 	 */
 	private boolean isOpened;
 
 	/**
 	 * The {@link H4SDSCollection} to which this {@link H4SDS} belongs.
 	 * 
-	 * @uml.property name="h4SDSCollectionOwner"
 	 * @uml.associationEnd inverse="sdsList:it.geosolutions.hdf.object.h4.H4SDSCollection"
 	 */
 	private H4SDSCollection h4SDSCollectionOwner = null;
@@ -169,20 +149,18 @@ public class H4SDS extends H4Variable implements IH4ReferencedObject, IHObject {
 	// 
 	// ////////////////////////////////////////////////////////////////////////
 	/**
-	 * Getter of the property <code>dimSizes</code>
+	 * getter of <code>dimSizes</code>
 	 * 
 	 * @return the dimension sizes of this SDS.
-	 * @uml.property name="dimSizes"
 	 */
 	public int[] getDimSizes() {
 		return dimSizes;
 	}
 
 	/**
-	 * Getter of the property <code>chunkSizes</code>
+	 * getter of <code>chunkSizes</code>
 	 * 
 	 * @return the chunk sizes of this SDS.
-	 * @uml.property name="chunkSizes"
 	 */
 	public int[] getChunkSizes() {
 		return chunkSizes;
@@ -190,34 +168,31 @@ public class H4SDS extends H4Variable implements IH4ReferencedObject, IHObject {
 
 	/**
 	 * @return the reference of this SDS.
-	 * @uml.property name="reference"
 	 */
 	public int getReference() {
 		return reference.getReference();
 	}
 
 	/**
-	 * Getter of the property <code>rank</code>
+	 * getter of <code>rank</code>
 	 * 
 	 * @return the rank of this SDS
-	 * @uml.property name="rank"
 	 */
 	public int getRank() {
 		return rank;
 	}
 
 	/**
-	 * Getter of the property <code>index</code>
+	 * getter of <code>index</code>
 	 * 
 	 * @return the index of this SDS within the source File
-	 * @uml.property name="index"
 	 */
 	public int getIndex() {
 		return index;
 	}
 
 	// /**
-	// * Getter of the property <code>datasetSize</code>
+	// * getter of <code>datasetSize</code>
 	// *
 	// * @return the number of 2D datasets contained within this SDS
 	// * @uml.property name="datasetSize"
@@ -227,21 +202,19 @@ public class H4SDS extends H4Variable implements IH4ReferencedObject, IHObject {
 	// }
 
 	/**
-	 * Getter of the property <code>datatype</code>
+	 * getter of <code>datatype</code>
 	 * 
 	 * @return the datatype of this sds
-	 * @uml.property name="datatype"
 	 */
 	public int getDatatype() {
 		return datatype;
 	}
 
 	/**
-	 * Getter of the property <code>nDescriptions</code>
+	 * getter of <code>nDescriptions</code>
 	 * 
 	 * @return number of data object description annotations related to this
 	 *         SDS.
-	 * @uml.property name="nDescriptions"
 	 */
 	public int getNDescriptions() {
 		synchronized (mutex) {
@@ -256,10 +229,9 @@ public class H4SDS extends H4Variable implements IH4ReferencedObject, IHObject {
 	}
 
 	/**
-	 * Getter of the property <code>nLabels</code>
+	 * getter of <code>nLabels</code>
 	 * 
 	 * @return the number of data object label annotations related to this SDS.
-	 * @uml.property name="nLabels"
 	 */
 	public int getNLabels() {
 		synchronized (mutex) {
@@ -274,10 +246,9 @@ public class H4SDS extends H4Variable implements IH4ReferencedObject, IHObject {
 	}
 
 	/**
-	 * Getter of the property <code>h4SDSCollectionOwner</code>
+	 * getter of <code>h4SDSCollectionOwner</code>
 	 * 
 	 * @return the {@link H4SDSCollection} to which this {@link H4SDS} belongs.
-	 * @uml.property name="h4SDSCollectionOwner"
 	 */
 	public H4SDSCollection getH4SDSCollectionOwner() {
 		return h4SDSCollectionOwner;
@@ -685,14 +656,4 @@ public class H4SDS extends H4Variable implements IH4ReferencedObject, IHObject {
 			}
 		}
 	}
-
-	// /**
-	// * returns <code>true</code> if this SDS is a Dimension Scale.
-	// *
-	// * @return <code>true</code> if this SDS is a Dimension Scale.
-	// * @throws HDFException
-	// */
-	// protected boolean isDimensionScale() throws HDFException {
-	// return HDFLibrary.SDiscoordvar(identifier);
-	// }
 }

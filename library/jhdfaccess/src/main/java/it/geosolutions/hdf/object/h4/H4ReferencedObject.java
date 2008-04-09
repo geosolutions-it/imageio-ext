@@ -25,8 +25,6 @@ public class H4ReferencedObject implements IH4ReferencedObject {
 
 	/**
 	 * the reference of this object
-	 * 
-	 * @uml.property name="reference"
 	 */
 	private int reference;
 
@@ -35,10 +33,9 @@ public class H4ReferencedObject implements IH4ReferencedObject {
 	}
 
 	/**
-	 * Getter of the property <code>reference</code>
+	 * getter of <code>reference</code>
 	 * 
 	 * @return the reference of this object.
-	 * @uml.property name="reference"
 	 */
 	public int getReference() {
 		return reference;

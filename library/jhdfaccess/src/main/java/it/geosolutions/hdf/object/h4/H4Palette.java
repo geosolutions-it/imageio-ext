@@ -32,29 +32,21 @@ public class H4Palette extends AbstractHObject implements IH4ReferencedObject,
 
 	/**
 	 * the datavalues of this palette. They will be loaded only when required.
-	 * 
-	 * @uml.property name="values"
 	 */
 	private byte[] values = null;
 
 	/**
 	 * the datatype of this palette
-	 * 
-	 * @uml.property name="datatype"
 	 */
 	private int datatype;
 
 	/**
 	 * The index of this palette within the parent image.
-	 * 
-	 * @uml.property name="index"
 	 */
 	private int index;
 
 	/**
 	 * The number of entries of this palette.
-	 * 
-	 * @uml.property name="numEntries"
 	 */
 
 	private int numEntries;
@@ -66,29 +58,21 @@ public class H4Palette extends AbstractHObject implements IH4ReferencedObject,
 	 * HDFConstants.MFGR_INTERLACE_PIXEL<BR>
 	 * HDFConstants.MFGR_INTERLACE_LINE<BR>
 	 * HDFConstants.MFGR_INTERLACE_COMPONENT<BR>
-	 * 
-	 * @uml.property name="interlaceMode"
 	 */
 	private int interlaceMode;
 
 	/**
 	 * the reference of this palette
-	 * 
-	 * @uml.property name="reference"
 	 */
 	private H4ReferencedObject reference;
 
 	/**
 	 * the number of components of this palette
-	 * 
-	 * @uml.property name="numComponents"
 	 */
 	private int numComponents;
 
 	/**
 	 * The {@link H4GRImage} owner.
-	 * 
-	 * @uml.property name="grImage"
 	 */
 	private H4GRImage grImage;
 
@@ -98,70 +82,63 @@ public class H4Palette extends AbstractHObject implements IH4ReferencedObject,
 	// 
 	// ////////////////////////////////////////////////////////////////////////
 	/**
-	 * Getter of the property <code>index</code>
+	 * getter of <code>index</code>
 	 * 
 	 * @return the index of this palette within the parent image.
-	 * @uml.property name="index"
 	 */
 	public int getIndex() {
 		return index;
 	}
 
 	/**
-	 * Getter of the property <code>reference</code>
+	 * getter of <code>reference</code>
 	 * 
 	 * @return the reference of this palette
-	 * @uml.property name="reference"
 	 */
 	public int getReference() {
 		return reference.getReference();
 	}
 
 	/**
-	 * Getter of the property <code>numComponents</code>
+	 * getter of <code>numComponents</code>
 	 * 
 	 * @return the number of components of this palette
-	 * @uml.property name="numComponents"
 	 */
 	public int getNumComponents() {
 		return numComponents;
 	}
 
 	/**
-	 * Getter of the property <code>datatype</code>
+	 * getter of <code>datatype</code>
 	 * 
 	 * @return the datatype of this palette
-	 * @uml.property name="datatype"
 	 */
 	public int getDatatype() {
 		return datatype;
 	}
 
 	/**
-	 * Getter of the property <code>interlaceMode</code>
+	 * getter of <code>interlaceMode</code>
 	 * 
 	 * @return the interlace Mode associated to this palette
-	 * @uml.property name="interlaceMode"
 	 */
 	public int getInterlaceMode() {
 		return interlaceMode;
 	}
 
 	/**
-	 * Getter of the property <code>numEntries</code>
+	 * getter of <code>numEntries</code>
 	 * 
 	 * @return the number of entries of this palette.
-	 * @uml.property name="numEntries"
 	 */
 	public int getNumEntries() {
 		return numEntries;
 	}
 
 	/**
-	 * Getter of the property <code>grImage</code>
+	 * getter of <code>grImage</code>
 	 * 
 	 * @return the {@link H4GRImage} owner.
-	 * @uml.property name="grImage"
 	 */
 	public H4GRImage getGrImage() {
 		return grImage;

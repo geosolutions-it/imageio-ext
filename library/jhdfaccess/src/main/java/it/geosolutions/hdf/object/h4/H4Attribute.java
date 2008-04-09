@@ -30,22 +30,16 @@ public class H4Attribute {
 
 	/**
 	 * The data contained within the attribute
-	 * 
-	 * @uml.property name="dataValues"
 	 */
 	private Object values;
 
 	/**
 	 * The name of the attribute
-	 * 
-	 * @uml.property name="name"
 	 */
 	private String name = "";
 
 	/**
 	 * the size of the attribute
-	 * 
-	 * @uml.property name="size"
 	 */
 	private int size;
 
@@ -56,15 +50,11 @@ public class H4Attribute {
 
 	/**
 	 * The index of the attribute.
-	 * 
-	 * @uml.property name="index"
 	 */
 	private int index;
 
 	/**
 	 * The datatype of the attribute.
-	 * 
-	 * @uml.property name="datatype"
 	 */
 	private int datatype;
 
@@ -131,50 +121,45 @@ public class H4Attribute {
 	// ////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Getter of the property <code>name</code>
+	 * getter of <code>name</code>
 	 * 
 	 * @return the name of the attribute.
-	 * @uml.property name="name"
 	 */
 	public String getName() {
 		return name;
 	}
 
 	/**
-	 * Getter of the property <code>index</code>
+	 * getter of <code>index</code>
 	 * 
 	 * @return the index of the attribute.
-	 * @uml.property name="index"
 	 */
 	public int getIndex() {
 		return index;
 	}
 
 	/**
-	 * Getter of the property <code>datatype</code>
+	 * getter of <code>datatype</code>
 	 * 
 	 * @return the datatype of the attribute.
-	 * @uml.property name="datatype"
 	 */
 	public int getDatatype() {
 		return datatype;
 	}
 
 	/**
-	 * Getter of the property <code>numValues</code>
+	 * getter of <code>numValues</code>
 	 * 
 	 * @return the numValues.
-	 * @uml.property name="numValues"
 	 */
 	public int getNumValues() {
 		return numValues;
 	}
 
 	/**
-	 * Getter of the property <code>size</code>
+	 * getter of <code>size</code>
 	 * 
 	 * @return the size of the attribute.
-	 * @uml.property name="size"
 	 */
 	public int getSize() {
 		return size;

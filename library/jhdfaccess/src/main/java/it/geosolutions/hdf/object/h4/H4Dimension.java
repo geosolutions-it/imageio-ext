@@ -49,7 +49,6 @@ public class H4Dimension extends H4Variable implements IHObject {
 	/**
 	 * The {@link H4SDS} to which this dimensions is related.
 	 * 
-	 * @uml.property name="h4SDS"
 	 * @uml.associationEnd inverse="dimensionsList:it.geosolutions.hdf.object.h4.H4SDS"
 	 */
 	private H4SDS h4SDS;
@@ -63,22 +62,16 @@ public class H4Dimension extends H4Variable implements IHObject {
 	/**
 	 * the datatype of the dimension scale, if a dimension scale is set for this
 	 * dimension. Otherwise, datatype is zero.
-	 * 
-	 * @uml.property name="datatype"
 	 */
 	private int datatype;
 
 	/**
 	 * The index of this dimension along the owner Scientific Dataset.
-	 * 
-	 * @uml.property name="index"
 	 */
 	private int index;
 
 	/**
 	 * The size of this dimension.
-	 * 
-	 * @uml.property name="size"
 	 */
 	private int size;
 
@@ -89,53 +82,48 @@ public class H4Dimension extends H4Variable implements IHObject {
 	// ////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Getter of the property <code>index</code>
+	 * getter of <code>index</code>
 	 * 
 	 * @return the index of this dimension.
-	 * @uml.property name="index"
 	 */
 	public int getIndex() {
 		return index;
 	}
 
 	/**
-	 * Getter of the property <code>size</code>
+	 * getter of <code>size</code>
 	 * 
 	 * @return the size of this dimension.
-	 * @uml.property name="size"
 	 */
 	public int getSize() {
 		return size;
 	}
 
 	/**
-	 * Getter of the property <code>datatype</code>.
+	 * getter of <code>datatype</code>.
 	 * 
 	 * @return the datatype. If a dimension scale is set for this dimension,
 	 *         <code>datatype</code> is the data type of the dimension scale.
 	 *         Otherwise, datatype is zero.
-	 * @uml.property name="datatype"
 	 */
 	public int getDatatype() {
 		return datatype;
 	}
 
 	/**
-	 * Getter of the property <code>hasDimensionScaleSet</code>.
+	 * getter of <code>hasDimensionScaleSet</code>.
 	 * 
 	 * @return <code>true</code> if a dimension scale is set for this
 	 *         dimension. <code>false</code> otherwise
-	 * @uml.property name="hasDimensionScaleSet"
 	 */
 	public final boolean isHasDimensionScaleSet() {
 		return hasDimensionScaleSet;
 	}
 
 	/**
-	 * Getter of the property <code>h4SDS</code>.
+	 * getter of <code>h4SDS</code>.
 	 * 
 	 * @return the {@link H4SDS} to which this dimensions is related.
-	 * @uml.property name="h4SDS"
 	 */
 	public H4SDS getH4SDS() {
 		return h4SDS;

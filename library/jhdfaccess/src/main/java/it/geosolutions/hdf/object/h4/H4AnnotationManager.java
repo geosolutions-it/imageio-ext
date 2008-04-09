@@ -38,36 +38,27 @@ public class H4AnnotationManager extends AbstractHObject implements IHObject {
 
 	/**
 	 * The number of file label annotations <br>
-	 * 
-	 * @uml.property name="nFileLabels"
 	 */
 	private int nFileLabels = -1;
 
 	/**
 	 * The number of file description annotations <br>
-	 * 
-	 * @uml.property name="nFileDescriptions"
 	 */
 	private int nFileDescriptions = -1;
 
 	/**
 	 * The number of total data object label annotations <br>
-	 * 
-	 * @uml.property name="nDataObjectLabels"
 	 */
 	private int nDataObjectLabels = -1;
 
 	/**
 	 * The number of total data object description annotations <br>
-	 * 
-	 * @uml.property name="nDataObjectDescriptions"
 	 */
 	private int nDataObjectDescriptions = -1;
 
 	/**
 	 * the {@link H4File} to which this collection is attached
 	 * 
-	 * @uml.property name="h4File"
 	 * @uml.associationEnd inverse="H4AnnotationManager:it.geosolutions.hdf.object.h4.H4File"
 	 */
 	private H4File h4File;
@@ -79,50 +70,45 @@ public class H4AnnotationManager extends AbstractHObject implements IHObject {
 	// ////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Getter of the property <code>nDataObjectDescriptions</code>
+	 * getter of <code>nDataObjectDescriptions</code>
 	 * 
 	 * @return Returns the nDataObjectDescriptions.
-	 * @uml.property name="nDataObjectDescriptions"
 	 */
 	public int getNDataObjectDescriptions() {
 		return nDataObjectDescriptions;
 	}
 
 	/**
-	 * Getter of the property <code>nDataObjectLabels</code>
+	 * getter of <code>nDataObjectLabels</code>
 	 * 
 	 * @return Returns the nDataObjectLabels.
-	 * @uml.property name="nDataObjectLabels"
 	 */
 	public int getNDataObjectLabels() {
 		return nDataObjectLabels;
 	}
 
 	/**
-	 * Getter of the property <code>nFileDescriptions</code>
+	 * getter of <code>nFileDescriptions</code>
 	 * 
 	 * @return Returns the nFileDescriptions.
-	 * @uml.property name="nFileDescriptions"
 	 */
 	public int getNFileDescriptions() {
 		return nFileDescriptions;
 	}
 
 	/**
-	 * Getter of the property <code>nFileLabels</code>
+	 * getter of <code>nFileLabels</code>
 	 * 
 	 * @return Returns the nFileLabels.
-	 * @uml.property name="nFileLabels"
 	 */
 	public int getNFileLabels() {
 		return nFileLabels;
 	}
 
 	/**
-	 * Getter of the property <code>h4File</code>
+	 * getter of <code>h4File</code>
 	 * 
 	 * @return the {@link H4File} to which this collection is attached
-	 * @uml.property name="h4File"
 	 */
 	public H4File getH4File() {
 		return h4File;

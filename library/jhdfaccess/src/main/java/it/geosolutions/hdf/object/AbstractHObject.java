@@ -27,17 +27,14 @@ public abstract class AbstractHObject implements IHObject{
 
 	/**
 	 * The numeric identifier associated to this <code>AbstractHObject</code>
-	 * 
-	 * @uml.property name="identifier"
 	 */
 	protected int identifier = HDFConstants.FAIL;
 
 	/**
-	 *  Getter of the property <code>identifier</code>
+	 *  getter of <code>identifier</code>
 	 * 
 	 * @return the numeric identifier associated to this
 	 *         <code>AbstractHObject</code>
-	 * @uml.property name="identifier"
 	 */
 	public int getIdentifier() {
 		return identifier;

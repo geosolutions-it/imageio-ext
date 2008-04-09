@@ -55,15 +55,12 @@ public class H4GRImageCollection extends H4DecoratedObject implements IHObject,
 
 	/**
 	 * The number of images available by means of this image collection
-	 * 
-	 * @uml.property name="numImages"
 	 */
 	private int numImages;
 
 	/**
 	 * the {@link H4File} to which this collection is attached
 	 * 
-	 * @uml.property name="h4File"
 	 * @uml.associationEnd inverse="h4GrImageCollection:it.geosolutions.hdf.object.h4.H4File"
 	 */
 	private H4File h4File;
@@ -82,10 +79,9 @@ public class H4GRImageCollection extends H4DecoratedObject implements IHObject,
 	}
 
 	/**
-	 * Getter of the property <code>h4File</code>
+	 * getter of <code>h4File</code>
 	 * 
 	 * @return the {@link H4File} to which this collection is attached
-	 * @uml.property name="h4File"
 	 */
 	public H4File getH4File() {
 		return h4File;

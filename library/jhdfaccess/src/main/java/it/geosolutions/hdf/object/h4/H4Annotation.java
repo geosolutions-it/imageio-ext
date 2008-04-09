@@ -70,8 +70,6 @@ public class H4Annotation extends AbstractHObject implements IH4ReferencedObject
 
 	/**
 	 * The <code>String</code> holding the content of this annotations
-	 * 
-	 * @uml.property name="content"
 	 */
 	private String content;
 
@@ -81,22 +79,16 @@ public class H4Annotation extends AbstractHObject implements IH4ReferencedObject
 	 * <code>HDFConstants.AN_DATA_DESC</code><BR>
 	 * <code>HDFConstants.AN_FILE_LABEL</code><BR>
 	 * <code>HDFConstants.AN_FILE_DESC</code><BR>
-	 * 
-	 * @uml.property name="type"
 	 */
 	private int type;
 
 	/**
 	 * the tag of this annotation
-	 * 
-	 * @uml.property name="tag"
 	 */
 	private int tag;
 
 	/**
 	 * the reference of this annotation
-	 * 
-	 * @uml.property name="reference"
 	 */
 	private H4ReferencedObject reference;
 
@@ -106,40 +98,36 @@ public class H4Annotation extends AbstractHObject implements IH4ReferencedObject
 	// 
 	// ////////////////////////////////////////////////////////////////////////
 	/**
-	 * Getter of the property <code>reference</code>
+	 * getter of <code>reference</code>
 	 * 
 	 * @return the reference of this annotation.
-	 * @uml.property name="reference"
 	 */
 	public int getReference() {
 		return reference.getReference();
 	}
 
 	/**
-	 * Getter of the property <code>tag</code>
+	 * getter of <code>tag</code>
 	 * 
 	 * @return the tag of this anntoation.
-	 * @uml.property name="tag"
 	 */
 	public int getTag() {
 		return tag;
 	}
 
 	/**
-	 * Getter of the property <code>content</code>
+	 * getter of <code>content</code>
 	 * 
 	 * @return the content of this annotation.
-	 * @uml.property name="content"
 	 */
 	public String getContent() {
 		return content;
 	}
 
 	/**
-	 * Getter of the property <code>type</code>
+	 * getter of <code>type</code>
 	 * 
 	 * @return the type of this annotation.
-	 * @uml.property name="type"
 	 */
 	public int getType() {
 		return type;
