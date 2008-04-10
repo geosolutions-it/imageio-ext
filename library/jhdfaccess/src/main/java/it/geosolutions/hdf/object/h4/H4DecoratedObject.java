@@ -60,6 +60,9 @@ public abstract class H4DecoratedObject extends AbstractHObject implements
 		return numAttributes;
 	}
 
+	/**
+	 * Initialize attributes properties.
+	 */
 	public void initDecorated() {
 		synchronized (mutex) {
 			if (numAttributes != 0) {
@@ -77,7 +80,7 @@ public abstract class H4DecoratedObject extends AbstractHObject implements
 	/**
 	 * Returns a specific attribute of this object, given its name.
 	 * 
-	 * @param name
+	 * @param attributeName
 	 *            the name of the required attribute
 	 * @return the {@link H4Attribute} related to the specified name.
 	 * @throws HDFException
@@ -165,8 +168,8 @@ public abstract class H4DecoratedObject extends AbstractHObject implements
 	/**
 	 * Returns a specific attribute of this object, given its index.
 	 * 
-	 * @param name
-	 *            the name of the required attribute
+	 * @param attributeIndex
+	 *            the index of the required attribute
 	 * @return the {@link H4Attribute} related to the specified index.
 	 * @throws HDFException
 	 */
@@ -210,6 +213,9 @@ public abstract class H4DecoratedObject extends AbstractHObject implements
 							+ numAttributes);
 	}
 	
+	/**
+	 * Clear the attributes mappings. 
+	 */
 	public void dispose(){
 		synchronized (mutex) {
 			if (attributes != null)

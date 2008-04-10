@@ -180,7 +180,7 @@ public class H4GRImageCollection extends H4DecoratedObject implements IHObject,
 	 * Returns the {@link H4GRImage} related to the index-TH image. Prior to
 	 * call this method, be sure that some images are available from this
 	 * {@link H4GRImageCollection} by querying the
-	 * {@link H4GRImageCollection#getNumImages()} method. otherwise an 
+	 * {@link H4GRImageCollection#size()} method. otherwise an 
 	 * <code>IndexOutOfBoundsException</code> will be thrown.
 	 * 
 	 * @param index
@@ -202,7 +202,7 @@ public class H4GRImageCollection extends H4DecoratedObject implements IHObject,
 	 * Returns the {@link H4GRImage} having the name specified as input
 	 * parameter, and open it. Prior to call this method, be sure that some
 	 * images are available from this {@link H4GRImageCollection} by querying
-	 * the {@link H4GRImageCollection#getNumImages()} method.
+	 * the {@link H4GRImageCollection#size()} method.
 	 * 
 	 * @param sName
 	 *            the name of the requested image.

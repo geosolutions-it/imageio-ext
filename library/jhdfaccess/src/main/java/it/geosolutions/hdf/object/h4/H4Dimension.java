@@ -341,9 +341,9 @@ public class H4Dimension extends H4Variable implements IHObject {
 	/**
 	 * Returns a specific attribute of this Dimension, given its name.
 	 * 
-	 * @param index
-	 *            the index of the required attribute
-	 * @return the {@link H4Attribute} related to the specified index.
+	 * @param attributeName
+	 *           the name of the required attribute
+	 * @return the {@link H4Attribute} related to the specified name.
 	 * @throws HDFException
 	 */
 	public H4Attribute getAttribute(final String attributeName)
@@ -360,8 +360,8 @@ public class H4Dimension extends H4Variable implements IHObject {
 	/**
 	 * Returns a specific attribute of this Dimension, given its index.
 	 * 
-	 * @param name
-	 *            the name of the required attribute
+	 * @param attributeIndex
+	 *            the index of the required attribute
 	 * @return the {@link H4Attribute} related to the specified index.
 	 * @throws HDFException
 	 */

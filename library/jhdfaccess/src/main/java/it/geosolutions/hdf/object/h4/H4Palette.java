@@ -187,7 +187,7 @@ public class H4Palette extends AbstractHObject implements IH4ReferencedObject,
 	/**
 	 * return a byte array containing palette values.
 	 * 
-	 * @return
+	 * @return the values of the palette.
 	 * @throws HDFException
 	 */
 	public byte[] getValues() throws HDFException {
@@ -197,7 +197,6 @@ public class H4Palette extends AbstractHObject implements IH4ReferencedObject,
 			HDFLibrary.GRreadlut(identifier, values);
 		}
 		return values;
-
 	}
 
 	/**
@@ -207,5 +206,4 @@ public class H4Palette extends AbstractHObject implements IH4ReferencedObject,
 		if (identifier != HDFConstants.FAIL)
 			identifier = HDFConstants.FAIL;
 	}
-
 }
