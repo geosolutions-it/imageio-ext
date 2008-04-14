@@ -166,12 +166,7 @@ public final class FileImageInputStreamExtImpl extends ImageInputStreamImpl
 	 */
 	public FileImageInputStreamExtImpl(File f) throws FileNotFoundException,
 			IOException {
-		if (f == null) {
-			throw new NullPointerException("f == null!");
-		}
-		this.file = f;
-		this.eraf = new EnhancedRandomAccessFile(f, "r");
-		this.eraf.setByteOrder(ByteOrder.BIG_ENDIAN);
+		this(f,-1);
 	}
 
 	/**
@@ -200,11 +195,23 @@ public final class FileImageInputStreamExtImpl extends ImageInputStreamImpl
 	 */
 	public FileImageInputStreamExtImpl(File f, int bufferSize)
 			throws FileNotFoundException, IOException {
+		////
+		//
+		// Check that the input file is a valid file
+		//
+		////
 		if (f == null) {
-			throw new NullPointerException("Input eraf was null!");
+			throw new NullPointerException("f == null!");
+		}
+		if(!f.exists()||f.isDirectory()||!f.canRead()){
+			final StringBuilder buff= new StringBuilder("Invalid input file provided");
+			buff.append("exists: ").append(f.exists()).append("\n");
+			buff.append("isDirectory: ").append(f.isDirectory()).append("\n");
+			buff.append("canRead: ").append(f.canRead()).append("\n");
+			throw new IllegalArgumentException(buff.toString());
 		}
 		this.file = f;
-		this.eraf = new EnhancedRandomAccessFile(f, "r", bufferSize);
+		this.eraf = bufferSize<=0?new EnhancedRandomAccessFile(f, "r"):new EnhancedRandomAccessFile(f, "r",bufferSize);
 		// NOTE: this must be done accordingly to what ImageInputStreamImpl
 		// does, otherwise some ImageREader subclasses might not work.
 		this.eraf.setByteOrder(ByteOrder.BIG_ENDIAN);
