@@ -166,7 +166,7 @@ public final class FileImageInputStreamExtImpl extends ImageInputStreamImpl
 	 */
 	public FileImageInputStreamExtImpl(File f) throws FileNotFoundException,
 			IOException {
-		this(f,-1);
+		this(f, -1);
 	}
 
 	/**
@@ -195,25 +195,27 @@ public final class FileImageInputStreamExtImpl extends ImageInputStreamImpl
 	 */
 	public FileImageInputStreamExtImpl(File f, int bufferSize)
 			throws FileNotFoundException, IOException {
-		////
+		// //
 		//
 		// Check that the input file is a valid file
 		//
-		////
+		// //
 		if (f == null) {
 			throw new NullPointerException("f == null!");
 		}
-		if(!f.exists()||f.isDirectory()||!f.canRead()){
-			final StringBuilder buff= new StringBuilder("Invalid input file provided");
+		if (!f.exists() || f.isDirectory() || !f.canRead()) {
+			final StringBuilder buff = new StringBuilder(
+					"Invalid input file provided");
 			buff.append("exists: ").append(f.exists()).append("\n");
 			buff.append("isDirectory: ").append(f.isDirectory()).append("\n");
 			buff.append("canRead: ").append(f.canRead()).append("\n");
 			throw new IllegalArgumentException(buff.toString());
 		}
 		this.file = f;
-		this.eraf = bufferSize<=0?new EnhancedRandomAccessFile(f, "r"):new EnhancedRandomAccessFile(f, "r",bufferSize);
+		this.eraf = bufferSize <= 0 ? new EnhancedRandomAccessFile(f, "r")
+				: new EnhancedRandomAccessFile(f, "r", bufferSize);
 		// NOTE: this must be done accordingly to what ImageInputStreamImpl
-		// does, otherwise some ImageREader subclasses might not work.
+		// does, otherwise some ImageReader subclasses might not work.
 		this.eraf.setByteOrder(ByteOrder.BIG_ENDIAN);
 	}
 
@@ -230,6 +232,19 @@ public final class FileImageInputStreamExtImpl extends ImageInputStreamImpl
 		return val;
 	}
 
+	/**
+	 * Read up to <code>len</code> bytes into an array, at a specified offset.
+	 * This will block until at least one byte has been read.
+	 * 
+	 * @param b
+	 *            the byte array to receive the bytes.
+	 * @param off
+	 *            the offset in the array where copying will start.
+	 * @param len
+	 *            the number of bytes to copy.
+	 * @return the actual number of bytes read, or -1 if there is not more data
+	 *         due to the end of the eraf being reached.
+	 */
 	public int read(byte[] b, int off, int len) throws IOException {
 		checkClosed();
 		bitOffset = 0;
@@ -297,7 +312,6 @@ public final class FileImageInputStreamExtImpl extends ImageInputStreamImpl
 		} catch (IOException e) {
 
 		}
-
 	}
 
 	/**
@@ -310,5 +324,4 @@ public final class FileImageInputStreamExtImpl extends ImageInputStreamImpl
 		return new StringBuffer("FileImageInputStreamExtImpl which points to ")
 				.append(this.file.toString()).toString();
 	}
-
 }

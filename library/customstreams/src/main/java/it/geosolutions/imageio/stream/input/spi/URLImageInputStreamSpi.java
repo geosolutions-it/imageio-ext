@@ -17,7 +17,6 @@
 package it.geosolutions.imageio.stream.input.spi;
 
 import it.geosolutions.imageio.stream.input.FileCacheImageInputStream;
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 
 import java.io.File;
 import java.io.IOException;
@@ -120,13 +119,12 @@ public class URLImageInputStreamSpi extends ImageInputStreamSpi {
 		super(vendorName, version, inputClass);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.imageio.spi.ImageInputStreamSpi#createInputStreamInstance(java.lang.Object,
-	 *      boolean, java.io.File)
-	 */
-	public ImageInputStream createInputStreamInstance(Object input,
+    /**
+     *
+     * @see javax.imageio.spi.ImageInputStreamSpi#createInputStreamInstance(java.lang.Object,
+     *      boolean, java.io.File)
+     */
+    public ImageInputStream createInputStreamInstance(Object input,
 			boolean useCache, File cacheDir) {
 		// is it a URL?
 		if (!(input instanceof URL)) {
@@ -142,7 +140,6 @@ public class URLImageInputStreamSpi extends ImageInputStreamSpi {
 			if (tempFile.exists()&&tempFile.isFile()&&tempFile.canRead())
 				return fileStreamSPI.createInputStreamInstance(input,useCache,cacheDir);
 
-
 			// URL that does NOT points to a file, let's open up a stream
 			if (useCache)
 				return new MemoryCacheImageInputStream(sourceURL
@@ -152,12 +149,10 @@ public class URLImageInputStreamSpi extends ImageInputStreamSpi {
 						sourceURL.openStream(), cacheDir);
 			
 		} catch (IOException e) {
-
 			if (LOGGER.isLoggable(Level.FINE))
 				LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
 			return null;
 		}
-
 	}
 
 	/**
@@ -166,5 +161,4 @@ public class URLImageInputStreamSpi extends ImageInputStreamSpi {
 	public String getDescription(Locale locale) {
 		return "Service provider that helps connecting to the onject pointed by a URL";
 	}
-
 }
