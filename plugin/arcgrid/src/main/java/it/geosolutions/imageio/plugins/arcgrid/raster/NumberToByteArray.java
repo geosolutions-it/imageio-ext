@@ -27,7 +27,7 @@ import java.io.IOException;
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions. 
  */
-public final class NumberToByteArray {
+final class NumberToByteArray {
 	// Hardcode some byte arrays to make them quickly available
 	public static final byte[] INFINITY = { 73, 110, 102, 105, 110, 105, 116,
 			121 };

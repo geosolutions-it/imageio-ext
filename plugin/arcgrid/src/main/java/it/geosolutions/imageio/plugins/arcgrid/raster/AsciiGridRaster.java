@@ -1098,7 +1098,7 @@ public abstract class AsciiGridRaster {
 		double retVal = Double.NaN;
 		boolean started = false;
 		int bytesRead = 0, validBytesRead = 0;
-		final StringToDouble numberConver = StringToDouble.acquire();
+		final StringToFloat floatConverter = StringToFloat.acquire();
 		while (true) {
 			b = (byte) (inStream.read() & 0xff);
 
@@ -1137,7 +1137,7 @@ public abstract class AsciiGridRaster {
 			// Process this character
 			//
 			// ///////////////////////////////////////////////////////////////////
-			if (!numberConver.pushChar(b))
+			if (!floatConverter.pushChar(b))
 				return Double.NEGATIVE_INFINITY;
 			started = true;
 			if (validBytesRead > maxValueLength)
@@ -1150,8 +1150,8 @@ public abstract class AsciiGridRaster {
 		// Retreve the value
 		//
 		// ///////////////////////////////////////////////////////////////////
-		numberConver.compute();
-		retVal = numberConver.getValue();
+		retVal = floatConverter.compute();
+		StringToFloat.release(floatConverter);
 		return retVal;
 	}
 
