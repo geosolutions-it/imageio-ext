@@ -117,7 +117,7 @@ public final class AsciiGridsImageReader extends ImageReader {
 	 * the possible {@link AsciiGridsImageReader}.
 	 */
 	private final static ComponentColorModel cm = RasterFactory
-			.createComponentColorModel(DataBuffer.TYPE_FLOAT,
+			.createComponentColorModel(DataBuffer.TYPE_DOUBLE,
 			// dataType
 					ColorSpace.getInstance(ColorSpace.CS_GRAY), // color space
 					false, // has alpha

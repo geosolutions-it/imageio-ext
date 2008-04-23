@@ -18,7 +18,6 @@ package it.geosolutions.imageio.plugins.arcgrid.raster;
 
 import it.geosolutions.imageio.plugins.arcgrid.AsciiGridsImageReader;
 import it.geosolutions.imageio.plugins.arcgrid.AsciiGridsImageWriter;
-import it.geosolutions.io.output.FastByteArrayWrapper;
 
 import java.awt.Rectangle;
 import java.awt.image.WritableRaster;
@@ -40,7 +39,7 @@ import javax.media.jai.iterator.RectIter;
  * Abstract base class to handle ASCII ArcGrid/GRASS formats
  * 
  * @author Daniele Romagnoli, GeoSolutions.
- * @author Simone Giannecchini, GeoSolutions. 
+ * @author Simone Giannecchini, GeoSolutions.
  */
 public abstract class AsciiGridRaster {
 
@@ -54,11 +53,15 @@ public abstract class AsciiGridRaster {
 
 	protected volatile boolean abortRequired = false;
 
+	private final static int MAX_BYTES_TO_READ = 70;
+
+	private final static int MAX_VALUE_LENGTH = 40;
+
 	/** max value found in the file */
-	protected double maxValue = Float.MIN_VALUE;
+	protected double maxValue = Double.MIN_VALUE;
 
 	/** min value found in the file */
-	protected double minValue = Float.MAX_VALUE;
+	protected double minValue = Double.MAX_VALUE;
 
 	/**
 	 * x coordinate of the grid origin (the lower left corner) in compliance
@@ -531,11 +534,11 @@ public abstract class AsciiGridRaster {
 				.getRenderingHint(JAI.KEY_TILE_FACTORY);
 		if (factory != null)
 			raster = factory.createTile(RasterFactory.createBandedSampleModel(
-					java.awt.image.DataBuffer.TYPE_FLOAT, dstWidth, dstHeight,
+					java.awt.image.DataBuffer.TYPE_DOUBLE, dstWidth, dstHeight,
 					1), null);
 		else
 			raster = RasterFactory.createBandedRaster(
-					java.awt.image.DataBuffer.TYPE_FLOAT, dstWidth, dstHeight,
+					java.awt.image.DataBuffer.TYPE_DOUBLE, dstWidth, dstHeight,
 					1, null);
 
 		int ch = -1;
@@ -667,7 +670,6 @@ public abstract class AsciiGridRaster {
 							key = new Long(samplesCounted);
 							val = new Long(streamPosition);
 							synchronized (tileTreeMutex) {
-
 								if (!tileMarker.containsKey(key)) {
 									tileMarker.put(key, val);
 								}
@@ -692,9 +694,7 @@ public abstract class AsciiGridRaster {
 
 					}
 				}
-
 			}
-
 		}
 
 		// /////////////////////////////////////////////////////////////////////
@@ -724,19 +724,6 @@ public abstract class AsciiGridRaster {
 		// variables for arithmetic operations
 		// //
 		double value = 0.0;
-		int valSign = 1;
-		double exponent = 0;
-		int expSign = 1;
-		double multiplier = 0.1;
-
-		// //
-		// variables to prevent illegal numbers
-		// //
-		int expChar = 0; // count the E symbols within the same number
-		int decimalPoint = 0; // count the '.' within the same number
-		int digits = 0;
-		int decimalDigits = 0;
-		int expDigits = 0;
 
 		// //
 		// variables for raster setting
@@ -746,216 +733,72 @@ public abstract class AsciiGridRaster {
 		int tempCol = 0, tempRow = 0;
 
 		final double noDataValue = getNoData();
-
+		final StringToDouble doubleConverter = StringToDouble.acquire();
+		// final StringToDouble doubleConverter = StringToDouble.acquire();
 		// If I need to load 10 samples, I need to count 9 spaces
 		while (samplesCounted < samplesToLoad) {
+			value = getValue(imageIS, MAX_BYTES_TO_READ, MAX_VALUE_LENGTH, doubleConverter);
+			// // //
+			// //
+			// // Does subsampling allow to add this value?
+			// //
+			// // //
+			tempCol = samplesCounted % nCols;
+			tempRow = samplesCounted / nCols;
 
-			ch = imageIS.read();
-			streamPosition++;
+			if (!((tempCol < srcRegionXOffset || tempCol >= srcRegionXOffset
+					+ srcRegionWidth))) {
 
-			// check if we read a white space or similar
-			if ((ch != 32) && (ch != 10) && (ch != 13) && (ch != 9)
-					&& (ch != 0)) {
-				if ((prevCh == 32) // ' '
-						|| (prevCh == 10) // '\r'
-						|| (prevCh == 13) // '\n'
-						|| (prevCh == 9) // '\t'
-						|| (prevCh == 0)) {
-					// //
-					//
-					// End of whitespaces. I need to convert read bytes
-					// in a double value and I set it as a sample of the
-					// raster, if subsampling allows it.
-					//
-					// //
-
-					// //
-					//
-					// Checks on the read value
-					//
-					// //
-					if (((decimalPoint == 1) && (decimalDigits == 0))
-							|| ((expChar == 1) && (expDigits == 0))
-							|| ((digits == 0) && (decimalDigits == 0) && (expDigits > 0))) {
-						// Illegal numbers. Example: 14.E8 ****
-						// 12.5E **** E10
-						throw new NumberFormatException(
-								"An Illegal number was found:\nDigits = "
-										+ digits + "\nDecimalPoints = "
-										+ decimalPoint + "\nDecimalDigits = "
-										+ decimalDigits + "\nE Symbols = "
-										+ expChar
-										+ "\nDigits after E Symbol = "
-										+ expDigits + "\n");
-					}
-
-					// //
-					//
-					// Does subsampling allow to add this value?
-					//
-					// //
-					tempCol = samplesCounted % nCols;
-					tempRow = samplesCounted / nCols;
-
-					if (!((tempCol < srcRegionXOffset || tempCol >= srcRegionXOffset
-							+ srcRegionWidth))) {
-
-						if ((!doSubsampling)
-								|| (doSubsampling && (((tempRow)
-										% ySubsamplingFactor == 0) && ((tempCol)
-										% xSubsamplingFactor == 0)))) {
-							// If there is an exponent, I update the value
-							if (exponent != 0) {
-								value *= Math.pow(10.0, exponent * expSign);
-							}
-
-							// Applying the proper sign.
-							value = value * valSign;
-
-							// no data management
-							if ((value != noDataValue) && !Double.isNaN(value)
-									&& !Double.isInfinite(value)) {
-								synchronized (tileTreeMutex) {
-									minValue = Math.min(minValue, value);
-									maxValue = Math.max(maxValue, value);
-								}
-							}
-
-							// //
-							//
-							// We found a value, let's give it to the raster.
-							//
-							// //
-							rasterY = (tempRow) / ySubsamplingFactor;
-							rasterX = (tempCol - srcRegionXOffset)
-									/ xSubsamplingFactor;
-							raster
-									.setSample(rasterX, rasterY, 0,
-											(float) value);
+				if ((!doSubsampling)
+						|| (doSubsampling && (((tempRow) % ySubsamplingFactor == 0) && ((tempCol)
+								% xSubsamplingFactor == 0)))) {
+					// If there is an exponent, I update the value
+					// no data management
+					if (Double.isInfinite(value)) {
+						if ((samplesCounted != samplesToLoad)) {
+							StringToDouble.release(doubleConverter);
+							throw new IOException(
+									"Error on reading data due to an END of File or invalid data find");
 						}
 					}
-					// sample found
-					samplesCounted++;
 
-					if (hasListeners) {
-						// //
-						//
-						// Check abort request at every 10%
-						//
-						// //
-						perc = (int) (((samplesCounted * 1.0f) / samplesToLoad) * 100);
-						if ((perc % (10 * iPerc) == 0) && (int) perc > 0) {
-							if (abortRequired)
-								return raster;
-							reader.processImageProgress(perc);
-							iPerc++;
+					if ((value != noDataValue) && !Double.isNaN(value)
+							&& !Double.isInfinite(value)) {
+						synchronized (tileTreeMutex) {
+							minValue = Math.min(minValue, value);
+							maxValue = Math.max(maxValue, value);
 						}
 					}
-					// Resetting Values
-					value = 0;
-					valSign = 1;
-					exponent = 0;
-					expChar = 0;
-					expDigits = 0;
-					decimalPoint = 0;
-					decimalDigits = 0;
-					digits = 0;
+
+					// //
+					//
+					// We found a value, let's give it to the raster.
+					//
+					// //
+					rasterY = (tempRow) / ySubsamplingFactor;
+					rasterX = (tempCol - srcRegionXOffset) / xSubsamplingFactor;
+					raster.setSample(rasterX, rasterY, 0, value);
 				}
-
-				// //
-				//
-				// Analysis of current byte for next value
-				//
-				// //
-				switch (ch) {
-				case 48: // '0'
-				case 49: // '1'
-				case 50: // '2'
-				case 51: // '3'
-				case 52: // '4'
-				case 53: // '5'
-				case 54: // '6'
-				case 55: // '7'
-				case 56: // '8'
-				case 57: // '9'
-					if ((decimalPoint == 0) && (expChar == 0)) {
-						value = (value * 10) + (ch - 48);
-						digits++;
-					} else if (expChar == 1) {
-						exponent = (exponent * 10) + (ch - 48);
-						expDigits++;
-					} else {
-						value += ((ch - 48) * multiplier);
-						multiplier /= 10.0;
-						decimalDigits++;
-					}
-
-					break;
-
-				case 46: // '.'
-					if (expChar > 0)
-						throw new NumberFormatException(
-								"A Decimal point can't exists after the E symbol within the same number\n");
-
-					decimalPoint++; // The "++" prevents invalid number
-					if (decimalPoint > 1)
-						throw new NumberFormatException(
-								"The number contains more than 1 decimal point!\n");
-
-					// Illegal Number handled example:
-					// 12.3.45
-					multiplier = 0.1;
-					break;
-
-				case 45: // '-'
-					if ((prevCh == 69) || (prevCh == 101))
-						expSign = -1;
-					else
-						valSign = -1;
-					break;
-
-				case 43: // '+'
-					if ((prevCh == 69) || (prevCh == 101))
-						expSign = 1;
-					else
-						valSign = 1;
-					break;
-
-				case 42: // '*' NoData in GRASS Format
-					value = Double.NaN;
-					break;
-
-				case 69: // 'E'
-				case 101: // 'e'
-					expChar++; // The "++" prevents invalid number
-					if (expChar > 1)
-						throw new NumberFormatException(
-								"The number contains more than one 'E' symbol !\n");
-
-					// Illegal Number handled example:
-					// 12.6E23E45
-					exponent = 0;
-					expSign = 1;
-					expDigits = 0;
-
-					break;
-
-				case -1:
-					if ((samplesCounted != samplesToLoad))
-						// send error on end of file
-						throw new EOFException(
-								"EOF found while looking for valid input");
-					break;
-
-				default:
-					throw new NumberFormatException(new StringBuffer(
-							"Invalid data value was found. ASCII CODE : ")
-							.append(ch).toString());
-				}
-
 			}
+			// sample found
+			samplesCounted++;
 
-			prevCh = ch; // store this byte for some checks
+			if (hasListeners) {
+				// //
+				//
+				// Check abort request at every 10%
+				//
+				// //
+				perc = (int) (((samplesCounted * 1.0f) / samplesToLoad) * 100);
+				if ((perc % (10 * iPerc) == 0) && (int) perc > 0) {
+					if (abortRequired)
+						return raster;
+					reader.processImageProgress(perc);
+					iPerc++;
+				}
+			}
+			// Resetting Values
+			value = 0;
 		}
 
 		synchronized (tileTreeMutex) {
@@ -968,11 +811,86 @@ public abstract class AsciiGridRaster {
 			// stream
 			tileMarker.put(new Long(samplesToLoad
 					+ samplesToThrowAwayBeforeFirstValidSample), new Long(
-					streamPosition));
+					imageIS.getStreamPosition()));
 		}
-
+		StringToDouble.release(doubleConverter);
 		return raster;
 	}
+
+	// /**
+	// * Writes the raster
+	// *
+	// * @param iterator
+	// * A <code>RectIterator</code> built on Lines and Pixels of the
+	// * Raster which need to be written.
+	// * @param noDataDouble
+	// * the value representing noData.
+	// * @param noDataMarker
+	// * a <code>String</code> which need to be printed when founding
+	// * a noData value
+	// * @throws IOException
+	// */
+	//
+	// public void writeRaster(RectIter iterator, Double noDataDouble,
+	// String noDataMarker) throws IOException {
+	//
+	// final boolean hasListeners = writer.isHasListeners();
+	// final int pixelsToWrite = hasListeners ? (writer.getNColumns() * writer
+	// .getNRows()) : 0;
+	// int pixelsWritten = 0;
+	// int perc = 0;
+	// int iPerc = 1;
+	//
+	// if (hasListeners && abortRequired) {
+	// return;
+	// }
+	//
+	// double sample;
+	// byte[] noDataMarkerBytes = noDataMarker.getBytes();
+	// byte[] newLineBytes = newline.getBytes();
+	// final NumberToByteArray ntba = new NumberToByteArray();
+	// final FastByteArrayWrapper fba = new FastByteArrayWrapper();
+	// while (!iterator.finishedLines()) {
+	// while (!iterator.finishedPixels()) {
+	// sample = iterator.getSampleDouble();
+	// pixelsWritten++;
+	// if (hasListeners) {
+	// perc = (int) (((pixelsWritten * 1.0f) / pixelsToWrite) * 1000);
+	//
+	// if ((perc % (25 * iPerc) == 0) && (int) perc > 0) {
+	// if (abortRequired) {
+	// return;
+	// }
+	// writer.processImageProgress(perc / 10f);
+	// iPerc++;
+	// }
+	// }
+	//
+	// // writing the sample
+	// if ((noDataDouble.compareTo(new Double(sample)) != 0)
+	// && !Double.isNaN(sample) && !Double.isInfinite(sample)) {
+	// fba.reset();
+	// ntba.append(fba, sample);
+	// imageOS.write(fba.getByteArray(), 0, fba.size());
+	// } else {
+	// imageOS.write(noDataMarkerBytes);
+	// }
+	//
+	// iterator.nextPixel();
+	//
+	// // space
+	// if (!iterator.finishedPixels())
+	// imageOS.write(32);
+	//
+	// }
+	//
+	// imageOS.write(newLineBytes);
+	// iterator.nextLine();
+	// iterator.startPixels();
+	//
+	// }
+	//
+	// }
 
 	/**
 	 * Writes the raster
@@ -1001,16 +919,12 @@ public abstract class AsciiGridRaster {
 		if (hasListeners && abortRequired) {
 			return;
 		}
-
+		String sampleString;
 		double sample;
-		byte[] noDataMarkerBytes = noDataMarker.getBytes();
-		byte[] newLineBytes = newline.getBytes();
-		final NumberToByteArray ntba = new NumberToByteArray();
-		final FastByteArrayWrapper fba = new FastByteArrayWrapper();
 		while (!iterator.finishedLines()) {
-
 			while (!iterator.finishedPixels()) {
 				sample = iterator.getSampleDouble();
+				sampleString = Double.toString(sample);
 				pixelsWritten++;
 				if (hasListeners) {
 					perc = (int) (((pixelsWritten * 1.0f) / pixelsToWrite) * 1000);
@@ -1027,11 +941,9 @@ public abstract class AsciiGridRaster {
 				// writing the sample
 				if ((noDataDouble.compareTo(new Double(sample)) != 0)
 						&& !Double.isNaN(sample) && !Double.isInfinite(sample)) {
-					fba.reset();
-					ntba.append(fba, sample);
-					imageOS.write(fba.getByteArray(), 0, fba.size());
+					imageOS.writeBytes(sampleString);
 				} else {
-					imageOS.write(noDataMarkerBytes);
+					imageOS.writeBytes(noDataMarker);
 				}
 
 				iterator.nextPixel();
@@ -1042,12 +954,10 @@ public abstract class AsciiGridRaster {
 
 			}
 
-			imageOS.write(newLineBytes);
+			imageOS.writeBytes(newline);
 			iterator.nextLine();
 			iterator.startPixels();
-
 		}
-
 	}
 
 	public void abort() {
@@ -1077,7 +987,7 @@ public abstract class AsciiGridRaster {
 	 * 
 	 * key value _new_line_ key value _new_line_
 	 * 
-	 * Purpos e of this method is to look for the header's keys.
+	 * Purpose of this method is to look for the header's keys.
 	 * 
 	 * @param inStream
 	 *            is the {@link ImageInputStream} to read from.
@@ -1085,20 +995,20 @@ public abstract class AsciiGridRaster {
 	 *            is maximum number of bytes to consume from the provided
 	 *            {@link ImageInputStream}.
 	 * @param maxValueLength
-	 *            indicates the maximum expected length in input ascci
+	 *            indicates the maximum expected length in input ascii
 	 *            characters of the value we are looking for.
-	 * @return a {@link double} containing either a valid value or NaN if
-	 *         something bad happened.
+	 * @return a {@link double} containing either a valid value or Negative
+	 *         Infinity if something bad happened.
 	 * @throws IOException
 	 */
 	double getValue(final ImageInputStream inStream, int maxBytesToRead,
-			int maxValueLength) throws IOException {
+			int maxValueLength, StringToDouble doubleConverter) throws IOException {
 
 		byte b;
 		double retVal = Double.NaN;
 		boolean started = false;
 		int bytesRead = 0, validBytesRead = 0;
-		final StringToFloat floatConverter = StringToFloat.acquire();
+//		final StringToDouble doubleConverter = StringToDouble.acquire();
 		while (true) {
 			b = (byte) (inStream.read() & 0xff);
 
@@ -1128,7 +1038,7 @@ public abstract class AsciiGridRaster {
 			}
 			// only digits, +, e, E, . are allowed
 			if ((b < 48 || b > 57) && b != 43 && b != 45 && b != 69 && b != 101
-					&& b != 46)
+					&& b != 46 && b != 42)
 				return Double.NEGATIVE_INFINITY;
 			validBytesRead++;
 
@@ -1137,7 +1047,7 @@ public abstract class AsciiGridRaster {
 			// Process this character
 			//
 			// ///////////////////////////////////////////////////////////////////
-			if (!floatConverter.pushChar(b))
+			if (!doubleConverter.pushChar(b))
 				return Double.NEGATIVE_INFINITY;
 			started = true;
 			if (validBytesRead > maxValueLength)
@@ -1147,11 +1057,11 @@ public abstract class AsciiGridRaster {
 
 		// ///////////////////////////////////////////////////////////////////
 		//
-		// Retreve the value
+		// Retrieve the value
 		//
 		// ///////////////////////////////////////////////////////////////////
-		retVal = floatConverter.compute();
-		StringToFloat.release(floatConverter);
+		retVal = doubleConverter.compute();
+//		StringToDouble.release(doubleConverter);
 		return retVal;
 	}
 
@@ -1194,7 +1104,7 @@ public abstract class AsciiGridRaster {
 			int maxKeyLength, byte specialChar) throws IOException {
 
 		byte b;
-		StringBuffer buffer = new StringBuffer(10);
+		StringBuilder buffer = new StringBuilder(10);
 		boolean started = false;
 		int bytesRead = 0, validBytesRead = 0;
 		while (true) {

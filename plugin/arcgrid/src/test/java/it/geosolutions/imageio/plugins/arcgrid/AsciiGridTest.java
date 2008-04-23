@@ -20,6 +20,7 @@ import it.geosolutions.resources.ShareableTestData;
 import it.geosolutions.resources.TestData;
 
 import java.awt.Rectangle;
+import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -155,9 +156,9 @@ public class AsciiGridTest extends TestCase {
 		else
 			image2.getTiles();
 
-		assertEquals(image2.getWidth(), image.getWidth());
-		assertEquals(image2.getHeight(), image.getHeight());
-
+		final String error[] = new String[1];
+		final boolean result = compare(image, image2, error);
+		assertTrue(error[0], result);
 	}
 
 	/**
@@ -208,5 +209,40 @@ public class AsciiGridTest extends TestCase {
 			visualize(image, title);
 		else
 			assertNotNull(image.getTiles());
+	}
+	
+	private boolean compare(RenderedOp image, RenderedOp image2,
+			final String error[]) {
+		final int minTileX1 = image.getMinTileX();
+		final int minTileY1 = image.getMinTileY();
+		final int width = image.getWidth();
+		final int height = image.getHeight();
+		final int maxTileX1 = minTileX1 + image.getNumXTiles();
+		final int maxTileY1 = minTileY1 + image.getNumYTiles();
+		double value1 = 0, value2 = 0;
+
+		for (int tileIndexX = minTileX1; tileIndexX < maxTileX1; tileIndexX++)
+			for (int tileIndexY = minTileY1; tileIndexY < maxTileY1; tileIndexY++) {
+
+				final Raster r1 = image.getTile(tileIndexX, tileIndexY);
+				final Raster r2 = image2.getTile(tileIndexX, tileIndexY);
+
+				for (int i = r1.getMinX(); i < width; i++) {
+					for (int j = r1.getMinY(); j < height; j++) {
+						value1 = r1.getSampleDouble(i, j, 0);
+						value2 = r2.getSampleDouble(i, j, 0);
+
+						if (value1 != value2) {
+							error[0] = new StringBuffer(
+									"Written back image is not equal to the original one: ")
+									.append(value1).append(", ").append(value2)
+									.toString();
+							return false;
+						}
+
+					}
+				}
+			}
+		return true;
 	}
 }

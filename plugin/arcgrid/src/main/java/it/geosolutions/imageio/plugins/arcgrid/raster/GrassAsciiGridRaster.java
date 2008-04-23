@@ -138,6 +138,7 @@ public final class GrassAsciiGridRaster extends AsciiGridRaster {
 		// Parsing the header
 		//
 		// /////////////////////////////////////////////////////////////////////
+		final StringToDouble doubleConverter = StringToDouble.acquire();
 		while (keepParsing) {
 			// //
 			//
@@ -153,7 +154,7 @@ public final class GrassAsciiGridRaster extends AsciiGridRaster {
 			// Get corresponding value
 			//
 			// //
-			value = getValue(imageIS, maxNumBytes, 150);
+			value = getValue(imageIS, maxNumBytes, 150, doubleConverter);
 			if (Double.isNaN(value) || Double.isNaN(value))
 				break;
 
@@ -186,7 +187,7 @@ public final class GrassAsciiGridRaster extends AsciiGridRaster {
 				keepParsing = false;
 			}
 		}
-
+		StringToDouble.release(doubleConverter);
 		// /////////////////////////////////////////////////////////////////////
 		//
 		// Checking if any required header field has been found

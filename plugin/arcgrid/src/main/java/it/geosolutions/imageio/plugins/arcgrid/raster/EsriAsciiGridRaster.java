@@ -29,7 +29,7 @@ import javax.imageio.stream.ImageOutputStream;
  * Class used to handle an ASCII ArcGrid format source.
  * 
  * @author Daniele Romagnoli, GeoSolutions.
- * @author Simone Giannecchini, GeoSolutions. 
+ * @author Simone Giannecchini, GeoSolutions.
  */
 public final class EsriAsciiGridRaster extends AsciiGridRaster {
 
@@ -80,7 +80,7 @@ public final class EsriAsciiGridRaster extends AsciiGridRaster {
 	public EsriAsciiGridRaster(ImageOutputStream ios) {
 		super(ios);
 	}
-	
+
 	/**
 	 * Creates a new instance of EsriAsciiGridRaster.
 	 * 
@@ -91,7 +91,7 @@ public final class EsriAsciiGridRaster extends AsciiGridRaster {
 			AsciiGridsImageWriter writer) {
 		super(ios, writer);
 	}
-	
+
 	/**
 	 * Creates a new instance of EsriAsciiGridRaster.
 	 * 
@@ -141,6 +141,7 @@ public final class EsriAsciiGridRaster extends AsciiGridRaster {
 		// Parsing the header
 		//
 		// /////////////////////////////////////////////////////////////////////
+		final StringToDouble doubleConverter = StringToDouble.acquire();
 		while (keepParsing) {
 			// //
 			//
@@ -156,7 +157,7 @@ public final class EsriAsciiGridRaster extends AsciiGridRaster {
 			// Get corresponding value
 			//
 			// //
-			value = getValue(imageIS, 300, 150);
+			value = getValue(imageIS, 300, 150, doubleConverter);
 			if (Double.isNaN(value) || Double.isNaN(value))
 				break;
 
@@ -206,7 +207,7 @@ public final class EsriAsciiGridRaster extends AsciiGridRaster {
 			}
 
 		}
-
+		StringToDouble.release(doubleConverter);
 		// /////////////////////////////////////////////////////////////////////
 		//
 		// Checking if any required header field has been found
@@ -289,18 +290,15 @@ public final class EsriAsciiGridRaster extends AsciiGridRaster {
 							"This file is not a valid ESRI ascii grid file.");
 
 				}
-
 			}
-
 		}
-//		 Restoring stream position
+		// Restoring stream position
 		imageIS.reset();
 		imageIS.mark();
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER.info("\tnCols:" + nCols);
 			LOGGER.info("\tnRows:" + nRows);
 		}
-
 	}
 
 	/**
@@ -369,10 +367,8 @@ public final class EsriAsciiGridRaster extends AsciiGridRaster {
 	/**
 	 * This method returns the noDataMarker returns the noDataMarker
 	 */
-
 	public String getNoDataMarker() {
 		if (noDataMarker == null) {
-
 			noDataMarker = !Double.isNaN(noData) ? Double.toString(noData)
 					: NO_DATA_MARKER;
 		}
