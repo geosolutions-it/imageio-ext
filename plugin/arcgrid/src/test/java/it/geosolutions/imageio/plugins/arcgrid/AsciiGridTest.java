@@ -210,8 +210,21 @@ public class AsciiGridTest extends TestCase {
 		else
 			assertNotNull(image.getTiles());
 	}
-	
-	private boolean compare(RenderedOp image, RenderedOp image2,
+
+	/**
+	 * Compare images by testing each pixel of the first image equals the pixel
+	 * of the second image. Return <code>true</code> if compare is
+	 * successfully.
+	 * 
+	 * @param image
+	 *            the first image to be compared
+	 * @param image2
+	 *            the first image to be compared
+	 * @param error
+	 *            a container for error messages in case of differences.
+	 * @return <code>true</code> if everything is ok.
+	 */
+	private boolean compare(final RenderedOp image, final RenderedOp image2,
 			final String error[]) {
 		final int minTileX1 = image.getMinTileX();
 		final int minTileY1 = image.getMinTileY();
@@ -239,7 +252,6 @@ public class AsciiGridTest extends TestCase {
 									.toString();
 							return false;
 						}
-
 					}
 				}
 			}
