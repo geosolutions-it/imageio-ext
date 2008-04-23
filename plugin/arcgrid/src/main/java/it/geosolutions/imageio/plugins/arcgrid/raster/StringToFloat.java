@@ -394,8 +394,11 @@ final class StringToFloat {
 			while (pool.size() > 0) {
 				r = (SoftReference) pool.remove(0);
 				o = r.get();
-				if (o != null)
-					return (StringToFloat) o;
+				if (o != null){
+					StringToFloat stf = (StringToFloat) o;
+					stf.reset();
+					return stf;
+				}
 
 			}
 			// we did not find any
