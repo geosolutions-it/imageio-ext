@@ -335,7 +335,7 @@ public final class EsriAsciiGridRaster extends AsciiGridRaster {
 		imageOS.writeBytes(new StringBuffer(NROWS).append(" ").append(rows)
 				.append(newline).toString());
 
-		if (rasterSpaceType.equalsIgnoreCase("pixelIsArea")) {
+		if (rasterSpaceType.equalsIgnoreCase("pixelIsPoint")) {
 			imageOS.writeBytes(new StringBuffer(XLLCENTER).append(" ").append(
 					xll).append(newline).toString());
 			imageOS.writeBytes(new StringBuffer(YLLCENTER).append(" ").append(
