@@ -737,7 +737,8 @@ public abstract class AsciiGridRaster {
 		// final StringToDouble doubleConverter = StringToDouble.acquire();
 		// If I need to load 10 samples, I need to count 9 spaces
 		while (samplesCounted < samplesToLoad) {
-			value = getValue(imageIS, MAX_BYTES_TO_READ, MAX_VALUE_LENGTH, doubleConverter);
+			value = getValue(imageIS, MAX_BYTES_TO_READ, MAX_VALUE_LENGTH,
+					doubleConverter);
 			// // //
 			// //
 			// // Does subsampling allow to add this value?
@@ -1002,13 +1003,14 @@ public abstract class AsciiGridRaster {
 	 * @throws IOException
 	 */
 	double getValue(final ImageInputStream inStream, int maxBytesToRead,
-			int maxValueLength, StringToDouble doubleConverter) throws IOException {
+			int maxValueLength, StringToDouble doubleConverter)
+			throws IOException {
 
 		byte b;
 		double retVal = Double.NaN;
 		boolean started = false;
 		int bytesRead = 0, validBytesRead = 0;
-//		final StringToDouble doubleConverter = StringToDouble.acquire();
+		// final StringToDouble doubleConverter = StringToDouble.acquire();
 		while (true) {
 			b = (byte) (inStream.read() & 0xff);
 
@@ -1061,7 +1063,7 @@ public abstract class AsciiGridRaster {
 		//
 		// ///////////////////////////////////////////////////////////////////
 		retVal = doubleConverter.compute();
-//		StringToDouble.release(doubleConverter);
+		// StringToDouble.release(doubleConverter);
 		return retVal;
 	}
 
@@ -1104,7 +1106,7 @@ public abstract class AsciiGridRaster {
 			int maxKeyLength, byte specialChar) throws IOException {
 
 		byte b;
-		StringBuilder buffer = new StringBuilder(10);
+		StringBuffer buffer = new StringBuffer(10);
 		boolean started = false;
 		int bytesRead = 0, validBytesRead = 0;
 		while (true) {
