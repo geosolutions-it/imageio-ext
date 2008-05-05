@@ -65,6 +65,11 @@
      <artifactId>imageio-ext-gdalbasedll</artifactId>
      <version>1.0-SNAPSHOT</version>
     </dependency>
+    <dependency>
+     <groupId>it.geosolutions.imageio-ext</groupId>
+     <artifactId>imageio-ext-gdalhdfdll</artifactId>
+     <version>1.0-SNAPSHOT</version>
+    </dependency>
    </dependencies>
     <build>
        <plugins>
@@ -91,6 +96,8 @@
                <unzip src="${m2.localrepo}/${dllpath.prefix}/${base.dll}/${version}/${base.dll}-${version}.jar" dest="${path.native}" overwrite="true">
                 </unzip>
                  <unzip src="${m2.localrepo}/${dllpath.prefix}/${msvc.dll}/${version}/${msvc.dll}-${version}.jar" dest="${path.native}" overwrite="true">
+                </unzip>
+                <unzip src="${m2.localrepo}/${dllpath.prefix}/${hdf.dll}/${version}/${hdf.dll}-${version}.jar" dest="${path.native}" overwrite="true">
                 </unzip>
                 <copy file="${path.native}\msvcp71.dll" tofile="${path.native}\xiodtest.dll" failonerror="false"/>
                 <available file="${path.native}\xiodtest.dll" property="sign.present"/>
@@ -173,11 +180,11 @@
               <phase>install</phase>
               <configuration>
                <tasks>
-               <unzip src="${m2.localrepo}/${dllpath.prefix}/${full.dll}/${version}/${full.dll}-${version}.jar" dest="${path.native}" overwrite="true">
+                <unzip src="${m2.localrepo}/${dllpath.prefix}/${full.dll}/${version}/${full.dll}-${version}.jar" dest="${path.native}" overwrite="true">
                 </unzip>
-               <unzip src="${m2.localrepo}/${dllpath.prefix}/${ecw.dll}/${version}/${ecw.dll}-${version}.jar" dest="${path.native}" overwrite="true">
+                <unzip src="${m2.localrepo}/${dllpath.prefix}/${ecw.dll}/${version}/${ecw.dll}-${version}.jar" dest="${path.native}" overwrite="true">
                 </unzip>
-              <unzip src="${m2.localrepo}/${dllpath.prefix}/${mrsid.dll}/${version}/${mrsid.dll}-${version}.jar" dest="${path.native}" overwrite="true">
+                <unzip src="${m2.localrepo}/${dllpath.prefix}/${mrsid.dll}/${version}/${mrsid.dll}-${version}.jar" dest="${path.native}" overwrite="true">
                 </unzip>
                 <unzip src="${m2.localrepo}/${dllpath.prefix}/${hdf.dll}/${version}/${hdf.dll}-${version}.jar" dest="${path.native}" overwrite="true">
                 </unzip>
