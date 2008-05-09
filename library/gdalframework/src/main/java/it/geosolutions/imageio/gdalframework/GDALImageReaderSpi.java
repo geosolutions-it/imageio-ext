@@ -31,7 +31,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.spi.ImageReaderWriterSpi;
+import javax.imageio.spi.ImageWriterSpi;
+import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageInputStream;
 
 import org.gdal.gdal.Dataset;
@@ -45,6 +49,23 @@ import org.gdal.gdalconst.gdalconst;
  * @author Simone Giannecchini, GeoSolutions.
  */
 public abstract class GDALImageReaderSpi extends ImageReaderSpi {
+	public void onRegistration(ServiceRegistry registry, Class category) {
+		super.onRegistration(registry, category);
+		if (!GDALUtilities.isGDALAvailable()) {
+			IIORegistry iioRegistry = (IIORegistry) registry;
+			Class spiClass = ImageReaderSpi.class;
+			final Iterator iter = iioRegistry.getServiceProviders(spiClass,
+					true);
+			while (iter.hasNext()) {
+				final ImageReaderSpi provider = (ImageReaderSpi) iter.next();
+				if (provider instanceof GDALImageReaderSpi) {
+					registry.deregisterServiceProvider(provider);
+				}
+
+			}
+		}
+	}
+
 	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.gdalframework");
 	static {

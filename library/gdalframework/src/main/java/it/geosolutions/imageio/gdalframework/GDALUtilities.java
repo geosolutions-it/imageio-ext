@@ -108,16 +108,7 @@ public final class GDALUtilities {
 	private static boolean init = false;
 
 	static {
-		try {
-			System.loadLibrary("gdaljni");
-			gdal.AllRegister();
-		} catch (UnsatisfiedLinkError e) {
-
-			if (LOGGER.isLoggable(Level.WARNING))
-				LOGGER.log(Level.WARNING, new StringBuffer(
-						"Native library load failed. ").append(
-						e.getLocalizedMessage()).toString(), e);
-		}
+		loadGDAL();
 	}
 
 	/**
@@ -258,6 +249,8 @@ public final class GDALUtilities {
 	 */
 	public static synchronized Dataset acquireDataSet(String name,
 			int accessType) {
+		if (!isGDALAvailable())
+			return null;
 		return gdal.Open(name, accessType);
 	}
 
@@ -290,6 +283,8 @@ public final class GDALUtilities {
 	 *            {@link Dataset} to close.
 	 */
 	public static synchronized void closeDataSet(Dataset ds) {
+		if (!isGDALAvailable())
+			return;
 		if (ds == null)
 			throw new NullPointerException("The provided dataset is null");
 		ds.delete();
@@ -306,6 +301,8 @@ public final class GDALUtilities {
 	 *         available. <code>false</code> otherwise.<BR>
 	 */
 	public static boolean isDriverAvailable(final String driverName) {
+		if (!isGDALAvailable())
+			return false;
 		final Driver driver = gdal.GetDriverByName(driverName);
 		if (driver == null)
 			return false;
@@ -665,8 +662,8 @@ public final class GDALUtilities {
 			gdal.AllRegister();
 			GDALUtilities.available = true;
 		} catch (UnsatisfiedLinkError e) {
-			if (LOGGER.isLoggable(Level.SEVERE))
-				LOGGER.severe(new StringBuffer("Native library load failed.")
+			if (LOGGER.isLoggable(Level.WARNING))
+				LOGGER.warning(new StringBuffer("Native library load failed.")
 						.append(e.toString()).toString());
 			GDALUtilities.available = false;
 		}
