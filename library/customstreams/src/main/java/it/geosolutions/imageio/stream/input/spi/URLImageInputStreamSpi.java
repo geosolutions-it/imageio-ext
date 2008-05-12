@@ -52,27 +52,28 @@ import javax.imageio.stream.MemoryCacheImageInputStream;
  * @author Simone Giannecchini(Simboss)
  */
 public class URLImageInputStreamSpi extends ImageInputStreamSpi {
-	/* Logger. */
-	private final static Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.stream.input");
-	
-	private static final FileImageInputStreamExtImplSpi fileStreamSPI= new FileImageInputStreamExtImplSpi();
-	
-	/**
-     * Takes a URL and converts it to a File. The attempts to deal with
-     * Windows UNC format specific problems, specifically files located
-     * on network shares and different drives.
-     *
-     * If the URL.getAuthority() returns null or is empty, then only the
-     * url's path property is used to construct the file. Otherwise, the
-     * authority is prefixed before the path.
-     *
+    /* Logger. */
+    private final static Logger LOGGER = Logger
+            .getLogger("it.geosolutions.imageio.stream.input");
+
+    private static final FileImageInputStreamExtImplSpi fileStreamSPI = new FileImageInputStreamExtImplSpi();
+
+    /**
+     * Takes a URL and converts it to a File. The attempts to deal with Windows
+     * UNC format specific problems, specifically files located on network
+     * shares and different drives.
+     * 
+     * If the URL.getAuthority() returns null or is empty, then only the url's
+     * path property is used to construct the file. Otherwise, the authority is
+     * prefixed before the path.
+     * 
      * It is assumed that url.getProtocol returns "file".
-     *
-     * Authority is the drive or network share the file is located on.
-     * Such as "C:", "E:", "\\fooServer"
-     *
-     * @param url a URL object that uses protocol "file"
+     * 
+     * Authority is the drive or network share the file is located on. Such as
+     * "C:", "E:", "\\fooServer"
+     * 
+     * @param url
+     *                a URL object that uses protocol "file"
      * @return a File that corresponds to the URL's location
      */
     public static File urlToFile(URL url) {
@@ -82,83 +83,83 @@ public class URLImageInputStreamSpi extends ImageInputStreamSpi {
             string = URLDecoder.decode(string, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             // Shouldn't happen
-        	LOGGER.log(Level.SEVERE,e.getLocalizedMessage(),e);
+            LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
         }
-       
+
         String path3;
         String simplePrefix = "file:/";
-        String standardPrefix = simplePrefix+"/";
-       
-        if( string.startsWith(standardPrefix) ){
+        String standardPrefix = simplePrefix + "/";
+
+        if (string.startsWith(standardPrefix)) {
             path3 = string.substring(standardPrefix.length());
-        } else if( string.startsWith(simplePrefix)){
-            path3 = string.substring(simplePrefix.length()-1);           
+        } else if (string.startsWith(simplePrefix)) {
+            path3 = string.substring(simplePrefix.length() - 1);
         } else {
-        String auth = url.getAuthority();
-        String path2 = url.getPath().replace("%20", " ");
-        if (auth != null && !auth.equals("")) {
-				path3 = "//" + auth + path2;
-			} else {
-				path3 = path2;
-			}
-		}
-       
+            String auth = url.getAuthority();
+            String path2 = url.getPath().replace("%20", " ");
+            if (auth != null && !auth.equals("")) {
+                path3 = "//" + auth + path2;
+            } else {
+                path3 = path2;
+            }
+        }
+
         return new File(path3);
     }
 
-	private static final String vendorName = "GeoSolutions";
+    private static final String vendorName = "GeoSolutions";
 
-	private static final String version = "1.0-RC1";
+    private static final String version = "1.0-RC1";
 
-	private static final Class inputClass = URL.class;
-
-	/**
-	 * Default constructor for a {@link URLImageInputStreamSpi};
-	 */
-	public URLImageInputStreamSpi() {
-		super(vendorName, version, inputClass);
-	}
+    private static final Class inputClass = URL.class;
 
     /**
-     *
+     * Default constructor for a {@link URLImageInputStreamSpi};
+     */
+    public URLImageInputStreamSpi() {
+        super(vendorName, version, inputClass);
+    }
+
+    /**
+     * 
      * @see javax.imageio.spi.ImageInputStreamSpi#createInputStreamInstance(java.lang.Object,
      *      boolean, java.io.File)
      */
     public ImageInputStream createInputStreamInstance(Object input,
-			boolean useCache, File cacheDir) {
-		// is it a URL?
-		if (!(input instanceof URL)) {
-			if (LOGGER.isLoggable(Level.FINE))
-				LOGGER.fine("The provided input is not a valid URL.");
-			return null;
-		}
+            boolean useCache, File cacheDir) {
+        // is it a URL?
+        if (!(input instanceof URL)) {
+            if (LOGGER.isLoggable(Level.FINE))
+                LOGGER.fine("The provided input is not a valid URL.");
+            return null;
+        }
 
-		try {
-			// URL that points to a file?
-			final URL sourceURL = ((URL) input);
-			final File tempFile =urlToFile(sourceURL);
-			if (tempFile.exists()&&tempFile.isFile()&&tempFile.canRead())
-				return fileStreamSPI.createInputStreamInstance(input,useCache,cacheDir);
+        try {
+            // URL that points to a file?
+            final URL sourceURL = ((URL) input);
+            final File tempFile = urlToFile(sourceURL);
+            if (tempFile.exists() && tempFile.isFile() && tempFile.canRead())
+                return fileStreamSPI.createInputStreamInstance(tempFile,
+                        useCache, cacheDir);
 
-			// URL that does NOT points to a file, let's open up a stream
-			if (useCache)
-				return new MemoryCacheImageInputStream(sourceURL
-						.openStream());
-			else
-				return new FileCacheImageInputStream(
-						sourceURL.openStream(), cacheDir);
-			
-		} catch (IOException e) {
-			if (LOGGER.isLoggable(Level.FINE))
-				LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
-			return null;
-		}
-	}
+            // URL that does NOT points to a file, let's open up a stream
+            if (useCache)
+                return new MemoryCacheImageInputStream(sourceURL.openStream());
+            else
+                return new FileCacheImageInputStream(sourceURL.openStream(),
+                        cacheDir);
 
-	/**
-	 * @see ImageInputStreamSpi#getDescription(Locale).
-	 */
-	public String getDescription(Locale locale) {
-		return "Service provider that helps connecting to the onject pointed by a URL";
-	}
+        } catch (IOException e) {
+            if (LOGGER.isLoggable(Level.FINE))
+                LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
+            return null;
+        }
+    }
+
+    /**
+     * @see ImageInputStreamSpi#getDescription(Locale).
+     */
+    public String getDescription(Locale locale) {
+        return "Service provider that helps connecting to the onject pointed by a URL";
+    }
 }
