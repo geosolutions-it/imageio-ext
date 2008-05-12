@@ -1,7 +1,7 @@
 /*
  *    JImageIO-extension - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
- *	  https://imageio-ext.dev.java.net/
+ *    https://imageio-ext.dev.java.net/
  *    (C) 2007, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
@@ -47,21 +47,6 @@ import org.gdal.gdalconst.gdalconst;
  * @author Simone Giannecchini, GeoSolutions.
  */
 public abstract class GDALImageReaderSpi extends ImageReaderSpi {
-    public void onRegistration(ServiceRegistry registry, Class category) {
-        super.onRegistration(registry, category);
-        if (!GDALUtilities.isGDALAvailable()) {
-            IIORegistry iioRegistry = (IIORegistry) registry;
-            Class spiClass = ImageReaderSpi.class;
-            final Iterator iter = iioRegistry.getServiceProviders(spiClass,
-                    true);
-            while (iter.hasNext()) {
-                final ImageReaderSpi provider = (ImageReaderSpi) iter.next();
-                if (provider instanceof GDALImageReaderSpi) {
-                    registry.deregisterServiceProvider(provider);
-                }
-            }
-        }
-    }
 
     private static final Logger LOGGER = Logger
             .getLogger("it.geosolutions.imageio.gdalframework");
@@ -248,5 +233,25 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
                 return false;
         }
         return true;
+    }
+
+    /**
+     * Allows to deregister GDAL based spi in case GDAL libraries are
+     * unavailable.
+     */
+    public void onRegistration(ServiceRegistry registry, Class category) {
+        super.onRegistration(registry, category);
+        if (!GDALUtilities.isGDALAvailable()) {
+            IIORegistry iioRegistry = (IIORegistry) registry;
+            Class spiClass = ImageReaderSpi.class;
+            final Iterator iter = iioRegistry.getServiceProviders(spiClass,
+                    true);
+            while (iter.hasNext()) {
+                final ImageReaderSpi provider = (ImageReaderSpi) iter.next();
+                if (provider instanceof GDALImageReaderSpi) {
+                    registry.deregisterServiceProvider(provider);
+                }
+            }
+        }
     }
 }
