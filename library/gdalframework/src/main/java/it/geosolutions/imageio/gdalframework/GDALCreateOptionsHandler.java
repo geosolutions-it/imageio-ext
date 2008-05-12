@@ -75,174 +75,153 @@ import java.util.Vector;
  */
 public abstract class GDALCreateOptionsHandler {
 
-	/**
-	 * NOTE: ------------------------------------------------------------------
-	 * When extending this class for different formats, you need to respect
-	 * case-sensitiveness of create Options when setting <code>optionName</code>
-	 * field.
-	 */
+    /**
+     * NOTE: ------------------------------------------------------------------
+     * When extending this class for different formats, you need to respect
+     * case-sensitiveness of create Options when setting <code>optionName</code>
+     * field.
+     */
 
-	private final Map createOptionsMap = Collections
-			.synchronizedMap(new HashMap());
+    private final Map createOptionsMap = Collections
+            .synchronizedMap(new HashMap());
 
-	/**
-	 * Provides to return a {@link List} containing <code>String</code>s
-	 * representing all specified create options we need to give to the writer
-	 * when it call GDAL's create/createCopy method.
-	 */
-	public List getCreateOptions() {
+    /**
+     * Provides to return a {@link List} containing <code>String</code>s
+     * representing all specified create options we need to give to the writer
+     * when it call GDAL's create/createCopy method.
+     */
+    public List getCreateOptions() {
 
-		// ////
-		// 
-		// approach 1
-		//
-		// ////
-		// TODO gdal actually requires Vector classes but it would be quite nice
-		// to move it to use a real list instead
-		final Vector options = new Vector();
-		synchronized (createOptionsMap) {
-			final Collection values = createOptionsMap.values();
-			final Iterator it = values.iterator();
-			while (it.hasNext()) {
+        // ////
+        // 
+        // approach 1
+        //
+        // ////
+        // TODO gdal actually requires Vector classes but it would be quite nice
+        // to move it to use a real list instead
+        final Vector options = new Vector();
+        synchronized (createOptionsMap) {
+            final Collection values = createOptionsMap.values();
+            final Iterator it = values.iterator();
+            while (it.hasNext()) {
 
-				// retrieving the index of the next set option
-				final GDALCreateOption selectedOption = (GDALCreateOption) it
-						.next();
-				if (selectedOption.isSet()) {
-					final StringBuffer opt = new StringBuffer(selectedOption
-							.getOptionName());
-					if (selectedOption.getRepresentedValueType() != GDALCreateOption.TYPE_NONE)
-						opt.append("=").append(selectedOption.getValue());
-					options.add(opt.toString());
-				}
-			}
-		}
+                // retrieving the index of the next set option
+                final GDALCreateOption selectedOption = (GDALCreateOption) it
+                        .next();
+                if (selectedOption.isSet()) {
+                    final StringBuffer opt = new StringBuffer(selectedOption
+                            .getOptionName());
+                    if (selectedOption.getRepresentedValueType() != GDALCreateOption.TYPE_NONE)
+                        opt.append("=").append(selectedOption.getValue());
+                    options.add(opt.toString());
+                }
+            }
+        }
 
-		// ////
-		// 
-		// approach 2
-		//
-		// ////
+        return options;
+    }
 
-		// for (int i = 0; i < createOptionsArrayLenght; i++) {
-		// if (createOptions[i].isSet())
-		// specifiedCreateOptions++;
-		// }
-		// Vector optionVector = new Vector(specifiedCreateOptions);
-		// for (int i = 0; i < createOptionsArrayLenght; i++) {
-		// if (createOptions[i].isSet()) {
-		// StringBuffer sb = new StringBuffer("");
-		// sb.append(createOptions[i].getOptionName())
-		// .append("=").append(
-		// createOptions[i].getValue());
-		// // TODO: Check this?
-		// optionVector.add((String) sb.toString());
-		// }
-		// }
-		return options;
-	}
+    /**
+     * Set the value of the create option identified by <code>optionName</code>
+     * to <code>optionValue</code>
+     * 
+     * @param optionName
+     *                name of the create option we want to set.
+     * @param optionValue
+     *                value for the specified create option.
+     */
+    public void setCreateOption(final String optionName,
+            final String optionValue) {
+        synchronized (createOptionsMap) {
+            if (!createOptionsMap.containsKey(optionName))
+                throw new IllegalArgumentException("Create option with name"
+                        + optionName + " does not exist");
+            ((GDALCreateOption) createOptionsMap.get(optionName))
+                    .setValue(optionValue);
+        }
+    }
 
-	/**
-	 * Set the value of the create option identified by <code>optionName</code>
-	 * to <code>optionValue</code>
-	 * 
-	 * @param optionName
-	 *            name of the create option we want to set.
-	 * @param optionValue
-	 *            value for the specified create option.
-	 */
-	public void setCreateOption(final String optionName,
-			final String optionValue) {
-		synchronized (createOptionsMap) {
-			if (!createOptionsMap.containsKey(optionName))
-				throw new IllegalArgumentException("Create option with name"
-						+ optionName + " does not exist");
-			((GDALCreateOption) createOptionsMap.get(optionName))
-					.setValue(optionValue);
-		}
-	}
+    /**
+     * Set the create option identified by <code>optionName</code>
+     * 
+     * @param optionName
+     *                name of the create option we want to set.
+     */
+    public void setCreateOption(final String optionName) {
+        synchronized (createOptionsMap) {
+            if (!createOptionsMap.containsKey(optionName))
+                throw new IllegalArgumentException("Create option with name"
+                        + optionName + " does not exist");
+            ((GDALCreateOption) createOptionsMap.get(optionName)).setValue("");
+        }
+    }
 
-	/**
-	 * Set the create option identified by <code>optionName</code>
-	 * 
-	 * @param optionName
-	 *            name of the create option we want to set.
-	 */
-	public void setCreateOption(final String optionName) {
-		synchronized (createOptionsMap) {
-			if (!createOptionsMap.containsKey(optionName))
-				throw new IllegalArgumentException("Create option with name"
-						+ optionName + " does not exist");
-			((GDALCreateOption) createOptionsMap.get(optionName)).setValue("");
-		}
-	}
+    /**
+     * This method add a create option to this handler.
+     * 
+     * @param option
+     *                to add to this handler.
+     */
+    public void addCreateOption(final GDALCreateOption option) {
+        if (option != null) {
+            synchronized (createOptionsMap) {
+                createOptionsMap.put(option.getOptionName(), option);
+            }
+        } else
+            throw new NullPointerException();
+    }
 
-	/**
-	 * This method add a create option to this handler.
-	 * 
-	 * @param option
-	 *            to add to this handler.
-	 */
-	public void addCreateOption(final GDALCreateOption option) {
-		if (option != null) {
-			synchronized (createOptionsMap) {
-				createOptionsMap.put(option.getOptionName(), option);
-			}
-		} else
-			throw new NullPointerException();
-	}
+    /**
+     * This method add a collection of create options to this handler.
+     * 
+     * <p>
+     * Objects that are not of type {@link GDALCreateOption} are not added.
+     * 
+     * @param option
+     *                to add to this handler.
+     */
+    public void addCreateOptions(final Collection options) {
+        if (options != null && options.size() > 0) {
+            synchronized (createOptionsMap) {
+                final Iterator it = options.iterator();
+                while (it.hasNext()) {
+                    final Object o = it.next();
+                    // we add it only in case it has the right type
+                    if (o != null && (o instanceof GDALCreateOption)) {
+                        final GDALCreateOption option = (GDALCreateOption) o;
+                        createOptionsMap.put(option.getOptionName(), o);
+                    }
+                }
+            }
+        } else
+            throw new IllegalArgumentException(
+                    "The provided collection is null or empty");
+    }
 
-	/**
-	 * This method add a collection of create options to this handler.
-	 * 
-	 * <p>
-	 * Objects that are not of type {@link GDALCreateOption} are not added.
-	 * 
-	 * @param option
-	 *            to add to this handler.
-	 */
-	public void addCreateOptions(final Collection options) {
-		if (options != null && options.size() > 0) {
-			synchronized (createOptionsMap) {
-				final Iterator it = options.iterator();
-				while (it.hasNext()) {
-					final Object o = it.next();
-					// we add it only in case it has the right type
-					if (o != null && (o instanceof GDALCreateOption)) {
-						final GDALCreateOption option = (GDALCreateOption) o;
-						createOptionsMap.put(option.getOptionName(), o);
-					}
-				}
-			}
-		} else
-			throw new IllegalArgumentException(
-					"The provided collection is null or empty");
-	}
+    /**
+     * Set the value of the create option identified by <code>optionName</code>
+     * to <code>optionValue</code>
+     * 
+     * @param optionName
+     *                name of the create option we want to set.
+     * @param optionValue
+     *                value for the specified create option.
+     */
+    public void setCreateOption(final String optionName, final int optionValue) {
+        setCreateOption(optionName, Integer.toString(optionValue));
+    }
 
-	/**
-	 * Set the value of the create option identified by <code>optionName</code>
-	 * to <code>optionValue</code>
-	 * 
-	 * @param optionName
-	 *            name of the create option we want to set.
-	 * @param optionValue
-	 *            value for the specified create option.
-	 */
-	public void setCreateOption(final String optionName, final int optionValue) {
-		setCreateOption(optionName, Integer.toString(optionValue));
-	}
-
-	/**
-	 * Set the value of the create option identified by <code>optionName</code>
-	 * to <code>optionValue</code>
-	 * 
-	 * @param optionName
-	 *            name of the create option we want to set.
-	 * @param optionValue
-	 *            value for the specified create option.
-	 */
-	public void setCreateOption(final String optionName, final float optionValue) {
-		setCreateOption(optionName, Float.toString(optionValue));
-	}
+    /**
+     * Set the value of the create option identified by <code>optionName</code>
+     * to <code>optionValue</code>
+     * 
+     * @param optionName
+     *                name of the create option we want to set.
+     * @param optionValue
+     *                value for the specified create option.
+     */
+    public void setCreateOption(final String optionName, final float optionValue) {
+        setCreateOption(optionName, Float.toString(optionValue));
+    }
 
 }

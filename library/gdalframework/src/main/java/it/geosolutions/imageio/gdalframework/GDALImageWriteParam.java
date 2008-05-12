@@ -33,256 +33,256 @@ import javax.imageio.ImageWriteParam;
  * 
  */
 public abstract class GDALImageWriteParam extends ImageWriteParam {
-	private final ImageWriteParam adaptee;
+    private final ImageWriteParam adaptee;
 
-	protected final GDALCreateOptionsHandler createOptionsHandler;
+    protected final GDALCreateOptionsHandler createOptionsHandler;
 
-	public boolean canWriteCompressed() {
-		return adaptee.canWriteCompressed();
-	}
+    public boolean canWriteCompressed() {
+        return adaptee.canWriteCompressed();
+    }
 
-	public boolean canWriteProgressive() {
+    public boolean canWriteProgressive() {
 
-		return adaptee.canWriteProgressive();
-	}
+        return adaptee.canWriteProgressive();
+    }
 
-	public boolean canWriteTiles() {
+    public boolean canWriteTiles() {
 
-		return adaptee.canWriteTiles();
-	}
+        return adaptee.canWriteTiles();
+    }
 
-	public float getBitRate(float quality) {
+    public float getBitRate(float quality) {
 
-		return adaptee.getBitRate(quality);
-	}
+        return adaptee.getBitRate(quality);
+    }
 
-	public int getCompressionMode() {
+    public int getCompressionMode() {
 
-		return adaptee.getCompressionMode();
-	}
+        return adaptee.getCompressionMode();
+    }
 
-	public float getCompressionQuality() {
+    public float getCompressionQuality() {
 
-		return adaptee.getCompressionQuality();
-	}
+        return adaptee.getCompressionQuality();
+    }
 
-	public String[] getCompressionQualityDescriptions() {
+    public String[] getCompressionQualityDescriptions() {
 
-		return adaptee.getCompressionQualityDescriptions();
-	}
+        return adaptee.getCompressionQualityDescriptions();
+    }
 
-	public float[] getCompressionQualityValues() {
+    public float[] getCompressionQualityValues() {
 
-		return adaptee.getCompressionQualityValues();
-	}
+        return adaptee.getCompressionQualityValues();
+    }
 
-	public String getCompressionType() {
+    public String getCompressionType() {
 
-		return adaptee.getCompressionType();
-	}
+        return adaptee.getCompressionType();
+    }
 
-	public String[] getCompressionTypes() {
+    public String[] getCompressionTypes() {
 
-		return adaptee.getCompressionTypes();
-	}
+        return adaptee.getCompressionTypes();
+    }
 
-	public String getLocalizedCompressionTypeName() {
+    public String getLocalizedCompressionTypeName() {
 
-		return adaptee.getLocalizedCompressionTypeName();
-	}
+        return adaptee.getLocalizedCompressionTypeName();
+    }
 
-	public Dimension[] getPreferredTileSizes() {
+    public Dimension[] getPreferredTileSizes() {
 
-		return adaptee.getPreferredTileSizes();
-	}
+        return adaptee.getPreferredTileSizes();
+    }
 
-	public int getProgressiveMode() {
+    public int getProgressiveMode() {
 
-		return adaptee.getProgressiveMode();
-	}
+        return adaptee.getProgressiveMode();
+    }
 
-	public int getTileHeight() {
+    public int getTileHeight() {
 
-		return adaptee.getTileHeight();
-	}
+        return adaptee.getTileHeight();
+    }
 
-	public int getTileWidth() {
+    public int getTileWidth() {
 
-		return adaptee.getTileWidth();
-	}
+        return adaptee.getTileWidth();
+    }
 
-	public int getTilingMode() {
+    public int getTilingMode() {
 
-		return adaptee.getTilingMode();
-	}
+        return adaptee.getTilingMode();
+    }
 
-	public boolean isCompressionLossless() {
+    public boolean isCompressionLossless() {
 
-		return adaptee.isCompressionLossless();
-	}
+        return adaptee.isCompressionLossless();
+    }
 
-	public void setCompressionMode(int mode) {
+    public void setCompressionMode(int mode) {
 
-		adaptee.setCompressionMode(mode);
-	}
+        adaptee.setCompressionMode(mode);
+    }
 
-	public void setCompressionQuality(float quality) {
+    public void setCompressionQuality(float quality) {
 
-		adaptee.setCompressionQuality(quality);
-	}
+        adaptee.setCompressionQuality(quality);
+    }
 
-	public void setCompressionType(String compressionType) {
+    public void setCompressionType(String compressionType) {
 
-		adaptee.setCompressionType(compressionType);
-	}
+        adaptee.setCompressionType(compressionType);
+    }
 
-	public void setProgressiveMode(int mode) {
+    public void setProgressiveMode(int mode) {
 
-		adaptee.setProgressiveMode(mode);
-	}
+        adaptee.setProgressiveMode(mode);
+    }
 
-	public void setTiling(int tileWidth, int tileHeight) {
+    public void setTiling(int tileWidth, int tileHeight) {
 
-		adaptee.setTiling(tileWidth, tileHeight, 0, 0);
-	}
+        adaptee.setTiling(tileWidth, tileHeight, 0, 0);
+    }
 
-	public void setTilingMode(int mode) {
+    public void setTilingMode(int mode) {
 
-		adaptee.setTilingMode(mode);
-	}
+        adaptee.setTilingMode(mode);
+    }
 
-	public void unsetCompression() {
+    public void unsetCompression() {
 
-		adaptee.unsetCompression();
-	}
+        adaptee.unsetCompression();
+    }
 
-	public void unsetTiling() {
+    public void unsetTiling() {
 
-		adaptee.unsetTiling();
-	}
+        adaptee.unsetTiling();
+    }
 
-	public void setDestinationType(ImageTypeSpecifier destinationType) {
+    public void setDestinationType(ImageTypeSpecifier destinationType) {
 
-		adaptee.setDestinationType(destinationType);
-	}
+        adaptee.setDestinationType(destinationType);
+    }
 
-	public boolean canOffsetTiles() {
-		return false;
-	}
+    public boolean canOffsetTiles() {
+        return false;
+    }
 
-	public Locale getLocale() {
-		return adaptee.getLocale();
-	}
+    public Locale getLocale() {
+        return adaptee.getLocale();
+    }
 
-	public int getTileGridXOffset() {
-		return adaptee.getTileGridXOffset();
-	}
+    public int getTileGridXOffset() {
+        return adaptee.getTileGridXOffset();
+    }
 
-	public int getTileGridYOffset() {
-		return adaptee.getTileGridYOffset();
-	}
+    public int getTileGridYOffset() {
+        return adaptee.getTileGridYOffset();
+    }
 
-	public boolean activateController() {
-		throw new UnsupportedOperationException(
-				"This operation is not currently supported by this API");
-	}
-
-	public IIOParamController getController() {
-		throw new UnsupportedOperationException(
-				"This operation is not currently supported by this API");
-	}
-
-	public IIOParamController getDefaultController() {
-		throw new UnsupportedOperationException(
-				"This operation is not currently supported by this API");
-	}
-
-	public Point getDestinationOffset() {
-		return adaptee.getDestinationOffset();
-	}
-
-	public ImageTypeSpecifier getDestinationType() {
-		return adaptee.getDestinationType();
-	}
-
-	public int[] getSourceBands() {
-		return adaptee.getSourceBands();
-	}
-
-	public Rectangle getSourceRegion() {
-		return adaptee.getSourceRegion();
-	}
-
-	public int getSourceXSubsampling() {
-		return adaptee.getSourceXSubsampling();
-	}
-
-	public int getSourceYSubsampling() {
-		return adaptee.getSourceYSubsampling();
-	}
-
-	public int getSubsamplingXOffset() {
-		return adaptee.getSubsamplingXOffset();
-	}
-
-	public int getSubsamplingYOffset() {
-		return adaptee.getSubsamplingYOffset();
-	}
-
-	public boolean hasController() {
-		return false;
-	}
-
-	public void setController(IIOParamController controller) {
-		throw new UnsupportedOperationException(
-				"This operation is not currently supported by this API");
-	}
-
-	public void setDestinationOffset(Point destinationOffset) {
-		 adaptee.setDestinationOffset(destinationOffset);//only for tests
-//		throw new UnsupportedOperationException(
-//				"This operation is not currently supported by this API");
-	}
-
-	public void setSourceBands(int[] sourceBands) {
-		adaptee.setSourceBands(sourceBands);
-	}
-
-	public void setSourceRegion(Rectangle sourceRegion) {
-		adaptee.setSourceRegion(sourceRegion);
-	}
-
-	public void setSourceSubsampling(int sourceXSubsampling,
-			int sourceYSubsampling, int subsamplingXOffset,
-			int subsamplingYOffset) {
-		adaptee.setSourceSubsampling(sourceXSubsampling, sourceYSubsampling,
-				subsamplingXOffset, subsamplingYOffset);
-	}
-
-	/**
-	 * 
-	 */
-	public GDALImageWriteParam(final ImageWriteParam adaptee,
-			final GDALCreateOptionsHandler optionsHandler) {
-		this(adaptee, optionsHandler, Locale.getDefault());
-	}
-
-	/**
-	 * @param locale
-	 */
-	public GDALImageWriteParam(final ImageWriteParam adaptee,
-			final GDALCreateOptionsHandler optionsHandler, Locale locale) {
-		super(locale);
-		this.adaptee = adaptee;
-		this.createOptionsHandler = optionsHandler;
-	}
-
-	public ImageWriteParam getAdaptee() {
-		return adaptee;
-	}
-
-	public GDALCreateOptionsHandler getCreateOptionsHandler() {
-		return createOptionsHandler;
-	}
+    public boolean activateController() {
+        throw new UnsupportedOperationException(
+                "This operation is not currently supported by this API");
+    }
+
+    public IIOParamController getController() {
+        throw new UnsupportedOperationException(
+                "This operation is not currently supported by this API");
+    }
+
+    public IIOParamController getDefaultController() {
+        throw new UnsupportedOperationException(
+                "This operation is not currently supported by this API");
+    }
+
+    public Point getDestinationOffset() {
+        return adaptee.getDestinationOffset();
+    }
+
+    public ImageTypeSpecifier getDestinationType() {
+        return adaptee.getDestinationType();
+    }
+
+    public int[] getSourceBands() {
+        return adaptee.getSourceBands();
+    }
+
+    public Rectangle getSourceRegion() {
+        return adaptee.getSourceRegion();
+    }
+
+    public int getSourceXSubsampling() {
+        return adaptee.getSourceXSubsampling();
+    }
+
+    public int getSourceYSubsampling() {
+        return adaptee.getSourceYSubsampling();
+    }
+
+    public int getSubsamplingXOffset() {
+        return adaptee.getSubsamplingXOffset();
+    }
+
+    public int getSubsamplingYOffset() {
+        return adaptee.getSubsamplingYOffset();
+    }
+
+    public boolean hasController() {
+        return false;
+    }
+
+    public void setController(IIOParamController controller) {
+        throw new UnsupportedOperationException(
+                "This operation is not currently supported by this API");
+    }
+
+    public void setDestinationOffset(Point destinationOffset) {
+        adaptee.setDestinationOffset(destinationOffset);// only for tests
+        // throw new UnsupportedOperationException(
+        // "This operation is not currently supported by this API");
+    }
+
+    public void setSourceBands(int[] sourceBands) {
+        adaptee.setSourceBands(sourceBands);
+    }
+
+    public void setSourceRegion(Rectangle sourceRegion) {
+        adaptee.setSourceRegion(sourceRegion);
+    }
+
+    public void setSourceSubsampling(int sourceXSubsampling,
+            int sourceYSubsampling, int subsamplingXOffset,
+            int subsamplingYOffset) {
+        adaptee.setSourceSubsampling(sourceXSubsampling, sourceYSubsampling,
+                subsamplingXOffset, subsamplingYOffset);
+    }
+
+    /**
+     * 
+     */
+    public GDALImageWriteParam(final ImageWriteParam adaptee,
+            final GDALCreateOptionsHandler optionsHandler) {
+        this(adaptee, optionsHandler, Locale.getDefault());
+    }
+
+    /**
+     * @param locale
+     */
+    public GDALImageWriteParam(final ImageWriteParam adaptee,
+            final GDALCreateOptionsHandler optionsHandler, Locale locale) {
+        super(locale);
+        this.adaptee = adaptee;
+        this.createOptionsHandler = optionsHandler;
+    }
+
+    public ImageWriteParam getAdaptee() {
+        return adaptee;
+    }
+
+    public GDALCreateOptionsHandler getCreateOptionsHandler() {
+        return createOptionsHandler;
+    }
 
 }

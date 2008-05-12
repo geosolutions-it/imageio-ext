@@ -29,59 +29,59 @@ import javax.imageio.metadata.IIOMetadataFormatImpl;
  */
 public class GDALCommonIIOStreamMetadataFormat extends IIOMetadataFormatImpl {
 
-	/**
-	 * A single instance of the <code>GDALCommonIIOStreamMetadataFormat</code> 
-	 * class.
-	 */
-	private static GDALCommonIIOStreamMetadataFormat theInstance = null;
+    /**
+     * A single instance of the <code>GDALCommonIIOStreamMetadataFormat</code>
+     * class.
+     */
+    private static GDALCommonIIOStreamMetadataFormat theInstance = null;
 
-	/**
-	 * Constructs a <code>GDALCommonIIOStreamMetadataFormat</code> instance.
-	 */
-	private GDALCommonIIOStreamMetadataFormat() {
-		super(GDALCommonIIOStreamMetadata.nativeMetadataFormatName,
-				CHILD_POLICY_SOME);
-		// //
-		//
-		// root -> DataSets
-		//
-		// //
-		addElement("DataSets",
-				GDALCommonIIOStreamMetadata.nativeMetadataFormatName,
-				CHILD_POLICY_REPEAT);
-		addAttribute("DataSets", "number", DATATYPE_STRING, true, null);
+    /**
+     * Constructs a <code>GDALCommonIIOStreamMetadataFormat</code> instance.
+     */
+    private GDALCommonIIOStreamMetadataFormat() {
+        super(GDALCommonIIOStreamMetadata.nativeMetadataFormatName,
+                CHILD_POLICY_SOME);
+        // //
+        //
+        // root -> DataSets
+        //
+        // //
+        addElement("DataSets",
+                GDALCommonIIOStreamMetadata.nativeMetadataFormatName,
+                CHILD_POLICY_REPEAT);
+        addAttribute("DataSets", "number", DATATYPE_STRING, true, null);
 
-		// //
-		//
-		// DataSets -> DataSet
-		//
-		// //
-		addElement("DataSet", "DataSets", CHILD_POLICY_EMPTY);
-		addAttribute("DataSet", "name", DATATYPE_STRING, true, null);
-	}
+        // //
+        //
+        // DataSets -> DataSet
+        //
+        // //
+        addElement("DataSet", "DataSets", CHILD_POLICY_EMPTY);
+        addAttribute("DataSet", "name", DATATYPE_STRING, true, null);
+    }
 
-	/**
-	 * Returns an instance of the <code>GDALCommonIIOStreamMetadataFormat</code>
-	 * class. We build only a single instance and we cache it for future uses.
-	 * 
-	 * @return an instance of the <code>GDALCommonIIOStreamMetadataFormat</code>
-	 *         class.
-	 */
-	public static synchronized IIOMetadataFormat getInstance() {
-		if (theInstance == null) {
-			theInstance = new GDALCommonIIOStreamMetadataFormat();
-		}
-		return theInstance;
-	}
-	
-	/**
-	 * @see javax.imageio.metadata.IIOMetadataFormatImpl#canNodeAppear(java.lang.String,
-	 *      javax.imageio.ImageTypeSpecifier)
-	 */
-	public boolean canNodeAppear(String elementName,
-			ImageTypeSpecifier imageType) {
-		// TODO implement me
-		return true;
-	}
+    /**
+     * Returns an instance of the <code>GDALCommonIIOStreamMetadataFormat</code>
+     * class. We build only a single instance and we cache it for future uses.
+     * 
+     * @return an instance of the <code>GDALCommonIIOStreamMetadataFormat</code>
+     *         class.
+     */
+    public static synchronized IIOMetadataFormat getInstance() {
+        if (theInstance == null) {
+            theInstance = new GDALCommonIIOStreamMetadataFormat();
+        }
+        return theInstance;
+    }
+
+    /**
+     * @see javax.imageio.metadata.IIOMetadataFormatImpl#canNodeAppear(java.lang.String,
+     *      javax.imageio.ImageTypeSpecifier)
+     */
+    public boolean canNodeAppear(String elementName,
+            ImageTypeSpecifier imageType) {
+        // TODO implement me
+        return true;
+    }
 
 }
