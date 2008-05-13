@@ -306,7 +306,7 @@ public abstract class GDALImageReader extends ImageReader {
     }
 
     /**
-     * Provides to read data from the required region of the raster.
+     * Read data from the required region of the raster.
      * 
      * @param item
      *                a <code>GDALCommonIIOImageMetadata</code> related to the
@@ -327,7 +327,7 @@ public abstract class GDALImageReader extends ImageReader {
     }
 
     /**
-     * Provides to read data from the required region of the raster.
+     * Read data from the required region of the raster.
      * 
      * @param item
      *                a <code>GDALCommonIIOImageMetadata</code> related to the
