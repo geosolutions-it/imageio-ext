@@ -86,6 +86,9 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
 	 * @throws IOException
 	 */
 	public void testRead() throws FileNotFoundException, IOException {
+		if (!isGDALAvailable) {
+			return;
+		}
 		final ParameterBlockJAI pbjImageRead;
 		String fileName = "bogota.tif";
 		final File file = TestData.file(this, fileName);
@@ -109,6 +112,9 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
 	 * @throws IOException
 	 */
 	public void testWrite() throws IOException, FileNotFoundException {
+		if (!isGDALAvailable) {
+			return;
+		}
 		final File outputFile = TestData.temp(this, "writetest.tif", false);
 		outputFile.deleteOnExit();
 		final File inputFile = TestData.file(this, "bogota.tif");
@@ -179,6 +185,9 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
 	 * @throws IOException
 	 */
 	public void testPaletted() throws FileNotFoundException, IOException {
+		if (!isGDALAvailable) {
+			return;
+		}
 		final File outputFile = TestData.temp(this, "writetest.tif", false);
 		outputFile.deleteOnExit();
 		final File inputFile = TestData.file(this, "paletted.tif");
