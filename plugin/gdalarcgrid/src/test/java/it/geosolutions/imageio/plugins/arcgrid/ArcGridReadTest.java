@@ -56,6 +56,9 @@ public class ArcGridReadTest extends AbstractArcGridTestCase {
 	 * @throws IOException
 	 */
 	public void testReadJAI() throws FileNotFoundException, IOException {
+		if (!isGDALAvailable) {
+			return;
+		}
 		final ParameterBlockJAI pbjImageRead;
 		final String fileName = "arcGrid.asc";
 		final File file = TestData.file(this, fileName);
@@ -77,6 +80,9 @@ public class ArcGridReadTest extends AbstractArcGridTestCase {
 	 * @throws IOException
 	 */
 	public void testReadImageIO() throws FileNotFoundException, IOException {
+		if (!isGDALAvailable) {
+			return;
+		}
 		final File file = TestData.file(this, "arcGrid.asc");
 
 		// //

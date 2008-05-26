@@ -59,6 +59,9 @@ public class DTEDTest extends AbstractTestCase {
 	 * @throws IOException
 	 */
 	public void testImageRead() throws FileNotFoundException, IOException {
+		if (!isGDALAvailable) {
+			return;
+		}
 		File file;
 		try {
 			file = TestData.file(this, fileName);

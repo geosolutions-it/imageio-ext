@@ -77,7 +77,7 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
 		if (!isLibraryAvailable) {
 			return;
 		}
-		final File file = TestData.file(this, "CB_TM432.jp2");
+		final File file = TestData.file(this, "20070220101148004653.jp2");
 		ImageReadDescriptorMT.register(JAI.getDefaultInstance());
 
 		final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(

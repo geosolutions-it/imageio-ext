@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.hdf4;
 
+import it.geosolutions.imageio.gdalframework.GDALUtilities;
+
 import java.util.logging.Logger;
 
 import javax.media.jai.JAI;
@@ -28,8 +30,16 @@ import junit.framework.TestCase;
  */
 public class AbstractHDF4TestCase extends TestCase {
 
+	/** A simple flag set to true in case the HDF4 driver is available */
+	protected final static boolean isDriverAvailable = GDALUtilities
+			.isDriverAvailable("HDF4"); 
+	
+	private final static String msg = "HDF4 Tests are skipped due to missing Driver.\n"
+		+ "Be sure GDAL has been built against HDF4 and the required"
+		+ " libs are in the classpath";
+	
 	protected static final Logger LOGGER = Logger
-	.getLogger("it.geosolutions.imageio.plugins.hdf4");
+	.getLogger("it.geosolutions.imageio.plugins.mrsid");
 	
 	public AbstractHDF4TestCase(String name) {
 		super(name);
@@ -37,6 +47,10 @@ public class AbstractHDF4TestCase extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
+		if (!isDriverAvailable){
+			LOGGER.warning(msg);
+			return;
+		}
 		// general settings
 		JAI.getDefaultInstance().getTileScheduler().setParallelism(5);
 		JAI.getDefaultInstance().getTileScheduler().setPriority(4);

@@ -16,6 +16,10 @@
  */
 package it.geosolutions.imageio.plugins.arcgrid;
 
+import java.util.logging.Logger;
+
+import it.geosolutions.imageio.gdalframework.GDALUtilities;
+
 import javax.media.jai.JAI;
 
 import junit.framework.TestCase;
@@ -26,12 +30,23 @@ import junit.framework.TestCase;
  */
 public class AbstractArcGridTestCase extends TestCase {
 
+	/** A simple flag set to true in case the GDAL Library is available */
+	protected final static boolean isGDALAvailable = GDALUtilities
+			.isGDALAvailable();
+
+	protected static final Logger LOGGER = Logger
+	.getLogger("it.geosolutions.imageio.plugins.arcgrid");
+	
 	public AbstractArcGridTestCase(String name) {
 		super(name);
 	}
 
 	protected void setUp() throws Exception {
 		super.setUp();
+		if (!isGDALAvailable){
+			LOGGER.warning("GDAL Library is not Available");
+			return;
+		}
 		// general settings
 		JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
 				128 * 1024 * 1024);

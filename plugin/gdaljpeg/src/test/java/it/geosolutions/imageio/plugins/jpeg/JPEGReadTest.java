@@ -66,6 +66,9 @@ public class JPEGReadTest extends AbstractJPEGTestCase {
 	 * @throws IOException
 	 */
 	public void testRead() throws FileNotFoundException, IOException {
+		if (!isGDALAvailable) {
+			return;
+		}
 		final ParameterBlockJAI pbjImageRead;
 		final ImageReadParam irp = new ImageReadParam();
 		final String fileName = "sample.jpg";
@@ -96,6 +99,9 @@ public class JPEGReadTest extends AbstractJPEGTestCase {
 	 * @throws IOException
 	 */
 	public void testSourceBands() throws IOException, FileNotFoundException {
+		if (!isGDALAvailable) {
+			return;
+		}
 		final File inputFile = TestData.file(this, "mountain.jpg");
 
 		// //

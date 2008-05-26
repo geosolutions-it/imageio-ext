@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.nitf;
 
+import it.geosolutions.imageio.gdalframework.GDALUtilities;
+
 import java.util.logging.Logger;
 
 import javax.media.jai.JAI;
@@ -28,8 +30,12 @@ import junit.framework.TestCase;
  */
 public class AbstractNITFTestCase extends TestCase {
 
-	private static final Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.plugins.nitf");
+	/** A simple flag set to true in case the GDAL Library is available */
+	protected final static boolean isGDALAvailable = GDALUtilities
+			.isGDALAvailable();
+
+	protected static final Logger LOGGER = Logger
+			.getLogger("it.geosolutions.imageio.plugins.geotiff");
 
 	public AbstractNITFTestCase(String name) {
 		super(name);
@@ -37,6 +43,10 @@ public class AbstractNITFTestCase extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
+		if (!isGDALAvailable) {
+			LOGGER.warning("GDAL Library is not Available");
+			return;
+		}
 		// general settings
 		JAI.getDefaultInstance().getTileScheduler().setParallelism(10);
 		JAI.getDefaultInstance().getTileScheduler().setPriority(4);

@@ -55,6 +55,9 @@ public class EnvisatTest extends AbstractEnvisatTestCase {
 	 * @throws IOException
 	 */
 	public void testJaiOperations() throws FileNotFoundException, IOException {
+		if (!isGDALAvailable) {
+			return;
+		}
 		File file;
 		try {
 			file = TestData.file(this, fileName);

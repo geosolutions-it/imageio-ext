@@ -60,6 +60,9 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
 	 * @throws IOException
 	 */
 	public void testManualRead() throws IOException, FileNotFoundException {
+		if (!isGDALAvailable) {
+			return;
+		}
 		final ImageReadParam irp = new ImageReadParam();
 
 		// Reading a simple GrayScale image

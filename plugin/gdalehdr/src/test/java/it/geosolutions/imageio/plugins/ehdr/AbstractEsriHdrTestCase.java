@@ -16,18 +16,27 @@
  */
 package it.geosolutions.imageio.plugins.ehdr;
 
+import it.geosolutions.imageio.gdalframework.GDALUtilities;
 import it.geosolutions.resources.TestData;
 
 import java.io.File;
+import java.util.logging.Logger;
 
 import javax.media.jai.JAI;
 
 import junit.framework.TestCase;
+
 /**
  * @author Daniele Romagnoli, GeoSolutions.
- * @author Simone Giannecchini, GeoSolutions. 
+ * @author Simone Giannecchini, GeoSolutions.
  */
 public class AbstractEsriHdrTestCase extends TestCase {
+	/** A simple flag set to true in case the GDAL Library is available */
+	protected final static boolean isGDALAvailable = GDALUtilities
+			.isGDALAvailable();
+
+	protected static final Logger LOGGER = Logger
+			.getLogger("it.geosolutions.imageio.plugins.ehdr");
 
 	public AbstractEsriHdrTestCase(String name) {
 		super(name);
@@ -35,7 +44,11 @@ public class AbstractEsriHdrTestCase extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		
+		if (!isGDALAvailable) {
+			LOGGER.warning("GDAL Library is not Available");
+			return;
+		}
+
 		File file = TestData.file(this, "test.zip");
 		assertTrue(file.exists());
 

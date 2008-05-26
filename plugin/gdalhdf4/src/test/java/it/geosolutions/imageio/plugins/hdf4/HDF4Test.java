@@ -44,17 +44,18 @@ import junit.framework.TestSuite;
  */
 public class HDF4Test extends AbstractHDF4TestCase {
 	// Actually, HDF on Linux is not tested. Test are disabled.
-	private final static boolean runTests = ((String)System.getProperty("os.name")).equalsIgnoreCase("Linux")?false:true;
-	
+	private final static boolean isLinux = ((String) System
+			.getProperty("os.name")).equalsIgnoreCase("Linux") ? true : false;
+
 	public HDF4Test(String name) {
 		super(name);
 	}
 
-	 /**
+	/**
 	 * This test method uses an HDF4 file containing several subdatasets
 	 */
 	public void testSubDataset() throws FileNotFoundException, IOException {
-		if(!runTests)
+		if (!isLinux && isDriverAvailable)
 			return;
 		try {
 			final int startIndex = 0;
@@ -90,7 +91,7 @@ public class HDF4Test extends AbstractHDF4TestCase {
 	}
 
 	public void testManualRead() throws FileNotFoundException, IOException {
-		if(!runTests)
+		if (!isLinux && isDriverAvailable)
 			return;
 		try {
 			ImageReader mReader = new HDF4ImageReaderSpi()
@@ -116,7 +117,7 @@ public class HDF4Test extends AbstractHDF4TestCase {
 	 */
 	public void testRasterBandsProperties() throws FileNotFoundException,
 			IOException {
-		if(!runTests)
+		if (!isLinux && isDriverAvailable)
 			return;
 		try {
 			ImageReader reader = new HDF4ImageReaderSpi()
@@ -189,7 +190,7 @@ public class HDF4Test extends AbstractHDF4TestCase {
 		// Test reading of several subdatasets
 		suite.addTest(new HDF4Test("testSubDataset"));
 
-		 // Test read without exploiting JAI
+		// Test read without exploiting JAI
 		suite.addTest(new HDF4Test("testManualRead"));
 
 		// Test reading of several subdatasets
@@ -199,7 +200,7 @@ public class HDF4Test extends AbstractHDF4TestCase {
 	}
 
 	public static void main(java.lang.String[] args) {
-		if(!runTests)
+		if (!isLinux && isDriverAvailable)
 			return;
 		junit.textui.TestRunner.run(suite());
 	}

@@ -18,14 +18,15 @@ package it.geosolutions.imageio.plugins.jp2mrsid;
 
 import it.geosolutions.imageio.gdalframework.GDALUtilities;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.media.jai.JAI;
 
+import junit.framework.TestCase;
+
 import org.gdal.gdal.Driver;
 import org.gdal.gdal.gdal;
-
-import junit.framework.TestCase;
 
 /**
  * @author Daniele Romagnoli, GeoSolutions.
@@ -34,7 +35,7 @@ import junit.framework.TestCase;
 public class AbstractJP2KTestCase extends TestCase {
 
 	/** A simple flag set to true in case the JP2 MrSID driver is available */
-	protected final static boolean isDriverAvailable;
+	protected static boolean isDriverAvailable;
 	private final static String msg = "JP2 MRSID Tests are skipped due to missing Driver.\n"
 			+ "Be sure GDAL has been built against MRSID and the required"
 			+ " lib is in the classpath";
@@ -43,18 +44,25 @@ public class AbstractJP2KTestCase extends TestCase {
 			.getLogger("it.geosolutions.imageio.plugins.jp2mrsid");
 
 	static {
-		gdal.AllRegister();
-		final Driver driverkak = gdal.GetDriverByName("JP2KAK");
-		final Driver driverecw = gdal.GetDriverByName("JP2ECW");
-		if (driverkak != null || driverecw != null) {
-			final StringBuffer skipDriver = new StringBuffer("");
-			if (driverkak != null)
-				skipDriver.append("JP2KAK ");
-			if (driverecw != null)
-				skipDriver.append("JP2ECW");
-			gdal.SetConfigOption("GDAL_SKIP", skipDriver.toString());
+		try {
+			gdal.AllRegister();
+			final Driver driverkak = gdal.GetDriverByName("JP2KAK");
+			final Driver driverecw = gdal.GetDriverByName("JP2ECW");
+			if (driverkak != null || driverecw != null) {
+				final StringBuffer skipDriver = new StringBuffer("");
+				if (driverkak != null)
+					skipDriver.append("JP2KAK ");
+				if (driverecw != null)
+					skipDriver.append("JP2ECW");
+				gdal.SetConfigOption("GDAL_SKIP", skipDriver.toString());
+			}
+			isDriverAvailable = GDALUtilities.isDriverAvailable("JP2MrSID");
+		} catch (UnsatisfiedLinkError e) {
+			if (LOGGER.isLoggable(Level.WARNING))
+				LOGGER.warning(new StringBuffer("GDAL library unavailable.")
+						.toString());
+			isDriverAvailable=false;
 		}
-		isDriverAvailable = GDALUtilities.isDriverAvailable("JP2MrSID");
 	}
 
 	public AbstractJP2KTestCase(String name) {

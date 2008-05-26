@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.dted;
 
+import it.geosolutions.imageio.gdalframework.GDALUtilities;
+
 import java.util.logging.Logger;
 
 import javax.media.jai.JAI;
@@ -27,8 +29,11 @@ import junit.framework.TestCase;
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class AbstractTestCase extends TestCase {
+	/** A simple flag set to true in case the GDAL Library is available */
+	protected final static boolean isGDALAvailable = GDALUtilities
+			.isGDALAvailable();
 
-	private static final Logger LOGGER = Logger
+	protected static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.plugins.dted");
 
 	public AbstractTestCase(String name) {
@@ -37,6 +42,10 @@ public class AbstractTestCase extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
+		if (!isGDALAvailable) {
+			LOGGER.warning("GDAL Library is not Available");
+			return;
+		}
 		// general settings
 		JAI.getDefaultInstance().getTileScheduler().setParallelism(10);
 		JAI.getDefaultInstance().getTileScheduler().setPriority(4);

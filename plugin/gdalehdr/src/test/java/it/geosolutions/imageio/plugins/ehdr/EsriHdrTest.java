@@ -46,6 +46,9 @@ public class EsriHdrTest extends AbstractEsriHdrTestCase {
 	 * @throws IOException
 	 */
 	public void testManualRead() throws IOException, FileNotFoundException {
+		if (!isGDALAvailable) {
+			return;
+		}
 		final String fileName = "test.bil";
 		final File file = TestData.file(this, fileName);
 		ImageReader reader = new EsriHdrImageReaderSpi().createReaderInstance();

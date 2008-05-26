@@ -18,6 +18,7 @@ package it.geosolutions.imageio.plugins.jp2ecw;
 
 import it.geosolutions.imageio.gdalframework.GDALUtilities;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.media.jai.JAI;
@@ -29,34 +30,41 @@ import org.gdal.gdal.gdal;
 
 /**
  * @author Daniele Romagnoli, GeoSolutions.
- * @author Simone Giannecchini, GeoSolutions. 
+ * @author Simone Giannecchini, GeoSolutions.
  */
 public class AbstractJP2KTestCase extends TestCase {
 
 	/** A simple flag set to true in case the JP2 ECW driver is available */
-	protected final static boolean isDriverAvailable;
+	protected static boolean isDriverAvailable;
 	private final static String msg = "JP2 ECW Tests are skipped due to missing Driver.\n"
-		+ "Be sure GDAL has been built against ECW and the required"
-		+ " lib is in the classpath";
-	
+			+ "Be sure GDAL has been built against ECW and the required"
+			+ " lib is in the classpath";
+
 	protected static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.plugins.jp2ecw");
-	
-	static{
-		gdal.AllRegister();
-		final Driver driverkak = gdal.GetDriverByName("JP2KAK");
-		final Driver drivermrsid = gdal.GetDriverByName("JP2MrSID");
-		if (driverkak!=null || drivermrsid!=null){
-			final StringBuffer skipDriver = new StringBuffer("");
-			if (driverkak!=null)
-				skipDriver.append("JP2KAK ");
-			if (drivermrsid!=null)
-				skipDriver.append("JP2MrSID");
-			gdal.SetConfigOption("GDAL_SKIP", skipDriver.toString());
+
+	static {
+		try {
+			gdal.AllRegister();
+			final Driver driverkak = gdal.GetDriverByName("JP2KAK");
+			final Driver drivermrsid = gdal.GetDriverByName("JP2MrSID");
+			if (driverkak != null || drivermrsid != null) {
+				final StringBuffer skipDriver = new StringBuffer("");
+				if (driverkak != null)
+					skipDriver.append("JP2KAK ");
+				if (drivermrsid != null)
+					skipDriver.append("JP2MrSID");
+				gdal.SetConfigOption("GDAL_SKIP", skipDriver.toString());
+			}
+			isDriverAvailable = GDALUtilities.isDriverAvailable("JP2ECW");
+		} catch (UnsatisfiedLinkError e) {
+			if (LOGGER.isLoggable(Level.WARNING))
+				LOGGER.warning(new StringBuffer("GDAL library unavailable.")
+						.toString());
+			isDriverAvailable = false;
 		}
-		isDriverAvailable=GDALUtilities.isDriverAvailable("JP2ECW");
 	}
-	
+
 	public AbstractJP2KTestCase(String name) {
 		super(name);
 	}
@@ -64,7 +72,7 @@ public class AbstractJP2KTestCase extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		// general settings
-		if (!isDriverAvailable){
+		if (!isDriverAvailable) {
 			LOGGER.warning(msg);
 			return;
 		}
