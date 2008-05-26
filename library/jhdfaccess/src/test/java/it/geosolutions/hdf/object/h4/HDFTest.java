@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageReadParam;
@@ -73,11 +74,16 @@ import com.sun.media.jai.codecimpl.util.RasterFactory;
  */
 public class HDFTest extends TestCase {
 	// Actually, HDF on Linux is not tested. Test are disabled.
-	private final static boolean runTests = ((String)System.getProperty("os.name")).equalsIgnoreCase("Linux")?false:true;
-	
-	
 	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.hdf.object.h4");
+
+	static {
+		final boolean isLinux = ((String) System.getProperty("os.name"))
+				.equalsIgnoreCase("Linux") ? true : false;
+		boolean isDLLpresent = H4File.isJHDFLibAvailable();
+		runTests = isDLLpresent && !isLinux;
+	}
+	private static final boolean runTests;
 
 	public HDFTest(final String test) {
 		super(test);
@@ -112,7 +118,7 @@ public class HDFTest extends TestCase {
 	}
 
 	public static void main(java.lang.String[] args) throws HDFException {
-		if(!runTests)
+		if (!runTests)
 			return;
 		junit.textui.TestRunner.run(suite());
 	}
@@ -121,7 +127,7 @@ public class HDFTest extends TestCase {
 	 * Test a MISR HDF source
 	 */
 	public void testMisrSDS() throws HDFException, IOException {
-		if(!runTests)
+		if (!runTests)
 			return;
 		StringBuffer outSb = new StringBuffer();
 		File file = null;
@@ -152,7 +158,7 @@ public class HDFTest extends TestCase {
 		//
 		// //
 		for (int s = 0; s < sdsNum; s++) {
-			sds = (H4SDS)sdsColl.get(s);
+			sds = (H4SDS) sdsColl.get(s);
 			outSb.append(printInfo(sds));
 
 			// Description Annotations visualization
@@ -240,7 +246,7 @@ public class HDFTest extends TestCase {
 	 * Annotations (Label/Description)
 	 */
 	public void testAnnotations() throws HDFException, IOException {
-		if(!runTests)
+		if (!runTests)
 			return;
 		StringBuffer outSb = new StringBuffer();
 		File file = null;
@@ -298,10 +304,9 @@ public class HDFTest extends TestCase {
 				}
 			}
 		}
-		if (TestData.isInteractiveTest()){
+		if (TestData.isInteractiveTest()) {
 			visualizeText("FILE ANNOTATIONS", outSb.toString());
-		}
-		else 
+		} else
 			LOGGER.info("\n" + outSb.toString());
 		outSb = new StringBuffer();
 		// ////////////////////////////////////////////////////////////////////
@@ -342,10 +347,9 @@ public class HDFTest extends TestCase {
 			sds.close();
 		}
 		myFile.close();
-		if (TestData.isInteractiveTest()){
+		if (TestData.isInteractiveTest()) {
 			visualizeText("SDS ANNOTATIONS", outSb.toString());
-		}
-		else 
+		} else
 			LOGGER.info("\n" + outSb.toString());
 		outSb = new StringBuffer();
 
@@ -397,10 +401,9 @@ public class HDFTest extends TestCase {
 			}
 		}
 		myFile.close();
-		if (TestData.isInteractiveTest()){
+		if (TestData.isInteractiveTest()) {
 			visualizeText("GRIMAGE ANNOTATIONS", outSb.toString());
-		}
-		else 
+		} else
 			LOGGER.info("\n" + outSb.toString());
 	}
 
@@ -408,7 +411,7 @@ public class HDFTest extends TestCase {
 	 * Test attributes management from various object.
 	 */
 	public void testAttributes() throws HDFException, IOException {
-		if(!runTests)
+		if (!runTests)
 			return;
 		StringBuffer outSb = new StringBuffer();
 		File file = null;
@@ -443,10 +446,9 @@ public class HDFTest extends TestCase {
 				outSb.append(printInfo(attrib));
 			}
 		}
-		if (TestData.isInteractiveTest()){
-			visualizeText("ATTRIBUTES FROM SDS COLLECTION",outSb.toString());
-		}
-		else 
+		if (TestData.isInteractiveTest()) {
+			visualizeText("ATTRIBUTES FROM SDS COLLECTION", outSb.toString());
+		} else
 			LOGGER.info("\n" + outSb.toString());
 		outSb = new StringBuffer();
 		outSb.append("\n\n\n======================================="
@@ -487,10 +489,9 @@ public class HDFTest extends TestCase {
 				printInfo(attribute);
 			sds.dispose();
 		}
-		if (TestData.isInteractiveTest()){
+		if (TestData.isInteractiveTest()) {
 			visualizeText("ATTRIBUTES FROM SDS", outSb.toString());
-		}
-		else 
+		} else
 			LOGGER.info("\n" + outSb.toString());
 		myFile.close();
 	}
@@ -499,7 +500,7 @@ public class HDFTest extends TestCase {
 	 * Test group Structure
 	 */
 	public void testGroups() throws HDFException, IOException {
-		if(!runTests)
+		if (!runTests)
 			return;
 		StringBuffer outSb = new StringBuffer();
 		File file = null;
@@ -538,10 +539,9 @@ public class HDFTest extends TestCase {
 			}
 			outSb.append("\n");
 		}
-		if (TestData.isInteractiveTest()){
+		if (TestData.isInteractiveTest()) {
 			visualizeText("GROUPS", outSb.toString());
-		}
-		else 
+		} else
 			LOGGER.info("\n" + outSb.toString());
 		myFile.close();
 	}
@@ -550,7 +550,7 @@ public class HDFTest extends TestCase {
 	 * Test Dimension scales management
 	 */
 	public void testDimensionScales() throws HDFException, IOException {
-		if(!runTests)
+		if (!runTests)
 			return;
 		StringBuffer outSb = new StringBuffer();
 		File file = null;
@@ -592,10 +592,9 @@ public class HDFTest extends TestCase {
 			}
 			outSb.append("======================================\n");
 		}
-		if (TestData.isInteractiveTest()){
+		if (TestData.isInteractiveTest()) {
 			visualizeText("DIMENSION SCALES", outSb.toString());
-		}
-		else 
+		} else
 			LOGGER.info("\n" + outSb.toString());
 		myFile.close();
 	}
@@ -604,7 +603,7 @@ public class HDFTest extends TestCase {
 	 * Test Paletted GR Images
 	 */
 	public void testVisualizePalettedGRImage() throws HDFException, IOException {
-		if(!runTests)
+		if (!runTests)
 			return;
 		StringBuffer outSb = new StringBuffer();
 		final File file = TestData.file(this, "palette.hdf4");
@@ -756,7 +755,7 @@ public class HDFTest extends TestCase {
 	 * SDS Data Read/Visualization Test
 	 */
 	public void testSDSReadAndVisualize() throws HDFException, IOException {
-		if(!runTests)
+		if (!runTests)
 			return;
 		StringBuffer outSb = new StringBuffer();
 		File file = null;
@@ -1239,15 +1238,15 @@ public class HDFTest extends TestCase {
 						+ "download requested sample data");
 		LOGGER.info(sb.toString());
 	}
-	
+
 	private void visualizeText(final String title, final String string) {
 		JFrame frame = new JFrame("Testing " + title);
 		frame.getContentPane().setLayout(new BorderLayout());
-		
+
 		// Sometime, we dont want to display image, only text data which
 		// need to be placed to the start of the area.
 		JTextArea textArea = new JTextArea();
-		
+
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		textArea.setText(string);
 		textArea.setEditable(false);

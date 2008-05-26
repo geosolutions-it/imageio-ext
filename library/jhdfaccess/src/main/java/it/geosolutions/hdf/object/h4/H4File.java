@@ -21,6 +21,8 @@ import it.geosolutions.hdf.object.IHObject;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ncsa.hdf.hdflib.HDFConstants;
 import ncsa.hdf.hdflib.HDFException;
@@ -32,6 +34,13 @@ import ncsa.hdf.hdflib.HDFLibrary;
  * @author Daniele Romagnoli, GeoSolutions
  */
 public class H4File extends AbstractHObject implements IHObject {
+
+	private static final Logger LOGGER = Logger
+			.getLogger("it.geosolutions.hdf.object.h4");
+
+	private static boolean init = false;
+
+	private static boolean available;
 
 	/**
 	 * Almost all HDF APIs require the preliminar open of the source file using
@@ -93,7 +102,7 @@ public class H4File extends AbstractHObject implements IHObject {
 	/**
 	 * The file path of HDF file referred by this {@link H4File} instance
 	 */
-	private final String filePath;
+	private String filePath;
 
 	// ////////////////////////////////////////////////////////////////////////
 	//
@@ -222,6 +231,10 @@ public class H4File extends AbstractHObject implements IHObject {
 			throw new IllegalArgumentException(
 					"Error while checking if the provided file is a HDF source ",
 					e);
+		} catch (UnsatisfiedLinkError e) {
+			if (LOGGER.isLoggable(Level.WARNING))
+				LOGGER.warning(new StringBuffer("Native library load failed.")
+						.append(e.toString()).toString());
 		}
 
 	}
@@ -345,5 +358,33 @@ public class H4File extends AbstractHObject implements IHObject {
 		default:
 			return null;
 		}
+	}
+
+	/** Forces loading of JHDF lib. */
+	public synchronized static void loadJHDFLib() {
+		if (init == false)
+			init = true;
+		else
+			return;
+		try {
+			System.loadLibrary("jhdf");
+			available = true;
+		} catch (UnsatisfiedLinkError e) {
+			if (LOGGER.isLoggable(Level.WARNING))
+				LOGGER.warning(new StringBuffer("Native library load failed.")
+						.append(e.toString()).toString());
+			available = false;
+		}
+	}
+
+	/**
+	 * Returns <code>true</code> if the JHDF library has been loaded.
+	 * <code>false</code> otherwise.
+	 * 
+	 * @return <code>true</code> only if the JHDF library has been loaded.
+	 */
+	public static boolean isJHDFLibAvailable() {
+		loadJHDFLib();
+		return available;
 	}
 }
