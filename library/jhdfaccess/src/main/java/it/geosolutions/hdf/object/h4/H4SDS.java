@@ -62,7 +62,7 @@ public class H4SDS extends H4Variable implements IH4ReferencedObject, IHObject {
 
 	public static String PREDEF_ATTR_VALID_RANGE = "valid_range";
 
-	private int[] mutex = new int[] { 1 };
+//	private int[] mutex = new int[] { 1 };
 
 	/**
 	 * The index of this SDS within the source File.
@@ -216,8 +216,8 @@ public class H4SDS extends H4Variable implements IH4ReferencedObject, IHObject {
 	 * @return number of data object description annotations related to this
 	 *         SDS.
 	 */
-	public int getNDescriptions() {
-		synchronized (mutex) {
+	public synchronized int getNDescriptions() {
+//		synchronized (mutex) {
 			if (nDescriptions == -1)
 				try {
 					getAnnotations(HDFConstants.AN_DATA_DESC);
@@ -225,7 +225,7 @@ public class H4SDS extends H4Variable implements IH4ReferencedObject, IHObject {
 					nDescriptions = 0;
 				}
 			return nDescriptions;
-		}
+//		}
 	}
 
 	/**
@@ -233,8 +233,8 @@ public class H4SDS extends H4Variable implements IH4ReferencedObject, IHObject {
 	 * 
 	 * @return the number of data object label annotations related to this SDS.
 	 */
-	public int getNLabels() {
-		synchronized (mutex) {
+	public synchronized int getNLabels() {
+//		synchronized (mutex) {
 			if (nLabels == -1)
 				try {
 					getAnnotations(HDFConstants.AN_DATA_LABEL);
@@ -242,7 +242,7 @@ public class H4SDS extends H4Variable implements IH4ReferencedObject, IHObject {
 					nLabels = 0;
 				}
 			return nLabels;
-		}
+//		}
 	}
 
 	/**
@@ -334,8 +334,8 @@ public class H4SDS extends H4Variable implements IH4ReferencedObject, IHObject {
 	 * it is worth to point out that the identifier of this sds is always the
 	 * same when referring to the same SDS Interface ID.
 	 */
-	public void open() {
-		synchronized (mutex) {
+	public synchronized void open() {
+//		synchronized (mutex) {
 			if (!isOpened) {
 				if (identifier != HDFConstants.FAIL) {
 					try {
@@ -352,7 +352,7 @@ public class H4SDS extends H4Variable implements IH4ReferencedObject, IHObject {
 					}
 				}
 			}
-		}
+//		}
 	}
 
 	/**
@@ -421,8 +421,8 @@ public class H4SDS extends H4Variable implements IH4ReferencedObject, IHObject {
 	 * close this {@link H4SDS} and its owned {@link AbstractHObject}s and
 	 * dispose allocated objects.
 	 */
-	public void dispose() {
-		synchronized (mutex) {
+	public synchronized void dispose() {
+//		synchronized (mutex) {
 			if (dimensions != null) {
 				final int dimSizes = dimensions.size();
 				if (dimSizes != 0) {
@@ -431,32 +431,38 @@ public class H4SDS extends H4Variable implements IH4ReferencedObject, IHObject {
 						dim.dispose();
 					}
 				}
+				dimensions.clear();
+				dimensions=null;
 			}
 			if (descAnnotations != null) {
 				for (int i = 0; i < nDescriptions; i++) {
 					H4Annotation ann = (H4Annotation) descAnnotations.get(i);
 					ann.close();
 				}
+				descAnnotations.clear();
+				descAnnotations=null;
 			}
 			if (labelAnnotations != null) {
 				for (int i = 0; i < nLabels; i++) {
 					H4Annotation ann = (H4Annotation) labelAnnotations.get(i);
 					ann.close();
 				}
+				labelAnnotations.clear();
+				labelAnnotations=null;
 			}
 
 			// Disposing objects hold by H4DecoratedObject superclass
 			super.dispose();
 			close();
 			identifier = HDFConstants.FAIL;
-		}
+//		}
 	}
 
 	/**
 	 * Terminate access to this SDS.
 	 */
-	public void close() {
-		synchronized (mutex) {
+	public synchronized void close() {
+//		synchronized (mutex) {
 			// During the H4SDSCollection initialization, all SDSs are opened,
 			// initialized and immediatly closed. When a SDS is required, the
 			// H4SDSCollection re-open access to the specific SDS. When a
@@ -473,7 +479,7 @@ public class H4SDS extends H4Variable implements IH4ReferencedObject, IHObject {
 					// XXX
 				}
 			}
-		}
+//		}
 	}
 
 	/**
@@ -558,8 +564,8 @@ public class H4SDS extends H4Variable implements IH4ReferencedObject, IHObject {
 	 * 
 	 * @return a <code>List</code> of {@link H4Dimension}s
 	 */
-	public List getDimensions() throws HDFException {
-		synchronized (mutex) {
+	public synchronized List getDimensions() throws HDFException {
+//		synchronized (mutex) {
 			if (dimensions.size() == 0) {
 				for (int i = 0; i < rank; i++) {
 					// Adding dimensions if needed
@@ -568,7 +574,7 @@ public class H4SDS extends H4Variable implements IH4ReferencedObject, IHObject {
 				}
 			}
 			return dimensions;
-		}
+//		}
 	}
 
 	/**
@@ -601,8 +607,8 @@ public class H4SDS extends H4Variable implements IH4ReferencedObject, IHObject {
 	 * @return the <code>List</code> of annotations available for this SDS
 	 * @throws HDFException
 	 */
-	public List getAnnotations(final int annotationType) throws HDFException {
-		synchronized (mutex) {
+	public synchronized List getAnnotations(final int annotationType) throws HDFException {
+//		synchronized (mutex) {
 
 			H4AnnotationManager annotationManager = h4SDSCollectionOwner
 					.getH4File().getH4AnnotationManager();
@@ -655,5 +661,5 @@ public class H4SDS extends H4Variable implements IH4ReferencedObject, IHObject {
 				return null;
 			}
 		}
-	}
+//	}
 }

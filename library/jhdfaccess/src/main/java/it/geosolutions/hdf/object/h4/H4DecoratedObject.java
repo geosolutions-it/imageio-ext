@@ -34,7 +34,7 @@ import it.geosolutions.hdf.object.IHObject;
 public abstract class H4DecoratedObject extends AbstractHObject implements
 		IHObject {
 
-	private int[] mutex = new int[] { 1 };
+//	private int[] mutex = new int[] { 1 };
 
 	/**
 	 * The map of attributes related to this object
@@ -63,8 +63,8 @@ public abstract class H4DecoratedObject extends AbstractHObject implements
 	/**
 	 * Initialize attributes properties.
 	 */
-	public void initDecorated() {
-		synchronized (mutex) {
+	public synchronized void initDecorated() {
+//		synchronized (mutex) {
 			if (numAttributes != 0) {
 				indexToAttributesMap = Collections.synchronizedMap(new HashMap(
 						numAttributes));
@@ -74,7 +74,7 @@ public abstract class H4DecoratedObject extends AbstractHObject implements
 				attributes = null;
 				indexToAttributesMap = null;
 			}
-		}
+//		}
 	}
 
 	/**
@@ -85,10 +85,10 @@ public abstract class H4DecoratedObject extends AbstractHObject implements
 	 * @return the {@link H4Attribute} related to the specified name.
 	 * @throws HDFException
 	 */
-	public H4Attribute getAttribute(final String attributeName)
+	public synchronized H4Attribute getAttribute(final String attributeName)
 			throws HDFException {
 		H4Attribute attribute = null;
-		synchronized (mutex) {
+//		synchronized (mutex) {
 			
 			//Here, the initialization has already occurred.
 			if (attributes != null) {
@@ -125,7 +125,7 @@ public abstract class H4DecoratedObject extends AbstractHObject implements
 					attribute = (H4Attribute) attributes.get(attributeName);
 			}
 			return attribute;
-		}
+//		}
 	}
 
 	/**
@@ -135,13 +135,13 @@ public abstract class H4DecoratedObject extends AbstractHObject implements
 	 * @return the map of attributes.
 	 * @throws HDFException
 	 */
-	public Map getAttributes() throws HDFException {
-		synchronized (mutex) {
+	public synchronized Map getAttributes() throws HDFException {
+//		synchronized (mutex) {
 			if (attributes != null && attributes.size() < numAttributes) {
 				buildAttributesMaps();
 			}
 			return attributes;
-		}
+//		}
 	}
 
 	/**
@@ -173,10 +173,10 @@ public abstract class H4DecoratedObject extends AbstractHObject implements
 	 * @return the {@link H4Attribute} related to the specified index.
 	 * @throws HDFException
 	 */
-	public H4Attribute getAttribute(final int attributeIndex)
+	public synchronized H4Attribute getAttribute(final int attributeIndex)
 			throws HDFException {
 		checkAttributeIndex(attributeIndex);
-		synchronized (mutex) {
+//		synchronized (mutex) {
 			if (indexToAttributesMap != null
 					&& !indexToAttributesMap.containsKey(Integer
 							.valueOf(attributeIndex))) {
@@ -189,7 +189,7 @@ public abstract class H4DecoratedObject extends AbstractHObject implements
 			}
 			return (H4Attribute) indexToAttributesMap.get(Integer
 					.valueOf(attributeIndex));
-		}
+//		}
 	}
 
 	/**
@@ -216,13 +216,13 @@ public abstract class H4DecoratedObject extends AbstractHObject implements
 	/**
 	 * Clear the attributes mappings. 
 	 */
-	public void dispose(){
-		synchronized (mutex) {
+	public synchronized void dispose(){
+//		synchronized (mutex) {
 			if (attributes != null)
 				attributes.clear();
 			if (indexToAttributesMap!=null)
-				attributes.clear();
-		}
+			    indexToAttributesMap.clear();
+//		}
 	}
 	
 	protected void finalize() throws Throwable {

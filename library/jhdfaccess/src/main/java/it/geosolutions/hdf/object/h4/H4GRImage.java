@@ -35,7 +35,7 @@ public class H4GRImage extends H4Variable implements IH4ReferencedObject {
 	// TODO: To be checked
 	public static String PREDEF_ATTR_FILL_VALUE = "FILL_VALUE";
 
-	private int[] mutex = new int[] { 1 };
+//	private int[] mutex = new int[] { 1 };
 
 	/**
 	 * The list of {@link H4Palette} available for this image
@@ -175,8 +175,8 @@ public class H4GRImage extends H4Variable implements IH4ReferencedObject {
 	 * @return number of data object description annotations related to this
 	 *         Image.
 	 */
-	public int getNDescriptions() {
-		synchronized (mutex) {
+	public synchronized int getNDescriptions() {
+//		synchronized (mutex) {
 			if (nDescriptions == -1)
 				try {
 					getAnnotations(HDFConstants.AN_DATA_DESC);
@@ -184,7 +184,7 @@ public class H4GRImage extends H4Variable implements IH4ReferencedObject {
 					nDescriptions = 0;
 				}
 			return nDescriptions;
-		}
+//		}
 	}
 
 	/**
@@ -193,8 +193,8 @@ public class H4GRImage extends H4Variable implements IH4ReferencedObject {
 	 * @return the number of data object label annotations related to this
 	 *         Image.
 	 */
-	public int getNLabels() {
-		synchronized (mutex) {
+	public synchronized int getNLabels() {
+//		synchronized (mutex) {
 			if (nLabels == -1)
 				try {
 					getAnnotations(HDFConstants.AN_DATA_LABEL);
@@ -202,7 +202,7 @@ public class H4GRImage extends H4Variable implements IH4ReferencedObject {
 					nLabels = 0;
 				}
 			return nLabels;
-		}
+//		}
 	}
 
 	/**
@@ -279,8 +279,8 @@ public class H4GRImage extends H4Variable implements IH4ReferencedObject {
 	/**
 	 * close this {@link H4GRImage} and dispose allocated objects.
 	 */
-	public void dispose() {
-		synchronized (mutex) {
+	public synchronized void dispose() {
+//		synchronized (mutex) {
 			
 			//Disposing object holds by H4DecoratedObject superclass
 			super.dispose();
@@ -301,7 +301,7 @@ public class H4GRImage extends H4Variable implements IH4ReferencedObject {
 				labelAnnotations.clear();
 			}
 			close();
-		}
+//		}
 	}
 
 	/**
@@ -340,8 +340,8 @@ public class H4GRImage extends H4Variable implements IH4ReferencedObject {
 	 * 
 	 * @return a <code>List</code> of {@link H4Palette}s
 	 */
-	public List getPalettes() {
-		synchronized (mutex) {
+	public synchronized List getPalettes() {
+//		synchronized (mutex) {
 			if (palettes == null) {
 				palettes = new ArrayList(numPalettes);
 				for (int pal = 0; pal < numPalettes; pal++) {
@@ -350,7 +350,7 @@ public class H4GRImage extends H4Variable implements IH4ReferencedObject {
 				}
 			}
 			return palettes;
-		}
+//		}
 	}
 
 	/**
@@ -431,8 +431,8 @@ public class H4GRImage extends H4Variable implements IH4ReferencedObject {
 	 * @return the <code>List</code> of annotations available for this Image
 	 * @throws HDFException
 	 */
-	public List getAnnotations(final int annotationType) throws HDFException {
-		synchronized (mutex) {
+	public synchronized List getAnnotations(final int annotationType) throws HDFException {
+//		synchronized (mutex) {
 			H4AnnotationManager annotationManager = h4GRImageCollectionOwner
 					.getH4File().getH4AnnotationManager();
 			switch (annotationType) {
@@ -471,5 +471,5 @@ public class H4GRImage extends H4Variable implements IH4ReferencedObject {
 				return null;
 			}
 		}
-	}
+//	}
 }

@@ -46,7 +46,7 @@ public class H4SDSCollection extends H4DecoratedObject implements IHObject,
 	// */
 	// private List sdsSizesList;
 
-	private int[] mutex = new int[1];
+//	private int[] mutex = new int[1];
 
 	/**
 	 * A map which allows to retrieve the index of a SDS within the SDS
@@ -196,7 +196,7 @@ public class H4SDSCollection extends H4DecoratedObject implements IHObject,
 						// H4SDS sds = new H4SDS(this, i);
 						// final boolean isDimensionScale = candidateSds
 						// .isDimensionScale();
-						// // SDS will be created and immediatly closed.
+						// // SDS will be created and immediately closed.
 						// // It will be re-opened only when required.
 						// if (!isDimensionScale) {
 						// sds.init();
@@ -226,20 +226,20 @@ public class H4SDSCollection extends H4DecoratedObject implements IHObject,
 	/**
 	 * close this {@link H4SDSCollection} and dispose allocated objects.
 	 */
-	public void dispose() {
-		synchronized (mutex) {
+	public synchronized void dispose() {
+//		synchronized (mutex) {
 			super.dispose();
 			if (sdsNamesToIndexes != null)
 				sdsNamesToIndexes.clear();
 			close();
-		}
+//		}
 	}
 
 	/**
 	 * End access to the underlying SD interface and end access to the owned
 	 * {@link AbstractHObject}s
 	 */
-	public void close() {
+	public synchronized void close() {
 		try {
 			if (sdsList != null) {
 				for (int i = 0; i < numSDS; i++) {
