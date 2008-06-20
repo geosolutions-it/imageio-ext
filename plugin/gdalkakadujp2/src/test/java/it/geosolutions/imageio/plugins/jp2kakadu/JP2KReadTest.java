@@ -61,8 +61,7 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
 		}
 			
 		final ParameterBlockJAI pbjImageRead;
-		// final File file = TestData.file(this, fileName);
-		final File file = new File("C:/work/data/jp2/simo.jp2");
+		 final File file = TestData.file(this, fileName);
 		JP2GDALKakaduImageReaderSpi
 				.setKakaduInputErrorManagement(KakaduErrorManagement.FAST);
 		pbjImageRead = new ParameterBlockJAI("ImageRead");
