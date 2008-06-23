@@ -266,9 +266,9 @@ public class H4File extends AbstractHObject implements IHObject {
 	 * opened/accessed interfaces and items.
 	 */
 	public synchronized void close() {
-		if (identifier != HDFConstants.FAIL)
+		if (filePath!=null)
 			try {
-
+			        filePath=null;
 				// //
 				//
 				// Closing all opened interfaces
