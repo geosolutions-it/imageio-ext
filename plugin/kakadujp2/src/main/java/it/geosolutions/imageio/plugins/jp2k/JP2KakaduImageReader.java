@@ -647,40 +647,60 @@ public class JP2KakaduImageReader extends ImageReader {
 
 	public void setInput(Object input, boolean seekForwardOnly,
 			boolean ignoreMetadata) {
+		///////////////////////////////////////////////////////////////////////
+		//
+		// Reset this reader as needed.
+		//
+		///////////////////////////////////////////////////////////////////////
 		if (this.imageInputStream != null) {
 			reset();
 			imageInputStream = null;
 		}
+		
+		
+		///////////////////////////////////////////////////////////////////////
+		//
+		// Checks on input object as a valid file
+		//
+		///////////////////////////////////////////////////////////////////////
 		if (input == null)
 			throw new NullPointerException("The provided input is null!");
-
-		// Checking if the provided input is a File
+		
 		if (input instanceof File) {
 			fileSource = (File) input;
-			try {
-				// Create an ImageInputStream from the provided input
-				imageInputStream = ImageIO.createImageInputStream(input);
-			} catch (IOException e) {
-				throw new RuntimeException("Not a Valid Input", e);
-			}
+		} else 
 			// Checking if the provided input is a FileImageInputStreamExt
-		} else if (input instanceof FileImageInputStreamExt) {
-			fileSource = ((FileImageInputStreamExt) input).getFile();
-			imageInputStream = (ImageInputStream) input;
+			if (input instanceof FileImageInputStreamExt) {
+				fileSource = ((FileImageInputStreamExt) input).getFile();
+			
+		} else 
 			// Checking if the provided input is a URL
-		} else if (input instanceof URL) {
-			final URL tempURL = (URL) input;
-			if (tempURL.getProtocol().equalsIgnoreCase("file")) {
-
-				try {
-					fileSource = new File(URLDecoder.decode(tempURL.getFile(),
-							"UTF-8"));
-					imageInputStream = ImageIO.createImageInputStream(input);
-				} catch (IOException e) {
-					throw new RuntimeException("Not a Valid Input", e);
-				}
+			if (input instanceof URL) {
+				final URL tempURL = (URL) input;
+				if (tempURL.getProtocol().equalsIgnoreCase("file")) {
+	
+					try {
+						fileSource = new File(URLDecoder.decode(tempURL.getFile(),
+								"UTF-8"));
+					} catch (IOException e) {
+						throw new RuntimeException("Not a Valid Input", e);
+					}
 			}
 		}
+			else
+				throw new IllegalArgumentException("Provided input object is null or invalid");
+		////
+		//
+		// Check that the input file is a valid file
+		//
+		////
+		if(!fileSource.exists()||fileSource.isDirectory()||!fileSource.canRead()){
+			final StringBuilder buff= new StringBuilder("Invalid input file provided");
+			buff.append("exists: ").append(fileSource.exists()).append("\n");
+			buff.append("isDirectory: ").append(fileSource.isDirectory()).append("\n");
+			buff.append("canRead: ").append(fileSource.canRead()).append("\n");
+			throw new IllegalArgumentException();
+		}	
 		Kdu_simple_file_source rawSource = null; // Must be disposed last
 		familySource = new Jp2_family_src(); // Dispose last
 		wrappedSource = new Jpx_source(); // Dispose in the middle
