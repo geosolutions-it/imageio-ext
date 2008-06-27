@@ -620,14 +620,20 @@ public class HDFTest extends TestCase {
 				+ "\n\t\tGRImages ( + Palette ) test\n"
 				+ "*************************************************\n");
 		myFile = new H4File(file.getAbsolutePath());
-		final H4GRImageCollection grImageCollection = myFile
-				.getH4GRImageCollection();
+		final H4GRImageCollection grImageCollection = myFile.getH4GRImageCollection();
 
-		final int nImages = grImageCollection.size();
-
+		final Iterator it=grImageCollection.iterator();
+		
+		try{
+			it.remove();
+			assertTrue(false);
+		}catch (Exception e) {
+			// TODO: handle exception
+		}
+		int im=0;
 		// GRImages scan
-		for (int im = 0; im < nImages; im++) {
-			grImage = (H4GRImage) grImageCollection.get(im);
+		while (it.hasNext()) {
+			grImage = (H4GRImage) it.next();
 			final int palettes = grImage.getNumPalettes();
 			ColorModel cm = null;
 			if (palettes != 0) {
@@ -746,6 +752,8 @@ public class HDFTest extends TestCase {
 			final String name = grImage.getName();
 			if (TestData.isInteractiveTest())
 				visualize(name, bimage, im);
+			
+			im++;
 		}
 		LOGGER.info("\n" + outSb.toString());
 		myFile.dipose();
