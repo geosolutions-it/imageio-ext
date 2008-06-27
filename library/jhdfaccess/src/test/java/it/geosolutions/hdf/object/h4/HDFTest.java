@@ -80,7 +80,7 @@ public class HDFTest extends TestCase {
 	static {
 		final boolean isLinux = ((String) System.getProperty("os.name"))
 				.equalsIgnoreCase("Linux") ? true : false;
-		boolean isDLLpresent = H4File.isJHDFLibAvailable();
+		boolean isDLLpresent = H4Utilities.isJHDFLibAvailable();
 		runTests = isDLLpresent && !isLinux;
 	}
 	private static final boolean runTests;
@@ -484,7 +484,7 @@ public class HDFTest extends TestCase {
 			}
 			// find predefined attribute
 			H4Attribute attribute = sds
-					.getAttribute(H4SDS.PREDEF_ATTR_LONG_NAME);
+					.getAttribute(H4Utilities.PREDEF_ATTR_LONG_NAME);
 			if (attribute != null)
 				printInfo(attribute);
 			sds.dispose();
@@ -707,7 +707,7 @@ public class HDFTest extends TestCase {
 			}
 
 			// Setting SampleModel and ColorModel
-			final int bufferType = H4DatatypeUtilities
+			final int bufferType = H4Utilities
 					.getBufferTypeFromDataType(datatype);
 			SampleModel sm = cm.createCompatibleSampleModel(
 					destinationRegion.width, destinationRegion.height);
@@ -784,7 +784,7 @@ public class HDFTest extends TestCase {
 			String title = "";
 			if (nAttributes > 0) {
 				H4Attribute attrib = sds
-						.getAttribute(H4SDS.PREDEF_ATTR_LONG_NAME);
+						.getAttribute(H4Utilities.PREDEF_ATTR_LONG_NAME);
 				if (attrib != null)
 					title = new String((byte[]) attrib.getValues());
 			}
@@ -860,7 +860,7 @@ public class HDFTest extends TestCase {
 		}
 
 		// Setting SampleModel and ColorModel
-		final int bufferType = H4DatatypeUtilities
+		final int bufferType = H4Utilities
 				.getBufferTypeFromDataType(datatype);
 		SampleModel sm = new BandedSampleModel(bufferType,
 				destinationRegion.width, destinationRegion.height,
@@ -1225,7 +1225,7 @@ public class HDFTest extends TestCase {
 			return sb.toString();
 		}
 		sb.append("\nDimension Scale values:\n");
-		sb.append(H4DatatypeUtilities.getValuesAsString(datatype, buf));
+		sb.append(H4Utilities.getValuesAsString(datatype, buf));
 		sb.append("\n--------------------------------\n");
 		return sb.toString();
 	}

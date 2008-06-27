@@ -257,12 +257,12 @@ public class H4GRImage extends H4Variable {
 				final int grInfo[] = { 0, 0, 0, 0 };
 				String grName[] = { "" };
 				HDFLibrary.GRgetiminfo(identifier, grName, grInfo, dimSizes);
-				this.name = grName[0];
+				setName(grName[0]);
 				numComponents = grInfo[0];
 				datatype = grInfo[1] & (~HDFConstants.DFNT_LITEND);
 				interlaceMode = grInfo[2];
 				numAttributes = grInfo[3];
-				initH4();
+				freeze();
 				numPalettes = HDFLibrary.GRgetnluts(identifier);
 			} else {
 				// XXX
@@ -403,7 +403,7 @@ public class H4GRImage extends H4Variable {
 		// allocate the required data array where data read will be stored.
 		// TODO: Attempts to read some Banded GRImages (with numComponents>0)
 		// Available examples in the guide are unworking
-		theData = H4DatatypeUtilities.allocateArray(datatype, datasize);
+		theData = H4Utilities.allocateArray(datatype, datasize);
 
 		// //
 		//

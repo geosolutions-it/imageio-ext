@@ -194,11 +194,11 @@ public class H4VGroup extends H4Variable implements IHObject {
 	public void init() throws HDFException {
 		final String[] vgroupName = { "" };
 		HDFLibrary.Vgetname(identifier, vgroupName);
-		name = vgroupName[0];
+		setName(vgroupName[0]);
 		tag = HDFLibrary.VQuerytag(identifier);
 		numObjects = HDFLibrary.Vntagrefs(identifier);
 		numAttributes = HDFLibrary.Vnattrs(identifier);
-		initH4();
+		freeze();
 	}
 
 	protected void finalize() throws Throwable {

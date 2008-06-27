@@ -151,11 +151,11 @@ public class H4Dimension extends H4Variable implements IHObject {
 				final String[] dimName = { "" };
 				final int[] dimInfo = { 0, 0, 0 };
 				HDFLibrary.SDdiminfo(identifier, dimName, dimInfo);
-				name = dimName[0];
+				setName(dimName[0]);
 				size = dimInfo[0];
 				datatype = dimInfo[1] & (~HDFConstants.DFNT_LITEND);
 				numAttributes = dimInfo[2];
-				initH4();
+				freeze();
 
 				// Retrieving dimension scale
 				final int interfaceID = sds.getH4SDSCollectionOwner()
@@ -164,7 +164,7 @@ public class H4Dimension extends H4Variable implements IHObject {
 				// If set, the dimension scale has the same name of the
 				// dimension
 				final int dimensionScaleIndex = HDFLibrary.SDnametoindex(
-						interfaceID, name);
+						interfaceID, getName());
 				if (dimensionScaleIndex != HDFConstants.FAIL) {
 					sdsDimensionScaleID = HDFLibrary.SDselect(interfaceID,
 							dimensionScaleIndex);
@@ -211,7 +211,7 @@ public class H4Dimension extends H4Variable implements IHObject {
 	 * depends on the datatype of the dimension scale. As an instance, for a
 	 * dimension scale having <code>HDFConstants.DFNT_INT32</code> as
 	 * datatype, returned object is an <code>int</code> array. See
-	 * {@link H4DatatypeUtilities#allocateArray(int, int)} to retrieve
+	 * {@link H4Utilities#allocateArray(int, int)} to retrieve
 	 * information about the returned type.
 	 * 
 	 * @return an <code>Object</code> containing dimension scale values if
@@ -223,7 +223,7 @@ public class H4Dimension extends H4Variable implements IHObject {
 	public Object getDimensionScaleValues() throws HDFException {
 		Object dataValues = null;
 		if (hasDimensionScaleSet && identifier != HDFConstants.FAIL) {
-			dataValues = H4DatatypeUtilities.allocateArray(datatype, size);
+			dataValues = H4Utilities.allocateArray(datatype, size);
 			if (dataValues != null)
 				HDFLibrary.SDgetdimscale(identifier, dataValues);
 		}

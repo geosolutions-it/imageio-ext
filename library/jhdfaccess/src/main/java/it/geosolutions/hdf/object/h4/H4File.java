@@ -38,9 +38,7 @@ public class H4File extends AbstractHObject implements IHObject {
 	private static final Logger LOGGER = Logger
 			.getLogger("it.geosolutions.hdf.object.h4");
 
-	private static boolean init = false;
 
-	private static boolean available;
 
 	/**
 	 * Almost all HDF APIs require the preliminar open of the source file using
@@ -358,33 +356,5 @@ public class H4File extends AbstractHObject implements IHObject {
 		default:
 			return null;
 		}
-	}
-
-	/** Forces loading of JHDF lib. */
-	public synchronized static void loadJHDFLib() {
-		if (init == false)
-			init = true;
-		else
-			return;
-		try {
-			System.loadLibrary("jhdf");
-			available = true;
-		} catch (UnsatisfiedLinkError e) {
-			if (LOGGER.isLoggable(Level.WARNING))
-				LOGGER.warning(new StringBuffer("Native library load failed.")
-						.append(e.toString()).toString());
-			available = false;
-		}
-	}
-
-	/**
-	 * Returns <code>true</code> if the JHDF library has been loaded.
-	 * <code>false</code> otherwise.
-	 * 
-	 * @return <code>true</code> only if the JHDF library has been loaded.
-	 */
-	public static boolean isJHDFLibAvailable() {
-		loadJHDFLib();
-		return available;
 	}
 }

@@ -28,7 +28,7 @@ public abstract class H4Variable extends AbstractH4Object implements IHObject {
 	/**
 	 * The name of this Variable
 	 */
-	protected String name = "";
+	private String name = null;
 
 	/**
 	 * getter of <code>name</code>
@@ -37,5 +37,11 @@ public abstract class H4Variable extends AbstractH4Object implements IHObject {
 	 */
 	public String getName() {
 		return name;
+	}
+
+	protected synchronized void setName(String name) {
+		if(this.name!=null)
+			throw new IllegalStateException("Name cannot be changed");
+		this.name = name;
 	}
 }

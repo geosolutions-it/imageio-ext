@@ -41,35 +41,6 @@ public class H4SDS extends H4Variable implements IHObject {
     private final static Logger LOGGER = Logger
             .getLogger("it.geosolutions.hdf.object.h4");
 
-    /** predefined attributes */
-    public static String PREDEF_ATTR_LONG_NAME = "long_name";
-
-    public static String PREDEF_ATTR_UNITS = "units";
-
-    public static String PREDEF_ATTR_FORMAT = "format";
-
-    public static String PREDEF_ATTR_CALIBRATED_NT = "calibrated_nt";
-
-    public static String PREDEF_ATTR_SCALE_FACTOR = "scale_factor";
-
-    public static String PREDEF_ATTR_SCALE_FACTOR_ERR = "scale_factor_err";
-
-    public static String PREDEF_ATTR_ADD_OFFSET = "add_offset";
-
-    public static String PREDEF_ATTR_ADD_OFFSET_ERR = "add_offset_err";
-
-    public static String PREDEF_ATTR_FILL_VALUE = "_FillValue";
-
-    public static String PREDEF_ATTR_COORDINATE_SYSTEM = "cordsys";
-
-    public static String PREDEF_ATTR_VALID_RANGE_MIN = "valid_min";
-
-    public static String PREDEF_ATTR_VALID_RANGE_MAX = "valid_max";
-
-    public static String PREDEF_ATTR_VALID_RANGE = "valid_range";
-
-    // private int[] mutex = new int[] { 1 };
-
     /**
      * The index of this SDS within the source File.
      */
@@ -260,39 +231,6 @@ public class H4SDS extends H4Variable implements IHObject {
         return h4SDSCollectionOwner;
     }
 
-    // /**
-    // * Main Constructor which builds a new <code>H4SDS</code> given its index
-    // * within the HDF source.<BR>
-    // *
-    // * It is worth to point out that we need to check if the just built
-    // * <code>H4SDS</code> is a dimension scale using the proper method
-    // * {@link H4SDS#isDimensionScale()}. If it is not a dimension scale, then
-    // * we need to initialize the <code>H4SDS</code> by calling the
-    // * {@link H4SDS#init()} method.
-    // *
-    // * @param h4SdsCollection
-    // * the parent collection
-    // * @param sdsIndex
-    // * the index of the SDS within the HDF source
-    // *
-    // */
-    // public H4SDS(H4SDSCollection h4SdsCollection, final int sdsIndex) {
-    // h4SDSCollectionOwner = h4SdsCollection;
-    // final int interfaceID = h4SDSCollectionOwner.getIdentifier();
-    // try {
-    // index = sdsIndex;
-    // identifier = HDFLibrary.SDselect(interfaceID, sdsIndex);
-    // isOpened = true;
-    // if (identifier == HDFConstants.FAIL) {
-    // throw new RuntimeException(
-    // "Error while creating a new H4SDS: invalid identifier");
-    // }
-    //
-    // } catch (HDFException e) {
-    // throw new RuntimeException("Error while creating a new H4SDS", e);
-    // }
-    // }
-
     private H4SDS(H4SDSCollection h4SdsCollection, int index, int identifier)
             throws HDFException {
         h4SDSCollectionOwner = h4SdsCollection;
@@ -345,32 +283,6 @@ public class H4SDS extends H4Variable implements IHObject {
         return sds;
     }
 
-    // /**
-    // * Open this <code>H4SDS</code><BR>
-    // * it is worth to point out that the identifier of this sds is always the
-    // * same when referring to the same SDS Interface ID.
-    // */
-    // public synchronized void open() {
-    // if (!isOpened) {
-    // if (identifier != HDFConstants.FAIL) {
-    // try {
-    // final int newIdentifier = HDFLibrary.SDselect(
-    // h4SDSCollectionOwner.getIdentifier(), index);
-    // if (newIdentifier != identifier) {
-    // if (LOGGER.isLoggable(Level.WARNING))
-    // LOGGER.log(Level.WARNING,
-    // "SDS identifier has changed");
-    // }
-    // isOpened = true;
-    // init();
-    // } catch (HDFException e) {
-    // throw new RuntimeException("Error while opening the H4SDS",
-    // e);
-    // }
-    // }
-    // }
-    // }
-
     /**
      * Initializes the {@link H4SDS} fields, such as dimension sizes, rank,
      * reference and so on.
@@ -378,6 +290,7 @@ public class H4SDS extends H4Variable implements IHObject {
      * @throws HDFException
      */
     private void init() throws HDFException {
+    	
         // checks if already initalized
         if (rank != -1)
             return;
@@ -396,7 +309,7 @@ public class H4SDS extends H4Variable implements IHObject {
                         datasetDimSizes, sdInfo)) {
 
             reference = new H4ReferencedObject(HDFLibrary.SDidtoref(identifier));
-            name = datasetName[0];
+            setName(datasetName[0]);
             rank = sdInfo[0];
             dimSizes = new int[rank];
             // datasetSize = 1;
@@ -410,7 +323,7 @@ public class H4SDS extends H4Variable implements IHObject {
             sdInfo[1] = sdInfo[1] & (~HDFConstants.DFNT_LITEND);
             datatype = sdInfo[1];
             numAttributes = sdInfo[2];
-            initH4();
+            freeze();
             dimensions = new ArrayList(rank);
 
             HDFChunkInfo chunkInfo = new HDFChunkInfo();
@@ -603,7 +516,7 @@ public class H4SDS extends H4Variable implements IHObject {
         }
 
         // allocate the required data array where data read will be stored.
-        theData = H4DatatypeUtilities.allocateArray(datatype, datasize);
+        theData = H4Utilities.allocateArray(datatype, datasize);
         // //
         //
         // Read operation

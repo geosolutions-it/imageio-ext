@@ -136,7 +136,7 @@ public class H4Annotation extends AbstractHObject implements IHObject{
 	/**
 	 * End access to this annotation.
 	 */
-	public void close() {
+	public synchronized void close() {
 		try {
 			if (identifier != HDFConstants.FAIL){
 				HDFLibrary.ANendaccess(identifier);

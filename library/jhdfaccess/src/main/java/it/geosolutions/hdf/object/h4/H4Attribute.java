@@ -170,7 +170,7 @@ public class H4Attribute {
 	 * type of the returned object depends on the datatype of this attribute. As
 	 * an instance, for an attribute having <code>HDFConstants.DFNT_INT32</code>
 	 * as datatype, returned object is an <code>int</code> array. See
-	 * {@link H4DatatypeUtilities#allocateArray(int, int)} to retrieve
+	 * {@link H4Utilities#allocateArray(int, int)} to retrieve
 	 * information about the returned type.
 	 * 
 	 * @return an <code>Object</code> containing attribute values.
@@ -178,7 +178,7 @@ public class H4Attribute {
 	 */
 	public Object getValues() throws HDFException {
 		if (values == null) {
-			values = H4DatatypeUtilities.allocateArray(datatype, size);
+			values = H4Utilities.allocateArray(datatype, size);
 			boolean done = false;
 			// //
 			//
@@ -213,7 +213,7 @@ public class H4Attribute {
 	 * @return a <code>String</code> containing attribute values.
 	 */
 	public String getValuesAsString() throws HDFException {
-		return H4DatatypeUtilities.getValuesAsString(datatype, getValues());
+		return H4Utilities.getValuesAsString(datatype, getValues());
 	}
 
 	/**
