@@ -29,7 +29,7 @@ import ncsa.hdf.hdflib.HDFLibrary;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  */
-public class H4GRImage extends H4Variable implements IH4ReferencedObject {
+public class H4GRImage extends H4Variable {
 
 	/** predefined attributes */
 	// TODO: To be checked
@@ -111,7 +111,7 @@ public class H4GRImage extends H4Variable implements IH4ReferencedObject {
 	 * 
 	 * @return the reference of this image
 	 */
-	public int getReference() {
+	int getReference() {
 		return reference.getReference();
 	}
 
@@ -262,7 +262,7 @@ public class H4GRImage extends H4Variable implements IH4ReferencedObject {
 				datatype = grInfo[1] & (~HDFConstants.DFNT_LITEND);
 				interlaceMode = grInfo[2];
 				numAttributes = grInfo[3];
-				initDecorated();
+				initH4();
 				numPalettes = HDFLibrary.GRgetnluts(identifier);
 			} else {
 				// XXX

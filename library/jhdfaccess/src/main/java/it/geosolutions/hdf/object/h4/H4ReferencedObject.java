@@ -21,7 +21,7 @@ package it.geosolutions.hdf.object.h4;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  */
-public class H4ReferencedObject implements IH4ReferencedObject {
+class H4ReferencedObject {
 
 	/**
 	 * the reference of this object

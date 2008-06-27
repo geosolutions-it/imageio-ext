@@ -155,7 +155,7 @@ public class H4Dimension extends H4Variable implements IHObject {
 				size = dimInfo[0];
 				datatype = dimInfo[1] & (~HDFConstants.DFNT_LITEND);
 				numAttributes = dimInfo[2];
-				initDecorated();
+				initH4();
 
 				// Retrieving dimension scale
 				final int interfaceID = sds.getH4SDSCollectionOwner()

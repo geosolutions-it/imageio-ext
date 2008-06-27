@@ -35,7 +35,7 @@ import ncsa.hdf.hdflib.HDFLibrary;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  */
-public class H4SDS extends H4Variable implements IH4ReferencedObject, IHObject {
+public class H4SDS extends H4Variable implements IHObject {
 
     /** Logger. */
     private final static Logger LOGGER = Logger
@@ -175,7 +175,7 @@ public class H4SDS extends H4Variable implements IH4ReferencedObject, IHObject {
     /**
      * @return the reference of this SDS.
      */
-    public int getReference() {
+    int getReference() {
         return reference.getReference();
     }
 
@@ -410,7 +410,7 @@ public class H4SDS extends H4Variable implements IH4ReferencedObject, IHObject {
             sdInfo[1] = sdInfo[1] & (~HDFConstants.DFNT_LITEND);
             datatype = sdInfo[1];
             numAttributes = sdInfo[2];
-            initDecorated();
+            initH4();
             dimensions = new ArrayList(rank);
 
             HDFChunkInfo chunkInfo = new HDFChunkInfo();

@@ -39,7 +39,7 @@ import ncsa.hdf.hdflib.HDFLibrary;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  */
-public class H4SDSCollection extends H4DecoratedObject implements IHObject,
+public class H4SDSCollection extends AbstractH4Object implements IHObject,
         List {
     private final static Logger LOGGER = Logger
             .getLogger("it.geosolutions.hdf.object.h4");
@@ -177,7 +177,7 @@ public class H4SDSCollection extends H4DecoratedObject implements IHObject,
                 final int[] sdsFileInfo = new int[2];
                 if (HDFLibrary.SDfileinfo(identifier, sdsFileInfo)) {
                     numAttributes = sdsFileInfo[1];
-                    initDecorated();
+                    initH4();
                     // retrieving the total # of SDS. It is worth to point out
                     // that this number includes the SDS related to dimension
                     // scales which will not treated as SDS. For this reason,

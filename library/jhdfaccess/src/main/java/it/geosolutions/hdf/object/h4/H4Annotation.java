@@ -27,7 +27,7 @@ import ncsa.hdf.hdflib.HDFLibrary;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  */
-public class H4Annotation extends AbstractHObject implements IH4ReferencedObject, IHObject{
+public class H4Annotation extends AbstractHObject implements IHObject{
 
 	/** Annotation types as Strings */
 	/** Data Object Label */
@@ -102,7 +102,7 @@ public class H4Annotation extends AbstractHObject implements IH4ReferencedObject
 	 * 
 	 * @return the reference of this annotation.
 	 */
-	public int getReference() {
+	int getReference() {
 		return reference.getReference();
 	}
 

@@ -37,8 +37,7 @@ import ncsa.hdf.hdflib.HDFLibrary;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  */
-public class H4GRImageCollection extends H4DecoratedObject implements IHObject,
-		List {
+public class H4GRImageCollection extends AbstractH4Object implements IHObject,List {
 
 	private int[] mutex = new int[1];
 
@@ -108,7 +107,7 @@ public class H4GRImageCollection extends H4DecoratedObject implements IHObject,
 				// Retrieving Information
 				if (HDFLibrary.GRfileinfo(identifier, grFileInfo)) {
 					numAttributes = grFileInfo[1];
-					initDecorated();
+					initH4();
 					numImages = grFileInfo[0];
 					grImagesList = new ArrayList(numImages);
 					grImagesNamesToIndexes = Collections

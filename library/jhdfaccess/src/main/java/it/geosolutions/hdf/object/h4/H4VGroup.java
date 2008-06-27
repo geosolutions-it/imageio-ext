@@ -30,8 +30,7 @@ import ncsa.hdf.hdflib.HDFLibrary;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  */
-public class H4VGroup extends H4Variable implements IHObject,
-		IH4ReferencedObject {
+public class H4VGroup extends H4Variable implements IHObject {
 	/**
 	 * TODO: Need to be improved (VGroup classes management)
 	 */
@@ -73,7 +72,7 @@ public class H4VGroup extends H4Variable implements IHObject,
 	 * 
 	 * @return the reference of this group.
 	 */
-	public int getReference() {
+	int getReference() {
 		return reference.getReference();
 	}
 
@@ -199,7 +198,7 @@ public class H4VGroup extends H4Variable implements IHObject,
 		tag = HDFLibrary.VQuerytag(identifier);
 		numObjects = HDFLibrary.Vntagrefs(identifier);
 		numAttributes = HDFLibrary.Vnattrs(identifier);
-		initDecorated();
+		initH4();
 	}
 
 	protected void finalize() throws Throwable {

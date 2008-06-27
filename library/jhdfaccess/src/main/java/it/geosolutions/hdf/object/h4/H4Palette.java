@@ -27,8 +27,7 @@ import ncsa.hdf.hdflib.HDFLibrary;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  */
-public class H4Palette extends AbstractHObject implements IH4ReferencedObject,
-		IHObject {
+public class H4Palette extends AbstractHObject implements IHObject {
 
 	/**
 	 * the datavalues of this palette. They will be loaded only when required.
@@ -135,14 +134,14 @@ public class H4Palette extends AbstractHObject implements IH4ReferencedObject,
 		return numEntries;
 	}
 
-	/**
-	 * getter of <code>grImage</code>
-	 * 
-	 * @return the {@link H4GRImage} owner.
-	 */
-	public H4GRImage getGrImage() {
-		return grImage;
-	}
+//	/**
+//	 * getter of <code>grImage</code>
+//	 * 
+//	 * @return the {@link H4GRImage} owner.
+//	 */
+//	public H4GRImage getGrImage() {
+//		return grImage;
+//	}
 
 	/**
 	 * Constructor which builds a new <code>H4Palette</code> given its index
@@ -164,8 +163,7 @@ public class H4Palette extends AbstractHObject implements IH4ReferencedObject,
 
 				// Getting palette information
 				HDFLibrary.GRgetlutinfo(identifier, lutInfo);
-				reference = new H4ReferencedObject(HDFLibrary
-						.GRluttoref(identifier));
+				reference = new H4ReferencedObject(HDFLibrary.GRluttoref(identifier));
 				numComponents = lutInfo[0];
 
 				// palette datatype
@@ -174,13 +172,15 @@ public class H4Palette extends AbstractHObject implements IH4ReferencedObject,
 				// palette interlaceMode
 				interlaceMode = lutInfo[2];
 
+				//palette num entries
 				numEntries = lutInfo[3];
 			}else{
-				// XXX
+				// throw an exception
+				throw new IllegalStateException("Unable to find lut identifier");
 			}
 
 		} catch (HDFException e) {
-			throw new RuntimeException ("HDFException occurred while creating a new H4Palette", e);
+			throw new IllegalStateException ("HDFException occurred while creating a new H4Palette", e);
 		}
 	}
 
@@ -190,7 +190,7 @@ public class H4Palette extends AbstractHObject implements IH4ReferencedObject,
 	 * @return the values of the palette.
 	 * @throws HDFException
 	 */
-	public byte[] getValues() throws HDFException {
+	public synchronized byte[] getValues() throws HDFException {
 		if (values == null) {
 			HDFLibrary.GRreqlutil(identifier, interlaceMode);
 			values = new byte[3 * numEntries];
@@ -202,7 +202,7 @@ public class H4Palette extends AbstractHObject implements IH4ReferencedObject,
 	/**
 	 * Method inherited from {@link AbstractHObject}.
 	 */
-	public void close() {
+	public synchronized void close() {
 		if (identifier != HDFConstants.FAIL)
 			identifier = HDFConstants.FAIL;
 	}
