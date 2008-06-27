@@ -95,7 +95,7 @@ public class TestData implements Runnable {
      * {@code true}. The value for this property is typically defined on the command line as a
      * <code>-D{@value}=true</code> option at Java or Maven starting time.
      */
-    public static final String EXTENSIVE_TEST_KEY = "org.geotools.test.extensive";
+    public static final String EXTENSIVE_TEST_KEY = "test.extensive";
 
     /**
      * The {@linkplain System#getProperty(String) system property} key for interactive tests. 
@@ -105,7 +105,7 @@ public class TestData implements Runnable {
      * The value for this property is typically defined on the command line as a
      * <code>-D{@value}=true</code> option at Java or Maven starting time.
      */
-    public static final String INTERACTIVE_TEST_KEY = "org.geotools.test.interactive";
+    public static final String INTERACTIVE_TEST_KEY = "test.interactive";
 
     /**
      * The files to delete at shutdown time. {@link File#deleteOnExit} alone doesn't seem
