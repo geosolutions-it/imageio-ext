@@ -213,7 +213,7 @@ public class H4SDS extends H4Variable implements IHObject {
         h4SDSCollectionOwner = h4SdsCollection;
         this.index = index;
         setIdentifier(identifier);
-        init();
+        initialize();
         isOpen = true;
     }
 
@@ -266,7 +266,7 @@ public class H4SDS extends H4Variable implements IHObject {
      * 
      * @throws HDFException
      */
-    private void init() throws HDFException {
+    private void initialize() throws HDFException {
     	
         // checks if already initalized
         if (rank != -1)
@@ -299,7 +299,7 @@ public class H4SDS extends H4Variable implements IHObject {
             sdInfo[1] = sdInfo[1] & (~HDFConstants.DFNT_LITEND);
             datatype = sdInfo[1];
             numAttributes = sdInfo[2];
-            freeze();
+            init();
             dimensions = new ArrayList(rank);
 
             HDFChunkInfo chunkInfo = new HDFChunkInfo();

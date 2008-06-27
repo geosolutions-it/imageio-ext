@@ -174,7 +174,7 @@ public class H4VGroup extends H4Variable implements IHObject {
 				final String[] vgroupClass = { "" };
 				HDFLibrary.Vgetclass(identifier, vgroupClass);
 				className = vgroupClass[0];
-				init();
+				initialize();
 			} else {
 				// XXX
 			}
@@ -190,7 +190,7 @@ public class H4VGroup extends H4Variable implements IHObject {
 	 * 
 	 * @throws HDFException
 	 */
-	public void init() throws HDFException {
+	public void initialize() throws HDFException {
 		final String[] vgroupName = { "" };
 		int identifier=getIdentifier();
 		HDFLibrary.Vgetname(identifier, vgroupName);
@@ -198,7 +198,7 @@ public class H4VGroup extends H4Variable implements IHObject {
 		tag = HDFLibrary.VQuerytag(identifier);
 		numObjects = HDFLibrary.Vntagrefs(identifier);
 		numAttributes = HDFLibrary.Vnattrs(identifier);
-		freeze();
+		init();
 	}
 
 	protected void finalize() throws Throwable {

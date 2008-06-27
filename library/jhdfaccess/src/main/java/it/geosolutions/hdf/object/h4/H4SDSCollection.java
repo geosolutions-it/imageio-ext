@@ -171,7 +171,7 @@ public class H4SDSCollection extends AbstractH4Object implements IHObject,
                 final int[] sdsFileInfo = new int[2];
                 if (HDFLibrary.SDfileinfo(identifier, sdsFileInfo)) {
                     numAttributes = sdsFileInfo[1];
-                    freeze();
+                    init();
                     // retrieving the total # of SDS. It is worth to point out
                     // that this number includes the SDS related to dimension
                     // scales which will not treated as SDS. For this reason,
