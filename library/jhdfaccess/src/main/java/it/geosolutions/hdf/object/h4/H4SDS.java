@@ -87,15 +87,6 @@ public class H4SDS extends H4Variable implements IHObject {
      */
     private int nDescriptions = -1;
 
-    // /**
-    // * the number of 2D datasets contained within this SDS.<BR>
-    // * As an instance, a 3D SDS, having size 5*800*600 has datasetSize=5 since
-    // * we can access to 5 different 2D-datasets
-    // *
-    // * @uml.property name="datasetSize"
-    // */
-    // private int datasetSize;
-
     /**
      * the datatype of this sds
      */
@@ -111,7 +102,7 @@ public class H4SDS extends H4Variable implements IHObject {
     /**
      * A boolean flag which tells whether the SDS has been opened.
      */
-    private boolean isOpened;
+    private boolean isOpen;
 
     /**
      * The {@link H4SDSCollection} to which this {@link H4SDS} belongs.
@@ -168,16 +159,6 @@ public class H4SDS extends H4Variable implements IHObject {
         return index;
     }
 
-    // /**
-    // * getter of <code>datasetSize</code>
-    // *
-    // * @return the number of 2D datasets contained within this SDS
-    // * @uml.property name="datasetSize"
-    // */
-    // public int getDatasetSize() {
-    // return datasetSize;
-    // }
-
     /**
      * getter of <code>datatype</code>
      * 
@@ -194,7 +175,6 @@ public class H4SDS extends H4Variable implements IHObject {
      *         SDS.
      */
     public synchronized int getNDescriptions() {
-        // synchronized (mutex) {
         if (nDescriptions == -1)
             try {
                 getAnnotations(HDFConstants.AN_DATA_DESC);
@@ -202,7 +182,6 @@ public class H4SDS extends H4Variable implements IHObject {
                 nDescriptions = 0;
             }
         return nDescriptions;
-        // }
     }
 
     /**
@@ -211,7 +190,6 @@ public class H4SDS extends H4Variable implements IHObject {
      * @return the number of data object label annotations related to this SDS.
      */
     public synchronized int getNLabels() {
-        // synchronized (mutex) {
         if (nLabels == -1)
             try {
                 getAnnotations(HDFConstants.AN_DATA_LABEL);
@@ -219,7 +197,6 @@ public class H4SDS extends H4Variable implements IHObject {
                 nLabels = 0;
             }
         return nLabels;
-        // }
     }
 
     /**
@@ -235,9 +212,9 @@ public class H4SDS extends H4Variable implements IHObject {
             throws HDFException {
         h4SDSCollectionOwner = h4SdsCollection;
         this.index = index;
-        this.identifier = identifier;
+        setIdentifier(identifier);
         init();
-        isOpened = true;
+        isOpen = true;
     }
 
     /**
@@ -304,9 +281,8 @@ public class H4SDS extends H4Variable implements IHObject {
         final int datasetDimSizes[] = new int[HDFConstants.MAX_VAR_DIMS];
         String datasetName[] = { "" };
 
-        if (identifier != HDFConstants.FAIL
-                && HDFLibrary.SDgetinfo(identifier, datasetName,
-                        datasetDimSizes, sdInfo)) {
+        int identifier=getIdentifier();
+		if (identifier != HDFConstants.FAIL&& HDFLibrary.SDgetinfo(identifier, datasetName,datasetDimSizes, sdInfo)) {
 
             reference = new H4ReferencedObject(HDFLibrary.SDidtoref(identifier));
             setName(datasetName[0]);
@@ -328,8 +304,7 @@ public class H4SDS extends H4Variable implements IHObject {
 
             HDFChunkInfo chunkInfo = new HDFChunkInfo();
             final int[] cflag = { HDFConstants.HDF_NONE };
-            boolean status = HDFLibrary.SDgetchunkinfo(identifier, chunkInfo,
-                    cflag);
+            boolean status = HDFLibrary.SDgetchunkinfo(identifier, chunkInfo,cflag);
             if (status) {
                 if (cflag[0] == HDFConstants.HDF_NONE)
                     chunkSizes = null;
@@ -373,7 +348,7 @@ public class H4SDS extends H4Variable implements IHObject {
         if (descAnnotations != null) {
             for (int i = 0; i < nDescriptions; i++) {
                 H4Annotation ann = (H4Annotation) descAnnotations.get(i);
-                ann.close();
+                ann.dipose();
             }
             descAnnotations.clear();
             descAnnotations = null;
@@ -381,51 +356,44 @@ public class H4SDS extends H4Variable implements IHObject {
         if (labelAnnotations != null) {
             for (int i = 0; i < nLabels; i++) {
                 H4Annotation ann = (H4Annotation) labelAnnotations.get(i);
-                ann.close();
+                ann.dipose();
             }
             labelAnnotations.clear();
             labelAnnotations = null;
         }
 
         // Disposing objects hold by H4DecoratedObject superclass
-        super.dispose();
-        close();
-        identifier = HDFConstants.FAIL;
-    }
-
-    /**
-     * Terminate access to this SDS.
-     */
-    public synchronized void close() {
         // ----------------
         // OLD STRATEGY:
         // ----------------
         // During the H4SDSCollection initialization, all SDSs are opened,
-        // initialized and immediatly closed. When a SDS is required, the
+        // initialized and immediately closed. When a SDS is required, the
         // H4SDSCollection re-open access to the specific SDS. When a
         // H4SDSCollection is closed, it attempts to close all H4SDSs by
         // calling the close method of each of them. Only the really opened
         // H4SDSs need to be closed.
-        if (isOpened) {
+        if (isOpen) {
             try {
-                if (identifier != HDFConstants.FAIL) {
+                int identifier=getIdentifier();
+				if (identifier != HDFConstants.FAIL) {
                     boolean closed = HDFLibrary.SDendaccess(identifier);
                     if (!closed) {
                         if (LOGGER.isLoggable(Level.WARNING))
-                            LOGGER.log(Level.WARNING,
-                                    "Unable to close access to the specified SDS having identifier:"
-                                            + identifier);
+                            LOGGER.log(Level.WARNING, "Unable to close access to the specified SDS having identifier:"+ identifier);
                     }
-                    isOpened = false;
+                    
                 }
             } catch (HDFException e) {
                 if (LOGGER.isLoggable(Level.WARNING))
                     LOGGER.log(Level.WARNING,
                             "Error closing access to the specified SDS"
-                                    + identifier);
+                                    + getIdentifier());
             }
         }
+        isOpen = false;
+        super.dispose();
     }
+
 
     /**
      * Read all data from the current SDS.
@@ -463,11 +431,11 @@ public class H4SDS extends H4Variable implements IHObject {
             final int selectedSizes[]) throws HDFException {
 
         Object theData = null;
-        if (identifier == HDFConstants.FAIL) {
+        if (getIdentifier() == HDFConstants.FAIL) {
             if (LOGGER.isLoggable(Level.WARNING))
                 LOGGER.log(Level.WARNING,
                         "Undefined identifier for the read operation"
-                                + identifier);
+                                + getIdentifier());
             return theData;
         }
         int datasize = 1;
@@ -523,7 +491,7 @@ public class H4SDS extends H4Variable implements IHObject {
         //
         // //
         if (theData != null) {
-            HDFLibrary.SDreaddata(identifier, start, stride, size, theData);
+            HDFLibrary.SDreaddata(getIdentifier(), start, stride, size, theData);
         }
 
         return theData;
@@ -537,7 +505,7 @@ public class H4SDS extends H4Variable implements IHObject {
      */
     public int getCompression() throws HDFException {
         final HDFCompInfo compInfo = new HDFCompInfo();
-        HDFLibrary.SDgetcompress(identifier, compInfo);
+        HDFLibrary.SDgetcompress(getIdentifier(), compInfo);
         return compInfo.ctype;
     }
 

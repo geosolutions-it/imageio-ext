@@ -16,7 +16,6 @@
  */
 package it.geosolutions.hdf.object.h4;
 
-import it.geosolutions.hdf.object.AbstractHObject;
 import it.geosolutions.hdf.object.IHObject;
 
 import java.util.ArrayList;
@@ -121,12 +120,9 @@ public class H4SDSCollection extends AbstractH4Object implements IHObject,
                 LOGGER.log(Level.WARNING,
                         "SDS not found for the specified index:" + index);
         }
-        // sds.open();
+
         return sds;
-        // }
-        // else
-        // throw new IllegalArgumentException ("The requested object is
-        // unavailable");
+
     }
 
     /**
@@ -145,7 +141,6 @@ public class H4SDSCollection extends AbstractH4Object implements IHObject,
         if (sdsNamesToIndexes.containsKey(sName)) {
             sds = (H4SDS) sdsList.get(((Integer) sdsNamesToIndexes.get(sName))
                     .intValue());
-            // sds.open();
         } else if (LOGGER.isLoggable(Level.WARNING))
             LOGGER.log(Level.WARNING, "SDS not found for the specified name:"
                     + sName);
@@ -170,10 +165,9 @@ public class H4SDSCollection extends AbstractH4Object implements IHObject,
         if (filePath == null)
             throw new IllegalArgumentException("Empty filepath specified");
         try {
-            identifier = HDFLibrary.SDstart(filePath, HDFConstants.DFACC_RDONLY
-                    | HDFConstants.DFACC_PARALLEL);
+            int identifier = HDFLibrary.SDstart(filePath, HDFConstants.DFACC_RDONLY | HDFConstants.DFACC_PARALLEL);
             if (identifier != HDFConstants.FAIL) {
-
+            	setIdentifier(identifier);
                 final int[] sdsFileInfo = new int[2];
                 if (HDFLibrary.SDfileinfo(identifier, sdsFileInfo)) {
                     numAttributes = sdsFileInfo[1];
@@ -197,20 +191,6 @@ public class H4SDSCollection extends AbstractH4Object implements IHObject,
                             numSDS++;
                         }
 
-                        // H4SDS sds = new H4SDS(this, i);
-                        // final boolean isDimensionScale = candidateSds
-                        // .isDimensionScale();
-                        // // SDS will be created and immediately closed.
-                        // // It will be re-opened only when required.
-                        // if (!isDimensionScale) {
-                        // sds.init();
-                        // sdsList.add(numSDS, sds);
-                        // final String name = sds.getName();
-                        // sdsNamesToIndexes.put(name, new Integer(numSDS));
-                        // // sdsSizesList.add(numSDS, Integer
-                        // // .valueOf(sds.getDatasetSize()));
-                        // numSDS++;
-                        // }
                     }
                 }
             } else {
@@ -224,42 +204,36 @@ public class H4SDSCollection extends AbstractH4Object implements IHObject,
     }
 
     protected synchronized void finalize() throws Throwable {
-        dispose();
+        try{
+        	dispose();
+        }
+        catch (Throwable t) {
+			// TODO: handle exception
+		}
     }
 
     /**
      * close this {@link H4SDSCollection} and dispose allocated objects.
      */
     public synchronized void dispose() {
-        super.dispose();
+
         if (sdsNamesToIndexes != null){
             sdsNamesToIndexes.clear();
             sdsNamesToIndexes=null;
         }
-        close();
-    }
 
-    /**
-     * End access to the underlying SD interface and end access to the owned
-     * {@link AbstractHObject}s
-     */
-    public synchronized void close() {
-        try {
-            if (sdsList != null) {
-                for (int i = 0; i < numSDS; i++) {
-                    H4SDS h4sds = (H4SDS) sdsList.get(i);
-                    h4sds.dispose();
-                }
+        if (sdsList != null) {
+            for (int i = 0; i < numSDS; i++) {
+                H4SDS h4sds = (H4SDS) sdsList.get(i);
+                h4sds.dispose();
             }
-            if (identifier != HDFConstants.FAIL) {
-                HDFLibrary.SDend(identifier);
-                identifier = HDFConstants.FAIL;
-            }
-        } catch (HDFException e) {
-            // XXX
         }
+
+        
+        super.dispose();
     }
 
+ 
     /**
      * Appends the specified element to the end of this list. Since this method
      * is actually unsupported, an <code>UnsupportedOperationException</code>

@@ -35,8 +35,6 @@ public class H4GRImage extends H4Variable {
 	// TODO: To be checked
 	public static String PREDEF_ATTR_FILL_VALUE = "FILL_VALUE";
 
-//	private int[] mutex = new int[] { 1 };
-
 	/**
 	 * The list of {@link H4Palette} available for this image
 	 */
@@ -176,15 +174,14 @@ public class H4GRImage extends H4Variable {
 	 *         Image.
 	 */
 	public synchronized int getNDescriptions() {
-//		synchronized (mutex) {
-			if (nDescriptions == -1)
-				try {
-					getAnnotations(HDFConstants.AN_DATA_DESC);
-				} catch (HDFException e) {
-					nDescriptions = 0;
-				}
-			return nDescriptions;
-//		}
+		if (nDescriptions == -1)
+			try {
+				getAnnotations(HDFConstants.AN_DATA_DESC);
+			} catch (HDFException e) {
+				nDescriptions = 0;
+			}
+		return nDescriptions;
+
 	}
 
 	/**
@@ -194,15 +191,13 @@ public class H4GRImage extends H4Variable {
 	 *         Image.
 	 */
 	public synchronized int getNLabels() {
-//		synchronized (mutex) {
-			if (nLabels == -1)
-				try {
-					getAnnotations(HDFConstants.AN_DATA_LABEL);
-				} catch (HDFException e) {
-					nLabels = 0;
-				}
-			return nLabels;
-//		}
+		if (nLabels == -1)
+			try {
+				getAnnotations(HDFConstants.AN_DATA_LABEL);
+			} catch (HDFException e) {
+				nLabels = 0;
+			}
+		return nLabels;
 	}
 
 	/**
@@ -223,7 +218,7 @@ public class H4GRImage extends H4Variable {
 	 */
 	public int getCompression() throws HDFException {
 		final HDFCompInfo compInfo = new HDFCompInfo();
-		HDFLibrary.GRgetcompress(identifier, compInfo);
+		HDFLibrary.GRgetcompress(getIdentifier(), compInfo);
 		return compInfo.ctype;
 	}
 
@@ -248,10 +243,10 @@ public class H4GRImage extends H4Variable {
 		h4GRImageCollectionOwner = h4GrImageCollection;
 		final int interfaceID = h4GRImageCollectionOwner.getIdentifier();
 		try {
-			identifier = HDFLibrary.GRselect(interfaceID, grIndex);
+			int identifier = HDFLibrary.GRselect(interfaceID, grIndex);
 			if (identifier != HDFConstants.FAIL) {
-				reference = new H4ReferencedObject(HDFLibrary
-						.GRidtoref(identifier));
+				setIdentifier(identifier);
+				reference = new H4ReferencedObject(HDFLibrary.GRidtoref(identifier));
 
 				// retrieving general raster info
 				final int grInfo[] = { 0, 0, 0, 0 };
@@ -280,59 +275,51 @@ public class H4GRImage extends H4Variable {
 	 * close this {@link H4GRImage} and dispose allocated objects.
 	 */
 	public synchronized void dispose() {
-//		synchronized (mutex) {
-			
-			//Disposing object holds by H4DecoratedObject superclass
-			super.dispose();
-			
-			//closing annotations
-			if (descAnnotations != null) {
-				for (int i = 0; i < nDescriptions; i++) {
-					H4Annotation ann = (H4Annotation) descAnnotations.get(i);
-					ann.close();
-				}
-				descAnnotations.clear();
+		
+		//closing annotations
+		if (descAnnotations != null) {
+			for (int i = 0; i < nDescriptions; i++) {
+				H4Annotation ann = (H4Annotation) descAnnotations.get(i);
+				ann.dipose();
 			}
-			if (labelAnnotations != null) {
-				for (int i = 0; i < nLabels; i++) {
-					H4Annotation ann = (H4Annotation) labelAnnotations.get(i);
-					ann.close();
-				}
-				labelAnnotations.clear();
+			descAnnotations.clear();
+		}
+		if (labelAnnotations != null) {
+			for (int i = 0; i < nLabels; i++) {
+				H4Annotation ann = (H4Annotation) labelAnnotations.get(i);
+				ann.dipose();
 			}
-			close();
-//		}
-	}
-
-	/**
-	 * Terminate access to this Image
-	 */
-	public void close() {
+			labelAnnotations.clear();
+		}
 		try {
+			int identifier=getIdentifier();
 			if (identifier != HDFConstants.FAIL) {
 				HDFLibrary.GRendaccess(identifier);
-				identifier = HDFConstants.FAIL;
 			}
 		} catch (HDFException e) {
 			// XXX
 		}
+		
+		
+		//Disposing object holds by H4DecoratedObject superclass
+		super.dispose();
 	}
 
-	/**
-	 * Open a H4GRImage. It is worth to point out that each open operations
-	 * provides a different identifier.
-	 */
-	public void open() {
-		if (identifier != HDFConstants.FAIL) {
-			try {
-				identifier = HDFLibrary.GRselect(h4GRImageCollectionOwner
-						.getIdentifier(), index);
-			} catch (HDFException e) {
-				throw new RuntimeException("Error while opening the H4GRImage",
-						e);
-			}
-		}
-	}
+
+//	/**
+//	 * Open a H4GRImage. It is worth to point out that each open operations
+//	 * provides a different identifier.
+//	 */
+//	public void open() {
+//		int identifier=getIdentifier();
+//		if (identifier != HDFConstants.FAIL) {
+//			try {
+//				setIdentifier(HDFLibrary.GRselect(h4GRImageCollectionOwner.getIdentifier(), index));
+//			} catch (HDFException e) {
+//				throw new RuntimeException("Error while opening the H4GRImage",e);
+//			}
+//		}
+//	}
 
 	/**
 	 * Returns a <code>List</code> containing available palettes for this
@@ -340,17 +327,15 @@ public class H4GRImage extends H4Variable {
 	 * 
 	 * @return a <code>List</code> of {@link H4Palette}s
 	 */
-	public synchronized List getPalettes() {
-//		synchronized (mutex) {
-			if (palettes == null) {
-				palettes = new ArrayList(numPalettes);
-				for (int pal = 0; pal < numPalettes; pal++) {
-					H4Palette palette = new H4Palette(this, pal);
-					palettes.add(pal, palette);
-				}
+	synchronized List getPalettes() {
+		if (palettes == null) {
+			palettes = new ArrayList(numPalettes);
+			for (int pal = 0; pal < numPalettes; pal++) {
+				H4Palette palette = new H4Palette(this, pal);
+				palettes.add(pal, palette);
 			}
-			return palettes;
-//		}
+		}
+		return palettes;
 	}
 
 	/**
@@ -412,8 +397,8 @@ public class H4GRImage extends H4Variable {
 		// //
 		if (theData != null) {
 			// prepare the proper interlaceMode for next read operation.
-			HDFLibrary.GRreqimageil(identifier, interlaceMode);
-			HDFLibrary.GRreadimage(identifier, start, stride, size, theData);
+			HDFLibrary.GRreqimageil(getIdentifier(), interlaceMode);
+			HDFLibrary.GRreadimage(getIdentifier(), start, stride, size, theData);
 		}
 		return theData;
 	}
@@ -432,44 +417,42 @@ public class H4GRImage extends H4Variable {
 	 * @throws HDFException
 	 */
 	public synchronized List getAnnotations(final int annotationType) throws HDFException {
-//		synchronized (mutex) {
-			H4AnnotationManager annotationManager = h4GRImageCollectionOwner
-					.getH4File().getH4AnnotationManager();
-			switch (annotationType) {
-			case HDFConstants.AN_DATA_LABEL:
-				if (nLabels == -1) {
-					// Searching data object label annotations related to this
-					// GR Image.
-					List listLabels = annotationManager.getH4Annotations(
-							HDFConstants.AN_DATA_LABEL,
-							(short) HDFConstants.DFTAG_RIG, (short) reference
-									.getReference());
-					if (listLabels == null || listLabels.size() == 0) {
-						nLabels = 0;
-					} else
-						nLabels = listLabels.size();
-					labelAnnotations = listLabels;
-				}
-				return labelAnnotations;
-			case HDFConstants.AN_DATA_DESC:
-				if (nDescriptions == -1) {
-					// Searching data object label annotations related to this
-					// GR Image.
-					List listDescriptions = annotationManager.getH4Annotations(
-							HDFConstants.AN_DATA_DESC,
-							(short) HDFConstants.DFTAG_RIG, (short) reference
-									.getReference());
-					if (listDescriptions == null
-							|| listDescriptions.size() == 0) {
-						nDescriptions = 0;
-					} else
-						nDescriptions = listDescriptions.size();
-					descAnnotations = listDescriptions;
-				}
-				return descAnnotations;
-			default:
-				return null;
+		H4AnnotationManager annotationManager = h4GRImageCollectionOwner
+				.getH4File().getH4AnnotationManager();
+		switch (annotationType) {
+		case HDFConstants.AN_DATA_LABEL:
+			if (nLabels == -1) {
+				// Searching data object label annotations related to this
+				// GR Image.
+				List listLabels = annotationManager.getH4Annotations(
+						HDFConstants.AN_DATA_LABEL,
+						(short) HDFConstants.DFTAG_RIG, (short) reference
+								.getReference());
+				if (listLabels == null || listLabels.size() == 0) {
+					nLabels = 0;
+				} else
+					nLabels = listLabels.size();
+				labelAnnotations = listLabels;
 			}
+			return labelAnnotations;
+		case HDFConstants.AN_DATA_DESC:
+			if (nDescriptions == -1) {
+				// Searching data object label annotations related to this
+				// GR Image.
+				List listDescriptions = annotationManager.getH4Annotations(
+						HDFConstants.AN_DATA_DESC,
+						(short) HDFConstants.DFTAG_RIG, (short) reference
+								.getReference());
+				if (listDescriptions == null
+						|| listDescriptions.size() == 0) {
+					nDescriptions = 0;
+				} else
+					nDescriptions = listDescriptions.size();
+				descAnnotations = listDescriptions;
+			}
+			return descAnnotations;
+		default:
+			return null;
 		}
-//	}
+	}
 }

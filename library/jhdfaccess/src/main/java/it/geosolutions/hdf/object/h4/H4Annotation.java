@@ -136,16 +136,18 @@ public class H4Annotation extends AbstractHObject implements IHObject{
 	/**
 	 * End access to this annotation.
 	 */
-	public synchronized void close() {
+	public synchronized void dipose() {
 		try {
-			if (identifier != HDFConstants.FAIL){
+			
+			int identifier=getIdentifier();
+			if (identifier != HDFConstants.FAIL)
 				HDFLibrary.ANendaccess(identifier);
-				identifier=HDFConstants.FAIL;
-			}
+			super.dispose();
 		} catch (HDFException e) {
-			// XXX
+			//TODO log me
 		}
 	}
+	
 
 	/**
 	 * Constructor. Builds a {@link H4Annotation} given the input annotation
@@ -155,8 +157,8 @@ public class H4Annotation extends AbstractHObject implements IHObject{
 	 *            the identifier of the required annotation.
 	 * @throws HDFException
 	 */
-	public H4Annotation(int anIdentifier) throws HDFException {
-		identifier = anIdentifier;
+	public H4Annotation(int identifier) throws HDFException {
+		setIdentifier(identifier);
 		short tagRef[] = new short[] { -1, -1 };
 		HDFLibrary.ANid2tagref(identifier, tagRef);
 		tag = tagRef[0];
@@ -166,5 +168,13 @@ public class H4Annotation extends AbstractHObject implements IHObject{
 		String annBuf[] = new String[] { "" };
 		HDFLibrary.ANreadann(identifier, annBuf, annLength);
 		content = annBuf[0];
+	}
+
+	protected void finalize() throws Throwable {
+		try{
+			dispose();
+		}catch (Throwable t) {
+			// TODO: handle exception
+		}
 	}
 }

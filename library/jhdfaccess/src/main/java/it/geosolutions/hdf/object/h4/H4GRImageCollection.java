@@ -39,8 +39,6 @@ import ncsa.hdf.hdflib.HDFLibrary;
  */
 public class H4GRImageCollection extends AbstractH4Object implements IHObject,List {
 
-	private int[] mutex = new int[1];
-
 	/**
 	 * The list of {@link H4GRImage}s available by mean of this image
 	 * collection
@@ -100,8 +98,9 @@ public class H4GRImageCollection extends AbstractH4Object implements IHObject,Li
 		h4File = h4file;
 		final int fileID = h4File.getIdentifier();
 		try {
-			identifier = HDFLibrary.GRstart(fileID);
+			int identifier = HDFLibrary.GRstart(fileID);
 			if (identifier != HDFConstants.FAIL) {
+				setIdentifier(identifier);
 				final int[] grFileInfo = new int[2];
 
 				// Retrieving Information
@@ -110,8 +109,7 @@ public class H4GRImageCollection extends AbstractH4Object implements IHObject,Li
 					freeze();
 					numImages = grFileInfo[0];
 					grImagesList = new ArrayList(numImages);
-					grImagesNamesToIndexes = Collections
-							.synchronizedMap(new HashMap(numImages));
+					grImagesNamesToIndexes =new HashMap(numImages);
 					for (int i = 0; i < numImages; i++) {
 						// Initializing image list
 						H4GRImage grImage = new H4GRImage(this, i);
@@ -135,44 +133,41 @@ public class H4GRImageCollection extends AbstractH4Object implements IHObject,Li
 		}
 	}
 
-	/**
-	 * close this {@link H4GRImageCollection} and dispose allocated objects.
-	 */
-	public void dispose() {
-		synchronized (mutex) {
-			super.dispose();
-			if (grImagesNamesToIndexes != null)
-				grImagesNamesToIndexes.clear();
-			close();
-		}
-	}
 
 	protected void finalize() throws Throwable {
-		dispose();
+		try{
+			dispose();
+		}
+		catch (Throwable t) {
+			// TODO: handle exception
+		}
 	}
 
 	/**
 	 * End access to the underlying general raster interface and end access to
 	 * the owned {@link AbstractHObject}s
 	 */
-	public void close() {
-		synchronized (mutex) {
-			try {
-				if (grImagesList != null) {
-					for (int i = 0; i < numImages; i++) {
-						H4GRImage h4grImage = (H4GRImage) grImagesList.get(i);
-						h4grImage.dispose();
-					}
-					grImagesList.clear();
+	public synchronized void dispose() {
+		try {
+			if (grImagesList != null) {
+				for (int i = 0; i < numImages; i++) {
+					H4GRImage h4grImage = (H4GRImage) grImagesList.get(i);
+					h4grImage.dispose();
 				}
-				if (identifier != HDFConstants.FAIL) {
-					HDFLibrary.GRend(identifier);
-					identifier = HDFConstants.FAIL;
-				}
-			} catch (HDFException e) {
-				// XXX
+				grImagesList.clear();
 			}
+			int identifier=getIdentifier();
+			if (identifier != HDFConstants.FAIL) {
+				HDFLibrary.GRend(identifier);
+			}
+		} catch (HDFException e) {
+			// XXX
 		}
+		
+
+		if (grImagesNamesToIndexes != null)
+			grImagesNamesToIndexes.clear();
+		super.dispose();	
 	}
 
 	/**
@@ -211,9 +206,7 @@ public class H4GRImageCollection extends AbstractH4Object implements IHObject,Li
 	public H4GRImage get(final String sName) {
 		H4GRImage grImage = null;
 		if (grImagesNamesToIndexes.containsKey(sName)) {
-			grImage = (H4GRImage) grImagesList
-					.get(((Integer) grImagesNamesToIndexes.get(sName))
-							.intValue());
+			grImage = (H4GRImage) grImagesList.get(((Integer) grImagesNamesToIndexes.get(sName)).intValue());
 			// grImage.open();
 		}
 		return grImage;

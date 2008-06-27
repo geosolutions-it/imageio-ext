@@ -144,9 +144,9 @@ public class H4Dimension extends H4Variable implements IHObject {
 		final int sdsID = sds.getIdentifier();
 		try {
 			// get the id of the required dimension of the specified dataset
-			identifier = HDFLibrary.SDgetdimid(sdsID, dimensionIndex);
+			int identifier = HDFLibrary.SDgetdimid(sdsID, dimensionIndex);
 			if (identifier != HDFConstants.FAIL) {
-
+				setIdentifier(identifier);
 				// retrieving dimension information
 				final String[] dimName = { "" };
 				final int[] dimInfo = { 0, 0, 0 };
@@ -222,10 +222,10 @@ public class H4Dimension extends H4Variable implements IHObject {
 
 	public Object getDimensionScaleValues() throws HDFException {
 		Object dataValues = null;
-		if (hasDimensionScaleSet && identifier != HDFConstants.FAIL) {
+		if (hasDimensionScaleSet && getIdentifier() != HDFConstants.FAIL) {
 			dataValues = H4Utilities.allocateArray(datatype, size);
 			if (dataValues != null)
-				HDFLibrary.SDgetdimscale(identifier, dataValues);
+				HDFLibrary.SDgetdimscale(getIdentifier(), dataValues);
 		}
 		return dataValues;
 	}
@@ -235,14 +235,14 @@ public class H4Dimension extends H4Variable implements IHObject {
 	 */
 	public void dispose() {
 		super.dispose();
-		close();
+		dipose();
 	}
 
 	/**
 	 * if a Dimension Scale is available for this Dimension, I need to close
 	 * access to the SDS containing dimension scale values
 	 */
-	public void close() {
+	public void dipose() {
 		if (hasDimensionScaleSet) {
 			try {
 				// end access to the SDS representing the dimension
@@ -276,8 +276,7 @@ public class H4Dimension extends H4Variable implements IHObject {
 				for (int i = 0; i < numAttributes; i++) {
 					dimAttrName[0] = "";
 					// get various info about this attribute
-					HDFLibrary.SDattrinfo(identifier, i, dimAttrName,
-							dimAttrInfo);
+					HDFLibrary.SDattrinfo(getIdentifier(), i, dimAttrName,dimAttrInfo);
 					final String attrName = dimAttrName[0];
 
 					// //
@@ -309,8 +308,7 @@ public class H4Dimension extends H4Variable implements IHObject {
 				// retrieving predefined attributes
 				final String predefAttributesValues[] = { "NONE", "NONE",
 						"NONE" };
-				HDFLibrary.SDgetdimstrs(identifier, predefAttributesValues,
-						HDFConstants.DFS_MAXLEN);
+				HDFLibrary.SDgetdimstrs(getIdentifier(), predefAttributesValues,HDFConstants.DFS_MAXLEN);
 				final String predefinedStrings[] = { PREDEF_ATTR_LABEL,
 						PREDEF_ATTR_UNIT, PREDEF_ATTR_FORMAT };
 

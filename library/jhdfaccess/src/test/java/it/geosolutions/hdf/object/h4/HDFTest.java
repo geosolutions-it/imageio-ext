@@ -235,9 +235,9 @@ public class HDFTest extends TestCase {
 				if (TestData.isInteractiveTest())
 					visualize("", bimage, 7, 800, 600);
 			}
-			sds.close();
+			sds.dispose();
 		}
-		myFile.close();
+		myFile.dipose();
 		LOGGER.info("\n" + outSb.toString());
 	}
 
@@ -331,7 +331,7 @@ public class HDFTest extends TestCase {
 				for (int i = 0; i < annSize; i++) {
 					H4Annotation ann = (H4Annotation) annotations.get(i);
 					outSb.append(printInfo(ann));
-					ann.close();
+					ann.dipose();
 				}
 			}
 			// Label Annotations
@@ -341,12 +341,12 @@ public class HDFTest extends TestCase {
 				for (int i = 0; i < annSize; i++) {
 					H4Annotation ann = (H4Annotation) annotations.get(i);
 					outSb.append(printInfo(ann));
-					ann.close();
+					ann.dipose();
 				}
 			}
-			sds.close();
+			sds.dispose();
 		}
-		myFile.close();
+		myFile.dipose();
 		if (TestData.isInteractiveTest()) {
 			visualizeText("SDS ANNOTATIONS", outSb.toString());
 		} else
@@ -400,7 +400,7 @@ public class HDFTest extends TestCase {
 				}
 			}
 		}
-		myFile.close();
+		myFile.dipose();
 		if (TestData.isInteractiveTest()) {
 			visualizeText("GRIMAGE ANNOTATIONS", outSb.toString());
 		} else
@@ -484,7 +484,7 @@ public class HDFTest extends TestCase {
 			}
 			// find predefined attribute
 			H4Attribute attribute = sds
-					.getAttribute(H4Utilities.PREDEF_ATTR_LONG_NAME);
+					.getAttribute(H4Utilities.SDS_PREDEF_ATTR_LONG_NAME);
 			if (attribute != null)
 				printInfo(attribute);
 			sds.dispose();
@@ -493,7 +493,7 @@ public class HDFTest extends TestCase {
 			visualizeText("ATTRIBUTES FROM SDS", outSb.toString());
 		} else
 			LOGGER.info("\n" + outSb.toString());
-		myFile.close();
+		myFile.dipose();
 	}
 
 	/**
@@ -530,7 +530,7 @@ public class HDFTest extends TestCase {
 					outSb.append("INDEX  = ").append(i).append("|---> TAG=")
 							.append(tagRefs[0]).append(" REF=").append(
 									tagRefs[1]).append("\n");
-					if (H4VGroup.isAVGroup(group, tagRefs[1])) {
+					if (H4Utilities.isAVGroup(group, tagRefs[1])) {
 						outSb.append("is a VGroup\n");
 						H4VGroup newGroup = new H4VGroup(group, tagRefs[1]);
 						outSb.append(printInfo(newGroup));
@@ -543,7 +543,7 @@ public class HDFTest extends TestCase {
 			visualizeText("GROUPS", outSb.toString());
 		} else
 			LOGGER.info("\n" + outSb.toString());
-		myFile.close();
+		myFile.dipose();
 	}
 
 	/**
@@ -596,7 +596,7 @@ public class HDFTest extends TestCase {
 			visualizeText("DIMENSION SCALES", outSb.toString());
 		} else
 			LOGGER.info("\n" + outSb.toString());
-		myFile.close();
+		myFile.dipose();
 	}
 
 	/**
@@ -748,7 +748,7 @@ public class HDFTest extends TestCase {
 				visualize(name, bimage, im);
 		}
 		LOGGER.info("\n" + outSb.toString());
-		myFile.close();
+		myFile.dipose();
 	}
 
 	/**
@@ -784,7 +784,7 @@ public class HDFTest extends TestCase {
 			String title = "";
 			if (nAttributes > 0) {
 				H4Attribute attrib = sds
-						.getAttribute(H4Utilities.PREDEF_ATTR_LONG_NAME);
+						.getAttribute(H4Utilities.SDS_PREDEF_ATTR_LONG_NAME);
 				if (attrib != null)
 					title = new String((byte[]) attrib.getValues());
 			}
@@ -797,7 +797,7 @@ public class HDFTest extends TestCase {
 				assertNotNull(bimage.getData());
 		}
 		LOGGER.info("\n" + outSb.toString());
-		myFile.close();
+		myFile.dipose();
 	}
 
 	/**

@@ -19,6 +19,7 @@ package it.geosolutions.hdf.object.h4;
 import it.geosolutions.hdf.object.IHObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import ncsa.hdf.hdflib.HDFConstants;
@@ -31,10 +32,6 @@ import ncsa.hdf.hdflib.HDFLibrary;
  * @author Daniele Romagnoli, GeoSolutions
  */
 public class H4VGroup extends H4Variable implements IHObject {
-	/**
-	 * TODO: Need to be improved (VGroup classes management)
-	 */
-	private int[] mutex = new int[] { 1 };
 
 	/**
 	 * The list of TAG/REF couples referred by this VGroup
@@ -118,7 +115,7 @@ public class H4VGroup extends H4Variable implements IHObject {
 	 * 
 	 * @uml.associationEnd inverse="H4VGroupCollection:it.geosolutions.hdf.object.h4.H4VGroupCollection"
 	 */
-	private H4VGroupCollection h4VGroupCollectionOwner = null;
+	H4VGroupCollection h4VGroupCollectionOwner = null;
 
 	/**
 	 * Main Constructor which builds a <code>H4Vgroup</code> given its ref.
@@ -137,8 +134,9 @@ public class H4VGroup extends H4Variable implements IHObject {
 		final int fileID = h4VGroupCollectionOwner.getH4File().getIdentifier();
 		try {
 			reference = new H4ReferencedObject(ref);
-			identifier = HDFLibrary.Vattach(fileID, ref, "r");
+			int identifier = HDFLibrary.Vattach(fileID, ref, "r");
 			if (identifier != HDFConstants.FAIL) {
+				setIdentifier(identifier);
 				final String[] vgroupClass = { "" };
 				HDFLibrary.Vgetclass(identifier, vgroupClass);
 				className = vgroupClass[0];
@@ -170,8 +168,9 @@ public class H4VGroup extends H4Variable implements IHObject {
 			final int fileID = h4VGroupCollectionOwner.getH4File()
 					.getIdentifier();
 			reference = new H4ReferencedObject(ref);
-			identifier = HDFLibrary.Vattach(fileID, ref, "r");
+			int identifier = HDFLibrary.Vattach(fileID, ref, "r");
 			if (identifier != HDFConstants.FAIL) {
+				setIdentifier(identifier);
 				final String[] vgroupClass = { "" };
 				HDFLibrary.Vgetclass(identifier, vgroupClass);
 				className = vgroupClass[0];
@@ -193,6 +192,7 @@ public class H4VGroup extends H4Variable implements IHObject {
 	 */
 	public void init() throws HDFException {
 		final String[] vgroupName = { "" };
+		int identifier=getIdentifier();
 		HDFLibrary.Vgetname(identifier, vgroupName);
 		setName(vgroupName[0]);
 		tag = HDFLibrary.VQuerytag(identifier);
@@ -202,30 +202,28 @@ public class H4VGroup extends H4Variable implements IHObject {
 	}
 
 	protected void finalize() throws Throwable {
-		dispose();
+		try {
+			dispose();
+		} catch (Throwable t) {
+			// TODO: handle exception
+		}
 	}
 
 	/**
 	 * close this {@link H4VGroup} and dispose allocated objects.
 	 */
-	public void dispose() {
-		super.dispose();
-		close();
-	}
-
-	/**
-	 * Terminate access to this VGroup.
-	 */
-	public void close() {
+	public synchronized void dispose() {
 		try {
+			int identifier=getIdentifier();
 			if (identifier != HDFConstants.FAIL) {
 				HDFLibrary.Vdetach(identifier);
-				identifier = HDFConstants.FAIL;
 			}
 		} catch (HDFException e) {
 			// XXX
 		}
+		super.dispose();		
 	}
+
 
 	/**
 	 * Returns a <code>List</code> containing TAG/REF couples referred by this
@@ -233,73 +231,16 @@ public class H4VGroup extends H4Variable implements IHObject {
 	 * 
 	 * @return a <code>List</code> of TAG/REF couples.
 	 */
-	public List getTagRefList() throws HDFException {
-		synchronized (mutex) {
-			if (tagRefList == null) {
-				tagRefList = new ArrayList(numObjects);
-				for (int i = 0; i < numObjects; i++) {
-					final int tagRef[] = { 0, 0 };
-					HDFLibrary.Vgettagref(identifier, i, tagRef);
-					tagRefList.add(i, tagRef);
-				}
+	public synchronized List getTagRefList() throws HDFException {
+		if (tagRefList == null) {
+			tagRefList = new ArrayList(numObjects);
+			for (int i = 0; i < numObjects; i++) {
+				final int tagRef[] = { 0, 0 };
+				HDFLibrary.Vgettagref(getIdentifier(), i, tagRef);
+				tagRefList.add(i, tagRef);
 			}
-			return tagRefList;
 		}
-
+		return Collections.unmodifiableList(tagRefList);
 	}
 
-	/**
-	 * Checks if the object specified by the reference parameter is a VGroup
-	 * children of another VGroup
-	 * 
-	 * @param parentGroup
-	 *            the candidate parent VGroup
-	 * @param ref
-	 *            the reference of the candidate children VGroup
-	 * @return <code>true</code> if the VGroup is children of a parent VGroup
-	 */
-	public static boolean isAVGroup(H4VGroup parentGroup, final int ref) {
-		boolean isAvGroup = false;
-		final int fileID = parentGroup.h4VGroupCollectionOwner.getH4File()
-				.getIdentifier();
-		final int parentGroupID = parentGroup.getIdentifier();
-		try {
-			final int id = HDFLibrary.Vattach(fileID, ref, "r");
-			if (id != HDFConstants.FAIL) {
-				final String[] vgroupClass = { "" };
-				HDFLibrary.Vgetclass(id, vgroupClass);
-				final String name = vgroupClass[0];
-				isAvGroup = HDFLibrary.Visvg(parentGroupID, ref)
-						&& isAVGroupClass(name);
-				// TODO: Need to detach?
-			}
-
-		} catch (HDFException e) {
-			// XXX
-		}
-		return isAvGroup;
-	}
-
-	protected static boolean isAVGroupClass(final String vGroupClassName) {
-		if (vGroupClassName.equalsIgnoreCase(HDFConstants.HDF_ATTRIBUTE)
-				|| vGroupClassName.equalsIgnoreCase(HDFConstants.HDF_VARIABLE)
-				|| vGroupClassName.equalsIgnoreCase(HDFConstants.HDF_DIMENSION)
-				|| vGroupClassName
-						.equalsIgnoreCase(HDFConstants.HDF_UDIMENSION)
-				|| vGroupClassName.equalsIgnoreCase(HDFConstants.DIM_VALS)
-				|| vGroupClassName.equalsIgnoreCase(HDFConstants.DIM_VALS01)
-				|| vGroupClassName.equalsIgnoreCase(HDFConstants.HDF_CHK_TBL)
-				|| vGroupClassName.equalsIgnoreCase(HDFConstants.HDF_CDF)
-				|| vGroupClassName.equalsIgnoreCase(HDFConstants.GR_NAME)
-				|| vGroupClassName.equalsIgnoreCase(HDFConstants.RI_NAME)
-				|| vGroupClassName.equalsIgnoreCase(HDFConstants.RIGATTRNAME)
-				|| vGroupClassName.equalsIgnoreCase(HDFConstants.RIGATTRCLASS))
-			return false;
-		else
-			return true;
-	}
-
-	protected boolean isAVGroupClass() {
-		return isAVGroupClass(className);
-	}
 }

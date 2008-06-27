@@ -98,13 +98,12 @@ public class H4VGroupCollection extends AbstractHObject implements IHObject,
 
                     // Note: the current vgroup must be detached
                     // before moving to the next.
-                    H4VGroup vgroup = new H4VGroup(this,
-                            referencesArray[loneVgroupIndex]);
-                    if (vgroup.isAVGroupClass()) {
+                    H4VGroup vgroup = new H4VGroup(this,referencesArray[loneVgroupIndex]);
+                    if (H4Utilities.isAVGroupClass(vgroup.getClassName())) {
                         vgroup.init();
                         loneVgroupsList.add(numLoneVgroups++, vgroup);
                     } else
-                        vgroup.close();
+                        vgroup.dispose();
                 }
             } else {
                 // XXX
@@ -145,14 +144,14 @@ public class H4VGroupCollection extends AbstractHObject implements IHObject,
      * close this {@link H4VGroupCollection} and dispose allocated objects.
      */
     public void dispose() {
-        close();
+        dipose();
     }
 
     /**
      * End access to the underlying VGroup interface and end access to the owned
      * {@link AbstractHObject}s
      */
-    public synchronized void close() {
+    public synchronized void dipose() {
         try {
             if (loneVgroupsList != null) {
                 for (int i = 0; i < numLoneVgroups; i++) {
@@ -160,9 +159,10 @@ public class H4VGroupCollection extends AbstractHObject implements IHObject,
                     group.dispose();
                 }
             }
-            if (identifier != HDFConstants.FAIL) {
+            int identifier=getIdentifier();
+			if (identifier != HDFConstants.FAIL) {
                 HDFLibrary.Vend(identifier);
-                identifier = HDFConstants.FAIL;
+                setIdentifier(HDFConstants.FAIL);
             }
 
         } catch (HDFException e) {

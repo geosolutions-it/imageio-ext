@@ -29,10 +29,10 @@ public interface IHObject {
 	 * (The object which allows to get access to several GR Images contained
 	 * within a HDF data source). 
 	 */
-	public void close();
+	public void dispose();
 
 	/**
-	 * Returns the idenfitier related to an underlying HDF element (a SDS, a 
+	 * Returns the identifier related to an underlying HDF element (a SDS, a 
 	 * GR Image, a SDS Interface ...) 
 	 * 
 	 * @return the identifier related to the underlying HDF element. 

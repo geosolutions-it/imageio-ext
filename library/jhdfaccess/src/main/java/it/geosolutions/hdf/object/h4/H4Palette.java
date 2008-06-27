@@ -157,8 +157,9 @@ public class H4Palette extends AbstractHObject implements IHObject {
 		grImage = image;
 		final int grID = grImage.getIdentifier();
 		try {
-			identifier = HDFLibrary.GRgetlutid(grID, index);
+			int identifier = HDFLibrary.GRgetlutid(grID, index);
 			if (identifier != HDFConstants.FAIL) {
+				setIdentifier(identifier);
 				int lutInfo[] = new int[] { 0, 0, 0, 0 };
 
 				// Getting palette information
@@ -192,9 +193,9 @@ public class H4Palette extends AbstractHObject implements IHObject {
 	 */
 	public synchronized byte[] getValues() throws HDFException {
 		if (values == null) {
-			HDFLibrary.GRreqlutil(identifier, interlaceMode);
+			HDFLibrary.GRreqlutil(getIdentifier(), interlaceMode);
 			values = new byte[3 * numEntries];
-			HDFLibrary.GRreadlut(identifier, values);
+			HDFLibrary.GRreadlut(getIdentifier(), values);
 		}
 		return values;
 	}
@@ -202,8 +203,8 @@ public class H4Palette extends AbstractHObject implements IHObject {
 	/**
 	 * Method inherited from {@link AbstractHObject}.
 	 */
-	public synchronized void close() {
-		if (identifier != HDFConstants.FAIL)
-			identifier = HDFConstants.FAIL;
+	public synchronized void dipose() {
+		if (getIdentifier() != HDFConstants.FAIL)
+			setIdentifier(HDFConstants.FAIL);
 	}
 }

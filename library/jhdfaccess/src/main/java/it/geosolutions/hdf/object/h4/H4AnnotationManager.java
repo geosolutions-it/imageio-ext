@@ -33,7 +33,7 @@ import ncsa.hdf.hdflib.HDFLibrary;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  */
-public class H4AnnotationManager extends AbstractHObject implements IHObject {
+class H4AnnotationManager extends AbstractHObject implements IHObject {
 	// XXX: Add Synchronization?
 
 	/**
@@ -131,7 +131,8 @@ public class H4AnnotationManager extends AbstractHObject implements IHObject {
 		final int fileID = h4File.getIdentifier();
 		try {
 			// Open the Annotation Interface and set its identifier
-			identifier = HDFLibrary.ANstart(fileID);
+			int identifier=HDFLibrary.ANstart(fileID);
+			setIdentifier(identifier);
 			if (identifier != HDFConstants.FAIL) {
 				// Retrieve basic annotations properties.
 				int annotationsInfo[] = new int[] { 0, 0, 0, 0 };
@@ -141,7 +142,7 @@ public class H4AnnotationManager extends AbstractHObject implements IHObject {
 				nDataObjectLabels = annotationsInfo[2];
 				nDataObjectDescriptions = annotationsInfo[3];
 			} else {
-				// XXX
+				throw new IllegalStateException("Unable to find annotation in the provided file");
 			}
 
 		} catch (HDFException e) {
@@ -180,12 +181,10 @@ public class H4AnnotationManager extends AbstractHObject implements IHObject {
 		switch (annotationType) {
 		case HDFConstants.AN_DATA_DESC:
 		case HDFConstants.AN_DATA_LABEL:
-			final int numTag = HDFLibrary.ANnumann(identifier, annotationType,
-					requiredTag, requiredReference);
+			final int numTag = HDFLibrary.ANnumann(getIdentifier(), annotationType,requiredTag, requiredReference);
 			if (numTag > 0) {
 				final int annIDs[] = new int[numTag];
-				HDFLibrary.ANannlist(identifier, annotationType, requiredTag,
-						requiredReference, annIDs);
+				HDFLibrary.ANannlist(getIdentifier(), annotationType, requiredTag,requiredReference, annIDs);
 				annotations = new ArrayList(numTag);
 				for (int k = 0; k < numTag; k++) {
 					H4Annotation annotation = new H4Annotation(annIDs[k]);
@@ -221,8 +220,7 @@ public class H4AnnotationManager extends AbstractHObject implements IHObject {
 			if (nFileLabels != 0) {
 				annotations = new ArrayList(nFileLabels);
 				for (int i = 0; i < nFileLabels; i++) {
-					final int annID = HDFLibrary.ANselect(identifier, i,
-							HDFConstants.AN_FILE_LABEL);
+					final int annID = HDFLibrary.ANselect(getIdentifier(), i,HDFConstants.AN_FILE_LABEL);
 					H4Annotation annotation = new H4Annotation(annID);
 					annotations.add(i, annotation);
 				}
@@ -232,8 +230,7 @@ public class H4AnnotationManager extends AbstractHObject implements IHObject {
 			if (nFileDescriptions != 0) {
 				annotations = new ArrayList(nFileDescriptions);
 				for (int i = 0; i < nFileDescriptions; i++) {
-					final int annID = HDFLibrary.ANselect(identifier, i,
-							HDFConstants.AN_FILE_DESC);
+					final int annID = HDFLibrary.ANselect(getIdentifier(), i,HDFConstants.AN_FILE_DESC);
 					H4Annotation annotation = new H4Annotation(annID);
 					annotations.add(i, annotation);
 				}
@@ -246,8 +243,9 @@ public class H4AnnotationManager extends AbstractHObject implements IHObject {
 	/**
 	 * End access to the underlying annotation routine interface.
 	 */
-	public void close() {
+	public void dipose() {
 		try {
+			int identifier=getIdentifier();
 			if (identifier != HDFConstants.FAIL) {
 				HDFLibrary.ANend(identifier);
 				identifier = HDFConstants.FAIL;
