@@ -44,8 +44,6 @@ public class H4Dimension extends H4Variable implements IHObject {
 	 */
 	private boolean hasDimensionScaleSet = false;
 
-	private int[] mutex = new int[] { 1 };
-
 	/**
 	 * The {@link H4SDS} to which this dimensions is related.
 	 * 
@@ -155,7 +153,7 @@ public class H4Dimension extends H4Variable implements IHObject {
 				size = dimInfo[0];
 				datatype = dimInfo[1] & (~HDFConstants.DFNT_LITEND);
 				numAttributes = dimInfo[2];
-				freeze();
+				init();
 
 				// Retrieving dimension scale
 				final int interfaceID = sds.getH4SDSCollectionOwner()
@@ -263,8 +261,7 @@ public class H4Dimension extends H4Variable implements IHObject {
 	 * @return the map of attributes.
 	 * @throws HDFException
 	 */
-	public Map getAttributes() throws HDFException {
-		synchronized (mutex) {
+	synchronized Map getAttributes() throws HDFException {
 
 			// Checking if I need to initialize attributes map
 			if (attributes != null && attributes.size() < numAttributes) {
@@ -333,7 +330,6 @@ public class H4Dimension extends H4Variable implements IHObject {
 				}
 			}
 			return attributes;
-		}
 	}
 
 	/**
@@ -344,15 +340,13 @@ public class H4Dimension extends H4Variable implements IHObject {
 	 * @return the {@link H4Attribute} related to the specified name.
 	 * @throws HDFException
 	 */
-	public H4Attribute getAttribute(final String attributeName)
+	public synchronized H4Attribute getAttribute(final String attributeName)
 			throws HDFException {
 		H4Attribute attribute = null;
-		synchronized (mutex) {
 			getAttributes();
 			if (attributes != null && attributes.containsKey(attributeName))
 				attribute = (H4Attribute) attributes.get(attributeName);
 			return attribute;
-		}
 	}
 
 	/**
@@ -363,18 +357,16 @@ public class H4Dimension extends H4Variable implements IHObject {
 	 * @return the {@link H4Attribute} related to the specified index.
 	 * @throws HDFException
 	 */
-	public H4Attribute getAttribute(final int attributeIndex)
+	public synchronized H4Attribute getAttribute(final int attributeIndex)
 			throws HDFException {
 		H4Attribute attribute = null;
-		synchronized (mutex) {
-			getAttributes();
-			if (indexToAttributesMap != null
-					&& indexToAttributesMap.containsKey(Integer
-							.valueOf(attributeIndex)))
-				attribute = (H4Attribute) indexToAttributesMap.get(Integer
-						.valueOf(attributeIndex));
+		getAttributes();
+		if (indexToAttributesMap != null
+				&& indexToAttributesMap.containsKey(Integer
+						.valueOf(attributeIndex)))
+			attribute = (H4Attribute) indexToAttributesMap.get(Integer
+					.valueOf(attributeIndex));
 
-		}
 		return attribute;
 	}
 
