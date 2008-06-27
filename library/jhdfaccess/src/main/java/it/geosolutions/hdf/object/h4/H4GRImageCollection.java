@@ -38,7 +38,28 @@ import ncsa.hdf.hdflib.HDFLibrary;
  * @author Daniele Romagnoli, GeoSolutions
  */
 public class H4GRImageCollection extends AbstractH4Object implements IHObject,List {
+	
+	private class H4GRImageCollectionIterator implements Iterator{
 
+		private Iterator it;
+		public boolean hasNext() {
+			return it.hasNext();
+		}
+
+		public Object next() {
+			return it.next();
+		}
+
+		public void remove() {
+			throw new UnsupportedOperationException();
+			
+		}
+
+		public H4GRImageCollectionIterator(Iterator it) {
+			this.it = it;
+		}
+		
+	}
 	/**
 	 * The list of {@link H4GRImage}s available by mean of this image
 	 * collection
@@ -106,7 +127,7 @@ public class H4GRImageCollection extends AbstractH4Object implements IHObject,Li
 				// Retrieving Information
 				if (HDFLibrary.GRfileinfo(identifier, grFileInfo)) {
 					numAttributes = grFileInfo[1];
-					freeze();
+					init();
 					numImages = grFileInfo[0];
 					grImagesList = new ArrayList(numImages);
 					grImagesNamesToIndexes =new HashMap(numImages);
@@ -227,7 +248,7 @@ public class H4GRImageCollection extends AbstractH4Object implements IHObject,Li
      * @return an iterator.
      */
 	public Iterator iterator() {
-		return Collections.unmodifiableCollection(grImagesList).iterator();
+		return new H4GRImageCollectionIterator(grImagesList.iterator());
 	}
 	
 	/**
