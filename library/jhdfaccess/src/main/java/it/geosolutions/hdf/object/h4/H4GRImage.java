@@ -211,7 +211,7 @@ public class H4GRImage extends H4Variable implements IH4ReferencedObject {
 	 * @return the {@link H4GRImageCollection} to which this {@link H4GRImage}
 	 *         belongs.
 	 */
-	public H4GRImageCollection getH4GRImageCollectionOwner() {
+	H4GRImageCollection getH4GRImageCollectionOwner() {
 		return h4GRImageCollectionOwner;
 	}
 

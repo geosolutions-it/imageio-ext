@@ -83,7 +83,7 @@ public class H4GRImageCollection extends H4DecoratedObject implements IHObject,
 	 * 
 	 * @return the {@link H4File} to which this collection is attached
 	 */
-	public H4File getH4File() {
+	H4File getH4File() {
 		return h4File;
 	}
 

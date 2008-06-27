@@ -256,7 +256,7 @@ public class H4SDS extends H4Variable implements IH4ReferencedObject, IHObject {
      * 
      * @return the {@link H4SDSCollection} to which this {@link H4SDS} belongs.
      */
-    public H4SDSCollection getH4SDSCollectionOwner() {
+    H4SDSCollection getH4SDSCollectionOwner() {
         return h4SDSCollectionOwner;
     }
 
@@ -484,6 +484,9 @@ public class H4SDS extends H4Variable implements IH4ReferencedObject, IHObject {
      * Terminate access to this SDS.
      */
     public synchronized void close() {
+        // ----------------
+        // OLD STRATEGY:
+        // ----------------
         // During the H4SDSCollection initialization, all SDSs are opened,
         // initialized and immediatly closed. When a SDS is required, the
         // H4SDSCollection re-open access to the specific SDS. When a

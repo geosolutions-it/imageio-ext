@@ -125,7 +125,7 @@ public class H4Dimension extends H4Variable implements IHObject {
 	 * 
 	 * @return the {@link H4SDS} to which this dimensions is related.
 	 */
-	public H4SDS getH4SDS() {
+	H4SDS getH4SDS() {
 		return h4SDS;
 	}
 

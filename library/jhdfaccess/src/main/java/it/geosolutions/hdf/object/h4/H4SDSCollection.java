@@ -75,6 +75,15 @@ public class H4SDSCollection extends H4DecoratedObject implements IHObject,
      * @uml.associationEnd inverse="h4SdsCollection:it.geosolutions.hdf.object.h4.H4File"
      */
     private H4File h4File;
+    
+    /**
+     * getter of <code>h4File</code>
+     * 
+     * @return Returns the h4File.
+     */
+    H4File getH4File() {
+        return h4File;
+    }
 
     /**
      * Returns the number of SDS available in this collection
@@ -88,15 +97,6 @@ public class H4SDSCollection extends H4DecoratedObject implements IHObject,
     // SET of Getters
     // 
     // ////////////////////////////////////////////////////////////////////////
-
-    /**
-     * getter of <code>h4File</code>
-     * 
-     * @return Returns the h4File.
-     */
-    public H4File getH4File() {
-        return h4File;
-    }
 
     /**
      * Returns the {@link H4SDS} related to the index-TH sds available in this

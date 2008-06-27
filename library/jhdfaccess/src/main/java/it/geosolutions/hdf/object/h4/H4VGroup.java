@@ -110,7 +110,7 @@ public class H4VGroup extends H4Variable implements IHObject,
 	 * @return the {@link H4VGroupCollection} to which this {@link H4VGroup}
 	 *         belongs.
 	 */
-	public H4VGroupCollection getH4VGroupCollectionOwner() {
+	H4VGroupCollection getH4VGroupCollectionOwner() {
 		return h4VGroupCollectionOwner;
 	}
 

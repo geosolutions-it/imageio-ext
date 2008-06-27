@@ -76,28 +76,28 @@ public class H4File extends AbstractHObject implements IHObject {
 	 * 
 	 * @uml.associationEnd inverse="h4File:it.geosolutions.hdf.object.h4.H4AnnotationManager"
 	 */
-	private H4AnnotationManager h4AnnotationManager = null;
+	public H4AnnotationManager h4AnnotationManager = null;
 
 	/**
 	 * the {@link H4SDSCollection} instance of this {@link H4File}
 	 * 
 	 * @uml.associationEnd inverse="h4File:it.geosolutions.hdf.object.h4.H4SDSCollection"
 	 */
-	private H4SDSCollection h4SdsCollection = null;
+	public H4SDSCollection h4SdsCollection = null;
 
 	/**
 	 * the {@link H4GRImageCollection} instance of this {@link H4File}
 	 * 
 	 * @uml.associationEnd inverse="h4File:it.geosolutions.hdf.object.h4.H4GRImageCollection"
 	 */
-	private H4GRImageCollection h4GRImageCollection = null;
+	public H4GRImageCollection h4GRImageCollection = null;
 
 	/**
 	 * the {@link H4VGroupCollection} instance of this {@link H4File}
 	 * 
 	 * @uml.associationEnd inverse="h4File:it.geosolutions.hdf.object.h4.H4VGroupCollection"
 	 */
-	private H4VGroupCollection h4VGroupCollection = null;
+	public H4VGroupCollection h4VGroupCollection = null;
 
 	/**
 	 * The file path of HDF file referred by this {@link H4File} instance
