@@ -257,7 +257,7 @@ public class H4GRImage extends H4Variable {
 				datatype = grInfo[1] & (~HDFConstants.DFNT_LITEND);
 				interlaceMode = grInfo[2];
 				numAttributes = grInfo[3];
-				freeze();
+				init();
 				numPalettes = HDFLibrary.GRgetnluts(identifier);
 			} else {
 				// XXX
@@ -305,21 +305,6 @@ public class H4GRImage extends H4Variable {
 		super.dispose();
 	}
 
-
-//	/**
-//	 * Open a H4GRImage. It is worth to point out that each open operations
-//	 * provides a different identifier.
-//	 */
-//	public void open() {
-//		int identifier=getIdentifier();
-//		if (identifier != HDFConstants.FAIL) {
-//			try {
-//				setIdentifier(HDFLibrary.GRselect(h4GRImageCollectionOwner.getIdentifier(), index));
-//			} catch (HDFException e) {
-//				throw new RuntimeException("Error while opening the H4GRImage",e);
-//			}
-//		}
-//	}
 
 	/**
 	 * Returns a <code>List</code> containing available palettes for this
