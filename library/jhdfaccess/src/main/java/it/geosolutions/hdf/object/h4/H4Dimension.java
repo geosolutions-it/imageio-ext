@@ -126,7 +126,8 @@ public class H4Dimension extends H4Variable implements IHObject {
      * @param dimensionIndex
      *                the index of the dimension within the SDS.
      * @throws IllegalArgumentException
-     *                 in case of wrong specified input parameters or identifiers.
+     *                 in case of wrong specified input parameters or
+     *                 identifiers.
      * @throws IllegalStateException
      *                 in case of problems getting a valid identifier for the
      *                 Annotation APIs
@@ -237,8 +238,9 @@ public class H4Dimension extends H4Variable implements IHObject {
      * to the SDS containing dimension scale values
      */
     public void dispose() {
-        try {
-            if (hasDimensionScaleSet) {
+
+        if (hasDimensionScaleSet) {
+            try {
                 // end access to the SDS representing the dimension
                 if (sdsDimensionScaleID != HDFConstants.FAIL) {
                     if (LOGGER.isLoggable(Level.FINE))
@@ -255,13 +257,14 @@ public class H4Dimension extends H4Variable implements IHObject {
                     }
                     sdsDimensionScaleID = HDFConstants.FAIL;
                 }
+            } catch (HDFException e) {
+                if (LOGGER.isLoggable(Level.WARNING))
+                    LOGGER.log(Level.WARNING,
+                            "Error closing access to the dimension with ID = "
+                                    + getIdentifier());
             }
-        } catch (HDFException e) {
-            if (LOGGER.isLoggable(Level.WARNING))
-                LOGGER.log(Level.WARNING,
-                        "Error closing access to the dimension with ID = "
-                                + getIdentifier());
         }
+
         super.dispose();
     }
 
@@ -300,16 +303,18 @@ public class H4Dimension extends H4Variable implements IHObject {
                         || attrName.equals(PREDEF_ATTR_FORMAT))
                     isPredef = true;
                 if (!isPredef) {
-                    H4Attribute attrib =null;
-                    if (dimAttrInfo != null) 
-                        attrib = new H4Attribute(this, nAttr, attrName, dimAttrInfo);
+                    H4Attribute attrib = null;
+                    if (dimAttrInfo != null)
+                        attrib = new H4Attribute(this, nAttr, attrName,
+                                dimAttrInfo);
                     if (attrib != null) {
                         attributes.put(attrName, attrib);
-                        indexToAttributesMap.put(Integer.valueOf(nAttr),
-                                attrib);
+                        indexToAttributesMap
+                                .put(Integer.valueOf(nAttr), attrib);
                         nAttr++;
                     } else {
-                        throw new RuntimeException("Error while setting dimension attribute");
+                        throw new RuntimeException(
+                                "Error while setting dimension attribute");
                     }
                 }
             }
@@ -417,7 +422,8 @@ public class H4Dimension extends H4Variable implements IHObject {
     }
 
     /**
-     * Dimension has a different management of attributes. Therefore, this method isn't needed.
+     * Dimension has a different management of attributes. Therefore, this
+     * method isn't needed.
      */
     protected int findAttributeIndexByName(String attributeName)
             throws HDFException {

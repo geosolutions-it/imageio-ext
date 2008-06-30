@@ -223,13 +223,12 @@ public class H4File extends AbstractHObject implements IHObject {
                 setIdentifier(identifier);
             else
                 throw new IllegalStateException("Error while opening the file "
-                        + filePath);
+                        + filePath + " due to unable to find the file ID");
             hOpened = true;
 
         } catch (HDFException e) {
             throw new IllegalStateException(
-                    "Error while checking if the provided file is a HDF source ",
-                    e);
+                    "Error while checking the provided file", e);
         }
 
     }
@@ -309,8 +308,8 @@ public class H4File extends AbstractHObject implements IHObject {
     }
 
     /**
-     * Returns a <code>List</code> of annotations available for this file,
-     * given the required type of annotations.
+     * Returns an unmodifiable <code>List</code> of annotations available for
+     * this file, given the required type of annotations.
      * 
      * @param annotationType
      *                the required annotation type. Supported values are
@@ -326,6 +325,7 @@ public class H4File extends AbstractHObject implements IHObject {
     public synchronized List getAnnotations(final int annotationType)
             throws HDFException {
         // Get access to the annotations interface
+        List returnedAnnotations = null;
         getH4AnnotationManager();
         switch (annotationType) {
         case HDFConstants.AN_FILE_LABEL:
@@ -335,17 +335,25 @@ public class H4File extends AbstractHObject implements IHObject {
                         .getH4Annotations(annotationType);
 
             }
-            return labelAnnotations;
+            if (nLabels>0)
+                returnedAnnotations = Collections.unmodifiableList(labelAnnotations);
+            break;
         case HDFConstants.AN_FILE_DESC:
             if (nDescriptions == -1) {// Annotations not yet initialized.
                 nDescriptions = h4AnnotationManager.getNFileDescriptions();
                 descAnnotations = h4AnnotationManager
                         .getH4Annotations(annotationType);
             }
-            return descAnnotations;
+            if (nDescriptions>0)
+                returnedAnnotations = Collections.unmodifiableList(descAnnotations);
+            break;
         default:
-            return Collections.emptyList();
+            returnedAnnotations = null;
         }
+        if (returnedAnnotations == null)
+            returnedAnnotations = Collections.emptyList();
+        return returnedAnnotations;
+
     }
 
     protected void finalize() throws Throwable {

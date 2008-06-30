@@ -130,7 +130,8 @@ public abstract class AbstractH4Object extends AbstractHObject implements
     public synchronized H4Attribute getAttribute(final String attributeName)
             throws HDFException {
         H4Attribute attribute = null;
-
+        if (attributeName==null)
+            throw new IllegalArgumentException("Null attribute name provided");
         // Here, the initialization has already occurred.
         if (attributes != null) {
 

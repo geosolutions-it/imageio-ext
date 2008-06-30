@@ -201,6 +201,8 @@ public class H4SDSCollection extends AbstractH4Object implements IHObject,
      *         specified sds does not exist
      */
     public H4SDS get(final String sName) {
+        if (sName==null)
+            throw new IllegalArgumentException("Null SDS name provided");
         H4SDS sds = null;
         if (sdsNamesToIndexes.containsKey(sName)) {
             sds = (H4SDS) sdsList.get(((Integer) sdsNamesToIndexes.get(sName))

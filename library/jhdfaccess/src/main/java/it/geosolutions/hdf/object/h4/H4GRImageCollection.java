@@ -299,6 +299,8 @@ public class H4GRImageCollection extends AbstractH4Object implements IHObject,
      *         specified image does not exist
      */
     public H4GRImage get(final String sName) {
+        if (sName==null)
+            throw new IllegalArgumentException("Null image name provided");
         H4GRImage grImage = null;
         if (grImagesNamesToIndexes.containsKey(sName)) {
             grImage = (H4GRImage) grImagesList
@@ -535,7 +537,6 @@ public class H4GRImageCollection extends AbstractH4Object implements IHObject,
             return attrInfo;
         else
             return null;
-
     }
 
     /**

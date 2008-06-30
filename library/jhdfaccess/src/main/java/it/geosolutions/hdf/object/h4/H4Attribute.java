@@ -215,8 +215,9 @@ public class H4Attribute {
     public static H4Attribute buildAttribute(
             AbstractH4Object objectWithAttribute, final int index)
             throws HDFException {
+        if (objectWithAttribute==null)
+            throw new IllegalArgumentException("Input object is null");
         H4Attribute attribute = null;
-
         String[] attrName = new String[] { "" };
 
         // get various info about this attribute from the proper interface,
