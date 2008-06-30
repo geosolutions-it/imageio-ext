@@ -126,9 +126,10 @@ public class H4Dimension extends H4Variable implements IHObject {
      * @param dimensionIndex
      *                the index of the dimension within the SDS.
      * @throws IllegalArgumentException
-     *                 in case of wrong specified input parameters or in case
-     *                 some initialization fails due to wrong identifiers or
-     *                 related errors.
+     *                 in case of wrong specified input parameters or identifiers.
+     * @throws IllegalStateException
+     *                 in case of problems getting a valid identifier for the
+     *                 Annotation APIs
      */
     public H4Dimension(H4SDS sds, final int dimensionIndex) {
         index = dimensionIndex;
@@ -195,12 +196,12 @@ public class H4Dimension extends H4Variable implements IHObject {
                     // }
                 }
             } else {
-                throw new IllegalArgumentException(
+                throw new IllegalStateException(
                         "Failing to get an identifier for the Dimension");
             }
 
         } catch (HDFException e) {
-            throw new IllegalArgumentException(
+            throw new IllegalStateException(
                     "HDFException occurred while creating a new H4Dimension", e);
         }
     }

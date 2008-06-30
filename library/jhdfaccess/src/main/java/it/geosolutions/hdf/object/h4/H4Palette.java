@@ -171,11 +171,11 @@ public class H4Palette extends AbstractHObject implements IHObject {
 				numEntries = lutInfo[3];
 			}else{
 				// throw an exception
-				throw new IllegalArgumentException("Unable to find lut identifier");
+				throw new IllegalStateException("Unable to find lut identifier");
 			}
 
 		} catch (HDFException e) {
-			throw new IllegalArgumentException ("HDFException occurred while creating a new H4Palette", e);
+			throw new IllegalStateException ("HDFException occurred while creating a new H4Palette", e);
 		}
 	}
 

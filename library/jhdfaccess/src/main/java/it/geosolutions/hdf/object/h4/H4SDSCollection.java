@@ -265,10 +265,10 @@ public class H4SDSCollection extends AbstractH4Object implements IHObject,
                                 "Unable to get file info from the SD interface with ID = " + identifier);
                 }
             } else {
-                throw new IllegalArgumentException("Failing to get an identifier for the SDS collection");
+                throw new IllegalStateException("Failing to get an identifier for the SDS collection");
             }
         } catch (HDFException e) {
-            throw new IllegalArgumentException(
+            throw new IllegalStateException(
                     "HDFException occurred while accessing SDS routines with file "
                             + h4file.getFilePath(), e);
         }

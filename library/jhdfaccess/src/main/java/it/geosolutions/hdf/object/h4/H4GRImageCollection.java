@@ -205,11 +205,11 @@ public class H4GRImageCollection extends AbstractH4Object implements IHObject,
                                         + identifier);
                 }
             } else {
-                throw new IllegalArgumentException(
+                throw new IllegalStateException(
                         "Failing to get an identifier for the GRImage collection");
             }
         } catch (HDFException e) {
-            throw new IllegalArgumentException(
+            throw new IllegalStateException(
                     "HDFException occurred while accessing General Raster Images routines with file "
                             + h4file.getFilePath(), e);
         }

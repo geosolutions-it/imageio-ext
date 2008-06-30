@@ -249,6 +249,8 @@ public class H4GRImage extends H4Variable {
      *                 related errors.
      */
     public H4GRImage(H4GRImageCollection h4GrImageCollection, final int grIndex) {
+        if (h4GrImageCollection==null)
+            throw new IllegalArgumentException("null GRImage collection");
         h4GRImageCollectionOwner = h4GrImageCollection;
         final int interfaceID = h4GRImageCollectionOwner.getIdentifier();
         if (interfaceID == HDFConstants.FAIL) {
@@ -274,10 +276,10 @@ public class H4GRImage extends H4Variable {
                 init();
                 numPalettes = HDFLibrary.GRgetnluts(identifier);
             } else {
-                throw new IllegalArgumentException("Invalid GRImage identifier");
+                throw new IllegalStateException("Invalid GRImage identifier");
             }
         } catch (HDFException e) {
-            throw new RuntimeException(
+            throw new IllegalStateException(
                     "HDFException occurred while creating a new H4GRImage", e);
         }
     }

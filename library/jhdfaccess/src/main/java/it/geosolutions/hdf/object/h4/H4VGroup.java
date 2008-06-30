@@ -169,10 +169,11 @@ public class H4VGroup extends H4Variable implements IHObject {
      * 
      */
     public H4VGroup(H4VGroup parentGroup, final int ref) {
+        this.h4VGroupCollectionOwner = parentGroup.h4VGroupCollectionOwner;
+        final int fileID = h4VGroupCollectionOwner.getH4File().getIdentifier();
+        if (fileID == HDFConstants.FAIL)
+            throw new IllegalArgumentException("Invalid file identifier");
         try {
-            this.h4VGroupCollectionOwner = parentGroup.h4VGroupCollectionOwner;
-            final int fileID = h4VGroupCollectionOwner.getH4File()
-                    .getIdentifier();
             reference = new H4ReferencedObject(ref);
             int identifier = HDFLibrary.Vattach(fileID, ref, "r");
             if (identifier != HDFConstants.FAIL) {
@@ -182,10 +183,11 @@ public class H4VGroup extends H4Variable implements IHObject {
                 className = vgroupClass[0];
                 initialize();
             } else {
-                // XXX
+                throw new IllegalStateException(
+                        "Failing to get an identifier for the VGroup element");
             }
         } catch (HDFException e) {
-            throw new RuntimeException(
+            throw new IllegalStateException(
                     "HDFException occurred while creating a new H4VGroup instance ",
                     e);
         }
@@ -226,8 +228,7 @@ public class H4VGroup extends H4Variable implements IHObject {
             int identifier = getIdentifier();
             if (identifier != HDFConstants.FAIL) {
                 if (LOGGER.isLoggable(Level.FINE))
-                    LOGGER.log(Level.FINE,
-                            "disposing VGroup with ID = ");
+                    LOGGER.log(Level.FINE, "disposing VGroup with ID = ");
                 HDFLibrary.Vdetach(identifier);
             }
         } catch (HDFException e) {
@@ -256,22 +257,23 @@ public class H4VGroup extends H4Variable implements IHObject {
         }
         return Collections.unmodifiableList(tagRefList);
     }
-    
+
     /**
      * @see {@link AbstractH4Object#readAttribute(int, Object)}
      */
-    protected boolean readAttribute(int index, Object values) throws HDFException {
-        return HDFLibrary.Vgetattr(getIdentifier(),index, values);
+    protected boolean readAttribute(int index, Object values)
+            throws HDFException {
+        return HDFLibrary.Vgetattr(getIdentifier(), index, values);
     }
-    
+
     /**
      * @see {@link AbstractH4Object#getAttributeInfo(int, String[])}
      */
     protected int[] getAttributeInfo(int index, String[] attrName)
-    throws HDFException {
+            throws HDFException {
         int[] attrInfo = new int[] { 0, 0, 0 };
         boolean done = HDFLibrary.Vattrinfo(getIdentifier(), index, attrName,
-        attrInfo);
+                attrInfo);
         if (done)
             return attrInfo;
         else
@@ -281,7 +283,8 @@ public class H4VGroup extends H4Variable implements IHObject {
     /**
      * @see {@link AbstractH4Object#findAttributeIndexByName(String)}
      */
-    protected int findAttributeIndexByName(String attributeName) throws HDFException {
+    protected int findAttributeIndexByName(String attributeName)
+            throws HDFException {
         return HDFLibrary.Vfindattr(getIdentifier(), attributeName);
     }
 }

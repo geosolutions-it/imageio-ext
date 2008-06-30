@@ -21,7 +21,6 @@ import it.geosolutions.hdf.object.IHObject;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -40,6 +39,72 @@ import ncsa.hdf.hdflib.HDFLibrary;
 public class H4VGroupCollection extends AbstractHObject implements IHObject,
         List {
 
+    private class H4VGroupCollectionIterator implements Iterator{
+
+        private Iterator it;
+        public boolean hasNext() {
+                return it.hasNext();
+        }
+
+        public Object next() {
+                return it.next();
+        }
+
+        public void remove() {
+                throw new UnsupportedOperationException();
+                
+        }
+
+        public H4VGroupCollectionIterator(Iterator it) {
+                this.it = it;
+        }
+    }
+    
+    private class H4VGroupCollectionListIterator implements ListIterator{
+
+        private ListIterator listIt;
+
+        public H4VGroupCollectionListIterator(ListIterator listIt) {
+                this.listIt = listIt;
+        }
+
+        public void add(Object item) {
+            throw new UnsupportedOperationException();
+        }
+
+        public boolean hasNext() {
+            return listIt.hasNext();
+        }
+
+        public boolean hasPrevious() {
+            return listIt.hasPrevious();
+        }
+
+        public Object next() {
+            return listIt.next();
+        }
+
+        public int nextIndex() {
+            return listIt.nextIndex();
+        }
+
+        public Object previous() {
+            return listIt.previous();
+        }
+
+        public int previousIndex() {
+            return listIt.previousIndex();
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+
+        public void set(Object item) {
+            throw new UnsupportedOperationException();
+        }
+    }
+    
     /** Logger. */
     private final static Logger LOGGER = Logger
             .getLogger("it.geosolutions.hdf.object.h4");
@@ -90,7 +155,11 @@ public class H4VGroupCollection extends AbstractHObject implements IHObject,
      */
     public H4VGroupCollection(H4File h4file) {
         h4File = h4file;
+        if (h4file == null)
+            throw new IllegalArgumentException("Null file provided");
         final int fileID = h4File.getIdentifier();
+        if (fileID == HDFConstants.FAIL)
+            throw new IllegalArgumentException("Invalid file identifier");
         try {
             if (HDFLibrary.Vstart(fileID)) {
                 final int nLoneVgroups = HDFLibrary.Vlone(fileID, null, 0);
@@ -112,10 +181,11 @@ public class H4VGroupCollection extends AbstractHObject implements IHObject,
                         vgroup.dispose();
                 }
             } else {
-                // XXX
+                throw new IllegalStateException(
+                "Failing to get access to the VGroup routines");
             }
         } catch (HDFException e) {
-            throw new IllegalArgumentException(
+            throw new IllegalStateException(
                     "HDFException occurred while accessing VGroup routines with file "
                             + h4file.getFilePath(), e);
         }
@@ -179,9 +249,7 @@ public class H4VGroupCollection extends AbstractHObject implements IHObject,
                         "Error Closing access to the VGroup Interface with ID = "
                                 + getIdentifier());
         }
-        finally{
-            super.dispose();
-        }
+        super.dispose();
     }
 
     /**
@@ -276,7 +344,7 @@ public class H4VGroupCollection extends AbstractHObject implements IHObject,
      * @return an iterator.
      */
     public Iterator iterator() {
-        return Collections.unmodifiableCollection(loneVgroupsList).iterator();
+        return new H4VGroupCollectionIterator(loneVgroupsList.iterator());
     }
 
     /**
@@ -285,7 +353,7 @@ public class H4VGroupCollection extends AbstractHObject implements IHObject,
      * @return a list iterator.
      */
     public ListIterator listIterator() {
-        return Collections.unmodifiableList(loneVgroupsList).listIterator();
+        return new H4VGroupCollectionListIterator(loneVgroupsList.listIterator());
     }
 
     /**
@@ -295,8 +363,7 @@ public class H4VGroupCollection extends AbstractHObject implements IHObject,
      * @return a list iterator.
      */
     public ListIterator listIterator(int index) {
-        return Collections.unmodifiableList(loneVgroupsList)
-                .listIterator(index);
+        return new H4VGroupCollectionListIterator(loneVgroupsList.listIterator(index));
     }
 
     /**
