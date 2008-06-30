@@ -175,7 +175,7 @@ public class H4Attribute {
      * @return an <code>Object</code> containing attribute values.
      * @throws HDFException
      */
-    public Object getValues() throws HDFException {
+    public synchronized Object getValues() throws HDFException {
         if (values == null) {
             values = H4Utilities.allocateArray(datatype, size);
             // //
