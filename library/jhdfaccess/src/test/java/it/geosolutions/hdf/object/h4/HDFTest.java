@@ -381,23 +381,33 @@ public class HDFTest extends TestCase {
 
 			// Description Annotations
 			annotations = grImage.getAnnotations(HDFConstants.AN_DATA_DESC);
-			if (annotations != null) {
+			if (!annotations.isEmpty()) {
 				final int annSize = annotations.size();
 				for (int i = 0; i < annSize; i++) {
 					H4Annotation ann = (H4Annotation) annotations.get(i);
 					outSb.append(printInfo(ann));
 				}
 			}
-
+			
 			// Label Annotations
 			annotations = grImage.getAnnotations(HDFConstants.AN_DATA_LABEL);
-			if (annotations != null) {
+			if (!annotations.isEmpty()) {
 				final int annSize = annotations.size();
 				for (int i = 0; i < annSize; i++) {
 					H4Annotation ann = (H4Annotation) annotations.get(i);
 					outSb.append(printInfo(ann));
 				}
 			}
+			
+			//Annotations are returned as unmodifiable
+                        try{
+                            annotations.remove(2);
+                            assertTrue(false);
+                        }catch (UnsupportedOperationException uoe){
+                            //annotations are returned as an unmodifiable list
+                            annotations=null;
+                        }
+                        
 		}
 		myFile.dispose();
 		if (TestData.isInteractiveTest()) {

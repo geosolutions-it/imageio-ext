@@ -17,6 +17,7 @@
 package it.geosolutions.hdf.object.h4;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -469,7 +470,7 @@ public class H4GRImage extends H4Variable {
     }
 
     /**
-     * Returns a <code>List</code> of annotations available for this Image,
+     * Returns an unmodifiable <code>List</code> of annotations available for this Image,
      * given the required type of annotations.
      * 
      * @param annotationType
@@ -483,6 +484,7 @@ public class H4GRImage extends H4Variable {
      */
     public synchronized List getAnnotations(final int annotationType)
             throws HDFException {
+        List returnedAnnotations = null;
         H4AnnotationManager annotationManager = h4GRImageCollectionOwner
                 .getH4File().getH4AnnotationManager();
         switch (annotationType) {
@@ -500,7 +502,9 @@ public class H4GRImage extends H4Variable {
                     nLabels = listLabels.size();
                 labelAnnotations = listLabels;
             }
-            return labelAnnotations;
+            if (nLabels>0)
+                returnedAnnotations = Collections.unmodifiableList(labelAnnotations);
+            break;
         case HDFConstants.AN_DATA_DESC:
             if (nDescriptions == -1) {
                 // Searching data object label annotations related to this
@@ -515,12 +519,17 @@ public class H4GRImage extends H4Variable {
                     nDescriptions = listDescriptions.size();
                 descAnnotations = listDescriptions;
             }
-            return descAnnotations;
+            if (nDescriptions>0)
+                returnedAnnotations = Collections.unmodifiableList(descAnnotations);
+            break;
         default:
-            return null;
+            returnedAnnotations =  null;
         }
+        if (returnedAnnotations==null)
+            returnedAnnotations=Collections.emptyList();
+        return returnedAnnotations;
     }
-
+    
     /**
      * @see {@link AbstractH4Object#readAttribute(int, Object)}
      */
