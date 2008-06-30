@@ -25,6 +25,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ncsa.hdf.hdflib.HDFConstants;
 import ncsa.hdf.hdflib.HDFException;
@@ -38,6 +40,10 @@ import ncsa.hdf.hdflib.HDFLibrary;
 public class H4VGroupCollection extends AbstractHObject implements IHObject,
         List {
 
+    /** Logger. */
+    private final static Logger LOGGER = Logger
+            .getLogger("it.geosolutions.hdf.object.h4");
+    
     /**
      * the number of lone vgroups of this Group collection
      */
@@ -137,21 +143,22 @@ public class H4VGroupCollection extends AbstractHObject implements IHObject,
     }
 
     protected void finalize() throws Throwable {
-        dispose();
+        try {
+            dispose();
+        } catch (Throwable e) {
+            if (LOGGER.isLoggable(Level.WARNING))
+                LOGGER.log(Level.WARNING,
+                        "Catched exception during dimension finalization: "
+                                + e.getLocalizedMessage());
+        }
     }
 
-    /**
-     * close this {@link H4VGroupCollection} and dispose allocated objects.
-     */
-    public void dispose() {
-        dipose();
-    }
 
     /**
      * End access to the underlying VGroup interface and end access to the owned
      * {@link AbstractHObject}s
      */
-    public synchronized void dipose() {
+    public synchronized void dispose() {
         try {
             if (loneVgroupsList != null) {
                 for (int i = 0; i < numLoneVgroups; i++) {
@@ -160,13 +167,20 @@ public class H4VGroupCollection extends AbstractHObject implements IHObject,
                 }
             }
             int identifier=getIdentifier();
-			if (identifier != HDFConstants.FAIL) {
+	    if (identifier != HDFConstants.FAIL) {
+	        if (LOGGER.isLoggable(Level.FINE))
+                    LOGGER.log(Level.FINE,
+                            "disposing VGroup collection with ID = ");
                 HDFLibrary.Vend(identifier);
-                setIdentifier(HDFConstants.FAIL);
             }
-
         } catch (HDFException e) {
-            // XXX
+            if (LOGGER.isLoggable(Level.WARNING))
+                LOGGER.log(Level.WARNING,
+                        "Error Closing access to the VGroup Interface with ID = "
+                                + getIdentifier());
+        }
+        finally{
+            super.dispose();
         }
     }
 

@@ -21,6 +21,8 @@ import it.geosolutions.hdf.object.IHObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ncsa.hdf.hdflib.HDFConstants;
 import ncsa.hdf.hdflib.HDFException;
@@ -34,8 +36,10 @@ import ncsa.hdf.hdflib.HDFLibrary;
  * @author Daniele Romagnoli, GeoSolutions
  */
 class H4AnnotationManager extends AbstractHObject implements IHObject {
-	// XXX: Add Synchronization?
 
+        /** Logger. */
+        private final static Logger LOGGER = Logger.getLogger("it.geosolutions.hdf.object.h4");
+    
 	/**
 	 * The number of file label annotations <br>
 	 */
@@ -132,8 +136,8 @@ class H4AnnotationManager extends AbstractHObject implements IHObject {
 		try {
 			// Open the Annotation Interface and set its identifier
 			int identifier=HDFLibrary.ANstart(fileID);
-			setIdentifier(identifier);
 			if (identifier != HDFConstants.FAIL) {
+			        setIdentifier(identifier);
 				// Retrieve basic annotations properties.
 				int annotationsInfo[] = new int[] { 0, 0, 0, 0 };
 				HDFLibrary.ANfileinfo(identifier, annotationsInfo);
@@ -153,7 +157,7 @@ class H4AnnotationManager extends AbstractHObject implements IHObject {
 	}
 
 	/**
-	 * Builds an returns a <code>List</code> of {@link H4Annotation}s
+	 * Builds and returns a <code>List</code> of {@link H4Annotation}s
 	 * available for a specific data object, given the required type of
 	 * annotation, and the TAG and reference of the data object.<BR>
 	 * If you are looking for file annotations, you have to use
@@ -174,7 +178,7 @@ class H4AnnotationManager extends AbstractHObject implements IHObject {
 	 * @return a <code>List</code> of {@link H4Annotation}s.
 	 * @throws HDFException
 	 */
-	public List getH4Annotations(final int annotationType,
+	List getH4Annotations(final int annotationType,
 			final short requiredTag, final short requiredReference)
 			throws HDFException {
 		List annotations = null;
@@ -199,7 +203,7 @@ class H4AnnotationManager extends AbstractHObject implements IHObject {
 	 * Use this method to retrieve the <code>List</code> of
 	 * {@link H4Annotation}s available for the file represented by the
 	 * {@link H4File} owner of this <code>H4AnnotationManager</code>. If you
-	 * ar looking for data object annotations, you have to use
+	 * are looking for data object annotations, you have to use
 	 * {@link H4AnnotationManager#getH4Annotations(int, short, short)} instead,
 	 * since data object annotations are related to a specific Object identified
 	 * by a couple <TAG,reference>.
@@ -213,7 +217,7 @@ class H4AnnotationManager extends AbstractHObject implements IHObject {
 	 * @return a <code>List</code> of {@link H4Annotation}s.
 	 * @throws HDFException
 	 */
-	public List getH4Annotations(final int annotationType) throws HDFException {
+	List getH4Annotations(final int annotationType) throws HDFException {
 		List annotations = null;
 		switch (annotationType) {
 		case HDFConstants.AN_FILE_LABEL:
@@ -236,23 +240,37 @@ class H4AnnotationManager extends AbstractHObject implements IHObject {
 				}
 			}
 			break;
-		}
+		
+		case HDFConstants.AN_DATA_DESC:
+		case HDFConstants.AN_DATA_LABEL:
+		    if (LOGGER.isLoggable(Level.WARNING)){
+		        LOGGER.log(Level.WARNING, "Direct use of annotation manager only allows to get File annotations.");
+		    }
+		}    
 		return annotations;
 	}
 
 	/**
 	 * End access to the underlying annotation routine interface.
 	 */
-	public void dipose() {
+	public void dispose() {
 		try {
 			int identifier=getIdentifier();
 			if (identifier != HDFConstants.FAIL) {
-				HDFLibrary.ANend(identifier);
-				identifier = HDFConstants.FAIL;
+			    if (LOGGER.isLoggable(Level.FINE))
+		                    LOGGER.log(Level.FINE, "disposing annotation interface with ID = " + identifier);
+		                boolean closed = HDFLibrary.ANend(identifier);
+		                if (!closed) {
+		                    if (LOGGER.isLoggable(Level.WARNING))
+		                        LOGGER.log(Level.WARNING, "Unable to close access to the annotation interface with ID = "+ identifier);
+		                }
 			}
-
 		} catch (HDFException e) {
-			// XXX
+		    if (LOGGER.isLoggable(Level.WARNING))
+                        LOGGER.log(Level.WARNING,
+                                "Error closing access to the annotation interface with ID = "
+                                        + getIdentifier());
 		}
+	        super.dispose();
 	}
 }

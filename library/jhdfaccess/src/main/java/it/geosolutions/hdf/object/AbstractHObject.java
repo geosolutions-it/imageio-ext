@@ -23,35 +23,35 @@ import ncsa.hdf.hdflib.HDFConstants;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  */
-public abstract class AbstractHObject implements IHObject{
+public abstract class AbstractHObject implements IHObject {
 
-	/**
-	 * The numeric identifier associated to this <code>AbstractHObject</code>
-	 */
-	private volatile int identifier = HDFConstants.FAIL;
+    /**
+     * The numeric identifier associated to this <code>AbstractHObject</code>
+     */
+    private volatile int identifier = HDFConstants.FAIL;
 
-	/**
-	 *  getter of <code>identifier</code>
-	 * 
-	 * @return the numeric identifier associated to this
-	 *         <code>AbstractHObject</code>
-	 */
-	public int getIdentifier() {
-		return identifier;
-	}
+    /**
+     * getter of <code>identifier</code>
+     * 
+     * @return the numeric identifier associated to this
+     *         <code>AbstractHObject</code>
+     */
+    public int getIdentifier() {
+        return identifier;
+    }
 
-	protected void setIdentifier(int identifier) {
-		if(identifier==HDFConstants.FAIL)
-			throw new IllegalArgumentException("HDF identifier cannot be negative! Found "+Integer.toString(identifier));
-		if(this.identifier!=HDFConstants.FAIL)
-			throw new IllegalStateException("Identifier cannot be changed");
-		this.identifier = identifier;
-	}
-	
-	/**
-	 * Disposes this {@link AbstractHObject}
-	 */
-	public void dispose(){
-		this.identifier=HDFConstants.FAIL;
-	}
+    protected void setIdentifier(int identifier) {
+        if (identifier == HDFConstants.FAIL)
+            throw new IllegalArgumentException("HDF identifier cannot be negative! Found " + Integer.toString(identifier));
+        if (this.identifier != HDFConstants.FAIL)
+            throw new IllegalStateException("Identifier cannot be changed");
+        this.identifier = identifier;
+    }
+
+    /**
+     * Disposes this {@link AbstractHObject}
+     */
+    public void dispose() {
+        this.identifier = HDFConstants.FAIL;
+    }
 }

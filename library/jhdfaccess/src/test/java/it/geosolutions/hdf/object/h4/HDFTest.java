@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageReadParam;
@@ -70,7 +69,7 @@ import com.sun.media.jai.codecimpl.util.RasterFactory;
  * href="http://www.hdfgroup.uiuc.edu/UserSupport/code-examples/sample-programs/convert/Conversion.html">
  * http://www.hdfgroup.uiuc.edu/UserSupport/code-examples/sample-programs/convert/Conversion.html</a><BR>
  * 
- * @author Romagnoli Daniele
+ * @author Romagnoli Daniele, GeoSolutions
  */
 public class HDFTest extends TestCase {
 	// Actually, HDF on Linux is not tested. Test are disabled.
@@ -237,7 +236,7 @@ public class HDFTest extends TestCase {
 			}
 			sds.dispose();
 		}
-		myFile.dipose();
+		myFile.dispose();
 		LOGGER.info("\n" + outSb.toString());
 	}
 
@@ -331,7 +330,7 @@ public class HDFTest extends TestCase {
 				for (int i = 0; i < annSize; i++) {
 					H4Annotation ann = (H4Annotation) annotations.get(i);
 					outSb.append(printInfo(ann));
-					ann.dipose();
+					ann.dispose();
 				}
 			}
 			// Label Annotations
@@ -341,12 +340,12 @@ public class HDFTest extends TestCase {
 				for (int i = 0; i < annSize; i++) {
 					H4Annotation ann = (H4Annotation) annotations.get(i);
 					outSb.append(printInfo(ann));
-					ann.dipose();
+					ann.dispose();
 				}
 			}
 			sds.dispose();
 		}
-		myFile.dipose();
+		myFile.dispose();
 		if (TestData.isInteractiveTest()) {
 			visualizeText("SDS ANNOTATIONS", outSb.toString());
 		} else
@@ -400,7 +399,7 @@ public class HDFTest extends TestCase {
 				}
 			}
 		}
-		myFile.dipose();
+		myFile.dispose();
 		if (TestData.isInteractiveTest()) {
 			visualizeText("GRIMAGE ANNOTATIONS", outSb.toString());
 		} else
@@ -493,7 +492,7 @@ public class HDFTest extends TestCase {
 			visualizeText("ATTRIBUTES FROM SDS", outSb.toString());
 		} else
 			LOGGER.info("\n" + outSb.toString());
-		myFile.dipose();
+		myFile.dispose();
 	}
 
 	/**
@@ -543,7 +542,7 @@ public class HDFTest extends TestCase {
 			visualizeText("GROUPS", outSb.toString());
 		} else
 			LOGGER.info("\n" + outSb.toString());
-		myFile.dipose();
+		myFile.dispose();
 	}
 
 	/**
@@ -596,7 +595,7 @@ public class HDFTest extends TestCase {
 			visualizeText("DIMENSION SCALES", outSb.toString());
 		} else
 			LOGGER.info("\n" + outSb.toString());
-		myFile.dipose();
+		myFile.dispose();
 	}
 
 	/**
@@ -756,7 +755,7 @@ public class HDFTest extends TestCase {
 			im++;
 		}
 		LOGGER.info("\n" + outSb.toString());
-		myFile.dipose();
+		myFile.dispose();
 	}
 
 	/**
@@ -805,7 +804,7 @@ public class HDFTest extends TestCase {
 				assertNotNull(bimage.getData());
 		}
 		LOGGER.info("\n" + outSb.toString());
-		myFile.dipose();
+		myFile.dispose();
 	}
 
 	/**

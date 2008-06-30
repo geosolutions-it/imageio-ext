@@ -21,6 +21,7 @@ import it.geosolutions.hdf.object.IHObject;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ncsa.hdf.hdflib.HDFConstants;
@@ -35,8 +36,6 @@ import ncsa.hdf.hdflib.HDFLibrary;
 public class H4File extends AbstractHObject implements IHObject {
 
 	private static final Logger LOGGER = Logger.getLogger("it.geosolutions.hdf.object.h4");
-
-
 
 	/**
 	 * Almost all HDF APIs require the preliminary open of the source file using
@@ -165,8 +164,11 @@ public class H4File extends AbstractHObject implements IHObject {
 			try {
 				getAnnotations(HDFConstants.AN_FILE_DESC);
 			} catch (HDFException e) {
-				//TODO log me
 				nDescriptions = 0;
+				if (LOGGER.isLoggable(Level.WARNING))
+	                                LOGGER.log(Level.WARNING,
+	                                        "Error getting file description annotations");
+				
 			}
 		return nDescriptions;
 	}
@@ -181,8 +183,10 @@ public class H4File extends AbstractHObject implements IHObject {
 			try {
 				getAnnotations(HDFConstants.AN_FILE_LABEL);
 			} catch (HDFException e) {
-				//TODO log me
 				nLabels = 0;
+				if (LOGGER.isLoggable(Level.WARNING))
+	                                LOGGER.log(Level.WARNING,
+	                                        "Error getting file label annotations");
 			}
 		return nLabels;
 	}
@@ -223,13 +227,11 @@ public class H4File extends AbstractHObject implements IHObject {
 
 	}
 
-
-
 	/**
 	 * Close access to this H4File and try to close all other related
 	 * opened/accessed interfaces and items.
 	 */
-	public synchronized void dipose() {
+	public synchronized void dispose() {
 		if (filePath!=null)
 			try {
 			    filePath=null;
@@ -254,7 +256,7 @@ public class H4File extends AbstractHObject implements IHObject {
 						if (annSize != 0) {
 							for (int i = 0; i < annSize; i++) {
 								H4Annotation annotation = (H4Annotation) descAnnotations.get(i);
-								annotation.dipose();
+								annotation.dispose();
 							}
 						}
 					}
@@ -263,11 +265,11 @@ public class H4File extends AbstractHObject implements IHObject {
 						if (annSize != 0) {
 							for (int i = 0; i < annSize; i++) {
 								H4Annotation annotation = (H4Annotation) labelAnnotations.get(i);
-								annotation.dipose();
+								annotation.dispose();
 							}
 						}
 					}
-					h4AnnotationManager.dipose();
+					h4AnnotationManager.dispose();
 				}
 
 				// //
@@ -275,17 +277,25 @@ public class H4File extends AbstractHObject implements IHObject {
 				// closing file
 				//
 				// //
-				if (hOpened) 
-				{
-					HDFLibrary.Hclose(getIdentifier());
+				if (hOpened){
+				    final int identifier = getIdentifier();
+				    if (LOGGER.isLoggable(Level.FINE))
+		                        LOGGER.log(Level.FINE,
+		                                "Closing File with ID = " + identifier);
+				    boolean closed = HDFLibrary.Hclose(identifier);
+				    if (!closed) {
+		                        if (LOGGER.isLoggable(Level.WARNING))
+		                            LOGGER.log(Level.WARNING, "Unable to close access to file with ID = "+ identifier);
+		                    }
 				    hOpened=false;
 				}
-				
-				super.dispose();
 					
 			} catch (HDFException e) {
-				// TODO log me and take proper action
-			}
+			    if (LOGGER.isLoggable(Level.WARNING))
+		                    LOGGER.log(Level.WARNING,
+		                            "Error closing access to file");
+			} 
+			super.dispose();
 	}
 
 	/**
@@ -327,10 +337,13 @@ public class H4File extends AbstractHObject implements IHObject {
 	}
 
 	protected void finalize() throws Throwable {
-		try{
-			dispose();
-		}catch (Throwable t) {
-			// TODO: handle exception
-		}
-	}
+	        try {
+	            dispose();
+	        } catch (Throwable e) {
+	            if (LOGGER.isLoggable(Level.WARNING))
+	                LOGGER.log(Level.WARNING,
+	                        "Catched exception during file finalization: "
+	                                + e.getLocalizedMessage());
+	        }
+	    }
 }

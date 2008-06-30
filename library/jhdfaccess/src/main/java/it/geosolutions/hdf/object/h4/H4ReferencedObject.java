@@ -23,22 +23,22 @@ package it.geosolutions.hdf.object.h4;
  */
 class H4ReferencedObject {
 
-	/**
-	 * the reference of this object
-	 */
-	private int reference;
+    /**
+     * the reference of this object
+     */
+    private int reference;
 
-	public H4ReferencedObject(int ref) {
-		reference = ref;
-	}
+    public H4ReferencedObject(int ref) {
+        reference = ref;
+    }
 
-	/**
-	 * getter of <code>reference</code>
-	 * 
-	 * @return the reference of this object.
-	 */
-	public int getReference() {
-		return reference;
-	}
+    /**
+     * getter of <code>reference</code>
+     * 
+     * @return the reference of this object.
+     */
+    public int getReference() {
+        return reference;
+    }
 
 }

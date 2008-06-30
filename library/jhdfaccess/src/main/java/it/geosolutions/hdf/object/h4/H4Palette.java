@@ -70,11 +70,6 @@ public class H4Palette extends AbstractHObject implements IHObject {
 	 */
 	private int numComponents;
 
-	/**
-	 * The {@link H4GRImage} owner.
-	 */
-	private H4GRImage grImage;
-
 	// ////////////////////////////////////////////////////////////////////////
 	//
 	// SET of Getters
@@ -94,7 +89,7 @@ public class H4Palette extends AbstractHObject implements IHObject {
 	 * 
 	 * @return the reference of this palette
 	 */
-	public int getReference() {
+	int getReference() {
 		return reference.getReference();
 	}
 
@@ -134,15 +129,6 @@ public class H4Palette extends AbstractHObject implements IHObject {
 		return numEntries;
 	}
 
-//	/**
-//	 * getter of <code>grImage</code>
-//	 * 
-//	 * @return the {@link H4GRImage} owner.
-//	 */
-//	public H4GRImage getGrImage() {
-//		return grImage;
-//	}
-
 	/**
 	 * Constructor which builds a new <code>H4Palette</code> given its index
 	 * in the image.<BR>
@@ -151,11 +137,19 @@ public class H4Palette extends AbstractHObject implements IHObject {
 	 *            the parent image
 	 * @param index
 	 *            the index of the required palette
-	 * 
+	 * @throws IllegalArgumentException
+         *             in case of wrong specified input parameters or in case
+         *             some initialization fails due to wrong identifiers or
+         *             related errors.
 	 */
 	public H4Palette(H4GRImage image, final int index) {
-		grImage = image;
-		final int grID = grImage.getIdentifier();
+	        if (image == null)
+	            throw new IllegalArgumentException("Null grImage provided");
+	        if (index < 0)
+	            throw new IllegalArgumentException("Invalid dimension index");
+		final int grID = image.getIdentifier();
+		if (grID == HDFConstants.FAIL)
+		        throw new IllegalArgumentException("Invalid grImage identifier");
 		try {
 			int identifier = HDFLibrary.GRgetlutid(grID, index);
 			if (identifier != HDFConstants.FAIL) {
@@ -177,11 +171,11 @@ public class H4Palette extends AbstractHObject implements IHObject {
 				numEntries = lutInfo[3];
 			}else{
 				// throw an exception
-				throw new IllegalStateException("Unable to find lut identifier");
+				throw new IllegalArgumentException("Unable to find lut identifier");
 			}
 
 		} catch (HDFException e) {
-			throw new IllegalStateException ("HDFException occurred while creating a new H4Palette", e);
+			throw new IllegalArgumentException ("HDFException occurred while creating a new H4Palette", e);
 		}
 	}
 
@@ -203,8 +197,8 @@ public class H4Palette extends AbstractHObject implements IHObject {
 	/**
 	 * Method inherited from {@link AbstractHObject}.
 	 */
-	public synchronized void dipose() {
-		if (getIdentifier() != HDFConstants.FAIL)
-			setIdentifier(HDFConstants.FAIL);
+	public synchronized void dispose() {
+		super.dispose();
+		values=null;
 	}
 }

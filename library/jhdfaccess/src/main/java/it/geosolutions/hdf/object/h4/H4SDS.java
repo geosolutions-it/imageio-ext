@@ -247,8 +247,6 @@ public class H4SDS extends H4Variable implements IHObject {
                     sds = new H4SDS(h4SDSCollection, index, identifier);
                 } else
                     HDFLibrary.SDendaccess(identifier);
-                // if (sds != null)
-                // sds.open();
             } else {
                 if (LOGGER.isLoggable(Level.WARNING))
                     LOGGER.log(Level.WARNING, "undefined SD identifier ");
@@ -282,8 +280,7 @@ public class H4SDS extends H4Variable implements IHObject {
         String datasetName[] = { "" };
 
         int identifier=getIdentifier();
-		if (identifier != HDFConstants.FAIL&& HDFLibrary.SDgetinfo(identifier, datasetName,datasetDimSizes, sdInfo)) {
-
+        if (identifier != HDFConstants.FAIL && HDFLibrary.SDgetinfo(identifier, datasetName,datasetDimSizes, sdInfo)) {
             reference = new H4ReferencedObject(HDFLibrary.SDidtoref(identifier));
             setName(datasetName[0]);
             rank = sdInfo[0];
@@ -316,17 +313,21 @@ public class H4SDS extends H4Variable implements IHObject {
             }
         } else {
             if (LOGGER.isLoggable(Level.WARNING))
-                LOGGER
-                        .log(
-                                Level.WARNING,
-                                "Error initializing SDS: "
-                                        + (identifier != HDFConstants.FAIL ? "\n SDgetInfo returned false"
+                LOGGER.log(Level.WARNING,"Error initializing SDS: "
+                + (identifier != HDFConstants.FAIL ? "\n SDgetInfo returned false"
                                                 : "identifier = -1"));
         }
     }
 
     protected void finalize() throws Throwable {
-        dispose();
+        try {
+            dispose();
+        } catch (Throwable e) {
+            if (LOGGER.isLoggable(Level.WARNING))
+                LOGGER.log(Level.WARNING,
+                        "Catched exception during SDS finalization: "
+                                + e.getLocalizedMessage());
+        }
     }
 
     /**
@@ -348,7 +349,7 @@ public class H4SDS extends H4Variable implements IHObject {
         if (descAnnotations != null) {
             for (int i = 0; i < nDescriptions; i++) {
                 H4Annotation ann = (H4Annotation) descAnnotations.get(i);
-                ann.dipose();
+                ann.dispose();
             }
             descAnnotations.clear();
             descAnnotations = null;
@@ -356,7 +357,7 @@ public class H4SDS extends H4Variable implements IHObject {
         if (labelAnnotations != null) {
             for (int i = 0; i < nLabels; i++) {
                 H4Annotation ann = (H4Annotation) labelAnnotations.get(i);
-                ann.dipose();
+                ann.dispose();
             }
             labelAnnotations.clear();
             labelAnnotations = null;
@@ -375,18 +376,20 @@ public class H4SDS extends H4Variable implements IHObject {
         if (isOpen) {
             try {
                 int identifier=getIdentifier();
-				if (identifier != HDFConstants.FAIL) {
+		if (identifier != HDFConstants.FAIL) {
+		    if (LOGGER.isLoggable(Level.FINE))
+                        LOGGER.log(Level.FINE,
+                                "disposing sds with ID = ");
                     boolean closed = HDFLibrary.SDendaccess(identifier);
                     if (!closed) {
                         if (LOGGER.isLoggable(Level.WARNING))
-                            LOGGER.log(Level.WARNING, "Unable to close access to the specified SDS having identifier:"+ identifier);
+                            LOGGER.log(Level.WARNING, "Unable to close access to the SDS with ID = "+ identifier);
                     }
-                    
                 }
             } catch (HDFException e) {
                 if (LOGGER.isLoggable(Level.WARNING))
                     LOGGER.log(Level.WARNING,
-                            "Error closing access to the specified SDS"
+                            "Error closing access to the SDS with ID = "
                                     + getIdentifier());
             }
         }
@@ -424,19 +427,27 @@ public class H4SDS extends H4Variable implements IHObject {
      * @param selectedSizes
      *                int array indicating the required size along each
      *                dimension
-     * @return an array of the proper type containing read data
+     * @return an array of the proper type containing read data 
+     *                  or <code>null</code> in case of no data read.
      * @throws HDFException
      */
     public Object read(final int selectedStart[], final int selectedStride[],
             final int selectedSizes[]) throws HDFException {
 
-        Object theData = null;
         if (getIdentifier() == HDFConstants.FAIL) {
             if (LOGGER.isLoggable(Level.WARNING))
                 LOGGER.log(Level.WARNING,
                         "Undefined identifier for the read operation"
                                 + getIdentifier());
-            return theData;
+            return null;
+        }
+        if (selectedStart==null || selectedStride==null || selectedSizes==null||
+                selectedStart.length!=rank || selectedSizes.length!=rank ||
+                selectedStride.length!=rank){
+            if (LOGGER.isLoggable(Level.WARNING))
+                LOGGER.log(Level.WARNING,
+                        "Wrong input parameters. Check the selected start/size/stride parameters are not null and their rank is equal to the the SDS rank");
+            return null;
         }
         int datasize = 1;
         int[] size = new int[rank];
@@ -458,7 +469,7 @@ public class H4SDS extends H4Variable implements IHObject {
                             "wrong read parameters: selectedSize = " + sSize
                                     + " selectedStart = " + sStart
                                     + " selectedStride = " + sStride);
-                    return theData;
+                    return null;
                 }
             }
 
@@ -468,7 +479,7 @@ public class H4SDS extends H4Variable implements IHObject {
             datasize *= sSize;
 
         }
-
+        Object theData = null;
         if (LOGGER.isLoggable(Level.FINE)) {
             StringBuffer sb = new StringBuffer();
             sb.append("READING: \nSelected size = ");
@@ -608,5 +619,24 @@ public class H4SDS extends H4Variable implements IHObject {
         default:
             return null;
         }
+    }
+    
+    protected boolean readAttribute(int index, Object values) throws HDFException {
+        return HDFLibrary.SDreadattr(getIdentifier(),index, values);
+    }
+    
+    protected int[] getAttributeInfo(int index, String[] attrName)
+    throws HDFException {
+        int[] attrInfo = new int[] { 0, 0 };
+        boolean done = HDFLibrary.SDattrinfo(getIdentifier(), index, attrName,
+        attrInfo);
+        if (done)
+            return attrInfo;
+        else
+            return null;
+    }
+    
+    protected int findAttributeIndexByName(String attributeName) throws HDFException {
+        return HDFLibrary.SDfindattr(getIdentifier(),attributeName);
     }
 }

@@ -25,23 +25,23 @@ import it.geosolutions.hdf.object.IHObject;
  */
 public abstract class H4Variable extends AbstractH4Object implements IHObject {
 
-	/**
-	 * The name of this Variable
-	 */
-	private String name = null;
+    /**
+     * The name of this Variable
+     */
+    private String name = null;
 
-	/**
-	 * getter of <code>name</code>
-	 * 
-	 * @return the name of this Variable.
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * getter of <code>name</code>
+     * 
+     * @return the name of this Variable.
+     */
+    public String getName() {
+        return name;
+    }
 
-	protected synchronized void setName(String name) {
-		if(this.name!=null)
-			throw new IllegalStateException("Name cannot be changed");
-		this.name = name;
-	}
+    protected synchronized void setName(String name) {
+        if (this.name != null)
+            throw new IllegalStateException("Name cannot be changed");
+        this.name = name;
+    }
 }

@@ -18,6 +18,10 @@ package it.geosolutions.hdf.object.h4;
 
 import it.geosolutions.hdf.object.AbstractHObject;
 import it.geosolutions.hdf.object.IHObject;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import ncsa.hdf.hdflib.HDFConstants;
 import ncsa.hdf.hdflib.HDFException;
 import ncsa.hdf.hdflib.HDFLibrary;
@@ -27,154 +31,169 @@ import ncsa.hdf.hdflib.HDFLibrary;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  */
-public class H4Annotation extends AbstractHObject implements IHObject{
+public class H4Annotation extends AbstractHObject implements IHObject {
 
-	/** Annotation types as Strings */
-	/** Data Object Label */
-	public final static String AN_DATA_LABEL = "Data Object Label";
+    /** Logger. */
+    private final static Logger LOGGER = Logger
+            .getLogger("it.geosolutions.hdf.object.h4");
 
-	/** Data Object Description */
-	public final static String AN_DATA_DESC = "Data Object Description";
+    /** Annotation types as Strings */
+    /** Data Object Label */
+    public final static String AN_DATA_LABEL = "Data Object Label";
 
-	/** File Label */
-	public final static String AN_FILE_LABEL = "File Label";
+    /** Data Object Description */
+    public final static String AN_DATA_DESC = "Data Object Description";
 
-	/** File Description */
-	public final static String AN_FILE_DESC = "File Description";
+    /** File Label */
+    public final static String AN_FILE_LABEL = "File Label";
 
-	/** Unrecognized Annotation Type*/
-	public final static String AN_UNDEFINED = "WARNING!!!";
+    /** File Description */
+    public final static String AN_FILE_DESC = "File Description";
 
-	/**
-	 * Returns a <code>String</code> representing the type of annotation
-	 * specified as input.
-	 * 
-	 * @param annotationType
-	 *            the annotation type
-	 * @return the Annotation Type as <code>String</code>
-	 */
-	public static String getAnnotationTypeString(final int annotationType) {
-		switch (annotationType) {
-		case HDFConstants.AN_DATA_LABEL:
-			return AN_DATA_LABEL;
-		case HDFConstants.AN_DATA_DESC:
-			return AN_DATA_DESC;
-		case HDFConstants.AN_FILE_LABEL:
-			return AN_FILE_LABEL;
-		case HDFConstants.AN_FILE_DESC:
-			return AN_FILE_DESC;
-		default:
-			return AN_UNDEFINED;
-		}
-	}
+    /** Unrecognized Annotation Type */
+    public final static String AN_UNDEFINED = "WARNING!!!";
 
-	/**
-	 * The <code>String</code> holding the content of this annotations
-	 */
-	private String content;
+    /**
+     * Returns a <code>String</code> representing the type of annotation
+     * specified as input.
+     * 
+     * @param annotationType
+     *                the annotation type
+     * @return the Annotation Type as <code>String</code>
+     */
+    public static String getAnnotationTypeString(final int annotationType) {
+        switch (annotationType) {
+        case HDFConstants.AN_DATA_LABEL:
+            return AN_DATA_LABEL;
+        case HDFConstants.AN_DATA_DESC:
+            return AN_DATA_DESC;
+        case HDFConstants.AN_FILE_LABEL:
+            return AN_FILE_LABEL;
+        case HDFConstants.AN_FILE_DESC:
+            return AN_FILE_DESC;
+        default:
+            return AN_UNDEFINED;
+        }
+    }
 
-	/**
-	 * the type of this annotation which is one of:<BR>
-	 * <code>HDFConstants.AN_DATA_LABEL</code><BR>
-	 * <code>HDFConstants.AN_DATA_DESC</code><BR>
-	 * <code>HDFConstants.AN_FILE_LABEL</code><BR>
-	 * <code>HDFConstants.AN_FILE_DESC</code><BR>
-	 */
-	private int type;
+    /**
+     * The <code>String</code> holding the content of this annotations
+     */
+    private String content;
 
-	/**
-	 * the tag of this annotation
-	 */
-	private int tag;
+    /**
+     * the type of this annotation which is one of:<BR>
+     * <code>HDFConstants.AN_DATA_LABEL</code><BR>
+     * <code>HDFConstants.AN_DATA_DESC</code><BR>
+     * <code>HDFConstants.AN_FILE_LABEL</code><BR>
+     * <code>HDFConstants.AN_FILE_DESC</code><BR>
+     */
+    private int type;
 
-	/**
-	 * the reference of this annotation
-	 */
-	private H4ReferencedObject reference;
+    /**
+     * the tag of this annotation
+     */
+    private int tag;
 
-	// ////////////////////////////////////////////////////////////////////////
-	//
-	// SET of Getters
-	// 
-	// ////////////////////////////////////////////////////////////////////////
-	/**
-	 * getter of <code>reference</code>
-	 * 
-	 * @return the reference of this annotation.
-	 */
-	int getReference() {
-		return reference.getReference();
-	}
+    /**
+     * the reference of this annotation
+     */
+    private H4ReferencedObject reference;
 
-	/**
-	 * getter of <code>tag</code>
-	 * 
-	 * @return the tag of this anntoation.
-	 */
-	public int getTag() {
-		return tag;
-	}
+    // ////////////////////////////////////////////////////////////////////////
+    //
+    // SET of Getters
+    // 
+    // ////////////////////////////////////////////////////////////////////////
+    /**
+     * getter of <code>reference</code>
+     * 
+     * @return the reference of this annotation.
+     */
+    int getReference() {
+        return reference.getReference();
+    }
 
-	/**
-	 * getter of <code>content</code>
-	 * 
-	 * @return the content of this annotation.
-	 */
-	public String getContent() {
-		return content;
-	}
+    /**
+     * getter of <code>tag</code>
+     * 
+     * @return the tag of this annotation.
+     */
+    public int getTag() {
+        return tag;
+    }
 
-	/**
-	 * getter of <code>type</code>
-	 * 
-	 * @return the type of this annotation.
-	 */
-	public int getType() {
-		return type;
-	}
+    /**
+     * getter of <code>content</code>
+     * 
+     * @return the content of this annotation.
+     */
+    public String getContent() {
+        return content;
+    }
 
-	/**
-	 * End access to this annotation.
-	 */
-	public synchronized void dipose() {
-		try {
-			
-			int identifier=getIdentifier();
-			if (identifier != HDFConstants.FAIL)
-				HDFLibrary.ANendaccess(identifier);
-			super.dispose();
-		} catch (HDFException e) {
-			//TODO log me
-		}
-	}
-	
+    /**
+     * getter of <code>type</code>
+     * 
+     * @return the type of this annotation.
+     */
+    public int getType() {
+        return type;
+    }
 
-	/**
-	 * Constructor. Builds a {@link H4Annotation} given the input annotation
-	 * identifier.
-	 * 
-	 * @param anIdentifier
-	 *            the identifier of the required annotation.
-	 * @throws HDFException
-	 */
-	public H4Annotation(int identifier) throws HDFException {
-		setIdentifier(identifier);
-		short tagRef[] = new short[] { -1, -1 };
-		HDFLibrary.ANid2tagref(identifier, tagRef);
-		tag = tagRef[0];
-		reference = new H4ReferencedObject(tagRef[1]);
-		type = HDFLibrary.ANtag2atype((short) tag);
-		final int annLength = HDFLibrary.ANannlen(identifier);
-		String annBuf[] = new String[] { "" };
-		HDFLibrary.ANreadann(identifier, annBuf, annLength);
-		content = annBuf[0];
-	}
+    /**
+     * End access to this annotation.
+     */
+    public synchronized void dispose() {
+        try {
+            int identifier = getIdentifier();
+            if (identifier != HDFConstants.FAIL) {
+                if (LOGGER.isLoggable(Level.FINE))
+                    LOGGER.log(Level.FINE, "disposing annotation with ID = " + identifier);
+                boolean closed = HDFLibrary.ANendaccess(identifier);
+                if (!closed) {
+                    if (LOGGER.isLoggable(Level.WARNING))
+                        LOGGER.log(Level.WARNING, "Unable to close access to the Annotation with ID = "+ identifier);
+                }
+            }
+        } catch (HDFException e) {
+            if (LOGGER.isLoggable(Level.WARNING))
+                LOGGER.log(Level.WARNING,
+                        "Error closing access to the annotation with ID = "
+                                + getIdentifier());
+        } 
+        super.dispose();
+    }
 
-	protected void finalize() throws Throwable {
-		try{
-			dispose();
-		}catch (Throwable t) {
-			// TODO: handle exception
-		}
-	}
+    /**
+     * Constructor. Builds a {@link H4Annotation} given the input annotation
+     * identifier.
+     * 
+     * @param anIdentifier
+     *                the identifier of the required annotation.
+     * @throws HDFException
+     */
+    public H4Annotation(int identifier) throws HDFException {
+        setIdentifier(identifier);
+        short tagRef[] = new short[] { -1, -1 };
+        HDFLibrary.ANid2tagref(identifier, tagRef);
+        tag = tagRef[0];
+        reference = new H4ReferencedObject(tagRef[1]);
+        type = HDFLibrary.ANtag2atype((short) tag);
+        final int annLength = HDFLibrary.ANannlen(identifier);
+        String annBuf[] = new String[] { "" };
+        HDFLibrary.ANreadann(identifier, annBuf, annLength);
+        content = annBuf[0];
+    }
+
+    protected void finalize() throws Throwable {
+        try {
+            dispose();
+        } catch (Throwable e) {
+            if (LOGGER.isLoggable(Level.WARNING))
+                LOGGER.log(Level.WARNING,
+                        "Catched exception during annotation finalization: "
+                                + e.getLocalizedMessage());
+        }
+    }
 }
