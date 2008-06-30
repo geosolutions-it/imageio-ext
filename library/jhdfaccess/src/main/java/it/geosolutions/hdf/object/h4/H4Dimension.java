@@ -392,11 +392,17 @@ public class H4Dimension extends H4Variable implements IHObject {
         }
     }
 
+    /**
+     * @see {@link AbstractH4Object#readAttribute(int, Object)}
+     */
     protected boolean readAttribute(int index, Object values)
             throws HDFException {
         return HDFLibrary.SDreadattr(getIdentifier(), index, values);
     }
 
+    /**
+     * @see {@link AbstractH4Object#getAttributeInfo(int, String[])}
+     */
     protected int[] getAttributeInfo(int index, String[] attrName)
             throws HDFException {
         final int[] dimAttrInfo = { 0, 0 };

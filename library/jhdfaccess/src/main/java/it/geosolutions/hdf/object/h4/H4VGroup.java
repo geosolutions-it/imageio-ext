@@ -257,10 +257,16 @@ public class H4VGroup extends H4Variable implements IHObject {
         return Collections.unmodifiableList(tagRefList);
     }
     
+    /**
+     * @see {@link AbstractH4Object#readAttribute(int, Object)}
+     */
     protected boolean readAttribute(int index, Object values) throws HDFException {
         return HDFLibrary.Vgetattr(getIdentifier(),index, values);
     }
     
+    /**
+     * @see {@link AbstractH4Object#getAttributeInfo(int, String[])}
+     */
     protected int[] getAttributeInfo(int index, String[] attrName)
     throws HDFException {
         int[] attrInfo = new int[] { 0, 0, 0 };
@@ -271,7 +277,10 @@ public class H4VGroup extends H4Variable implements IHObject {
         else
             return null;
     }
-    
+
+    /**
+     * @see {@link AbstractH4Object#findAttributeIndexByName(String)}
+     */
     protected int findAttributeIndexByName(String attributeName) throws HDFException {
         return HDFLibrary.Vfindattr(getIdentifier(), attributeName);
     }
