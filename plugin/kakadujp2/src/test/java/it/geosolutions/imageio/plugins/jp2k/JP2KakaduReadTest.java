@@ -24,14 +24,18 @@ import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageReadParam;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
+import javax.media.jai.widget.ScrollingImagePanel;
+import javax.swing.JFrame;
 
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
@@ -42,8 +46,11 @@ import junit.framework.TestSuite;
  * @author Daniele Romagnoli, GeoSolutions.
  * 
  */
-public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
-	static FileCache fileCache = new FileCache();
+public class JP2KakaduReadTest extends TestCase {
+	private static FileCache fileCache = new FileCache();
+	private final static String msg = "JP2K Direct Kakadu Tests are skipped due to missing libraries.\n"
+			+ "Be sure the required Kakadu libraries libs are in the classpath";
+	private static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.jp2k");
 
 	public JP2KakaduReadTest(String name) {
 		super(name);
@@ -56,7 +63,7 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
 	 * @throws IOException
 	 */
 	public void testJaiReadFromUrl() throws IOException {
-		if (!isLibraryAvailable) {
+		if (!KakaduUtilities.isKakaduAvailable()) {
 			return;
 		}
 		final URL url = new URL(
@@ -74,10 +81,10 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
 	}
 
 	public void testJaiReadFromFile() throws IOException {
-		if (!isLibraryAvailable) {
+		if (!KakaduUtilities.isKakaduAvailable()) {
 			return;
 		}
-		final File file = TestData.file(this, "20070220101148004653.jp2");
+		final File file = TestData.file(this, "CB_TM432.jp2");
 		ImageReadDescriptorMT.register(JAI.getDefaultInstance());
 
 		final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
@@ -104,7 +111,7 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
 	 * @throws IOException
 	 */
 	public void testManualRead() throws IOException {
-		if (!isLibraryAvailable) {
+		if (!KakaduUtilities.isKakaduAvailable()) {
 			return;
 		}
 		final File file = TestData.file(this, "CB_TM432.jp2");
@@ -141,5 +148,28 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
 	
 	public static void visualize(RenderedImage ri, String title) {
 		visualize(ri, 800, 600);
+	}
+	protected void setUp() throws Exception {
+		super.setUp();
+		if (!KakaduUtilities.isKakaduAvailable()) {
+			LOGGER.warning(msg);
+			return;
+		}
+		// general settings
+		JAI.getDefaultInstance().getTileScheduler().setParallelism(5);
+		JAI.getDefaultInstance().getTileScheduler().setPriority(6);
+		JAI.getDefaultInstance().getTileScheduler().setPrefetchPriority(1);
+		JAI.getDefaultInstance().getTileScheduler().setPrefetchParallelism(1);
+		JAI.getDefaultInstance().getTileCache().setMemoryCapacity(64 * 1024 * 1024);
+		JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
+
+	}
+
+	public static void visualize(RenderedImage ri, int width, int height) {
+		final JFrame jf = new JFrame("");
+		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		jf.getContentPane().add(new ScrollingImagePanel(ri, width, height));
+		jf.pack();
+		jf.setVisible(true);
 	}
 }
