@@ -44,7 +44,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
@@ -72,9 +71,11 @@ import kdu_jni.Kdu_simple_file_source;
  * @author Daniele Romagnoli, GeoSolutions.
  */
 public class JP2KakaduImageReader extends ImageReader {
+	static{
+		KakaduUtilities.loadKakadu();
+	}
 
-	private static Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.plugins.jp2k");
+	private static Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.jp2k");
 
 	/** Auxiliary String Buffer. It is used for messages logging */
 	private StringBuffer sb;
@@ -582,19 +583,20 @@ public class JP2KakaduImageReader extends ImageReader {
 				innerSampleModel = new SinglePixelPackedSampleModel(
 						DataBuffer.TYPE_INT, requiredRegionWidth,
 						requiredRegionHeight, BITMASKS_RGB);
-				imageBuffer = new DataBufferInt(destinationBuffer,
-						databufferSize);
+				imageBuffer = new DataBufferInt(destinationBuffer,databufferSize);
 				break;
 			case 1:
 				innerSampleModel = cm.createCompatibleSampleModel(
 						tileWidth, tileHeight);
 
-//				switch (dataBufferType) {
-//				case DataBuffer.TYPE_INT:
-					imageBuffer = new DataBufferInt(destinationBuffer,
-							databufferSize);
+				switch (dataBufferType) {
+				case DataBuffer.TYPE_INT:
+					imageBuffer = new DataBufferInt(destinationBuffer,databufferSize);
 					break;
-//				}
+//				case DataBuffer.TYPE_BYTE:
+//					imageBuffer = new DataBufferByte(destinationBuffer,databufferSize);
+//					break;
+				}
 			}
 
 			try {

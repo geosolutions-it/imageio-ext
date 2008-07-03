@@ -26,6 +26,10 @@ import kdu_jni.Kdu_message;
  */
 
 class Kdu_sysout_message extends Kdu_message {
+	static{
+		KakaduUtilities.loadKakadu();
+	}
+	
 	private static Logger LOGGER = Logger
 			.getLogger("it.geosolutions.imageio.jp2k");
 
