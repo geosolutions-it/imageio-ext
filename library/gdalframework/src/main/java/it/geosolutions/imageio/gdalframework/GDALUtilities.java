@@ -103,7 +103,7 @@ public final class GDALUtilities {
             .getLogger("it.geosolutions.imageio.gdalframework");
 
     /** is gdal available on this machine?. */
-    private volatile static boolean available;
+    private static boolean available;
 
     private static boolean init = false;
 
