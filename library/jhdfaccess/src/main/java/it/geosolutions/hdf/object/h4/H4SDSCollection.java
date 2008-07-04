@@ -37,36 +37,36 @@ import ncsa.hdf.hdflib.HDFLibrary;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  */
-public class H4SDSCollection extends AbstractH4Object implements IHObject,
-        List {
-    
-    private class H4SDSCollectionIterator implements Iterator{
+public class H4SDSCollection extends AbstractH4Object implements IHObject, List {
+
+    private class H4SDSCollectionIterator implements Iterator {
 
         private Iterator it;
+
         public boolean hasNext() {
-                return it.hasNext();
+            return it.hasNext();
         }
 
         public Object next() {
-                return it.next();
+            return it.next();
         }
 
         public void remove() {
-                throw new UnsupportedOperationException();
-                
+            throw new UnsupportedOperationException();
+
         }
 
         public H4SDSCollectionIterator(Iterator it) {
-                this.it = it;
+            this.it = it;
         }
     }
-    
-    private class H4SDSCollectionListIterator implements ListIterator{
+
+    private class H4SDSCollectionListIterator implements ListIterator {
 
         private ListIterator listIt;
 
         public H4SDSCollectionListIterator(ListIterator listIt) {
-                this.listIt = listIt;
+            this.listIt = listIt;
         }
 
         public void add(Object item) {
@@ -105,7 +105,7 @@ public class H4SDSCollection extends AbstractH4Object implements IHObject,
             throw new UnsupportedOperationException();
         }
     }
-    
+
     private final static Logger LOGGER = Logger
             .getLogger("it.geosolutions.hdf.object.h4");
 
@@ -140,7 +140,7 @@ public class H4SDSCollection extends AbstractH4Object implements IHObject,
      * @uml.associationEnd inverse="h4SdsCollection:it.geosolutions.hdf.object.h4.H4File"
      */
     private H4File h4File;
-    
+
     /**
      * getter of <code>h4File</code>
      * 
@@ -201,7 +201,7 @@ public class H4SDSCollection extends AbstractH4Object implements IHObject,
      *         specified sds does not exist
      */
     public H4SDS get(final String sName) {
-        if (sName==null)
+        if (sName == null)
             throw new IllegalArgumentException("Null SDS name provided");
         H4SDS sds = null;
         if (sdsNamesToIndexes.containsKey(sName)) {
@@ -220,9 +220,9 @@ public class H4SDSCollection extends AbstractH4Object implements IHObject,
      * @param h4file
      *                the input {@link H4File}
      * @throws IllegalArgumentException
-     *             in case of wrong specified input parameters or in case
-     *             some initialization fails due to wrong identifiers or
-     *             related errors.
+     *                 in case of wrong specified input parameters or in case
+     *                 some initialization fails due to wrong identifiers or
+     *                 related errors.
      */
     public H4SDSCollection(H4File h4file) {
         this.h4File = h4file;
@@ -232,7 +232,8 @@ public class H4SDSCollection extends AbstractH4Object implements IHObject,
         if (filePath == null)
             throw new IllegalArgumentException("Empty filepath specified");
         try {
-            int identifier = HDFLibrary.SDstart(filePath, HDFConstants.DFACC_RDONLY | HDFConstants.DFACC_PARALLEL);
+            int identifier = HDFLibrary.SDstart(filePath,
+                    HDFConstants.DFACC_RDONLY | HDFConstants.DFACC_PARALLEL);
             if (identifier != HDFConstants.FAIL) {
                 setIdentifier(identifier);
                 final int[] sdsFileInfo = new int[2];
@@ -257,17 +258,18 @@ public class H4SDSCollection extends AbstractH4Object implements IHObject,
                         }
 
                     }
-                }
-                else{
-                    sdsList=null;
-                    numSDS=0;
-                    sdsNamesToIndexes=null;
+                } else {
+                    sdsList = null;
+                    numSDS = 0;
+                    sdsNamesToIndexes = null;
                     if (LOGGER.isLoggable(Level.WARNING))
                         LOGGER.log(Level.WARNING,
-                                "Unable to get file info from the SD interface with ID = " + identifier);
+                                "Unable to get file info from the SD interface with ID = "
+                                        + identifier);
                 }
             } else {
-                throw new IllegalStateException("Failing to get an identifier for the SDS collection");
+                throw new IllegalStateException(
+                        "Failing to get an identifier for the SDS collection");
             }
         } catch (HDFException e) {
             throw new IllegalStateException(
@@ -276,7 +278,7 @@ public class H4SDSCollection extends AbstractH4Object implements IHObject,
         }
     }
 
-    protected void finalize() throws Throwable {
+     protected void finalize() throws Throwable {
         try {
             dispose();
         } catch (Throwable e) {
@@ -291,38 +293,42 @@ public class H4SDSCollection extends AbstractH4Object implements IHObject,
      * close this {@link H4SDSCollection} and dispose allocated objects.
      */
     public synchronized void dispose() {
-        if (sdsNamesToIndexes != null){
-            sdsNamesToIndexes.clear();
-            sdsNamesToIndexes=null;
-        }
+        int identifier = getIdentifier();
+        if (identifier != HDFConstants.FAIL) {
+            if (sdsNamesToIndexes != null) {
+                sdsNamesToIndexes.clear();
+                sdsNamesToIndexes = null;
+            }
 
-        if (sdsList != null) {
-            for (int i = 0; i < numSDS; i++) {
-                H4SDS h4sds = (H4SDS) sdsList.get(i);
-                h4sds.dispose();
+            if (sdsList != null) {
+                for (int i = 0; i < numSDS; i++) {
+                    H4SDS h4sds = (H4SDS) sdsList.get(i);
+                    h4sds.dispose();
+                }
+                sdsList.clear();
+                sdsList = null;
             }
-            sdsList.clear();
-            sdsList = null;
-        }
-        try {
-            int identifier = getIdentifier();
-            if (LOGGER.isLoggable(Level.FINE))
-                LOGGER.log(Level.FINE, "disposing SDS collection with ID = " + identifier);
-            boolean closed = HDFLibrary.SDend(identifier);
-            if (!closed) {
+            try {
+                if (LOGGER.isLoggable(Level.FINE))
+                    LOGGER.log(Level.FINE,
+                            "disposing SDS collection with ID = " + identifier);
+                boolean closed = HDFLibrary.SDend(identifier);
+                if (!closed) {
+                    if (LOGGER.isLoggable(Level.WARNING))
+                        LOGGER.log(Level.WARNING,
+                                "Unable to close access to the SDS interface with ID = "
+                                        + identifier);
+                }
+            } catch (HDFException e) {
                 if (LOGGER.isLoggable(Level.WARNING))
-                    LOGGER.log(Level.WARNING, "Unable to close access to the SDS interface with ID = "+ identifier);
+                    LOGGER.log(Level.WARNING,
+                            "Error closing access to the SDS interface with ID = "
+                                    + getIdentifier());
             }
-        } catch (HDFException e) {
-            if (LOGGER.isLoggable(Level.WARNING))
-                LOGGER.log(Level.WARNING,
-                        "Error closing access to the SDS interface with ID = "
-                                + getIdentifier());
         }
         super.dispose();
     }
 
- 
     /**
      * Appends the specified element to the end of this list. Since this method
      * is actually unsupported, an <code>UnsupportedOperationException</code>
@@ -423,7 +429,7 @@ public class H4SDSCollection extends AbstractH4Object implements IHObject,
      * @return a list iterator.
      */
     public ListIterator listIterator() {
-        return new H4SDSCollectionListIterator (sdsList.listIterator());
+        return new H4SDSCollectionListIterator(sdsList.listIterator());
     }
 
     /**
@@ -433,7 +439,7 @@ public class H4SDSCollection extends AbstractH4Object implements IHObject,
      * @return a list iterator.
      */
     public ListIterator listIterator(int index) {
-        return new H4SDSCollectionListIterator (sdsList.listIterator(index));
+        return new H4SDSCollectionListIterator(sdsList.listIterator(index));
     }
 
     /**
@@ -533,28 +539,30 @@ public class H4SDSCollection extends AbstractH4Object implements IHObject,
     /**
      * @see {@link AbstractH4Object#readAttribute(int, Object)}
      */
-    protected boolean readAttribute(int index, Object values) throws HDFException {
-        return HDFLibrary.SDreadattr(getIdentifier(),index, values);
+    protected boolean readAttribute(int index, Object values)
+            throws HDFException {
+        return HDFLibrary.SDreadattr(getIdentifier(), index, values);
     }
 
     /**
      * @see {@link AbstractH4Object#getAttributeInfo(int, String[])}
      */
     protected int[] getAttributeInfo(int index, String[] attrName)
-    throws HDFException {
+            throws HDFException {
         int[] attrInfo = new int[] { 0, 0 };
         boolean done = HDFLibrary.SDattrinfo(getIdentifier(), index, attrName,
-        attrInfo);
+                attrInfo);
         if (done)
             return attrInfo;
         else
             return null;
     }
-    
+
     /**
      * @see {@link AbstractH4Object#findAttributeIndexByName(String)}
      */
-    protected int findAttributeIndexByName(String attributeName) throws HDFException {
-        return HDFLibrary.SDfindattr(getIdentifier(),attributeName);
+    protected int findAttributeIndexByName(String attributeName)
+            throws HDFException {
+        return HDFLibrary.SDfindattr(getIdentifier(), attributeName);
     }
 }
