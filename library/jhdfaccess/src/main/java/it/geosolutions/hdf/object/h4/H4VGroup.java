@@ -33,12 +33,50 @@ import ncsa.hdf.hdflib.HDFLibrary;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  */
-public class H4VGroup extends H4Variable implements IHObject {
+public class H4VGroup extends H4Variable implements IHObject, IH4ObjectWithAttributes {
 
     /** Logger. */
     private final static Logger LOGGER = Logger
             .getLogger("it.geosolutions.hdf.object.h4");
 
+    private AbstractH4ObjectWithAttributes objectWithAttributes; 
+    
+    private class H4VGroupWithAttributes  extends AbstractH4ObjectWithAttributes{
+
+        public H4VGroupWithAttributes(final int identifier, final int numAttributes) {
+            super(identifier, numAttributes );
+        }
+        
+        /**
+         * @see {@link AbstractH4ObjectWithAttributes#readAttribute(int, Object)}
+         */
+        protected boolean readAttribute(int index, Object values)
+                throws HDFException {
+            return HDFLibrary.Vgetattr(getIdentifier(), index, values);
+        }
+
+        /**
+         * @see {@link AbstractH4ObjectWithAttributes#getAttributeInfo(int, String[])}
+         */
+        protected int[] getAttributeInfo(int index, String[] attrName)
+                throws HDFException {
+            int[] attrInfo = new int[] { 0, 0, 0 };
+            boolean done = HDFLibrary.Vattrinfo(getIdentifier(), index, attrName,
+                    attrInfo);
+            if (done)
+                return attrInfo;
+            else
+                return null;
+        }
+
+        /**
+         * @see {@link AbstractH4ObjectWithAttributes#findAttributeIndexByName(String)}
+         */
+        protected int findAttributeIndexByName(String attributeName)
+                throws HDFException {
+            return HDFLibrary.Vfindattr(getIdentifier(), attributeName);
+        }
+    }
     /**
      * The list of TAG/REF couples referred by this VGroup
      */
@@ -127,7 +165,7 @@ public class H4VGroup extends H4Variable implements IHObject {
      * Main Constructor which builds a <code>H4Vgroup</code> given its ref.
      * This constructor is called by the {@link H4VGroupCollection} during the
      * initialization fase. After this call, the {@link H4VGroupCollection}
-     * check if the built object is a real VGroup. If affermative, it call the
+     * check if the built object is a real VGroup. If affirmative, it call the
      * {@link #init()} method.
      * 
      * @param h4VgroupCollection
@@ -205,8 +243,7 @@ public class H4VGroup extends H4Variable implements IHObject {
         setName(vgroupName[0]);
         tag = HDFLibrary.VQuerytag(identifier);
         numObjects = HDFLibrary.Vntagrefs(identifier);
-        numAttributes = HDFLibrary.Vnattrs(identifier);
-        init();
+        objectWithAttributes = new H4VGroupWithAttributes(identifier, HDFLibrary.Vnattrs(identifier));
     }
 
     protected void finalize() throws Throwable {
@@ -230,6 +267,8 @@ public class H4VGroup extends H4Variable implements IHObject {
                 if (LOGGER.isLoggable(Level.FINE))
                     LOGGER.log(Level.FINE, "disposing VGroup with ID = ");
                 HDFLibrary.Vdetach(identifier);
+                if (objectWithAttributes!=null)
+                    objectWithAttributes.dispose();
             }
         } catch (HDFException e) {
             if (LOGGER.isLoggable(Level.WARNING))
@@ -257,34 +296,25 @@ public class H4VGroup extends H4Variable implements IHObject {
         }
         return Collections.unmodifiableList(tagRefList);
     }
-
+    
     /**
-     * @see {@link AbstractH4Object#readAttribute(int, Object)}
+     * @see {@link IH4ObjectWithAttributes#getAttribute(int)}
      */
-    protected boolean readAttribute(int index, Object values)
-            throws HDFException {
-        return HDFLibrary.Vgetattr(getIdentifier(), index, values);
+    public H4Attribute getAttribute(int attributeIndex) throws HDFException {
+        return objectWithAttributes.getAttribute(attributeIndex);
     }
 
     /**
-     * @see {@link AbstractH4Object#getAttributeInfo(int, String[])}
+     * @see {@link IH4ObjectWithAttributes#getAttribute(String)}
      */
-    protected int[] getAttributeInfo(int index, String[] attrName)
-            throws HDFException {
-        int[] attrInfo = new int[] { 0, 0, 0 };
-        boolean done = HDFLibrary.Vattrinfo(getIdentifier(), index, attrName,
-                attrInfo);
-        if (done)
-            return attrInfo;
-        else
-            return null;
+    public H4Attribute getAttribute(String attributeName) throws HDFException {
+        return objectWithAttributes.getAttribute(attributeName);
     }
 
     /**
-     * @see {@link AbstractH4Object#findAttributeIndexByName(String)}
+     * @see {@link IH4ObjectWithAttributes#getNumAttributes()}
      */
-    protected int findAttributeIndexByName(String attributeName)
-            throws HDFException {
-        return HDFLibrary.Vfindattr(getIdentifier(), attributeName);
+    public int getNumAttributes() {
+       return objectWithAttributes.getNumAttributes();
     }
 }

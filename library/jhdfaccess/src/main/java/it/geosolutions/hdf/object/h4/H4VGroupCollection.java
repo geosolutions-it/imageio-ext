@@ -175,7 +175,7 @@ public class H4VGroupCollection extends AbstractHObject implements IHObject,
                     // before moving to the next.
                     H4VGroup vgroup = new H4VGroup(this,referencesArray[loneVgroupIndex]);
                     if (H4Utilities.isAVGroupClass(vgroup.getClassName())) {
-                        vgroup.init();
+                        vgroup.initialize();
                         loneVgroupsList.add(numLoneVgroups++, vgroup);
                     } else
                         vgroup.dispose();

@@ -200,14 +200,10 @@ public class HDFTest extends TestCase {
 
 						// Dimension's attributes visualization
 						if (nAttrib != 0) {
-							Map attributes = dim.getAttributes();
-							Set keys = attributes.keySet();
-							Iterator attribsIt = keys.iterator();
-							while (attribsIt.hasNext()) {
-								H4Attribute attrib = (H4Attribute) attributes
-										.get(attribsIt.next());
-								outSb.append(printInfo(attrib));
-							}
+				                       for (int j=0;j<nAttrib;j++){
+				                           H4Attribute attrib = (H4Attribute) dim.getAttribute(j);
+				                           outSb.append(printInfo(attrib));
+				                       }
 						}
 					}
 			}
@@ -218,14 +214,10 @@ public class HDFTest extends TestCase {
 			// SDS Attributes visualization
 			final int attrNum = sds.getNumAttributes();
 			if (attrNum != 0) {
-				Map attributes = sds.getAttributes();
-				Set keys = attributes.keySet();
-				Iterator attribsIt = keys.iterator();
-				while (attribsIt.hasNext()) {
-					H4Attribute attrib = (H4Attribute) attributes.get(attribsIt
-							.next());
-					outSb.append(printInfo(attrib));
-				}
+			    for (int i=0;i<attrNum;i++){
+			        H4Attribute attrib = (H4Attribute) sds.getAttribute(i);
+                                outSb.append(printInfo(attrib));
+			    }
 			}
 
 			// Visualize 2D datasets
@@ -446,14 +438,10 @@ public class HDFTest extends TestCase {
 
 		int attrNum = sdsColl.getNumAttributes();
 		if (attrNum != 0) {
-			Map attributes = sdsColl.getAttributes();
-			Set keys = attributes.keySet();
-			Iterator attribsIt = keys.iterator();
-			while (attribsIt.hasNext()) {
-				H4Attribute attrib = (H4Attribute) attributes.get(attribsIt
-						.next());
-				outSb.append(printInfo(attrib));
-			}
+                        for (int i=0;i<attrNum;i++){
+                            H4Attribute attrib = (H4Attribute) sdsColl.getAttribute(i);
+                            outSb.append(printInfo(attrib));
+                        }
 		}
 		if (TestData.isInteractiveTest()) {
 			visualizeText("ATTRIBUTES FROM SDS COLLECTION", outSb.toString());
@@ -482,14 +470,10 @@ public class HDFTest extends TestCase {
 							" attributes\n=========================================\n");
 			// find all attributes of the current SDS
 			if (attrNum != 0) {
-				Map attributes = sds.getAttributes();
-				Set keys = attributes.keySet();
-				Iterator attribsIt = keys.iterator();
-				while (attribsIt.hasNext()) {
-					H4Attribute attrib = (H4Attribute) attributes.get(attribsIt
-							.next());
-					outSb.append(printInfo(attrib));
-				}
+	                            for (int j=0;j<attrNum;j++){
+	                                H4Attribute attrib = (H4Attribute) sds.getAttribute(j);
+	                                outSb.append(printInfo(attrib));
+	                            }
 			}
 			// find predefined attribute
 			H4Attribute attribute = sds

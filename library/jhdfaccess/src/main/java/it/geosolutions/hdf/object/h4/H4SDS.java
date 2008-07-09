@@ -36,8 +36,10 @@ import ncsa.hdf.hdflib.HDFLibrary;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  */
-public class H4SDS extends H4Variable implements IHObject {
+public class H4SDS extends H4Variable implements IHObject, IH4ObjectWithAttributes {
 
+    private AbstractH4ObjectWithAttributes objectWithAttributes; 
+    
     /** Logger. */
     private final static Logger LOGGER = Logger
             .getLogger("it.geosolutions.hdf.object.h4");
@@ -298,8 +300,7 @@ public class H4SDS extends H4Variable implements IHObject {
             }
             sdInfo[1] = sdInfo[1] & (~HDFConstants.DFNT_LITEND);
             datatype = sdInfo[1];
-            numAttributes = sdInfo[2];
-            init();
+            objectWithAttributes = new H4SDSFamilyObjectsWithAttributes(identifier, sdInfo[2]);
             dimensions = new ArrayList(rank);
 
             HDFChunkInfo chunkInfo = new HDFChunkInfo();
@@ -344,6 +345,9 @@ public class H4SDS extends H4Variable implements IHObject {
     public synchronized void dispose() {
         int identifier = getIdentifier();
         if (identifier != HDFConstants.FAIL) {
+            if (LOGGER.isLoggable(Level.FINE))
+                LOGGER.log(Level.FINE, "disposing SDS with ID = "
+                        + identifier);
             if (dimensions != null) {
                 final int dimSizes = dimensions.size();
                 if (dimSizes != 0) {
@@ -371,7 +375,10 @@ public class H4SDS extends H4Variable implements IHObject {
                 labelAnnotations.clear();
                 labelAnnotations = null;
             }
-
+            if (objectWithAttributes!=null){
+                objectWithAttributes.dispose();
+                objectWithAttributes = null;
+            }
             // Disposing objects hold by H4DecoratedObject superclass
             // ----------------
             // OLD STRATEGY:
@@ -640,32 +647,23 @@ public class H4SDS extends H4Variable implements IHObject {
     }
 
     /**
-     * @see {@link AbstractH4Object#readAttribute(int, Object)}
+     * @see {@link IH4ObjectWithAttributes#getAttribute(int)}
      */
-    protected boolean readAttribute(int index, Object values)
-            throws HDFException {
-        return HDFLibrary.SDreadattr(getIdentifier(), index, values);
+    public H4Attribute getAttribute(int attributeIndex) throws HDFException {
+        return objectWithAttributes.getAttribute(attributeIndex);
     }
 
     /**
-     * @see {@link AbstractH4Object#getAttributeInfo(int, String[])}
+     * @see {@link IH4ObjectWithAttributes#getAttribute(String)}
      */
-    protected int[] getAttributeInfo(int index, String[] attrName)
-            throws HDFException {
-        int[] attrInfo = new int[] { 0, 0 };
-        boolean done = HDFLibrary.SDattrinfo(getIdentifier(), index, attrName,
-                attrInfo);
-        if (done)
-            return attrInfo;
-        else
-            return null;
+    public H4Attribute getAttribute(String attributeName) throws HDFException {
+        return objectWithAttributes.getAttribute(attributeName);
     }
 
     /**
-     * @see {@link AbstractH4Object#findAttributeIndexByName(String)}
+     * @see {@link IH4ObjectWithAttributes#getNumAttributes()}
      */
-    protected int findAttributeIndexByName(String attributeName)
-            throws HDFException {
-        return HDFLibrary.SDfindattr(getIdentifier(), attributeName);
+    public int getNumAttributes() {
+       return objectWithAttributes.getNumAttributes();
     }
 }

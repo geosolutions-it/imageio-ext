@@ -43,9 +43,9 @@ public class H4Attribute {
     private int size;
 
     /**
-     * The {@link AbstractHObject} to which this attribute belongs.
+     * The {@link AbstractH4ObjectWithAttributes} to which this attribute belongs.
      */
-    private AbstractH4Object attributeOwner;
+    private AbstractH4ObjectWithAttributes attributeOwner;
 
     /**
      * The index of the attribute.
@@ -74,7 +74,7 @@ public class H4Attribute {
      *                size. Attribute information retrieved by means of the
      *                VGroup interface, also returns the number of values.
      */
-    public H4Attribute(AbstractH4Object object, int i, String attrName,
+    public H4Attribute(AbstractH4ObjectWithAttributes object, int i, String attrName,
             int[] attrInfo) {
         this(object, i, attrName, attrInfo, null);
     }
@@ -95,12 +95,13 @@ public class H4Attribute {
      * @param data
      *                an Object containing datavalues of this attribute.
      */
-    public H4Attribute(AbstractH4Object object, int i, String attrName,
+    public H4Attribute(AbstractH4ObjectWithAttributes object, int i, String attrName,
             int[] attrInfo, Object data) {
         int attrDatatype;
         if (attrInfo.length == 2) {
             attrDatatype = attrInfo[0];
             size = attrInfo[1];
+            numValues=1;
         } else {
             attrDatatype = attrInfo[0];
             numValues = attrInfo[1];
@@ -213,7 +214,7 @@ public class H4Attribute {
      * @throws HDFException
      */
     public static H4Attribute buildAttribute(
-            AbstractH4Object objectWithAttribute, final int index)
+            AbstractH4ObjectWithAttributes objectWithAttribute, final int index)
             throws HDFException {
         if (objectWithAttribute==null)
             throw new IllegalArgumentException("Input object is null");
@@ -230,5 +231,14 @@ public class H4Attribute {
                     attrName[0], attrInfo);
         }
         return attribute;
+    }
+    
+    public synchronized void dispose() {
+        numValues=-1;
+        attributeOwner=null;
+        name = null;
+        index = -1;
+        datatype= HDFConstants.FAIL;
+        values = null;
     }
 }

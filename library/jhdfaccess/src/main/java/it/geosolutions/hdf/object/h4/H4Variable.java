@@ -16,6 +16,7 @@
  */
 package it.geosolutions.hdf.object.h4;
 
+import it.geosolutions.hdf.object.AbstractHObject;
 import it.geosolutions.hdf.object.IHObject;
 
 /**
@@ -23,7 +24,7 @@ import it.geosolutions.hdf.object.IHObject;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  */
-public abstract class H4Variable extends AbstractH4Object implements IHObject {
+public abstract class H4Variable extends AbstractHObject implements IHObject {
 
     /**
      * The name of this Variable

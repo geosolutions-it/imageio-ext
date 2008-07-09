@@ -32,11 +32,13 @@ import ncsa.hdf.hdflib.HDFLibrary;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  */
-public class H4GRImage extends H4Variable {
+public class H4GRImage extends H4Variable implements IH4ObjectWithAttributes {
 
     /** Logger. */
     private final static Logger LOGGER = Logger
             .getLogger("it.geosolutions.hdf.object.h4");
+
+    private AbstractH4ObjectWithAttributes objectWithAttributes;
 
     /** predefined attributes */
     public static String PREDEF_ATTR_FILL_VALUE = "FILL_VALUE";
@@ -249,7 +251,7 @@ public class H4GRImage extends H4Variable {
      *                 related errors.
      */
     public H4GRImage(H4GRImageCollection h4GrImageCollection, final int grIndex) {
-        if (h4GrImageCollection==null)
+        if (h4GrImageCollection == null)
             throw new IllegalArgumentException("null GRImage collection");
         h4GRImageCollectionOwner = h4GrImageCollection;
         final int interfaceID = h4GRImageCollectionOwner.getIdentifier();
@@ -272,8 +274,8 @@ public class H4GRImage extends H4Variable {
                 numComponents = grInfo[0];
                 datatype = grInfo[1] & (~HDFConstants.DFNT_LITEND);
                 interlaceMode = grInfo[2];
-                numAttributes = grInfo[3];
-                init();
+                objectWithAttributes = new H4GRFamilyObjectsWithAttributes(
+                        identifier, grInfo[3]);
                 numPalettes = HDFLibrary.GRgetnluts(identifier);
             } else {
                 throw new IllegalStateException("Invalid GRImage identifier");
@@ -299,30 +301,34 @@ public class H4GRImage extends H4Variable {
      * close this {@link H4GRImage} and dispose allocated objects.
      */
     public synchronized void dispose() {
-
-        // closing annotations
-        if (descAnnotations != null) {
-            for (int i = 0; i < nDescriptions; i++) {
-                H4Annotation ann = (H4Annotation) descAnnotations.get(i);
-                ann.dispose();
-            }
-            descAnnotations.clear();
-            descAnnotations = null;
-        }
-        if (labelAnnotations != null) {
-            for (int i = 0; i < nLabels; i++) {
-                H4Annotation ann = (H4Annotation) labelAnnotations.get(i);
-                ann.dispose();
-            }
-            labelAnnotations.clear();
-            labelAnnotations = null;
-        }
-        try {
-            int identifier = getIdentifier();
+        int identifier = getIdentifier();
+        if (identifier != HDFConstants.FAIL) {
             if (LOGGER.isLoggable(Level.FINE))
                 LOGGER.log(Level.FINE, "disposing GRImage with ID = "
                         + identifier);
-            if (identifier != HDFConstants.FAIL) {
+            // closing annotations
+            if (descAnnotations != null) {
+                for (int i = 0; i < nDescriptions; i++) {
+                    H4Annotation ann = (H4Annotation) descAnnotations.get(i);
+                    ann.dispose();
+                }
+                descAnnotations.clear();
+                descAnnotations = null;
+            }
+            if (labelAnnotations != null) {
+                for (int i = 0; i < nLabels; i++) {
+                    H4Annotation ann = (H4Annotation) labelAnnotations.get(i);
+                    ann.dispose();
+                }
+                labelAnnotations.clear();
+                labelAnnotations = null;
+            }
+            if (objectWithAttributes!=null){
+                objectWithAttributes.dispose();
+                objectWithAttributes = null;
+            }
+            try {
+
                 boolean closed = HDFLibrary.GRendaccess(identifier);
                 if (!closed) {
                     if (LOGGER.isLoggable(Level.WARNING))
@@ -330,14 +336,13 @@ public class H4GRImage extends H4Variable {
                                 "Unable to close access to GRImage with ID = "
                                         + identifier);
                 }
+            } catch (HDFException e) {
+                if (LOGGER.isLoggable(Level.WARNING))
+                    LOGGER.log(Level.WARNING,
+                            "Error closing access to the GRImage with ID = "
+                                    + getIdentifier());
             }
-        } catch (HDFException e) {
-            if (LOGGER.isLoggable(Level.WARNING))
-                LOGGER.log(Level.WARNING,
-                        "Error closing access to the GRImage with ID = "
-                                + getIdentifier());
         }
-
         super.dispose();
     }
 
@@ -472,8 +477,8 @@ public class H4GRImage extends H4Variable {
     }
 
     /**
-     * Returns an unmodifiable <code>List</code> of annotations available for this Image,
-     * given the required type of annotations.
+     * Returns an unmodifiable <code>List</code> of annotations available for
+     * this Image, given the required type of annotations.
      * 
      * @param annotationType
      *                the required annotation type. One of:<BR>
@@ -504,8 +509,9 @@ public class H4GRImage extends H4Variable {
                     nLabels = listLabels.size();
                 labelAnnotations = listLabels;
             }
-            if (nLabels>0)
-                returnedAnnotations = Collections.unmodifiableList(labelAnnotations);
+            if (nLabels > 0)
+                returnedAnnotations = Collections
+                        .unmodifiableList(labelAnnotations);
             break;
         case HDFConstants.AN_DATA_DESC:
             if (nDescriptions == -1) {
@@ -521,44 +527,36 @@ public class H4GRImage extends H4Variable {
                     nDescriptions = listDescriptions.size();
                 descAnnotations = listDescriptions;
             }
-            if (nDescriptions>0)
-                returnedAnnotations = Collections.unmodifiableList(descAnnotations);
+            if (nDescriptions > 0)
+                returnedAnnotations = Collections
+                        .unmodifiableList(descAnnotations);
             break;
         default:
-            returnedAnnotations =  null;
+            returnedAnnotations = null;
         }
-        if (returnedAnnotations==null)
-            returnedAnnotations=Collections.emptyList();
+        if (returnedAnnotations == null)
+            returnedAnnotations = Collections.emptyList();
         return returnedAnnotations;
     }
-    
-    /**
-     * @see {@link AbstractH4Object#readAttribute(int, Object)}
-     */
-    protected boolean readAttribute(int index, Object values)
-            throws HDFException {
-        return HDFLibrary.GRgetattr(getIdentifier(), index, values);
-    }
-    
-    /**
-     * @see {@link AbstractH4Object#getAttributeInfo(int, String[])}
-     */
-    protected int[] getAttributeInfo(int index, String[] attrName)
-            throws HDFException {
-        int[] attrInfo = new int[] { 0, 0 };
-        boolean done = HDFLibrary.GRattrinfo(getIdentifier(), index, attrName,
-                attrInfo);
-        if (done)
-            return attrInfo;
-        else
-            return null;
 
+    /**
+     * @see {@link IH4ObjectWithAttributes#getAttribute(int)}
+     */
+    public H4Attribute getAttribute(int attributeIndex) throws HDFException {
+        return objectWithAttributes.getAttribute(attributeIndex);
     }
 
     /**
-     * @see {@link AbstractH4Object#findAttributeIndexByName(String)}
+     * @see {@link IH4ObjectWithAttributes#getAttribute(String)}
      */
-    protected int findAttributeIndexByName(String attributeName) throws HDFException {
-            return HDFLibrary.GRfindattr(getIdentifier(),attributeName);
+    public H4Attribute getAttribute(String attributeName) throws HDFException {
+        return objectWithAttributes.getAttribute(attributeName);
+    }
+
+    /**
+     * @see {@link IH4ObjectWithAttributes#getNumAttributes()}
+     */
+    public int getNumAttributes() {
+        return objectWithAttributes.getNumAttributes();
     }
 }

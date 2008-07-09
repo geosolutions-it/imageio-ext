@@ -38,11 +38,13 @@ import ncsa.hdf.hdflib.HDFLibrary;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  */
-public class H4GRImageCollection extends AbstractH4Object implements IHObject,
-        List {
+public class H4GRImageCollection extends AbstractHObject implements IHObject,
+        List, IH4ObjectWithAttributes {
 
     private final static Logger LOGGER = Logger
             .getLogger("it.geosolutions.hdf.object.h4");
+
+    private AbstractH4ObjectWithAttributes objectWithAttributes;
 
     private class H4GRImageCollectionIterator implements Iterator {
 
@@ -65,13 +67,13 @@ public class H4GRImageCollection extends AbstractH4Object implements IHObject,
             this.it = it;
         }
     }
-    
-    private class H4GRImageCollectionListIterator implements ListIterator{
+
+    private class H4GRImageCollectionListIterator implements ListIterator {
 
         private ListIterator listIt;
 
         public H4GRImageCollectionListIterator(ListIterator listIt) {
-                this.listIt = listIt;
+            this.listIt = listIt;
         }
 
         public void add(Object item) {
@@ -182,8 +184,8 @@ public class H4GRImageCollection extends AbstractH4Object implements IHObject,
 
                 // Retrieving Information
                 if (HDFLibrary.GRfileinfo(identifier, grFileInfo)) {
-                    numAttributes = grFileInfo[1];
-                    init();
+                    objectWithAttributes = new H4GRFamilyObjectsWithAttributes(
+                            identifier, grFileInfo[1]);
                     numImages = grFileInfo[0];
                     grImagesList = new ArrayList(numImages);
                     grImagesNamesToIndexes = new HashMap(numImages);
@@ -231,24 +233,30 @@ public class H4GRImageCollection extends AbstractH4Object implements IHObject,
      * the owned {@link AbstractHObject}s
      */
     public synchronized void dispose() {
-        if (grImagesNamesToIndexes != null) {
-            grImagesNamesToIndexes.clear();
-            grImagesNamesToIndexes = null;
-        }
-        if (grImagesList != null) {
-            for (int i = 0; i < numImages; i++) {
-                H4GRImage h4grImage = (H4GRImage) grImagesList.get(i);
-                h4grImage.dispose();
-            }
-            grImagesList.clear();
-            grImagesList = null;
-        }
-        try {
-            int identifier = getIdentifier();
+        int identifier = getIdentifier();
+        if (identifier != HDFConstants.FAIL) {
             if (LOGGER.isLoggable(Level.FINE))
                 LOGGER.log(Level.FINE,
                         "disposing GRImage collection with ID = " + identifier);
-            if (identifier != HDFConstants.FAIL) {
+
+            if (grImagesNamesToIndexes != null) {
+                grImagesNamesToIndexes.clear();
+                grImagesNamesToIndexes = null;
+            }
+            if (grImagesList != null) {
+                for (int i = 0; i < numImages; i++) {
+                    H4GRImage h4grImage = (H4GRImage) grImagesList.get(i);
+                    h4grImage.dispose();
+                }
+                grImagesList.clear();
+                grImagesList = null;
+            }
+            if (objectWithAttributes!=null){
+                objectWithAttributes.dispose();
+                objectWithAttributes = null;
+            }
+            try {
+
                 boolean closed = HDFLibrary.GRend(identifier);
                 if (!closed) {
                     if (LOGGER.isLoggable(Level.WARNING))
@@ -256,12 +264,12 @@ public class H4GRImageCollection extends AbstractH4Object implements IHObject,
                                 "Unable to close access to GRImage interface with ID = "
                                         + identifier);
                 }
+            } catch (HDFException e) {
+                if (LOGGER.isLoggable(Level.WARNING))
+                    LOGGER.log(Level.WARNING,
+                            "Error closing access to the GRImage interface with ID = "
+                                    + getIdentifier());
             }
-        } catch (HDFException e) {
-            if (LOGGER.isLoggable(Level.WARNING))
-                LOGGER.log(Level.WARNING,
-                        "Error closing access to the GRImage interface with ID = "
-                                + getIdentifier());
         }
         super.dispose();
     }
@@ -299,7 +307,7 @@ public class H4GRImageCollection extends AbstractH4Object implements IHObject,
      *         specified image does not exist
      */
     public H4GRImage get(final String sName) {
-        if (sName==null)
+        if (sName == null)
             throw new IllegalArgumentException("Null image name provided");
         H4GRImage grImage = null;
         if (grImagesNamesToIndexes.containsKey(sName)) {
@@ -344,7 +352,8 @@ public class H4GRImageCollection extends AbstractH4Object implements IHObject,
      * @return a list iterator.
      */
     public ListIterator listIterator(int index) {
-        return new H4GRImageCollectionListIterator(grImagesList.listIterator(index));
+        return new H4GRImageCollectionListIterator(grImagesList
+                .listIterator(index));
     }
 
     /**
@@ -518,31 +527,23 @@ public class H4GRImageCollection extends AbstractH4Object implements IHObject,
     }
 
     /**
-     * @see {@link AbstractH4Object#readAttribute(int, Object)}
+     * @see {@link IH4ObjectWithAttributes#getAttribute(int)}
      */
-    protected boolean readAttribute(int index, Object values)
-            throws HDFException {
-        return HDFLibrary.GRgetattr(getIdentifier(), index, values);
+    public H4Attribute getAttribute(int attributeIndex) throws HDFException {
+        return objectWithAttributes.getAttribute(attributeIndex);
     }
 
     /**
-     * @see {@link AbstractH4Object#getAttributeInfo(int, String[])}
+     * @see {@link IH4ObjectWithAttributes#getAttribute(String)}
      */
-    protected int[] getAttributeInfo(int index, String[] attrName)
-            throws HDFException {
-        int[] attrInfo = new int[] { 0, 0 };
-        boolean done = HDFLibrary.GRattrinfo(getIdentifier(), index, attrName,
-                attrInfo);
-        if (done)
-            return attrInfo;
-        else
-            return null;
+    public H4Attribute getAttribute(String attributeName) throws HDFException {
+        return objectWithAttributes.getAttribute(attributeName);
     }
 
     /**
-     * @see {@link AbstractH4Object#findAttributeIndexByName(String)}
+     * @see {@link IH4ObjectWithAttributes#getNumAttributes()}
      */
-    protected int findAttributeIndexByName(String attributeName) throws HDFException {
-        return HDFLibrary.GRfindattr(getIdentifier(),attributeName);
+    public int getNumAttributes() {
+        return objectWithAttributes.getNumAttributes();
     }
 }

@@ -16,6 +16,7 @@
  */
 package it.geosolutions.hdf.object.h4;
 
+import it.geosolutions.hdf.object.AbstractHObject;
 import it.geosolutions.hdf.object.IHObject;
 
 import java.util.ArrayList;
@@ -37,8 +38,10 @@ import ncsa.hdf.hdflib.HDFLibrary;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  */
-public class H4SDSCollection extends AbstractH4Object implements IHObject, List {
+public class H4SDSCollection extends AbstractHObject implements IHObject, List, IH4ObjectWithAttributes {
 
+    private AbstractH4ObjectWithAttributes objectWithAttributes; 
+    
     private class H4SDSCollectionIterator implements Iterator {
 
         private Iterator it;
@@ -238,8 +241,7 @@ public class H4SDSCollection extends AbstractH4Object implements IHObject, List 
                 setIdentifier(identifier);
                 final int[] sdsFileInfo = new int[2];
                 if (HDFLibrary.SDfileinfo(identifier, sdsFileInfo)) {
-                    numAttributes = sdsFileInfo[1];
-                    init();
+                    objectWithAttributes = new H4SDSFamilyObjectsWithAttributes(identifier, sdsFileInfo[1]);
                     // retrieving the total # of SDS. It is worth to point out
                     // that this number includes the SDS related to dimension
                     // scales which will not treated as SDS. For this reason,
@@ -295,6 +297,9 @@ public class H4SDSCollection extends AbstractH4Object implements IHObject, List 
     public synchronized void dispose() {
         int identifier = getIdentifier();
         if (identifier != HDFConstants.FAIL) {
+            if (LOGGER.isLoggable(Level.FINE))
+                LOGGER.log(Level.FINE,
+                        "disposing SDS collection with ID = " + identifier);
             if (sdsNamesToIndexes != null) {
                 sdsNamesToIndexes.clear();
                 sdsNamesToIndexes = null;
@@ -308,10 +313,11 @@ public class H4SDSCollection extends AbstractH4Object implements IHObject, List 
                 sdsList.clear();
                 sdsList = null;
             }
+            if (objectWithAttributes!=null){
+                objectWithAttributes.dispose();
+                objectWithAttributes = null;
+            }
             try {
-                if (LOGGER.isLoggable(Level.FINE))
-                    LOGGER.log(Level.FINE,
-                            "disposing SDS collection with ID = " + identifier);
                 boolean closed = HDFLibrary.SDend(identifier);
                 if (!closed) {
                     if (LOGGER.isLoggable(Level.WARNING))
@@ -537,32 +543,23 @@ public class H4SDSCollection extends AbstractH4Object implements IHObject, List 
     }
 
     /**
-     * @see {@link AbstractH4Object#readAttribute(int, Object)}
+     * @see {@link IH4ObjectWithAttributes#getAttribute(int)}
      */
-    protected boolean readAttribute(int index, Object values)
-            throws HDFException {
-        return HDFLibrary.SDreadattr(getIdentifier(), index, values);
+    public H4Attribute getAttribute(int attributeIndex) throws HDFException {
+        return objectWithAttributes.getAttribute(attributeIndex);
     }
 
     /**
-     * @see {@link AbstractH4Object#getAttributeInfo(int, String[])}
+     * @see {@link IH4ObjectWithAttributes#getAttribute(String)}
      */
-    protected int[] getAttributeInfo(int index, String[] attrName)
-            throws HDFException {
-        int[] attrInfo = new int[] { 0, 0 };
-        boolean done = HDFLibrary.SDattrinfo(getIdentifier(), index, attrName,
-                attrInfo);
-        if (done)
-            return attrInfo;
-        else
-            return null;
+    public H4Attribute getAttribute(String attributeName) throws HDFException {
+        return objectWithAttributes.getAttribute(attributeName);
     }
 
     /**
-     * @see {@link AbstractH4Object#findAttributeIndexByName(String)}
+     * @see {@link IH4ObjectWithAttributes#getNumAttributes()}
      */
-    protected int findAttributeIndexByName(String attributeName)
-            throws HDFException {
-        return HDFLibrary.SDfindattr(getIdentifier(), attributeName);
+    public int getNumAttributes() {
+       return objectWithAttributes.getNumAttributes();
     }
 }
