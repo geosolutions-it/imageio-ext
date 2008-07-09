@@ -403,7 +403,7 @@ public class H4Dimension extends H4Variable implements IHObject,
      * to the SDS containing dimension scale values
      */
     public synchronized void dispose() {
-        int identifier = getIdentifier();
+        final int identifier = getIdentifier();
         if (identifier != HDFConstants.FAIL) {
             if (objectWithAttributes != null) {
                 objectWithAttributes.dispose();
@@ -430,8 +430,8 @@ public class H4Dimension extends H4Variable implements IHObject,
                 } catch (HDFException e) {
                     if (LOGGER.isLoggable(Level.WARNING))
                         LOGGER.log(Level.WARNING,
-                                "Error closing access to the dimension with ID = "
-                                        + getIdentifier());
+                                "Error closing access to the dimension scale with ID = "
+                                        + sdsDimensionScaleID);
                 }
             }
         }

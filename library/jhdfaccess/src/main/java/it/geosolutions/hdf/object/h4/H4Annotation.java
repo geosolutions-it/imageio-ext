@@ -145,23 +145,26 @@ public class H4Annotation extends AbstractHObject implements IHObject {
      * End access to this annotation.
      */
     public synchronized void dispose() {
-        try {
-            int identifier = getIdentifier();
-            if (identifier != HDFConstants.FAIL) {
+        final int identifier = getIdentifier();
+        if (identifier != HDFConstants.FAIL) {
+            try {
                 if (LOGGER.isLoggable(Level.FINE))
-                    LOGGER.log(Level.FINE, "disposing annotation with ID = " + identifier);
+                    LOGGER.log(Level.FINE, "disposing annotation with ID = "
+                            + identifier);
                 boolean closed = HDFLibrary.ANendaccess(identifier);
                 if (!closed) {
                     if (LOGGER.isLoggable(Level.WARNING))
-                        LOGGER.log(Level.WARNING, "Unable to close access to the Annotation with ID = "+ identifier);
+                        LOGGER.log(Level.WARNING,
+                                "Unable to close access to the Annotation with ID = "
+                                        + identifier);
                 }
+            } catch (HDFException e) {
+                if (LOGGER.isLoggable(Level.WARNING))
+                    LOGGER.log(Level.WARNING,
+                            "Error closing access to the annotation with ID = "
+                                    + identifier);
             }
-        } catch (HDFException e) {
-            if (LOGGER.isLoggable(Level.WARNING))
-                LOGGER.log(Level.WARNING,
-                        "Error closing access to the annotation with ID = "
-                                + getIdentifier());
-        } 
+        }
         super.dispose();
     }
 

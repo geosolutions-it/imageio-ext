@@ -33,20 +33,22 @@ import ncsa.hdf.hdflib.HDFLibrary;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  */
-public class H4VGroup extends H4Variable implements IHObject, IH4ObjectWithAttributes {
+public class H4VGroup extends H4Variable implements IHObject,
+        IH4ObjectWithAttributes {
 
     /** Logger. */
     private final static Logger LOGGER = Logger
             .getLogger("it.geosolutions.hdf.object.h4");
 
-    private AbstractH4ObjectWithAttributes objectWithAttributes; 
-    
-    private class H4VGroupWithAttributes  extends AbstractH4ObjectWithAttributes{
+    private AbstractH4ObjectWithAttributes objectWithAttributes;
 
-        public H4VGroupWithAttributes(final int identifier, final int numAttributes) {
-            super(identifier, numAttributes );
+    private class H4VGroupWithAttributes extends AbstractH4ObjectWithAttributes {
+
+        public H4VGroupWithAttributes(final int identifier,
+                final int numAttributes) {
+            super(identifier, numAttributes);
         }
-        
+
         /**
          * @see {@link AbstractH4ObjectWithAttributes#readAttribute(int, Object)}
          */
@@ -61,8 +63,8 @@ public class H4VGroup extends H4Variable implements IHObject, IH4ObjectWithAttri
         protected int[] getAttributeInfo(int index, String[] attrName)
                 throws HDFException {
             int[] attrInfo = new int[] { 0, 0, 0 };
-            boolean done = HDFLibrary.Vattrinfo(getIdentifier(), index, attrName,
-                    attrInfo);
+            boolean done = HDFLibrary.Vattrinfo(getIdentifier(), index,
+                    attrName, attrInfo);
             if (done)
                 return attrInfo;
             else
@@ -77,6 +79,7 @@ public class H4VGroup extends H4Variable implements IHObject, IH4ObjectWithAttri
             return HDFLibrary.Vfindattr(getIdentifier(), attributeName);
         }
     }
+
     /**
      * The list of TAG/REF couples referred by this VGroup
      */
@@ -243,7 +246,8 @@ public class H4VGroup extends H4Variable implements IHObject, IH4ObjectWithAttri
         setName(vgroupName[0]);
         tag = HDFLibrary.VQuerytag(identifier);
         numObjects = HDFLibrary.Vntagrefs(identifier);
-        objectWithAttributes = new H4VGroupWithAttributes(identifier, HDFLibrary.Vnattrs(identifier));
+        objectWithAttributes = new H4VGroupWithAttributes(identifier,
+                HDFLibrary.Vnattrs(identifier));
     }
 
     protected void finalize() throws Throwable {
@@ -261,20 +265,22 @@ public class H4VGroup extends H4Variable implements IHObject, IH4ObjectWithAttri
      * close this {@link H4VGroup} and dispose allocated objects.
      */
     public synchronized void dispose() {
-        try {
-            int identifier = getIdentifier();
-            if (identifier != HDFConstants.FAIL) {
-                if (LOGGER.isLoggable(Level.FINE))
-                    LOGGER.log(Level.FINE, "disposing VGroup with ID = ");
+        final int identifier = getIdentifier();
+        if (identifier != HDFConstants.FAIL) {
+            if (LOGGER.isLoggable(Level.FINE))
+                LOGGER.log(Level.FINE, "disposing VGroup with ID = ");
+            try {
                 HDFLibrary.Vdetach(identifier);
-                if (objectWithAttributes!=null)
+                if (objectWithAttributes != null) {
                     objectWithAttributes.dispose();
+                    objectWithAttributes = null;
+                }
+            } catch (HDFException e) {
+                if (LOGGER.isLoggable(Level.WARNING))
+                    LOGGER.log(Level.WARNING,
+                            "Error detaching the VGroup with ID = "
+                                    + identifier);
             }
-        } catch (HDFException e) {
-            if (LOGGER.isLoggable(Level.WARNING))
-                LOGGER.log(Level.WARNING,
-                        "Error detaching the VGroup with ID = "
-                                + getIdentifier());
         }
         super.dispose();
     }
@@ -296,7 +302,7 @@ public class H4VGroup extends H4Variable implements IHObject, IH4ObjectWithAttri
         }
         return Collections.unmodifiableList(tagRefList);
     }
-    
+
     /**
      * @see {@link IH4ObjectWithAttributes#getAttribute(int)}
      */
@@ -315,6 +321,6 @@ public class H4VGroup extends H4Variable implements IHObject, IH4ObjectWithAttri
      * @see {@link IH4ObjectWithAttributes#getNumAttributes()}
      */
     public int getNumAttributes() {
-       return objectWithAttributes.getNumAttributes();
+        return objectWithAttributes.getNumAttributes();
     }
 }

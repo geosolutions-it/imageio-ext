@@ -295,7 +295,7 @@ public class H4SDSCollection extends AbstractHObject implements IHObject, List, 
      * close this {@link H4SDSCollection} and dispose allocated objects.
      */
     public synchronized void dispose() {
-        int identifier = getIdentifier();
+        final int identifier = getIdentifier();
         if (identifier != HDFConstants.FAIL) {
             if (LOGGER.isLoggable(Level.FINE))
                 LOGGER.log(Level.FINE,
@@ -329,7 +329,7 @@ public class H4SDSCollection extends AbstractHObject implements IHObject, List, 
                 if (LOGGER.isLoggable(Level.WARNING))
                     LOGGER.log(Level.WARNING,
                             "Error closing access to the SDS interface with ID = "
-                                    + getIdentifier());
+                                    + identifier);
             }
         }
         super.dispose();

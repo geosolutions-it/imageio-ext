@@ -16,6 +16,9 @@
  */
 package it.geosolutions.hdf.object.h4;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import it.geosolutions.hdf.object.AbstractHObject;
 import it.geosolutions.hdf.object.IHObject;
 import ncsa.hdf.hdflib.HDFConstants;
@@ -29,6 +32,10 @@ import ncsa.hdf.hdflib.HDFLibrary;
  */
 public class H4Palette extends AbstractHObject implements IHObject {
 
+    /** Logger. */
+    private final static Logger LOGGER = Logger
+            .getLogger("it.geosolutions.hdf.object.h4");
+    
     /**
      * the datavalues of this palette. They will be loaded only when required.
      */
@@ -200,7 +207,17 @@ public class H4Palette extends AbstractHObject implements IHObject {
      * Method inherited from {@link AbstractHObject}.
      */
     public synchronized void dispose() {
+       final int identifier = getIdentifier();
+       if (identifier!=HDFConstants.FAIL){
+           if (LOGGER.isLoggable(Level.FINE))
+               LOGGER.log(Level.FINE, "disposing Palette with ID = "
+                       + identifier);
+           values = null;
+           numEntries=-1;
+           interlaceMode=-1;
+           reference=null;
+       }
+        
         super.dispose();
-        values = null;
     }
 }

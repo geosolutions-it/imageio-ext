@@ -343,7 +343,7 @@ public class H4SDS extends H4Variable implements IHObject, IH4ObjectWithAttribut
      * dispose allocated objects.
      */
     public synchronized void dispose() {
-        int identifier = getIdentifier();
+        final int identifier = getIdentifier();
         if (identifier != HDFConstants.FAIL) {
             if (LOGGER.isLoggable(Level.FINE))
                 LOGGER.log(Level.FINE, "disposing SDS with ID = "
@@ -402,7 +402,7 @@ public class H4SDS extends H4Variable implements IHObject, IH4ObjectWithAttribut
                     if (LOGGER.isLoggable(Level.WARNING))
                         LOGGER.log(Level.WARNING,
                                 "Error closing access to the SDS with ID = "
-                                        + getIdentifier());
+                                        + identifier);
                 }
             }
             isOpen = false;

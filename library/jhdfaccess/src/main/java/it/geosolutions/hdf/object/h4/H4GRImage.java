@@ -301,7 +301,7 @@ public class H4GRImage extends H4Variable implements IH4ObjectWithAttributes {
      * close this {@link H4GRImage} and dispose allocated objects.
      */
     public synchronized void dispose() {
-        int identifier = getIdentifier();
+        final int identifier = getIdentifier();
         if (identifier != HDFConstants.FAIL) {
             if (LOGGER.isLoggable(Level.FINE))
                 LOGGER.log(Level.FINE, "disposing GRImage with ID = "
@@ -340,7 +340,7 @@ public class H4GRImage extends H4Variable implements IH4ObjectWithAttributes {
                 if (LOGGER.isLoggable(Level.WARNING))
                     LOGGER.log(Level.WARNING,
                             "Error closing access to the GRImage with ID = "
-                                    + getIdentifier());
+                                    + identifier);
             }
         }
         super.dispose();

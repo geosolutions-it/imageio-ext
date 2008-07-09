@@ -38,14 +38,14 @@ public class H4File extends AbstractHObject implements IHObject {
     private static final Logger LOGGER = Logger
             .getLogger("it.geosolutions.hdf.object.h4");
 
-    /**
-     * Almost all HDF APIs require the preliminary open of the source file using
-     * the <code>HOpen</code> routine. However, the SD interface, used to
-     * access SDS dataset, does not uses this routine, but the
-     * <code>SDStart</code> one. This variable will become <code>true</code>
-     * when HOpen will be called.
-     */
-    private boolean hOpened = false;
+//    /**
+//     * Almost all HDF APIs require the preliminary open of the source file using
+//     * the <code>HOpen</code> routine. However, the SD interface, used to
+//     * access SDS dataset, does not uses this routine, but the
+//     * <code>SDStart</code> one. This variable will become <code>true</code>
+//     * when HOpen will be called.
+//     */
+//    private boolean hOpened = false;
 
     /**
      * The list of file label annotations related to this file.
@@ -111,8 +111,6 @@ public class H4File extends AbstractHObject implements IHObject {
      * @return the {@link H4AnnotationManager} instance of this {@link H4File}
      */
     synchronized H4AnnotationManager getH4AnnotationManager() {
-        if (!hOpened)
-            throw new IllegalStateException("File is not open!");
         if (h4AnnotationManager == null)
             h4AnnotationManager = new H4AnnotationManager(this);
         return h4AnnotationManager;
@@ -124,8 +122,6 @@ public class H4File extends AbstractHObject implements IHObject {
      * @return the {@link H4GRImageCollection} instance of this {@link H4File}
      */
     public synchronized H4GRImageCollection getH4GRImageCollection() {
-        if (!hOpened)
-            throw new IllegalStateException("File is not open!");
         if (h4GRImageCollection == null)
             h4GRImageCollection = new H4GRImageCollection(this);
         return h4GRImageCollection;
@@ -148,8 +144,6 @@ public class H4File extends AbstractHObject implements IHObject {
      * @return the {@link H4VGroupCollection} instance of this {@link H4File}
      */
     public synchronized H4VGroupCollection getH4VGroupCollection() {
-        if (!hOpened)
-            throw new IllegalStateException("File is not open!");
         if (h4VGroupCollection == null)
             h4VGroupCollection = new H4VGroupCollection(this);
         return h4VGroupCollection;
@@ -218,14 +212,12 @@ public class H4File extends AbstractHObject implements IHObject {
                 throw new IllegalArgumentException(
                         "The specified file is not a valid HDF source " + path);
 
-            int identifier = HDFLibrary.Hopen(filePath);
+            final int identifier = HDFLibrary.Hopen(filePath);
             if (identifier != HDFConstants.FAIL)
                 setIdentifier(identifier);
             else
                 throw new IllegalStateException("Error while opening the file "
                         + filePath + " due to unable to find the file ID");
-            hOpened = true;
-
         } catch (HDFException e) {
             throw new IllegalStateException(
                     "Error while checking the provided file", e);
@@ -238,7 +230,8 @@ public class H4File extends AbstractHObject implements IHObject {
      * opened/accessed interfaces and items.
      */
     public synchronized void dispose() {
-        if (filePath != null)
+        final int identifier = getIdentifier();
+        if (identifier != HDFConstants.FAIL)
             try {
                 filePath = null;
                 // //
@@ -285,19 +278,15 @@ public class H4File extends AbstractHObject implements IHObject {
                 // closing file
                 //
                 // //
-                if (hOpened) {
-                    final int identifier = getIdentifier();
-                    if (LOGGER.isLoggable(Level.FINE))
-                        LOGGER.log(Level.FINE, "Closing File with ID = "
-                                + identifier);
-                    boolean closed = HDFLibrary.Hclose(identifier);
-                    if (!closed) {
-                        if (LOGGER.isLoggable(Level.WARNING))
-                            LOGGER.log(Level.WARNING,
-                                    "Unable to close access to file with ID = "
-                                            + identifier);
-                    }
-                    hOpened = false;
+                if (LOGGER.isLoggable(Level.FINE))
+                    LOGGER.log(Level.FINE, "Closing File with ID = "
+                            + identifier);
+                boolean closed = HDFLibrary.Hclose(identifier);
+                if (!closed) {
+                    if (LOGGER.isLoggable(Level.WARNING))
+                        LOGGER.log(Level.WARNING,
+                                "Unable to close access to file with ID = "
+                                        + identifier);
                 }
 
             } catch (HDFException e) {
@@ -335,8 +324,9 @@ public class H4File extends AbstractHObject implements IHObject {
                         .getH4Annotations(annotationType);
 
             }
-            if (nLabels>0)
-                returnedAnnotations = Collections.unmodifiableList(labelAnnotations);
+            if (nLabels > 0)
+                returnedAnnotations = Collections
+                        .unmodifiableList(labelAnnotations);
             break;
         case HDFConstants.AN_FILE_DESC:
             if (nDescriptions == -1) {// Annotations not yet initialized.
@@ -344,8 +334,9 @@ public class H4File extends AbstractHObject implements IHObject {
                 descAnnotations = h4AnnotationManager
                         .getH4Annotations(annotationType);
             }
-            if (nDescriptions>0)
-                returnedAnnotations = Collections.unmodifiableList(descAnnotations);
+            if (nDescriptions > 0)
+                returnedAnnotations = Collections
+                        .unmodifiableList(descAnnotations);
             break;
         default:
             returnedAnnotations = null;

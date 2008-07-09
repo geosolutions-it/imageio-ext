@@ -126,7 +126,8 @@ class H4AnnotationManager extends AbstractHObject implements IHObject {
      * @param h4file
      *                the input {@link H4File}
      * @throws IllegalArgumentException
-     *                 in case of wrong specified input parameters or identifiers.
+     *                 in case of wrong specified input parameters or
+     *                 identifiers.
      * @throws IllegalStateException
      *                 in case of problems getting a valid identifier for the
      *                 Annotation APIs
@@ -266,13 +267,13 @@ class H4AnnotationManager extends AbstractHObject implements IHObject {
      * End access to the underlying annotation routine interface.
      */
     public void dispose() {
-        try {
-            int identifier = getIdentifier();
-            if (identifier != HDFConstants.FAIL) {
-                if (LOGGER.isLoggable(Level.FINE))
-                    LOGGER.log(Level.FINE,
-                            "disposing annotation interface with ID = "
-                                    + identifier);
+        final int identifier = getIdentifier();
+        if (identifier != HDFConstants.FAIL) {
+            if (LOGGER.isLoggable(Level.FINE))
+                LOGGER.log(Level.FINE,
+                        "disposing annotation interface with ID = "
+                                + identifier);
+            try {
                 boolean closed = HDFLibrary.ANend(identifier);
                 if (!closed) {
                     if (LOGGER.isLoggable(Level.WARNING))
@@ -280,12 +281,12 @@ class H4AnnotationManager extends AbstractHObject implements IHObject {
                                 "Unable to close access to the annotation interface with ID = "
                                         + identifier);
                 }
+            } catch (HDFException e) {
+                if (LOGGER.isLoggable(Level.WARNING))
+                    LOGGER.log(Level.WARNING,
+                            "Error closing access to the annotation interface with ID = "
+                                    + identifier);
             }
-        } catch (HDFException e) {
-            if (LOGGER.isLoggable(Level.WARNING))
-                LOGGER.log(Level.WARNING,
-                        "Error closing access to the annotation interface with ID = "
-                                + getIdentifier());
         }
         super.dispose();
     }

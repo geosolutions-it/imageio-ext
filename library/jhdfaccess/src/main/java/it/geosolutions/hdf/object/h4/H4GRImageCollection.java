@@ -233,7 +233,7 @@ public class H4GRImageCollection extends AbstractHObject implements IHObject,
      * the owned {@link AbstractHObject}s
      */
     public synchronized void dispose() {
-        int identifier = getIdentifier();
+        final int identifier = getIdentifier();
         if (identifier != HDFConstants.FAIL) {
             if (LOGGER.isLoggable(Level.FINE))
                 LOGGER.log(Level.FINE,
@@ -268,7 +268,7 @@ public class H4GRImageCollection extends AbstractHObject implements IHObject,
                 if (LOGGER.isLoggable(Level.WARNING))
                     LOGGER.log(Level.WARNING,
                             "Error closing access to the GRImage interface with ID = "
-                                    + getIdentifier());
+                                    + identifier);
             }
         }
         super.dispose();
