@@ -72,9 +72,9 @@ public class H4VGroup extends H4Variable implements IHObject,
         }
 
         /**
-         * @see {@link AbstractH4Object#findAttributeIndexByName(String)}
+         * @see {@link AbstractH4Object#getAttributeIndexByName(String)}
          */
-        protected int findAttributeIndexByName(String attributeName)
+        protected int getAttributeIndexByName(String attributeName)
                 throws HDFException {
             return HDFLibrary.Vfindattr(getIdentifier(), attributeName);
         }

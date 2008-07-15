@@ -54,9 +54,9 @@ class H4GRFamilyObjectsWithAttributes  extends AbstractH4Object{
     }
 
     /**
-     * @see {@link AbstractH4Object#findAttributeIndexByName(String)}
+     * @see {@link AbstractH4Object#getAttributeIndexByName(String)}
      */
-    protected int findAttributeIndexByName(String attributeName) throws HDFException {
-            return HDFLibrary.GRfindattr(getIdentifier(),attributeName);
+    protected int getAttributeIndexByName(String attributeName) throws HDFException {
+    	return HDFLibrary.GRfindattr(getIdentifier(),attributeName);
     }
 }

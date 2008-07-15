@@ -25,7 +25,16 @@ import ncsa.hdf.hdflib.HDFConstants;
  */
 public abstract class AbstractHObject implements IHObject {
 
-    /**
+    public AbstractHObject(int identifier) {
+		setIdentifier(identifier);
+	}
+    
+    protected AbstractHObject()
+    {
+    	
+    }
+
+	/**
      * The numeric identifier associated to this <code>AbstractHObject</code>
      */
     private volatile int identifier = HDFConstants.FAIL;

@@ -126,43 +126,9 @@ public class H4Dimension extends H4Variable implements IHObject,
             return attributes;
         }
 
-        /**
-         * Returns a specific attribute of this Dimension, given its name.
-         * 
-         * @param attributeName
-         *                the name of the required attribute
-         * @return the {@link H4Attribute} related to the specified name.
-         * @throws HDFException
-         */
-        public synchronized H4Attribute getAttribute(final String attributeName)
-                throws HDFException {
-            H4Attribute attribute = null;
-            getAttributes();
-            if (attributes != null && attributes.containsKey(attributeName))
-                attribute = (H4Attribute) attributes.get(attributeName);
-            return attribute;
-        }
 
-        /**
-         * Returns a specific attribute of this Dimension, given its index.
-         * 
-         * @param attributeIndex
-         *                the index of the required attribute
-         * @return the {@link H4Attribute} related to the specified index.
-         * @throws HDFException
-         */
-        public synchronized H4Attribute getAttribute(final int attributeIndex)
-                throws HDFException {
-            H4Attribute attribute = null;
-            getAttributes();
-            if (indexToAttributesMap != null
-                    && indexToAttributesMap.containsKey(Integer
-                            .valueOf(attributeIndex)))
-                attribute = (H4Attribute) indexToAttributesMap.get(Integer
-                        .valueOf(attributeIndex));
 
-            return attribute;
-        }
+
 
         /**
          * @see {@link AbstractH4Object#readAttribute(int, Object)}
@@ -178,8 +144,7 @@ public class H4Dimension extends H4Variable implements IHObject,
         protected int[] getAttributeInfo(int index, String[] attrName)
                 throws HDFException {
             final int[] dimAttrInfo = { 0, 0 };
-            boolean done = HDFLibrary.SDattrinfo(getIdentifier(), index,
-                    attrName, dimAttrInfo);
+            boolean done = HDFLibrary.SDattrinfo(getIdentifier(), index,attrName, dimAttrInfo);
             if (done)
                 return dimAttrInfo;
             else
@@ -187,14 +152,12 @@ public class H4Dimension extends H4Variable implements IHObject,
 
         }
 
-        /**
-         * Dimension has a different management of attributes. Therefore, this
-         * method isn't needed.
-         */
-        protected int findAttributeIndexByName(String attributeName)
-                throws HDFException {
-            throw new UnsupportedOperationException();
-        }
+		protected int getAttributeIndexByName(String attributeName)
+				throws HDFException {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
 
     }
 

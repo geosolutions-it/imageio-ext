@@ -177,7 +177,7 @@ public class H4Annotation extends AbstractHObject implements IHObject {
      * @throws HDFException
      */
     public H4Annotation(int identifier) throws HDFException {
-        setIdentifier(identifier);
+        super(identifier);
         short tagRef[] = new short[] { -1, -1 };
         HDFLibrary.ANid2tagref(identifier, tagRef);
         tag = tagRef[0];

@@ -227,8 +227,7 @@ public class H4Attribute {
 
         if (attrInfo != null) {
             // build a new attribute
-            attribute = new H4Attribute(objectWithAttribute, index,
-                    attrName[0], attrInfo);
+            attribute = new H4Attribute(objectWithAttribute, index,attrName[0], attrInfo);
         }
         return attribute;
     }
