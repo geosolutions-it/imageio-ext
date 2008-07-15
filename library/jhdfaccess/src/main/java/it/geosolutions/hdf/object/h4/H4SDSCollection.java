@@ -40,7 +40,7 @@ import ncsa.hdf.hdflib.HDFLibrary;
  */
 public class H4SDSCollection extends AbstractHObject implements IHObject, List, IH4ObjectWithAttributes {
 
-    private AbstractH4ObjectWithAttributes objectWithAttributes; 
+    private AbstractH4Object objectWithAttributes; 
     
     private class H4SDSCollectionIterator implements Iterator {
 
@@ -241,7 +241,7 @@ public class H4SDSCollection extends AbstractHObject implements IHObject, List, 
                 setIdentifier(identifier);
                 final int[] sdsFileInfo = new int[2];
                 if (HDFLibrary.SDfileinfo(identifier, sdsFileInfo)) {
-                    objectWithAttributes = new H4SDSFamilyObjectsWithAttributes(identifier, sdsFileInfo[1]);
+                    objectWithAttributes = new H4SDSFamilyObjectsAttributesManager(identifier, sdsFileInfo[1]);
                     // retrieving the total # of SDS. It is worth to point out
                     // that this number includes the SDS related to dimension
                     // scales which will not treated as SDS. For this reason,

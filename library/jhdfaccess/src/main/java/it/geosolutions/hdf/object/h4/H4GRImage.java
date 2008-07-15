@@ -38,7 +38,7 @@ public class H4GRImage extends H4Variable implements IH4ObjectWithAttributes {
     private final static Logger LOGGER = Logger
             .getLogger("it.geosolutions.hdf.object.h4");
 
-    private AbstractH4ObjectWithAttributes objectWithAttributes;
+    private AbstractH4Object objectWithAttributes;
 
     /** predefined attributes */
     public static String PREDEF_ATTR_FILL_VALUE = "FILL_VALUE";

@@ -44,7 +44,7 @@ public class H4GRImageCollection extends AbstractHObject implements IHObject,
     private final static Logger LOGGER = Logger
             .getLogger("it.geosolutions.hdf.object.h4");
 
-    private AbstractH4ObjectWithAttributes objectWithAttributes;
+    private AbstractH4Object objectWithAttributes;
 
     private class H4GRImageCollectionIterator implements Iterator {
 

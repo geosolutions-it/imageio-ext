@@ -43,9 +43,9 @@ public class H4Attribute {
     private int size;
 
     /**
-     * The {@link AbstractH4ObjectWithAttributes} to which this attribute belongs.
+     * The {@link AbstractH4Object} to which this attribute belongs.
      */
-    private AbstractH4ObjectWithAttributes attributeOwner;
+    private AbstractH4Object attributeOwner;
 
     /**
      * The index of the attribute.
@@ -74,7 +74,7 @@ public class H4Attribute {
      *                size. Attribute information retrieved by means of the
      *                VGroup interface, also returns the number of values.
      */
-    public H4Attribute(AbstractH4ObjectWithAttributes object, int i, String attrName,
+    public H4Attribute(AbstractH4Object object, int i, String attrName,
             int[] attrInfo) {
         this(object, i, attrName, attrInfo, null);
     }
@@ -95,7 +95,7 @@ public class H4Attribute {
      * @param data
      *                an Object containing datavalues of this attribute.
      */
-    public H4Attribute(AbstractH4ObjectWithAttributes object, int i, String attrName,
+    public H4Attribute(AbstractH4Object object, int i, String attrName,
             int[] attrInfo, Object data) {
         int attrDatatype;
         if (attrInfo.length == 2) {
@@ -214,7 +214,7 @@ public class H4Attribute {
      * @throws HDFException
      */
     public static H4Attribute buildAttribute(
-            AbstractH4ObjectWithAttributes objectWithAttribute, final int index)
+            AbstractH4Object objectWithAttribute, final int index)
             throws HDFException {
         if (objectWithAttribute==null)
             throw new IllegalArgumentException("Input object is null");

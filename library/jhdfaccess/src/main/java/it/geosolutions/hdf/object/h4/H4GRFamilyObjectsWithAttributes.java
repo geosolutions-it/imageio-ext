@@ -24,14 +24,14 @@ import ncsa.hdf.hdflib.HDFLibrary;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  */
-class H4GRFamilyObjectsWithAttributes  extends AbstractH4ObjectWithAttributes{
+class H4GRFamilyObjectsWithAttributes  extends AbstractH4Object{
 
     public H4GRFamilyObjectsWithAttributes(final int identifier, final int numAttributes) {
         super(identifier, numAttributes);
     }
     
     /**
-     * @see {@link AbstractH4ObjectWithAttributes#readAttribute(int, Object)}
+     * @see {@link AbstractH4Object#readAttribute(int, Object)}
      */
     protected boolean readAttribute(int index, Object values)
             throws HDFException {
@@ -39,7 +39,7 @@ class H4GRFamilyObjectsWithAttributes  extends AbstractH4ObjectWithAttributes{
     }
     
     /**
-     * @see {@link AbstractH4ObjectWithAttributes#getAttributeInfo(int, String[])}
+     * @see {@link AbstractH4Object#getAttributeInfo(int, String[])}
      */
     protected int[] getAttributeInfo(int index, String[] attrName)
             throws HDFException {
@@ -54,7 +54,7 @@ class H4GRFamilyObjectsWithAttributes  extends AbstractH4ObjectWithAttributes{
     }
 
     /**
-     * @see {@link AbstractH4ObjectWithAttributes#findAttributeIndexByName(String)}
+     * @see {@link AbstractH4Object#findAttributeIndexByName(String)}
      */
     protected int findAttributeIndexByName(String attributeName) throws HDFException {
             return HDFLibrary.GRfindattr(getIdentifier(),attributeName);

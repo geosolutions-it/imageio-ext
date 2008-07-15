@@ -38,7 +38,7 @@ import ncsa.hdf.hdflib.HDFLibrary;
  */
 public class H4SDS extends H4Variable implements IHObject, IH4ObjectWithAttributes {
 
-    private AbstractH4ObjectWithAttributes objectWithAttributes; 
+    private AbstractH4Object objectWithAttributes; 
     
     /** Logger. */
     private final static Logger LOGGER = Logger
@@ -300,7 +300,7 @@ public class H4SDS extends H4Variable implements IHObject, IH4ObjectWithAttribut
             }
             sdInfo[1] = sdInfo[1] & (~HDFConstants.DFNT_LITEND);
             datatype = sdInfo[1];
-            objectWithAttributes = new H4SDSFamilyObjectsWithAttributes(identifier, sdInfo[2]);
+            objectWithAttributes = new H4SDSFamilyObjectsAttributesManager(identifier, sdInfo[2]);
             dimensions = new ArrayList(rank);
 
             HDFChunkInfo chunkInfo = new HDFChunkInfo();

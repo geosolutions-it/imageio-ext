@@ -34,12 +34,12 @@ import ncsa.hdf.hdflib.HDFLibrary;
 public class H4Dimension extends H4Variable implements IHObject,
         IH4ObjectWithAttributes {
 
-    private AbstractH4ObjectWithAttributes objectWithAttributes;
+    private AbstractH4Object objectWithAttributes;
 
-    private class H4DimensionWithAttributes extends
-            AbstractH4ObjectWithAttributes {
+    private class H4DimensionAttributesManager extends
+            AbstractH4Object {
 
-        public H4DimensionWithAttributes(final int identifier,
+        public H4DimensionAttributesManager(final int identifier,
                 final int numAttributes) {
             super(identifier, numAttributes);
         }
@@ -165,7 +165,7 @@ public class H4Dimension extends H4Variable implements IHObject,
         }
 
         /**
-         * @see {@link AbstractH4ObjectWithAttributes#readAttribute(int, Object)}
+         * @see {@link AbstractH4Object#readAttribute(int, Object)}
          */
         protected boolean readAttribute(int index, Object values)
                 throws HDFException {
@@ -173,7 +173,7 @@ public class H4Dimension extends H4Variable implements IHObject,
         }
 
         /**
-         * @see {@link AbstractH4ObjectWithAttributes#getAttributeInfo(int, String[])}
+         * @see {@link AbstractH4Object#getAttributeInfo(int, String[])}
          */
         protected int[] getAttributeInfo(int index, String[] attrName)
                 throws HDFException {
@@ -319,7 +319,7 @@ public class H4Dimension extends H4Variable implements IHObject,
                 setName(dimName[0]);
                 size = dimInfo[0];
                 datatype = dimInfo[1] & (~HDFConstants.DFNT_LITEND);
-                objectWithAttributes = new H4DimensionWithAttributes(
+                objectWithAttributes = new H4DimensionAttributesManager(
                         identifier, dimInfo[2]);
 
                 // Retrieving dimension scale

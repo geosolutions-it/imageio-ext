@@ -40,17 +40,17 @@ public class H4VGroup extends H4Variable implements IHObject,
     private final static Logger LOGGER = Logger
             .getLogger("it.geosolutions.hdf.object.h4");
 
-    private AbstractH4ObjectWithAttributes objectWithAttributes;
+    private AbstractH4Object objectWithAttributes;
 
-    private class H4VGroupWithAttributes extends AbstractH4ObjectWithAttributes {
+    private class H4VGroupAttributesManager extends AbstractH4Object {
 
-        public H4VGroupWithAttributes(final int identifier,
+        public H4VGroupAttributesManager(final int identifier,
                 final int numAttributes) {
             super(identifier, numAttributes);
         }
 
         /**
-         * @see {@link AbstractH4ObjectWithAttributes#readAttribute(int, Object)}
+         * @see {@link AbstractH4Object#readAttribute(int, Object)}
          */
         protected boolean readAttribute(int index, Object values)
                 throws HDFException {
@@ -58,7 +58,7 @@ public class H4VGroup extends H4Variable implements IHObject,
         }
 
         /**
-         * @see {@link AbstractH4ObjectWithAttributes#getAttributeInfo(int, String[])}
+         * @see {@link AbstractH4Object#getAttributeInfo(int, String[])}
          */
         protected int[] getAttributeInfo(int index, String[] attrName)
                 throws HDFException {
@@ -72,7 +72,7 @@ public class H4VGroup extends H4Variable implements IHObject,
         }
 
         /**
-         * @see {@link AbstractH4ObjectWithAttributes#findAttributeIndexByName(String)}
+         * @see {@link AbstractH4Object#findAttributeIndexByName(String)}
          */
         protected int findAttributeIndexByName(String attributeName)
                 throws HDFException {
@@ -246,7 +246,7 @@ public class H4VGroup extends H4Variable implements IHObject,
         setName(vgroupName[0]);
         tag = HDFLibrary.VQuerytag(identifier);
         numObjects = HDFLibrary.Vntagrefs(identifier);
-        objectWithAttributes = new H4VGroupWithAttributes(identifier,
+        objectWithAttributes = new H4VGroupAttributesManager(identifier,
                 HDFLibrary.Vnattrs(identifier));
     }
 
