@@ -211,7 +211,7 @@ public class H4SDS extends H4Variable implements IHObject, IH4Object {
         return h4SDSCollectionOwner;
     }
 
-    private H4SDS(H4SDSCollection h4SdsCollection, int index, int identifier)
+    H4SDS(H4SDSCollection h4SdsCollection, int index, int identifier)
             throws HDFException {
         h4SDSCollectionOwner = h4SdsCollection;
         this.index = index;

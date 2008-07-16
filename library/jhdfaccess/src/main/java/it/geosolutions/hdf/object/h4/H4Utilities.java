@@ -94,14 +94,14 @@ public class H4Utilities {
 
     public static String SDS_PREDEF_ATTR_VALID_RANGE_MAX = "valid_max";
 
-    public static String PREDEF_ATTR_VALID_RANGE = "valid_range";
+    public static String SDS_PREDEF_ATTR_VALID_RANGE = "valid_range";
 
-	/** predefined attributes */
-	public static String PREDEF_ATTR_LABEL = "long_name";
+    /** predefined dimension attributes */
+    public static String PREDEF_ATTR_LABEL = "long_name";
 
-	public static String PREDEF_ATTR_UNIT = "units";
+    public static String PREDEF_ATTR_UNIT = "units";
 
-	public static String PREDEF_ATTR_FORMAT = "format";
+    public static String PREDEF_ATTR_FORMAT = "format";
 
     /**
      * Ensure non instantiability
@@ -112,13 +112,17 @@ public class H4Utilities {
 
     /**
      * Utility method for raising an exception in case
+     * 
      * @param o
      * @param objectName
      */
-    public static void checkNonNull(final Object o, final String objectName){
-    	if(o==null)
-    		throw new NullPointerException(objectName!=null?"Object "+objectName+" cannot be null":"The provided object cannot be null");
+    public static void checkNonNull(final Object o, final String objectName) {
+        if (o == null)
+            throw new NullPointerException(objectName != null ? "Object "
+                    + objectName + " cannot be null"
+                    : "The provided object cannot be null");
     }
+
     /**
      * Builds a properly typed and properly sized array to store a specific
      * amount of data, given the type of data and its size.
@@ -374,7 +378,8 @@ public class H4Utilities {
             }
 
         } catch (HDFException e) {
-           throw new IllegalStateException ("Error accessing the VGroup Routines",e);
+            throw new IllegalStateException(
+                    "Error accessing the VGroup Routines", e);
         }
         return isAvGroup;
     }
@@ -478,84 +483,85 @@ public class H4Utilities {
 
             }
             attributeValue = sb.toString();
-        }
-        else{
+        } else {
             if (LOGGER.isLoggable(Level.WARNING))
-                LOGGER.log(Level.WARNING, "No values were found for the specified attribute");
+                LOGGER.log(Level.WARNING,
+                        "No values were found for the specified attribute");
         }
         return attributeValue;
     }
 
-	/**
-	 * Attempts to build a new {@link H4SDS} given its index within the file. A
-	 * new {@link H4SDS} is returned only if the underlying SDS does not
-	 * represents a dimension scale. Otherwise, <code>null</code> will
-	 * returned.
-	 * 
-	 * @param h4SDSCollection
-	 *                the collection owner.
-	 * @param index
-	 *                the index of the required SDS within the file
-	 * @return a new {@link H4SDS} if the underlying SDS does not represents a
-	 *         dimension scale. <code>null</code> otherwise.
-	 * @throws HDFException
-	 */
-	public static H4SDS buildH4SDS(H4SDSCollection h4SDSCollection,
-	        final int index) throws HDFException {
-	    H4SDS sds = null;
-	    final int interfaceID = h4SDSCollection.getIdentifier();
-	    if (interfaceID == HDFConstants.FAIL) {
-	        if (H4SDS.LOGGER.isLoggable(Level.WARNING))
-	            H4SDS.LOGGER.log(Level.WARNING, "undefined SDInterface identifier ");
-	        return sds;
-	    }
-	    try {
-	        final int identifier = HDFLibrary.SDselect(interfaceID, index);
-	        if (identifier != HDFConstants.FAIL) {
-	            if (!HDFLibrary.SDiscoordvar(identifier)) {
-	                sds = new H4SDS(h4SDSCollection, index, identifier);
-	            } else
-	                HDFLibrary.SDendaccess(identifier);
-	        } else {
-	            if (H4SDS.LOGGER.isLoggable(Level.WARNING))
-	                H4SDS.LOGGER.log(Level.WARNING, "undefined SD identifier ");
-	        }
-	
-	    } catch (HDFException e) {
-	        throw new RuntimeException("Error while creating a new H4SDS", e);
-	    }
-	    return sds;
-	}
+    /**
+     * Attempts to build a new {@link H4SDS} given its index within the file. A
+     * new {@link H4SDS} is returned only if the underlying SDS does not
+     * represents a dimension scale. Otherwise, <code>null</code> will
+     * returned.
+     * 
+     * @param h4SDSCollection
+     *                the collection owner.
+     * @param index
+     *                the index of the required SDS within the file
+     * @return a new {@link H4SDS} if the underlying SDS does not represents a
+     *         dimension scale. <code>null</code> otherwise.
+     * @throws HDFException
+     */
+    protected static H4SDS buildH4SDS(H4SDSCollection h4SDSCollection,
+            final int index) throws HDFException {
+        H4SDS sds = null;
+        final int interfaceID = h4SDSCollection.getIdentifier();
+        if (interfaceID == HDFConstants.FAIL) {
+            if (H4SDS.LOGGER.isLoggable(Level.WARNING))
+                H4SDS.LOGGER.log(Level.WARNING,
+                        "undefined SDInterface identifier ");
+            return sds;
+        }
+        try {
+            final int identifier = HDFLibrary.SDselect(interfaceID, index);
+            if (identifier != HDFConstants.FAIL) {
+                if (!HDFLibrary.SDiscoordvar(identifier)) {
+                    sds = new H4SDS(h4SDSCollection, index, identifier);
+                } else
+                    HDFLibrary.SDendaccess(identifier);
+            } else {
+                if (H4SDS.LOGGER.isLoggable(Level.WARNING))
+                    H4SDS.LOGGER.log(Level.WARNING, "undefined SD identifier ");
+            }
 
-	/**
-	 * Static utility method which build a new {@link H4Attribute} given the
-	 * object to which the attribute is attached and the index of the attribute.
-	 * 
-	 * @param objectWithAttribute
-	 *                The owner {@link AbstractHObject} to which the attribute
-	 *                is attached
-	 * @param index
-	 *                The index of the required attribute.
-	 * @return the {@link H4Attribute} just built.
-	 * @throws HDFException
-	 */
-	public static H4Attribute buildAttribute(
-	        AbstractH4Object objectWithAttribute, final int index)
-	        throws HDFException {
-	    if (objectWithAttribute == null)
-	        throw new IllegalArgumentException("Input object is null");
-	    H4Attribute attribute = null;
-	    String[] attrName = new String[] { "" };
-	
-	    // get various info about this attribute from the proper interface,
-	    // depending on the subclass of the owner object
-	    int[] attrInfo = objectWithAttribute.getAttributeInfo(index, attrName);
-	
-	    if (attrInfo != null) {
-	        // build a new attribute
-	        attribute = new H4Attribute(objectWithAttribute, index,
-	                attrName[0], attrInfo);
-	    }
-	    return attribute;
-	}
+        } catch (HDFException e) {
+            throw new RuntimeException("Error while creating a new H4SDS", e);
+        }
+        return sds;
+    }
+
+    /**
+     * Static utility method which build a new {@link H4Attribute} given the
+     * object to which the attribute is attached and the index of the attribute.
+     * 
+     * @param objectWithAttribute
+     *                The owner {@link AbstractHObject} to which the attribute
+     *                is attached
+     * @param index
+     *                The index of the required attribute.
+     * @return the {@link H4Attribute} just built.
+     * @throws HDFException
+     */
+    protected static H4Attribute buildAttribute(
+            AbstractH4Object objectWithAttribute, final int index)
+            throws HDFException {
+        if (objectWithAttribute == null)
+            throw new IllegalArgumentException("Input object is null");
+        H4Attribute attribute = null;
+        String[] attrName = new String[] { "" };
+
+        // get various info about this attribute from the proper interface,
+        // depending on the subclass of the owner object
+        int[] attrInfo = objectWithAttribute.getAttributeInfo(index, attrName);
+
+        if (attrInfo != null) {
+            // build a new attribute
+            attribute = new H4Attribute(objectWithAttribute, index,
+                    attrName[0], attrInfo);
+        }
+        return attribute;
+    }
 }
