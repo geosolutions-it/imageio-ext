@@ -36,99 +36,94 @@ public class H4Dimension extends H4Variable implements IHObject,
 
     private AbstractH4Object objectWithAttributes;
 
-    private class H4DimensionAttributesManager extends
-            AbstractH4Object {
+    private class H4DimensionAttributesManager extends AbstractH4Object {
 
         public H4DimensionAttributesManager(final int identifier,
                 final int numAttributes) {
             super(identifier, numAttributes);
         }
 
-        /**
-         * returns a <code>Map</code> containing all attributes associated to
-         * this Dimension
-         * 
-         * @return the map of attributes.
-         * @throws HDFException
-         */
-        synchronized Map getAttributes() throws HDFException {
-
-            // Checking if I need to initialize attributes map
-            if (attributes != null && attributes.size() < numAttributes) {
-                // user defined attributes
-                final String[] dimAttrName = new String[1];
-                int nAttr = 0;
-                for (int i = 0; i < numAttributes; i++) {
-                    dimAttrName[0] = "";
-                    // get various info about this attribute
-                    int[] dimAttrInfo = getAttributeInfo(i, dimAttrName);
-                    final String attrName = dimAttrName[0];
-
-                    // //
-                    //
-                    // The HDF user guide explicitly states that
-                    // Predefined Attributes for Dimensions need to be
-                    // read using specialized routines (SDgetdimstrs).
-                    // So, I will skip a found attribute if it is a
-                    // predefined one.
-                    //
-                    // //
-                    boolean isPredef = false;
-                    if (attrName.equals(PREDEF_ATTR_LABEL)
-                            || attrName.equals(PREDEF_ATTR_UNIT)
-                            || attrName.equals(PREDEF_ATTR_FORMAT))
-                        isPredef = true;
-                    if (!isPredef) {
-                        H4Attribute attrib = null;
-                        if (dimAttrInfo != null)
-                            attrib = new H4Attribute(this, nAttr, attrName,
-                                    dimAttrInfo);
-                        if (attrib != null) {
-                            attributes.put(attrName, attrib);
-                            indexToAttributesMap.put(Integer.valueOf(nAttr),
-                                    attrib);
-                            nAttr++;
-                        } else {
-                            throw new RuntimeException(
-                                    "Error while setting dimension attribute");
-                        }
-                    }
-                }
-
-                // retrieving predefined attributes
-                final String predefAttributesValues[] = { "NONE", "NONE",
-                        "NONE" };
-                HDFLibrary.SDgetdimstrs(getIdentifier(),
-                        predefAttributesValues, HDFConstants.DFS_MAXLEN);
-                final String predefinedStrings[] = { PREDEF_ATTR_LABEL,
-                        PREDEF_ATTR_UNIT, PREDEF_ATTR_FORMAT };
-
-                for (int k = 0; k < 3; k++) {
-                    // getting predefined attribute value
-                    final String value = predefAttributesValues[k];
-                    if (value != null && value.trim().length() != 0) {
-
-                        // predefined attribute found. Building a new
-                        // H4Attribute
-                        H4Attribute attrib = new H4Attribute(this, nAttr,
-                                predefinedStrings[k],
-                                new int[] { HDFConstants.DFNT_CHAR8,
-                                        value.length() }, value.getBytes());
-                        if (attrib != null) {
-                            attributes.put(predefinedStrings[k], attrib);
-                            indexToAttributesMap.put(Integer.valueOf(nAttr),
-                                    attrib);
-                            nAttr++;
-                        }
-                    }
-                }
-            }
-            return attributes;
-        }
-
-
-
-
+//         /**
+//         * returns a <code>Map</code> containing all attributes associated to
+//         * this Dimension
+//         *
+//         * @return the map of attributes.
+//         * @throws HDFException
+//         */
+//         synchronized Map getAttributes() throws HDFException {
+//        
+//         // Checking if I need to initialize attributes map
+//         if (attributes != null && attributes.size() < numAttributes) {
+//         // user defined attributes
+//         final String[] dimAttrName = new String[1];
+//         int nAttr = 0;
+//         for (int i = 0; i < numAttributes; i++) {
+//         dimAttrName[0] = "";
+//         // get various info about this attribute
+//         int[] dimAttrInfo = getAttributeInfo(i, dimAttrName);
+//         final String attrName = dimAttrName[0];
+//        
+//         // //
+//         //
+//         // The HDF user guide explicitly states that
+//         // Predefined Attributes for Dimensions need to be
+//         // read using specialized routines (SDgetdimstrs).
+//         // So, I will skip a found attribute if it is a
+//         // predefined one.
+//         //
+//         // //
+//         boolean isPredef = false;
+//         if (attrName.equals(PREDEF_ATTR_LABEL)
+//         || attrName.equals(PREDEF_ATTR_UNIT)
+//         || attrName.equals(PREDEF_ATTR_FORMAT))
+//         isPredef = true;
+//         if (!isPredef) {
+//         H4Attribute attrib = null;
+//         if (dimAttrInfo != null)
+//         attrib = new H4Attribute(this, nAttr, attrName,
+//         dimAttrInfo);
+//         if (attrib != null) {
+//         attributes.put(attrName, attrib);
+//         indexToAttributesMap.put(Integer.valueOf(nAttr),
+//         attrib);
+//         nAttr++;
+//         } else {
+//         throw new RuntimeException(
+//         "Error while setting dimension attribute");
+//         }
+//         }
+//         }
+//        
+//         // retrieving predefined attributes
+//         final String predefAttributesValues[] = { "NONE", "NONE",
+//         "NONE" };
+//         HDFLibrary.SDgetdimstrs(getIdentifier(),
+//         predefAttributesValues, HDFConstants.DFS_MAXLEN);
+//         final String predefinedStrings[] = { PREDEF_ATTR_LABEL,
+//         PREDEF_ATTR_UNIT, PREDEF_ATTR_FORMAT };
+//        
+//         for (int k = 0; k < 3; k++) {
+//         // getting predefined attribute value
+//         final String value = predefAttributesValues[k];
+//         if (value != null && value.trim().length() != 0) {
+//        
+//         // predefined attribute found. Building a new
+//         // H4Attribute
+//         H4Attribute attrib = new H4Attribute(this, nAttr,
+//         predefinedStrings[k],
+//         new int[] { HDFConstants.DFNT_CHAR8,
+//         value.length() }, value.getBytes());
+//         if (attrib != null) {
+//         attributes.put(predefinedStrings[k], attrib);
+//         indexToAttributesMap.put(Integer.valueOf(nAttr),
+//         attrib);
+//         nAttr++;
+//         }
+//         }
+//         }
+//         }
+//         return attributes;
+//         }
 
         /**
          * @see {@link AbstractH4Object#readAttribute(int, Object)}
@@ -144,7 +139,8 @@ public class H4Dimension extends H4Variable implements IHObject,
         protected int[] getAttributeInfo(int index, String[] attrName)
                 throws HDFException {
             final int[] dimAttrInfo = { 0, 0 };
-            boolean done = HDFLibrary.SDattrinfo(getIdentifier(), index,attrName, dimAttrInfo);
+            boolean done = HDFLibrary.SDattrinfo(getIdentifier(), index,
+                    attrName, dimAttrInfo);
             if (done)
                 return dimAttrInfo;
             else
@@ -152,12 +148,11 @@ public class H4Dimension extends H4Variable implements IHObject,
 
         }
 
-		protected int getAttributeIndexByName(String attributeName)
-				throws HDFException {
-			// TODO Auto-generated method stub
-			return 0;
-		}
-
+        protected int getAttributeIndexByName(String attributeName)
+                throws HDFException {
+            // TODO Auto-generated method stub
+            return -1;
+        }
 
     }
 

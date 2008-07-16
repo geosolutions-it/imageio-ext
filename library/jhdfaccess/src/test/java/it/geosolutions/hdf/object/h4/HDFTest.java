@@ -25,8 +25,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageReadParam;
@@ -91,27 +89,27 @@ public class HDFTest extends TestCase {
 	public static TestSuite suite() {
 		TestSuite suite = new TestSuite();
 
-		// Testing File Annotations (Label/Description), Data Object
-		// (SDS/GRImage) Annotations (Label/Description)
-		suite.addTest(new HDFTest("testAnnotations"));
-
-		// Test attributes management
-		suite.addTest(new HDFTest("testAttributes"));
-
-		// Test group Structure
-		suite.addTest(new HDFTest("testGroups"));
-
-		// Test Dimension scales management
-		suite.addTest(new HDFTest("testDimensionScales"));
-
-		// SDS Data Read/Visualization Test
-		suite.addTest(new HDFTest("testSDSReadAndVisualize"));
-
+//		// Testing File Annotations (Label/Description), Data Object
+//		// (SDS/GRImage) Annotations (Label/Description)
+//		suite.addTest(new HDFTest("testAnnotations"));
+//
+//		// Test attributes management
+//		suite.addTest(new HDFTest("testAttributes"));
+//
+//		// Test group Structure
+//		suite.addTest(new HDFTest("testGroups"));
+//
+//		// Test Dimension scales management
+//		suite.addTest(new HDFTest("testDimensionScales"));
+//
+//		// SDS Data Read/Visualization Test
+//		suite.addTest(new HDFTest("testSDSReadAndVisualize"));
+//
 		// Test a MISR HDF source
 		suite.addTest(new HDFTest("testMisrSDS"));
 
-		// Test Paletted GR Images
-		suite.addTest(new HDFTest("testVisualizePalettedGRImage"));
+//		// Test Paletted GR Images
+//		suite.addTest(new HDFTest("testVisualizePalettedGRImage"));
 
 		return suite;
 	}
@@ -582,6 +580,13 @@ public class HDFTest extends TestCase {
 							" has Dimension Scale set\n");
 					outSb.append(printDimensionScaleValues(dimension));
 				}
+				final int attrNum = dimension.getNumAttributes();
+		                if (attrNum != 0) {
+		                        for (int a=0;a<attrNum;a++){
+		                            H4Attribute attrib = (H4Attribute) dimension.getAttribute(a);
+		                            outSb.append(printInfo(attrib));
+		                        }
+		                }
 			}
 			outSb.append("======================================\n");
 		}

@@ -184,7 +184,7 @@ public class H4GRImageCollection extends AbstractHObject implements IHObject,
 
                 // Retrieving Information
                 if (HDFLibrary.GRfileinfo(identifier, grFileInfo)) {
-                    objectWithAttributes = new H4GRFamilyObjectsWithAttributes(
+                    objectWithAttributes = new H4GRFamilyObjectsAttributesManager(
                             identifier, grFileInfo[1]);
                     numImages = grFileInfo[0];
                     grImagesList = new ArrayList(numImages);

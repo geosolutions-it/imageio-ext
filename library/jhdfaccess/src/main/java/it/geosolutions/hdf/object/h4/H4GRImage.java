@@ -274,7 +274,7 @@ public class H4GRImage extends H4Variable implements IH4ObjectWithAttributes {
                 numComponents = grInfo[0];
                 datatype = grInfo[1] & (~HDFConstants.DFNT_LITEND);
                 interlaceMode = grInfo[2];
-                objectWithAttributes = new H4GRFamilyObjectsWithAttributes(
+                objectWithAttributes = new H4GRFamilyObjectsAttributesManager(
                         identifier, grInfo[3]);
                 numPalettes = HDFLibrary.GRgetnluts(identifier);
             } else {

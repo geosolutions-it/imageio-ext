@@ -61,9 +61,9 @@ public abstract class AbstractH4Object extends AbstractHObject implements
      */
     private int numAttributes;
 
-    /* (non-Javadoc)
-	 * @see it.geosolutions.hdf.object.h4.IH4Object#getNumAttributes()
-	 */
+    /**
+     * @see it.geosolutions.hdf.object.h4.IH4Object#getNumAttributes()
+     */
     public int getNumAttributes() {
         return numAttributes;
     }
@@ -108,9 +108,9 @@ public abstract class AbstractH4Object extends AbstractHObject implements
      */
     protected abstract int getAttributeIndexByName(String attributeName)throws HDFException;
 
-    /* (non-Javadoc)
-	 * @see it.geosolutions.hdf.object.h4.IH4Object#getAttribute(java.lang.String)
-	 */
+    /** 
+     * @see it.geosolutions.hdf.object.h4.IH4Object#getAttribute(java.lang.String)
+     */
     public synchronized H4Attribute getAttribute(final String attributeName)
             throws HDFException {
         if (attributeName == null)
@@ -129,11 +129,9 @@ public abstract class AbstractH4Object extends AbstractHObject implements
         return attribute;
     }
 
-
-
-    /* (non-Javadoc)
-	 * @see it.geosolutions.hdf.object.h4.IH4Object#getAttribute(int)
-	 */
+    /** 
+     * @see it.geosolutions.hdf.object.h4.IH4Object#getAttribute(int)
+     */
     public synchronized H4Attribute getAttribute(final int attributeIndex)
             throws HDFException {
         checkAttributeIndex(attributeIndex);

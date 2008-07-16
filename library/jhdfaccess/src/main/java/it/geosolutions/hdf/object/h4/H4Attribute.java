@@ -101,7 +101,7 @@ public class H4Attribute {
         if (attrInfo.length == 2) {
             attrDatatype = attrInfo[0];
             size = attrInfo[1];
-            numValues=1;
+            numValues = 1;
         } else {
             attrDatatype = attrInfo[0];
             numValues = attrInfo[1];
@@ -216,7 +216,7 @@ public class H4Attribute {
     public static H4Attribute buildAttribute(
             AbstractH4Object objectWithAttribute, final int index)
             throws HDFException {
-        if (objectWithAttribute==null)
+        if (objectWithAttribute == null)
             throw new IllegalArgumentException("Input object is null");
         H4Attribute attribute = null;
         String[] attrName = new String[] { "" };
@@ -227,17 +227,18 @@ public class H4Attribute {
 
         if (attrInfo != null) {
             // build a new attribute
-            attribute = new H4Attribute(objectWithAttribute, index,attrName[0], attrInfo);
+            attribute = new H4Attribute(objectWithAttribute, index,
+                    attrName[0], attrInfo);
         }
         return attribute;
     }
-    
+
     public synchronized void dispose() {
-        numValues=-1;
-        attributeOwner=null;
+        numValues = -1;
+        attributeOwner = null;
         name = null;
         index = -1;
-        datatype= HDFConstants.FAIL;
+        datatype = HDFConstants.FAIL;
         values = null;
     }
 }

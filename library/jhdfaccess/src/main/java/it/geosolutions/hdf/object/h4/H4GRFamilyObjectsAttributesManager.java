@@ -20,13 +20,13 @@ import ncsa.hdf.hdflib.HDFException;
 import ncsa.hdf.hdflib.HDFLibrary;
 
 /**
- * A package private class which allows to handle Attributes using the SDS APIs.
+ * A package private class which allows to handle Attributes using the GR APIs.
  * 
  * @author Daniele Romagnoli, GeoSolutions
  */
-class H4SDSFamilyObjectsAttributesManager extends AbstractH4Object {
+class H4GRFamilyObjectsAttributesManager extends AbstractH4Object {
 
-    public H4SDSFamilyObjectsAttributesManager(final int identifier,
+    public H4GRFamilyObjectsAttributesManager(final int identifier,
             final int numAttributes) {
         super(identifier, numAttributes);
     }
@@ -36,7 +36,7 @@ class H4SDSFamilyObjectsAttributesManager extends AbstractH4Object {
      */
     protected boolean readAttribute(int index, Object values)
             throws HDFException {
-        return HDFLibrary.SDreadattr(getIdentifier(), index, values);
+        return HDFLibrary.GRgetattr(getIdentifier(), index, values);
     }
 
     /**
@@ -45,7 +45,7 @@ class H4SDSFamilyObjectsAttributesManager extends AbstractH4Object {
     protected int[] getAttributeInfo(int index, String[] attrName)
             throws HDFException {
         int[] attrInfo = new int[] { 0, 0 };
-        boolean done = HDFLibrary.SDattrinfo(getIdentifier(), index, attrName,
+        boolean done = HDFLibrary.GRattrinfo(getIdentifier(), index, attrName,
                 attrInfo);
         if (done)
             return attrInfo;
@@ -58,6 +58,6 @@ class H4SDSFamilyObjectsAttributesManager extends AbstractH4Object {
      */
     protected int getAttributeIndexByName(String attributeName)
             throws HDFException {
-        return HDFLibrary.SDfindattr(getIdentifier(), attributeName);
+        return HDFLibrary.GRfindattr(getIdentifier(), attributeName);
     }
 }
