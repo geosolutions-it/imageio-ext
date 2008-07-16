@@ -74,8 +74,7 @@ public class H4Attribute {
      *                size. Attribute information retrieved by means of the
      *                VGroup interface, also returns the number of values.
      */
-    public H4Attribute(AbstractH4Object object, int i, String attrName,
-            int[] attrInfo) {
+    public H4Attribute(AbstractH4Object object, int i, String attrName,int[] attrInfo) {
         this(object, i, attrName, attrInfo, null);
     }
 
@@ -95,8 +94,7 @@ public class H4Attribute {
      * @param data
      *                an Object containing datavalues of this attribute.
      */
-    public H4Attribute(AbstractH4Object object, int i, String attrName,
-            int[] attrInfo, Object data) {
+    public H4Attribute(AbstractH4Object object, int i, String attrName,int[] attrInfo, Object data) {
         int attrDatatype;
         if (attrInfo.length == 2) {
             attrDatatype = attrInfo[0];
@@ -199,38 +197,6 @@ public class H4Attribute {
      */
     public String getValuesAsString() throws HDFException {
         return H4Utilities.getValuesAsString(datatype, getValues());
-    }
-
-    /**
-     * Static utility method which build a new {@link H4Attribute} given the
-     * object to which the attribute is attached and the index of the attribute.
-     * 
-     * @param objectWithAttribute
-     *                The owner {@link AbstractHObject} to which the attribute
-     *                is attached
-     * @param index
-     *                The index of the required attribute.
-     * @return the {@link H4Attribute} just built.
-     * @throws HDFException
-     */
-    public static H4Attribute buildAttribute(
-            AbstractH4Object objectWithAttribute, final int index)
-            throws HDFException {
-        if (objectWithAttribute == null)
-            throw new IllegalArgumentException("Input object is null");
-        H4Attribute attribute = null;
-        String[] attrName = new String[] { "" };
-
-        // get various info about this attribute from the proper interface,
-        // depending on the subclass of the owner object
-        int[] attrInfo = objectWithAttribute.getAttributeInfo(index, attrName);
-
-        if (attrInfo != null) {
-            // build a new attribute
-            attribute = new H4Attribute(objectWithAttribute, index,
-                    attrName[0], attrInfo);
-        }
-        return attribute;
     }
 
     public synchronized void dispose() {

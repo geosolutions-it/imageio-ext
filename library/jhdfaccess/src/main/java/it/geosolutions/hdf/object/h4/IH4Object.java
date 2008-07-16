@@ -22,6 +22,10 @@ import ncsa.hdf.hdflib.HDFException;
 /**
  * Interface which should be implemented by H4Objects having attributes.
  * 
+ * @todo in the future we may want to refactor this interface and merge it with 
+ * the {@link IHObject} interface in order to also merge the respective abstract classes providing
+ * skeletal implementations.
+ * 
  * @author Daniele Romagnoli, GeoSolutions
  */
 public interface IH4Object extends IHObject {

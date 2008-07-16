@@ -40,7 +40,7 @@ import ncsa.hdf.hdflib.HDFLibrary;
  */
 public class H4SDSCollection extends AbstractHObject implements IHObject, List, IH4Object {
 
-    private AbstractH4Object objectWithAttributes; 
+    private AbstractH4Object attributesHolder; 
     
     private class H4SDSCollectionIterator implements Iterator {
 
@@ -241,7 +241,7 @@ public class H4SDSCollection extends AbstractHObject implements IHObject, List, 
                 setIdentifier(identifier);
                 final int[] sdsFileInfo = new int[2];
                 if (HDFLibrary.SDfileinfo(identifier, sdsFileInfo)) {
-                    objectWithAttributes = new H4SDSFamilyObjectsAttributesManager(identifier, sdsFileInfo[1]);
+                    attributesHolder = new H4SDSFamilyObjectsAttributesManager(identifier, sdsFileInfo[1]);
                     // retrieving the total # of SDS. It is worth to point out
                     // that this number includes the SDS related to dimension
                     // scales which will not treated as SDS. For this reason,
@@ -251,7 +251,7 @@ public class H4SDSCollection extends AbstractHObject implements IHObject, List, 
                     sdsList = new ArrayList(sdsTotalNum);
                     sdsNamesToIndexes = new HashMap(sdsTotalNum);
                     for (int i = 0; i < sdsTotalNum; i++) {
-                        H4SDS candidateSds = H4SDS.buildH4SDS(this, i);
+                        H4SDS candidateSds = H4Utilities.buildH4SDS(this, i);
                         if (candidateSds != null) {
                             sdsList.add(numSDS, candidateSds);
                             final String name = candidateSds.getName();
@@ -313,9 +313,9 @@ public class H4SDSCollection extends AbstractHObject implements IHObject, List, 
                 sdsList.clear();
                 sdsList = null;
             }
-            if (objectWithAttributes!=null){
-                objectWithAttributes.dispose();
-                objectWithAttributes = null;
+            if (attributesHolder!=null){
+                attributesHolder.dispose();
+                attributesHolder = null;
             }
             try {
                 boolean closed = HDFLibrary.SDend(identifier);
@@ -546,20 +546,20 @@ public class H4SDSCollection extends AbstractHObject implements IHObject, List, 
      * @see {@link IH4Object#getAttribute(int)}
      */
     public H4Attribute getAttribute(int attributeIndex) throws HDFException {
-        return objectWithAttributes.getAttribute(attributeIndex);
+        return attributesHolder.getAttribute(attributeIndex);
     }
 
     /**
      * @see {@link IH4Object#getAttribute(String)}
      */
     public H4Attribute getAttribute(String attributeName) throws HDFException {
-        return objectWithAttributes.getAttribute(attributeName);
+        return attributesHolder.getAttribute(attributeName);
     }
 
     /**
      * @see {@link IH4Object#getNumAttributes()}
      */
     public int getNumAttributes() {
-       return objectWithAttributes.getNumAttributes();
+       return attributesHolder.getNumAttributes();
     }
 }

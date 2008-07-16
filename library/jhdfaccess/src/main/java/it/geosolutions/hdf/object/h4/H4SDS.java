@@ -38,10 +38,10 @@ import ncsa.hdf.hdflib.HDFLibrary;
  */
 public class H4SDS extends H4Variable implements IHObject, IH4Object {
 
-    private AbstractH4Object objectWithAttributes; 
+    private AbstractH4Object attributesHolder; 
     
     /** Logger. */
-    private final static Logger LOGGER = Logger
+    final static Logger LOGGER = Logger
             .getLogger("it.geosolutions.hdf.object.h4");
 
     /**
@@ -221,47 +221,6 @@ public class H4SDS extends H4Variable implements IHObject, IH4Object {
     }
 
     /**
-     * Attempts to build a new {@link H4SDS} given its index within the file. A
-     * new {@link H4SDS} is returned only if the underlying SDS does not
-     * represents a dimension scale. Otherwise, <code>null</code> will
-     * returned.
-     * 
-     * @param h4SDSCollection
-     *                the collection owner.
-     * @param index
-     *                the index of the required SDS within the file
-     * @return a new {@link H4SDS} if the underlying SDS does not represents a
-     *         dimension scale. <code>null</code> otherwise.
-     * @throws HDFException
-     */
-    protected static H4SDS buildH4SDS(H4SDSCollection h4SDSCollection,
-            final int index) throws HDFException {
-        H4SDS sds = null;
-        final int interfaceID = h4SDSCollection.getIdentifier();
-        if (interfaceID == HDFConstants.FAIL) {
-            if (LOGGER.isLoggable(Level.WARNING))
-                LOGGER.log(Level.WARNING, "undefined SDInterface identifier ");
-            return sds;
-        }
-        try {
-            final int identifier = HDFLibrary.SDselect(interfaceID, index);
-            if (identifier != HDFConstants.FAIL) {
-                if (!HDFLibrary.SDiscoordvar(identifier)) {
-                    sds = new H4SDS(h4SDSCollection, index, identifier);
-                } else
-                    HDFLibrary.SDendaccess(identifier);
-            } else {
-                if (LOGGER.isLoggable(Level.WARNING))
-                    LOGGER.log(Level.WARNING, "undefined SD identifier ");
-            }
-
-        } catch (HDFException e) {
-            throw new RuntimeException("Error while creating a new H4SDS", e);
-        }
-        return sds;
-    }
-
-    /**
      * Initializes the {@link H4SDS} fields, such as dimension sizes, rank,
      * reference and so on.
      * 
@@ -300,7 +259,7 @@ public class H4SDS extends H4Variable implements IHObject, IH4Object {
             }
             sdInfo[1] = sdInfo[1] & (~HDFConstants.DFNT_LITEND);
             datatype = sdInfo[1];
-            objectWithAttributes = new H4SDSFamilyObjectsAttributesManager(identifier, sdInfo[2]);
+            attributesHolder = new H4SDSFamilyObjectsAttributesManager(identifier, sdInfo[2]);
             dimensions = new ArrayList(rank);
 
             HDFChunkInfo chunkInfo = new HDFChunkInfo();
@@ -375,9 +334,9 @@ public class H4SDS extends H4Variable implements IHObject, IH4Object {
                 labelAnnotations.clear();
                 labelAnnotations = null;
             }
-            if (objectWithAttributes!=null){
-                objectWithAttributes.dispose();
-                objectWithAttributes = null;
+            if (attributesHolder!=null){
+                attributesHolder.dispose();
+                attributesHolder = null;
             }
             // Disposing objects hold by H4DecoratedObject superclass
             // ----------------
@@ -650,20 +609,20 @@ public class H4SDS extends H4Variable implements IHObject, IH4Object {
      * @see {@link IH4Object#getAttribute(int)}
      */
     public H4Attribute getAttribute(int attributeIndex) throws HDFException {
-        return objectWithAttributes.getAttribute(attributeIndex);
+        return attributesHolder.getAttribute(attributeIndex);
     }
 
     /**
      * @see {@link IH4Object#getAttribute(String)}
      */
     public H4Attribute getAttribute(String attributeName) throws HDFException {
-        return objectWithAttributes.getAttribute(attributeName);
+        return attributesHolder.getAttribute(attributeName);
     }
 
     /**
      * @see {@link IH4Object#getNumAttributes()}
      */
     public int getNumAttributes() {
-       return objectWithAttributes.getNumAttributes();
+       return attributesHolder.getNumAttributes();
     }
 }

@@ -156,7 +156,7 @@ public abstract class AbstractH4Object extends AbstractHObject implements
     }
 
     protected H4Attribute getAttributeByIndex(int attributeIndex) throws HDFException {
-         return H4Attribute.buildAttribute(this, attributeIndex);
+         return H4Utilities.buildAttribute(this, attributeIndex);
 	}
 
 	/**

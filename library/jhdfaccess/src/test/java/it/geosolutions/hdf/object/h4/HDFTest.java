@@ -532,9 +532,9 @@ public class HDFTest extends TestCase {
             for (int i = 0; i < rank; i++) {
                 H4Dimension dimension = h4sds.getDimension(i);
                 final String[] predefinedAttributes = new String[] {
-                        H4Dimension.PREDEF_ATTR_LABEL,
-                        H4Dimension.PREDEF_ATTR_UNIT,
-                        H4Dimension.PREDEF_ATTR_FORMAT };
+                        H4Utilities.PREDEF_ATTR_LABEL,
+                        H4Utilities.PREDEF_ATTR_UNIT,
+                        H4Utilities.PREDEF_ATTR_FORMAT };
                 for (int attr = 0; attr < 3; attr++) {
                     String attrName = predefinedAttributes[attr];
                     H4Attribute attrib = dimension.getAttribute(attrName);

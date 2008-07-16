@@ -34,7 +34,7 @@ import ncsa.hdf.hdflib.HDFLibrary;
  */
 public class H4Dimension extends H4Variable implements IHObject, IH4Object {
 
-    private AbstractH4Object objectWithAttributes;
+    private AbstractH4Object attributesHolder;
 
     private class H4DimensionAttributesManager extends AbstractH4Object {
 
@@ -77,8 +77,7 @@ public class H4Dimension extends H4Variable implements IHObject, IH4Object {
                 dimAttrName[0] = "";
                 final int[] dimAttrInfo = { 0, 0 };
                 // get various info about this attribute
-                HDFLibrary.SDattrinfo(getIdentifier(), i, dimAttrName,
-                        dimAttrInfo);
+                HDFLibrary.SDattrinfo(getIdentifier(), i, dimAttrName,dimAttrInfo);
                 final String attrName = dimAttrName[0];
 
                 // //
@@ -142,16 +141,15 @@ public class H4Dimension extends H4Variable implements IHObject, IH4Object {
          */
         protected int[] getAttributeInfo(int index, String[] attrName)
                 throws HDFException {
+        	H4Utilities.checkNonNull(attrName, "attrName");
             final int[] dimAttrInfo = { 0, 0 };
             boolean done = false;
             if (hasPredefined) {
                 Integer i = Integer.valueOf(index);
                 if (predefAttribsByIndex.containsKey(i)) {
                     String name = (String) predefAttribsByIndex.get(i);
-                    if (name != null && name.trim().length() > 0
-                            && predefValues.containsKey(name)) {
-                        byte[] values = ((String) predefValues.get(name))
-                                .getBytes();
+                    if (name != null && name.trim().length() > 0&& predefValues.containsKey(name)) {
+                        byte[] values = ((String) predefValues.get(name)).getBytes();
                         attrName[0] = name;
                         dimAttrInfo[0] = HDFConstants.DFNT_CHAR8;
                         dimAttrInfo[1] = values.length;
@@ -159,8 +157,7 @@ public class H4Dimension extends H4Variable implements IHObject, IH4Object {
                     }
                 }
             } else {
-                done = HDFLibrary.SDattrinfo(getIdentifier(), index, attrName,
-                        dimAttrInfo);
+                done = HDFLibrary.SDattrinfo(getIdentifier(), index, attrName,dimAttrInfo);
             }
             if (done)
                 return dimAttrInfo;
@@ -173,6 +170,7 @@ public class H4Dimension extends H4Variable implements IHObject, IH4Object {
          */
         protected int getAttributeIndexByName(String attributeName)
                 throws HDFException {
+        	H4Utilities.checkNonNull(attributeName, "attributeName");
             if (hasPredefined) {
                 int index = -1;
                 if (predefAttribsByName.containsKey(attributeName)) {
@@ -210,13 +208,6 @@ public class H4Dimension extends H4Variable implements IHObject, IH4Object {
     /** Logger. */
     private final static Logger LOGGER = Logger
             .getLogger("it.geosolutions.hdf.object.h4");
-
-    /** predefined attributes */
-    public static String PREDEF_ATTR_LABEL = "long_name";
-
-    public static String PREDEF_ATTR_UNIT = "units";
-
-    public static String PREDEF_ATTR_FORMAT = "format";
 
     /**
      * <code>true</code> if a dimension scale is set for this dimension.
@@ -337,7 +328,7 @@ public class H4Dimension extends H4Variable implements IHObject, IH4Object {
                 //
                 // //
                 String predefAttributePairs[] = checkForPredefined();
-                objectWithAttributes = new H4DimensionAttributesManager(
+                attributesHolder = new H4DimensionAttributesManager(
                         identifier, dimInfo[2], predefAttributePairs);
 
                 // Retrieving dimension scale
@@ -406,8 +397,8 @@ public class H4Dimension extends H4Variable implements IHObject, IH4Object {
 
             }
             if (predefined != 0) {
-                final String predefinedStrings[] = { PREDEF_ATTR_LABEL,
-                        PREDEF_ATTR_UNIT, PREDEF_ATTR_FORMAT };
+                final String predefinedStrings[] = { H4Utilities.PREDEF_ATTR_LABEL,
+                        H4Utilities.PREDEF_ATTR_UNIT, H4Utilities.PREDEF_ATTR_FORMAT };
                 predefAttributePairs = new String[predefined * 2];
                 for (int k = 0; k < 3; k++) {
                     if (predefinedElements[k]) {
@@ -454,9 +445,9 @@ public class H4Dimension extends H4Variable implements IHObject, IH4Object {
     public synchronized void dispose() {
         final int identifier = getIdentifier();
         if (identifier != HDFConstants.FAIL) {
-            if (objectWithAttributes != null) {
-                objectWithAttributes.dispose();
-                objectWithAttributes = null;
+            if (attributesHolder != null) {
+                attributesHolder.dispose();
+                attributesHolder = null;
             }
             if (hasDimensionScaleSet) {
                 try {
@@ -502,20 +493,20 @@ public class H4Dimension extends H4Variable implements IHObject, IH4Object {
      * @see {@link IH4Object#getAttribute(int)}
      */
     public H4Attribute getAttribute(int attributeIndex) throws HDFException {
-        return objectWithAttributes.getAttribute(attributeIndex);
+        return attributesHolder.getAttribute(attributeIndex);
     }
 
     /**
      * @see {@link IH4Object#getAttribute(String)}
      */
     public H4Attribute getAttribute(String attributeName) throws HDFException {
-        return objectWithAttributes.getAttribute(attributeName);
+        return attributesHolder.getAttribute(attributeName);
     }
 
     /**
      * @see {@link IH4Object#getNumAttributes()}
      */
     public int getNumAttributes() {
-        return objectWithAttributes.getNumAttributes();
+        return attributesHolder.getNumAttributes();
     }
 }

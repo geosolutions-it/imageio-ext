@@ -36,6 +36,7 @@ class H4SDSFamilyObjectsAttributesManager extends AbstractH4Object {
      */
     protected boolean readAttribute(int index, Object values)
             throws HDFException {
+    	H4Utilities.checkNonNull(values, "values");
         return HDFLibrary.SDreadattr(getIdentifier(), index, values);
     }
 
@@ -44,9 +45,11 @@ class H4SDSFamilyObjectsAttributesManager extends AbstractH4Object {
      */
     protected int[] getAttributeInfo(int index, String[] attrName)
             throws HDFException {
+    	H4Utilities.checkNonNull(attrName, "attrName");
+    	for (int i=0;i<attrName.length;i++)
+    		H4Utilities.checkNonNull(attrName[i], "attrName["+i+"]");
         int[] attrInfo = new int[] { 0, 0 };
-        boolean done = HDFLibrary.SDattrinfo(getIdentifier(), index, attrName,
-                attrInfo);
+        boolean done = HDFLibrary.SDattrinfo(getIdentifier(), index, attrName,attrInfo);
         if (done)
             return attrInfo;
         else
@@ -58,6 +61,7 @@ class H4SDSFamilyObjectsAttributesManager extends AbstractH4Object {
      */
     protected int getAttributeIndexByName(String attributeName)
             throws HDFException {
+    	H4Utilities.checkNonNull(attributeName, "attributeName");
         return HDFLibrary.SDfindattr(getIdentifier(), attributeName);
     }
 }
