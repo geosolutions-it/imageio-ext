@@ -32,8 +32,7 @@ import ncsa.hdf.hdflib.HDFLibrary;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  */
-public class H4Dimension extends H4Variable implements IHObject,
-        IH4ObjectWithAttributes {
+public class H4Dimension extends H4Variable implements IHObject, IH4Object {
 
     private AbstractH4Object objectWithAttributes;
 
@@ -121,14 +120,15 @@ public class H4Dimension extends H4Variable implements IHObject,
                         // as a byte array. I simply need to copy bytes
                         //
                         // //
-                        final byte[] valueBytes = ((String)predefValues.get(name)).getBytes();
-                        
-                        // Casting the preallocated values container to 
+                        final byte[] valueBytes = ((String) predefValues
+                                .get(name)).getBytes();
+
+                        // Casting the preallocated values container to
                         // the byte array to be filled
-                        byte[] retValues = ((byte[])values);
+                        byte[] retValues = ((byte[]) values);
                         final int size = retValues.length;
-                        for (int k=0;k<size;k++)
-                            retValues[k]=valueBytes[k];
+                        for (int k = 0; k < size; k++)
+                            retValues[k] = valueBytes[k];
                         success = true;
                     }
                 }
@@ -150,7 +150,8 @@ public class H4Dimension extends H4Variable implements IHObject,
                     String name = (String) predefAttribsByIndex.get(i);
                     if (name != null && name.trim().length() > 0
                             && predefValues.containsKey(name)) {
-                        byte[] values = ((String)predefValues.get(name)).getBytes();
+                        byte[] values = ((String) predefValues.get(name))
+                                .getBytes();
                         attrName[0] = name;
                         dimAttrInfo[0] = HDFConstants.DFNT_CHAR8;
                         dimAttrInfo[1] = values.length;

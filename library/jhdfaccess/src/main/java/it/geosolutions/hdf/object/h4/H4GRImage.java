@@ -16,6 +16,8 @@
  */
 package it.geosolutions.hdf.object.h4;
 
+import it.geosolutions.hdf.object.IHObject;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,7 +34,7 @@ import ncsa.hdf.hdflib.HDFLibrary;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  */
-public class H4GRImage extends H4Variable implements IH4ObjectWithAttributes {
+public class H4GRImage extends H4Variable implements IHObject, IH4Object {
 
     /** Logger. */
     private final static Logger LOGGER = Logger
@@ -323,7 +325,7 @@ public class H4GRImage extends H4Variable implements IH4ObjectWithAttributes {
                 labelAnnotations.clear();
                 labelAnnotations = null;
             }
-            if (objectWithAttributes!=null){
+            if (objectWithAttributes != null) {
                 objectWithAttributes.dispose();
                 objectWithAttributes = null;
             }

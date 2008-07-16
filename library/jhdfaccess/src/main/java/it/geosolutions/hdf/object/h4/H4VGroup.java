@@ -34,7 +34,7 @@ import ncsa.hdf.hdflib.HDFLibrary;
  * @author Daniele Romagnoli, GeoSolutions
  */
 public class H4VGroup extends H4Variable implements IHObject,
-        IH4ObjectWithAttributes {
+        IH4Object {
 
     /** Logger. */
     private final static Logger LOGGER = Logger

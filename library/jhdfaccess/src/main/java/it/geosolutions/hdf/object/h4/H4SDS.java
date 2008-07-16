@@ -36,7 +36,7 @@ import ncsa.hdf.hdflib.HDFLibrary;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  */
-public class H4SDS extends H4Variable implements IHObject, IH4ObjectWithAttributes {
+public class H4SDS extends H4Variable implements IHObject, IH4Object {
 
     private AbstractH4Object objectWithAttributes; 
     

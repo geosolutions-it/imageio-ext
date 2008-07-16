@@ -38,7 +38,7 @@ import ncsa.hdf.hdflib.HDFLibrary;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  */
-public class H4SDSCollection extends AbstractHObject implements IHObject, List, IH4ObjectWithAttributes {
+public class H4SDSCollection extends AbstractHObject implements IHObject, List, IH4Object {
 
     private AbstractH4Object objectWithAttributes; 
     

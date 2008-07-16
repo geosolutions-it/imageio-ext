@@ -38,8 +38,8 @@ import ncsa.hdf.hdflib.HDFLibrary;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  */
-public class H4GRImageCollection extends AbstractHObject implements IHObject,
-        List, IH4ObjectWithAttributes {
+public class H4GRImageCollection extends AbstractHObject implements List,
+        IHObject, IH4Object {
 
     private final static Logger LOGGER = Logger
             .getLogger("it.geosolutions.hdf.object.h4");
@@ -251,7 +251,7 @@ public class H4GRImageCollection extends AbstractHObject implements IHObject,
                 grImagesList.clear();
                 grImagesList = null;
             }
-            if (objectWithAttributes!=null){
+            if (objectWithAttributes != null) {
                 objectWithAttributes.dispose();
                 objectWithAttributes = null;
             }
