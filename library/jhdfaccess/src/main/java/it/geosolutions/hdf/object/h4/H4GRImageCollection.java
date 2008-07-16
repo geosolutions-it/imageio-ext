@@ -527,21 +527,21 @@ public class H4GRImageCollection extends AbstractHObject implements List,
     }
 
     /**
-     * @see {@link IH4ObjectWithAttributes#getAttribute(int)}
+     * @see {@link IH4Object#getAttribute(int)}
      */
     public H4Attribute getAttribute(int attributeIndex) throws HDFException {
         return objectWithAttributes.getAttribute(attributeIndex);
     }
 
     /**
-     * @see {@link IH4ObjectWithAttributes#getAttribute(String)}
+     * @see {@link IH4Object#getAttribute(String)}
      */
     public H4Attribute getAttribute(String attributeName) throws HDFException {
         return objectWithAttributes.getAttribute(attributeName);
     }
 
     /**
-     * @see {@link IH4ObjectWithAttributes#getNumAttributes()}
+     * @see {@link IH4Object#getNumAttributes()}
      */
     public int getNumAttributes() {
         return objectWithAttributes.getNumAttributes();
