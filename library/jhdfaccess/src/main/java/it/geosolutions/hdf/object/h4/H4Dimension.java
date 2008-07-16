@@ -18,6 +18,7 @@ package it.geosolutions.hdf.object.h4;
 
 import it.geosolutions.hdf.object.IHObject;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,99 +39,102 @@ public class H4Dimension extends H4Variable implements IHObject,
 
     private class H4DimensionAttributesManager extends AbstractH4Object {
 
+        private Map predefAttribsByName = null;
+
+        private Map predefAttribsByIndex = null;
+
+        private Map predefValues = null;
+
+        private boolean hasPredefined;
+
         public H4DimensionAttributesManager(final int identifier,
-                final int numAttributes) {
+                final int numAttributes, String[] predefinedAttributePairs)
+                throws HDFException {
             super(identifier, numAttributes);
+            if (predefinedAttributePairs != null) {
+                hasPredefined = true;
+                if (hasPredefined)
+                    attributesCheck(predefinedAttributePairs);
+            }
         }
 
-//         /**
-//         * returns a <code>Map</code> containing all attributes associated to
-//         * this Dimension
-//         *
-//         * @return the map of attributes.
-//         * @throws HDFException
-//         */
-//         synchronized Map getAttributes() throws HDFException {
-//        
-//         // Checking if I need to initialize attributes map
-//         if (attributes != null && attributes.size() < numAttributes) {
-//         // user defined attributes
-//         final String[] dimAttrName = new String[1];
-//         int nAttr = 0;
-//         for (int i = 0; i < numAttributes; i++) {
-//         dimAttrName[0] = "";
-//         // get various info about this attribute
-//         int[] dimAttrInfo = getAttributeInfo(i, dimAttrName);
-//         final String attrName = dimAttrName[0];
-//        
-//         // //
-//         //
-//         // The HDF user guide explicitly states that
-//         // Predefined Attributes for Dimensions need to be
-//         // read using specialized routines (SDgetdimstrs).
-//         // So, I will skip a found attribute if it is a
-//         // predefined one.
-//         //
-//         // //
-//         boolean isPredef = false;
-//         if (attrName.equals(PREDEF_ATTR_LABEL)
-//         || attrName.equals(PREDEF_ATTR_UNIT)
-//         || attrName.equals(PREDEF_ATTR_FORMAT))
-//         isPredef = true;
-//         if (!isPredef) {
-//         H4Attribute attrib = null;
-//         if (dimAttrInfo != null)
-//         attrib = new H4Attribute(this, nAttr, attrName,
-//         dimAttrInfo);
-//         if (attrib != null) {
-//         attributes.put(attrName, attrib);
-//         indexToAttributesMap.put(Integer.valueOf(nAttr),
-//         attrib);
-//         nAttr++;
-//         } else {
-//         throw new RuntimeException(
-//         "Error while setting dimension attribute");
-//         }
-//         }
-//         }
-//        
-//         // retrieving predefined attributes
-//         final String predefAttributesValues[] = { "NONE", "NONE",
-//         "NONE" };
-//         HDFLibrary.SDgetdimstrs(getIdentifier(),
-//         predefAttributesValues, HDFConstants.DFS_MAXLEN);
-//         final String predefinedStrings[] = { PREDEF_ATTR_LABEL,
-//         PREDEF_ATTR_UNIT, PREDEF_ATTR_FORMAT };
-//        
-//         for (int k = 0; k < 3; k++) {
-//         // getting predefined attribute value
-//         final String value = predefAttributesValues[k];
-//         if (value != null && value.trim().length() != 0) {
-//        
-//         // predefined attribute found. Building a new
-//         // H4Attribute
-//         H4Attribute attrib = new H4Attribute(this, nAttr,
-//         predefinedStrings[k],
-//         new int[] { HDFConstants.DFNT_CHAR8,
-//         value.length() }, value.getBytes());
-//         if (attrib != null) {
-//         attributes.put(predefinedStrings[k], attrib);
-//         indexToAttributesMap.put(Integer.valueOf(nAttr),
-//         attrib);
-//         nAttr++;
-//         }
-//         }
-//         }
-//         }
-//         return attributes;
-//         }
+        /**
+         * returns a <code>Map</code> containing all attributes associated to
+         * this Dimension
+         * 
+         * @return the map of attributes.
+         * @throws HDFException
+         * @throws HDFException
+         */
+        private void attributesCheck(final String[] predefinedAttributePairs)
+                throws HDFException {
+            final int numAttributes = this.getNumAttributes();
+            final String[] dimAttrName = new String[1];
+            final int numPredef = predefinedAttributePairs.length / 2;
+            predefAttribsByIndex = new HashMap(numPredef);
+            predefAttribsByName = new HashMap(numPredef);
+            predefValues = new HashMap(numPredef);
+            for (int i = 0; i < numAttributes; i++) {
+                dimAttrName[0] = "";
+                final int[] dimAttrInfo = { 0, 0 };
+                // get various info about this attribute
+                HDFLibrary.SDattrinfo(getIdentifier(), i, dimAttrName,
+                        dimAttrInfo);
+                final String attrName = dimAttrName[0];
+
+                // //
+                //
+                // The HDF user guide explicitly states that
+                // Predefined Attributes for Dimensions need to be
+                // read using specialized routines (SDgetdimstrs).
+                // So, I will setup information related to predefined Attributes
+                //
+                // //
+                for (int k = 0; k < numPredef; k++) {
+                    if (attrName.equals(predefinedAttributePairs[k * 2])) {
+                        Integer index = Integer.valueOf(i);
+                        predefAttribsByIndex.put(index, attrName);
+                        predefAttribsByName.put(attrName, index);
+                        String value = predefinedAttributePairs[(k * 2) + 1];
+                        predefValues.put(attrName, value);
+                    }
+                }
+            }
+        }
 
         /**
          * @see {@link AbstractH4Object#readAttribute(int, Object)}
          */
         protected boolean readAttribute(int index, Object values)
                 throws HDFException {
-            return HDFLibrary.SDreadattr(getIdentifier(), index, values);
+            if (hasPredefined) {
+                boolean success = false;
+                Integer i = Integer.valueOf(index);
+                if (predefAttribsByIndex.containsKey(i)) {
+                    String name = (String) predefAttribsByIndex.get(i);
+                    if (name != null && name.trim().length() > 0
+                            && predefValues.containsKey(name)) {
+                        // //
+                        //
+                        // Values have been preemptively allocated.
+                        // Note that predefined attributes have values
+                        // as a byte array. I simply need to copy bytes
+                        //
+                        // //
+                        final byte[] valueBytes = ((String)predefValues.get(name)).getBytes();
+                        
+                        // Casting the preallocated values container to 
+                        // the byte array to be filled
+                        byte[] retValues = ((byte[])values);
+                        final int size = retValues.length;
+                        for (int k=0;k<size;k++)
+                            retValues[k]=valueBytes[k];
+                        success = true;
+                    }
+                }
+                return success;
+            } else
+                return HDFLibrary.SDreadattr(getIdentifier(), index, values);
         }
 
         /**
@@ -139,21 +143,67 @@ public class H4Dimension extends H4Variable implements IHObject,
         protected int[] getAttributeInfo(int index, String[] attrName)
                 throws HDFException {
             final int[] dimAttrInfo = { 0, 0 };
-            boolean done = HDFLibrary.SDattrinfo(getIdentifier(), index,
-                    attrName, dimAttrInfo);
+            boolean done = false;
+            if (hasPredefined) {
+                Integer i = Integer.valueOf(index);
+                if (predefAttribsByIndex.containsKey(i)) {
+                    String name = (String) predefAttribsByIndex.get(i);
+                    if (name != null && name.trim().length() > 0
+                            && predefValues.containsKey(name)) {
+                        byte[] values = ((String)predefValues.get(name)).getBytes();
+                        attrName[0] = name;
+                        dimAttrInfo[0] = HDFConstants.DFNT_CHAR8;
+                        dimAttrInfo[1] = values.length;
+                        done = true;
+                    }
+                }
+            } else {
+                done = HDFLibrary.SDattrinfo(getIdentifier(), index, attrName,
+                        dimAttrInfo);
+            }
             if (done)
                 return dimAttrInfo;
             else
                 return null;
-
         }
 
+        /**
+         * @see {@link AbstractH4Object#getAttributeIndexByName(String)}
+         */
         protected int getAttributeIndexByName(String attributeName)
                 throws HDFException {
-            // TODO Auto-generated method stub
-            return -1;
+            if (hasPredefined) {
+                int index = -1;
+                if (predefAttribsByName.containsKey(attributeName)) {
+                    Integer i = (Integer) predefAttribsByName
+                            .get(attributeName);
+                    if (i != null) {
+                        index = i.intValue();
+                    }
+                }
+                return index;
+            } else
+                return HDFLibrary.SDfindattr(getIdentifier(), attributeName);
         }
 
+        /**
+         * Clear the attributes mappings.
+         */
+        public synchronized void dispose() {
+            if (predefAttribsByIndex != null) {
+                predefAttribsByIndex.clear();
+                predefAttribsByIndex = null;
+            }
+            if (predefAttribsByName != null) {
+                predefAttribsByName.clear();
+                predefAttribsByName = null;
+            }
+            if (predefValues != null) {
+                predefValues.clear();
+                predefValues = null;
+            }
+            super.dispose();
+        }
     }
 
     /** Logger. */
@@ -277,8 +327,17 @@ public class H4Dimension extends H4Variable implements IHObject,
                 setName(dimName[0]);
                 size = dimInfo[0];
                 datatype = dimInfo[1] & (~HDFConstants.DFNT_LITEND);
+
+                // //
+                //
+                // Predefined dimension attributes should be differently handled
+                // by leveraging on special APIs.
+                // The following workaround manages that case.
+                //
+                // //
+                String predefAttributePairs[] = checkForPredefined();
                 objectWithAttributes = new H4DimensionAttributesManager(
-                        identifier, dimInfo[2]);
+                        identifier, dimInfo[2], predefAttributePairs);
 
                 // Retrieving dimension scale
                 final int interfaceID = sds.getH4SDSCollectionOwner()
@@ -328,6 +387,37 @@ public class H4Dimension extends H4Variable implements IHObject,
             throw new IllegalStateException(
                     "HDFException occurred while creating a new H4Dimension", e);
         }
+    }
+
+    private String[] checkForPredefined() throws HDFException {
+        String[] predefAttributePairs = null;
+        final String predefAttributesValues[] = { "NONE", "NONE", "NONE" };
+
+        if (HDFLibrary.SDgetdimstrs(getIdentifier(), predefAttributesValues,
+                HDFConstants.DFS_MAXLEN)) {
+            int predefined = 0;
+            boolean predefinedElements[] = new boolean[] { false, false, false };
+            for (int k = 0; k < 3; k++) {
+                if (predefAttributesValues[k] != null) {
+                    predefined++;
+                    predefinedElements[k] = true;
+                }
+
+            }
+            if (predefined != 0) {
+                final String predefinedStrings[] = { PREDEF_ATTR_LABEL,
+                        PREDEF_ATTR_UNIT, PREDEF_ATTR_FORMAT };
+                predefAttributePairs = new String[predefined * 2];
+                for (int k = 0; k < 3; k++) {
+                    if (predefinedElements[k]) {
+                        predefAttributePairs[k * 2] = predefinedStrings[k];
+                        predefAttributePairs[(k * 2) + 1] = predefAttributesValues[k];
+                    }
+                }
+            }
+
+        }
+        return predefAttributePairs;
     }
 
     /**

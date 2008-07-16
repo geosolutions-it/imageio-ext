@@ -156,19 +156,7 @@ public abstract class AbstractH4Object extends AbstractHObject implements
     }
 
     protected H4Attribute getAttributeByIndex(int attributeIndex) throws HDFException {
-//        Integer intIndex = Integer.valueOf(attributeIndex);
-//        if (!indexToAttributesMap.containsKey(intIndex)){
-//            // An attribute with this index has not been found
-//            // in the map
-//            H4Attribute attribute = H4Attribute.buildAttribute(this, attributeIndex);
-//            if (attribute != null) {
-//                // Adding the new attribute to the map
-//                indexToAttributesMap.put(intIndex, attribute);
-//                attributes.put(attribute.getName(), attribute);
-//            }
-//        }
          return H4Attribute.buildAttribute(this, attributeIndex);
-		
 	}
 
 	/**
