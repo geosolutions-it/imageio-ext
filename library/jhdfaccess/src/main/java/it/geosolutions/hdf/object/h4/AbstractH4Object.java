@@ -123,7 +123,8 @@ public abstract class AbstractH4Object extends AbstractHObject implements
                 // The required attribute is not present. Searching for
                 // this attribute by querying the interface
                 int attributeIndex = getAttributeIndexByName(attributeName);
-                return getAttribute(attributeIndex);
+                if (attributeIndex!=-1)
+                    return getAttribute(attributeIndex);
             } else
                 attribute = (H4Attribute) attributes.get(attributeName);
         }
