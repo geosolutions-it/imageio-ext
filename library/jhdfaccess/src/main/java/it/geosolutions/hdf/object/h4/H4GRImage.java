@@ -40,7 +40,7 @@ public class H4GRImage extends H4Variable implements IHObject, IH4Object {
     private final static Logger LOGGER = Logger
             .getLogger("it.geosolutions.hdf.object.h4");
 
-    private AbstractH4Object objectWithAttributes;
+    private AbstractH4Object attributesHolder;
 
     /** predefined attributes */
     public static String PREDEF_ATTR_FILL_VALUE = "FILL_VALUE";
@@ -276,7 +276,7 @@ public class H4GRImage extends H4Variable implements IHObject, IH4Object {
                 numComponents = grInfo[0];
                 datatype = grInfo[1] & (~HDFConstants.DFNT_LITEND);
                 interlaceMode = grInfo[2];
-                objectWithAttributes = new H4GRFamilyObjectsAttributesManager(
+                attributesHolder = new H4GRFamilyObjectsAttributesManager(
                         identifier, grInfo[3]);
                 numPalettes = HDFLibrary.GRgetnluts(identifier);
             } else {
@@ -325,9 +325,9 @@ public class H4GRImage extends H4Variable implements IHObject, IH4Object {
                 labelAnnotations.clear();
                 labelAnnotations = null;
             }
-            if (objectWithAttributes != null) {
-                objectWithAttributes.dispose();
-                objectWithAttributes = null;
+            if (attributesHolder != null) {
+                attributesHolder.dispose();
+                attributesHolder = null;
             }
             try {
 
@@ -545,20 +545,20 @@ public class H4GRImage extends H4Variable implements IHObject, IH4Object {
      * @see {@link IH4Object#getAttribute(int)}
      */
     public H4Attribute getAttribute(int attributeIndex) throws HDFException {
-        return objectWithAttributes.getAttribute(attributeIndex);
+        return attributesHolder.getAttribute(attributeIndex);
     }
 
     /**
      * @see {@link IH4Object#getAttribute(String)}
      */
     public H4Attribute getAttribute(String attributeName) throws HDFException {
-        return objectWithAttributes.getAttribute(attributeName);
+        return attributesHolder.getAttribute(attributeName);
     }
 
     /**
      * @see {@link IH4Object#getNumAttributes()}
      */
     public int getNumAttributes() {
-        return objectWithAttributes.getNumAttributes();
+        return attributesHolder.getNumAttributes();
     }
 }
