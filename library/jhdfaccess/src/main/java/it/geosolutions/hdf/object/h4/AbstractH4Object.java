@@ -36,7 +36,7 @@ public abstract class AbstractH4Object extends AbstractHObject implements
         IHObject, IH4Object {
 
     protected AbstractH4Object(final int identifier, final int numAttributes) {
-    	super(identifier);
+        super(identifier);
         this.numAttributes = numAttributes;
         attributes = new HashMap(numAttributes);
         indexToAttributesMap = new HashMap(numAttributes);
@@ -106,9 +106,10 @@ public abstract class AbstractH4Object extends AbstractHObject implements
      *                the attribute name
      * @return the index of the required attribute
      */
-    protected abstract int getAttributeIndexByName(String attributeName)throws HDFException;
+    protected abstract int getAttributeIndexByName(String attributeName)
+            throws HDFException;
 
-    /** 
+    /**
      * @see it.geosolutions.hdf.object.h4.IH4Object#getAttribute(java.lang.String)
      */
     public synchronized H4Attribute getAttribute(final String attributeName)
@@ -129,7 +130,7 @@ public abstract class AbstractH4Object extends AbstractHObject implements
         return attribute;
     }
 
-    /** 
+    /**
      * @see it.geosolutions.hdf.object.h4.IH4Object#getAttribute(int)
      */
     public synchronized H4Attribute getAttribute(final int attributeIndex)
@@ -142,24 +143,25 @@ public abstract class AbstractH4Object extends AbstractHObject implements
             // Attributes are instead accessed by index during an attribute
             // list scan. For this reason, if the required attribute is not
             // in the map, we provide to loading all the attributes.
-        	 attribute =getAttributeByIndex(attributeIndex);
-			 if (attribute != null) {
-				 // Adding the new attribute to the map
-				 indexToAttributesMap.put(index, attribute);
-				 attributes.put(attribute.getName(), attribute);
-			 }   
+            attribute = getAttributeByIndex(attributeIndex);
+            if (attribute != null) {
+                // Adding the new attribute to the map
+                indexToAttributesMap.put(index, attribute);
+                attributes.put(attribute.getName(), attribute);
+            }
         }
-        if (indexToAttributesMap.containsKey(index)){
-            attribute = (H4Attribute)indexToAttributesMap.get(index);
+        if (indexToAttributesMap.containsKey(index)) {
+            attribute = (H4Attribute) indexToAttributesMap.get(index);
         }
         return attribute;
     }
 
-    protected H4Attribute getAttributeByIndex(int attributeIndex) throws HDFException {
-         return H4Utilities.buildAttribute(this, attributeIndex);
-	}
+    protected H4Attribute getAttributeByIndex(int attributeIndex)
+            throws HDFException {
+        return H4Utilities.buildAttribute(this, attributeIndex);
+    }
 
-	/**
+    /**
      * checks if the specified attribute index is valid. An attribute index is
      * not valid if there are no attributes <BR>
      * (numAttributes = 0) or if the specified index exceed the number of
@@ -177,7 +179,9 @@ public abstract class AbstractH4Object extends AbstractHObject implements
             throw new IllegalArgumentException("No available attributes");
         else if (index >= numAttributes || index < 0)
             throw new IndexOutOfBoundsException(
-                    "Specified index is not valid. It should be greater than zero and belower than "
+                    "Specified index is not valid: "
+                            + index
+                            + "\nIt should be greater than zero and belower than "
                             + numAttributes);
     }
 
@@ -192,20 +196,21 @@ public abstract class AbstractH4Object extends AbstractHObject implements
             attributes = null;
         }
         if (indexToAttributesMap != null) {
-            for (int i=0;i<numAttributes;i++){
+            for (int i = 0; i < numAttributes; i++) {
                 Integer intIndex = Integer.valueOf(i);
-                if (indexToAttributesMap.containsKey(intIndex)){
-                    H4Attribute attrib = (H4Attribute) indexToAttributesMap.get(intIndex);
-                    if (attrib!=null){
+                if (indexToAttributesMap.containsKey(intIndex)) {
+                    H4Attribute attrib = (H4Attribute) indexToAttributesMap
+                            .get(intIndex);
+                    if (attrib != null) {
                         attrib.dispose();
-                        attrib=null;
+                        attrib = null;
                     }
                 }
             }
             indexToAttributesMap.clear();
             indexToAttributesMap = null;
         }
-        numAttributes=-1;
+        numAttributes = -1;
         super.dispose();
     }
 
