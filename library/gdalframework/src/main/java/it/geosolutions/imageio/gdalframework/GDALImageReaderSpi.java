@@ -242,16 +242,7 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
     public synchronized void onRegistration(ServiceRegistry registry, Class category) {
         super.onRegistration(registry, category);
         if (!GDALUtilities.isGDALAvailable()) {
-            IIORegistry iioRegistry = (IIORegistry) registry;
-            Class spiClass = ImageReaderSpi.class;
-            final Iterator iter = iioRegistry.getServiceProviders(spiClass,
-                    true);
-            while (iter.hasNext()) {
-                final ImageReaderSpi provider = (ImageReaderSpi) iter.next();
-                if (provider instanceof GDALImageReaderSpi) {
-                    registry.deregisterServiceProvider(provider);
-                }
-            }
+            return;
         }
     }
 }

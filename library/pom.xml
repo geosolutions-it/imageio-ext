@@ -75,6 +75,8 @@
   <modules>
     <module>test-data</module>
     <module>customstreams</module>
+    <module>geocore</module>
+    <module>utilities</module>
     <module>gdalframework</module>
     <module>imagereadmt</module>
     <module>jhdfaccess</module>

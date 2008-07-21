@@ -16,25 +16,19 @@
  */
 package it.geosolutions.imageio.gdalframework;
 
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
+
 import java.awt.BorderLayout;
-import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
-import java.awt.image.renderable.ParameterBlock;
 import java.io.IOException;
 import java.util.List;
 
-import javax.media.jai.JAI;
-import javax.media.jai.ROI;
-import javax.media.jai.RenderedOp;
 import javax.media.jai.widget.ScrollingImagePanel;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
-
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
 
 import com.sun.media.jai.operator.ImageReadDescriptor;
 
@@ -80,87 +74,6 @@ public final class Viewer {
     }
 
     private final static String newLine = System.getProperty("line.separator");
-
-    /**
-     * Visualize the image, after rescaling its values, given a threshold for
-     * the ROI. This is useful to rescale an image coming from a source which
-     * may contain noDataValues. The ROI threshold allows to set a minimal value
-     * to be included in the computation of the future JAI extrema operation
-     * used before the JAI rescale operation.
-     * 
-     * @param image
-     *                RenderedImage to visualize
-     * @param title
-     *                title for the frame
-     * @param roiThreshold
-     *                the threshold for the inner ROI
-     */
-    public static void visualizeRescaled(RenderedImage image, String title,
-            int roiThreshold) throws IOException {
-
-        ROI roi = new ROI(image, roiThreshold);
-        ParameterBlock pb = new ParameterBlock();
-        pb.addSource(image); // The source image
-        if (roi != null)
-            pb.add(roi); // The region of the image to scan
-
-        // Perform the extrema operation on the source image
-        RenderedOp op = JAI.create("extrema", pb);
-
-        // Retrieve both the maximum and minimum pixel value
-        double[][] extrema = (double[][]) op.getProperty("extrema");
-
-        final double[] scale = new double[] { (255) / (extrema[1][0] - extrema[0][0]) };
-        final double[] offset = new double[] { ((255) * extrema[0][0])
-                / (extrema[0][0] - extrema[1][0]) };
-
-        // Preparing to rescaling values
-        ParameterBlock pbRescale = new ParameterBlock();
-        pbRescale.add(scale);
-        pbRescale.add(offset);
-        pbRescale.addSource(image);
-        RenderedOp rescaledImage = JAI.create("Rescale", pbRescale);
-
-        ParameterBlock pbConvert = new ParameterBlock();
-        pbConvert.addSource(rescaledImage);
-        pbConvert.add(DataBuffer.TYPE_BYTE);
-        RenderedOp destImage = JAI.create("format", pbConvert);
-        visualize(destImage, title);
-    }
-
-    /**
-     * base method used to simply visualize RenderedImage without further
-     * information
-     * 
-     * @param ri
-     *                RenderedImage to visualize
-     */
-    public static void visualize(final RenderedImage ri) {
-        visualize(ri, "");
-    }
-
-    /**
-     * base method used to simply visualize RenderedImage without further
-     * information
-     * 
-     * @param ri
-     *                RenderedImage to visualize
-     * @param title
-     *                title for the frame (usually the image filename)
-     */
-    public static void visualize(final RenderedImage ri, String title) {
-        final JFrame frame = new JFrame(title);
-        frame.getContentPane().add(new ScrollingImagePanel(ri, 1024, 768));
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                frame.pack();
-                frame.setSize(1024, 768);
-                frame.setVisible(true);
-            }
-        });
-    }
 
     /**
      * Most of the following methods have 4 overloaded sorts.
@@ -632,43 +545,6 @@ public final class Viewer {
         }
     }
 
-    public static void displayImageIOMetadata(Node root) {
-        displayMetadata(root, 0);
-    }
-
-    static void indent(int level) {
-        for (int i = 0; i < level; i++) {
-            System.out.print("  ");
-        }
-    }
-
-    static void displayMetadata(Node node, int level) {
-        indent(level); // emit open tag
-        System.out.print("<" + node.getNodeName());
-        NamedNodeMap map = node.getAttributes();
-        if (map != null) { // print attribute values
-            int length = map.getLength();
-            for (int i = 0; i < length; i++) {
-                Node attr = map.item(i);
-                System.out.print(" " + attr.getNodeName() + "=\""
-                        + attr.getNodeValue() + "\"");
-            }
-        }
-
-        Node child = node.getFirstChild();
-        if (child != null) {
-            System.out.println(">"); // close current tag
-            while (child != null) { // emit child tags recursively
-                displayMetadata(child, level + 1);
-                child = child.getNextSibling();
-            }
-            indent(level); // emit close tag
-            System.out.println("</" + node.getNodeName() + ">");
-        } else {
-            System.out.println("/>");
-        }
-    }
-
     // ////////////////////////////////////////////////////////////////////////
     //
     // Provides to retrieve projections from the provided {@lik RenderedImage}
@@ -842,5 +718,13 @@ public final class Viewer {
                 frame.setVisible(true);
             }
         });
+    }
+
+    public static void visualize(RenderedImage ri) {
+        ImageIOUtilities.visualize(ri);
+    }
+
+    public static void visualize(RenderedImage ri, final String title) {
+        ImageIOUtilities.visualize(ri, title);
     }
 }

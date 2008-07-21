@@ -16,6 +16,9 @@
  */
 package it.geosolutions.imageio.gdalframework;
 
+import it.geosolutions.imageio.core.CoreCommonImageMetadata;
+import it.geosolutions.imageio.core.GCP;
+
 import java.awt.Dimension;
 import java.awt.image.BandedSampleModel;
 import java.awt.image.ColorModel;
@@ -34,11 +37,10 @@ import java.util.logging.Logger;
 
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.metadata.IIOMetadataNode;
 
 import org.gdal.gdal.Band;
 import org.gdal.gdal.Dataset;
-import org.gdal.gdal.GCP;
+import org.gdal.gdal.Driver;
 import org.gdal.gdal.gdal;
 import org.gdal.gdalconst.gdalconst;
 import org.gdal.gdalconst.gdalconstConstants;
@@ -54,121 +56,67 @@ import org.w3c.dom.Node;
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
  */
-public class GDALCommonIIOImageMetadata extends IIOMetadata {
+public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
 
     /** The LOGGER for this class. */
     private static final Logger LOGGER = Logger
             .getLogger("it.geosolutions.imageio.gdalframework");
+    
+    private class GDALGCP implements GCP{
+        private org.gdal.gdal.GCP gcp;
+        
+        public GDALGCP(org.gdal.gdal.GCP gcp){
+            if (gcp==null)
+                throw new NullPointerException("provided GCP is null");
+            this.gcp=gcp;
+        }
 
-    /**
-     * The name of the native metadata format for this object.
-     */
-    public static final String nativeMetadataFormatName = "it.geosolutions.imageio.gdalframework.commonImageMetadata_1.0";
+        public double getGCPLine() {
+            return gcp.getGCPLine();
+        }
 
-    /**
-     * The name of the class implementing <code>IIOMetadataFormat</code> and
-     * representing the native metadata format for this object.
-     */
-    public static final String nativeMetadataFormatClassName = "it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadataFormat";
+        public double getGCPPixel() {
+            return gcp.getGCPPixel();
+        }
 
-    /**
-     * the name of the driver which has opened the dataset represented by this
-     * common metadata object.
-     */
-    private String driverName;
+        public double getGCPX() {
+            return gcp.getGCPX();
+        }
 
-    /**
-     * The description of the driver which has opened the dataset represented by
-     * this common metadata object.
-     */
-    private String driverDescription;
+        public double getGCPY() {
+            return gcp.getGCPY();
+        }
 
-    /** The dataset name */
-    protected String datasetName;
+        public double getGCPZ() {
+            return gcp.getGCPZ();
+        }
 
-    /** The dataset description */
-    protected String datasetDescription;
+        public String getId() {
+            return gcp.getId();
+        }
 
-    /** The dataset projection. */
-    protected String projection;
+        public String getInfo() {
+            return gcp.getInfo();
+        }
+        
+    }
 
-    /** The number of Ground Control Points */
-    protected int gcpNumber;
-
-    /** The GCP's Projection */
-    protected String gcpProjection;
-
-    /** The grid to world transformation. */
-    protected double[] geoTransformation = new double[6];
+//    /**
+//     * The name of the native metadata format for this object.
+//     */
+//    public static final String nativeMetadataFormatName = "it_geosolutions_imageio_gdalframework_commonImageMetadata_1.0";
+//
+//    /**
+//     * The name of the class implementing <code>IIOMetadataFormat</code> and
+//     * representing the native metadata format for this object.
+//     */
+//    public static final String nativeMetadataFormatClassName = "it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadataFormat";
 
     /**
      * A map containing an HashMap for each domain if available (the Default
      * domain, the ImageStructure domain, as well as any xml prefixed domain)
      */
     protected Map gdalMetadataMap;
-
-    /**
-     * The list of Ground Control Points. <BR>
-     * Any Ground Control Point has the following fields:<BR>
-     * <UL>
-     * <LI>ID: Unique Identifier</LI>
-     * <LI>Info: Informational message/description</LI>
-     * <LI>x: GCPPixel -----> Pixel (x) location of GCP on Raster</LI>
-     * <LI>y: GCPLine ------> Line(y) location of GCP on Raster</LI>
-     * <LI>lon: GCPX -------> X position of GCP in Georeferenced Space</LI>
-     * <LI>lat: GCPY -------> Y position of GCP in Georeferenced Space</LI>
-     * <LI>elevation: GCPZ -> elevation of GCP in Georeferenced Space</LI>
-     * </UL>
-     */
-    private List gcps;
-
-    /** The raster width */
-    protected int width;
-
-    /** The raster height */
-    protected int height;
-
-    /** The raster tile height */
-    protected int tileHeight;
-
-    /** The raster tile width */
-    protected int tileWidth;
-
-    /** The <code>ColorModel</code> used for the dataset */
-    protected ColorModel colorModel;
-
-    /** The <code>SampleModel</code> used for the dataset */
-    protected SampleModel sampleModel;
-
-    // ////////////////////////////////////////////////
-    // 
-    // Band Properties
-    //
-    // ////////////////////////////////////////////////
-
-    /** Number of bands */
-    protected int numBands;
-
-    /** Array to store the maximum value for each band */
-    protected Double[] maximums;
-
-    /** Array to store the minimum value for each band */
-    protected Double[] minimums;
-
-    /** Array to store the noData value for each band */
-    protected Double[] noDataValues;
-
-    /** Array to store the scale value for each band */
-    protected Double[] scales;
-
-    /** Array to store the offset value for each band */
-    protected Double[] offsets;
-
-    /** Array to store the number of numOverviews for each band */
-    protected int[] numOverviews;
-
-    /** Array to store the color interpretation for each band */
-    protected int[] colorInterpretations;
 
     /**
      * <code>GDALCommonIIOImageMetadata</code> constructor. Firstly, it
@@ -229,12 +177,15 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
             final boolean initializationRequired, final String formatName,
             final String formatClassName) {
         super(false, formatName, formatClassName, null, null);
-        datasetName = name;
+        setDatasetName(name);
         if (dataset == null)
             return;
-        datasetDescription = dataset.GetDescription();
-        driverDescription = dataset.GetDriver().GetDescription();
-        driverName = dataset.GetDriver().getShortName();
+        setDatasetDescription(dataset.GetDescription());
+        Driver driver = dataset.GetDriver();
+        if (driver != null) {
+            setDriverDescription(driver.GetDescription());
+            setDriverName(driver.getShortName());
+        }
         gdalMetadataMap = Collections.synchronizedMap(new HashMap(2));
 
         // //
@@ -306,11 +257,6 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
                 nativeMetadataFormatClassName);
     }
 
-    /** Private constructor */
-    private GDALCommonIIOImageMetadata() {
-
-    }
-
     /**
      * Set georeferencing information from an input <code>Dataset</code>
      * 
@@ -320,10 +266,12 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
      */
     private void setGeoreferencingInfo(Dataset dataset) {
         // Setting CRS's related information
-        dataset.GetGeoTransform(geoTransformation);
-        projection = dataset.GetProjection();
-        gcpProjection = dataset.GetGCPProjection();
-        gcpNumber = dataset.GetGCPCount();
+        final double[] geoT = new double[6];
+        dataset.GetGeoTransform(geoT);
+        setGeoTransformation(geoT);
+        setProjection(dataset.GetProjection());
+        setGcpProjection(dataset.GetGCPProjection());
+        setGcpNumber(dataset.GetGCPCount());
     }
 
     /**
@@ -338,8 +286,8 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
      */
     private boolean setMembers(Dataset dataset) {
         // Retrieving raster properties
-        width = dataset.getRasterXSize();
-        height = dataset.getRasterYSize();
+        setWidth(dataset.getRasterXSize());
+        setHeight(dataset.getRasterYSize());
 
         // Retrieving block size
         final int[] xBlockSize = new int[1];
@@ -347,8 +295,11 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
 
         // Remember: RasterBand numeration starts from 1
         dataset.GetRasterBand(1).GetBlockSize(xBlockSize, yBlockSize);
-        tileHeight = yBlockSize[0];
-        tileWidth = xBlockSize[0];
+
+        final int tileHeight = yBlockSize[0];
+        final int tileWidth = xBlockSize[0];
+        setTileHeight(tileHeight);
+        setTileWidth(tileWidth);
         if (((long) tileHeight) * ((long) tileWidth) > Integer.MAX_VALUE)
             performTileSizeTuning(dataset);
 
@@ -357,7 +308,8 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
         // Getting dataset main properties
         //
         // /////////////////////////////////////////////////////////////////
-        numBands = dataset.getRasterCount();
+        final int numBands = dataset.getRasterCount();
+        setNumBands(numBands);
         if (numBands <= 0)
             return false;
         // final int xsize = dataset.getRasterXSize();
@@ -373,13 +325,13 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
         // bands variables
         final int[] banks = new int[numBands];
         final int[] offsetsR = new int[numBands];
-        noDataValues = new Double[numBands];
-        scales = new Double[numBands];
-        offsets = new Double[numBands];
-        minimums = new Double[numBands];
-        maximums = new Double[numBands];
-        numOverviews = new int[numBands];
-        colorInterpretations = new int[numBands];
+        final Double[] noDataValues = new Double[numBands];
+        final Double[] scales = new Double[numBands];
+        final Double[] offsets = new Double[numBands];
+        final Double[] minimums = new Double[numBands];
+        final Double[] maximums = new Double[numBands];
+        final int[] numOverviews = new int[numBands];
+        final int[] colorInterpretations = new int[numBands];
         int buf_type = 0;
 
         Band pBand = null;
@@ -407,6 +359,13 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
             numOverviews[band] = pBand.GetOverviewCount();
             bandsOffset[band] = band;
         }
+        setNoDataValues(noDataValues);
+        setScales(scales);
+        setOffsets(offsets);
+        setMinimums(minimums);
+        setMaximums(maximums);
+        setNumOverviews(numOverviews);
+        setColorInterpretations(colorInterpretations);
 
         // /////////////////////////////////////////////////////////////////
         //
@@ -446,12 +405,12 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
         //
         // //
         if (tileSize < 0)
-            sampleModel = new BandedSampleModel(buffer_type, tileWidth,
-                    tileHeight, tileWidth, banks, offsetsR);
+            setSampleModel(new BandedSampleModel(buffer_type, tileWidth,
+                    tileHeight, tileWidth, banks, offsetsR));
         else
-            sampleModel = new PixelInterleavedSampleModel(buffer_type,
+            setSampleModel(new PixelInterleavedSampleModel(buffer_type,
                     tileWidth, tileHeight, numBands, tileWidth * numBands,
-                    bandsOffset);
+                    bandsOffset));
 
         // //
         //
@@ -463,188 +422,13 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
                     .getIndexColorModel(gdal.GetDataTypeSize(buf_type));
 
             // TODO: fix the SWIG wrapper to avoid alpha setting when undefined
-            colorModel = icm;
+            setColorModel(icm);
         } else
-            colorModel = GDALUtilities.buildColorModel(sampleModel);
+            setColorModel(GDALUtilities.buildColorModel(getSampleModel()));
 
-        if (colorModel == null || sampleModel == null)
+        if (getColorModel() == null || getSampleModel() == null)
             return false;
         return true;
-    }
-
-    /**
-     * Returns the XML DOM <code>Node</code> object that represents the root
-     * of a tree of metadata contained within this object on its native format.
-     * 
-     * @return a root node containing common metadata exposed on its native
-     *         format.
-     */
-    private Node createCommonNativeTree() {
-        // Create root node
-        final IIOMetadataNode root = new IIOMetadataNode(
-                nativeMetadataFormatName);
-
-        // ////////////////////////////////////////////////////////////////////
-        //
-        // DatasetDescriptor
-        //
-        // ////////////////////////////////////////////////////////////////////
-        IIOMetadataNode node = new IIOMetadataNode("DatasetDescriptor");
-        node.setAttribute("name", datasetName);
-        node.setAttribute("description", datasetDescription);
-        node.setAttribute("driverName", driverName);
-        node.setAttribute("driverDescription", driverDescription);
-        node.setAttribute("projection", projection);
-        node.setAttribute("numGCPs", Integer.toString(gcpNumber));
-        node.setAttribute("gcpProjection", gcpProjection);
-        root.appendChild(node);
-
-        // ////////////////////////////////////////////////////////////////////
-        //
-        // RasterDimensions
-        //
-        // ////////////////////////////////////////////////////////////////////
-        node = new IIOMetadataNode("RasterDimensions");
-        node.setAttribute("width", Integer.toString(width));
-        node.setAttribute("height", Integer.toString(height));
-        node.setAttribute("tileWidth", Integer.toString(tileWidth));
-        node.setAttribute("tileHeight", Integer.toString(tileHeight));
-        node.setAttribute("numBands", Integer.toString(numBands));
-        root.appendChild(node);
-
-        // ////////////////////////////////////////////////////////////////////
-        //
-        // GeoTransform
-        //
-        // ////////////////////////////////////////////////////////////////////
-        node = new IIOMetadataNode("GeoTransform");
-        final boolean hasgeoTransform = geoTransformation != null
-                && geoTransformation.length > 0;
-        node.setAttribute("m0", hasgeoTransform ? Double
-                .toString(geoTransformation[0]) : null);
-        node.setAttribute("m1", hasgeoTransform ? Double
-                .toString(geoTransformation[1]) : null);
-        node.setAttribute("m2", hasgeoTransform ? Double
-                .toString(geoTransformation[2]) : null);
-        node.setAttribute("m3", hasgeoTransform ? Double
-                .toString(geoTransformation[3]) : null);
-        node.setAttribute("m4", hasgeoTransform ? Double
-                .toString(geoTransformation[4]) : null);
-        node.setAttribute("m5", hasgeoTransform ? Double
-                .toString(geoTransformation[5]) : null);
-        root.appendChild(node);
-
-        // ////////////////////////////////////////////////////////////////////
-        //
-        // GCPS
-        //
-        // ////////////////////////////////////////////////////////////////////
-        if (gcpNumber > 0) {
-            IIOMetadataNode nodeGCPs = new IIOMetadataNode("GCPS");
-            final List gcps = getGcps();
-            final Iterator it = gcps.iterator();
-            while (it.hasNext()) {
-                node = new IIOMetadataNode("GCP");
-                final GCP gcp = (GCP) it.next();
-                node.setAttribute("x", Double.toString(gcp.getGCPPixel()));
-                node.setAttribute("y", Double.toString(gcp.getGCPLine()));
-                node.setAttribute("id", gcp.getId());
-                node.setAttribute("info", gcp.getInfo());
-                node.setAttribute("lon", Double.toString(gcp.getGCPX()));
-                node.setAttribute("lat", Double.toString(gcp.getGCPY()));
-                node.setAttribute("elevation", Double.toString(gcp.getGCPZ()));
-                nodeGCPs.appendChild(node);
-            }
-            root.appendChild(nodeGCPs);
-        }
-
-        // ////////////////////////////////////////////////////////////////////
-        //
-        // BandsInfo
-        //
-        // ////////////////////////////////////////////////////////////////////
-        IIOMetadataNode bandsNode = new IIOMetadataNode("BandsInfo");
-
-        // //
-        //
-        // BandsInfo -> BandInfo
-        //
-        // //
-        for (int i = 0; i < numBands; i++) {
-            node = new IIOMetadataNode("BandInfo");
-            node.setAttribute("index", Integer.toString(i));
-            node.setAttribute("colorInterpretation",
-                    colorInterpretations != null
-                            & colorInterpretations.length > i ? Integer
-                            .toBinaryString(colorInterpretations[i]) : "");
-            node.setAttribute("noData",
-                    noDataValues != null && noDataValues.length > i
-                            && noDataValues[i] != null ? noDataValues[i]
-                            .toString() : null);
-            node.setAttribute("maximum", maximums != null
-                    && maximums.length > i && maximums[i] != null ? maximums[i]
-                    .toString() : null);
-            node.setAttribute("minimum", minimums != null
-                    && minimums.length > i && minimums[i] != null ? minimums[i]
-                    .toString() : null);
-            node.setAttribute("scale", scales != null && scales.length > i
-                    && scales[i] != null ? scales[i].toString() : null);
-            node.setAttribute("offset", offsets != null && offsets.length > i
-                    && offsets[i] != null ? offsets[i].toString() : null);
-            node.setAttribute("numOverviews", numOverviews != null
-                    && numOverviews.length > i ? Integer
-                    .toString(numOverviews[i]) : null);
-            bandsNode.appendChild(node);
-        }
-
-        // ////////////////////////////////////////////////////////////////////
-        //
-        // BandsInfo -> BandInfo -> ColorTable
-        //
-        // ////////////////////////////////////////////////////////////////////
-        if (colorModel instanceof IndexColorModel) {
-            final IndexColorModel icm = (IndexColorModel) colorModel;
-            final int mapSize = icm.getMapSize();
-            IIOMetadataNode node1 = new IIOMetadataNode("ColorTable");
-            node1.setAttribute("sizeOfLocalColorTable", Integer
-                    .toString(mapSize));
-            final byte rgb[][] = new byte[3][mapSize];
-            icm.getReds(rgb[0]);
-            icm.getReds(rgb[1]);
-            icm.getReds(rgb[2]);
-            for (int i = 0; i < mapSize; i++) {
-                IIOMetadataNode nodeEntry = new IIOMetadataNode(
-                        "ColorTableEntry");
-                nodeEntry.setAttribute("index", Integer.toString(i));
-                nodeEntry.setAttribute("red", Byte.toString(rgb[0][i]));
-                nodeEntry.setAttribute("green", Byte.toString(rgb[1][i]));
-                nodeEntry.setAttribute("blue", Byte.toString(rgb[2][i]));
-                nodeEntry.setAttribute("alpha", Byte.toString(rgb[3][i]));
-                node1.appendChild(nodeEntry);
-            }
-            node.appendChild(node1);
-        }
-        root.appendChild(bandsNode);
-        return root;
-    }
-
-    /**
-     * Returns an XML DOM <code>Node</code> object that represents the root of
-     * a tree of common stream metadata contained within this object according
-     * to the conventions defined by a given metadata format name.
-     * 
-     * @param formatName
-     *                the name of the requested metadata format. Note that
-     *                actually, the only supported format name is the
-     *                {@link GDALCommonIIOImageMetadata#nativeMetadataFormatName}.
-     *                Requesting other format names will result in an
-     *                <code>IllegalArgumentException</code>
-     */
-    public Node getAsTree(String formatName) {
-        if (nativeMetadataFormatName.equalsIgnoreCase(formatName))
-            return createCommonNativeTree();
-        throw new IllegalArgumentException(formatName
-                + " is not a supported format name");
     }
 
     /**
@@ -686,133 +470,30 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
                 "reset operation is not allowed");
     }
 
-    // ////////////////////////////////////////////////////////////////////////
-    //
-    // Dataset and Driver Properties
-    // 
-    // ////////////////////////////////////////////////////////////////////////
-    /**
-     * Returns the name of the dataset which is the source for this
-     * <code>IIOMetadata</code>
-     */
-    public String getDatasetName() {
-        return datasetName;
-    }
-
-    /**
-     * Returns the description of the dataset which is the source for this
-     * <code>IIOMetadata</code>
-     */
-    public String getDescription() {
-        return datasetDescription;
-    }
-
-    /**
-     * Returns the name of the GDAL driver used to open the source dataset for
-     * this <code>IIOMetadata</code>
-     */
-    public String getDriverName() {
-        return driverName;
-    }
-
-    /**
-     * Returns the description of the GDAL driver used to open the source
-     * dataset for this <code>IIOMetadata</code>
-     */
-    public String getDriverDescription() {
-        return driverDescription;
-    }
-
-    // ////////////////////////////////////////////////////////////////////////
-    //
-    // Raster Properties
-    // 
-    // ////////////////////////////////////////////////////////////////////////
-    /**
-     * Returns the number of bands of the dataset which is the source for this
-     * <code>IIOMetadata</code>
-     */
-    public int getNumBands() {
-        return numBands;
-    }
-
-    /** Returns the width of the image */
-    public int getWidth() {
-        return width;
-    }
-
-    /** Returns the height of the image */
-    public int getHeight() {
-        return height;
-    }
-
-    /** Returns the tile height of the image */
-    public int getTileHeight() {
-        return tileHeight;
-    }
-
-    /** Returns the tile width of the image */
-    public int getTileWidth() {
-        return tileWidth;
-    }
-
-    /**
-     * Returns the <code>ColorModel</code> for the dataset held by this
-     * object.
-     */
-    public final ColorModel getColorModel() {
-        return colorModel;
-    }
-
-    /**
-     * Returns the <code>SampleModel</code> for the dataset held by this
-     * object.
-     */
-    public final SampleModel getSampleModel() {
-        return sampleModel;
-    }
-
-    // ////////////////////////////////////////////////////////////////////////
-    //
-    // Referencing
-    // 
-    // ////////////////////////////////////////////////////////////////////////
-    /** Returns the projection */
-    public String getProjection() {
-        return projection;
-    }
-
-    /** Returns the grid to world transformation of the image */
-    public double[] getGeoTransformation() {
-        return (double[]) geoTransformation.clone();
-    }
-
-    /** Returns the number of Ground Control Points */
-    public int getGcpNumber() {
-        return gcpNumber;
-    }
-
-    /** Returns the Ground Control Point's projection */
-    public String getGcpProjection() {
-        return gcpProjection;
-    }
-
     /** Returns the Ground Control Points */
-    public synchronized final List getGcps() {
+    public synchronized List getGcps() {
         // TODO: actually the Java bindings do not work properly when getting
         // GCPs (the JVM crash). Uncomment the following code when the method
         // getting GCPs works fine
         //
         //
-        // if (gcps == null) {
-        // gcps = new Vector(gcpNumber);
-        // final Dataset ds = GDALUtilities.acquireDataSet(datasetName,
-        // gdalconst.GA_ReadOnly);
-        // ds.GetGCPs((Vector) gcps);
-        // GDALUtilities.closeDataSet(ds);
-        // }
-        // return Collections.unmodifiableList(gcps);
-        return null;
+//        if (super.getGcps().isEmpty()) {
+//            final int nGCP = getGcpNumber();
+//            List gcps = new Vector(nGCP);
+//            final Dataset ds = GDALUtilities.acquireDataSet(getDatasetName(),
+//                    gdalconst.GA_ReadOnly);
+//            ds.GetGCPs((Vector) gcps);
+//              if (gcps!=null && gcps.isEmpty()){
+//                  List groundControlPoints = new ArrayList(nGCP);
+//                  Iterator it = gcps.iterator();
+//                  while (it.hasNext()){
+//                      groundControlPoints.add(new GDALGCP((org.gdal.gdal.GCP)it.next()));
+//                  }
+//                  setGcps(groundControlPoints);
+//              }
+//            GDALUtilities.closeDataSet(ds);
+//        }
+        return super.getGcps();
     }
 
     // ////////////////////////////////////////////////////////////////////////
@@ -820,157 +501,6 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
     // Bands Properties
     // 
     // ////////////////////////////////////////////////////////////////////////
-    /**
-     * Returns the number of overviews for the specified band
-     * 
-     * @param bandIndex
-     *                the index of the required band
-     * @throws IllegalArgumentException
-     *                 in case the specified band number is out of range
-     */
-    public int getNumOverviews(final int bandIndex) {
-        checkBandIndex(bandIndex);
-        return numOverviews[bandIndex];
-    }
-
-    /**
-     * Returns the colorInterpretation for the specified band
-     * 
-     * @param bandIndex
-     *                the index of the required band
-     * @throws IllegalArgumentException
-     *                 in case the specified band number is out of range
-     */
-    public int getColorInterpretations(final int bandIndex) {
-        checkBandIndex(bandIndex);
-        return colorInterpretations[bandIndex];
-    }
-
-    /**
-     * Returns the maximum value for the specified band
-     * 
-     * @param bandIndex
-     *                the index of the required band
-     * @throws IllegalArgumentException
-     *                 in case the specified band number is out of range or
-     *                 maximum value has not been found
-     */
-    public double getMaximum(final int bandIndex)
-            throws IllegalArgumentException {
-        checkBandIndex(bandIndex);
-        if (maximums != null) {
-            Double maximum = maximums[bandIndex];
-            if (maximum != null)
-                return maximum.doubleValue();
-        }
-        throw new IllegalArgumentException(
-                "no maximum value available for the specified band "
-                        + bandIndex);
-    }
-
-    /**
-     * Returns the minimum value for the specified band
-     * 
-     * @param bandIndex
-     *                the index of the required band
-     * @throws IllegalArgumentException
-     *                 in case the specified band number is out of range or
-     *                 minimum value has not been found
-     */
-    public double getMinimum(final int bandIndex)
-            throws IllegalArgumentException {
-        checkBandIndex(bandIndex);
-        if (minimums != null) {
-            Double minimum = minimums[bandIndex];
-            if (minimum != null)
-                return minimum.doubleValue();
-        }
-        throw new IllegalArgumentException(
-                "no minimum value available for the specified band "
-                        + bandIndex);
-    }
-
-    /**
-     * Returns the scale value for the specified band
-     * 
-     * @param bandIndex
-     *                the index of the required band
-     * @throws IllegalArgumentException
-     *                 in case the specified band number is out of range or
-     *                 scale value has not been found
-     */
-    public double getScale(final int bandIndex) throws IllegalArgumentException {
-        checkBandIndex(bandIndex);
-        if (scales != null) {
-            Double scale = scales[bandIndex];
-            if (scale != null)
-                return scale.doubleValue();
-        }
-        throw new IllegalArgumentException(
-                "no scale value available for the specified band " + bandIndex);
-    }
-
-    /**
-     * Returns the offset value for the specified band
-     * 
-     * @param bandIndex
-     *                the index of the required band
-     * @throws IllegalArgumentException
-     *                 in case the specified band number is out of range or
-     *                 offset value has not been found
-     */
-    public double getOffset(final int bandIndex)
-            throws IllegalArgumentException {
-        checkBandIndex(bandIndex);
-        if (offsets != null) {
-            Double offset = offsets[bandIndex];
-            if (offset != null)
-                return offset.doubleValue();
-        }
-        throw new IllegalArgumentException(
-                "no Offset value available for the specified band " + bandIndex);
-    }
-
-    /**
-     * Returns the noDataValue value for the specified band
-     * 
-     * @param bandIndex
-     *                the index of the required band
-     * @throws IllegalArgumentException
-     *                 in case the specified band number is out of range or
-     *                 noDataValue has not been found
-     */
-    public double getNoDataValue(final int bandIndex)
-            throws IllegalArgumentException {
-        checkBandIndex(bandIndex);
-        if (noDataValues != null) {
-            Double noDataValue = noDataValues[bandIndex];
-            if (noDataValue != null)
-                return noDataValue.doubleValue();
-        }
-        throw new IllegalArgumentException(
-                "no noDataValue available for the specified band " + bandIndex);
-    }
-
-    /**
-     * Check the validity of the specified band index. Band indexes are in the
-     * range [0, numBands -1 ]
-     * 
-     * @param bandIndex
-     *                the band index to be validated.
-     * @throws IllegalArgumentException
-     *                 in case the specified band index isn't in the valid range
-     */
-    private void checkBandIndex(final int bandIndex)
-            throws IllegalArgumentException {
-        if (bandIndex < 0 || bandIndex > numBands) {
-            final StringBuffer sb = new StringBuffer("Specified band index (")
-                    .append(bandIndex).append(
-                            ") is out of range. It should be in the range [0,")
-                    .append(numBands - 1).append("]");
-            throw new IllegalArgumentException(sb.toString());
-        }
-    }
 
     /**
      * Provides to increase data access performances. In many cases, the block
@@ -996,8 +526,8 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
         final int height = dataset.getRasterYSize();
         final Dimension imageSize = new Dimension(width, height);
         final Dimension tileSize = GDALUtilities.toTileSize(imageSize);
-        tileHeight = tileSize.height;
-        tileWidth = tileSize.width;
+        setTileHeight(tileSize.height);
+        setTileWidth(tileSize.width);
     }
 
     /**
@@ -1066,15 +596,20 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
      * <code>GDALWritableCommonIIOImageMetadata</code> instance, with setting
      * capabilities
      */
+    /**
+     * Returns a copy of this <code>GDALCommonIIOImageMetadata</code> as a
+     * <code>GDALWritableCommonIIOImageMetadata</code> instance, with setting
+     * capabilities
+     */
     public GDALWritableCommonIIOImageMetadata asWritable() {
         GDALWritableCommonIIOImageMetadata metadata = new GDALWritableCommonIIOImageMetadata(
-                datasetName);
-        metadata.datasetName = this.datasetName;
-        metadata.datasetDescription = this.datasetDescription;
-        metadata.projection = this.projection;
-        metadata.gcpNumber = this.gcpNumber;
-        metadata.gcpProjection = this.gcpProjection;
-        metadata.geoTransformation = (double[]) this.geoTransformation.clone();
+                this.getDatasetName());
+        metadata.setDatasetName(this.getDatasetName());
+        metadata.setDatasetDescription(this.getDatasetDescription());
+        metadata.setProjection(this.getProjection());
+        metadata.setGcpNumber(this.getGcpNumber());
+        metadata.setGcpProjection(this.getGcpProjection());
+        metadata.setGeoTransformation(this.getGeoTransformation());
         if (this.gdalMetadataMap != null) {
             Map inputMap = this.gdalMetadataMap;
             Map map = Collections.synchronizedMap(new HashMap(inputMap.size()));
@@ -1095,22 +630,23 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
         }
         // TODO: Need to clone GCPs ... but actually JVM crashes when getting
         // GCPs
-        metadata.width = this.width;
-        metadata.height = this.height;
-        metadata.tileHeight = this.tileHeight;
-        metadata.tileWidth = this.tileWidth;
+        metadata.setWidth(this.getWidth());
+        metadata.setHeight(this.getHeight());
+        metadata.setTileHeight(this.getTileHeight());
+        metadata.setTileWidth(this.getTileWidth());
 
-        metadata.sampleModel = null;
-        if (this.sampleModel != null) {
-            final int smWidth = this.sampleModel.getWidth();
-            final int smHeight = this.sampleModel.getHeight();
-            metadata.sampleModel = this.sampleModel
-                    .createCompatibleSampleModel(smWidth, smHeight);
+        metadata.setSampleModel(null);
+        SampleModel sm = this.getSampleModel();
+        if (sm != null) {
+            final int smWidth = sm.getWidth();
+            final int smHeight = sm.getHeight();
+            metadata.setSampleModel(sm.createCompatibleSampleModel(smWidth,
+                    smHeight));
         }
-        metadata.numBands = this.numBands;
+        metadata.setNumBands(this.getNumBands());
 
-        metadata.colorModel = null;
-        ColorModel cm = this.colorModel;
+        metadata.setColorModel(null);
+        ColorModel cm = this.getColorModel();
         if (cm != null) {
             if (cm instanceof IndexColorModel) {
                 // //
@@ -1129,25 +665,24 @@ public class GDALCommonIIOImageMetadata extends IIOMetadata {
                 if (icm.hasAlpha()) {
                     byte[] a = new byte[mapSize];
                     icm.getAlphas(a);
-                    metadata.colorModel = new IndexColorModel(icm
-                            .getPixelSize(), mapSize, r, g, b, a);
+                    metadata.setColorModel(new IndexColorModel(icm
+                            .getPixelSize(), mapSize, r, g, b, a));
                 } else
-                    metadata.colorModel = new IndexColorModel(icm
-                            .getPixelSize(), mapSize, r, g, b);
+                    metadata.setColorModel(new IndexColorModel(icm
+                            .getPixelSize(), mapSize, r, g, b));
             } else
-                metadata.colorModel = GDALUtilities
-                        .buildColorModel(sampleModel);
+                metadata.setColorModel(GDALUtilities.buildColorModel(metadata
+                        .getSampleModel()));
         }
 
-        metadata.maximums = (Double[]) this.maximums.clone();
-        metadata.minimums = (Double[]) this.minimums.clone();
-        metadata.noDataValues = (Double[]) this.noDataValues.clone();
-        metadata.scales = (Double[]) this.scales.clone();
-        metadata.offsets = (Double[]) this.offsets.clone();
+        metadata.setMaximums(this.getMaximums());
+        metadata.setMinimums(this.getMinimums());
+        metadata.setNoDataValues(this.getNoDataValues());
+        metadata.setScales(this.getScales());
+        metadata.setOffsets(this.getOffsets());
 
-        metadata.numOverviews = (int[]) this.numOverviews.clone();
-        metadata.colorInterpretations = (int[]) this.colorInterpretations
-                .clone();
+        metadata.setNumOverviews(this.getNumOverviews());
+        metadata.setColorInterpretations(this.getColorInterpretations());
         return metadata;
     }
 }
