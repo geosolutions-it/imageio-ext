@@ -10,7 +10,7 @@
     <artifactId>imageio-ext-plugin</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <name>ArcGrid Plugin</name>
+  <name>Pure java ArcGrid Plugin</name>
   <!-- url> </url -->
   
   <scm>
