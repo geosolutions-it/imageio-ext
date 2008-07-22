@@ -604,7 +604,6 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
     public GDALWritableCommonIIOImageMetadata asWritable() {
         GDALWritableCommonIIOImageMetadata metadata = new GDALWritableCommonIIOImageMetadata(
                 this.getDatasetName());
-        metadata.setDatasetName(this.getDatasetName());
         metadata.setDatasetDescription(this.getDatasetDescription());
         metadata.setProjection(this.getProjection());
         metadata.setGcpNumber(this.getGcpNumber());

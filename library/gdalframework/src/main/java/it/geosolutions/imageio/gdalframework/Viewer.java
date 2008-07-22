@@ -720,10 +720,16 @@ public final class Viewer {
         });
     }
 
+    /**
+     * @deprecated use {@link ImageIOUtilities#visualize(RenderedImage)}
+     */
     public static void visualize(RenderedImage ri) {
         ImageIOUtilities.visualize(ri);
     }
 
+    /**
+     * @deprecated use {@link ImageIOUtilities#visualize(RenderedImage, String))}
+     */
     public static void visualize(RenderedImage ri, final String title) {
         ImageIOUtilities.visualize(ri, title);
     }

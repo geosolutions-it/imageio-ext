@@ -86,7 +86,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     private String gcpProjection;
 
     /** The grid to world transformation. */
-    private double[] geoTransformation = new double[6];
+    private double[] geoTransformation;
 
     /**
      * A map containing an HashMap for each domain if available (the Default
@@ -155,7 +155,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     private int[] numOverviews;
 
     /** Array to store the color interpretation for each band */
-    protected int[] colorInterpretations;
+    private int[] colorInterpretations;
 
     /**
      * Private constructor
@@ -276,7 +276,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
             node.setAttribute("index", Integer.toString(i));
             node.setAttribute("colorInterpretation",
                     colorInterpretations != null
-                            & colorInterpretations.length > i ? Integer
+                            && colorInterpretations.length > i ? Integer
                             .toBinaryString(colorInterpretations[i]) : "");
             node.setAttribute("noData",
                     noDataValues != null && noDataValues.length > i
@@ -488,6 +488,8 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     }
 
     protected void setMaximums(Double[] maximums) {
+        if (this.maximums!=null)
+            throw new UnsupportedOperationException("maximums have already been defined");
         this.maximums = maximums;
     }
 
@@ -496,6 +498,8 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     }
 
     protected void setMinimums(Double[] minimums) {
+        if (this.minimums!=null)
+            throw new UnsupportedOperationException("minimums have already been defined");
         this.minimums = minimums;
     }
 
@@ -504,6 +508,8 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     }
 
     protected void setNoDataValues(Double[] noDataValues) {
+        if (this.noDataValues!=null)
+            throw new UnsupportedOperationException("noDataValues have already been defined");
         this.noDataValues = noDataValues;
     }
 
@@ -512,6 +518,8 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     }
 
     protected void setScales(Double[] scales) {
+        if (this.scales!=null)
+            throw new UnsupportedOperationException("scales have already been defined");
         this.scales = scales;
     }
 
@@ -520,6 +528,8 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     }
 
     protected void setOffsets(Double[] offsets) {
+        if (this.offsets!=null)
+            throw new UnsupportedOperationException("offsets have already been defined");
         this.offsets = offsets;
     }
 
@@ -773,6 +783,8 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     }
 
     protected void setGeoTransformation(double[] geoTransformation) {
+        if (this.geoTransformation!=null)
+            throw new UnsupportedOperationException("geoTransformation have already been defined");
         this.geoTransformation = geoTransformation;
     }
 
@@ -781,6 +793,8 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     }
 
     protected void setColorInterpretations(int[] colorInterpretations) {
+        if (this.colorInterpretations!=null)
+            throw new UnsupportedOperationException("colorInterpretations have already been defined");
         this.colorInterpretations = colorInterpretations;
     }
 }

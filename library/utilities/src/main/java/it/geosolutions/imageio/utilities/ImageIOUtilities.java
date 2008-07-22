@@ -43,6 +43,8 @@ import com.sun.media.jai.codecimpl.util.RasterFactory;
  */
 public class ImageIOUtilities {
 
+    private static final int DEFAULT_ROI = -999;
+
     /**
      * Utility method returning a proper <code>ColorModel</code> given an
      * input <code>SampleModel</code>
@@ -94,6 +96,13 @@ public class ImageIOUtilities {
 
     }
 
+    /**
+     * Given a root node, print the values/attributes tree using the System Out
+     * 
+     * @TODO change it using Logger
+     * @param root
+     *                the root node to be printed.
+     */
     public static void displayImageIOMetadata(Node root) {
         displayMetadata(root, 0);
     }
@@ -112,8 +121,11 @@ public class ImageIOUtilities {
             int length = map.getLength();
             for (int i = 0; i < length; i++) {
                 Node attr = map.item(i);
+                String attrValue = attr.getNodeValue();
+                if (attrValue == null)
+                    attrValue = "";
                 System.out.print(" " + attr.getNodeName() + "=\""
-                        + attr.getNodeValue() + "\"");
+                        + attrValue + "\"");
             }
         }
         System.out.print(">"); // close current tag
@@ -195,8 +207,7 @@ public class ImageIOUtilities {
     }
 
     /**
-     * base method used to simply visualize RenderedImage without further
-     * information
+     * base method used to simply visualize RenderedImage
      * 
      * @param ri
      *                RenderedImage to visualize
@@ -217,15 +228,42 @@ public class ImageIOUtilities {
         });
     }
 
+    /**
+     * base method used to visualize RenderedImage by specifying the frame title
+     * as well as the request for rescaling.
+     * 
+     * @param ri
+     *                RenderedImage to visualize
+     * @param title
+     *                title for the frame (usually the image filename)
+     * @param rescale
+     *                if <code>true</code> the RenderedImage will be rescaled
+     *                using a default value for the ROI.
+     */
     public static void visualize(final RenderedImage ri, String title,
             final boolean rescale) {
-        visualize(ri, title, rescale, -999);
+        visualize(ri, title, rescale, DEFAULT_ROI);
     }
 
+    /**
+     * base method used to visualize RenderedImage by specifying the frame title
+     * as well as the request for rescaling.
+     * 
+     * @param ri
+     *                RenderedImage to visualize
+     * @param title
+     *                title for the frame (usually the image filename)
+     * @param rescale
+     *                if <code>true</code> the RenderedImage will be rescaled
+     *                using a default value for the ROI.
+     * @param roiThreshold
+     *                the threshold for the inner ROI. It represent the minimum
+     *                value of the pixels representing the region of interest.
+     */
     public static void visualize(RenderedImage ri, String title,
-            boolean rescale, int i) {
+            boolean rescale, int roiThreshold) {
         if (rescale == true)
-            visualizeRescaled(ri, title, i);
+            visualizeRescaled(ri, title, roiThreshold);
         else
             visualize(ri, title);
     }
