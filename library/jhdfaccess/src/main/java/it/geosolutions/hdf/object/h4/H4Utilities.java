@@ -296,55 +296,64 @@ public class H4Utilities {
      */
     public static String getValuesAsString(int datatype, Object buf) {
         StringBuffer sb = new StringBuffer();
+        int i;
         if (datatype == HDFConstants.DFNT_FLOAT32
                 || datatype == HDFConstants.DFNT_FLOAT) {
             float[] ff = (float[]) buf;
             final int size = ff.length;
-            for (int i = 0; i < size; i++) {
+            for (i = 0; i < size-1; i++) {
                 sb.append(ff[i]).append(" ");
             }
+            sb.append(ff[i]);
         } else if (datatype == HDFConstants.DFNT_DOUBLE
                 || datatype == HDFConstants.DFNT_FLOAT64) {
             double[] dd = (double[]) buf;
             final int size = dd.length;
-            for (int i = 0; i < size; i++) {
+            for (i = 0; i < size-1; i++) {
                 sb.append(dd[i]).append(" ");
             }
+            sb.append(dd[i]);
         } else if (datatype == HDFConstants.DFNT_INT8) {
             byte[] bb = (byte[]) buf;
             final int size = bb.length;
-            for (int i = 0; i < size; i++) {
+            for (i = 0; i < size-1; i++) {
                 sb.append(bb[i]).append(" ");
             }
+            sb.append(bb[i]);
         } else if (datatype == HDFConstants.DFNT_UINT8) {
             byte[] bb = (byte[]) buf;
             final int size = bb.length;
-            for (int i = 0; i < size; i++) {
+            for (i = 0; i < size-1; i++) {
                 int myByte = (0x000000FF & ((int) bb[i]));
                 short anUnsignedByte = (short) myByte;
                 sb.append(anUnsignedByte).append(" ");
             }
+            int myByte = (0x000000FF & ((int) bb[i]));
+            short anUnsignedByte = (short) myByte;
+            sb.append(anUnsignedByte);
         } else if (datatype == HDFConstants.DFNT_INT16
                 || datatype == HDFConstants.DFNT_UINT16) {
             short[] ss = (short[]) buf;
             final int size = ss.length;
-            for (int i = 0; i < size; i++) {
+            for (i = 0; i < size-1; i++) {
                 sb.append(ss[i]).append(" ");
             }
+            sb.append(ss[i]);
         } else if (datatype == HDFConstants.DFNT_INT32
                 || datatype == HDFConstants.DFNT_UINT32) {
             int[] ii = (int[]) buf;
             final int size = ii.length;
-            for (int i = 0; i < size; i++) {
+            for (i = 0; i < size-1; i++) {
                 sb.append(ii[i]).append(" ");
             }
+            sb.append(ii[i]);
         } else if (datatype == HDFConstants.DFNT_CHAR
                 || datatype == HDFConstants.DFNT_UCHAR8) {
 
             byte[] bb = (byte[]) buf;
             final int size = bb.length;
             sb = new StringBuffer(size);
-            for (int i = 0; i < size && bb[i] != 0; i++) {
+            for (i = 0; i < size && bb[i] != 0; i++) {
                 sb.append(new String(bb, i, 1));
             }
         }
