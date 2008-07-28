@@ -18,6 +18,7 @@ package it.geosolutions.imageio.plugins.mrsid;
 
 import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
 import it.geosolutions.imageio.gdalframework.Viewer;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
 import java.awt.Point;
@@ -59,325 +60,325 @@ import com.sun.media.jai.operator.ImageReadDescriptor;
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class MrSIDTest extends AbstractMrSIDTestCase {
-	
-	public MrSIDTest(String name) {
-		super(name);
-	}
 
-	/**
-	 * Test retrieving all available metadata properties
-	 * 
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-	public void testMetadata() throws FileNotFoundException, IOException {
-		if (!isDriverAvailable){
-			return;
-		}
-		try {
-			final File file = TestData.file(this, fileName);
-			final ParameterBlockJAI pbjImageRead;
-			pbjImageRead = new ParameterBlockJAI("ImageRead");
-			pbjImageRead.setParameter("Input", file);
-			RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-			IIOMetadata metadata = (IIOMetadata) image
-					.getProperty(ImageReadDescriptor.PROPERTY_NAME_METADATA_IMAGE);
-			assertTrue(metadata instanceof GDALCommonIIOImageMetadata);
-			GDALCommonIIOImageMetadata commonMetadata = (GDALCommonIIOImageMetadata) metadata;
-			Viewer
-					.displayImageIOMetadata(commonMetadata
-							.getAsTree(GDALCommonIIOImageMetadata.nativeMetadataFormatName));
-			Viewer.displayImageIOMetadata(commonMetadata
-					.getAsTree(MrSIDIIOImageMetadata.mrsidImageMetadataName));
-			if (TestData.isInteractiveTest())
-				Viewer.visualizeAllInformation(image, "", TestData
-						.isInteractiveTest());
-		} catch (FileNotFoundException fnfe) {
-			warningMessage();
-		}
-	}
+    public MrSIDTest(String name) {
+        super(name);
+    }
 
-	/**
-	 * Test read exploiting common JAI operations (Crop-Translate-Rotate)
-	 * 
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-	public void testJaiOperations() throws FileNotFoundException, IOException {
-		if (!isDriverAvailable){
-			return;
-		}
-		try {
-			final File file = TestData.file(this, fileName);
+    /**
+     * Test retrieving all available metadata properties
+     * 
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public void testMetadata() throws FileNotFoundException, IOException {
+        if (!isDriverAvailable) {
+            return;
+        }
+        try {
+            final File file = TestData.file(this, fileName);
+            final ParameterBlockJAI pbjImageRead;
+            pbjImageRead = new ParameterBlockJAI("ImageRead");
+            pbjImageRead.setParameter("Input", file);
+            RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+            IIOMetadata metadata = (IIOMetadata) image
+                    .getProperty(ImageReadDescriptor.PROPERTY_NAME_METADATA_IMAGE);
+            assertTrue(metadata instanceof GDALCommonIIOImageMetadata);
+            GDALCommonIIOImageMetadata commonMetadata = (GDALCommonIIOImageMetadata) metadata;
+            ImageIOUtilities
+                    .displayImageIOMetadata(commonMetadata
+                            .getAsTree(GDALCommonIIOImageMetadata.nativeMetadataFormatName));
+            ImageIOUtilities.displayImageIOMetadata(commonMetadata
+                    .getAsTree(MrSIDIIOImageMetadata.mrsidImageMetadataName));
+            if (TestData.isInteractiveTest())
+                Viewer.visualizeAllInformation(image, "", TestData
+                        .isInteractiveTest());
+        } catch (FileNotFoundException fnfe) {
+            warningMessage();
+        }
+    }
 
-			// ////////////////////////////////////////////////////////////////
-			// preparing to read
-			// ////////////////////////////////////////////////////////////////
-			final ParameterBlockJAI pbjImageRead;
-			final ImageReadParam irp = new ImageReadParam();
+    /**
+     * Test read exploiting common JAI operations (Crop-Translate-Rotate)
+     * 
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public void testJaiOperations() throws FileNotFoundException, IOException {
+        if (!isDriverAvailable) {
+            return;
+        }
+        try {
+            final File file = TestData.file(this, fileName);
 
-			// subsample by 2 on both dimensions
-			final int xSubSampling = 2;
-			final int ySubSampling = 2;
-			final int xSubSamplingOffset = 0;
-			final int ySubSamplingOffset = 0;
-			irp.setSourceSubsampling(xSubSampling, ySubSampling,
-					xSubSamplingOffset, ySubSamplingOffset);
+            // ////////////////////////////////////////////////////////////////
+            // preparing to read
+            // ////////////////////////////////////////////////////////////////
+            final ParameterBlockJAI pbjImageRead;
+            final ImageReadParam irp = new ImageReadParam();
 
-			// re-tile on the fly to 512x512
-			final ImageLayout l = new ImageLayout();
-			l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512)
-					.setTileWidth(512);
+            // subsample by 2 on both dimensions
+            final int xSubSampling = 2;
+            final int ySubSampling = 2;
+            final int xSubSamplingOffset = 0;
+            final int ySubSamplingOffset = 0;
+            irp.setSourceSubsampling(xSubSampling, ySubSampling,
+                    xSubSamplingOffset, ySubSamplingOffset);
 
-			pbjImageRead = new ParameterBlockJAI("ImageRead");
-			pbjImageRead.setParameter("Input", file);
-			pbjImageRead.setParameter("readParam", irp);
+            // re-tile on the fly to 512x512
+            final ImageLayout l = new ImageLayout();
+            l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512)
+                    .setTileWidth(512);
 
-			// get a RenderedImage
-			RenderedOp image = JAI.create("ImageRead", pbjImageRead,
-					new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
+            pbjImageRead = new ParameterBlockJAI("ImageRead");
+            pbjImageRead.setParameter("Input", file);
+            pbjImageRead.setParameter("readParam", irp);
 
-			if (TestData.isInteractiveTest())
-				Viewer.visualize(image, "Subsampling Read");
-			else
-				assertNotNull(image.getTiles());
+            // get a RenderedImage
+            RenderedOp image = JAI.create("ImageRead", pbjImageRead,
+                    new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
 
-			// ////////////////////////////////////////////////////////////////
-			// preparing to crop
-			// ////////////////////////////////////////////////////////////////
-			final ParameterBlockJAI pbjCrop = new ParameterBlockJAI("Crop");
-			pbjCrop.addSource(image);
+            if (TestData.isInteractiveTest())
+                ImageIOUtilities.visualize(image, "Subsampling Read");
+            else
+                assertNotNull(image.getTiles());
 
-			Float xCrop = new Float(image.getWidth() * 3 / 4.0
-					+ image.getMinX());
-			Float yCrop = new Float(image.getHeight() * 3 / 4.0
-					+ image.getMinY());
-			Float cropWidth = new Float(image.getWidth() / 4.0);
-			Float cropHeigth = new Float(image.getHeight() / 4.0);
+            // ////////////////////////////////////////////////////////////////
+            // preparing to crop
+            // ////////////////////////////////////////////////////////////////
+            final ParameterBlockJAI pbjCrop = new ParameterBlockJAI("Crop");
+            pbjCrop.addSource(image);
 
-			pbjCrop.setParameter("x", xCrop);
-			pbjCrop.setParameter("y", yCrop);
-			pbjCrop.setParameter("width", cropWidth);
-			pbjCrop.setParameter("height", cropHeigth);
+            Float xCrop = new Float(image.getWidth() * 3 / 4.0
+                    + image.getMinX());
+            Float yCrop = new Float(image.getHeight() * 3 / 4.0
+                    + image.getMinY());
+            Float cropWidth = new Float(image.getWidth() / 4.0);
+            Float cropHeigth = new Float(image.getHeight() / 4.0);
 
-			final RenderedOp croppedImage = JAI.create("Crop", pbjCrop);
-			if (TestData.isInteractiveTest())
-				Viewer.visualize(croppedImage, "Cropped Image");
-			else
-				assertNotNull(croppedImage.getTiles());
+            pbjCrop.setParameter("x", xCrop);
+            pbjCrop.setParameter("y", yCrop);
+            pbjCrop.setParameter("width", cropWidth);
+            pbjCrop.setParameter("height", cropHeigth);
 
-			// ////////////////////////////////////////////////////////////////
-			// preparing to translate
-			// ////////////////////////////////////////////////////////////////
-			final ParameterBlockJAI pbjTranslate = new ParameterBlockJAI(
-					"Translate");
-			pbjTranslate.addSource(croppedImage);
+            final RenderedOp croppedImage = JAI.create("Crop", pbjCrop);
+            if (TestData.isInteractiveTest())
+                ImageIOUtilities.visualize(croppedImage, "Cropped Image");
+            else
+                assertNotNull(croppedImage.getTiles());
 
-			Float xTrans = new Float(-croppedImage.getMinX());
-			Float yTrans = new Float(-croppedImage.getMinY());
+            // ////////////////////////////////////////////////////////////////
+            // preparing to translate
+            // ////////////////////////////////////////////////////////////////
+            final ParameterBlockJAI pbjTranslate = new ParameterBlockJAI(
+                    "Translate");
+            pbjTranslate.addSource(croppedImage);
 
-			pbjTranslate.setParameter("xTrans", xTrans);
-			pbjTranslate.setParameter("yTrans", yTrans);
+            Float xTrans = new Float(-croppedImage.getMinX());
+            Float yTrans = new Float(-croppedImage.getMinY());
 
-			final RenderedOp translatedImage = JAI.create("Translate",
-					pbjTranslate);
-			if (TestData.isInteractiveTest())
-				Viewer.visualize(translatedImage, "Translated Image");
-			else
-				assertNotNull(image.getTiles());
+            pbjTranslate.setParameter("xTrans", xTrans);
+            pbjTranslate.setParameter("yTrans", yTrans);
 
-			// ////////////////////////////////////////////////////////////////
-			// preparing to rotate
-			// ////////////////////////////////////////////////////////////////
+            final RenderedOp translatedImage = JAI.create("Translate",
+                    pbjTranslate);
+            if (TestData.isInteractiveTest())
+                ImageIOUtilities.visualize(translatedImage, "Translated Image");
+            else
+                assertNotNull(image.getTiles());
 
-			final ParameterBlockJAI pbjRotate = new ParameterBlockJAI("Rotate");
-			pbjRotate.addSource(translatedImage);
+            // ////////////////////////////////////////////////////////////////
+            // preparing to rotate
+            // ////////////////////////////////////////////////////////////////
 
-			Float xOrigin = new Float(cropWidth.floatValue() / 2);
-			Float yOrigin = new Float(cropHeigth.floatValue() / 2);
-			Float angle = new Float(java.lang.Math.PI / 2);
+            final ParameterBlockJAI pbjRotate = new ParameterBlockJAI("Rotate");
+            pbjRotate.addSource(translatedImage);
 
-			pbjRotate.setParameter("xOrigin", xOrigin);
-			pbjRotate.setParameter("yOrigin", yOrigin);
-			pbjRotate.setParameter("angle", angle);
+            Float xOrigin = new Float(cropWidth.floatValue() / 2);
+            Float yOrigin = new Float(cropHeigth.floatValue() / 2);
+            Float angle = new Float(java.lang.Math.PI / 2);
 
-			final RenderedOp rotatedImage = JAI.create("Rotate", pbjRotate);
-			if (TestData.isInteractiveTest())
-				Viewer.visualize(rotatedImage, "Rotated Image");
-			else
-				assertNotNull(image.getTiles());
+            pbjRotate.setParameter("xOrigin", xOrigin);
+            pbjRotate.setParameter("yOrigin", yOrigin);
+            pbjRotate.setParameter("angle", angle);
 
-		} catch (FileNotFoundException fnfe) {
-			warningMessage();
-		}
-	}
+            final RenderedOp rotatedImage = JAI.create("Rotate", pbjRotate);
+            if (TestData.isInteractiveTest())
+                ImageIOUtilities.visualize(rotatedImage, "Rotated Image");
+            else
+                assertNotNull(image.getTiles());
 
-	/**
-	 * Test read exploiting the setSourceBands and setDestinationType on
-	 * imageReadParam
-	 * 
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-	public void testSubBandsRead() throws IOException {
-		if (!isDriverAvailable){
-			return;
-		}
-		try {
-			ImageReader reader = new MrSIDImageReaderSpi()
-					.createReaderInstance();
-			final File file = TestData.file(this, fileName);
-			reader.setInput(file);
+        } catch (FileNotFoundException fnfe) {
+            warningMessage();
+        }
+    }
 
-			// //
-			//
-			// Getting image properties
-			//
-			// //
-			ImageTypeSpecifier spec = (ImageTypeSpecifier) reader
-					.getImageTypes(0).next();
-			SampleModel sm = spec.getSampleModel();
-			final int width = reader.getWidth(0);
-			final int height = reader.getHeight(0);
+    /**
+     * Test read exploiting the setSourceBands and setDestinationType on
+     * imageReadParam
+     * 
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public void testSubBandsRead() throws IOException {
+        if (!isDriverAvailable) {
+            return;
+        }
+        try {
+            ImageReader reader = new MrSIDImageReaderSpi()
+                    .createReaderInstance();
+            final File file = TestData.file(this, fileName);
+            reader.setInput(file);
 
-			// //
-			//
-			// Setting a ColorModel
-			//
-			// //
-			ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
-			ColorModel cm = RasterFactory.createComponentColorModel(sm
-					.getDataType(), // dataType
-					cs, // color space
-					false, // has alpha
-					false, // is alphaPremultiplied
-					Transparency.OPAQUE); // transparency
+            // //
+            //
+            // Getting image properties
+            //
+            // //
+            ImageTypeSpecifier spec = (ImageTypeSpecifier) reader
+                    .getImageTypes(0).next();
+            SampleModel sm = spec.getSampleModel();
+            final int width = reader.getWidth(0);
+            final int height = reader.getHeight(0);
 
-			// //
-			// 
-			// Setting Image Read Parameters
-			//
-			// //
-			final ImageReadParam param = new ImageReadParam();
-			final int ssx = 2;
-			final int ssy = 2;
-			param.setSourceSubsampling(ssx, ssy, 0, 0);
-			final Rectangle sourceRegion = new Rectangle(50, 50, 300, 300);
-			param.setSourceRegion(sourceRegion);
-			param.setSourceBands(new int[] { 0 });
-			Rectangle intersRegion = new Rectangle(0, 0, width, height);
-			intersRegion = intersRegion.intersection(sourceRegion);
+            // //
+            //
+            // Setting a ColorModel
+            //
+            // //
+            ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
+            ColorModel cm = RasterFactory.createComponentColorModel(sm
+                    .getDataType(), // dataType
+                    cs, // color space
+                    false, // has alpha
+                    false, // is alphaPremultiplied
+                    Transparency.OPAQUE); // transparency
 
-			int subsampledWidth = (intersRegion.width + ssx - 1) / ssx;
-			int subsampledHeight = (intersRegion.height + ssy - 1) / ssy;
-			param.setDestinationType(new ImageTypeSpecifier(cm, sm
-					.createCompatibleSampleModel(subsampledWidth,
-							subsampledHeight).createSubsetSampleModel(
-							new int[] { 0 })));
+            // //
+            // 
+            // Setting Image Read Parameters
+            //
+            // //
+            final ImageReadParam param = new ImageReadParam();
+            final int ssx = 2;
+            final int ssy = 2;
+            param.setSourceSubsampling(ssx, ssy, 0, 0);
+            final Rectangle sourceRegion = new Rectangle(50, 50, 300, 300);
+            param.setSourceRegion(sourceRegion);
+            param.setSourceBands(new int[] { 0 });
+            Rectangle intersRegion = new Rectangle(0, 0, width, height);
+            intersRegion = intersRegion.intersection(sourceRegion);
 
-			// //
-			//
-			// Preparing the ImageRead operation
-			//
-			// //
-			ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
-			pbjImageRead.setParameter("Input", file);
-			pbjImageRead.setParameter("readParam", param);
-			pbjImageRead.setParameter("reader", reader);
+            int subsampledWidth = (intersRegion.width + ssx - 1) / ssx;
+            int subsampledHeight = (intersRegion.height + ssy - 1) / ssy;
+            param.setDestinationType(new ImageTypeSpecifier(cm, sm
+                    .createCompatibleSampleModel(subsampledWidth,
+                            subsampledHeight).createSubsetSampleModel(
+                            new int[] { 0 })));
 
-			// //
-			//
-			// Setting a Layout
-			//
-			// //
-			final ImageLayout l = new ImageLayout();
-			l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(256)
-					.setTileWidth(256);
-			RenderedOp image = JAI.create("ImageRead", pbjImageRead,
-					new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
+            // //
+            //
+            // Preparing the ImageRead operation
+            //
+            // //
+            ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
+            pbjImageRead.setParameter("Input", file);
+            pbjImageRead.setParameter("readParam", param);
+            pbjImageRead.setParameter("reader", reader);
 
-			if (TestData.isInteractiveTest())
-				Viewer.visualize(image, "SourceBand selection");
-			else
-				assertNotNull(image.getTiles());
-		} catch (FileNotFoundException fnfe) {
-			warningMessage();
-		}
-	}
+            // //
+            //
+            // Setting a Layout
+            //
+            // //
+            final ImageLayout l = new ImageLayout();
+            l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(256)
+                    .setTileWidth(256);
+            RenderedOp image = JAI.create("ImageRead", pbjImageRead,
+                    new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
 
-	/**
-	 * Test read exploiting the setDestination on imageReadParam
-	 * 
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-	public void testManualRead() throws IOException {
-		if (!isDriverAvailable){
-			return;
-		}
-		try {
-			ImageReader reader = new MrSIDImageReaderSpi()
-					.createReaderInstance();
+            if (TestData.isInteractiveTest())
+                ImageIOUtilities.visualize(image, "SourceBand selection");
+            else
+                assertNotNull(image.getTiles());
+        } catch (FileNotFoundException fnfe) {
+            warningMessage();
+        }
+    }
 
-			final File file = TestData.file(this, fileName);
-			reader.setInput(file);
-			ImageTypeSpecifier spec = (ImageTypeSpecifier) reader
-					.getImageTypes(0).next();
-			final int width = reader.getWidth(0);
-			final int halfWidth = width / 2;
-			final int height = reader.getHeight(0);
-			final int halfHeight = height / 2;
+    /**
+     * Test read exploiting the setDestination on imageReadParam
+     * 
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public void testManualRead() throws IOException {
+        if (!isDriverAvailable) {
+            return;
+        }
+        try {
+            ImageReader reader = new MrSIDImageReaderSpi()
+                    .createReaderInstance();
 
-			final ImageReadParam irp = new ImageReadParam();
-			irp.setSourceRegion(new Rectangle(halfWidth, halfHeight, halfWidth,
-					halfHeight));
-			WritableRaster raster = Raster.createWritableRaster(spec
-					.getSampleModel()
-					.createCompatibleSampleModel(width, height), null);
-			final BufferedImage bi = new BufferedImage(spec.getColorModel(),
-					raster, false, null);
+            final File file = TestData.file(this, fileName);
+            reader.setInput(file);
+            ImageTypeSpecifier spec = (ImageTypeSpecifier) reader
+                    .getImageTypes(0).next();
+            final int width = reader.getWidth(0);
+            final int halfWidth = width / 2;
+            final int height = reader.getHeight(0);
+            final int halfHeight = height / 2;
 
-			irp.setDestination(bi);
-			irp.setDestinationOffset(new Point(halfWidth, halfHeight));
-			reader.read(0, irp);
-			irp.setSourceRegion(new Rectangle(0, 0, halfWidth, halfHeight));
-			irp.setDestinationOffset(new Point(0, 0));
-			reader.read(0, irp);
-			irp.setSourceRegion(new Rectangle(halfWidth, halfHeight / 2,
-					halfWidth, halfHeight / 4));
-			irp.setDestinationOffset(new Point(halfWidth, halfHeight / 2));
-			reader.read(0, irp);
+            final ImageReadParam irp = new ImageReadParam();
+            irp.setSourceRegion(new Rectangle(halfWidth, halfHeight, halfWidth,
+                    halfHeight));
+            WritableRaster raster = Raster.createWritableRaster(spec
+                    .getSampleModel()
+                    .createCompatibleSampleModel(width, height), null);
+            final BufferedImage bi = new BufferedImage(spec.getColorModel(),
+                    raster, false, null);
 
-			if (TestData.isInteractiveTest())
-				Viewer.visualize(bi, "MrSID Destination settings");
-			else
-				assertNotNull(bi);
+            irp.setDestination(bi);
+            irp.setDestinationOffset(new Point(halfWidth, halfHeight));
+            reader.read(0, irp);
+            irp.setSourceRegion(new Rectangle(0, 0, halfWidth, halfHeight));
+            irp.setDestinationOffset(new Point(0, 0));
+            reader.read(0, irp);
+            irp.setSourceRegion(new Rectangle(halfWidth, halfHeight / 2,
+                    halfWidth, halfHeight / 4));
+            irp.setDestinationOffset(new Point(halfWidth, halfHeight / 2));
+            reader.read(0, irp);
 
-			reader.dispose();
-		} catch (FileNotFoundException fnfe) {
-			warningMessage();
-		}
-	}
+            if (TestData.isInteractiveTest())
+                ImageIOUtilities.visualize(bi, "MrSID Destination settings");
+            else
+                assertNotNull(bi);
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite();
+            reader.dispose();
+        } catch (FileNotFoundException fnfe) {
+            warningMessage();
+        }
+    }
 
-		// Test read exploiting common JAI operations (Crop-Translate-Rotate)
-		suite.addTest(new MrSIDTest("testJaiOperations"));
+    public static Test suite() {
+        TestSuite suite = new TestSuite();
 
-		// Test reading metadata information
-		suite.addTest(new MrSIDTest("testMetadata"));
+        // Test read exploiting common JAI operations (Crop-Translate-Rotate)
+        suite.addTest(new MrSIDTest("testJaiOperations"));
 
-		// Test read without exploiting JAI
-		suite.addTest(new MrSIDTest("testManualRead"));
+        // Test reading metadata information
+        suite.addTest(new MrSIDTest("testMetadata"));
 
-		// Test read without exploiting JAI
-		suite.addTest(new MrSIDTest("testSubBandsRead"));
+        // Test read without exploiting JAI
+        suite.addTest(new MrSIDTest("testManualRead"));
 
-		return suite;
-	}
+        // Test read without exploiting JAI
+        suite.addTest(new MrSIDTest("testSubBandsRead"));
 
-	public static void main(java.lang.String[] args) {
-		junit.textui.TestRunner.run(suite());
-	}
+        return suite;
+    }
+
+    public static void main(java.lang.String[] args) {
+        junit.textui.TestRunner.run(suite());
+    }
 }

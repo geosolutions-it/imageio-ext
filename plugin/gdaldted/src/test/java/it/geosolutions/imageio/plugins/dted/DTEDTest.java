@@ -18,6 +18,7 @@ package it.geosolutions.imageio.plugins.dted;
 
 import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
 import it.geosolutions.imageio.gdalframework.Viewer;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
 import java.awt.RenderingHints;
@@ -101,7 +102,7 @@ public class DTEDTest extends AbstractTestCase {
 				} catch (IllegalArgumentException iae) {
 				}
 			}
-			Viewer.visualizeRescaled(image, "test", noDataValue);
+			ImageIOUtilities.visualize(image, "test", true, noDataValue);
 		} else
 			assertNotNull(image.getTiles());
 		assertEquals(61, image.getWidth());
