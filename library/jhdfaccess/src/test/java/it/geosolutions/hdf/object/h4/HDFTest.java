@@ -77,10 +77,7 @@ public class HDFTest extends TestCase {
             .getLogger("it.geosolutions.hdf.object.h4");
 
     static {
-        final boolean isLinux = ((String) System.getProperty("os.name"))
-                .equalsIgnoreCase("Linux") ? true : false;
-        boolean isDLLpresent = H4Utilities.isJHDFLibAvailable();
-        runTests = isDLLpresent && !isLinux;
+        runTests = H4Utilities.isJHDFLibAvailable();
     }
 
     private static final boolean runTests;

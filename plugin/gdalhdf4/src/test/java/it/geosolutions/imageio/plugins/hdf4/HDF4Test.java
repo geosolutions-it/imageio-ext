@@ -16,7 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.hdf4;
 
-import it.geosolutions.imageio.gdalframework.Viewer;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
 import java.awt.RenderingHints;
@@ -82,7 +82,7 @@ public class HDF4Test extends AbstractHDF4TestCase {
 						new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
 				image.getTiles();
 				if (TestData.isInteractiveTest())
-					Viewer.visualize(image, fileName);
+					ImageIOUtilities.visualize(image, fileName);
 				mReader.dispose();
 			}
 		} catch (FileNotFoundException fnfe) {
@@ -101,7 +101,7 @@ public class HDF4Test extends AbstractHDF4TestCase {
 			mReader.setInput(file);
 			RenderedImage ri = mReader.read(0);
 			if (TestData.isInteractiveTest())
-				Viewer.visualize(ri);
+				ImageIOUtilities.visualize(ri);
 			else {
 				assertNotNull(ri);
 				mReader.dispose();
