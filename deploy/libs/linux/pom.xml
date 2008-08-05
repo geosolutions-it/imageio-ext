@@ -114,7 +114,7 @@
     </build>
   </profile>
   <profile>
-  <id>full</id>
+    <id>full</id>
     <build>
        <plugins>
         <plugin>
@@ -126,11 +126,11 @@
               <configuration>
                <tasks>
                <mkdir dir="${temp.dir}" />
-	       <exec executable="sh">
+	       				<exec executable="sh">
                   <arg value="-c"/>
                   <arg value="echo downloading libraries [4 MB]"/>
                 </exec>
-               <get src="${remote.url}/${path.prefix}/${full.lib}/${version}/${full.lib}-${version}.jar" dest="${temp.dir}/${full.lib}-${version}.jar"/>
+                <get src="${remote.url}/${path.prefix}/${full.lib}/${version}/${full.lib}-${version}.jar" dest="${temp.dir}/${full.lib}-${version}.jar"/>
 	       <get src="${remote.url}/${path.prefix}/${hdf.lib}/${version}/${hdf.lib}-${version}.jar" dest="${temp.dir}/${hdf.lib}-${version}.jar"/>
                 <exec executable="sh">
                   <arg value="-c"/>
