@@ -17,7 +17,6 @@
 package it.geosolutions.imageio.plugins.jp2mrsid;
 
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
-import it.geosolutions.imageio.gdalframework.GDALImageReaderSpi;
 
 import java.awt.image.RenderedImage;
 import java.util.logging.Level;
