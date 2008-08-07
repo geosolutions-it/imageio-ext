@@ -16,8 +16,6 @@
  */
 package it.geosolutions.imageio.stream.input.spi;
 
-import it.geosolutions.imageio.stream.input.FileCacheImageInputStream;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,6 +28,7 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.imageio.spi.ImageInputStreamSpi;
+import javax.imageio.stream.FileCacheImageInputStream;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 
