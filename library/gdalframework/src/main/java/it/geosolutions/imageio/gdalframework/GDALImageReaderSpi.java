@@ -239,10 +239,20 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
      * Allows to deregister GDAL based spi in case GDAL libraries are
      * unavailable.
      */
-    public synchronized void onRegistration(ServiceRegistry registry, Class category) {
+    public synchronized void onRegistration(ServiceRegistry registry,
+            Class category) {
         super.onRegistration(registry, category);
         if (!GDALUtilities.isGDALAvailable()) {
-            return;
+            IIORegistry iioRegistry = (IIORegistry) registry;
+            Class spiClass = ImageReaderSpi.class;
+            final Iterator iter = iioRegistry.getServiceProviders(spiClass,
+                    true);
+            while (iter.hasNext()) {
+                final ImageReaderSpi provider = (ImageReaderSpi) iter.next();
+                if (provider instanceof GDALImageReaderSpi) {
+                    registry.deregisterServiceProvider(provider);
+                }
+            }
         }
     }
 }
