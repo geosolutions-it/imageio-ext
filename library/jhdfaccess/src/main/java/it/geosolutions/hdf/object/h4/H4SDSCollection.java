@@ -38,10 +38,11 @@ import ncsa.hdf.hdflib.HDFLibrary;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  */
-public class H4SDSCollection extends AbstractHObject implements IHObject, List, IH4Object {
+public class H4SDSCollection extends AbstractHObject implements IHObject, List,
+        IH4Object {
 
-    private AbstractH4Object attributesHolder; 
-    
+    private AbstractH4Object attributesHolder;
+
     private class H4SDSCollectionIterator implements Iterator {
 
         private Iterator it;
@@ -235,43 +236,58 @@ public class H4SDSCollection extends AbstractHObject implements IHObject, List, 
         if (filePath == null)
             throw new IllegalArgumentException("Empty filepath specified");
         try {
-            int identifier = HDFLibrary.SDstart(filePath,
-                    HDFConstants.DFACC_RDONLY | HDFConstants.DFACC_PARALLEL);
-            if (identifier != HDFConstants.FAIL) {
-                setIdentifier(identifier);
-                final int[] sdsFileInfo = new int[2];
-                if (HDFLibrary.SDfileinfo(identifier, sdsFileInfo)) {
-                    attributesHolder = new H4SDSFamilyObjectsAttributesManager(identifier, sdsFileInfo[1]);
-                    // retrieving the total # of SDS. It is worth to point out
-                    // that this number includes the SDS related to dimension
-                    // scales which will not treated as SDS. For this reason,
-                    // the effective number of SDS could be lower
-                    final int sdsTotalNum = sdsFileInfo[0];
+            int identifier = HDFConstants.FAIL;
+            H4Utilities.lock();
+            try {
+                identifier = HDFLibrary.SDstart(filePath,
+                        HDFConstants.DFACC_RDONLY);
+                if (identifier != HDFConstants.FAIL) {
+                    setIdentifier(identifier);
+                    final int[] sdsFileInfo = new int[2];
+                    boolean done = false;
+                    done = HDFLibrary.SDfileinfo(identifier, sdsFileInfo);
 
-                    sdsList = new ArrayList(sdsTotalNum);
-                    sdsNamesToIndexes = new HashMap(sdsTotalNum);
-                    for (int i = 0; i < sdsTotalNum; i++) {
-                        H4SDS candidateSds = H4Utilities.buildH4SDS(this, i);
-                        if (candidateSds != null) {
-                            sdsList.add(numSDS, candidateSds);
-                            final String name = candidateSds.getName();
-                            sdsNamesToIndexes.put(name, new Integer(numSDS));
-                            numSDS++;
+                    if (done) {
+                        attributesHolder = new H4SDSFamilyObjectsAttributesManager(
+                                identifier, sdsFileInfo[1]);
+                        // retrieving the total # of SDS. It is worth to point
+                        // out
+                        // that this number includes the SDS related to
+                        // dimension
+                        // scales which will not treated as SDS. For this
+                        // reason,
+                        // the effective number of SDS could be lower
+                        final int sdsTotalNum = sdsFileInfo[0];
+
+                        sdsList = new ArrayList(sdsTotalNum);
+                        sdsNamesToIndexes = new HashMap(sdsTotalNum);
+                        for (int i = 0; i < sdsTotalNum; i++) {
+                            H4SDS candidateSds = H4Utilities
+                                    .buildH4SDS(this, i);
+                            if (candidateSds != null) {
+                                sdsList.add(numSDS, candidateSds);
+                                final String name = candidateSds.getName();
+                                sdsNamesToIndexes
+                                        .put(name, new Integer(numSDS));
+                                numSDS++;
+                            }
+
                         }
-
+                    } else {
+                        sdsList = null;
+                        numSDS = 0;
+                        sdsNamesToIndexes = null;
+                        if (LOGGER.isLoggable(Level.WARNING))
+                            LOGGER.log(Level.WARNING,
+                                    "Unable to get file info from the SD interface with ID = "
+                                            + identifier);
                     }
                 } else {
-                    sdsList = null;
-                    numSDS = 0;
-                    sdsNamesToIndexes = null;
-                    if (LOGGER.isLoggable(Level.WARNING))
-                        LOGGER.log(Level.WARNING,
-                                "Unable to get file info from the SD interface with ID = "
-                                        + identifier);
+                    throw new IllegalStateException(
+                            "Failing to get an identifier for the SDS collection");
                 }
-            } else {
-                throw new IllegalStateException(
-                        "Failing to get an identifier for the SDS collection");
+            } finally {
+                H4Utilities.unlock();
             }
         } catch (HDFException e) {
             throw new IllegalStateException(
@@ -280,7 +296,7 @@ public class H4SDSCollection extends AbstractHObject implements IHObject, List, 
         }
     }
 
-     protected void finalize() throws Throwable {
+    protected void finalize() throws Throwable {
         try {
             dispose();
         } catch (Throwable e) {
@@ -297,39 +313,47 @@ public class H4SDSCollection extends AbstractHObject implements IHObject, List, 
     public synchronized void dispose() {
         final int identifier = getIdentifier();
         if (identifier != HDFConstants.FAIL) {
-            if (LOGGER.isLoggable(Level.FINE))
-                LOGGER.log(Level.FINE,
-                        "disposing SDS collection with ID = " + identifier);
-            if (sdsNamesToIndexes != null) {
-                sdsNamesToIndexes.clear();
-                sdsNamesToIndexes = null;
-            }
-
-            if (sdsList != null) {
-                for (int i = 0; i < numSDS; i++) {
-                    H4SDS h4sds = (H4SDS) sdsList.get(i);
-                    h4sds.dispose();
-                }
-                sdsList.clear();
-                sdsList = null;
-            }
-            if (attributesHolder!=null){
-                attributesHolder.dispose();
-                attributesHolder = null;
-            }
+            H4Utilities.lock();
             try {
-                boolean closed = HDFLibrary.SDend(identifier);
-                if (!closed) {
+                if (LOGGER.isLoggable(Level.FINE))
+                    LOGGER.log(Level.FINE,
+                            "disposing SDS collection with ID = " + identifier);
+                if (sdsNamesToIndexes != null) {
+                    sdsNamesToIndexes.clear();
+                    sdsNamesToIndexes = null;
+                }
+
+                if (sdsList != null) {
+                    for (int i = 0; i < numSDS; i++) {
+                        H4SDS h4sds = (H4SDS) sdsList.get(i);
+                        h4sds.dispose();
+                    }
+                    sdsList.clear();
+                    sdsList = null;
+                }
+                if (attributesHolder != null) {
+                    attributesHolder.dispose();
+                    attributesHolder = null;
+                }
+                try {
+                    boolean closed = false;
+
+                    closed = HDFLibrary.SDend(identifier);
+
+                    if (!closed) {
+                        if (LOGGER.isLoggable(Level.WARNING))
+                            LOGGER.log(Level.WARNING,
+                                    "Unable to close access to the SDS interface with ID = "
+                                            + identifier);
+                    }
+                } catch (HDFException e) {
                     if (LOGGER.isLoggable(Level.WARNING))
                         LOGGER.log(Level.WARNING,
-                                "Unable to close access to the SDS interface with ID = "
+                                "Error closing access to the SDS interface with ID = "
                                         + identifier);
                 }
-            } catch (HDFException e) {
-                if (LOGGER.isLoggable(Level.WARNING))
-                    LOGGER.log(Level.WARNING,
-                            "Error closing access to the SDS interface with ID = "
-                                    + identifier);
+            } finally {
+                H4Utilities.unlock();
             }
         }
         super.dispose();
@@ -560,6 +584,6 @@ public class H4SDSCollection extends AbstractHObject implements IHObject, List, 
      * @see {@link IH4Object#getNumAttributes()}
      */
     public int getNumAttributes() {
-       return attributesHolder.getNumAttributes();
+        return attributesHolder.getNumAttributes();
     }
 }

@@ -36,8 +36,15 @@ class H4SDSFamilyObjectsAttributesManager extends AbstractH4Object {
      */
     protected boolean readAttribute(int index, Object values)
             throws HDFException {
-    	H4Utilities.checkNonNull(values, "values");
-        return HDFLibrary.SDreadattr(getIdentifier(), index, values);
+        H4Utilities.checkNonNull(values, "values");
+        boolean read = false;
+        H4Utilities.lock();
+        try {
+            read = HDFLibrary.SDreadattr(getIdentifier(), index, values);
+        } finally {
+            H4Utilities.unlock();
+        }
+        return read;
     }
 
     /**
@@ -45,11 +52,19 @@ class H4SDSFamilyObjectsAttributesManager extends AbstractH4Object {
      */
     protected int[] getAttributeInfo(int index, String[] attrName)
             throws HDFException {
-    	H4Utilities.checkNonNull(attrName, "attrName");
-    	for (int i=0;i<attrName.length;i++)
-    		H4Utilities.checkNonNull(attrName[i], "attrName["+i+"]");
+        H4Utilities.checkNonNull(attrName, "attrName");
+        for (int i = 0; i < attrName.length; i++)
+            H4Utilities.checkNonNull(attrName[i], "attrName[" + i + "]");
         int[] attrInfo = new int[] { 0, 0 };
-        boolean done = HDFLibrary.SDattrinfo(getIdentifier(), index, attrName,attrInfo);
+
+        boolean done = false;
+        H4Utilities.lock();
+        try {
+            done = HDFLibrary.SDattrinfo(getIdentifier(), index, attrName,
+                    attrInfo);
+        } finally {
+            H4Utilities.unlock();
+        }
         if (done)
             return attrInfo;
         else
@@ -61,7 +76,14 @@ class H4SDSFamilyObjectsAttributesManager extends AbstractH4Object {
      */
     protected int getAttributeIndexByName(String attributeName)
             throws HDFException {
-    	H4Utilities.checkNonNull(attributeName, "attributeName");
-        return HDFLibrary.SDfindattr(getIdentifier(), attributeName);
+        H4Utilities.checkNonNull(attributeName, "attributeName");
+        int index = -1;
+        H4Utilities.lock();
+        try {
+            index = HDFLibrary.SDfindattr(getIdentifier(), attributeName);
+        } finally {
+            H4Utilities.unlock();
+        }
+        return index;
     }
 }

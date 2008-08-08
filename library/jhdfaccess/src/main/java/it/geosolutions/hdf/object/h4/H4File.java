@@ -38,14 +38,15 @@ public class H4File extends AbstractHObject implements IHObject {
     private static final Logger LOGGER = Logger
             .getLogger("it.geosolutions.hdf.object.h4");
 
-//    /**
-//     * Almost all HDF APIs require the preliminary open of the source file using
-//     * the <code>HOpen</code> routine. However, the SD interface, used to
-//     * access SDS dataset, does not uses this routine, but the
-//     * <code>SDStart</code> one. This variable will become <code>true</code>
-//     * when HOpen will be called.
-//     */
-//    private boolean hOpened = false;
+    // /**
+    // * Almost all HDF APIs require the preliminary open of the source file
+    // using
+    // * the <code>HOpen</code> routine. However, the SD interface, used to
+    // * access SDS dataset, does not uses this routine, but the
+    // * <code>SDStart</code> one. This variable will become <code>true</code>
+    // * when HOpen will be called.
+    // */
+    // private boolean hOpened = false;
 
     /**
      * The list of file label annotations related to this file.
@@ -206,18 +207,26 @@ public class H4File extends AbstractHObject implements IHObject {
         if (path == null)
             throw new IllegalArgumentException("The specified filePath is null");
         try {
-            if (HDFLibrary.Hishdf(path))
-                filePath = path;
-            else
-                throw new IllegalArgumentException(
-                        "The specified file is not a valid HDF source " + path);
-
-            final int identifier = HDFLibrary.Hopen(filePath);
-            if (identifier != HDFConstants.FAIL)
-                setIdentifier(identifier);
-            else
-                throw new IllegalStateException("Error while opening the file "
-                        + filePath + " due to unable to find the file ID");
+            int identifier = HDFConstants.FAIL;
+            H4Utilities.lock();
+            try {
+                if (HDFLibrary.Hishdf(path)) {
+                    filePath = path;
+                } else {
+                    throw new IllegalArgumentException(
+                            "The specified file is not a valid HDF source "
+                                    + path);
+                }
+                identifier = HDFLibrary.Hopen(filePath);
+                if (identifier != HDFConstants.FAIL)
+                    setIdentifier(identifier);
+                else
+                    throw new IllegalStateException(
+                            "Error while opening the file " + filePath
+                                    + " due to unable to find the file ID");
+            } finally {
+                H4Utilities.unlock();
+            }
         } catch (HDFException e) {
             throw new IllegalStateException(
                     "Error while checking the provided file", e);
@@ -233,62 +242,68 @@ public class H4File extends AbstractHObject implements IHObject {
         final int identifier = getIdentifier();
         if (identifier != HDFConstants.FAIL)
             try {
-                filePath = null;
-                // //
-                //
-                // Closing all opened interfaces
-                //
-                // //
+                H4Utilities.lock();
+                try {
+                    filePath = null;
+                    // //
+                    //
+                    // Closing all opened interfaces
+                    //
+                    // //
 
-                if (h4GRImageCollection != null)
-                    h4GRImageCollection.dispose();
-                if (h4VGroupCollection != null)
-                    h4VGroupCollection.dispose();
-                if (h4SdsCollection != null)
-                    h4SdsCollection.dispose();
+                    if (h4GRImageCollection != null)
+                        h4GRImageCollection.dispose();
+                    if (h4VGroupCollection != null)
+                        h4VGroupCollection.dispose();
+                    if (h4SdsCollection != null)
+                        h4SdsCollection.dispose();
 
-                // closing annotation Interface
-                if (h4AnnotationManager != null) {
-                    // End access to file annotations
-                    if (descAnnotations != null) {
-                        final int annSize = descAnnotations.size();
-                        if (annSize != 0) {
-                            for (int i = 0; i < annSize; i++) {
-                                H4Annotation annotation = (H4Annotation) descAnnotations
-                                        .get(i);
-                                annotation.dispose();
+                    // closing annotation Interface
+                    if (h4AnnotationManager != null) {
+                        // End access to file annotations
+                        if (descAnnotations != null) {
+                            final int annSize = descAnnotations.size();
+                            if (annSize != 0) {
+                                for (int i = 0; i < annSize; i++) {
+                                    H4Annotation annotation = (H4Annotation) descAnnotations
+                                            .get(i);
+                                    annotation.dispose();
+                                }
                             }
                         }
-                    }
-                    if (labelAnnotations != null) {
-                        final int annSize = labelAnnotations.size();
-                        if (annSize != 0) {
-                            for (int i = 0; i < annSize; i++) {
-                                H4Annotation annotation = (H4Annotation) labelAnnotations
-                                        .get(i);
-                                annotation.dispose();
+                        if (labelAnnotations != null) {
+                            final int annSize = labelAnnotations.size();
+                            if (annSize != 0) {
+                                for (int i = 0; i < annSize; i++) {
+                                    H4Annotation annotation = (H4Annotation) labelAnnotations
+                                            .get(i);
+                                    annotation.dispose();
+                                }
                             }
                         }
+                        h4AnnotationManager.dispose();
                     }
-                    h4AnnotationManager.dispose();
-                }
 
-                // //
-                //
-                // closing file
-                //
-                // //
-                if (LOGGER.isLoggable(Level.FINE))
-                    LOGGER.log(Level.FINE, "Closing File with ID = "
-                            + identifier);
-                boolean closed = HDFLibrary.Hclose(identifier);
-                if (!closed) {
-                    if (LOGGER.isLoggable(Level.WARNING))
-                        LOGGER.log(Level.WARNING,
-                                "Unable to close access to file with ID = "
-                                        + identifier);
-                }
+                    // //
+                    //
+                    // closing file
+                    //
+                    // //
+                    if (LOGGER.isLoggable(Level.FINE))
+                        LOGGER.log(Level.FINE, "Closing File with ID = "
+                                + identifier);
+                    boolean closed = false;
 
+                    closed = HDFLibrary.Hclose(identifier);
+                    if (!closed) {
+                        if (LOGGER.isLoggable(Level.WARNING))
+                            LOGGER.log(Level.WARNING,
+                                    "Unable to close access to file with ID = "
+                                            + identifier);
+                    }
+                } finally {
+                    H4Utilities.unlock();
+                }
             } catch (HDFException e) {
                 if (LOGGER.isLoggable(Level.WARNING))
                     LOGGER.log(Level.WARNING, "Error closing access to file");

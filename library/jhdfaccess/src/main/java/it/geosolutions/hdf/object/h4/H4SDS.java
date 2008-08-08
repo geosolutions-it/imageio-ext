@@ -38,8 +38,8 @@ import ncsa.hdf.hdflib.HDFLibrary;
  */
 public class H4SDS extends H4Variable implements IHObject, IH4Object {
 
-    private AbstractH4Object attributesHolder; 
-    
+    private AbstractH4Object attributesHolder;
+
     /** Logger. */
     final static Logger LOGGER = Logger
             .getLogger("it.geosolutions.hdf.object.h4");
@@ -228,7 +228,7 @@ public class H4SDS extends H4Variable implements IHObject, IH4Object {
      */
     private void initialize() throws HDFException {
 
-        // checks if already initalized
+        // checks if already initialized
         if (rank != -1)
             return;
 
@@ -240,49 +240,57 @@ public class H4SDS extends H4Variable implements IHObject, IH4Object {
         final int sdInfo[] = { 0, 0, 0 };
         final int datasetDimSizes[] = new int[HDFConstants.MAX_VAR_DIMS];
         String datasetName[] = { "" };
-
-        int identifier = getIdentifier();
-        if (identifier != HDFConstants.FAIL
-                && HDFLibrary.SDgetinfo(identifier, datasetName,
-                        datasetDimSizes, sdInfo)) {
-            reference = new H4ReferencedObject(HDFLibrary.SDidtoref(identifier));
-            setName(datasetName[0]);
-            rank = sdInfo[0];
-            dimSizes = new int[rank];
-            // datasetSize = 1;
-            for (int j = 0; j < rank; j++) {
-                dimSizes[j] = datasetDimSizes[j];
-                // when rank > 2, X and Y are the last 2 coordinates. As an
-                // instance, for a 3D subdatasets, 3rd dimension has index 0.
-                // if (j < rank - 2)
-                // datasetSize *= datasetDimSizes[j];
-            }
-            sdInfo[1] = sdInfo[1] & (~HDFConstants.DFNT_LITEND);
-            datatype = sdInfo[1];
-            attributesHolder = new H4SDSFamilyObjectsAttributesManager(identifier, sdInfo[2]);
-            dimensions = new ArrayList(rank);
-
-            HDFChunkInfo chunkInfo = new HDFChunkInfo();
-            final int[] cflag = { HDFConstants.HDF_NONE };
-            boolean status = HDFLibrary.SDgetchunkinfo(identifier, chunkInfo,
-                    cflag);
-            if (status) {
-                if (cflag[0] == HDFConstants.HDF_NONE)
-                    chunkSizes = null;
-                else {
-                    chunkSizes = new int[rank];
-                    for (int k = 0; k < rank; k++)
-                        chunkSizes[k] = chunkInfo.chunk_lengths[k];
+        int identifier = HDFConstants.FAIL;
+        H4Utilities.lock();
+        try {
+            identifier = getIdentifier();
+            if (identifier != HDFConstants.FAIL
+                    && HDFLibrary.SDgetinfo(identifier, datasetName,
+                            datasetDimSizes, sdInfo)) {
+                reference = new H4ReferencedObject(HDFLibrary
+                        .SDidtoref(identifier));
+                setName(datasetName[0]);
+                rank = sdInfo[0];
+                dimSizes = new int[rank];
+                // datasetSize = 1;
+                for (int j = 0; j < rank; j++) {
+                    dimSizes[j] = datasetDimSizes[j];
+                    // when rank > 2, X and Y are the last 2 coordinates. As an
+                    // instance, for a 3D subdatasets, 3rd dimension has index
+                    // 0.
+                    // if (j < rank - 2)
+                    // datasetSize *= datasetDimSizes[j];
                 }
+                sdInfo[1] = sdInfo[1] & (~HDFConstants.DFNT_LITEND);
+                datatype = sdInfo[1];
+                attributesHolder = new H4SDSFamilyObjectsAttributesManager(
+                        identifier, sdInfo[2]);
+                dimensions = new ArrayList(rank);
+
+                HDFChunkInfo chunkInfo = new HDFChunkInfo();
+                final int[] cflag = { HDFConstants.HDF_NONE };
+                boolean status = HDFLibrary.SDgetchunkinfo(identifier,
+                        chunkInfo, cflag);
+                if (status) {
+                    if (cflag[0] == HDFConstants.HDF_NONE)
+                        chunkSizes = null;
+                    else {
+                        chunkSizes = new int[rank];
+                        for (int k = 0; k < rank; k++)
+                            chunkSizes[k] = chunkInfo.chunk_lengths[k];
+                    }
+                }
+            } else {
+                if (LOGGER.isLoggable(Level.WARNING))
+                    LOGGER
+                            .log(
+                                    Level.WARNING,
+                                    "Error initializing SDS: "
+                                            + (identifier != HDFConstants.FAIL ? "\n SDgetInfo returned false"
+                                                    : "identifier = -1"));
             }
-        } else {
-            if (LOGGER.isLoggable(Level.WARNING))
-                LOGGER
-                        .log(
-                                Level.WARNING,
-                                "Error initializing SDS: "
-                                        + (identifier != HDFConstants.FAIL ? "\n SDgetInfo returned false"
-                                                : "identifier = -1"));
+        } finally {
+            H4Utilities.unlock();
         }
     }
 
@@ -303,68 +311,78 @@ public class H4SDS extends H4Variable implements IHObject, IH4Object {
      */
     public synchronized void dispose() {
         final int identifier = getIdentifier();
-        if (identifier != HDFConstants.FAIL) {
-            if (LOGGER.isLoggable(Level.FINE))
-                LOGGER.log(Level.FINE, "disposing SDS with ID = "
-                        + identifier);
-            if (dimensions != null) {
-                final int dimSizes = dimensions.size();
-                if (dimSizes != 0) {
-                    for (int i = 0; i < dimSizes; i++) {
-                        H4Dimension dim = (H4Dimension) dimensions.get(i);
-                        dim.dispose();
+        H4Utilities.lock();
+        try {
+            if (identifier != HDFConstants.FAIL) {
+                if (LOGGER.isLoggable(Level.FINE))
+                    LOGGER.log(Level.FINE, "disposing SDS with ID = "
+                            + identifier);
+                if (dimensions != null) {
+                    final int dimSizes = dimensions.size();
+                    if (dimSizes != 0) {
+                        for (int i = 0; i < dimSizes; i++) {
+                            H4Dimension dim = (H4Dimension) dimensions.get(i);
+                            dim.dispose();
+                        }
                     }
+                    dimensions.clear();
+                    dimensions = null;
                 }
-                dimensions.clear();
-                dimensions = null;
-            }
-            if (descAnnotations != null) {
-                for (int i = 0; i < nDescriptions; i++) {
-                    H4Annotation ann = (H4Annotation) descAnnotations.get(i);
-                    ann.dispose();
+                if (descAnnotations != null) {
+                    for (int i = 0; i < nDescriptions; i++) {
+                        H4Annotation ann = (H4Annotation) descAnnotations
+                                .get(i);
+                        ann.dispose();
+                    }
+                    descAnnotations.clear();
+                    descAnnotations = null;
                 }
-                descAnnotations.clear();
-                descAnnotations = null;
-            }
-            if (labelAnnotations != null) {
-                for (int i = 0; i < nLabels; i++) {
-                    H4Annotation ann = (H4Annotation) labelAnnotations.get(i);
-                    ann.dispose();
+                if (labelAnnotations != null) {
+                    for (int i = 0; i < nLabels; i++) {
+                        H4Annotation ann = (H4Annotation) labelAnnotations
+                                .get(i);
+                        ann.dispose();
+                    }
+                    labelAnnotations.clear();
+                    labelAnnotations = null;
                 }
-                labelAnnotations.clear();
-                labelAnnotations = null;
-            }
-            if (attributesHolder!=null){
-                attributesHolder.dispose();
-                attributesHolder = null;
-            }
-            // Disposing objects hold by H4DecoratedObject superclass
-            // ----------------
-            // OLD STRATEGY:
-            // ----------------
-            // During the H4SDSCollection initialization, all SDSs are opened,
-            // initialized and immediately closed. When a SDS is required, the
-            // H4SDSCollection re-open access to the specific SDS. When a
-            // H4SDSCollection is closed, it attempts to close all H4SDSs by
-            // calling the close method of each of them. Only the really opened
-            // H4SDSs need to be closed.
-            if (isOpen) {
-                try {
-                    boolean closed = HDFLibrary.SDendaccess(identifier);
-                    if (!closed) {
+                if (attributesHolder != null) {
+                    attributesHolder.dispose();
+                    attributesHolder = null;
+                }
+                // Disposing objects hold by H4DecoratedObject superclass
+                // ----------------
+                // OLD STRATEGY:
+                // ----------------
+                // During the H4SDSCollection initialization, all SDSs are
+                // opened,
+                // initialized and immediately closed. When a SDS is required,
+                // the
+                // H4SDSCollection re-open access to the specific SDS. When a
+                // H4SDSCollection is closed, it attempts to close all H4SDSs by
+                // calling the close method of each of them. Only the really
+                // opened
+                // H4SDSs need to be closed.
+                if (isOpen) {
+                    try {
+                        boolean closed = HDFLibrary.SDendaccess(identifier);
+                        if (!closed) {
+                            if (LOGGER.isLoggable(Level.WARNING))
+                                LOGGER.log(Level.WARNING,
+                                        "Unable to close access to the SDS with ID = "
+                                                + identifier);
+                        }
+                    } catch (HDFException e) {
                         if (LOGGER.isLoggable(Level.WARNING))
                             LOGGER.log(Level.WARNING,
-                                    "Unable to close access to the SDS with ID = "
+                                    "Error closing access to the SDS with ID = "
                                             + identifier);
                     }
-                } catch (HDFException e) {
-                    if (LOGGER.isLoggable(Level.WARNING))
-                        LOGGER.log(Level.WARNING,
-                                "Error closing access to the SDS with ID = "
-                                        + identifier);
                 }
+                isOpen = false;
             }
-            isOpen = false;
+        } finally {
+            H4Utilities.unlock();
         }
         super.dispose();
     }
@@ -476,24 +494,29 @@ public class H4SDS extends H4Variable implements IHObject, IH4Object {
         //
         // //
         if (theData != null) {
-            HDFLibrary
-                    .SDreaddata(getIdentifier(), start, stride, size, theData);
+            H4Utilities.lock();
+            try {
+                HDFLibrary.SDreaddata(getIdentifier(), start, stride, size,
+                        theData);
+            } finally {
+                H4Utilities.unlock();
+            }
         }
 
         return theData;
     }
 
-    /**
-     * Returns compression info related to this SDS
-     * 
-     * @return the type of compression.
-     * @throws HDFException
-     */
-    public int getCompression() throws HDFException {
-        final HDFCompInfo compInfo = new HDFCompInfo();
-        HDFLibrary.SDgetcompress(getIdentifier(), compInfo);
-        return compInfo.ctype;
-    }
+    // /**
+    // * Returns compression info related to this SDS
+    // *
+    // * @return the type of compression.
+    // * @throws HDFException
+    // */
+    // public int getCompression() throws HDFException {
+    // final HDFCompInfo compInfo = new HDFCompInfo();
+    // HDFLibrary.SDgetcompress(getIdentifier(), compInfo);
+    // return compInfo.ctype;
+    // }
 
     /**
      * Returns a <code>List</code> containing available dimensions for this
@@ -542,6 +565,7 @@ public class H4SDS extends H4Variable implements IHObject, IH4Object {
      * @return the <code>List</code> of annotations available for this SDS
      * @throws HDFException
      */
+    // TODO: SYNC
     public synchronized List getAnnotations(final int annotationType)
             throws HDFException {
         List returnedAnnotations = null;
@@ -623,6 +647,6 @@ public class H4SDS extends H4Variable implements IHObject, IH4Object {
      * @see {@link IH4Object#getNumAttributes()}
      */
     public int getNumAttributes() {
-       return attributesHolder.getNumAttributes();
+        return attributesHolder.getNumAttributes();
     }
 }

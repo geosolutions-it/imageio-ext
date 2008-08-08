@@ -19,6 +19,7 @@ package it.geosolutions.hdf.object.h4;
 import it.geosolutions.hdf.object.AbstractHObject;
 
 import java.awt.image.DataBuffer;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,6 +40,18 @@ public class H4Utilities {
 
     private static boolean init = false;
 
+    /** A lock to be used to grant thread-safety while calling the HDFLibrary */
+    private static ReentrantLock lock = new ReentrantLock();
+
+    static void lock() {
+        lock.lock();
+    }
+
+    static void unlock() {
+        lock.unlock();
+    }
+
+    /** Set to <code>true</code> in case the JHDF lib is available */
     private static boolean available;
 
     /** Forces loading of JHDF lib. */
@@ -301,7 +314,7 @@ public class H4Utilities {
                 || datatype == HDFConstants.DFNT_FLOAT) {
             float[] ff = (float[]) buf;
             final int size = ff.length;
-            for (i = 0; i < size-1; i++) {
+            for (i = 0; i < size - 1; i++) {
                 sb.append(ff[i]).append(" ");
             }
             sb.append(ff[i]);
@@ -309,21 +322,21 @@ public class H4Utilities {
                 || datatype == HDFConstants.DFNT_FLOAT64) {
             double[] dd = (double[]) buf;
             final int size = dd.length;
-            for (i = 0; i < size-1; i++) {
+            for (i = 0; i < size - 1; i++) {
                 sb.append(dd[i]).append(" ");
             }
             sb.append(dd[i]);
         } else if (datatype == HDFConstants.DFNT_INT8) {
             byte[] bb = (byte[]) buf;
             final int size = bb.length;
-            for (i = 0; i < size-1; i++) {
+            for (i = 0; i < size - 1; i++) {
                 sb.append(bb[i]).append(" ");
             }
             sb.append(bb[i]);
         } else if (datatype == HDFConstants.DFNT_UINT8) {
             byte[] bb = (byte[]) buf;
             final int size = bb.length;
-            for (i = 0; i < size-1; i++) {
+            for (i = 0; i < size - 1; i++) {
                 int myByte = (0x000000FF & ((int) bb[i]));
                 short anUnsignedByte = (short) myByte;
                 sb.append(anUnsignedByte).append(" ");
@@ -335,7 +348,7 @@ public class H4Utilities {
                 || datatype == HDFConstants.DFNT_UINT16) {
             short[] ss = (short[]) buf;
             final int size = ss.length;
-            for (i = 0; i < size-1; i++) {
+            for (i = 0; i < size - 1; i++) {
                 sb.append(ss[i]).append(" ");
             }
             sb.append(ss[i]);
@@ -343,7 +356,7 @@ public class H4Utilities {
                 || datatype == HDFConstants.DFNT_UINT32) {
             int[] ii = (int[]) buf;
             final int size = ii.length;
-            for (i = 0; i < size-1; i++) {
+            for (i = 0; i < size - 1; i++) {
                 sb.append(ii[i]).append(" ");
             }
             sb.append(ii[i]);
@@ -370,6 +383,7 @@ public class H4Utilities {
      *                the reference of the candidate children VGroup
      * @return <code>true</code> if the VGroup is children of a parent VGroup
      */
+    //TODO: SYNC
     public static boolean isAVGroup(H4VGroup parentGroup, final int ref) {
         boolean isAvGroup = false;
         final int fileID = parentGroup.h4VGroupCollectionOwner.getH4File()
@@ -421,7 +435,6 @@ public class H4Utilities {
      * @return the built <code>String</code>
      * @throws HDFException
      */
-
     public static String buildAttributeString(H4Attribute att)
             throws HDFException {
         if (att == null)
@@ -525,15 +538,21 @@ public class H4Utilities {
             return sds;
         }
         try {
-            final int identifier = HDFLibrary.SDselect(interfaceID, index);
-            if (identifier != HDFConstants.FAIL) {
-                if (!HDFLibrary.SDiscoordvar(identifier)) {
-                    sds = new H4SDS(h4SDSCollection, index, identifier);
-                } else
-                    HDFLibrary.SDendaccess(identifier);
-            } else {
-                if (H4SDS.LOGGER.isLoggable(Level.WARNING))
-                    H4SDS.LOGGER.log(Level.WARNING, "undefined SD identifier ");
+            H4Utilities.lock.lock();
+            try {
+                final int identifier = HDFLibrary.SDselect(interfaceID, index);
+                if (identifier != HDFConstants.FAIL) {
+                    if (!HDFLibrary.SDiscoordvar(identifier)) {
+                        sds = new H4SDS(h4SDSCollection, index, identifier);
+                    } else
+                        HDFLibrary.SDendaccess(identifier);
+                } else {
+                    if (H4SDS.LOGGER.isLoggable(Level.WARNING))
+                        H4SDS.LOGGER.log(Level.WARNING,
+                                "undefined SD identifier ");
+                }
+            } finally {
+                H4Utilities.lock.unlock();
             }
 
         } catch (HDFException e) {
