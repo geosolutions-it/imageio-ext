@@ -63,9 +63,9 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
             .getLogger("it.geosolutions.imageio.gdalframework");
     
     private class GDALGCP implements GCP{
-        private org.gdal.gdal.GCP gcp;
+        private final org.gdal.gdal.GCP gcp;
         
-        public GDALGCP(org.gdal.gdal.GCP gcp){
+        public GDALGCP(final org.gdal.gdal.GCP gcp){
             if (gcp==null)
                 throw new NullPointerException("provided GCP is null");
             this.gcp=gcp;
