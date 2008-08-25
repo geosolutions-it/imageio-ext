@@ -44,8 +44,7 @@ import org.w3c.dom.Node;
 public abstract class CoreCommonImageMetadata extends IIOMetadata {
 
     /** The LOGGER for this class. */
-    private static final Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.core");
+    private static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.core");
 
     /**
      * The name of the native metadata format for this object.
@@ -88,13 +87,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     /** The grid to world transformation. */
     private double[] geoTransformation;
 
-    /**
-     * A map containing an HashMap for each domain if available (the Default
-     * domain, the ImageStructure domain, as well as any xml prefixed domain)
-     */
-    protected Map gdalMetadataMap;
-
-    /**
+     /**
      * The list of Ground Control Points. <BR>
      * Any Ground Control Point has the following fields:<BR>
      * <UL>
