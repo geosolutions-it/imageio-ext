@@ -200,7 +200,7 @@ public class H4Palette extends AbstractHObject implements IHObject {
             values = new byte[3 * numEntries];
             HDFLibrary.GRreadlut(getIdentifier(), values);
         }
-        return values;
+        return (byte[])values.clone();
     }
 
     /**

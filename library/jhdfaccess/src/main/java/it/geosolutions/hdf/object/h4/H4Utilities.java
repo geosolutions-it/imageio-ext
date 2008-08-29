@@ -83,38 +83,38 @@ public class H4Utilities {
     }
 
     /** predefined attributes */
-    public static String SDS_PREDEF_ATTR_LONG_NAME = "long_name";
+    public static final String SDS_PREDEF_ATTR_LONG_NAME = "long_name";
 
-    public static String SDS_PREDEF_ATTR_UNITS = "units";
+    public static final String SDS_PREDEF_ATTR_UNITS = "units";
 
-    public static String SDS_PREDEF_ATTR_FORMAT = "format";
+    public static final String SDS_PREDEF_ATTR_FORMAT = "format";
 
-    public static String SDS_PREDEF_ATTR_CALIBRATED_NT = "calibrated_nt";
+    public static final String SDS_PREDEF_ATTR_CALIBRATED_NT = "calibrated_nt";
 
-    public static String SDS_PREDEF_ATTR_SCALE_FACTOR = "scale_factor";
+    public static final String SDS_PREDEF_ATTR_SCALE_FACTOR = "scale_factor";
 
-    public static String SDS_PREDEF_ATTR_SCALE_FACTOR_ERR = "scale_factor_err";
+    public static final String SDS_PREDEF_ATTR_SCALE_FACTOR_ERR = "scale_factor_err";
 
-    public static String SDS_PREDEF_ATTR_ADD_OFFSET = "add_offset";
+    public static final String SDS_PREDEF_ATTR_ADD_OFFSET = "add_offset";
 
-    public static String SDS_PREDEF_ATTR_ADD_OFFSET_ERR = "add_offset_err";
+    public static final String SDS_PREDEF_ATTR_ADD_OFFSET_ERR = "add_offset_err";
 
-    public static String SDS_PREDEF_ATTR_FILL_VALUE = "_FillValue";
+    public static final String SDS_PREDEF_ATTR_FILL_VALUE = "_FillValue";
 
-    public static String SDS_PREDEF_ATTR_COORDINATE_SYSTEM = "cordsys";
+    public static final String SDS_PREDEF_ATTR_COORDINATE_SYSTEM = "cordsys";
 
-    public static String SDS_PREDEF_ATTR_VALID_RANGE_MIN = "valid_min";
+    public static final String SDS_PREDEF_ATTR_VALID_RANGE_MIN = "valid_min";
 
-    public static String SDS_PREDEF_ATTR_VALID_RANGE_MAX = "valid_max";
+    public static final String SDS_PREDEF_ATTR_VALID_RANGE_MAX = "valid_max";
 
-    public static String SDS_PREDEF_ATTR_VALID_RANGE = "valid_range";
+    public static final String SDS_PREDEF_ATTR_VALID_RANGE = "valid_range";
 
     /** predefined dimension attributes */
-    public static String PREDEF_ATTR_LABEL = "long_name";
+    public static final String PREDEF_ATTR_LABEL = "long_name";
 
-    public static String PREDEF_ATTR_UNIT = "units";
+    public static final String PREDEF_ATTR_UNIT = "units";
 
-    public static String PREDEF_ATTR_FORMAT = "format";
+    public static final String PREDEF_ATTR_FORMAT = "format";
 
     /**
      * Ensure non instantiability

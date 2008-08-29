@@ -238,77 +238,77 @@ public class H4File extends AbstractHObject implements IHObject {
      * Close access to this H4File and try to close all other related
      * opened/accessed interfaces and items.
      */
-    public synchronized void dispose() {
-        final int identifier = getIdentifier();
-        if (identifier != HDFConstants.FAIL)
-            try {
-                H4Utilities.lock();
-                try {
-                    filePath = null;
-                    // //
-                    //
-                    // Closing all opened interfaces
-                    //
-                    // //
+    public void dispose() {
+        H4Utilities.lock();
+        try {
+            final int identifier = getIdentifier();
+            if (identifier != HDFConstants.FAIL) {
 
-                    if (h4GRImageCollection != null)
-                        h4GRImageCollection.dispose();
-                    if (h4VGroupCollection != null)
-                        h4VGroupCollection.dispose();
-                    if (h4SdsCollection != null)
-                        h4SdsCollection.dispose();
+                filePath = null;
+                // //
+                //
+                // Closing all opened interfaces
+                //
+                // //
 
-                    // closing annotation Interface
-                    if (h4AnnotationManager != null) {
-                        // End access to file annotations
-                        if (descAnnotations != null) {
-                            final int annSize = descAnnotations.size();
-                            if (annSize != 0) {
-                                for (int i = 0; i < annSize; i++) {
-                                    H4Annotation annotation = (H4Annotation) descAnnotations
-                                            .get(i);
-                                    annotation.dispose();
-                                }
+                if (h4GRImageCollection != null)
+                    h4GRImageCollection.dispose();
+                if (h4VGroupCollection != null)
+                    h4VGroupCollection.dispose();
+                if (h4SdsCollection != null)
+                    h4SdsCollection.dispose();
+
+                // closing annotation Interface
+                if (h4AnnotationManager != null) {
+                    // End access to file annotations
+                    if (descAnnotations != null) {
+                        final int annSize = descAnnotations.size();
+                        if (annSize != 0) {
+                            for (int i = 0; i < annSize; i++) {
+                                H4Annotation annotation = (H4Annotation) descAnnotations
+                                        .get(i);
+                                annotation.dispose();
                             }
                         }
-                        if (labelAnnotations != null) {
-                            final int annSize = labelAnnotations.size();
-                            if (annSize != 0) {
-                                for (int i = 0; i < annSize; i++) {
-                                    H4Annotation annotation = (H4Annotation) labelAnnotations
-                                            .get(i);
-                                    annotation.dispose();
-                                }
+                    }
+                    if (labelAnnotations != null) {
+                        final int annSize = labelAnnotations.size();
+                        if (annSize != 0) {
+                            for (int i = 0; i < annSize; i++) {
+                                H4Annotation annotation = (H4Annotation) labelAnnotations
+                                        .get(i);
+                                annotation.dispose();
                             }
                         }
-                        h4AnnotationManager.dispose();
                     }
-
-                    // //
-                    //
-                    // closing file
-                    //
-                    // //
-                    if (LOGGER.isLoggable(Level.FINE))
-                        LOGGER.log(Level.FINE, "Closing File with ID = "
-                                + identifier);
-                    boolean closed = false;
-
-                    closed = HDFLibrary.Hclose(identifier);
-                    if (!closed) {
-                        if (LOGGER.isLoggable(Level.WARNING))
-                            LOGGER.log(Level.WARNING,
-                                    "Unable to close access to file with ID = "
-                                            + identifier);
-                    }
-                } finally {
-                    H4Utilities.unlock();
+                    h4AnnotationManager.dispose();
                 }
-            } catch (HDFException e) {
-                if (LOGGER.isLoggable(Level.WARNING))
-                    LOGGER.log(Level.WARNING, "Error closing access to file");
+
+                // //
+                //
+                // closing file
+                //
+                // //
+                if (LOGGER.isLoggable(Level.FINE))
+                    LOGGER.log(Level.FINE, "Closing File with ID = "
+                            + identifier);
+                boolean closed = false;
+
+                closed = HDFLibrary.Hclose(identifier);
+                if (!closed) {
+                    if (LOGGER.isLoggable(Level.WARNING))
+                        LOGGER.log(Level.WARNING,
+                                "Unable to close access to file with ID = "
+                                        + identifier);
+                }
             }
-        super.dispose();
+            super.dispose();
+        } catch (HDFException e) {
+            if (LOGGER.isLoggable(Level.WARNING))
+                LOGGER.log(Level.WARNING, "Error closing access to file");
+        } finally {
+            H4Utilities.unlock();
+        }
     }
 
     /**

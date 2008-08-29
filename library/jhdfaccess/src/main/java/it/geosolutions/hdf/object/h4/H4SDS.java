@@ -125,7 +125,7 @@ public class H4SDS extends H4Variable implements IHObject, IH4Object {
      * @return the dimension sizes of this SDS.
      */
     public int[] getDimSizes() {
-        return dimSizes;
+        return dimSizes!=null?(int[])dimSizes.clone():dimSizes;
     }
 
     /**
@@ -134,7 +134,7 @@ public class H4SDS extends H4Variable implements IHObject, IH4Object {
      * @return the chunk sizes of this SDS.
      */
     public int[] getChunkSizes() {
-        return chunkSizes;
+        return chunkSizes!=null?(int[])chunkSizes.clone():chunkSizes;
     }
 
     /**
@@ -309,9 +309,9 @@ public class H4SDS extends H4Variable implements IHObject, IH4Object {
      * close this {@link H4SDS} and its owned {@link AbstractHObject}s and
      * dispose allocated objects.
      */
-    public synchronized void dispose() {
-        final int identifier = getIdentifier();
+    public void dispose() {
         H4Utilities.lock();
+        final int identifier = getIdentifier();
         try {
             if (identifier != HDFConstants.FAIL) {
                 if (LOGGER.isLoggable(Level.FINE))
@@ -350,19 +350,7 @@ public class H4SDS extends H4Variable implements IHObject, IH4Object {
                     attributesHolder.dispose();
                     attributesHolder = null;
                 }
-                // Disposing objects hold by H4DecoratedObject superclass
-                // ----------------
-                // OLD STRATEGY:
-                // ----------------
-                // During the H4SDSCollection initialization, all SDSs are
-                // opened,
-                // initialized and immediately closed. When a SDS is required,
-                // the
-                // H4SDSCollection re-open access to the specific SDS. When a
-                // H4SDSCollection is closed, it attempts to close all H4SDSs by
-                // calling the close method of each of them. Only the really
-                // opened
-                // H4SDSs need to be closed.
+                
                 if (isOpen) {
                     try {
                         boolean closed = HDFLibrary.SDendaccess(identifier);
@@ -381,10 +369,11 @@ public class H4SDS extends H4Variable implements IHObject, IH4Object {
                 }
                 isOpen = false;
             }
+            super.dispose();
         } finally {
             H4Utilities.unlock();
         }
-        super.dispose();
+        
     }
 
     /**

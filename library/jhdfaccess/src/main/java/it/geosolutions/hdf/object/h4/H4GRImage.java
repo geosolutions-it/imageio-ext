@@ -138,7 +138,7 @@ public class H4GRImage extends H4Variable implements IHObject, IH4Object {
      * @return the dimension sizes of this image
      */
     public int[] getDimSizes() {
-        return dimSizes;
+        return dimSizes!=null?(int[])dimSizes.clone():dimSizes;
     }
 
     /**
