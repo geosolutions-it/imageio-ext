@@ -45,7 +45,7 @@
             <include>**/*Test.java</include>
           </includes>
           <forkMode>once</forkMode>
-          <argLine>-Xmx${test.maxHeapSize} -enableassertions -Dorg.geotools.test.extensive=${extensive.tests} -Dorg.geotools.test.interactive=${interactive.tests} -Dit.geosolutions.imageio.plugins.jp2kakadu.holdwrittenfiles=${tests.holdwrittenfiles}</argLine>
+          <argLine>-Xmx${test.maxHeapSize} -enableassertions -Dtest.extensive=${extensive.tests} -Dtest.interactive=${interactive.tests} -Dit.geosolutions.imageio.plugins.jp2kakadu.holdwrittenfiles=${tests.holdwrittenfiles}</argLine>
          </configuration>
       </plugin>
     </plugins>
