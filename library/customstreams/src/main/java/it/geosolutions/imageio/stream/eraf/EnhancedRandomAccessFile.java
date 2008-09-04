@@ -68,7 +68,7 @@ import java.nio.channels.FileChannel;
  * @see DataInput
  * @see DataOutput
  * @see java.io.RandomAccessFile
- * @task optimize {@link #readLine()}
+ * @todo optimize {@link #readLine()}
  * @task {@link ByteOrder} is not respected with writing
  */
 public class EnhancedRandomAccessFile implements DataInput, DataOutput {
@@ -1492,14 +1492,27 @@ public class EnhancedRandomAccessFile implements DataInput, DataOutput {
 	 *                if an I/O error occurs.
 	 */
 	public void writeLong(long v) throws IOException {
-		write((int) (v >>> 56) & 0xFF);
-		write((int) (v >>> 48) & 0xFF);
-		write((int) (v >>> 40) & 0xFF);
-		write((int) (v >>> 32) & 0xFF);
-		write((int) (v >>> 24) & 0xFF);
-		write((int) (v >>> 16) & 0xFF);
-		write((int) (v >>> 8) & 0xFF);
-		write((int) (v >>> 0) & 0xFF);
+
+		if (bigEndian) {
+			write((int) (v >>> 56) & 0xFF);
+			write((int) (v >>> 48) & 0xFF);
+			write((int) (v >>> 40) & 0xFF);
+			write((int) (v >>> 32) & 0xFF);
+			write((int) (v >>> 24) & 0xFF);
+			write((int) (v >>> 16) & 0xFF);
+			write((int) (v >>> 8) & 0xFF);
+			write((int) (v >>> 0) & 0xFF);
+		} else {
+			write((int) (v >>> 0) & 0xFF);
+			write((int) (v >>> 8) & 0xFF);
+			write((int) (v >>> 16) & 0xFF);
+			write((int) (v >>> 24) & 0xFF);	
+			write((int) (v >>> 32) & 0xFF);	
+			write((int) (v >>> 40) & 0xFF);
+			write((int) (v >>> 48) & 0xFF);	
+			write((int) (v >>> 56) & 0xFF);
+			
+		}		
 	}
 
 	/**
