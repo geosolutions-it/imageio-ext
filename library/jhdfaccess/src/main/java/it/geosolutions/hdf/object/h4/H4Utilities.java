@@ -55,7 +55,7 @@ public class H4Utilities {
     private static boolean available;
 
     /** Forces loading of JHDF lib. */
-    private static void loadJHDFLib() {
+    public static void loadJHDFLib() {
         if (init == false)
             init = true;
         else
