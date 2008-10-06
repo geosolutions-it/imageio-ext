@@ -2,7 +2,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>it.geosolutions.imageio-ext</groupId>
-  <artifactId>imageio-ext-kakadujp2</artifactId>
+  <artifactId>imageio-ext-directkakadu</artifactId>
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
   <parent>
@@ -10,33 +10,51 @@
     <artifactId>imageio-ext-plugin</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <name>Jpeg2000 (Direct Kakadu) Plugin</name>
-  <scm>
-      <connection>
-        scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/kakadujp2
-      </connection>
-      <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/kakadujp2</url>
-  </scm>
   <dependencies>
     <dependency>
-      <groupId>it.geosolutions.imageio-ext</groupId>
-      <artifactId>imageio-ext-customstreams</artifactId>
-      <version>${project.version}</version>
+  		<groupId>it.geosolutions.imageio-ext</groupId>
+  		<artifactId>imageio-ext-customstreams</artifactId>
+			<version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>it.geosolutions.imageio-ext</groupId>
-      <artifactId>imageio-ext-imagereadmt</artifactId>
-      <version>${project.version}</version>
+  		<groupId>it.geosolutions.imageio-ext</groupId>
+  		<artifactId>imageio-ext-imagereadmt</artifactId>
+			<version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>it.geosolutions.imageio-ext</groupId>
-      <artifactId>imageio-ext-test-data</artifactId>
-      <version>${project.version}</version>
+  		<groupId>it.geosolutions.imageio-ext</groupId>
+  		<artifactId>imageio-ext-test-data</artifactId>
+			<version>${project.version}</version>
     </dependency>
+    <!--<dependency>
+  		<groupId>org.geotools</groupId>
+  		<artifactId>gt2-geotiff</artifactId>
+			<version>2.4-SNAPSHOT</version>
+    </dependency>-->
     <dependency>
-      <groupId>it.geosolutions.imageio-ext</groupId>
-      <artifactId>imageio-ext-kakadujni</artifactId>
-      <version>${project.version}</version>
+  		<groupId>it.geosolutions.imageio-ext</groupId>
+  		<artifactId>imageio-ext-kakadujni</artifactId>
+			<version>${project.version}</version>
     </dependency>
   </dependencies>
+  <name>Direct Kakadu Jpeg2000 Plugin</name>
+  <!-- url> </url -->
+  <build>
+	<plugins>
+      <!-- ======================================================= -->
+      <!--                      Compilation.                       -->
+      <!-- ======================================================= -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>  <!-- The -source argument for the Java compiler. -->
+          <target>1.5</target>  <!-- The -target argument for the Java compiler. -->
+          <debug>true</debug>   <!-- Whether to include debugging information.   -->
+          <encoding>ISO-8859-1</encoding> <!-- The -encoding argument for the Java compiler. -->
+        </configuration>
+      </plugin>
+	</plugins>
+</build>
 </project>
+

@@ -21,155 +21,157 @@ import it.geosolutions.util.FileCache;
 
 import java.awt.RenderingHints;
 import java.awt.image.RenderedImage;
+import java.awt.image.renderable.ParameterBlock;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.logging.Logger;
 
 import javax.imageio.ImageReadParam;
+import javax.media.jai.Histogram;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
+import javax.media.jai.PlanarImage;
 import javax.media.jai.RenderedOp;
-import javax.media.jai.widget.ScrollingImagePanel;
 import javax.swing.JFrame;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * Testing reading capabilities for {@link JP2KakaduImageReader} leveraging on
+ * Testing reading capabilities for {@link JP2KKakaduImageReader} leveraging on
  * JAI.
  * 
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
- * 
  */
-public class JP2KakaduReadTest extends TestCase {
-	private static FileCache fileCache = new FileCache();
-	private final static String msg = "JP2K Direct Kakadu Tests are skipped due to missing libraries.\n"
-			+ "Be sure the required Kakadu libraries libs are in the classpath";
-	private static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.jp2k");
+public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
 
-	public JP2KakaduReadTest(String name) {
-		super(name);
+    static FileCache fileCache = new FileCache();
 
-	}
-	
-	/**
-	 * Test Read exploiting Linear Interpolation
-	 * 
-	 * @throws IOException
-	 */
-	public void testJaiReadFromUrl() throws IOException {
-		if (!KakaduUtilities.isKakaduAvailable()) {
-			return;
-		}
-		final URL url = new URL(
-				"http://www.microimages.com/gallery/jp2/CB_TM432.jp2");
-		final File file = fileCache.getFile(url);
-		final ParameterBlockJAI pbjImageRead;
-		pbjImageRead = new ParameterBlockJAI("ImageRead");
-		pbjImageRead.setParameter("Input", file);
-		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-		if (TestData.isInteractiveTest())
-			visualize(image,
-					"http://www.microimages.com/gallery/jp2/CB_TM432.jp2");
-		else
-			assertNotNull(image.getTiles());
-	}
+    public JP2KakaduReadTest(String name) {
+        super(name);
 
-	public void testJaiReadFromFile() throws IOException {
-		if (!KakaduUtilities.isKakaduAvailable()) {
-			return;
-		}
-		final File file = TestData.file(this, "CB_TM432.jp2");
-		ImageReadDescriptorMT.register(JAI.getDefaultInstance());
+    }
 
-		final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
-				"ImageReadMT");
-		ImageLayout l = new ImageLayout();
-		l.setTileHeight(512);
-		l.setTileWidth(512);
+    /**
+     * Test Read exploiting Linear Interpolation
+     * 
+     * @throws IOException
+     */
+    public void testJaiReadFromUrl() throws IOException {
+        final URL url = new URL(
+                "http://www.microimages.com/gallery/jp2/CB_TM432.jp2");
+        final File file = fileCache.getFile(url);
+        final ParameterBlockJAI pbjImageRead;
+        pbjImageRead = new ParameterBlockJAI("ImageRead");
+        pbjImageRead.setParameter("Input", file);
+        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+        if (TestData.isInteractiveTest())
+            visualize(image,
+                    "http://www.microimages.com/gallery/jp2/CB_TM432.jp2");
+        else
+            assertNotNull(image.getTiles());
+    }
 
-		ImageReadParam rp = new JP2KakaduImageReadParam();
-		rp.setSourceSubsampling(1, 1, 0, 0);
-		pbjImageRead.setParameter("ReadParam", rp);
-		pbjImageRead.setParameter("Input", file);
-		RenderedOp image = JAI.create("ImageReadMT", pbjImageRead,
-				new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
-		if (TestData.isInteractiveTest())
-			visualize(image, 800, 600);
-		else
-			assertNotNull(image.getTiles());
-	}
+    public void testJaiReadFromFile() throws IOException {
 
-	/**
-	 * Test Read without exploiting JAI-ImageIO Tools
-	 * 
-	 * @throws IOException
-	 */
-	public void testManualRead() throws IOException {
-		if (!KakaduUtilities.isKakaduAvailable()) {
-			return;
-		}
-		final File file = TestData.file(this, "CB_TM432.jp2");
-		JP2KakaduImageReader reader = new JP2KakaduImageReader(
-				new JP2KakaduImageReaderSpi());
+        final File file = TestData.file(this, "CB_TM432.jp2");
+        ImageReadDescriptorMT.register(JAI.getDefaultInstance());
 
-		reader.setInput(file);
-		ImageReadParam param = new ImageReadParam();
+        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+                "ImageRead");
+        ImageLayout l = new ImageLayout();
+        l.setTileHeight(256);
+        l.setTileWidth(256);
 
-		RenderedImage image = reader.read(0, param);
-		if (TestData.isInteractiveTest())
-			visualize(image, "testManualRead");
-		else
-			assertNotNull(image.getData());
-		assertEquals(361, image.getWidth());
-		assertEquals(488, image.getHeight());
-	}
+        ImageReadParam rp = new JP2KKakaduImageReadParam();
+        rp.setSourceSubsampling(1, 1, 0, 0);
+        pbjImageRead.setParameter("ReadParam", rp);
+        pbjImageRead.setParameter("Input", file);
+        pbjImageRead.setParameter("imageChoice", 0);
+        RenderedOp image = JAI.create("ImageRead", pbjImageRead,
+                new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
+        if (TestData.isInteractiveTest())
+            visualize(image, 800, 600);
+        else
+            assertNotNull(image.getTiles());
+    }
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite();
+    /**
+     * Test Read without exploiting JAI-ImageIO Tools
+     * 
+     * @throws IOException
+     */
+    // public void testManualRead() throws IOException {
+    // final File file = new File(sampleFileForDebug);
+    //
+    // ImageReader reader = new JP2KakaduImageReader(
+    // new JP2KakaduImageReaderSpi());
+    // reader.setInput(file);
+    // final int numImages = reader.getNumImages(true);
+    // for (int i = 0; i < numImages; i++) {
+    // ImageReadParam param = new ImageReadParam();
+    // param.setSourceSubsampling(8, 8, 0, 0);
+    // // param.setSourceRegion(new Rectangle(0, 2000, 2000, 700));
+    // RenderedImage image = reader.read(i, param);
+    // if (TestData.isInteractiveTest())
+    // visualize(image, "testManualRead");
+    // else
+    // assertNotNull(PlanarImage.wrapRenderedImage(image).getTiles());
+    // // displayStatistics(false, image);
+    //
+    // reader.reset();
+    // }
+    // reader.dispose();
+    //
+    // }
+    public void testManualRead() throws IOException {
+        final File file = TestData.file(this, "CB_TM432.jp2");
+        JP2KKakaduImageReader reader = new JP2KKakaduImageReader(
+                new JP2KKakaduImageReaderSpi());
 
-		suite.addTest(new JP2KakaduReadTest("testJaiReadFromFile"));
+        reader.setInput(file);
+        ImageReadParam param = new ImageReadParam();
+        // param.setSourceSubsampling(4, 4, 0, 0);
+        RenderedImage image = reader.read(0, param);
+        if (TestData.isInteractiveTest())
+            visualize(image, "testManualRead");
+        else
+            assertNotNull(image.getData());
+        assertEquals(361, image.getWidth());
+        assertEquals(488, image.getHeight());
+    }
 
-		suite.addTest(new JP2KakaduReadTest("testManualRead"));
-		
-		suite.addTest(new JP2KakaduReadTest("testJaiReadFromUrl"));
+    public static void displayStatistics(boolean b, RenderedImage source) {
+        PlanarImage img = JAI.create("extrema", source, null);
+        double[] maximum = (double[]) img.getProperty("maximum");
+        double[] minimum = (double[]) img.getProperty("minimum");
 
-		return suite;
-	}
+        ParameterBlock pb = (new ParameterBlock()).addSource(source);
+        pb.add(null).add(1).add(1).add(new int[] { 65536 });
+        pb.add(new double[] { minimum[0] }).add(new double[] { maximum[0] });
 
-	public static void main(java.lang.String[] args) {
-		junit.textui.TestRunner.run(suite());
-	}
-	
-	public static void visualize(RenderedImage ri, String title) {
-		visualize(ri, 800, 600);
-	}
-	protected void setUp() throws Exception {
-		super.setUp();
-		if (!KakaduUtilities.isKakaduAvailable()) {
-			LOGGER.warning(msg);
-			return;
-		}
-		// general settings
-		JAI.getDefaultInstance().getTileScheduler().setParallelism(5);
-		JAI.getDefaultInstance().getTileScheduler().setPriority(6);
-		JAI.getDefaultInstance().getTileScheduler().setPrefetchPriority(1);
-		JAI.getDefaultInstance().getTileScheduler().setPrefetchParallelism(1);
-		JAI.getDefaultInstance().getTileCache().setMemoryCapacity(64 * 1024 * 1024);
-		JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
+        PlanarImage dst = JAI.create("histogram", pb);
+        Histogram h = (Histogram) dst.getProperty("hiStOgRam");
+        JFrame frame = new HistogramFrame(h, b);
+        frame.pack();
+        frame.show();
+    }
 
-	}
+    public static void main(java.lang.String[] args) {
+        junit.textui.TestRunner.run(suite());
+    }
 
-	public static void visualize(RenderedImage ri, int width, int height) {
-		final JFrame jf = new JFrame("");
-		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		jf.getContentPane().add(new ScrollingImagePanel(ri, width, height));
-		jf.pack();
-		jf.setVisible(true);
-	}
+    public static Test suite() {
+        TestSuite suite = new TestSuite();
+
+        suite.addTest(new JP2KakaduReadTest("testJaiReadFromFile"));
+
+        suite.addTest(new JP2KakaduReadTest("testManualRead"));
+
+        suite.addTest(new JP2KakaduReadTest("testJaiReadFromUrl"));
+
+        return suite;
+    }
 }

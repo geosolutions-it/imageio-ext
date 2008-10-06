@@ -1,0 +1,64 @@
+/*
+ *    JImageIO-extension - OpenSource Java Image translation Library
+ *    http://www.geo-solutions.it/
+ *    https://imageio-ext.dev.java.net/
+ *    (C) 2008, GeoSolutions
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+package it.geosolutions.imageio.plugins.jp2k.box;
+
+import javax.imageio.metadata.IIOMetadataNode;
+
+/**
+ * @author Simone Giannecchini, GeoSolutions.
+ * @author Daniele Romagnoli, GeoSolutions.
+ * 
+ * @TODO Actually, this implementation does nothing since this box may be
+ *       ignored by a JP2 compatible reader.
+ */
+@SuppressWarnings("serial")
+public class CompositingLayerHeaderBox extends BaseJP2KBox {
+
+    public final static int BOX_TYPE = 0x6A706C68;
+
+    public final static String NAME = "jplh";
+
+    public final static String JP2K_MD_NAME = "JP2KCompositingLayerHeaderBox";
+
+    public CompositingLayerHeaderBox(int length, int type, byte[] data) {
+        super(length, type, data);
+        // TODO Auto-generated constructor stub
+    }
+
+    public CompositingLayerHeaderBox(byte[] data) {
+        super(8 + data.length, BOX_TYPE, data);
+    }
+
+    @Override
+    protected byte[] compose() {
+        return null;
+    }
+
+    @Override
+    protected void parse(byte[] data) {
+    }
+    
+    public IIOMetadataNode getNativeNode() {
+        String name = BoxUtilities.getName(getType());
+        if (name == null)
+            name = "unknown";
+
+        IIOMetadataNode node = new IIOMetadataNode(name);
+        return node;
+    }
+
+}

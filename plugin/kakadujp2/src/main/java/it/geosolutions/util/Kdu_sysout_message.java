@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package it.geosolutions.imageio.plugins.jp2k;
+package it.geosolutions.util;
 
 import java.util.logging.Logger;
 
@@ -24,35 +24,26 @@ import kdu_jni.Kdu_message;
 /**
  * Class used to handle kakadu system messages.
  */
-
 class Kdu_sysout_message extends Kdu_message {
-	static{
-		KakaduUtilities.loadKakadu();
-	}
-	
-	private static Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.jp2k");
+    private static Logger LOGGER = Logger
+            .getLogger("it.geosolutions.imageio.jp2k");
 
-	private boolean raiseExceptionOnEndOfMessage;
+    private boolean raiseExceptionOnEndOfMessage;
 
-	// If the raiseException parameter is true, throws an exeception
-	// after printing a message.
-	public Kdu_sysout_message(boolean raiseException) {
-		this.raiseExceptionOnEndOfMessage = raiseException;
-	}
+    // If the raiseException parameter is true, throws an exception
+    // after printing a message.
+    public Kdu_sysout_message(boolean raiseException) {
+        this.raiseExceptionOnEndOfMessage = raiseException;
+    }
 
-	public void Put_text(String text) { // Implements the C++ callback function
-		// `kdu_message::put_text'
-		LOGGER.info(text);
-	}
+    public void Put_text(String text) {
+        // Implements the C++ callback function `kdu_message::put_text'
+        LOGGER.info(text);
+    }
 
-	public void Flush(boolean endOfMessage) throws KduException { // Implements
-		// the C++
-		// callback
-		// function
-		// `kdu_message::flush'.
-		if (endOfMessage && raiseExceptionOnEndOfMessage)
-			throw new KduException("In `Kdu_sysout_message'.");
-	}
-
+    public void Flush(boolean endOfMessage) throws KduException {
+        // Implements the C++ callback function `kdu_message::flush'.
+        if (endOfMessage && raiseExceptionOnEndOfMessage)
+            throw new KduException("In `Kdu_sysout_message'.");
+    }
 }
