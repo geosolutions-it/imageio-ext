@@ -16,11 +16,9 @@
  */
 package it.geosolutions.imageio.plugins.arcbinarygrid;
 
-import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
-import java.awt.Rectangle;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -50,7 +48,11 @@ public class ArcBinaryGridReadTest extends AbstractArcBinaryGridTestCase {
         super(name);
     }
 
-    private final static String fileName = "";
+    /**
+     * To run this test, download the whole nzdem500 folder available at:
+     * http://download.osgeo.org/gdal/data/aig/nzdem/nzdem500/
+     */
+    private final static String fileName = "nzdem500/vat.adf";
 
     /**
      * Simple test read through JAI - ImageIO
@@ -58,23 +60,32 @@ public class ArcBinaryGridReadTest extends AbstractArcBinaryGridTestCase {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public void testReadJAI() throws FileNotFoundException, IOException {
+    public void testReadJAI() throws IOException {
         if (!isGDALAvailable) {
             return;
         }
-        if(true)
-            return; //REMOVE THIS WHEN FINDING TEST-DATA.
         final ParameterBlockJAI pbjImageRead;
-        final File file = TestData.file(this, fileName);
+        File file = null;
+        try {
+            file = TestData.file(this, fileName);
+        } catch (FileNotFoundException fnfe) {
+            LOGGER.warning("test-data not found: " + fileName
+                    + "\nTests are skipped");
+            return;
+        }
         pbjImageRead = new ParameterBlockJAI("ImageRead");
+        ImageReadParam rp = new ImageReadParam();
+        rp.setSourceSubsampling(8, 8, 0, 0);
+        pbjImageRead.setParameter("readParam", rp);
         pbjImageRead.setParameter("Input", file);
         RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+
         if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image, fileName);
+            ImageIOUtilities.visualize(image, fileName, true);
         else
             image.getTiles();
-        assertEquals(120, image.getWidth());
-        assertEquals(85, image.getHeight());
+        assertEquals(251, image.getWidth());
+        assertEquals(369, image.getHeight());
     }
 
     /**
@@ -83,13 +94,18 @@ public class ArcBinaryGridReadTest extends AbstractArcBinaryGridTestCase {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public void testReadImageIO() throws FileNotFoundException, IOException {
+    public void testReadImageIO() throws IOException {
         if (!isGDALAvailable) {
             return;
         }
-        if(true)
-            return; //REMOVE THIS WHEN FINDING TEST-DATA.
-        final File file = TestData.file(this, fileName);
+        File file = null;
+        try {
+            file = TestData.file(this, fileName);
+        } catch (FileNotFoundException fnfe) {
+            LOGGER.warning("test-data not found: " + fileName
+                    + "\nTests are skipped");
+            return;
+        }
 
         // //
         //
@@ -107,34 +123,12 @@ public class ArcBinaryGridReadTest extends AbstractArcBinaryGridTestCase {
         final ImageReader reader = (ImageReader) it.next();
         assertTrue(reader instanceof ArcBinaryGridImageReader);
         ImageReadParam rp = reader.getDefaultReadParam();
-        rp.setSourceSubsampling(2, 2, 0, 0);
+        rp.setSourceSubsampling(4, 4, 0, 0);
         reader.setInput(file);
         RenderedImage image = reader.read(0, rp);
         if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image, "subsample read "
-                    + file.getName());
+            ImageIOUtilities.visualize(image, "subsample read " + file.getName(), true);
         reader.reset();
-
-        assertEquals((int) (reader.getWidth(0) / 2.0 + 0.5), image.getWidth());
-        assertEquals((int) (reader.getHeight(0) / 2.0 + 0.5), image.getHeight());
-
-        // //
-        //
-        // read some data from it using sourceregion
-        //
-        // //
-        assertTrue(reader instanceof ArcBinaryGridImageReader);
-        rp = reader.getDefaultReadParam();
-        rp.setSourceRegion(new Rectangle(0, 0, 60, 42));
-        reader.setInput(file);
-        image = reader.read(0, rp);
-        if (TestData.isInteractiveTest())
-            Viewer.visualize(image, "subsample read " + file.getName());
-        reader.reset();
-
-        assertEquals(60, image.getWidth());
-        assertEquals(42, image.getHeight());
-
         reader.dispose();
     }
 
