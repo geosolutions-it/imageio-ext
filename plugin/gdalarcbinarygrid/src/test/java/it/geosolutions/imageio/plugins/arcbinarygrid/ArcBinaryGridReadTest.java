@@ -49,7 +49,8 @@ public class ArcBinaryGridReadTest extends AbstractArcBinaryGridTestCase {
     }
 
     /**
-     * To run this test, download the whole nzdem500 folder available at:
+     * To run this test, you need to get the content of the 
+     * whole nzdem500 folder available at:
      * http://download.osgeo.org/gdal/data/aig/nzdem/nzdem500/
      */
     private final static String fileName = "nzdem500/vat.adf";
