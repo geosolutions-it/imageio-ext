@@ -19,6 +19,8 @@ import kdu_jni.KduException;
 import kdu_jni.Kdu_codestream;
 import kdu_jni.Kdu_coords;
 import kdu_jni.Kdu_dims;
+import kdu_jni.Kdu_stripe_compressor;
+import kdu_jni.Kdu_tile;
 import kdu_jni.Siz_params;
 
 import com.sun.media.imageio.plugins.jpeg2000.J2KImageWriteParam;
@@ -29,37 +31,43 @@ public class KakaduWrite {
 
     
     public static void main(String[] args) throws KduException, FileNotFoundException, IOException{
-//        KakaduUtilities.initializeKakaduMessagesManagement();
-//        Jp2_output_box outBox = new Jp2_output_box();
-//        Jp2_family_tgt familyTarget = new Jp2_family_tgt();
-//        familyTarget.Open("E:/miomio.jp2");
-//        outBox.Open(familyTarget,(long)ContiguousCodestreamBox.BOX_TYPE);
-//        Kdu_codestream codeStream = new Kdu_codestream();
-//        Siz_params params = new Siz_params();
-////        params = codeStream.Access_siz();
-//        params.Set("Ssize",0,0,2);
-//        params.Set("Ssize",0,1,2);
-//        params.Set("Sprofile",0,0,2);
-//        params.Set("Sorigin", 0,0,0);
-//        params.Set("Sorigin", 0,1,0);
-//        params.Set("Scomponents", 0, 0, 1);
-//        params.Set("Sprecision", 0, 0, 8);
-//        params.Set("Sdims",0,0,2);
-//        params.Set("Sdims",0,1,2);
-//        params.Set("Ssigned", 0,0,false);
-//        params.Finalize_all();
-//        codeStream.Create(params, outBox, null);
-//        outBox.Write(4);
-//        outBox.Close();
-//        familyTarget.Close();
+        KakaduUtilities.initializeKakaduMessagesManagement();
+        Jp2_output_box outBox = new Jp2_output_box();
+        Jp2_family_tgt familyTarget = new Jp2_family_tgt();
+        familyTarget.Open("E:/miomio.jp2");
+        outBox.Open(familyTarget,(long)ContiguousCodestreamBox.BOX_TYPE);
+        Kdu_codestream codeStream = new Kdu_codestream();
+        Siz_params params = new Siz_params();
+//        params = codeStream.Access_siz();
+        params.Set("Ssize",0,0,2);
+        params.Set("Ssize",0,1,2);
+        params.Set("Sprofile",0,0,2);
+        params.Set("Sorigin", 0,0,0);
+        params.Set("Sorigin", 0,1,0);
+        params.Set("Scomponents", 0, 0, 1);
+        params.Set("Sprecision", 0, 0, 8);
+        params.Set("Sdims",0,0,2);
+        params.Set("Sdims",0,1,2);
+        params.Set("Ssigned", 0,0,false);
+        params.Finalize_all();
+        codeStream.Create(params, outBox, null);
+        Kdu_stripe_compressor compressor = new Kdu_stripe_compressor();
+        compressor.Start(codeStream);
+        compressor.Push_stripe(new byte[]{100,100,0,0},new int[2]);
+        compressor.Finish();
+        compressor.Native_destroy();
+        codeStream.Destroy();
+        outBox.Close();
+        familyTarget.Close();
+        familyTarget.Native_destroy();
 
-        BufferedImage imageToBeWritten = ImageIO.read(new FileImageInputStream(new File("E:/mono.bmp")));
-        J2KImageWriter writer = new J2KImageWriter(new J2KImageWriterSpi());
-        writer.setOutput(new FileImageOutputStream(new File("E:/mono.jp2")));
-        J2KImageWriteParam param = new J2KImageWriteParam();
-        param.setWriteCodeStreamOnly(true);
-        writer.write(null, new IIOImage(imageToBeWritten,null,null),param);
-        writer.dispose();
+//        BufferedImage imageToBeWritten = ImageIO.read(new FileImageInputStream(new File("E:/mono.bmp")));
+//        J2KImageWriter writer = new J2KImageWriter(new J2KImageWriterSpi());
+//        writer.setOutput(new FileImageOutputStream(new File("E:/mono.jp2")));
+//        J2KImageWriteParam param = new J2KImageWriteParam();
+//        param.setWriteCodeStreamOnly(true);
+//        writer.write(null, new IIOImage(imageToBeWritten,null,null),param);
+//        writer.dispose();
         
         
         
