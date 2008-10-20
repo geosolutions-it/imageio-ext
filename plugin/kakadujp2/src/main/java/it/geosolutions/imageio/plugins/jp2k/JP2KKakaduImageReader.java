@@ -261,6 +261,8 @@ public class JP2KKakaduImageReader extends ImageReader {
     }
 
     public IIOMetadata getStreamMetadata() throws IOException {
+        if (isRawSource)
+            throw new UnsupportedOperationException("Raw source detected. Actually, unable to get stream metadata");
         return new JP2KStreamMetadata(fileWalker.getJP2KBoxesTree(), numImages);
     }
 
@@ -848,6 +850,8 @@ public class JP2KKakaduImageReader extends ImageReader {
                 rawSource = new Kdu_simple_file_source(fileName);
                 if (rawSource != null) {
                     isRawSource = true;
+                    LOGGER.info("Detected raw source");
+                    numImages = 1;
                 }
             } else {
                 // we have a valid jp2/jpx file
@@ -865,7 +869,8 @@ public class JP2KKakaduImageReader extends ImageReader {
                     numImages = 0;
             }
 
-            fileWalker = new JP2KFileWalker(this.fileName);
+            if(!isRawSource)
+                fileWalker = new JP2KFileWalker(this.fileName);
             for (int cs = 0; cs < numImages; cs++) {
                 if (isRawSource) {
                     codestream.Create(rawSource);
@@ -1128,6 +1133,8 @@ public class JP2KKakaduImageReader extends ImageReader {
      * @param codestreamP
      */
     private void parseBoxes(JP2KCodestreamProperties codestreamP) {
+        if (isRawSource)
+            return;
         short numComp = 1;
         byte[] bitDepths = null;
         byte[] maps = null;

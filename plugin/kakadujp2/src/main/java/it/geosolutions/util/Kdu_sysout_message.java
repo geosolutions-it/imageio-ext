@@ -38,7 +38,9 @@ class Kdu_sysout_message extends Kdu_message {
 
     public void Put_text(String text) {
         // Implements the C++ callback function `kdu_message::put_text'
-        LOGGER.info(text);
+        //TODO: Revert to Logger version although we need to group single characters
+        // to avoid text fragmentation.
+        System.out.print(text);
     }
 
     public void Flush(boolean endOfMessage) throws KduException {
