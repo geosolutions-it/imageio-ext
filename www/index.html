@@ -3,15 +3,15 @@
 <HEAD>
 	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1252">
 	<TITLE>Project Home Page</TITLE>
-	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.3  (Win32)">
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 3.0  (Win32)">
 	<META NAME="CREATED" CONTENT="0;0">
 	<META NAME="CHANGEDBY" CONTENT="Simone Giannecchini">
-	<META NAME="CHANGED" CONTENT="20080328;18024597">
+	<META NAME="CHANGED" CONTENT="20081023;19023300">
+	<META NAME="CHANGEDBY" CONTENT="Simone Giannecchini">
 	<STYLE TYPE="text/css">
 	<!--
-		@page { size: 21cm 29.7cm }
-		P { color: #000000 }
 		TD P { color: #000000 }
+		P { color: #000000 }
 		H3 { color: #000000 }
 		H3.western { font-family: "Albany", sans-serif }
 		H3.cjk { font-family: "HG Mincho Light J" }
@@ -28,18 +28,17 @@
 <P ALIGN=JUSTIFY>The Image I/O-Ext project extends the Java Sun's
 ImageI/O framework capabilities by providing access to new raster
 formats directly or through the integration of other frameworks and
-libraries, like GDAL, JMAgick (experimental) and Kakadu
-(experimental).</P>
+libraries, like GDAL, JMagick (experimental) and Kakadu.</P>
 <H3 CLASS="western"><A NAME="Main_Features"></A>Main Features</H3>
 <P ALIGN=JUSTIFY>The core module of the project is the <B>gdalframework
-</B><SPAN STYLE="font-weight: medium">module which provide a bridge
-between the Java imaeio framework and t</SPAN>he Geospatial Data
+</B><SPAN STYLE="font-weight: normal">module which provide a bridge
+between the Java imageio framework and t</SPAN>he Geospatial Data
 Abstraction Library (<A HREF="http://www.gdal.org/">GDAL</A>) via
 SWIG's generated Java bindings to provide support for a reach set of
 data formats. Here below a brief list of the current supported
 formats si provided. Note that for each of these formats an
-imageio-ext plugin is provided which integrates into the standard
-SUN imageio SPI mechanism.</P>
+imageio-ext plugin is provided which integrates into the standard SUN
+imageio SPI mechanism.</P>
 <H4 CLASS="western"><A NAME="Supported_Formats"></A><FONT FACE="Times New Roman, serif">GDAL
 Supported Formats</FONT></H4>
 <TABLE BORDER=1 CELLPADDING=2 CELLSPACING=1>
@@ -59,7 +58,7 @@ Supported Formats</FONT></H4>
 			<P>R</P>
 		</TD>
 	</TR>
-        <TR>
+	<TR>
 		<TD>
 			<P>Arc/Info Binary Grid</P>
 		</TD>
@@ -176,7 +175,7 @@ Supported Formats</FONT></H4>
 </P>
 <H4 CLASS="western">Utility modules</H4>
 <P>The Image I/O-Ext project provides some additional utility modules
-as desribe here below.</P>
+as described here below.</P>
 <UL>
 	<LI><P STYLE="margin-bottom: 0cm"><B>imagereadmt</B> provides a
 	specific ImageRead operation implementation with support for
@@ -185,16 +184,16 @@ as desribe here below.</P>
 	<LI><P STYLE="margin-bottom: 0cm"><B>customstreams</B> contains a
 	wide set of extended input/output streams 
 	</P>
-	<LI><P><B>jhdfaccess</B> revisited version of the ncsa JHDF
+	<LI><P><B>jhdfaccess</B> revisited version of the NCSA JHDF
 	libraries which provide access to HDF format. It currently provides
-	onlt read access to the HDF4 format but write access capabilities
-	are under development. 
+	only read access to the HDF4 format but write access capabilities
+	could also be added. 
 	</P>
 </UL>
 <P><BR><BR>
 </P>
 <H4 CLASS="western">Additional Supported Modules</H4>
-<P>Image I/O-Ext provides a set of additional plugins (which dont
+<P>Image I/O-Ext provides a set of additional plugins (which don't
 rely on GDAL):</P>
 <P STYLE="margin-bottom: 0cm"><BR>
 </P>
@@ -247,21 +246,24 @@ rely on GDAL):</P>
 <P>Data access capabilities*: R=Readonly capabilities; R/W=Read and
 write capabilities</P>
 <H3 CLASS="western"><A NAME="Documentation"></A>Documentation</H3>
-<P> The <A HREF="https://imageio-ext.dev.java.net/servlets/ProjectDocumentList">"Documents & Files"</A> section contains some documents which could help you in order to 
-setup and use the ImageI/O-Ext. The available documents are:
+<P>The <A HREF="https://imageio-ext.dev.java.net/servlets/ProjectDocumentList">&quot;Documents
+&amp; Files&quot;</A> section contains some documents which could
+help you in order to set-up and use the ImageI/O-Ext. The available
+documents are: 
+</P>
 <UL>
-	<LI><P STYLE="margin-bottom: 0cm">Setup Guide, a step-to-step guide in order to set-up
-the project as well as all the tools/software needed for this
-purpose</P></LI>
-<LI><P STYLE="margin-bottom: 0cm">User Guide, a preliminar Guide to use the ImageI/O-Ext. Note that it should be considered a &quot;WORK in PROGRESS&quot;.
-(It may contains some errors as well as empty chapters...)</P></LI>
+	<LI><P STYLE="margin-bottom: 0cm">Set-up Guide, a step-to-step guide
+	in order to set-up the project as well as all the tools/software
+	needed for this purpose</P>
+	<LI><P STYLE="margin-bottom: 0cm">User Guide, a preliminary Guide to
+	use the ImageI/O-Ext. Note that it should be considered a &quot;WORK
+	in PROGRESS&quot;. (It may contains some errors as well as empty
+	chapters...)</P>
 </UL>
-
 <P>Finally, a brief document on the JHDF revisited libraries has been
 written. It is available at: <A HREF="https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/library/jhdfaccess/doc/HDFAccessDoc.pdf">HDF
 Access revisited Framework Report</A> 
 </P>
-
 <H3 CLASS="western"><A NAME="Downloads"></A>Downloads</H3>
 <P>Image I/O-Ext Project source code is available for download via
 <A HREF="https://imageio-ext.dev.java.net/source/browse/imageio-ext/">subversion</A>.
@@ -299,7 +301,7 @@ imageio-ext.dev.java.net</FONT> (replace 'at' with @). <A HREF="https://imageio-
 here to subscribe</A> to any of these lists. 
 </P>
 <BLOCKQUOTE>The <I>dev</I> list is a list for developers to discuss
-project development issues/artifacts and requirements.<BR>The
+project development issues/artefacts and requirements.<BR>The
 <I>announce</I> list is a low-volume moderated mailing list for
 announcing Image I/O-Ext news and information.<BR>The <I>issues</I>
 list is for automated issues tracking and the <I>commits</I> list is
