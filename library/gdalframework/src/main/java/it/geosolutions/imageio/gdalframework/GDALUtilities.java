@@ -568,12 +568,8 @@ public final class GDALUtilities {
             // Setting error messages handler.
             //
             // //
-            String cplDebug = gdal.GetConfigOption(CPL_DEBUG, "");
-            boolean showErrors = getAsBoolean(cplDebug);
-            if (cplDebug.trim().length() == 0) {
-                cplDebug = System.getProperty(CPL_DEBUG);
-                showErrors = getAsBoolean(cplDebug);
-            }
+            final String cplDebug = System.getProperty(CPL_DEBUG);
+            final boolean showErrors = getAsBoolean(cplDebug);
             if (!showErrors)
                 gdal.PushErrorHandler("CPLQuietErrorHandler");
             GDALUtilities.available = true;
