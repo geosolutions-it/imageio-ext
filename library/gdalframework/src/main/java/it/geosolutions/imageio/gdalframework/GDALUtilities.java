@@ -99,6 +99,8 @@ public final class GDALUtilities {
         public final static int READ_ONLY = 2;
     }
 
+    private static final String CPL_DEBUG = "CPL_DEBUG";
+
     private static final Logger LOGGER = Logger
             .getLogger("it.geosolutions.imageio.gdalframework");
 
@@ -128,6 +130,21 @@ public final class GDALUtilities {
 
     /** private constructor to prevent instantiation */
     private GDALUtilities() {
+    }
+
+    /**
+     * Get a boolean value from a specified value. Return <code>true</code> if
+     * the value is one of "ON","TRUE","YES" (values aren't case sensitive).
+     * 
+     * Return <code>false</code> otherwise. A null value is handled as false.
+     */
+    private static boolean getAsBoolean(final String value) {
+        if (value != null && value.trim().length() > 0) {
+            if (value.equalsIgnoreCase("ON") || value.equalsIgnoreCase("TRUE")
+                    || value.equalsIgnoreCase("YES"))
+                return true;
+        }
+        return false;
     }
 
     /**
@@ -545,6 +562,20 @@ public final class GDALUtilities {
         try {
             System.loadLibrary("gdaljni");
             gdal.AllRegister();
+
+            // //
+            //
+            // Setting error messages handler.
+            //
+            // //
+            String cplDebug = gdal.GetConfigOption(CPL_DEBUG, "");
+            boolean showErrors = getAsBoolean(cplDebug);
+            if (cplDebug.trim().length() == 0) {
+                cplDebug = System.getProperty(CPL_DEBUG);
+                showErrors = getAsBoolean(cplDebug);
+            }
+            if (!showErrors)
+                gdal.PushErrorHandler("CPLQuietErrorHandler");
             GDALUtilities.available = true;
         } catch (UnsatisfiedLinkError e) {
             if (LOGGER.isLoggable(Level.WARNING))
