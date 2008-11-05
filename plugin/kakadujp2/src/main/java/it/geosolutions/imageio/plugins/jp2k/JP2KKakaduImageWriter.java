@@ -193,7 +193,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
         final int destinationWidth = destSize.width;
         final int destinationHeight = destSize.height;
         final int rowSize = (destinationWidth * nComponents);
-        final int imageSize = rowSize * destinationHeight * bitDepth;
+        final int imageSize = rowSize * destinationHeight * bitDepth/8;
         final long qualityLayersSize = (long) (imageSize * quality);
 
         // ////////////////////////////////////////////////////////////////////
@@ -227,12 +227,14 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                 codeStream.Create(params, target, null);
 
             params = codeStream.Access_siz();
-            params.Parse_string("Creversible=no");
+            params.Parse_string("Creversible=yes");
             params.Parse_string("Cycc=yes");
-            params.Parse_string("Qguard=2");
+            params.Parse_string("Clevels=5");
+//            params.Parse_string("Corder=PCRL");
+//            params.Parse_string("Qguard=2");
             
 
-            final int qualityLayers = 32;
+            final int qualityLayers = 2;
             // TODO: Test
             params.Parse_string("Clayers=" + qualityLayers);
 
@@ -252,7 +254,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                 target.Open_codestream();
             }
 
-            params.Finalize_all();
+//            params.Finalize_all();
 
             // //
             //
@@ -293,6 +295,25 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             // pull_stripe all have a nominally signed representation unless
             // otherwise indicated by a non-NULL isSigned argument
             final int precisions[] = new int[nComponents];
+            
+            final long[] qualityLayerSizes = new long[qualityLayers];
+            final long[] cumulativeQualityLayerSizes = new long[qualityLayers];
+            
+            final int[] multipliers = new int[qualityLayers];
+            
+            int multi = 1;
+            int totals = 0;
+            for (int i=0;i<qualityLayers;i++){
+                multi = i!=0? multi*2 : multi;
+                totals+= multi;
+                multipliers[i]= multi;
+            }
+            double qualityStep = Math.floor((double)qualityLayersSize)/((double)totals);
+            for (int i=0;i<qualityLayers;i++){
+                long step = i!=0?qualityLayerSizes[i-1]:0;
+                qualityLayerSizes[i]=(long)Math.floor(qualityStep*multipliers[i]);
+                cumulativeQualityLayerSizes[i]=qualityLayerSizes[i]+step;
+            }
 
             int maxStripeHeight = MAX_BUFFER_SIZE / (rowSize);
             if (maxStripeHeight > destinationHeight)
@@ -309,7 +330,11 @@ public class JP2KKakaduImageWriter extends ImageWriter {
 
             }
 
-            final int minStripeHeight = MIN_BUFFER_SIZE / (rowSize);
+            int minStripeHeight = MIN_BUFFER_SIZE / (rowSize);
+            if (minStripeHeight<1){
+                minStripeHeight=1;
+            }
+            
 
             for (int component = 0; component < nComponents; component++) {
                 stripeHeights[component] = maxStripeHeight;
@@ -325,7 +350,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             //
             // ////////////////////////////////////////////////////////////////
 
-            compressor.Start(codeStream, qualityLayers, new long[] { qualityLayersSize },
+            compressor.Start(codeStream, qualityLayers, qualityLayerSizes,
                     null, 0, false, false, true, 0, nComponents, false);
             boolean useRecommendations = compressor
                     .Get_recommended_stripe_heights(minStripeHeight, 1024,
@@ -335,7 +360,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                     stripeHeights[i] = maxStripeHeight;
             }
             boolean goOn = true;
-            int stripeWidth = rowSize * stripeHeights[0];
+            int stripeSize = rowSize * stripeHeights[0];
             int stripeBytes = 0;
 
             // //
@@ -344,25 +369,25 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             //
             // //
             if (bitDepth <= 8) {
-                byte[] bufferValues = new byte[stripeWidth];
+                byte[] bufferValues = new byte[stripeSize];
                 int y = 0;
                 while (goOn) {
                     if (sourceHeight - y < stripeHeights[0]) {
                         for (int i = 0; i < nComponents; i++)
                             stripeHeights[i] = sourceHeight - y;
-                        stripeWidth = rowSize * stripeHeights[0];
-                        bufferValues = new byte[stripeWidth];
+                        stripeSize = rowSize * stripeHeights[0];
+                        bufferValues = new byte[stripeSize];
 
                     }
                     final Rectangle rect = new Rectangle(0, y,
                             destinationWidth, stripeHeights[0]);
-                    final Raster rasterData = inputRenderedImage.getData(rect);
+                    Raster rasterData = inputRenderedImage.getData(rect);
                     rasterData.getDataElements(0, y, destinationWidth,
                             stripeHeights[0], bufferValues);
                     goOn = compressor.Push_stripe(bufferValues, stripeHeights,
                             sampleOffsets, sampleGaps, rowGaps, precisions, 0);
                     y += stripeHeights[0];
-                    stripeBytes += stripeWidth;
+                    stripeBytes += stripeSize;
                 }
             } else if (bitDepth > 8 && bitDepth <= 16) {
                 // //
@@ -374,14 +399,14 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                 final boolean[] isSigned = new boolean[nComponents];
                 for (int i = 0; i < isSigned.length; i++)
                     isSigned[i] = isGlobalSigned;
-                short[] bufferValues = new short[stripeWidth];
+                short[] bufferValues = new short[stripeSize];
                 int y = 0;
                 while (goOn) {
                     if (sourceHeight - y < stripeHeights[0]) {
                         for (int i = 0; i < nComponents; i++)
                             stripeHeights[i] = sourceHeight - y;
-                        stripeWidth = rowSize * stripeHeights[0];
-                        bufferValues = new short[stripeWidth];
+                        stripeSize = rowSize * stripeHeights[0];
+                        bufferValues = new short[stripeSize];
                     }
 
                     final Rectangle rect = new Rectangle(0, y,
@@ -393,7 +418,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                             sampleOffsets, sampleGaps, rowGaps, precisions,
                             isSigned, 0);
                     y += stripeHeights[0];
-                    stripeBytes += stripeWidth;
+                    stripeBytes += stripeSize;
                 }
 
             } else if (bitDepth > 16 && bitDepth <= 32) {
@@ -402,15 +427,15 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                 // Int Buffer
                 //
                 // //
-                int[] bufferValues = new int[stripeWidth];
+                int[] bufferValues = new int[stripeSize];
                 int y = 0;
                 while (goOn) {
                     if (sourceHeight - y < stripeHeights[0]) {
                         for (int i = 0; i < nComponents; i++)
                             stripeHeights[i] = sourceHeight - y;
 
-                        stripeWidth = rowSize * stripeHeights[0];
-                        bufferValues = new int[stripeWidth];
+                        stripeSize = rowSize * stripeHeights[0];
+                        bufferValues = new int[stripeSize];
 
                     }
                     final Rectangle rect = new Rectangle(0, y,
@@ -421,7 +446,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                     goOn = compressor.Push_stripe(bufferValues, stripeHeights,
                             sampleOffsets, sampleGaps, rowGaps, precisions);
                     y += stripeHeights[0];
-                    stripeBytes += stripeWidth;
+                    stripeBytes += stripeSize;
                 }
             }
 

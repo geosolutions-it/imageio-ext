@@ -35,7 +35,7 @@ public class JP2KKakaduWriteTest extends TestCase{
     
 //    private final static String testPath = "C://";
     
-    private final static String inputFileName = testPath + "IM-0001-30023.bmp";
+    private final static String inputFileName = testPath + "prova.tif";
     
     private final static String outputFileName = testPath + "writtenImage";
 
@@ -67,7 +67,7 @@ public class JP2KKakaduWriteTest extends TestCase{
         writer.setOutput(ImageIO.createImageOutputStream(new File(outputFileNameKakadu)));
 
         JP2KKakaduImageWriteParam param = new JP2KKakaduImageWriteParam();
-        param.setQuality(0.3);
+        param.setQuality(0.2);
         param.setWriteCodeStreamOnly(true);
 
         writer.write(null, new IIOImage(image, null, null), param);
@@ -106,7 +106,7 @@ public class JP2KKakaduWriteTest extends TestCase{
 
         suite.addTest(new JP2KKakaduWriteTest("testKakaduWriter"));
 
-        suite.addTest(new JP2KKakaduWriteTest("testImageIOJP2KWriter"));
+//        suite.addTest(new JP2KKakaduWriteTest("testImageIOJP2KWriter"));
 
         return suite;
     }
