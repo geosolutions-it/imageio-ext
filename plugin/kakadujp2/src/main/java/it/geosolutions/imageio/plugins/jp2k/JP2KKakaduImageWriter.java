@@ -36,7 +36,6 @@ import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.media.jai.PlanarImage;
-import javax.swing.text.html.CSS;
 
 import kdu_jni.Jp2_colour;
 import kdu_jni.Jp2_dimensions;
@@ -128,13 +127,19 @@ public class JP2KKakaduImageWriter extends ImageWriter {
 
         final PlanarImage inputRenderedImage = PlanarImage
                 .wrapRenderedImage(image.getRenderedImage());
+
+        // ////////////////////////////////////////////////////////////////////
+        //
+        // Image properties initialization
+        //
+        // ////////////////////////////////////////////////////////////////////
         final int sourceWidth = inputRenderedImage.getWidth();
         final int sourceHeight = inputRenderedImage.getHeight();
         final int sourceMinX = inputRenderedImage.getMinX();
         final int sourceMinY = inputRenderedImage.getMinY();
         final int dataType = inputRenderedImage.getSampleModel().getDataType();
         final ColorModel cm = inputRenderedImage.getColorModel();
-        
+
         final int[] cmComponentBits = cm.getComponentSize();
         final int componentBits = cmComponentBits[0];
 
@@ -179,24 +184,23 @@ public class JP2KKakaduImageWriter extends ImageWriter {
         // //
         final int xSubsamplingFactor = param.getSourceXSubsampling();
         final int ySubsamplingFactor = param.getSourceYSubsampling();
-        Rectangle imageBounds = new Rectangle(sourceMinX, sourceMinY,
+        final Rectangle imageBounds = new Rectangle(sourceMinX, sourceMinY,
                 sourceWidth, sourceHeight);
-        Dimension destSize = new Dimension();
+        final Dimension destSize = new Dimension();
         computeRegions(imageBounds, destSize, param);
 
         // Destination sizes
         final int destinationWidth = destSize.width;
         final int destinationHeight = destSize.height;
         final int rowSize = (destinationWidth * nComponents);
-        final double imageSize = rowSize * destinationHeight * bitDepth;
+        final int imageSize = rowSize * destinationHeight * bitDepth;
         final long qualityLayersSize = (long) (imageSize * quality);
-        
 
-        // //
+        // ////////////////////////////////////////////////////////////////////
         //
         // Kakadu objects initialization
         //
-        // //
+        // ////////////////////////////////////////////////////////////////////
         Kdu_compressed_target outputTarget = null;
         Jp2_target target = null;
         Jp2_family_tgt familyTarget = null;
@@ -224,9 +228,11 @@ public class JP2KKakaduImageWriter extends ImageWriter {
 
             params = codeStream.Access_siz();
             params.Parse_string("Creversible=no");
-            params.Parse_string("Cycc=no");
+            params.Parse_string("Cycc=yes");
+            params.Parse_string("Qguard=2");
+            
 
-            final int qualityLayers = 1;
+            final int qualityLayers = 32;
             // TODO: Test
             params.Parse_string("Clayers=" + qualityLayers);
 
@@ -236,9 +242,9 @@ public class JP2KKakaduImageWriter extends ImageWriter {
 
                 Jp2_colour colour = target.Access_colour();
                 final int cs = cm.getColorSpace().getType();
-                if (cs == ColorSpace.TYPE_RGB){
+                if (cs == ColorSpace.TYPE_RGB) {
                     colour.Init(kdu_jni.Kdu_global.JP2_sRGB_SPACE);
-                }else if (cs == ColorSpace.TYPE_GRAY){
+                } else if (cs == ColorSpace.TYPE_GRAY) {
                     colour.Init(kdu_jni.Kdu_global.JP2_sLUM_SPACE);
                 }
 
@@ -255,7 +261,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             // //
 
             Kdu_stripe_compressor compressor = new Kdu_stripe_compressor();
-            
+
             // Array with one entry for each image component, identifying the
             // number of lines supplied for that component in the present call.
             // All entries must be non-negative.
@@ -292,8 +298,8 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             if (maxStripeHeight > destinationHeight)
                 maxStripeHeight = destinationHeight;
             else {
-                
-                // In case the computed stripeHeight is near to the 
+
+                // In case the computed stripeHeight is near to the
                 // destination height, I will avoid multiple calls by
                 // doing a single push.
                 double ratio = (double) maxStripeHeight
@@ -313,13 +319,13 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                 precisions[component] = cmComponentBits[component];
             }
 
-            // //
+            // ////////////////////////////////////////////////////////////////
             //
-            // writing Loop
+            // Pushing stripes
             //
-            // //
+            // ////////////////////////////////////////////////////////////////
 
-            compressor.Start(codeStream, 1, new long[] { qualityLayersSize },
+            compressor.Start(codeStream, qualityLayers, new long[] { qualityLayersSize },
                     null, 0, false, false, true, 0, nComponents, false);
             boolean useRecommendations = compressor
                     .Get_recommended_stripe_heights(minStripeHeight, 1024,
@@ -332,7 +338,6 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             int stripeWidth = rowSize * stripeHeights[0];
             int stripeBytes = 0;
 
-            
             // //
             //
             // Byte Buffer
@@ -420,11 +425,11 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                 }
             }
 
-            // //
+            // ////////////////////////////////////////////////////////////////
             //
             // Kakadu Objects Finalization
             //
-            // //
+            // ////////////////////////////////////////////////////////////////
             compressor.Finish();
             compressor.Native_destroy();
             codeStream.Destroy();
