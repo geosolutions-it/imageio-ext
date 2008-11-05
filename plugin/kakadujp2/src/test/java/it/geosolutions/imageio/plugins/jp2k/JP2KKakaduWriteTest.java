@@ -31,9 +31,13 @@ public class JP2KKakaduWriteTest extends TestCase{
         super(name);
     }
     
-    private final static String inputFileName = "C://Work//data//kakadu//IM-0001-30023.bmp";
+    private final static String testPath = "C://Work//data//kakadu//";
     
-    private final static String outputFileName = "C://Work//data//kakadu//writtenImage";
+//    private final static String testPath = "C://";
+    
+    private final static String inputFileName = testPath + "IM-0001-30023.bmp";
+    
+    private final static String outputFileName = testPath + "writtenImage";
 
     private final static String outputFileNameKakadu = outputFileName + "_Kakadu.jp2";
 
