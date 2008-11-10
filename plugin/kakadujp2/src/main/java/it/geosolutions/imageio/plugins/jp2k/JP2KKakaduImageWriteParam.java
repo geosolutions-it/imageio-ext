@@ -20,6 +20,12 @@ import javax.imageio.ImageWriteParam;
 
 public class JP2KKakaduImageWriteParam extends ImageWriteParam {
 
+    public JP2KKakaduImageWriteParam(){
+        cLevels = 5;
+        canWriteCompressed = true;
+        compressionMode = MODE_EXPLICIT;
+    }
+    
     /**
      * Specifies whether write only the jpeg2000 code stream. The output will be
      * a raw codestream.
@@ -33,6 +39,11 @@ public class JP2KKakaduImageWriteParam extends ImageWriteParam {
      * 
      */
     private double quality = 1.0;
+    
+    /**
+     * Specify the number of decompositions levels.
+     */
+    private int cLevels;
     
     /**
      * Sets <code>writeCodeStreamOnly</code>.
@@ -76,5 +87,25 @@ public class JP2KKakaduImageWriteParam extends ImageWriteParam {
      */
     public void setQuality(final double quality) {
         this.quality = quality;
+    }
+
+    /**
+     * Gets <code>cLevels</code>.
+     * @return the number of decomposition levels.
+     * 
+     * @see #setCLevels(int)
+     */
+    public int getCLevels() {
+        return cLevels;
+    }
+
+    /**
+     * Sets <code>cLevels</code>.
+     * @param cLevels the number of decomposition levels.
+     * 
+     * @see #getCLevels()()
+     */
+    public void setCLevels(final int cLevels) {
+        this.cLevels = cLevels;
     }
 }

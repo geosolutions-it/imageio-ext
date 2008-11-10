@@ -850,7 +850,8 @@ public class JP2KKakaduImageReader extends ImageReader {
                 rawSource = new Kdu_simple_file_source(fileName);
                 if (rawSource != null) {
                     isRawSource = true;
-                    LOGGER.info("Detected raw source");
+                    if (LOGGER.isLoggable(Level.FINE))
+                        LOGGER.fine("Detected raw source");
                     numImages = 1;
                 }
             } else {
