@@ -18,7 +18,9 @@ package it.geosolutions.util;
 
 import it.geosolutions.imageio.plugins.jp2k.JP2KKakaduImageReadParam;
 
+import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
@@ -29,6 +31,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.imageio.ImageWriteParam;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageReaderWriterSpi;
@@ -256,6 +259,59 @@ public class KakaduUtilities {
                 LOGGER.warning(new StringBuffer("Native library load failed.")
                         .append(e.toString()).toString());
             available = false;
+        }
+    }
+    
+    /**
+     * Compute the source region and destination dimensions taking any parameter
+     * settings into account.
+     */
+    public static void computeRegions(final Rectangle sourceBounds,
+            Dimension destSize, ImageWriteParam param) {
+        int periodX = 1;
+        int periodY = 1;
+        if (param != null) {
+            final int[] sourceBands = param.getSourceBands();
+            if (sourceBands != null
+                    && (sourceBands.length != 1 || sourceBands[0] != 0)) {
+                throw new IllegalArgumentException("Cannot sub-band image!");
+                // TODO: Actually, sourceBands is ignored!!
+            }
+
+            // ////////////////////////////////////////////////////////////////
+            //
+            // Get source region and subsampling settings
+            //
+            // ////////////////////////////////////////////////////////////////
+            Rectangle sourceRegion = param.getSourceRegion();
+            if (sourceRegion != null) {
+                // Clip to actual image bounds
+                sourceRegion = sourceRegion.intersection(sourceBounds);
+                sourceBounds.setBounds(sourceRegion);
+            }
+
+            // Get subsampling factors
+            periodX = param.getSourceXSubsampling();
+            periodY = param.getSourceYSubsampling();
+
+            // Adjust for subsampling offsets
+            int gridX = param.getSubsamplingXOffset();
+            int gridY = param.getSubsamplingYOffset();
+            sourceBounds.x += gridX;
+            sourceBounds.y += gridY;
+            sourceBounds.width -= gridX;
+            sourceBounds.height -= gridY;
+        }
+
+        // ////////////////////////////////////////////////////////////////////
+        //
+        // Compute output dimensions
+        //
+        // ////////////////////////////////////////////////////////////////////
+        destSize.setSize((sourceBounds.width + periodX - 1) / periodX,
+                (sourceBounds.height + periodY - 1) / periodY);
+        if (destSize.width <= 0 || destSize.height <= 0) {
+            throw new IllegalArgumentException("Empty source region!");
         }
     }
 }

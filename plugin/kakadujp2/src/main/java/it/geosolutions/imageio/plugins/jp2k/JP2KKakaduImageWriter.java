@@ -17,6 +17,7 @@
 package it.geosolutions.imageio.plugins.jp2k;
 
 import it.geosolutions.imageio.stream.output.FileImageOutputStreamExt;
+import it.geosolutions.util.KakaduUtilities;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -67,12 +68,6 @@ public class JP2KKakaduImageWriter extends ImageWriter {
     private final static int MAX_BUFFER_SIZE = 32 * 1024 * 1024;
 
     private final static int MIN_BUFFER_SIZE = 1024 * 1024;
-
-    private final static int MIN_QUALITY_LAYERS_THRESHOLD = 128 * 128;
-
-    private final static int MED_QUALITY_LAYERS_THRESHOLD = 512 * 512;
-
-    private final static int MAX_QUALITY_LAYERS_THRESHOLD = 1024 * 1024;
 
     public ImageWriteParam getDefaultWriteParam() {
         return new JP2KKakaduImageWriteParam();
@@ -229,7 +224,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                 sourceWidth, sourceHeight);
         final Rectangle imageBounds = (Rectangle) originalBounds.clone();
         final Dimension destSize = new Dimension();
-        computeRegions(imageBounds, destSize, param);
+        KakaduUtilities.computeRegions(imageBounds, destSize, param);
 
         boolean resampleInputImage = false;
         if (xSubsamplingFactor != 1 || ySubsamplingFactor != 1
@@ -280,7 +275,6 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                                     "When writing codestreams, the \".j2c\" file suffix is suggested instead of \".jp2\"");
 
             } else {
-
                 familyTarget = new Jp2_family_tgt();
                 familyTarget.Open(fileName);
                 target = new Jp2_target();
@@ -294,7 +288,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             // //
             final Kdu_codestream codeStream = new Kdu_codestream();
             Siz_params params = new Siz_params();
-            initParams(params, destinationWidth, destinationHeight, bits,
+            initializeParams(params, destinationWidth, destinationHeight, bits,
                     nComponents, isGlobalSigned);
 
             if (writeCodeStreamOnly)
@@ -302,20 +296,10 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             else
                 codeStream.Create(params, target, null);
 
-            params = codeStream.Access_siz();
-            if (quality == 1 && hasPalette)
-                params.Parse_string("Creversible=yes");
-            else
-                params.Parse_string("Creversible=no");
-
-            params.Parse_string("Cycc=" + (cycc ? "yes" : "no"));
-            params.Parse_string("Clevels=" + cLevels);
-            params.Parse_string("Clayers=" + qualityLayers);
-
-            if (!writeCodeStreamOnly) {
-                initHeader(target, params, cm);
-                target.Open_codestream();
-            }
+            if (!initializeCodestream(codeStream, cycc, cLevels, quality,
+                    qualityLayers, cm, writeCodeStreamOnly, target))
+                throw new IOException(
+                        "Unable to initialized the codestream due to a missing Jp2_target object");
 
             // //
             //
@@ -323,7 +307,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             //
             // //
 
-            Kdu_stripe_compressor compressor = new Kdu_stripe_compressor();
+            final Kdu_stripe_compressor compressor = new Kdu_stripe_compressor();
 
             // Array with one entry for each image component, identifying the
             // number of lines supplied for that component in the present call.
@@ -357,58 +341,12 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             // otherwise indicated by a non-NULL isSigned argument
             final int precisions[] = new int[nComponents];
 
-            final long[] cumulativeQualityLayerSizes;
-            if (quality < 1) {
-                cumulativeQualityLayerSizes = computeQualityLayers(
-                        qualityLayers, qualityLayersSize);
-            } else {
-                cumulativeQualityLayerSizes = null;
-            }
+            initializeStripeCompressor(compressor, codeStream, quality,
+                    qualityLayers, qualityLayersSize, rowSize,
+                    destinationHeight, destinationWidth, nComponents,
+                    stripeHeights, sampleGaps, rowGaps, sampleOffsets,
+                    precisions, numberOfBits);
 
-            int maxStripeHeight = MAX_BUFFER_SIZE / (rowSize);
-            if (maxStripeHeight > destinationHeight)
-                maxStripeHeight = destinationHeight;
-            else {
-
-                // In case the computed stripeHeight is near to the
-                // destination height, I will avoid multiple calls by
-                // doing a single push.
-                double ratio = (double) maxStripeHeight
-                        / (double) destinationHeight;
-                if (ratio > SINGLE_PUSH_THRESHOLD_RATIO)
-                    maxStripeHeight = destinationHeight;
-
-            }
-
-            int minStripeHeight = MIN_BUFFER_SIZE / (rowSize);
-            if (minStripeHeight < 1)
-                minStripeHeight = 1;
-
-            for (int component = 0; component < nComponents; component++) {
-                stripeHeights[component] = maxStripeHeight;
-                sampleGaps[component] = nComponents;
-                rowGaps[component] = destinationWidth * nComponents;
-                sampleOffsets[component] = component;
-                precisions[component] = numberOfBits[component];
-            }
-
-            // ////////////////////////////////////////////////////////////////
-            //
-            // Initializing Stripe Compressor
-            //
-            // ////////////////////////////////////////////////////////////////
-
-            compressor.Start(codeStream, qualityLayers,
-                    cumulativeQualityLayerSizes, null, 0, false, false, true,
-                    0, nComponents, false);
-            final boolean useRecommendations = compressor
-                    .Get_recommended_stripe_heights(minStripeHeight, 1024,
-                            stripeHeights, null);
-            if (!useRecommendations) {
-                // Setting the stripeHeight to the max affordable stripe height
-                for (int i = 0; i < nComponents; i++)
-                    stripeHeights[i] = maxStripeHeight;
-            }
             boolean goOn = true;
             final int stripeSize = rowSize * stripeHeights[0];
 
@@ -417,6 +355,10 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             // Pushing Stripes
             //
             // ////////////////////////////////////////////////////////////////
+
+            // //
+            // TODO: Writes may leverage on tiling
+            // //
 
             // //
             //
@@ -439,6 +381,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                             bufferValues = new byte[rowSize * stripeHeights[0]];
 
                         }
+
                         Raster rasterData = inputRenderedImage
                                 .getData(new Rectangle(0, y, destinationWidth,
                                         stripeHeights[0]));
@@ -477,6 +420,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                                 imageBounds.width, stripeHeights[0]
                                         * ySubsamplingFactor);
                         rect = rect.intersection(originalBounds);
+
                         Raster rasterData = inputRenderedImage.getData(rect);
                         lastY = rect.y + rect.height;
 
@@ -584,6 +528,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                                 stripeHeights[i] = destinationHeight - y;
                             bufferValues = new int[rowSize * stripeHeights[0]];
                         }
+
                         Raster rasterData = inputRenderedImage
                                 .getData(new Rectangle(0, y, destinationWidth,
                                         stripeHeights[0]));
@@ -610,6 +555,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                                     lastY, imageBounds.width, stripeHeights[0]
                                             * ySubsamplingFactor);
                             rect = rect.intersection(originalBounds);
+
                             final Raster rasterData = inputRenderedImage
                                     .getData(rect);
                             lastY = rect.y + rect.height;
@@ -638,10 +584,11 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             compressor.Finish();
             compressor.Native_destroy();
             codeStream.Destroy();
+
         } catch (KduException e) {
-            throw new RuntimeException(
-                    "Error caused by a Kakadu exception during write operation",
-                    e);
+            throw (IOException) new IOException(
+                    "Error caused by a Kakadu exception during write operation")
+                    .initCause(e);
         } finally {
             if (!writeCodeStreamOnly && target != null) {
                 try {
@@ -682,6 +629,157 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                     // yeah I am eating this
                 }
             }
+        }
+    }
+
+    /**
+     * @param codeStream
+     *                the output codestream
+     * @param cycc
+     *                the cycc parameter
+     * @param cLevels
+     *                the number of DWT decomposition levels
+     * @param quality
+     *                the quality factor
+     * @param qualityLayers
+     *                the number of quality layers
+     * @param cm
+     *                the input image's colorModel
+     * @param writeCodeStreamOnly
+     *                <code>true</code> if we need to write only codestream.
+     * @param target
+     *                the optional {@link Jp2_target} object in case we are
+     *                writing only codestream.
+     * @return
+     * @throws KduException
+     */
+    private boolean initializeCodestream(final Kdu_codestream codeStream,
+            final boolean cycc, final int cLevels, final double quality,
+            final int qualityLayers, final ColorModel cm,
+            final boolean writeCodeStreamOnly, final Jp2_target target)
+            throws KduException {
+        Siz_params params = codeStream.Access_siz();
+        if (quality == 1 && cm instanceof IndexColorModel)
+            params.Parse_string("Creversible=yes");
+        else
+            params.Parse_string("Creversible=no");
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Cycc=").append((cycc ? "yes" : "no"));
+        params.Parse_string(sb.toString());
+        sb.setLength(0);
+        sb.append("Clevels=").append(cLevels);
+        params.Parse_string(sb.toString());
+        sb.setLength(0);
+        sb.append("Clayers=").append(qualityLayers);
+        params.Parse_string(sb.toString());
+
+        if (!writeCodeStreamOnly) {
+            if (target == null)
+                return false;
+            initializeHeader(target, params, cm);
+            target.Open_codestream();
+        }
+        return true;
+    }
+
+    /**
+     * Initialize the provided stripe compressor leveraging on a set of
+     * parameters.
+     * 
+     * @param compressor
+     *                the {@link Kdu_stripe_compressor} to be initialized.
+     * @param codeStream
+     *                the {@link Kdu_codestream}
+     * @param quality
+     *                the requested quality factor
+     * @param qualityLayers
+     *                the number of specified quality layers
+     * @param qualityLayersSize
+     *                the requested quality layers total size.
+     * @param rowSize
+     *                the size of a destination image row in pixels
+     * @param destinationHeight
+     *                the destination image height
+     * @param destinationWidth
+     *                the destination image width
+     * @param nComponents
+     *                the number of components
+     * @param stripeHeights
+     *                the stripeHeights array
+     * @param sampleGaps
+     *                the sampleGaps array
+     * @param rowGaps
+     *                the rowGaps array
+     * @param sampleOffsets
+     *                the sampleOffsets array
+     * @param precisions
+     *                the precisions array
+     * @param numberOfBits
+     *                the bitdepth
+     * @throws KduException
+     */
+    private void initializeStripeCompressor(
+            final Kdu_stripe_compressor compressor,
+            final Kdu_codestream codeStream, final double quality,
+            final int qualityLayers, final long qualityLayersSize,
+            final int rowSize, final int destinationHeight,
+            final int destinationWidth, int nComponents,
+            final int[] stripeHeights, final int[] sampleGaps,
+            final int[] rowGaps, final int[] sampleOffsets,
+            final int[] precisions, final int[] numberOfBits)
+            throws KduException {
+        final long[] cumulativeQualityLayerSizes;
+        if (quality < 1) {
+            cumulativeQualityLayerSizes = computeQualityLayers(qualityLayers,
+                    qualityLayersSize);
+        } else {
+            cumulativeQualityLayerSizes = null;
+        }
+
+        int maxStripeHeight = MAX_BUFFER_SIZE / (rowSize);
+        if (maxStripeHeight > destinationHeight)
+            maxStripeHeight = destinationHeight;
+        else {
+
+            // In case the computed stripeHeight is near to the
+            // destination height, I will avoid multiple calls by
+            // doing a single push.
+            double ratio = (double) maxStripeHeight
+                    / (double) destinationHeight;
+            if (ratio > SINGLE_PUSH_THRESHOLD_RATIO)
+                maxStripeHeight = destinationHeight;
+
+        }
+
+        int minStripeHeight = MIN_BUFFER_SIZE / (rowSize);
+        if (minStripeHeight < 1)
+            minStripeHeight = 1;
+
+        for (int component = 0; component < nComponents; component++) {
+            stripeHeights[component] = maxStripeHeight;
+            sampleGaps[component] = nComponents;
+            rowGaps[component] = destinationWidth * nComponents;
+            sampleOffsets[component] = component;
+            precisions[component] = numberOfBits[component];
+        }
+
+        // ////////////////////////////////////////////////////////////////
+        //
+        // Initializing Stripe Compressor
+        //
+        // ////////////////////////////////////////////////////////////////
+
+        compressor.Start(codeStream, qualityLayers,
+                cumulativeQualityLayerSizes, null, 0, false, false, true, 0,
+                nComponents, false);
+        final boolean useRecommendations = compressor
+                .Get_recommended_stripe_heights(minStripeHeight, 1024,
+                        stripeHeights, null);
+        if (!useRecommendations) {
+            // Setting the stripeHeight to the max affordable stripe height
+            for (int i = 0; i < nComponents; i++)
+                stripeHeights[i] = maxStripeHeight;
         }
     }
 
@@ -747,8 +845,8 @@ public class JP2KKakaduImageWriter extends ImageWriter {
      *                the color model of the image to be written.
      * @throws KduException
      */
-    private void initHeader(final Jp2_target target, final Siz_params params,
-            final ColorModel cm) throws KduException {
+    private void initializeHeader(final Jp2_target target,
+            final Siz_params params, final ColorModel cm) throws KduException {
 
         // //
         //
@@ -905,10 +1003,10 @@ public class JP2KKakaduImageWriter extends ImageWriter {
 
     }
 
-    private void initParams(Siz_params params, final int destinationWidth,
-            final int destinationHeight, final int precision,
-            final int components, final boolean isGlobalSigned)
-            throws KduException {
+    private void initializeParams(Siz_params params,
+            final int destinationWidth, final int destinationHeight,
+            final int precision, final int components,
+            final boolean isGlobalSigned) throws KduException {
         params.Set("Ssize", 0, 0, destinationHeight);
         params.Set("Ssize", 0, 1, destinationWidth);
         params.Set("Sprofile", 0, 0, 2);
@@ -920,59 +1018,6 @@ public class JP2KKakaduImageWriter extends ImageWriter {
         params.Set("Sdims", 0, 1, destinationWidth);
         params.Set("Ssigned", 0, 0, isGlobalSigned);
         params.Finalize();
-    }
-
-    /**
-     * Compute the source region and destination dimensions taking any parameter
-     * settings into account.
-     */
-    private static void computeRegions(final Rectangle sourceBounds,
-            Dimension destSize, ImageWriteParam param) {
-        int periodX = 1;
-        int periodY = 1;
-        if (param != null) {
-            final int[] sourceBands = param.getSourceBands();
-            if (sourceBands != null
-                    && (sourceBands.length != 1 || sourceBands[0] != 0)) {
-                throw new IllegalArgumentException("Cannot sub-band image!");
-                // TODO: Actually, sourceBands is ignored!!
-            }
-
-            // ////////////////////////////////////////////////////////////////
-            //
-            // Get source region and subsampling settings
-            //
-            // ////////////////////////////////////////////////////////////////
-            Rectangle sourceRegion = param.getSourceRegion();
-            if (sourceRegion != null) {
-                // Clip to actual image bounds
-                sourceRegion = sourceRegion.intersection(sourceBounds);
-                sourceBounds.setBounds(sourceRegion);
-            }
-
-            // Get subsampling factors
-            periodX = param.getSourceXSubsampling();
-            periodY = param.getSourceYSubsampling();
-
-            // Adjust for subsampling offsets
-            int gridX = param.getSubsamplingXOffset();
-            int gridY = param.getSubsamplingYOffset();
-            sourceBounds.x += gridX;
-            sourceBounds.y += gridY;
-            sourceBounds.width -= gridX;
-            sourceBounds.height -= gridY;
-        }
-
-        // ////////////////////////////////////////////////////////////////////
-        //
-        // Compute output dimensions
-        //
-        // ////////////////////////////////////////////////////////////////////
-        destSize.setSize((sourceBounds.width + periodX - 1) / periodX,
-                (sourceBounds.height + periodY - 1) / periodY);
-        if (destSize.width <= 0 || destSize.height <= 0) {
-            throw new IllegalArgumentException("Empty source region!");
-        }
     }
 
 }
