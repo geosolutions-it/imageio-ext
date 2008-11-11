@@ -17,6 +17,8 @@ import java.awt.image.SampleModel;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.logging.Logger;
 
 import javax.imageio.IIOImage;
@@ -48,6 +50,28 @@ public class JP2KKakaduWriteTest extends TestCase {
     private final static double lossyQuality = 0.02;
 
     private final static String testPath;
+
+    class TestConfiguration {
+        String outputFileName;
+
+        boolean writeCodeStreamOnly;
+
+        double quality;
+
+        boolean useJAI;
+
+        JP2KKakaduImageWriteParam param = null;
+
+        public TestConfiguration(String fileName,
+                final boolean writeCodestreamOnly, final double quality,
+                final boolean useJAI, final JP2KKakaduImageWriteParam param) {
+            outputFileName = fileName;
+            this.writeCodeStreamOnly = writeCodestreamOnly;
+            this.quality = quality;
+            this.useJAI = useJAI;
+            this.param = param;
+        }
+    }
 
     static {
 
@@ -86,40 +110,57 @@ public class JP2KKakaduWriteTest extends TestCase {
                 continue;
             }
 
-            final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
-                    "ImageRead");
-            ImageReader reader = ImageIO.getImageReaders(
-                    ImageIO.createImageInputStream(file)).next();
-
-            pbjImageRead.setParameter("reader", reader);
-            pbjImageRead.setParameter("Input", file);
-            RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-
             final String suffix = fileName.substring(0, fileName.length() - 4);
-            write(outputFileName + "_" + suffix, image, true, lossLessQuality);
-            write(outputFileName + "_" + suffix, image, false, lossLessQuality);
-            write(outputFileName + "_" + suffix, image, true, lossyQuality);
-            write(outputFileName + "_" + suffix, image, false, lossyQuality);
-            write(outputFileName + "_JAI" + suffix, image, true,
-                    lossLessQuality, true);
-            write(outputFileName + "_JAI" + suffix, image, false,
-                    lossLessQuality, true);
-            write(outputFileName + "_JAI" + suffix, image, true, lossyQuality,
-                    true);
-            write(outputFileName + "_JAI" + suffix, image, false, lossyQuality,
-                    true);
+            LinkedList<TestConfiguration> configs = new LinkedList<TestConfiguration>();
+
+            configs.add(new TestConfiguration(outputFileName + "_" + suffix,
+                    true, lossLessQuality, false, null));
+
+            configs.add(new TestConfiguration(outputFileName + "_" + suffix,
+                    false, lossLessQuality, false, null));
+            configs.add(new TestConfiguration(outputFileName + "_" + suffix,
+                    true, lossyQuality, false, null));
+            configs.add(new TestConfiguration(outputFileName + "_" + suffix,
+                    false, lossyQuality, false, null));
+            configs.add(new TestConfiguration(
+                    outputFileName + "_JAI_" + suffix, true, lossLessQuality,
+                    true, null));
+            configs.add(new TestConfiguration(
+                    outputFileName + "_JAI_" + suffix, false, lossLessQuality,
+                    true, null));
+            configs.add(new TestConfiguration(
+                    outputFileName + "_JAI_" + suffix, true, lossyQuality,
+                    true, null));
+            configs.add(new TestConfiguration(
+                    outputFileName + "_JAI_" + suffix, false, lossyQuality,
+                    true, null));
 
             JP2KKakaduImageWriteParam param = new JP2KKakaduImageWriteParam();
             param.setCLevels(3);
 
-            write(outputFileName + "_3levels_" + suffix, image, true,
-                    lossLessQuality, param);
-            write(outputFileName + "_3levels_" + suffix, image, false,
-                    lossLessQuality, param);
-            write(outputFileName + "_3levels_" + suffix, image, true,
-                    lossyQuality, param);
-            write(outputFileName + "_3levels_" + suffix, image, false,
-                    lossyQuality, param);
+            configs.add(new TestConfiguration(outputFileName + "_3levels_"
+                    + suffix, true, lossLessQuality, false, param));
+            configs.add(new TestConfiguration(outputFileName + "_3levels_"
+                    + suffix, false, lossLessQuality, false, param));
+            configs.add(new TestConfiguration(outputFileName + "_3levels_"
+                    + suffix, true, lossyQuality, false, param));
+            configs.add(new TestConfiguration(outputFileName + "_3levels_"
+                    + suffix, false, lossyQuality, false, param));
+
+            for (TestConfiguration config : configs) {
+
+                final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+                        "ImageRead");
+                ImageReader reader = ImageIO.getImageReaders(
+                        ImageIO.createImageInputStream(file)).next();
+
+                pbjImageRead.setParameter("reader", reader);
+                pbjImageRead.setParameter("Input", file);
+                RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+
+                write(config.outputFileName, image, config.writeCodeStreamOnly,
+                        config.quality, config.useJAI, config.param);
+            }
         }
     }
 
@@ -134,37 +175,44 @@ public class JP2KKakaduWriteTest extends TestCase {
                     + "\n This test will be skipped");
             return;
         }
-
-        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
-                "ImageRead");
-        ImageReader reader = ImageIO.getImageReaders(
-                ImageIO.createImageInputStream(file)).next();
-
-        pbjImageRead.setParameter("reader", reader);
-        pbjImageRead.setParameter("Input", file);
-        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-
         final String suffix = fileName.substring(0, fileName.length() - 4);
+
+        LinkedList<TestConfiguration> configs = new LinkedList<TestConfiguration>();
+
         JP2KKakaduImageWriteParam param = new JP2KKakaduImageWriteParam();
         param.setSourceRegion(new Rectangle(100, 0, 450, 800));
         param.setSourceSubsampling(2, 3, 0, 0);
 
-        write(outputFileName + "_pp" + suffix, image, true, lossLessQuality,
-                param);
-        write(outputFileName + "_pp" + suffix, image, false, lossLessQuality,
-                param);
-        write(outputFileName + "_pp" + suffix, image, true, lossyQuality, param);
-        write(outputFileName + "_pp" + suffix, image, false, lossyQuality,
-                param);
-        write(outputFileName + "_pp_JAI" + suffix, image, true,
-                lossLessQuality, true, param);
-        write(outputFileName + "_pp_JAI" + suffix, image, false,
-                lossLessQuality, true, param);
-        write(outputFileName + "_pp_JAI" + suffix, image, true, lossyQuality,
-                true, param);
-        write(outputFileName + "_pp_JAI" + suffix, image, false, lossyQuality,
-                true, param);
+        configs.add(new TestConfiguration(outputFileName + "_pp_" + suffix,
+                true, lossLessQuality, false, param));
+        configs.add(new TestConfiguration(outputFileName + "_pp_" + suffix,
+                false, lossLessQuality, false, param));
+        configs.add(new TestConfiguration(outputFileName + "_pp_" + suffix,
+                true, lossyQuality, false, param));
+        configs.add(new TestConfiguration(outputFileName + "_pp_" + suffix,
+                false, lossyQuality, false, param));
+        configs.add(new TestConfiguration(outputFileName + "_pp_JAI_" + suffix,
+                true, lossLessQuality, true, param));
+        configs.add(new TestConfiguration(outputFileName + "_pp_JAI_" + suffix,
+                false, lossLessQuality, true, param));
+        configs.add(new TestConfiguration(outputFileName + "_pp_JAI_" + suffix,
+                true, lossyQuality, true, param));
+        configs.add(new TestConfiguration(outputFileName + "_pp_JAI_" + suffix,
+                false, lossyQuality, true, param));
 
+        for (TestConfiguration config : configs) {
+
+            final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+                    "ImageRead");
+            ImageReader reader = ImageIO.getImageReaders(
+                    ImageIO.createImageInputStream(file)).next();
+
+            pbjImageRead.setParameter("reader", reader);
+            pbjImageRead.setParameter("Input", file);
+            RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+            write(config.outputFileName, image, config.writeCodeStreamOnly,
+                    config.quality, config.useJAI, config.param);
+        }
     }
 
     private static synchronized void write(String file, RenderedImage bi,
@@ -217,7 +265,7 @@ public class JP2KKakaduWriteTest extends TestCase {
 
         suite.addTest(new JP2KKakaduWriteTest("testKakaduWriter"));
 
-         suite.addTest(new JP2KKakaduWriteTest("testKakaduWriterParam"));
+        suite.addTest(new JP2KKakaduWriteTest("testKakaduWriterParam"));
 
         suite.addTest(new JP2KKakaduWriteTest("test12BitGray"));
 
@@ -266,6 +314,7 @@ public class JP2KKakaduWriteTest extends TestCase {
         DataBuffer imageBuffer = new DataBufferUShort(bufferValues, bufferSize);
         BufferedImage bi = new BufferedImage(cm, Raster.createWritableRaster(
                 sm, imageBuffer, null), false, null);
+     
         write(outputFileName + "_gray12", bi, true, lossLessQuality);
         write(outputFileName + "_gray12", bi, false, lossLessQuality);
         write(outputFileName + "_gray12", bi, true, lossyQuality);
@@ -289,9 +338,11 @@ public class JP2KKakaduWriteTest extends TestCase {
             for (int j = 0; j < w; j++)
                 bufferValues[j + (i * h)] = (short) ((j + i) * (65536 / 1024));
         }
+        
         DataBuffer imageBuffer = new DataBufferUShort(bufferValues, bufferSize);
         BufferedImage bi = new BufferedImage(cm, Raster.createWritableRaster(
                 sm, imageBuffer, null), false, null);
+        
         write(outputFileName + "_gray16", bi, true, lossLessQuality);
         write(outputFileName + "_gray16", bi, false, lossLessQuality);
         write(outputFileName + "_gray16", bi, true, lossyQuality);
@@ -300,7 +351,6 @@ public class JP2KKakaduWriteTest extends TestCase {
         write(outputFileName + "_JAI_gray16", bi, false, lossLessQuality, true);
         write(outputFileName + "_JAI_gray16", bi, true, lossyQuality, true);
         write(outputFileName + "_JAI_gray16", bi, false, lossyQuality, true);
-
     }
 
     public static void test24BitGray() throws IOException {
