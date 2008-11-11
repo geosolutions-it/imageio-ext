@@ -177,7 +177,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
         final int sourceMinY = inputRenderedImage.getMinY();
         final SampleModel sm = inputRenderedImage.getSampleModel();
         final int dataType = sm.getDataType();
-        final boolean isGlobalSigned = dataType == DataBuffer.TYPE_SHORT;
+        final boolean isGlobalSigned = (dataType != DataBuffer.TYPE_USHORT && dataType != DataBuffer.TYPE_BYTE);
 
         final ColorModel cm = inputRenderedImage.getColorModel();
         final boolean hasPalette = cm instanceof IndexColorModel ? true : false;
@@ -442,7 +442,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                         Raster rasterData = inputRenderedImage
                                 .getData(new Rectangle(0, y, destinationWidth,
                                         stripeHeights[0]));
-                        if (hasPalette&&writeCodeStreamOnly) {
+                        if (hasPalette && writeCodeStreamOnly) {
                             DataBuffer buff = rasterData.getDataBuffer();
                             final int loopLength = buff.getSize();
                             for (int l = 0; l < loopLength; l++) {
@@ -638,21 +638,50 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             compressor.Finish();
             compressor.Native_destroy();
             codeStream.Destroy();
-
-            if (writeCodeStreamOnly) {
-                outputTarget.Close();
-                outputTarget.Native_destroy();
-            } else {
-                target.Close();
-                target.Native_destroy();
-                familyTarget.Close();
-                familyTarget.Native_destroy();
-            }
-
         } catch (KduException e) {
             throw new RuntimeException(
                     "Error caused by a Kakadu exception during write operation",
                     e);
+        } finally {
+            if (!writeCodeStreamOnly && target != null) {
+                try {
+                    if (target.Exists())
+                        target.Close();
+                } catch (Throwable e) {
+                    // yeah I am eating this
+                }
+                try {
+                    target.Native_destroy();
+                } catch (Throwable e) {
+                    // yeah I am eating this
+                }
+
+                if (familyTarget != null) {
+                    try {
+                        if (familyTarget.Exists())
+                            familyTarget.Close();
+                    } catch (Throwable e) {
+                        // yeah I am eating this
+                    }
+                    try {
+                        familyTarget.Native_destroy();
+                    } catch (Throwable e) {
+                        // yeah I am eating this
+                    }
+                }
+
+            } else if (writeCodeStreamOnly && outputTarget != null) {
+                try {
+                    outputTarget.Close();
+                } catch (Throwable e) {
+                    // yeah I am eating this
+                }
+                try {
+                    outputTarget.Native_destroy();
+                } catch (Throwable e) {
+                    // yeah I am eating this
+                }
+            }
         }
     }
 
@@ -906,7 +935,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             if (sourceBands != null
                     && (sourceBands.length != 1 || sourceBands[0] != 0)) {
                 throw new IllegalArgumentException("Cannot sub-band image!");
-                //TODO: Actually, sourceBands is ignored!!
+                // TODO: Actually, sourceBands is ignored!!
             }
 
             // ////////////////////////////////////////////////////////////////
