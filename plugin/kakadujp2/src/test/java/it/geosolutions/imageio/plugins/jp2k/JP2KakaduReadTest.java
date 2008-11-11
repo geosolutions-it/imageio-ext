@@ -17,14 +17,12 @@ package it.geosolutions.imageio.plugins.jp2k;
 
 import it.geosolutions.imageio.imageioimpl.imagereadmt.ImageReadDescriptorMT;
 import it.geosolutions.resources.TestData;
-import it.geosolutions.util.FileCache;
 
 import java.awt.RenderingHints;
 import java.awt.image.RenderedImage;
 import java.awt.image.renderable.ParameterBlock;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 
 import javax.imageio.ImageReadParam;
 import javax.media.jai.Histogram;
@@ -47,32 +45,32 @@ import junit.framework.TestSuite;
  */
 public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
 
-    static FileCache fileCache = new FileCache();
+//    static FileCache fileCache = new FileCache();
 
     public JP2KakaduReadTest(String name) {
         super(name);
 
     }
 
-    /**
-     * Test Read exploiting Linear Interpolation
-     * 
-     * @throws IOException
-     */
-    public void testJaiReadFromUrl() throws IOException {
-        final URL url = new URL(
-                "http://www.microimages.com/gallery/jp2/CB_TM432.jp2");
-        final File file = fileCache.getFile(url);
-        final ParameterBlockJAI pbjImageRead;
-        pbjImageRead = new ParameterBlockJAI("ImageRead");
-        pbjImageRead.setParameter("Input", file);
-        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-        if (TestData.isInteractiveTest())
-            visualize(image,
-                    "http://www.microimages.com/gallery/jp2/CB_TM432.jp2");
-        else
-            assertNotNull(image.getTiles());
-    }
+//    /**
+//     * Test Read exploiting Linear Interpolation
+//     * 
+//     * @throws IOException
+//     */
+//    public void testJaiReadFromUrl() throws IOException {
+//        final URL url = new URL(
+//                "http://www.microimages.com/gallery/jp2/CB_TM432.jp2");
+//        final File file = fileCache.getFile(url);
+//        final ParameterBlockJAI pbjImageRead;
+//        pbjImageRead = new ParameterBlockJAI("ImageRead");
+//        pbjImageRead.setParameter("Input", file);
+//        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+//        if (TestData.isInteractiveTest())
+//            visualize(image,
+//                    "http://www.microimages.com/gallery/jp2/CB_TM432.jp2");
+//        else
+//            assertNotNull(image.getTiles());
+//    }
 
     public void testJaiReadFromFile() throws IOException {
 

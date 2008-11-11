@@ -306,7 +306,6 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             // Setting parameters for stripe compression
             //
             // //
-
             final Kdu_stripe_compressor compressor = new Kdu_stripe_compressor();
 
             // Array with one entry for each image component, identifying the
@@ -1000,7 +999,6 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             }
         } else
             throw new IllegalArgumentException("Unsupported buffer type");
-
     }
 
     private void initializeParams(Siz_params params,
