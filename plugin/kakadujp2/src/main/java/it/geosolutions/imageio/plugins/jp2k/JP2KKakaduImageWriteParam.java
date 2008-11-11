@@ -20,31 +20,36 @@ import javax.imageio.ImageWriteParam;
 
 public class JP2KKakaduImageWriteParam extends ImageWriteParam {
 
-    public JP2KKakaduImageWriteParam(){
+    public JP2KKakaduImageWriteParam() {
         cLevels = 5;
+        qualityLayers = 1;
         canWriteCompressed = true;
         compressionMode = MODE_EXPLICIT;
     }
-    
+
     /**
      * Specifies whether write only the jpeg2000 code stream. The output will be
      * a raw codestream.
      */
     private boolean writeCodeStreamOnly = false;
 
-    
     /**
-     * Specifies the quality of the output image as a compression ratio.
-     * As an instance, a value of 0.2 means a 5:1 compression ratio.
+     * Specifies the quality of the output image as a compression ratio. As an
+     * instance, a value of 0.2 means a 5:1 compression ratio.
      * 
      */
     private double quality = 1.0;
-    
+
+    /**
+     * Specify the number of quality layers
+     */
+    private int qualityLayers;
+
     /**
      * Specify the number of decompositions levels.
      */
     private int cLevels;
-    
+
     /**
      * Sets <code>writeCodeStreamOnly</code>.
      * 
@@ -70,6 +75,7 @@ public class JP2KKakaduImageWriteParam extends ImageWriteParam {
 
     /**
      * Gets <code>quality</code>.
+     * 
      * @return the quality parameter.
      * 
      * @see #setQuality(double)
@@ -80,8 +86,11 @@ public class JP2KKakaduImageWriteParam extends ImageWriteParam {
 
     /**
      * Sets <code>quality</code>.
-     * @param quality a quality parameter representing a compression ratio.
-     * As an instance, a 0.2 quality represents a 5:1 compression ratio.
+     * 
+     * @param quality
+     *                a quality parameter representing a compression ratio. As
+     *                an instance, a 0.2 quality represents a 5:1 compression
+     *                ratio.
      * 
      * @see #getQuality()
      */
@@ -91,6 +100,7 @@ public class JP2KKakaduImageWriteParam extends ImageWriteParam {
 
     /**
      * Gets <code>cLevels</code>.
+     * 
      * @return the number of decomposition levels.
      * 
      * @see #setCLevels(int)
@@ -101,11 +111,36 @@ public class JP2KKakaduImageWriteParam extends ImageWriteParam {
 
     /**
      * Sets <code>cLevels</code>.
-     * @param cLevels the number of decomposition levels.
+     * 
+     * @param cLevels
+     *                the number of decomposition levels.
      * 
      * @see #getCLevels()()
      */
     public void setCLevels(final int cLevels) {
         this.cLevels = cLevels;
+    }
+
+    /**
+     * Gets <code>qualityLayers</code>.
+     * 
+     * @return the number of quality layers.
+     * 
+     * @see #setQualityLayers(int)
+     */
+    public int getQualityLayers() {
+        return qualityLayers;
+    }
+
+    /**
+     * Sets <code>qualityLayers</code>.
+     * 
+     * @param qualityLayers
+     *                the number of quality layers.
+     * 
+     * @see #getQualityLayers()
+     */
+    public void setQualityLayers(final int qualityLayers) {
+        this.qualityLayers = qualityLayers;
     }
 }

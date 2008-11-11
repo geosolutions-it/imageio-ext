@@ -108,6 +108,18 @@ public class JP2KKakaduWriteTest extends TestCase {
                     true);
             write(outputFileName + "_JAI" + suffix, image, false, lossyQuality,
                     true);
+
+            JP2KKakaduImageWriteParam param = new JP2KKakaduImageWriteParam();
+            param.setCLevels(3);
+
+            write(outputFileName + "_3levels_" + suffix, image, true,
+                    lossLessQuality, param);
+            write(outputFileName + "_3levels_" + suffix, image, false,
+                    lossLessQuality, param);
+            write(outputFileName + "_3levels_" + suffix, image, true,
+                    lossyQuality, param);
+            write(outputFileName + "_3levels_" + suffix, image, false,
+                    lossyQuality, param);
         }
     }
 
@@ -171,6 +183,8 @@ public class JP2KKakaduWriteTest extends TestCase {
                     addParam.getSourceYSubsampling(), addParam
                             .getSubsamplingXOffset(), addParam
                             .getSubsamplingYOffset());
+            param.setCLevels(addParam.getCLevels());
+            param.setQualityLayers(addParam.getQualityLayers());
         }
 
         if (!useJAI) {
@@ -203,7 +217,7 @@ public class JP2KKakaduWriteTest extends TestCase {
 
         suite.addTest(new JP2KKakaduWriteTest("testKakaduWriter"));
 
-        suite.addTest(new JP2KKakaduWriteTest("testKakaduWriterParam"));
+         suite.addTest(new JP2KKakaduWriteTest("testKakaduWriterParam"));
 
         suite.addTest(new JP2KKakaduWriteTest("test12BitGray"));
 
@@ -211,9 +225,9 @@ public class JP2KKakaduWriteTest extends TestCase {
 
         suite.addTest(new JP2KKakaduWriteTest("test24BitGray"));
 
-        // suite.addTest(new JP2KKakaduWriteTest("test12BitProvided"));
-
         suite.addTest(new JP2KKakaduWriteTest("testPalettedRGB"));
+
+        // suite.addTest(new JP2KKakaduWriteTest("test12BitProvided"));
 
         // suite.addTest(new JP2KKakaduWriteTest("testImageIOJP2KWriter"));
 

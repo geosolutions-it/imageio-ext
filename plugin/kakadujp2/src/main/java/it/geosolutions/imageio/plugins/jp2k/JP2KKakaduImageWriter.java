@@ -144,6 +144,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
         JP2KKakaduImageWriteParam jp2Kparam;
         final boolean writeCodeStreamOnly;
         final double quality;
+        int qualityLayers = 1;
         int cLevels;
         final boolean cycc;
 
@@ -154,6 +155,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             writeCodeStreamOnly = jp2Kparam.isWriteCodeStreamOnly();
             quality = jp2Kparam.getQuality();
             cLevels = jp2Kparam.getCLevels();
+            qualityLayers = jp2Kparam.getQualityLayers();
         } else {
             writeCodeStreamOnly = true;
             quality = 1;
@@ -238,7 +240,6 @@ public class JP2KKakaduImageWriter extends ImageWriter {
         final int rowSize = (destinationWidth * nComponents);
         final int imageSize = rowSize * destinationHeight;
 
-        int qualityLayers = 1;
         // if (imageSizeBits>MAX_QUALITY_LAYERS_THRESHOLD)
         // qualityLayers = 10;
         // else if (imageSizeBits>MED_QUALITY_LAYERS_THRESHOLD)
@@ -335,9 +336,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             // code-stream's SIZ marker segment, and returned via
             // kdu_codestream::get_bit_depth. The original image sample
             // bit-depth, B, may be larger or smaller than the value of P
-            // supplied via the precisions argument. The samples returned by
-            // pull_stripe all have a nominally signed representation unless
-            // otherwise indicated by a non-NULL isSigned argument
+            // supplied via the precisions argument. 
             final int precisions[] = new int[nComponents];
 
             initializeStripeCompressor(compressor, codeStream, quality,
@@ -754,6 +753,9 @@ public class JP2KKakaduImageWriter extends ImageWriter {
         int minStripeHeight = MIN_BUFFER_SIZE / (rowSize);
         if (minStripeHeight < 1)
             minStripeHeight = 1;
+        else if (minStripeHeight > destinationHeight){
+            minStripeHeight = destinationHeight;
+        }
 
         for (int component = 0; component < nComponents; component++) {
             stripeHeights[component] = maxStripeHeight;
