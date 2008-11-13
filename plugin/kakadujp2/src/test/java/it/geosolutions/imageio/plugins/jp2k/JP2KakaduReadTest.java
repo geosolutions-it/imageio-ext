@@ -74,7 +74,7 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
 
     public void testJaiReadFromFile() throws IOException {
 
-        final File file = TestData.file(this, "example.jp2");
+        final File file = TestData.file(this, "CB_TM432.jp2");
         ImageReadDescriptorMT.register(JAI.getDefaultInstance());
 
         final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
@@ -125,7 +125,7 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
     //
     // }
     public void testManualRead() throws IOException {
-        final File file = TestData.file(this, "example.jp2");
+        final File file = TestData.file(this, "CB_TM432.jp2");
         JP2KKakaduImageReader reader = new JP2KKakaduImageReader(
                 new JP2KKakaduImageReaderSpi());
 
@@ -166,7 +166,7 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
 
         suite.addTest(new JP2KakaduReadTest("testJaiReadFromFile"));
 
-//        suite.addTest(new JP2KakaduReadTest("testManualRead"));
+        suite.addTest(new JP2KakaduReadTest("testManualRead"));
 //
 //        suite.addTest(new JP2KakaduReadTest("testJaiReadFromUrl"));
 

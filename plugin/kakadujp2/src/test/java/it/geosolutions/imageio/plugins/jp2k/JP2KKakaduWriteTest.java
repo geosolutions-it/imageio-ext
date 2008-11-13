@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferInt;
 import java.awt.image.DataBufferUShort;
 import java.awt.image.Raster;
@@ -17,7 +18,6 @@ import java.awt.image.SampleModel;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
@@ -29,6 +29,8 @@ import javax.imageio.stream.ImageOutputStream;
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
+
+import com.sun.imageio.plugins.bmp.BMPImageReaderSpi;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -47,10 +49,12 @@ public class JP2KKakaduWriteTest extends TestCase {
 
     private final static double lossLessQuality = 1;
 
-    private final static double lossyQuality = 0.02;
+    private final static double lossyQuality = 0.2;
 
     private final static String testPath;
 
+    private final static String pathSeparator = System.getProperty("path.separator");
+    
     class TestConfiguration {
         String outputFileName;
 
@@ -74,9 +78,8 @@ public class JP2KKakaduWriteTest extends TestCase {
     }
 
     static {
-
-        String path = System.getProperty("data.path");
-        if (path != null) {
+        String path = System.getProperty("data.pat");
+        if (path != null && path.length()>1) {
             path = path.replace("\\", "/");
             final char lastChar = path.charAt(path.length() - 1);
             if (lastChar == '/')
@@ -84,19 +87,19 @@ public class JP2KKakaduWriteTest extends TestCase {
             else
                 testPath = path + "/";
         } else
-            testPath = "C:/";
+            testPath = System.getProperty("java.io.tmpdir");
     }
 
     private final static String[] files = new String[] { "IM-0001-30023.bmp",
             "IM-0001-0008.bmp", "IM-0001-0010.bmp", "IM-0001-0014.bmp",
             "OT-MONO2-8-hip.bmp", "MR-MONO2-8-16x-heart (12).bmp",
-            "8-bit Uncompressed Gray.bmp", };
+            "8-bit Uncompressed Gray.bmp" };
 
     private final static String inputFileName = testPath;
 
     // private final static String inputFileName12bit = testPath + "test1.jp2";
 
-    private final static String outputFileName = testPath + "/out/";
+    private final static String outputFileName = testPath + pathSeparator + "out" + pathSeparator;
 
     public void testKakaduWriter() throws KduException, FileNotFoundException,
             IOException {
@@ -239,7 +242,17 @@ public class JP2KKakaduWriteTest extends TestCase {
             final ImageWriter writer = new JP2KKakaduImageWriterSpi()
                     .createWriterInstance();
 
+            // final ImageWriter writer = new
+            // J2KImageWriterSpi().createWriterInstance();
             writer.setOutput(outputStream);
+            // J2KImageWriteParam ioparam = (J2KImageWriteParam)
+            // writer.getDefaultWriteParam();
+            // ioparam.setWriteCodeStreamOnly(true);
+            // ioparam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+            // ioparam.setCompressionType("JPEG2000");
+            // ioparam.setCompressionQuality((float)quality);
+            // ioparam.setEncodingRate((quality)*24);
+            // writer.write(null, new IIOImage(bi, null, null), ioparam);
             writer.write(null, new IIOImage(bi, null, null), param);
             writer.dispose();
         } else {
@@ -267,6 +280,8 @@ public class JP2KKakaduWriteTest extends TestCase {
 
         suite.addTest(new JP2KKakaduWriteTest("testKakaduWriterParam"));
 
+        suite.addTest(new JP2KKakaduWriteTest("testRGB"));
+
         suite.addTest(new JP2KKakaduWriteTest("test12BitGray"));
 
         suite.addTest(new JP2KKakaduWriteTest("test16BitGray"));
@@ -276,8 +291,6 @@ public class JP2KKakaduWriteTest extends TestCase {
         suite.addTest(new JP2KKakaduWriteTest("testPalettedRGB"));
 
         // suite.addTest(new JP2KKakaduWriteTest("test12BitProvided"));
-
-        // suite.addTest(new JP2KKakaduWriteTest("testImageIOJP2KWriter"));
 
         return suite;
     }
@@ -314,7 +327,7 @@ public class JP2KKakaduWriteTest extends TestCase {
         DataBuffer imageBuffer = new DataBufferUShort(bufferValues, bufferSize);
         BufferedImage bi = new BufferedImage(cm, Raster.createWritableRaster(
                 sm, imageBuffer, null), false, null);
-     
+
         write(outputFileName + "_gray12", bi, true, lossLessQuality);
         write(outputFileName + "_gray12", bi, false, lossLessQuality);
         write(outputFileName + "_gray12", bi, true, lossyQuality);
@@ -338,11 +351,11 @@ public class JP2KKakaduWriteTest extends TestCase {
             for (int j = 0; j < w; j++)
                 bufferValues[j + (i * h)] = (short) ((j + i) * (65536 / 1024));
         }
-        
+
         DataBuffer imageBuffer = new DataBufferUShort(bufferValues, bufferSize);
         BufferedImage bi = new BufferedImage(cm, Raster.createWritableRaster(
                 sm, imageBuffer, null), false, null);
-        
+
         write(outputFileName + "_gray16", bi, true, lossLessQuality);
         write(outputFileName + "_gray16", bi, false, lossLessQuality);
         write(outputFileName + "_gray16", bi, true, lossyQuality);
@@ -380,19 +393,27 @@ public class JP2KKakaduWriteTest extends TestCase {
         write(outputFileName + "_JAI_gray24", bi, false, lossyQuality, true);
     }
 
+    public void testRGB() throws IOException {
+        final File file = TestData.file(this, "RGB24.bmp");
+        final ImageReader reader = new BMPImageReaderSpi().createReaderInstance();
+        reader.setInput(ImageIO.createImageInputStream(file));
+        BufferedImage bi = reader.read(0);
+        write(outputFileName + "_RGB", bi, true, lossLessQuality);
+        write(outputFileName + "_RGB", bi, false, lossLessQuality);
+        write(outputFileName + "_RGB", bi, true, lossyQuality);
+        write(outputFileName + "_RGB", bi, false, lossyQuality);
+        write(outputFileName + "_JAI_RGB", bi, true, lossLessQuality, true);
+        write(outputFileName + "_JAI_RGB", bi, false, lossLessQuality, true);
+        write(outputFileName + "_JAI_RGB", bi, true, lossyQuality, true);
+        write(outputFileName + "_JAI_RGB", bi, false, lossyQuality, true);
+    }
+
     public void testPalettedRGB() throws IOException {
         BufferedImage bi = ImageIO.read(TestData.file(this, "paletted.tif"));
         write(outputFileName + "_RGB8", bi, true, lossLessQuality);
         write(outputFileName + "_RGB8", bi, false, lossLessQuality);
         write(outputFileName + "_JAI_RGB8", bi, true, lossLessQuality, true);
         write(outputFileName + "_JAI_RGB8", bi, false, lossLessQuality, true);
-    }
-
-    private static synchronized void write(String file, final RenderedImage bi,
-            final boolean codeStreamOnly, final double quality,
-            JP2KKakaduImageWriteParam param) throws IOException {
-        write(file, bi, codeStreamOnly, quality, false, param);
-
     }
 
     private static synchronized void write(String file, final RenderedImage bi,
