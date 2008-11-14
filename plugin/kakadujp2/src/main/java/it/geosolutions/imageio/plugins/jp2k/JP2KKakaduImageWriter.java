@@ -64,10 +64,60 @@ public class JP2KKakaduImageWriter extends ImageWriter {
     /** The LOGGER for this class. */
     private static final Logger LOGGER = Logger
             .getLogger("it.geosolutions.imageio.plugins.jp2k");
+    
+    public final static String MAX_BUFFER_SIZE_KEY = "it.geosolutions.maxBufferSize";
 
-    private final static int MAX_BUFFER_SIZE = 32 * 1024 * 1024;
+    private final static int DEFAULT_MAX_BUFFER_SIZE = 32 * 1024 * 1024;
+
+    /**
+     * The max size in bytes of the buffer to be used by stripe compressor.
+     */
+    private final static int MAX_BUFFER_SIZE;
 
     private final static int MIN_BUFFER_SIZE = 1024 * 1024;
+
+    static {
+        int size = DEFAULT_MAX_BUFFER_SIZE;
+        Integer maxSize = Integer.getInteger(MAX_BUFFER_SIZE_KEY);
+        if (maxSize != null)
+            size = maxSize.intValue();
+        else {
+            // //
+            //
+            // Checking for a properly formatted string value.
+            // Valid values should end with one of M,m,K,k
+            //
+            // //
+            final String maxSizes = System
+                    .getProperty(MAX_BUFFER_SIZE_KEY);
+            if (maxSizes != null) {
+                final int length = maxSizes.length();
+                final String value = maxSizes.substring(0, length - 1);
+                final String suffix = maxSizes.substring(length - 1, length);
+
+                // //
+                //
+                // Checking for valid multiplier suffix
+                //
+                // //
+                if (suffix.equalsIgnoreCase("M")
+                        || suffix.equalsIgnoreCase("K")) {
+                    int val;
+                    try {
+                        val = Integer.parseInt(value);
+                        if (suffix.equalsIgnoreCase("M"))
+                            val *= (1024 * 1024); // Size in MegaBytes
+                        else
+                            val *= 1024; // Size in KiloBytes
+                        size = val;
+                    } catch (NumberFormatException nfe) {
+                        // not a valid value
+                    }
+                }
+            }
+        }
+        MAX_BUFFER_SIZE = size;
+    }
 
     public ImageWriteParam getDefaultWriteParam() {
         return new JP2KKakaduImageWriteParam();
@@ -80,6 +130,9 @@ public class JP2KKakaduImageWriter extends ImageWriter {
      */
     private static final double SINGLE_PUSH_THRESHOLD_RATIO = 0.90;
 
+    /**
+     * The file to be written
+     */
     private File outputFile;
 
     public JP2KKakaduImageWriter(ImageWriterSpi originatingProvider) {
@@ -174,7 +227,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
         final int sourceMinY = inputRenderedImage.getMinY();
         final SampleModel sm = inputRenderedImage.getSampleModel();
         final int dataType = sm.getDataType();
-        final boolean isGlobalSigned = (dataType != DataBuffer.TYPE_USHORT && dataType != DataBuffer.TYPE_BYTE);
+        final boolean isDataSigned = (dataType != DataBuffer.TYPE_USHORT && dataType != DataBuffer.TYPE_BYTE);
 
         final ColorModel cm = inputRenderedImage.getColorModel();
         final boolean hasPalette = cm instanceof IndexColorModel ? true : false;
@@ -188,6 +241,11 @@ public class JP2KKakaduImageWriter extends ImageWriter {
         byte[] greens = null;
         byte[] blues = null;
 
+        // //
+        //
+        // Handling paletted Image
+        //
+        // //
         if (hasPalette) {
             cycc = false;
             cLevels = 1;
@@ -290,7 +348,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             final Kdu_codestream codeStream = new Kdu_codestream();
             Siz_params params = new Siz_params();
             initializeParams(params, destinationWidth, destinationHeight, bits,
-                    nComponents, isGlobalSigned);
+                    nComponents, isDataSigned);
 
             if (writeCodeStreamOnly)
                 codeStream.Create(params, outputTarget, null);
@@ -304,7 +362,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
 
             // //
             //
-            // Setting parameters for stripe compression
+            // Preparing parameters for stripe compression
             //
             // //
             final Kdu_stripe_compressor compressor = new Kdu_stripe_compressor();
@@ -336,7 +394,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             // code-stream's SIZ marker segment, and returned via
             // kdu_codestream::get_bit_depth. The original image sample
             // bit-depth, B, may be larger or smaller than the value of P
-            // supplied via the precisions argument. 
+            // supplied via the precisions argument.
             final int precisions[] = new int[nComponents];
 
             initializeStripeCompressor(compressor, codeStream, quality,
@@ -353,10 +411,6 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             // Pushing Stripes
             //
             // ////////////////////////////////////////////////////////////////
-
-            // //
-            // TODO: Writes may leverage on tiling
-            // //
 
             // //
             //
@@ -456,7 +510,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                 // //
                 final boolean[] isSigned = new boolean[nComponents];
                 for (int i = 0; i < isSigned.length; i++)
-                    isSigned[i] = isGlobalSigned;
+                    isSigned[i] = isDataSigned;
                 short[] bufferValues = new short[stripeSize];
                 int y = 0;
 
@@ -593,12 +647,12 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                     if (target.Exists())
                         target.Close();
                 } catch (Throwable e) {
-                    // yeah I am eating this
+                    // Does Nothing
                 }
                 try {
                     target.Native_destroy();
                 } catch (Throwable e) {
-                    // yeah I am eating this
+                    // Does Nothing
                 }
 
                 if (familyTarget != null) {
@@ -606,12 +660,12 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                         if (familyTarget.Exists())
                             familyTarget.Close();
                     } catch (Throwable e) {
-                        // yeah I am eating this
+                        // Does Nothing
                     }
                     try {
                         familyTarget.Native_destroy();
                     } catch (Throwable e) {
-                        // yeah I am eating this
+                        // Does Nothing
                     }
                 }
 
@@ -619,18 +673,20 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                 try {
                     outputTarget.Close();
                 } catch (Throwable e) {
-                    // yeah I am eating this
+                    // Does Nothing
                 }
                 try {
                     outputTarget.Native_destroy();
                 } catch (Throwable e) {
-                    // yeah I am eating this
+                    // Does Nothing
                 }
             }
         }
     }
 
     /**
+     * Initialize the codestream params complying the provided arguments.
+     * 
      * @param codeStream
      *                the output codestream
      * @param cycc
@@ -682,7 +738,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
     }
 
     /**
-     * Initialize the provided stripe compressor leveraging on a set of
+     * Initialize the provided stripe compressor leveraging on the set of input
      * parameters.
      * 
      * @param compressor
@@ -747,16 +803,20 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                     / (double) destinationHeight;
             if (ratio > SINGLE_PUSH_THRESHOLD_RATIO)
                 maxStripeHeight = destinationHeight;
-
         }
 
         int minStripeHeight = MIN_BUFFER_SIZE / (rowSize);
         if (minStripeHeight < 1)
             minStripeHeight = 1;
-        else if (minStripeHeight > destinationHeight){
+        else if (minStripeHeight > destinationHeight) {
             minStripeHeight = destinationHeight;
         }
 
+        // //
+        //
+        // Filling arrays which will be used by push method
+        //
+        // //
         for (int component = 0; component < nComponents; component++) {
             stripeHeights[component] = maxStripeHeight;
             sampleGaps[component] = nComponents;
@@ -884,6 +944,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             final int blues[] = new int[lutSize];
             final int greens[] = new int[lutSize];
 
+            // Getting the palette entries
             for (int i = 0; i < lutSize; i++) {
                 reds[i] = icm.getRed(i);
                 greens[i] = icm.getGreen(i);
@@ -897,6 +958,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             palette.Set_lut(1, greens, bitDepth, false);
             palette.Set_lut(2, blues, bitDepth, false);
 
+            // Setting channels
             Jp2_channels channels = target.Access_channels();
             channels.Init(3);
             channels.Set_colour_mapping(0, 0, 0);
@@ -904,14 +966,13 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             channels.Set_colour_mapping(2, 0, 2);
         }
 
-        // Write the header
+        // Finish the initialization by writing the header
         target.Write_header();
     }
 
     /**
      * Read a region of an input raster and put the data values in the provided
      * Buffer.
-     * 
      * 
      * @param region
      *                the requested region
@@ -922,7 +983,9 @@ public class JP2KKakaduImageWriter extends ImageWriter {
      * @param lastY
      *                the last pixel to be analyzed along the image height.
      * @param xSubsamplingFactor
+     *                the subsampling factor along the image width.
      * @param ySubsamplingFactor
+     *                the subsampling factor along the image height.
      * @param rasterData
      *                the original raster data.
      * @param dataBuffer
@@ -1003,21 +1066,38 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             throw new IllegalArgumentException("Unsupported buffer type");
     }
 
-    private void initializeParams(Siz_params params,
-            final int destinationWidth, final int destinationHeight,
-            final int precision, final int components,
-            final boolean isGlobalSigned) throws KduException {
-        params.Set("Ssize", 0, 0, destinationHeight);
-        params.Set("Ssize", 0, 1, destinationWidth);
+    /**
+     * Initialize the {@link Siz_params} object with the set of provided
+     * information, such as image size, number of components, bit depth, data
+     * sign.
+     * 
+     * @param params
+     *                the {@link Siz_params} to be set.
+     * @param width
+     *                the image width
+     * @param height
+     *                the image height
+     * @param precision
+     *                the number of bits of each component.
+     * @param components
+     *                the number of components
+     * @param isSigned
+     *                <code>true</code> if data is signed.
+     * @throws KduException
+     */
+    private void initializeParams(Siz_params params, final int width,
+            final int height, final int precision, final int components,
+            final boolean isSigned) throws KduException {
+        params.Set("Ssize", 0, 0, height);
+        params.Set("Ssize", 0, 1, width);
         params.Set("Sprofile", 0, 0, 2);
         params.Set("Sorigin", 0, 0, 0);
         params.Set("Sorigin", 0, 1, 0);
         params.Set("Scomponents", 0, 0, components);
         params.Set("Sprecision", 0, 0, precision);
-        params.Set("Sdims", 0, 0, destinationHeight);
-        params.Set("Sdims", 0, 1, destinationWidth);
-        params.Set("Ssigned", 0, 0, isGlobalSigned);
+        params.Set("Sdims", 0, 0, height);
+        params.Set("Sdims", 0, 1, width);
+        params.Set("Ssigned", 0, 0, isSigned);
         params.Finalize();
     }
-
 }
