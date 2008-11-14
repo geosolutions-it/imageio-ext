@@ -64,18 +64,34 @@ public class JP2KKakaduImageWriter extends ImageWriter {
     /** The LOGGER for this class. */
     private static final Logger LOGGER = Logger
             .getLogger("it.geosolutions.imageio.plugins.jp2k");
-    
+
     public final static String MAX_BUFFER_SIZE_KEY = "it.geosolutions.maxBufferSize";
 
     private final static int DEFAULT_MAX_BUFFER_SIZE = 32 * 1024 * 1024;
 
+    private final static boolean refineBytes = true;
+    
     /**
      * The max size in bytes of the buffer to be used by stripe compressor.
      */
     private final static int MAX_BUFFER_SIZE;
 
     private final static int MIN_BUFFER_SIZE = 1024 * 1024;
-
+    
+    private final static int SOC_SIZE = 2;
+    
+    private final static int COD_SIZE = 14;
+    
+    private final static int SOT_SIZE = 12;
+    
+    private final static int EOC_SIZE = 2;
+    
+    private final static int SOD_SIZE = 2;
+    
+    private final static int COM_SIZE = 108;
+    
+    private final static int QCD_SIZE_EST = 40;
+    
     static {
         int size = DEFAULT_MAX_BUFFER_SIZE;
         Integer maxSize = Integer.getInteger(MAX_BUFFER_SIZE_KEY);
@@ -88,8 +104,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             // Valid values should end with one of M,m,K,k
             //
             // //
-            final String maxSizes = System
-                    .getProperty(MAX_BUFFER_SIZE_KEY);
+            final String maxSizes = System.getProperty(MAX_BUFFER_SIZE_KEY);
             if (maxSizes != null) {
                 final int length = maxSizes.length();
                 final String value = maxSizes.substring(0, length - 1);
@@ -193,6 +208,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
     public void write(IIOMetadata streamMetadata, IIOImage image,
             ImageWriteParam param) throws IOException {
 
+        int bytesOverHead = 0; //The number of bytes stolen by header, markers, boxes
         final String fileName = outputFile.getAbsolutePath();
         JP2KKakaduImageWriteParam jp2Kparam;
         final boolean writeCodeStreamOnly;
@@ -249,25 +265,29 @@ public class JP2KKakaduImageWriter extends ImageWriter {
         if (hasPalette) {
             cycc = false;
             cLevels = 1;
-
+            IndexColorModel icm = (IndexColorModel) cm;
+            final int lutSize = icm.getMapSize();
+            final int numColorComponents = cm.getNumColorComponents();
             // Updating the number of components to write as RGB (3 bands)
             if (writeCodeStreamOnly) {
-                nComponents = cm.getNumColorComponents();
+                nComponents = numColorComponents;
 
                 // //
                 //
                 // Caching look up table for future accesses.
                 //
                 // //
-
-                IndexColorModel icm = (IndexColorModel) cm;
-                final int lutSize = icm.getMapSize();
                 reds = new byte[lutSize];
                 blues = new byte[lutSize];
                 greens = new byte[lutSize];
                 icm.getReds(reds);
                 icm.getGreens(greens);
                 icm.getBlues(blues);
+            } else {
+                // adding pclr and cmap boxes overhead bytes
+                bytesOverHead += (4 + 2 + numColorComponents + 1); // NE + NC + Bi
+                bytesOverHead += lutSize * numColorComponents + 4; // pclr LUT
+                bytesOverHead += 20; // cmap
             }
         } else {
             cycc = true;
@@ -307,8 +327,6 @@ public class JP2KKakaduImageWriter extends ImageWriter {
         // else
         // qualityLayers = 1;
 
-        final long qualityLayersSize = (long) (imageSize * quality * bits * 0.125);
-
         // ////////////////////////////////////////////////////////////////////
         //
         // Kakadu objects initialization
@@ -338,7 +356,18 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                 familyTarget.Open(fileName);
                 target = new Jp2_target();
                 target.Open(familyTarget);
+
+                // Adding signature, fileType, image header, Jp2Header box bytes
+                // + jp2c marker.
+                bytesOverHead += 84;
             }
+            
+            bytesOverHead += addMarkerBytes(nComponents);
+            if (bytesOverHead >= imageSize)
+                bytesOverHead = 0;
+            
+            final long qualityLayersSize = (long) ((imageSize - (refineBytes?bytesOverHead:0)) * quality * bits * 0.125);
+
 
             // //
             //
@@ -684,6 +713,13 @@ public class JP2KKakaduImageWriter extends ImageWriter {
         }
     }
 
+    private int addMarkerBytes(final int components) {
+        int bytesOverhead = 0;
+        int siz_size = (38 + components*3) + 2;
+        bytesOverhead += SOC_SIZE + siz_size + COD_SIZE + QCD_SIZE_EST + COM_SIZE + SOT_SIZE + SOD_SIZE;
+        return bytesOverhead;
+    }
+
     /**
      * Initialize the codestream params complying the provided arguments.
      * 
@@ -733,6 +769,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                 return false;
             initializeHeader(target, params, cm);
             target.Open_codestream();
+
         }
         return true;
     }

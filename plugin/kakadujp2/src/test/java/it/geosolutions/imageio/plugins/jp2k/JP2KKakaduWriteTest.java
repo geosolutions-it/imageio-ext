@@ -48,7 +48,7 @@ public class JP2KKakaduWriteTest extends TestCase {
 
     private final static double lossLessQuality = 1;
 
-    private final static double lossyQuality = 0.01;
+    private final static double lossyQuality = 0.1;
 
     private final static String testPath;
 
