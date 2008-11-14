@@ -211,8 +211,8 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             qualityLayers = jp2Kparam.getQualityLayers();
         } else {
             writeCodeStreamOnly = true;
-            quality = 1;
-            cLevels = 7;
+            quality = JP2KKakaduImageWriteParam.DEFAULT_QUALITY;
+            cLevels = JP2KKakaduImageWriteParam.DEFAULT_C_LEVELS;
         }
 
         // ////////////////////////////////////////////////////////////////////

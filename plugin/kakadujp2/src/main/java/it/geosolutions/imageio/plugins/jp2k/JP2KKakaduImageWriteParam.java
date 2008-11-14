@@ -21,7 +21,8 @@ import javax.imageio.ImageWriteParam;
 public class JP2KKakaduImageWriteParam extends ImageWriteParam {
 
     public JP2KKakaduImageWriteParam() {
-        cLevels = 7;
+        cLevels = DEFAULT_C_LEVELS;
+        quality = DEFAULT_QUALITY;
         qualityLayers = 1;
         canWriteCompressed = true;
         compressionMode = MODE_EXPLICIT;
@@ -38,7 +39,12 @@ public class JP2KKakaduImageWriteParam extends ImageWriteParam {
      * instance, a value of 0.2 means a 5:1 compression ratio.
      * 
      */
-    private double quality = 1.0;
+    private double quality;
+    
+    /**
+     * The default number of decomposition levels.
+     */
+    final static double DEFAULT_QUALITY = 1.0;
 
     /**
      * Specify the number of quality layers
@@ -49,6 +55,11 @@ public class JP2KKakaduImageWriteParam extends ImageWriteParam {
      * Specify the number of decompositions levels.
      */
     private int cLevels;
+    
+    /**
+     * The default number of decomposition levels.
+     */
+    final static int DEFAULT_C_LEVELS = 7;
 
     /**
      * Sets <code>writeCodeStreamOnly</code>.
