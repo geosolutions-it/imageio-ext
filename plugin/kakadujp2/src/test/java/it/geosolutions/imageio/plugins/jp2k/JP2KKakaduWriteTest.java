@@ -134,23 +134,24 @@ public class JP2KKakaduWriteTest extends TestCase {
             configs.add(new TestConfiguration(
                     outputFileName + "_JAI_" + suffix, false, lossLessQuality,
                     true, null));
-            configs.add(new TestConfiguration(
-                    outputFileName + "_JAI_" + suffix, true, lossyQuality,
-                    true, null));
-            configs.add(new TestConfiguration(
-                    outputFileName + "_JAI_" + suffix, false, lossyQuality,
-                    true, null));
+//            configs.add(new TestConfiguration(
+//                    outputFileName + "_JAI_" + suffix, true, lossyQuality,
+//                    true, null));
+//            configs.add(new TestConfiguration(
+//                    outputFileName + "_JAI_" + suffix, false, lossyQuality,
+//                    true, null));
 
             JP2KKakaduImageWriteParam param = new JP2KKakaduImageWriteParam();
-            param.setCLevels(3);
+            final int levels = 2;
+            param.setCLevels(levels);
 
-            configs.add(new TestConfiguration(outputFileName + "_3levels_"
+            configs.add(new TestConfiguration(outputFileName + "_" + levels + "levels_"
                     + suffix, true, lossLessQuality, false, param));
-            configs.add(new TestConfiguration(outputFileName + "_3levels_"
+            configs.add(new TestConfiguration(outputFileName + "_" + levels + "levels_"
                     + suffix, false, lossLessQuality, false, param));
-            configs.add(new TestConfiguration(outputFileName + "_3levels_"
+            configs.add(new TestConfiguration(outputFileName + "_" + levels + "levels_"
                     + suffix, true, lossyQuality, false, param));
-            configs.add(new TestConfiguration(outputFileName + "_3levels_"
+            configs.add(new TestConfiguration(outputFileName + "_" + levels + "levels_"
                     + suffix, false, lossyQuality, false, param));
 
             for (TestConfiguration config : configs) {
@@ -201,10 +202,10 @@ public class JP2KKakaduWriteTest extends TestCase {
                 true, lossLessQuality, true, param));
         configs.add(new TestConfiguration(outputFileName + "_pp_JAI_" + suffix,
                 false, lossLessQuality, true, param));
-        configs.add(new TestConfiguration(outputFileName + "_pp_JAI_" + suffix,
-                true, lossyQuality, true, param));
-        configs.add(new TestConfiguration(outputFileName + "_pp_JAI_" + suffix,
-                false, lossyQuality, true, param));
+//        configs.add(new TestConfiguration(outputFileName + "_pp_JAI_" + suffix,
+//                true, lossyQuality, true, param));
+//        configs.add(new TestConfiguration(outputFileName + "_pp_JAI_" + suffix,
+//                false, lossyQuality, true, param));
 
         for (TestConfiguration config : configs) {
 
@@ -224,7 +225,7 @@ public class JP2KKakaduWriteTest extends TestCase {
     private static synchronized void write(String file, RenderedImage bi,
             boolean codeStreamOnly, double quality, boolean useJAI,
             JP2KKakaduImageWriteParam addParam) throws IOException {
-        file += "_Q" + quality + "_" + (codeStreamOnly ? ".j2c" : ".jp2");
+        file += "_Q" + quality + (codeStreamOnly ? ".j2c" : ".jp2");
         final ImageOutputStream outputStream = ImageIO
                 .createImageOutputStream(new File(file));
         JP2KKakaduImageWriteParam param = new JP2KKakaduImageWriteParam();
@@ -348,8 +349,8 @@ public class JP2KKakaduWriteTest extends TestCase {
         write(outputFileName + "_gray12", bi, false, lossyQuality);
         write(outputFileName + "_JAI_gray12", bi, true, lossLessQuality, true);
         write(outputFileName + "_JAI_gray12", bi, false, lossLessQuality, true);
-        write(outputFileName + "_JAI_gray12", bi, true, lossyQuality, true);
-        write(outputFileName + "_JAI_gray12", bi, false, lossyQuality, true);
+//        write(outputFileName + "_JAI_gray12", bi, true, lossyQuality, true);
+//        write(outputFileName + "_JAI_gray12", bi, false, lossyQuality, true);
     }
 
     public static void test16BitGray() throws IOException {
@@ -377,8 +378,8 @@ public class JP2KKakaduWriteTest extends TestCase {
         write(outputFileName + "_gray16", bi, false, lossyQuality);
         write(outputFileName + "_JAI_gray16", bi, true, lossLessQuality, true);
         write(outputFileName + "_JAI_gray16", bi, false, lossLessQuality, true);
-        write(outputFileName + "_JAI_gray16", bi, true, lossyQuality, true);
-        write(outputFileName + "_JAI_gray16", bi, false, lossyQuality, true);
+//        write(outputFileName + "_JAI_gray16", bi, true, lossyQuality, true);
+//        write(outputFileName + "_JAI_gray16", bi, false, lossyQuality, true);
     }
 
     public static void test24BitGray() throws IOException {
@@ -405,8 +406,8 @@ public class JP2KKakaduWriteTest extends TestCase {
         write(outputFileName + "_gray24", bi, false, lossyQuality);
         write(outputFileName + "_JAI_gray24", bi, true, lossLessQuality, true);
         write(outputFileName + "_JAI_gray24", bi, false, lossLessQuality, true);
-        write(outputFileName + "_JAI_gray24", bi, true, lossyQuality, true);
-        write(outputFileName + "_JAI_gray24", bi, false, lossyQuality, true);
+//        write(outputFileName + "_JAI_gray24", bi, true, lossyQuality, true);
+//        write(outputFileName + "_JAI_gray24", bi, false, lossyQuality, true);
     }
 
     public void testRGB() throws IOException {
@@ -421,8 +422,8 @@ public class JP2KKakaduWriteTest extends TestCase {
         write(outputFileName + "_RGB", bi, false, lossyQuality);
         write(outputFileName + "_JAI_RGB", bi, true, lossLessQuality, true);
         write(outputFileName + "_JAI_RGB", bi, false, lossLessQuality, true);
-        write(outputFileName + "_JAI_RGB", bi, true, lossyQuality, true);
-        write(outputFileName + "_JAI_RGB", bi, false, lossyQuality, true);
+//        write(outputFileName + "_JAI_RGB", bi, true, lossyQuality, true);
+//        write(outputFileName + "_JAI_RGB", bi, false, lossyQuality, true);
     }
 
     public void testPalettedRGB() throws IOException {

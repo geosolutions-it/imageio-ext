@@ -212,7 +212,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
         } else {
             writeCodeStreamOnly = true;
             quality = 1;
-            cLevels = 5;
+            cLevels = 7;
         }
 
         // ////////////////////////////////////////////////////////////////////

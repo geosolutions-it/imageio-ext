@@ -21,7 +21,7 @@ import javax.imageio.ImageWriteParam;
 public class JP2KKakaduImageWriteParam extends ImageWriteParam {
 
     public JP2KKakaduImageWriteParam() {
-        cLevels = 5;
+        cLevels = 7;
         qualityLayers = 1;
         canWriteCompressed = true;
         compressionMode = MODE_EXPLICIT;
