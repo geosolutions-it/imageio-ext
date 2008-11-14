@@ -46,6 +46,8 @@ public class JP2KKakaduWriteTest extends TestCase {
         super(name);
     }
 
+    private static int writeOperations = 0;
+    
     private final static double lossLessQuality = 1;
 
     private final static double lossyQuality = 0.1;
@@ -134,25 +136,27 @@ public class JP2KKakaduWriteTest extends TestCase {
             configs.add(new TestConfiguration(
                     outputFileName + "_JAI_" + suffix, false, lossLessQuality,
                     true, null));
-//            configs.add(new TestConfiguration(
-//                    outputFileName + "_JAI_" + suffix, true, lossyQuality,
-//                    true, null));
-//            configs.add(new TestConfiguration(
-//                    outputFileName + "_JAI_" + suffix, false, lossyQuality,
-//                    true, null));
+            // configs.add(new TestConfiguration(
+            // outputFileName + "_JAI_" + suffix, true, lossyQuality,
+            // true, null));
+            // configs.add(new TestConfiguration(
+            // outputFileName + "_JAI_" + suffix, false, lossyQuality,
+            // true, null));
 
             JP2KKakaduImageWriteParam param = new JP2KKakaduImageWriteParam();
             final int levels = 2;
             param.setCLevels(levels);
 
-            configs.add(new TestConfiguration(outputFileName + "_" + levels + "levels_"
-                    + suffix, true, lossLessQuality, false, param));
-            configs.add(new TestConfiguration(outputFileName + "_" + levels + "levels_"
-                    + suffix, false, lossLessQuality, false, param));
-            configs.add(new TestConfiguration(outputFileName + "_" + levels + "levels_"
-                    + suffix, true, lossyQuality, false, param));
-            configs.add(new TestConfiguration(outputFileName + "_" + levels + "levels_"
-                    + suffix, false, lossyQuality, false, param));
+            configs.add(new TestConfiguration(outputFileName + "_" + levels
+                    + "levels_" + suffix, true, lossLessQuality, false, param));
+            configs
+                    .add(new TestConfiguration(outputFileName + "_" + levels
+                            + "levels_" + suffix, false, lossLessQuality,
+                            false, param));
+            configs.add(new TestConfiguration(outputFileName + "_" + levels
+                    + "levels_" + suffix, true, lossyQuality, false, param));
+            configs.add(new TestConfiguration(outputFileName + "_" + levels
+                    + "levels_" + suffix, false, lossyQuality, false, param));
 
             for (TestConfiguration config : configs) {
 
@@ -202,10 +206,12 @@ public class JP2KKakaduWriteTest extends TestCase {
                 true, lossLessQuality, true, param));
         configs.add(new TestConfiguration(outputFileName + "_pp_JAI_" + suffix,
                 false, lossLessQuality, true, param));
-//        configs.add(new TestConfiguration(outputFileName + "_pp_JAI_" + suffix,
-//                true, lossyQuality, true, param));
-//        configs.add(new TestConfiguration(outputFileName + "_pp_JAI_" + suffix,
-//                false, lossyQuality, true, param));
+        // configs.add(new TestConfiguration(outputFileName + "_pp_JAI_" +
+        // suffix,
+        // true, lossyQuality, true, param));
+        // configs.add(new TestConfiguration(outputFileName + "_pp_JAI_" +
+        // suffix,
+        // false, lossyQuality, true, param));
 
         for (TestConfiguration config : configs) {
 
@@ -225,6 +231,8 @@ public class JP2KKakaduWriteTest extends TestCase {
     private static synchronized void write(String file, RenderedImage bi,
             boolean codeStreamOnly, double quality, boolean useJAI,
             JP2KKakaduImageWriteParam addParam) throws IOException {
+        
+        writeOperations++;
         file += "_Q" + quality + (codeStreamOnly ? ".j2c" : ".jp2");
         final ImageOutputStream outputStream = ImageIO
                 .createImageOutputStream(new File(file));
@@ -275,6 +283,7 @@ public class JP2KKakaduWriteTest extends TestCase {
 
     public static void main(java.lang.String[] args) {
         junit.textui.TestRunner.run(suite());
+        LOGGER.info(writeOperations + " write operations performed");
     }
 
     public static Test suite() {
@@ -293,12 +302,11 @@ public class JP2KKakaduWriteTest extends TestCase {
         suite.addTest(new JP2KKakaduWriteTest("test24BitGray"));
 
         suite.addTest(new JP2KKakaduWriteTest("testPalettedRGB"));
-        
-        suite.addTest(new JP2KKakaduWriteTest("testReducedMemory"));
 
+        suite.addTest(new JP2KKakaduWriteTest("testReducedMemory"));
+        
         return suite;
     }
-
 
     public static void testReducedMemory() throws IOException {
         System.setProperty(JP2KKakaduImageWriter.MAX_BUFFER_SIZE_KEY, "16K");
@@ -312,7 +320,8 @@ public class JP2KKakaduWriteTest extends TestCase {
         final int[] bufferValues = new int[bufferSize];
         for (int i = 0; i < h; i++) {
             for (int j = 0; j < w; j++)
-//                bufferValues[j + (i * h)] = (int) (j + i) * (16777216 / 4096);
+                // bufferValues[j + (i * h)] = (int) (j + i) * (16777216 /
+                // 4096);
                 bufferValues[j + (i * h)] = (int) (Math.random() * 16777215d);
         }
         DataBuffer imageBuffer = new DataBufferInt(bufferValues, bufferSize);
@@ -323,8 +332,9 @@ public class JP2KKakaduWriteTest extends TestCase {
         write(outputFileName + "_RM", bi, false, lossLessQuality);
         write(outputFileName + "_RM", bi, true, lossyQuality);
         write(outputFileName + "_RM", bi, false, lossyQuality);
+        LOGGER.info(writeOperations + " write operations performed");
     }
-    
+
     public static void test12BitGray() throws IOException {
         final ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
         ColorModel cm = new ComponentColorModel(cs, new int[] { 12 }, false,
@@ -336,8 +346,9 @@ public class JP2KKakaduWriteTest extends TestCase {
         final short[] bufferValues = new short[bufferSize];
         for (int i = 0; i < h; i++) {
             for (int j = 0; j < w; j++)
-//                bufferValues[j + (i * h)] = (short) ((j + i) * (4096 / 1024));
-            bufferValues[j + (i * h)] = (short) (Math.random() * 4095d);
+                // bufferValues[j + (i * h)] = (short) ((j + i) * (4096 /
+                // 1024));
+                bufferValues[j + (i * h)] = (short) (Math.random() * 4095d);
         }
         DataBuffer imageBuffer = new DataBufferUShort(bufferValues, bufferSize);
         BufferedImage bi = new BufferedImage(cm, Raster.createWritableRaster(
@@ -349,8 +360,8 @@ public class JP2KKakaduWriteTest extends TestCase {
         write(outputFileName + "_gray12", bi, false, lossyQuality);
         write(outputFileName + "_JAI_gray12", bi, true, lossLessQuality, true);
         write(outputFileName + "_JAI_gray12", bi, false, lossLessQuality, true);
-//        write(outputFileName + "_JAI_gray12", bi, true, lossyQuality, true);
-//        write(outputFileName + "_JAI_gray12", bi, false, lossyQuality, true);
+        // write(outputFileName + "_JAI_gray12", bi, true, lossyQuality, true);
+        // write(outputFileName + "_JAI_gray12", bi, false, lossyQuality, true);
     }
 
     public static void test16BitGray() throws IOException {
@@ -364,7 +375,8 @@ public class JP2KKakaduWriteTest extends TestCase {
         final short[] bufferValues = new short[bufferSize];
         for (int i = 0; i < h; i++) {
             for (int j = 0; j < w; j++)
-//                bufferValues[j + (i * h)] = (short) ((j + i) * (65536 / 1024));
+                // bufferValues[j + (i * h)] = (short) ((j + i) * (65536 /
+                // 1024));
                 bufferValues[j + (i * h)] = (short) (Math.random() * 65535);
         }
 
@@ -372,14 +384,19 @@ public class JP2KKakaduWriteTest extends TestCase {
         BufferedImage bi = new BufferedImage(cm, Raster.createWritableRaster(
                 sm, imageBuffer, null), false, null);
 
+        JP2KKakaduImageWriteParam param = new JP2KKakaduImageWriteParam();
+        param.setSourceSubsampling(2, 3, 0, 0);
+
         write(outputFileName + "_gray16", bi, true, lossLessQuality);
         write(outputFileName + "_gray16", bi, false, lossLessQuality);
         write(outputFileName + "_gray16", bi, true, lossyQuality);
         write(outputFileName + "_gray16", bi, false, lossyQuality);
         write(outputFileName + "_JAI_gray16", bi, true, lossLessQuality, true);
         write(outputFileName + "_JAI_gray16", bi, false, lossLessQuality, true);
-//        write(outputFileName + "_JAI_gray16", bi, true, lossyQuality, true);
-//        write(outputFileName + "_JAI_gray16", bi, false, lossyQuality, true);
+        write(outputFileName + "_JAI_subSampled_gray16", bi, true,
+                lossyQuality, true, param);
+        write(outputFileName + "_JAI_subSampled_gray16", bi, false,
+                lossyQuality, true, param);
     }
 
     public static void test24BitGray() throws IOException {
@@ -393,21 +410,27 @@ public class JP2KKakaduWriteTest extends TestCase {
         final int[] bufferValues = new int[bufferSize];
         for (int i = 0; i < h; i++) {
             for (int j = 0; j < w; j++)
-//                bufferValues[j + (i * h)] = (int) (j + i) * (16777216 / 1024);
-            bufferValues[j + (i * h)] = (int) (Math.random() * 16777215d);
+                // bufferValues[j + (i * h)] = (int) (j + i) * (16777216 /
+                // 1024);
+                bufferValues[j + (i * h)] = (int) (Math.random() * 16777215d);
         }
         DataBuffer imageBuffer = new DataBufferInt(bufferValues, bufferSize);
         BufferedImage bi = new BufferedImage(cm, Raster.createWritableRaster(
                 sm, imageBuffer, null), false, null);
 
+        JP2KKakaduImageWriteParam param = new JP2KKakaduImageWriteParam();
+        param.setSourceSubsampling(2, 3, 0, 0);
+        
         write(outputFileName + "_gray24", bi, true, lossLessQuality);
         write(outputFileName + "_gray24", bi, false, lossLessQuality);
         write(outputFileName + "_gray24", bi, true, lossyQuality);
         write(outputFileName + "_gray24", bi, false, lossyQuality);
         write(outputFileName + "_JAI_gray24", bi, true, lossLessQuality, true);
         write(outputFileName + "_JAI_gray24", bi, false, lossLessQuality, true);
-//        write(outputFileName + "_JAI_gray24", bi, true, lossyQuality, true);
-//        write(outputFileName + "_JAI_gray24", bi, false, lossyQuality, true);
+        write(outputFileName + "_JAI_subSampled_gray24", bi, true,
+                lossyQuality, true, param);
+        write(outputFileName + "_JAI_subSampled_gray24", bi, false,
+                lossyQuality, true, param);
     }
 
     public void testRGB() throws IOException {
@@ -422,8 +445,8 @@ public class JP2KKakaduWriteTest extends TestCase {
         write(outputFileName + "_RGB", bi, false, lossyQuality);
         write(outputFileName + "_JAI_RGB", bi, true, lossLessQuality, true);
         write(outputFileName + "_JAI_RGB", bi, false, lossLessQuality, true);
-//        write(outputFileName + "_JAI_RGB", bi, true, lossyQuality, true);
-//        write(outputFileName + "_JAI_RGB", bi, false, lossyQuality, true);
+        // write(outputFileName + "_JAI_RGB", bi, true, lossyQuality, true);
+        // write(outputFileName + "_JAI_RGB", bi, false, lossyQuality, true);
     }
 
     public void testPalettedRGB() throws IOException {
@@ -434,13 +457,13 @@ public class JP2KKakaduWriteTest extends TestCase {
         write(outputFileName + "_JAI_RGB8", bi, false, lossLessQuality, true);
     }
 
-    private static synchronized void write(String file, final RenderedImage bi,
+    private static void write(String file, final RenderedImage bi,
             final boolean codeStreamOnly, final double quality)
             throws IOException {
         write(file, bi, codeStreamOnly, quality, false);
     }
 
-    private static synchronized void write(String file, final RenderedImage bi,
+    private static void write(String file, final RenderedImage bi,
             final boolean codeStreamOnly, final double quality,
             final boolean useJAI) throws IOException {
         write(file, bi, codeStreamOnly, quality, useJAI, null);

@@ -70,28 +70,28 @@ public class JP2KKakaduImageWriter extends ImageWriter {
     private final static int DEFAULT_MAX_BUFFER_SIZE = 32 * 1024 * 1024;
 
     private final static boolean refineBytes = true;
-    
+
     /**
      * The max size in bytes of the buffer to be used by stripe compressor.
      */
     private final static int MAX_BUFFER_SIZE;
 
     private final static int MIN_BUFFER_SIZE = 1024 * 1024;
-    
+
     private final static int SOC_SIZE = 2;
-    
+
     private final static int COD_SIZE = 14;
-    
+
     private final static int SOT_SIZE = 12;
-    
+
     private final static int EOC_SIZE = 2;
-    
+
     private final static int SOD_SIZE = 2;
-    
+
     private final static int COM_SIZE = 108;
-    
+
     private final static int QCD_SIZE_EST = 40;
-    
+
     static {
         int size = DEFAULT_MAX_BUFFER_SIZE;
         Integer maxSize = Integer.getInteger(MAX_BUFFER_SIZE_KEY);
@@ -208,7 +208,8 @@ public class JP2KKakaduImageWriter extends ImageWriter {
     public void write(IIOMetadata streamMetadata, IIOImage image,
             ImageWriteParam param) throws IOException {
 
-        int bytesOverHead = 0; //The number of bytes stolen by header, markers, boxes
+        int bytesOverHead = 0; // The number of bytes stolen by header,
+        // markers, boxes
         final String fileName = outputFile.getAbsolutePath();
         JP2KKakaduImageWriteParam jp2Kparam;
         final boolean writeCodeStreamOnly;
@@ -222,7 +223,15 @@ public class JP2KKakaduImageWriter extends ImageWriter {
         if (param instanceof JP2KKakaduImageWriteParam) {
             jp2Kparam = (JP2KKakaduImageWriteParam) param;
             writeCodeStreamOnly = jp2Kparam.isWriteCodeStreamOnly();
-            quality = jp2Kparam.getQuality();
+            double q = jp2Kparam.getQuality();
+            if (q < 0.01) {
+                q = 0.01;
+                if (LOGGER.isLoggable(Level.FINE))
+                    LOGGER
+                            .log(Level.FINE,
+                                    "Quality level should be in the range 0.01 - 1. /n Reassigning it to 0.01");
+            }
+            quality = q;
             cLevels = jp2Kparam.getCLevels();
             qualityLayers = jp2Kparam.getQualityLayers();
         } else {
@@ -285,7 +294,8 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                 icm.getBlues(blues);
             } else {
                 // adding pclr and cmap boxes overhead bytes
-                bytesOverHead += (4 + 2 + numColorComponents + 1); // NE + NC + Bi
+                bytesOverHead += (4 + 2 + numColorComponents + 1); // NE + NC +
+                // Bi
                 bytesOverHead += lutSize * numColorComponents + 4; // pclr LUT
                 bytesOverHead += 20; // cmap
             }
@@ -361,13 +371,14 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                 // + jp2c marker.
                 bytesOverHead += 84;
             }
-            
+
             bytesOverHead += addMarkerBytes(nComponents);
             if (bytesOverHead >= imageSize)
                 bytesOverHead = 0;
-            
-            final long qualityLayersSize = (long) ((imageSize - (refineBytes?bytesOverHead:0)) * quality * bits * 0.125);
 
+            final long qualityLayersSize = (long) ((imageSize - (refineBytes ? bytesOverHead
+                    : 0))
+                    * quality * bits * 0.125);
 
             // //
             //
@@ -715,8 +726,9 @@ public class JP2KKakaduImageWriter extends ImageWriter {
 
     private int addMarkerBytes(final int components) {
         int bytesOverhead = 0;
-        int siz_size = (38 + components*3) + 2;
-        bytesOverhead += SOC_SIZE + siz_size + COD_SIZE + QCD_SIZE_EST + COM_SIZE + SOT_SIZE + SOD_SIZE;
+        int siz_size = (38 + components * 3) + 2;
+        bytesOverhead += SOC_SIZE + siz_size + COD_SIZE + QCD_SIZE_EST
+                + COM_SIZE + SOT_SIZE + SOD_SIZE;
         return bytesOverhead;
     }
 
