@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferInt;
 import java.awt.image.DataBufferUShort;
 import java.awt.image.Raster;
@@ -47,10 +48,10 @@ public class JP2KKakaduWriteTest extends TestCase {
     }
 
     private static int writeOperations = 0;
-    
+
     private final static double lossLessQuality = 1;
 
-    private final static double lossyQuality = 0.1;
+    private final static double lossyQuality = 0.01;
 
     private final static String testPath;
 
@@ -231,7 +232,7 @@ public class JP2KKakaduWriteTest extends TestCase {
     private static synchronized void write(String file, RenderedImage bi,
             boolean codeStreamOnly, double quality, boolean useJAI,
             JP2KKakaduImageWriteParam addParam) throws IOException {
-        
+
         writeOperations++;
         file += "_Q" + quality + (codeStreamOnly ? ".j2c" : ".jp2");
         final ImageOutputStream outputStream = ImageIO
@@ -295,6 +296,8 @@ public class JP2KKakaduWriteTest extends TestCase {
 
         suite.addTest(new JP2KKakaduWriteTest("testRGB"));
 
+        suite.addTest(new JP2KKakaduWriteTest("test8BitGray"));
+
         suite.addTest(new JP2KKakaduWriteTest("test12BitGray"));
 
         suite.addTest(new JP2KKakaduWriteTest("test16BitGray"));
@@ -304,7 +307,7 @@ public class JP2KKakaduWriteTest extends TestCase {
         suite.addTest(new JP2KKakaduWriteTest("testPalettedRGB"));
 
         suite.addTest(new JP2KKakaduWriteTest("testReducedMemory"));
-        
+
         return suite;
     }
 
@@ -333,6 +336,35 @@ public class JP2KKakaduWriteTest extends TestCase {
         write(outputFileName + "_RM", bi, true, lossyQuality);
         write(outputFileName + "_RM", bi, false, lossyQuality);
         LOGGER.info(writeOperations + " write operations performed");
+    }
+
+    public static void test8BitGray() throws IOException {
+        final ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
+        ColorModel cm = new ComponentColorModel(cs, new int[] { 8 }, false,
+                false, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
+        final int w = 128;
+        final int h = 128;
+        SampleModel sm = cm.createCompatibleSampleModel(w, h);
+        final int bufferSize = w * h;
+        final byte[] bufferValues = new byte[bufferSize];
+        for (int i = 0; i < h; i++) {
+            for (int j = 0; j < w; j++)
+                // bufferValues[j + (i * h)] = (short) ((j + i) * (4096 /
+                // 1024));
+                bufferValues[j + (i * h)] = (byte) (Math.random() * 255d);
+        }
+        DataBuffer imageBuffer = new DataBufferByte(bufferValues, bufferSize);
+        BufferedImage bi = new BufferedImage(cm, Raster.createWritableRaster(
+                sm, imageBuffer, null), false, null);
+
+        write(outputFileName + "_gray8", bi, true, lossLessQuality);
+        write(outputFileName + "_gray8", bi, false, lossLessQuality);
+        write(outputFileName + "_gray8", bi, true, lossyQuality);
+        write(outputFileName + "_gray8", bi, false, lossyQuality);
+        write(outputFileName + "_JAI_gray8", bi, true, lossLessQuality, true);
+        write(outputFileName + "_JAI_gray8", bi, false, lossLessQuality, true);
+        // write(outputFileName + "_JAI_gray12", bi, true, lossyQuality, true);
+        // write(outputFileName + "_JAI_gray12", bi, false, lossyQuality, true);
     }
 
     public static void test12BitGray() throws IOException {
@@ -420,7 +452,7 @@ public class JP2KKakaduWriteTest extends TestCase {
 
         JP2KKakaduImageWriteParam param = new JP2KKakaduImageWriteParam();
         param.setSourceSubsampling(2, 3, 0, 0);
-        
+
         write(outputFileName + "_gray24", bi, true, lossLessQuality);
         write(outputFileName + "_gray24", bi, false, lossLessQuality);
         write(outputFileName + "_gray24", bi, true, lossyQuality);
