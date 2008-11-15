@@ -67,7 +67,11 @@ public class JP2KKakaduImageWriter extends ImageWriter {
 
     public final static String MAX_BUFFER_SIZE_KEY = "it.geosolutions.maxBufferSize";
 
+    public final static String ADD_COMMENT_MARKER_KEY = "it.geosolutions.addCommentMarker";
+
     private final static int DEFAULT_MAX_BUFFER_SIZE = 32 * 1024 * 1024;
+
+    private final static boolean addCommentMarker;
 
     private final static boolean refineBytes = true;
 
@@ -90,11 +94,18 @@ public class JP2KKakaduImageWriter extends ImageWriter {
 
     private final static int COM_SIZE = 108;
 
+    private final static int COM_KAKADUV_SIZE = 17;
+
     private final static int QCD_SIZE_EST = 40;
 
     static {
         int size = DEFAULT_MAX_BUFFER_SIZE;
         Integer maxSize = Integer.getInteger(MAX_BUFFER_SIZE_KEY);
+        Boolean addComment = Boolean.parseBoolean(ADD_COMMENT_MARKER_KEY);
+        if (addComment != null)
+            addCommentMarker = addComment.booleanValue();
+        else
+            addCommentMarker = true;
         if (maxSize != null)
             size = maxSize.intValue();
         else {
@@ -728,7 +739,8 @@ public class JP2KKakaduImageWriter extends ImageWriter {
         int bytesOverhead = 0;
         int siz_size = (38 + components * 3) + 2;
         bytesOverhead += SOC_SIZE + siz_size + COD_SIZE + QCD_SIZE_EST
-                + COM_SIZE + SOT_SIZE + SOD_SIZE + EOC_SIZE;
+                + (addCommentMarker ? COM_SIZE : COM_KAKADUV_SIZE) + SOT_SIZE
+                + SOD_SIZE + EOC_SIZE;
         return bytesOverhead;
     }
 
@@ -881,8 +893,8 @@ public class JP2KKakaduImageWriter extends ImageWriter {
         // ////////////////////////////////////////////////////////////////
 
         compressor.Start(codeStream, qualityLayers,
-                cumulativeQualityLayerSizes, null, 0, false, false, true, 0,
-                nComponents, false);
+                cumulativeQualityLayerSizes, null, 0, false, false,
+                addCommentMarker, 0, nComponents, false);
         final boolean useRecommendations = compressor
                 .Get_recommended_stripe_heights(minStripeHeight, 1024,
                         stripeHeights, null);
