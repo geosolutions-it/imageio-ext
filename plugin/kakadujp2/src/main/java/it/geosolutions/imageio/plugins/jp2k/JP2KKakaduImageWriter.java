@@ -728,7 +728,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
         int bytesOverhead = 0;
         int siz_size = (38 + components * 3) + 2;
         bytesOverhead += SOC_SIZE + siz_size + COD_SIZE + QCD_SIZE_EST
-                + COM_SIZE + SOT_SIZE + SOD_SIZE;
+                + COM_SIZE + SOT_SIZE + SOD_SIZE + EOC_SIZE;
         return bytesOverhead;
     }
 
