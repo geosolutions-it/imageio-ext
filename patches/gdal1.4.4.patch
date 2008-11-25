@@ -1,6 +1,6 @@
 Index: frmts/jp2kak/makefile.vc
 ===================================================================
---- frmts/jp2kak/makefile.vc	(revision 13697)
+--- frmts/jp2kak/makefile.vc	(revision 15809)
 +++ frmts/jp2kak/makefile.vc	(working copy)
 @@ -4,14 +4,32 @@
  !INCLUDE $(GDAL_ROOT)\nmake.opt
@@ -41,7 +41,7 @@ Index: frmts/jp2kak/makefile.vc
 -
 Index: frmts/jp2kak/GNUmakefile
 ===================================================================
---- frmts/jp2kak/GNUmakefile	(revision 13697)
+--- frmts/jp2kak/GNUmakefile	(revision 15809)
 +++ frmts/jp2kak/GNUmakefile	(working copy)
 @@ -10,12 +10,12 @@
  OBJ	=	jp2kakdataset.o
@@ -60,7 +60,7 @@ Index: frmts/jp2kak/GNUmakefile
  
 Index: frmts/jp2kak/jp2kakdataset.cpp
 ===================================================================
---- frmts/jp2kak/jp2kakdataset.cpp	(revision 13697)
+--- frmts/jp2kak/jp2kakdataset.cpp	(revision 15809)
 +++ frmts/jp2kak/jp2kakdataset.cpp	(working copy)
 @@ -39,6 +39,7 @@
  #include "kdu_params.h"
@@ -189,6 +189,28 @@ Index: frmts/jp2kak/jp2kakdataset.cpp
          poDS->oCodeStream.set_persistent();
  
          poDS->jpip_client = jpip_client;
+@@ -1293,10 +1360,10 @@
+         poDS->oCodeStream.get_valid_tiles(tile_indices);
+ 
+         kdu_tile tile = poDS->oCodeStream.open_tile(tile_indices.pos);
+-        int nResCount = tile.access_component(0).get_num_resolutions();
++        poDS->nResCount = tile.access_component(0).get_num_resolutions();
+         tile.close();
+ 
+-        CPLDebug( "JP2KAK", "nResCount=%d", nResCount );
++        CPLDebug( "JP2KAK", "nResCount=%d", poDS->nResCount );
+ 
+ /* -------------------------------------------------------------------- */
+ /*      Create band information objects.                                */
+@@ -1306,7 +1373,7 @@
+         for( iBand = 1; iBand <= poDS->nBands; iBand++ )
+         {
+             JP2KAKRasterBand *poBand = 
+-                new JP2KAKRasterBand(iBand,0,poDS->oCodeStream, nResCount,
++                new JP2KAKRasterBand(iBand,0,poDS->oCodeStream, poDS->nResCount,
+                                      jpip_client, oJP2Channels, poDS );
+ 
+             if( iBand == 1 && oJP2Palette.exists() )
 @@ -1428,6 +1495,261 @@
  }
  
@@ -497,7 +519,7 @@ Index: frmts/jp2kak/jp2kakdataset.cpp
  "   <Option name='Rshift' type='string'/>"
 Index: swig/include/java/gdal_java.i
 ===================================================================
---- swig/include/java/gdal_java.i	(revision 13697)
+--- swig/include/java/gdal_java.i	(revision 15809)
 +++ swig/include/java/gdal_java.i	(working copy)
 @@ -77,18 +77,92 @@
      byte[] greens = new byte[size];
