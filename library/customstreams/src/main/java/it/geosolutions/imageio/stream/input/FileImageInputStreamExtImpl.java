@@ -203,14 +203,16 @@ public final class FileImageInputStreamExtImpl extends ImageInputStreamImpl
 		if (f == null) {
 			throw new NullPointerException("f == null!");
 		}
-		if (!f.exists() || f.isDirectory() || !f.canRead()) {
-			final StringBuilder buff = new StringBuilder(
-					"Invalid input file provided");
+		final StringBuilder buff = new StringBuilder("Invalid input file provided");
+		if (!f.exists() || f.isDirectory()) {
 			buff.append("exists: ").append(f.exists()).append("\n");
 			buff.append("isDirectory: ").append(f.isDirectory()).append("\n");
-			buff.append("canRead: ").append(f.canRead()).append("\n");
-			throw new IllegalArgumentException(buff.toString());
+			throw new FileNotFoundException(buff.toString());
 		}
+		if (!f.exists() || f.isDirectory() || !f.canRead()) {
+                    buff.append("canRead: ").append(f.canRead()).append("\n");
+                    throw new IOException(buff.toString());
+                }
 		this.file = f;
 		this.eraf = bufferSize <= 0 ? new EnhancedRandomAccessFile(f, "r")
 				: new EnhancedRandomAccessFile(f, "r", bufferSize);

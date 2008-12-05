@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,10 +42,14 @@ import javax.media.jai.RenderedOp;
 import javax.media.jai.widget.ScrollingImagePanel;
 import javax.swing.JFrame;
 
+import junit.framework.Assert;
 import junit.framework.TestCase;
 
 public class TestImageInputStream extends TestCase {
-	private final static Logger LOGGER = Logger
+    
+        private final String fileName = "a.txt";
+        private final String directoryName = "test-data";
+    	private final static Logger LOGGER = Logger
 			.getLogger(TestImageInputStream.class.toString());
 
 	public static void main(String[] args) {
@@ -265,58 +270,121 @@ public class TestImageInputStream extends TestCase {
 
 	}
 
-	/**
-	 * Testing capabilities of {@link StringImageInputStreamSPI}.
-	 * 
-	 */
-	public void testStringImageInputStream() {
+    /**
+     * Testing capabilities of {@link StringImageInputStreamSPI}.
+     * 
+     */
+    public void testStringImageInputStream() {
 
-		LOGGER.info("Testing capabilities of StringImageInputStreamSPI");
-		// get a URL pointing to a FILE
-		final String inURLToFile = TestData.getResource(this, "a.txt")
-				.toString();
-		// get an ImageInputStream
-		ImageInputStream instream;
-		try {
-			instream = ImageIO.createImageInputStream(inURLToFile);
-		} catch (IOException e) {
-			LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
-			instream = null;
-		}
-		assertNotNull(
-				"Unable to get an StringImageInputStreamSPI from a URL pointing to a File",
-				instream);
+        LOGGER.info("Testing capabilities of StringImageInputStreamSPI");
+        // get a URL pointing to a FILE
+        final String inURLToFile = TestData.getResource(this, "a.txt")
+                .toString();
+        // get an ImageInputStream
+        ImageInputStream instream;
+        try {
+            instream = ImageIO.createImageInputStream(inURLToFile);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
+            instream = null;
+        }
+        assertNotNull(
+                "Unable to get an StringImageInputStreamSPI from a URL pointing to a File",
+                instream);
 
-		// get a URL pointing to an http page
-		try {
-			final String httpURL = new URL("http://www.corriere.it/")
-					.toString();
-			instream = ImageIO.createImageInputStream(httpURL);
-		} catch (MalformedURLException e) {
-			LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
-			instream = null;
-		} catch (IOException e) {
-			LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
-			instream = null;
-		}
-		assertNotNull(
-				"Unable to get an URLImageInputStreamSpi from a URL pointing to an http page",
-				instream);
+        // get a URL pointing to an http page
+        try {
+            final String httpURL = new URL("http://www.corriere.it/")
+                    .toString();
+            instream = ImageIO.createImageInputStream(httpURL);
+        } catch (MalformedURLException e) {
+            LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
+            instream = null;
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
+            instream = null;
+        }
+        assertNotNull(
+                "Unable to get an URLImageInputStreamSpi from a URL pointing to an http page",
+                instream);
 
-		try {
-			final String url = TestData.url(this, "sample.jpeg").toString();
-			final ImageInputStream stream = ImageIO.createImageInputStream(url);
-			final RenderedOp image = JAI.create("ImageRead", stream);
-			if (TestData.isInteractiveTest())
-				visualize(image, "testURLImageInputStreamSpi");
-			else
-				image.getAsBufferedImage();
-		} catch (IOException e) {
-			LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
-		}
+        try {
+            final String url = TestData.url(this, "sample.jpeg").toString();
+            final ImageInputStream stream = ImageIO.createImageInputStream(url);
+            final RenderedOp image = JAI.create("ImageRead", stream);
+            if (TestData.isInteractiveTest())
+                visualize(image, "testURLImageInputStreamSpi");
+            else
+                image.getAsBufferedImage();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
+        }
 
-		LOGGER
-				.info("Testing capabilities of URLImageInputStreamSpi: SUCCESS!!!");
+        LOGGER
+                .info("Testing capabilities of URLImageInputStreamSpi: SUCCESS!!!");
 
-	}
+    }
+
+    /**
+     *  Test if <code>NullPointerException</code> is thrown when null file is passed.
+     */
+    public void testImageInputStreamExtInvalidContructor() {
+
+        try {
+            new FileImageInputStreamExtImpl(null);
+            Assert.fail("NullPointerException must be thrown.");
+        } catch (NullPointerException e) {
+            // OK
+        } catch (Exception e) {
+            Assert.fail(e.getClass().getSimpleName() + " should not be thrown");
+        }
+    }
+
+    /**
+     *  Test if <code>FileNotFoundException</code> is thrown when a non-existing file is passed.
+     */
+    public void testImageInputStreamExtInvalidContructor2() {
+
+        try {
+            File file = new File("this/file/is/invalid");
+            new FileImageInputStreamExtImpl(file);
+            Assert.fail("FileNotFoundException must be thrown.");
+        } catch (FileNotFoundException e) {
+            // OK
+        } catch (Exception e) {
+            Assert.fail(e.getClass().getSimpleName() + " should not be thrown");
+        }
+    }
+
+    /**
+     *  Test if <code>FileNotFoundException</code> is thrown when a directory is passed.
+     */
+    public void testImageInputStreamExtInvalidContructor3() {
+
+        try {
+            URI fileURI = getClass().getResource(directoryName).toURI();
+            File file = new File(fileURI);
+            new FileImageInputStreamExtImpl(file);
+            Assert.fail("FileNotFoundException must be thrown.");
+        } catch (FileNotFoundException e) {
+            // OK
+        } catch (Exception e) {
+            Assert.fail(e.getClass().getSimpleName() + " should not be thrown");
+        }
+    }
+
+    /**
+     *  Test if no exception is thrown when valid arguments are used.
+     */
+    public void testImageInputStreamExtValidContructor() {
+
+        try {
+            URI fileURI = getClass()
+                    .getResource(directoryName + "/" + fileName).toURI();
+            File file = new File(fileURI);
+            new FileImageInputStreamExtImpl(file);
+        } catch (Exception e) {
+            Assert.fail(e.getClass().getSimpleName() + " should not be thrown");
+        }
+    }
 }
