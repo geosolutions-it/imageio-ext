@@ -91,8 +91,10 @@
         <module>gdalerdasimg</module>
 	      <module>gdalnitf</module>
         <module>gdalehdr</module>
+        <module>gdalenvihdr</module>
         <module>gdaljpeg</module>
         <module>gdalarcgrid</module>
+        <module>gdalarcbinarygrid</module>
         <module>arcgrid</module>
         <module>swan</module>
         <module>gdaldted</module>
@@ -107,6 +109,7 @@
         <module>gdalerdasimg</module>
         <module>gdalnitf</module>
         <module>gdalehdr</module>
+        <module>gdalenvihdr</module>
         <module>gdalmrsid</module>
         <module>gdalecw</module>
         <module>gdalecwjp2</module>
@@ -115,6 +118,7 @@
         <module>kakadujp2</module>
         <module>gdaljpeg</module>
         <module>gdalarcgrid</module>
+        <module>gdalarcbinarygrid</module>
         <module>arcgrid</module>
         <module>swan</module>
         <module>gdaldted</module>
