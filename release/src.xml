@@ -1,0 +1,35 @@
+<assembly>
+  <id>src</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <moduleSets>
+      <moduleSet>
+        <includes>
+                     <include>it.geosolutions:imageio-ext-gdalframework</include>
+        </includes>
+        <sources>
+          <outputDirectory>imageio-ext-1.0-SNAPSHOT/${artifactId}/</outputDirectory>
+        </sources>
+      </moduleSet>
+  </moduleSets>
+  <fileSets>
+  <fileSet>
+        <directory>.</directory>
+        <outputDirectory>imageio-ext-1.0/</outputDirectory>
+                          <includes>
+                                  <include>pom.xml</include>
+                          </includes>
+     </fileSet>
+      <fileSet>
+        <directory>release</directory>
+        <outputDirectory>/</outputDirectory>
+        <includes>
+          <include>developer_README.txt</include>
+          <include>LICENSE.txt</include>
+          <include>MrSID_decoderSDK_license.txt</include>
+        </includes>
+      </fileSet>
+  </fileSets>
+</assembly>

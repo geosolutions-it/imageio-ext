@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <parent>
+    <groupId>it.geosolutions.imageio-ext</groupId>
+    <artifactId>imageio-ext</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  
+  <groupId>it.geosolutions.imageio-ext</groupId>
+  <artifactId>release</artifactId>
+  <packaging>jar</packaging>
+  <name>ImageIO-Ext Release Module</name>
+  
+  <dependencies>
+    <dependency>
+      <groupId>it.geosolutions.imageio-ext</groupId>
+      <artifactId>imageio-ext-gdalframework</artifactId>
+       <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+              <groupId>it.geosolutions.imageio-ext</groupId>
+              <artifactId>imageio-ext-jhdfaccess</artifactId>
+             
+     <version>1.0-SNAPSHOT</version>
+     </dependency>
+    <dependency>
+                  <groupId>it.geosolutions.imageio-ext</groupId>
+                  <artifactId>imageio-ext-imagereadmt</artifactId>
+     <version>1.0-SNAPSHOT</version>
+     </dependency>
+        <dependency>
+                      <groupId>it.geosolutions.imageio-ext</groupId>
+                      <artifactId>imageio-ext-gdalgeotiff</artifactId>
+     <version>1.0-SNAPSHOT</version>
+     </dependency>
+        <dependency>
+                      <groupId>it.geosolutions.imageio-ext</groupId>
+                      <artifactId>imageio-ext-gdalarcgrid</artifactId>
+     <version>1.0-SNAPSHOT</version>
+     </dependency>
+     <dependency>
+                          <groupId>it.geosolutions.imageio-ext</groupId>
+                          <artifactId>imageio-ext-gdalarcbinarygrid</artifactId>
+     <version>1.0-SNAPSHOT</version>
+     </dependency>
+    <dependency>
+                              <groupId>it.geosolutions.imageio-ext</groupId>
+                              <artifactId>imageio-ext-arcgrid</artifactId>
+     <version>1.0-SNAPSHOT</version>
+     </dependency>
+        <dependency>
+                      <groupId>it.geosolutions.imageio-ext</groupId>
+                      <artifactId>imageio-ext-gdalenvihdr</artifactId>
+     <version>1.0-SNAPSHOT</version>
+     </dependency>
+        <dependency>
+                      <groupId>it.geosolutions.imageio-ext</groupId>
+                      <artifactId>imageio-ext-gdalehdr</artifactId>
+     <version>1.0-SNAPSHOT</version>
+     </dependency>
+        <dependency>
+                      <groupId>it.geosolutions.imageio-ext</groupId>
+                      <artifactId>imageio-ext-gdaldted</artifactId>
+     <version>1.0-SNAPSHOT</version>
+     </dependency>
+        <dependency>
+                      <groupId>it.geosolutions.imageio-ext</groupId>
+                      <artifactId>imageio-ext-gdalecw</artifactId>
+     <version>1.0-SNAPSHOT</version>
+     </dependency>
+           <dependency>
+                          <groupId>it.geosolutions.imageio-ext</groupId>
+                          <artifactId>imageio-ext-gdalenvisat</artifactId>
+     <version>1.0-SNAPSHOT</version>
+     </dependency>
+        <dependency>
+                      <groupId>it.geosolutions.imageio-ext</groupId>
+                      <artifactId>imageio-ext-gdalecwjp2</artifactId>
+     <version>1.0-SNAPSHOT</version>
+     </dependency>
+    <dependency>
+                          <groupId>it.geosolutions.imageio-ext</groupId>
+                          <artifactId>imageio-ext-gdaljpeg</artifactId>
+     <version>1.0-SNAPSHOT</version>
+     </dependency>
+      <dependency>
+              <groupId>it.geosolutions.imageio-ext</groupId>
+              <artifactId>imageio-ext-gdalnitf</artifactId>
+              <version>1.0-SNAPSHOT</version>
+     </dependency>
+      <dependency>
+                          <groupId>it.geosolutions.imageio-ext</groupId>
+                          <artifactId>imageio-ext-gdalerdasimg</artifactId>
+     <version>1.0-SNAPSHOT</version>
+     </dependency>
+      <dependency>
+                          <groupId>it.geosolutions.imageio-ext</groupId>
+                          <artifactId>imageio-ext-gdalmrsid</artifactId>
+     <version>1.0-SNAPSHOT</version>
+     </dependency>
+      <dependency>
+                          <groupId>it.geosolutions.imageio-ext</groupId>
+                          <artifactId>imageio-ext-gdalmrsidjp2</artifactId>
+     <version>1.0-SNAPSHOT</version>
+     </dependency>
+      <dependency>
+                          <groupId>it.geosolutions.imageio-ext</groupId>
+                          <artifactId>imageio-ext-gdalkakadujp2</artifactId>
+     <version>1.0-SNAPSHOT</version>
+     </dependency>
+      <dependency>
+                          <groupId>it.geosolutions.imageio-ext</groupId>
+                          <artifactId>imageio-ext-directkakadu</artifactId>
+     <version>1.0-SNAPSHOT</version>
+     </dependency>
+   </dependencies>
+
+  <build>
+    <plugins>
+      
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>install</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>install</phase>
+            <configuration>
+              <!-- remove some unwanted dependencies that get pulled over -->
+              <tasks>
+                <delete>
+                  <fileset dir="${project.build.directory}/dependency"
+                    includes="servlet-api-2.4.jar,core*.jar"/>
+                
+                </delete>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      
+    </plugins>
+  </build>
+  
+</project>
