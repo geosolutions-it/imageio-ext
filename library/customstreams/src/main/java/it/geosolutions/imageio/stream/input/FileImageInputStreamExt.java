@@ -1,8 +1,8 @@
 /*
- *    JImageIO-extension - OpenSource Java Image translation Library
+ *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
- *	  https://imageio-ext.dev.java.net/
- *    (C) 2007, GeoSolutions
+ *    https://imageio-ext.dev.java.net/
+ *    (C) 2007 - 2008, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -21,10 +21,9 @@ import java.io.File;
 import javax.imageio.stream.ImageInputStream;
 
 /**
- * @author Daniele Romagnoli
- * @author Simone Giannecchini(Simboss)
+ * @author Daniele Romagnoli, GeoSolutions
+ * @author Simone Giannecchini, GeoSolutions
  */
-
 public interface FileImageInputStreamExt extends ImageInputStream  {
     /**
      * Returns the associated {@link File}
