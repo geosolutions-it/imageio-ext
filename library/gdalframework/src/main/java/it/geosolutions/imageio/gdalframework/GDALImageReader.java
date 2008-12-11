@@ -1,8 +1,8 @@
 /*
- *    JImageIO-extension - OpenSource Java Image translation Library
+ *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
- *	  https://imageio-ext.dev.java.net/
- *    (C) 2007, GeoSolutions
+ *    https://imageio-ext.dev.java.net/
+ *    (C) 2007 - 2008, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,6 +17,7 @@
 package it.geosolutions.imageio.gdalframework;
 
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
+import it.geosolutions.imageio.stream.input.URIImageInputStream;
 
 import java.awt.Rectangle;
 import java.awt.image.BandedSampleModel;
@@ -35,6 +36,7 @@ import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.ByteBuffer;
@@ -64,6 +66,8 @@ import org.gdal.gdal.Dataset;
 import org.gdal.gdal.gdal;
 import org.gdal.gdalconst.gdalconst;
 import org.gdal.gdalconst.gdalconstConstants;
+
+import com.sun.jndi.toolkit.url.Uri;
 
 /**
  * Main abstract class defining the main framework which needs to be used to
@@ -100,6 +104,12 @@ public abstract class GDALImageReader extends ImageReader {
 
     /** The dataset input source */
     private File datasetSource = null;
+    
+    /** 
+     * The optional URI referring the input source.
+     * As an instance, an ECWP link
+     */
+    private URI uriSource = null;
 
     /**
      * {@link HashMap} containing couples (datasetName,
@@ -220,10 +230,19 @@ public abstract class GDALImageReader extends ImageReader {
         synchronized (datasetMap) {
             if (!isInitialized) {
                 // Retrieving the fileName in order to open the main dataset
-                final String mainDatasetFileName = getDatasetSource(
-                        super.getInput()).getAbsolutePath();
+                
+                String mainDatasetName = "";
+                final Object datainput = super.getInput();
+                if (!(datainput instanceof URIImageInputStream)){
+                    mainDatasetName = getDatasetSource(datainput).getAbsolutePath();
+                } else {
+                    URI uri = ((URIImageInputStream)datainput).getUri();
+                    if (uri != null){
+                        mainDatasetName = uri.toString();
+                    }
+                } 
                 final Dataset mainDataset = GDALUtilities.acquireDataSet(
-                        mainDatasetFileName, gdalconstConstants.GA_ReadOnly);
+                        mainDatasetName, gdalconstConstants.GA_ReadOnly);
                 if (mainDataset == null)
                     return false;
                 // /////////////////////////////////////////////////////////////
@@ -256,7 +275,7 @@ public abstract class GDALImageReader extends ImageReader {
                 if (nSubdatasets == 0) {
                     nSubdatasets = 1;
                     datasetNames = new String[1];
-                    datasetNames[0] = datasetSource.getAbsolutePath();
+                    datasetNames[0] = mainDatasetName;
                     final GDALCommonIIOImageMetadata myItem = createDatasetMetadata(datasetNames[0]);
                     datasetMap.put(datasetNames[0], myItem);
                 } else {
@@ -268,9 +287,9 @@ public abstract class GDALImageReader extends ImageReader {
                                 .lastIndexOf("_NAME=") + 6;
                         datasetNames[i] = subdatasetName.substring(nameStartAt);
                     }
-                    datasetNames[nSubdatasets] = mainDatasetFileName;
-                    datasetMap.put(mainDatasetFileName, createDatasetMetadata(
-                            mainDataset, mainDatasetFileName));
+                    datasetNames[nSubdatasets] = mainDatasetName;
+                    datasetMap.put(mainDatasetName, createDatasetMetadata(
+                            mainDataset, mainDatasetName));
                     subdatasets.clear();
                 }
                 isInitialized = true;
@@ -753,6 +772,12 @@ public abstract class GDALImageReader extends ImageReader {
                 }
             }
         }
+        else if (input instanceof URIImageInputStream){
+            imageInputStream = (URIImageInputStream)input;
+            datasetSource = null;
+            uriSource = ((URIImageInputStream)input).getUri();
+            
+        }
 
         // /////////////////////////////////////////////////////////////////////
         //
@@ -763,8 +788,15 @@ public abstract class GDALImageReader extends ImageReader {
         // /////////////////////////////////////////////////////////////////////
         boolean isInputDecodable = false;
         if (imageInputStream != null) {
-            Dataset dataSet = GDALUtilities.acquireDataSet(datasetSource
-                    .getAbsolutePath(), gdalconstConstants.GA_ReadOnly);
+            Dataset dataSet = null;
+            if (datasetSource != null){
+                dataSet = GDALUtilities.acquireDataSet(datasetSource
+                        .getAbsolutePath(), gdalconstConstants.GA_ReadOnly);    
+            }else if (uriSource != null){
+                final String urisource = uriSource.toString();
+                dataSet = GDALUtilities.acquireDataSet(urisource, gdalconstConstants.GA_ReadOnly);    
+            }
+            
             if (dataSet != null) {
                 isInputDecodable = ((GDALImageReaderSpi) this
                         .getOriginatingProvider()).isDecodable(dataSet);
@@ -801,7 +833,7 @@ public abstract class GDALImageReader extends ImageReader {
 
                 }
             imageInputStream = null;
-
+            
             // Cleaning HashMap
             datasetMap.clear();
             datasetNames = null;
