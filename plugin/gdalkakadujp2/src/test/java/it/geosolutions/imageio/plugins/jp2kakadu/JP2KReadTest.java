@@ -1,8 +1,8 @@
 /*
- *    JImageIO-extension - OpenSource Java Image translation Library
+ *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
- *	  https://imageio-ext.dev.java.net/
- *    (C) 2007, GeoSolutions
+ *    https://imageio-ext.dev.java.net/
+ *    (C) 2007 - 2008, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -31,6 +31,8 @@ import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
 
+import org.gdal.gdal.gdal;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -43,7 +45,7 @@ import junit.framework.TestSuite;
  */
 public class JP2KReadTest extends AbstractJP2KTestCase {
 
-	public final static String fileName = "test.jp2";
+	public final static String fileName = "etopo2-bathymetry-2090682191_20081029T171043376.jp2";
 
 	public JP2KReadTest(String name) {
 		super(name);
@@ -61,22 +63,32 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
 		}
 			
 		final ParameterBlockJAI pbjImageRead;
-		 final File file = TestData.file(this, fileName);
+		final File file = TestData.file(this, fileName);
+		 
 		JP2GDALKakaduImageReaderSpi
 				.setKakaduInputErrorManagement(KakaduErrorManagement.FAST);
-		pbjImageRead = new ParameterBlockJAI("ImageRead");
-		pbjImageRead.setParameter("Input", file);
-		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
-				.createReaderInstance());
-		final ImageLayout layout = new ImageLayout();
-		layout.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(256)
-				.setTileWidth(256);
-		RenderedOp image = JAI.create("ImageRead", pbjImageRead,
-				new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout));
-		if (TestData.isInteractiveTest())
-			Viewer.visualizeBothMetadata(image, "");
-		else
-			assertNotNull(image.getTiles());
+		JP2GDALKakaduImageReader reader = (JP2GDALKakaduImageReader) new JP2GDALKakaduImageReaderSpi().createReaderInstance();
+		reader.setInput(file);
+		ImageReadParam paramm = new ImageReadParam();
+		gdal.SetConfigOption("GDAL_FORCE_CACHING", "NO");
+//		gdal.SetConfigOption("GDAL_ONE_BIG_READ", "NO");
+                
+		paramm.setSourceSubsampling(1,4,0,0);
+		reader.read(0,paramm);
+		
+//		pbjImageRead = new ParameterBlockJAI("ImageRead");
+//		pbjImageRead.setParameter("Input", file);
+//		pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
+//				.createReaderInstance());
+//		final ImageLayout layout = new ImageLayout();
+////		layout.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(256)
+////				.setTileWidth(256);
+//		RenderedOp image = JAI.create("ImageRead", pbjImageRead,
+//				new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout));
+//		if (TestData.isInteractiveTest())
+//			Viewer.visualizeBothMetadata(image, "");
+//		else
+//			assertNotNull(image.getTiles());
 	}
 
 	/**
@@ -198,8 +210,8 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 
-		// Test read exploiting common JAI operations (Crop-Translate-Rotate)
-		suite.addTest(new JP2KReadTest("testJaiOperations"));
+//		// Test read exploiting common JAI operations (Crop-Translate-Rotate)
+//		suite.addTest(new JP2KReadTest("testJaiOperations"));
 
 		// Test reading of a simple image
 		suite.addTest(new JP2KReadTest("testRead"));
