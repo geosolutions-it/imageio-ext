@@ -57,8 +57,8 @@ import com.sun.media.imageio.stream.FileChannelImageInputStream;
  * @see ImageInputStreamSpi
  * @see ImageIO#createImageInputStream(Object)
  * 
- * @author Daniele Romagnoli
- * @author Simone Giannecchini(Simboss)
+ * @author Daniele Romagnoli, GeoSolutions
+ * @author Simone Giannecchini, GeoSolutions
  */
 public class FileImageInputStreamExtImplSpi extends ImageInputStreamSpi {
 

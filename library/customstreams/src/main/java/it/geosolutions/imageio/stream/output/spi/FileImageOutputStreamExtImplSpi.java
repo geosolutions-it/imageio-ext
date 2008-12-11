@@ -36,8 +36,8 @@ import com.sun.imageio.spi.FileImageOutputStreamSpi;
  * A Special ImageOutputStream Service Provider Interface which is able to
  * provide a BufferedFileImageOutputStreamExt
  * 
- * @author Daniele Romagnoli
- * @author Simone Giannecchini(Simboss)
+ * @author Daniele Romagnoli, GeoSolutions
+ * @author Simone Giannecchini, GeoSolutions
  */
 
 public class FileImageOutputStreamExtImplSpi extends ImageOutputStreamSpi {
@@ -74,13 +74,15 @@ public class FileImageOutputStreamExtImplSpi extends ImageOutputStreamSpi {
 	public void onRegistration(ServiceRegistry registry, Class category) {
 		super.onRegistration(registry, category);
 		Object other;
+		Class targetClass = ImageOutputStreamSpi.class;
 		for (Iterator i = registry.getServiceProviders(
-				ImageOutputStreamSpi.class, true); i.hasNext();) {
+		        targetClass, true); i.hasNext();) {
 			other = i.next();
+			
 			if (other instanceof FileImageOutputStreamSpi)
 				registry.deregisterServiceProvider(other);
 			if (this != other) {
-				registry.setOrdering(ImageOutputStreamSpi.class, this, other);
+				registry.setOrdering(targetClass, this, other);
 			}
 		}
 	}
