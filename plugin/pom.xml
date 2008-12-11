@@ -124,6 +124,26 @@
         <module>gdaldted</module>
         <module>gdalgeotiff</module>
        </modules>
+    </profile> 
+    <profile>
+      <id>releasebuild</id>
+      <modules>
+        <module>gdalenvisat</module>
+        <module>gdalerdasimg</module>
+        <module>gdalnitf</module>
+        <module>gdalehdr</module>
+        <module>gdalenvihdr</module>
+        <module>gdalmrsid</module>
+        <module>gdalecw</module>
+        <module>gdalecwjp2</module>
+        <module>gdalmrsidjp2</module>
+        <module>gdaljpeg</module>
+        <module>gdalarcgrid</module>
+        <module>gdalarcbinarygrid</module>
+        <module>arcgrid</module>
+        <module>gdaldted</module>
+        <module>gdalgeotiff</module>
+       </modules>
     </profile>
   </profiles>
 </project>
