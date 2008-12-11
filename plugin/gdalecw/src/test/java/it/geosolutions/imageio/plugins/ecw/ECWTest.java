@@ -44,7 +44,7 @@ import junit.framework.TestSuite;
  */
 public class ECWTest extends AbstractECWTestCase {
     
-    private final static String ECWP = "ecwp://www.earthetc.com/images/usa/1metercalif.ecw";
+    private final static String ECWP = "ecwp://Set a valid link";
 	
 	/** @todo optimize logic for test skipping */
 	
@@ -163,17 +163,17 @@ public class ECWTest extends AbstractECWTestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 
-//		// Test reading of a GrayScale image
-//		suite.addTest(new ECWTest("testGrayScaleImageRead"));
-//
-//		// Test reading of a RGB image
-//		suite.addTest(new ECWTest("testImageRead"));
-//
-//		// Test reading of a RGB image
-//		suite.addTest(new ECWTest("testManualRead"));
+		// Test reading of a GrayScale image
+		suite.addTest(new ECWTest("testGrayScaleImageRead"));
+
+		// Test reading of a RGB image
+		suite.addTest(new ECWTest("testImageRead"));
+
+		// Test reading of a RGB image
+		suite.addTest(new ECWTest("testManualRead"));
 		
-		// Test reading from ECWP
-                suite.addTest(new ECWTest("testECWPRead"));
+//		// Test reading from ECWP
+//                suite.addTest(new ECWTest("testECWPRead"));
 
 		return suite;
 	}
