@@ -99,6 +99,7 @@
         <module>swan</module>
         <module>gdaldted</module>
         <module>gdalgeotiff</module>
+        <module>tiff</module>
       </modules>
     </profile>
     <profile>
@@ -123,6 +124,7 @@
         <module>swan</module>
         <module>gdaldted</module>
         <module>gdalgeotiff</module>
+        <module>tiff</module>
        </modules>
     </profile> 
     <profile>
@@ -143,6 +145,7 @@
         <module>arcgrid</module>
         <module>gdaldted</module>
         <module>gdalgeotiff</module>
+        <module>tiff</module>
        </modules>
     </profile>
   </profiles>
