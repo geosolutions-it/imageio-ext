@@ -358,6 +358,11 @@
       <url>http://lists.refractions.net/m2</url>
     </repository>
     <repository>
+      <id>jboss</id>
+      <name>jboss</name>
+      <url>http://repository.jboss.org/maven2/</url>
+    </repository>
+    <repository>
       <id>codehaus.org</id>
       <name>CodeHaus Snapshots</name>
       <url>http://snapshots.repository.codehaus.org</url>
@@ -384,6 +389,21 @@
   <!--                                                                       -->
   <dependencies>
     <!-- Tests or legacy -->
+    <dependency>
+      <groupId>javax.media</groupId>
+     <artifactId>jai_core</artifactId>
+     <version>1.1.3</version>
+   </dependency>
+   <dependency>
+     <groupId>javax.media</groupId>
+     <artifactId>jai_codec</artifactId>
+     <version>1.1.3</version>
+   </dependency>
+   <dependency>
+     <groupId>com.sun</groupId>
+     <artifactId>jai_imageio</artifactId>
+     <version>1.0</version>
+   </dependency>       
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
