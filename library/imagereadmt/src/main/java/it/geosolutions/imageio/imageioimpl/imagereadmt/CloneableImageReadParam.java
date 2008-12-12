@@ -24,9 +24,8 @@ import javax.imageio.ImageReadParam;
  * @author Simone Giannecchini, GeoSolutions.
  */
 public abstract class CloneableImageReadParam extends ImageReadParam implements
-		Cloneable {
+        Cloneable {
 
-	public abstract Object clone() throws CloneNotSupportedException;
+    public abstract Object clone() throws CloneNotSupportedException;
 
 }
- 

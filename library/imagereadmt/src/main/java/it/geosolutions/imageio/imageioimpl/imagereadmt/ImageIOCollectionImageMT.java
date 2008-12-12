@@ -66,23 +66,24 @@ import javax.media.jai.CollectionImage;
 
 /**
  * A <code>CollectionImage</code> to be used as the return value from
- * <code>ImageReadMTCIF.create()</code> and <code>ImageWriteCIF.create()</code>.
- * The <code>imageCollection</code> instance variable is a <code>List</code>.
- *
+ * <code>ImageReadMTCIF.create()</code> and
+ * <code>ImageWriteCIF.create()</code>. The <code>imageCollection</code>
+ * instance variable is a <code>List</code>.
+ * 
  * @author Simone Giannecchini, GeoSolutions.
  */
 class ImageIOCollectionImageMT extends CollectionImage {
     /**
      * Creates an <code>ImageIOCollectionImageMT</code> with the specified
      * capacity.
-     *
-     * @exception IllegalArgumentException if <code>capacity</code> is
-     * not positive.
+     * 
+     * @exception IllegalArgumentException
+     *                    if <code>capacity</code> is not positive.
      */
     ImageIOCollectionImageMT(int capacity) {
         super();
 
-        if(capacity <= 0) {
+        if (capacity <= 0) {
             // No message as this is not at the API level and it is
             // the unique exception.
             throw new IllegalArgumentException();

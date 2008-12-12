@@ -84,7 +84,7 @@ import com.sun.media.jai.operator.ImageReadDescriptor;
 /**
  * Implementation of the <code>OpImage</code> of the "ImageRead" operation.
  * 
- * @author Simone Giannecchini, GeoSolutions.
+ * @author Simone Giannecchini, GeoSolutions
  */
 final class ImageReadOpImageMT extends OpImage {
 

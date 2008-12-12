@@ -5,8 +5,6 @@
 #
 # If this file is updated, remember to update Registry.registerServices(...) accordingly.
 #
-# Version: $Id: registryFile.jai 16592 2005-11-03 05:59:00Z desruisseaux $
-#
 ##################################################################################################
 #
 # Each line can be in one of the formats described below. Space or tab characters separate

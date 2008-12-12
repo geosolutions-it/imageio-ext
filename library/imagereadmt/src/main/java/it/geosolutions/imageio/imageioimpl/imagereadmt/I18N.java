@@ -64,30 +64,31 @@ import java.io.InputStream;
 import java.util.PropertyResourceBundle;
 
 import com.sun.media.imageioimpl.common.I18NImpl;
+
 /**
  * @author Simone Giannecchini, GeoSolutions.
  */
 final class I18N extends I18NImpl {
-	private static Class clazz;
-	static {
-		try {
-			clazz = Class
-					.forName("it.geosolutions.imageio.imageioimpl.imagereadmt.CloneableImageReadParam");
-			assert clazz!=null;
-		} catch (ClassNotFoundException e) {
-			throw new RuntimeException(e); // Chain the exception.
-		}
-	}
+    private static Class clazz;
+    static {
+        try {
+            clazz = Class
+                    .forName("it.geosolutions.imageio.imageioimpl.imagereadmt.CloneableImageReadParam");
+            assert clazz != null;
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e); // Chain the exception.
+        }
+    }
 
-	static String getString(String key) {
-		PropertyResourceBundle bundle = null;
-		try {
-			InputStream stream = clazz.getResourceAsStream("properties");
-			bundle = new PropertyResourceBundle(stream);
-		} catch (Throwable e) {
-			throw new RuntimeException(e); // Chain the exception.
-		}
+    static String getString(String key) {
+        PropertyResourceBundle bundle = null;
+        try {
+            InputStream stream = clazz.getResourceAsStream("properties");
+            bundle = new PropertyResourceBundle(stream);
+        } catch (Throwable e) {
+            throw new RuntimeException(e); // Chain the exception.
+        }
 
-		return (String) bundle.handleGetObject(key);
-	}
+        return (String) bundle.handleGetObject(key);
+    }
 }

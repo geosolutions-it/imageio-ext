@@ -30,98 +30,98 @@ import junit.framework.TestSuite;
  */
 public class ImageIOExtTest extends TestCase {
 
-	/**
-	 * @param name
-	 */
-	public ImageIOExtTest(String name) {
-		super(name);
-	}
+    /**
+     * @param name
+     */
+    public ImageIOExtTest(String name) {
+        super(name);
+    }
 
-	/**
-	 * @see junit.framework.TestCase#setUp()
-	 */
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
+    /**
+     * @see junit.framework.TestCase#setUp()
+     */
+    protected void setUp() throws Exception {
+        super.setUp();
+    }
 
-	/**
-	 * @see junit.framework.TestCase#tearDown()
-	 */
-	protected void tearDown() throws Exception {
-		super.tearDown();
-	}
+    /**
+     * @see junit.framework.TestCase#tearDown()
+     */
+    protected void tearDown() throws Exception {
+        super.tearDown();
+    }
 
-	public void testImageReadMT() {
-		ImageReadDescriptorMT.register(JAI.getDefaultInstance());
-		final ParameterBlockJAI pbj = new ParameterBlockJAI("ImageReadMT");
-		assertNotNull(pbj);
-	}
+    public void testImageReadMT() {
+        ImageReadDescriptorMT.register(JAI.getDefaultInstance());
+        final ParameterBlockJAI pbj = new ParameterBlockJAI("ImageReadMT");
+        assertNotNull(pbj);
+    }
 
-	public void testImageReadMTOperation() throws IOException {
-		// final String opName = "ImageReadMT";
-		// JAI.getDefaultInstance().getTileScheduler().setParallelism(5);
-		// JAI.getDefaultInstance().getTileScheduler().setPrefetchParallelism(5);
-		// ImageReaderSpi spi = new GeoTiffImageReaderSpi();
-		// ImageReader reader = spi.createReaderInstance();
-		// final File file = new File(new String("C:/bogota.tif"));
-		//
-		// // //
-		// //
-		// // Setting Image Read Parameters
-		// //
-		// // //
-		// final ImageReadParam param = new DefaultCloneableImageReadParam();
-		// BufferedImage bi = new BufferedImage(512, 512,
-		// BufferedImage.TYPE_BYTE_GRAY);
-		// param.setDestination(bi);
-		//
-		// // //
-		// //
-		// // Preparing the ImageRead operation
-		// //
-		// // //
-		// ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(opName);
-		// pbjImageRead
-		// .setParameter("Input", ImageIO.createImageInputStream(file));
-		// pbjImageRead.setParameter("readParam", param);
-		// pbjImageRead.setParameter("reader", reader);
-		//
-		// // //
-		// //
-		// // Setting a Layout
-		// //
-		// // //
-		// final ImageLayout l = new ImageLayout();
-		// l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(256)
-		// .setTileWidth(256);
-		//
-		// // //
-		// //
-		// // ImageReadMT operation
-		// //
-		// // //
-		// RenderedOp image = JAI.create(opName, pbjImageRead, new
-		// RenderingHints(
-		// JAI.KEY_IMAGE_LAYOUT, l));
-		// image.getTiles();
-		// final JFrame jf = new JFrame();
-		// jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		// jf.getContentPane().add(new ScrollingImagePanel(bi, 800, 800));
-		// jf.pack();
-		// jf.setVisible(true);
-	}
+    public void testImageReadMTOperation() throws IOException {
+        // final String opName = "ImageReadMT";
+        // JAI.getDefaultInstance().getTileScheduler().setParallelism(5);
+        // JAI.getDefaultInstance().getTileScheduler().setPrefetchParallelism(5);
+        // ImageReaderSpi spi = new GeoTiffImageReaderSpi();
+        // ImageReader reader = spi.createReaderInstance();
+        // final File file = new File(new String("C:/bogota.tif"));
+        //
+        // // //
+        // //
+        // // Setting Image Read Parameters
+        // //
+        // // //
+        // final ImageReadParam param = new DefaultCloneableImageReadParam();
+        // BufferedImage bi = new BufferedImage(512, 512,
+        // BufferedImage.TYPE_BYTE_GRAY);
+        // param.setDestination(bi);
+        //
+        // // //
+        // //
+        // // Preparing the ImageRead operation
+        // //
+        // // //
+        // ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(opName);
+        // pbjImageRead
+        // .setParameter("Input", ImageIO.createImageInputStream(file));
+        // pbjImageRead.setParameter("readParam", param);
+        // pbjImageRead.setParameter("reader", reader);
+        //
+        // // //
+        // //
+        // // Setting a Layout
+        // //
+        // // //
+        // final ImageLayout l = new ImageLayout();
+        // l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(256)
+        // .setTileWidth(256);
+        //
+        // // //
+        // //
+        // // ImageReadMT operation
+        // //
+        // // //
+        // RenderedOp image = JAI.create(opName, pbjImageRead, new
+        // RenderingHints(
+        // JAI.KEY_IMAGE_LAYOUT, l));
+        // image.getTiles();
+        // final JFrame jf = new JFrame();
+        // jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // jf.getContentPane().add(new ScrollingImagePanel(bi, 800, 800));
+        // jf.pack();
+        // jf.setVisible(true);
+    }
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite();
+    public static Test suite() {
+        TestSuite suite = new TestSuite();
 
-		suite.addTest(new ImageIOExtTest("testImageReadMT"));
+        suite.addTest(new ImageIOExtTest("testImageReadMT"));
 
-		suite.addTest(new ImageIOExtTest("testImageReadMTOperation"));
+        suite.addTest(new ImageIOExtTest("testImageReadMTOperation"));
 
-		return suite;
-	}
+        return suite;
+    }
 
-	public static void main(java.lang.String[] args) {
-		junit.textui.TestRunner.run(suite());
-	}
+    public static void main(java.lang.String[] args) {
+        junit.textui.TestRunner.run(suite());
+    }
 }
