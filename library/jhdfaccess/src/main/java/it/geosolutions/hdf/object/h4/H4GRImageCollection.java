@@ -41,6 +41,8 @@ import ncsa.hdf.hdflib.HDFLibrary;
 public class H4GRImageCollection extends AbstractHObject implements List,
         IHObject, IH4Object {
 
+    /** TODO: need to add locking as used in H4SDS objects */
+    
     private final static Logger LOGGER = Logger
             .getLogger("it.geosolutions.hdf.object.h4");
 

@@ -26,15 +26,13 @@ import ncsa.hdf.hdflib.HDFConstants;
 public abstract class AbstractHObject implements IHObject {
 
     public AbstractHObject(int identifier) {
-		setIdentifier(identifier);
-	}
-    
-    protected AbstractHObject()
-    {
-    	
+        setIdentifier(identifier);
     }
 
-	/**
+    protected AbstractHObject() {
+    }
+
+    /**
      * The numeric identifier associated to this <code>AbstractHObject</code>
      */
     private volatile int identifier = HDFConstants.FAIL;
@@ -51,7 +49,9 @@ public abstract class AbstractHObject implements IHObject {
 
     protected void setIdentifier(int identifier) {
         if (identifier == HDFConstants.FAIL)
-            throw new IllegalArgumentException("HDF identifier cannot be negative! Found " + Integer.toString(identifier));
+            throw new IllegalArgumentException(
+                    "HDF identifier cannot be negative! Found "
+                            + Integer.toString(identifier));
         if (this.identifier != HDFConstants.FAIL)
             throw new IllegalStateException("Identifier cannot be changed");
         this.identifier = identifier;

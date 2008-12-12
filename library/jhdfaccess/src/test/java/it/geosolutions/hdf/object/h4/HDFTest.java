@@ -1,3 +1,19 @@
+/*
+ *    ImageI/O-Ext - OpenSource Java Image translation Library
+ *    http://www.geo-solutions.it/
+ *    https://imageio-ext.dev.java.net/
+ *    (C) 2007 - 2008, GeoSolutions
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 package it.geosolutions.hdf.object.h4;
 
 import it.geosolutions.resources.TestData;
@@ -25,8 +41,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageReadParam;
@@ -69,7 +83,7 @@ import com.sun.media.jai.codecimpl.util.RasterFactory;
  * href="http://www.hdfgroup.uiuc.edu/UserSupport/code-examples/sample-programs/convert/Conversion.html">
  * http://www.hdfgroup.uiuc.edu/UserSupport/code-examples/sample-programs/convert/Conversion.html</a><BR>
  * 
- * @author Romagnoli Daniele, GeoSolutions
+ * @author Daniele Romagnoli, GeoSolutions
  */
 public class HDFTest extends TestCase {
     // Actually, HDF on Linux is not tested. Test are disabled.

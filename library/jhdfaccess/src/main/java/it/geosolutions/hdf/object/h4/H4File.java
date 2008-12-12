@@ -38,16 +38,6 @@ public class H4File extends AbstractHObject implements IHObject {
     private static final Logger LOGGER = Logger
             .getLogger("it.geosolutions.hdf.object.h4");
 
-    // /**
-    // * Almost all HDF APIs require the preliminary open of the source file
-    // using
-    // * the <code>HOpen</code> routine. However, the SD interface, used to
-    // * access SDS dataset, does not uses this routine, but the
-    // * <code>SDStart</code> one. This variable will become <code>true</code>
-    // * when HOpen will be called.
-    // */
-    // private boolean hOpened = false;
-
     /**
      * The list of file label annotations related to this file.
      */
@@ -359,7 +349,6 @@ public class H4File extends AbstractHObject implements IHObject {
         if (returnedAnnotations == null)
             returnedAnnotations = Collections.emptyList();
         return returnedAnnotations;
-
     }
 
     protected void finalize() throws Throwable {

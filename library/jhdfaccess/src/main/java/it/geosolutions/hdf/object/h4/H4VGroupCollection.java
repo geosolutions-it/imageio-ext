@@ -39,6 +39,8 @@ import ncsa.hdf.hdflib.HDFLibrary;
 public class H4VGroupCollection extends AbstractHObject implements IHObject,
         List {
 
+    /** TODO: need to add locking as used in H4SDS objects */
+    
     private class H4VGroupCollectionIterator implements Iterator{
 
         private Iterator it;

@@ -32,6 +32,8 @@ import ncsa.hdf.hdflib.HDFLibrary;
  */
 public class H4Palette extends AbstractHObject implements IHObject {
 
+    /** TODO: need to add locking as used in H4SDS objects */
+    
     /** Logger. */
     private final static Logger LOGGER = Logger
             .getLogger("it.geosolutions.hdf.object.h4");
