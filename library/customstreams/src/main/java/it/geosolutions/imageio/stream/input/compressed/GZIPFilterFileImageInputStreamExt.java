@@ -15,6 +15,7 @@
  *    Lesser General Public License for more details.
  */
 package it.geosolutions.imageio.stream.input.compressed;
+
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 
@@ -23,32 +24,32 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
- * @author Daniele Romagnoli
- * @author Simone Giannecchini(Simboss)
+ * @author Daniele Romagnoli, GeoSolutions
+ * @author Simone Giannecchini, GeoSolutions
  */
 
 public class GZIPFilterFileImageInputStreamExt extends GZIPImageInputStream
-		implements FileImageInputStreamExt {
-	private File file;
+        implements FileImageInputStreamExt {
+    private File file;
 
-	public GZIPFilterFileImageInputStreamExt(File file)
-			throws FileNotFoundException, IOException {
-		super(new GZIPImageInputStream(new FileImageInputStreamExtImpl(file)));
-		this.file = file;
-	}
+    public GZIPFilterFileImageInputStreamExt(File file)
+            throws FileNotFoundException, IOException {
+        super(new GZIPImageInputStream(new FileImageInputStreamExtImpl(file)));
+        this.file = file;
+    }
 
-	public GZIPFilterFileImageInputStreamExt(FileImageInputStreamExtImpl fiis)
-			throws FileNotFoundException, IOException {
-		super(new GZIPImageInputStream(fiis));
-		this.file = fiis.getFile();
-	}
+    public GZIPFilterFileImageInputStreamExt(FileImageInputStreamExtImpl fiis)
+            throws FileNotFoundException, IOException {
+        super(new GZIPImageInputStream(fiis));
+        this.file = fiis.getFile();
+    }
 
-	/**
-	 * return the associated eraf
-	 * 
-	 * @return DOCUMENT ME!
-	 */
-	public File getFile() {
-		return file;
-	}
+    /**
+     * return the associated file
+     * 
+     * @return the file
+     */
+    public File getFile() {
+        return file;
+    }
 }

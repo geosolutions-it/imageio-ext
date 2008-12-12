@@ -21,6 +21,8 @@ import java.net.URI;
 import javax.imageio.stream.ImageInputStream;
 
 /**
+ * An {@link ImageInputStream} that gets its input from a {@link URI}
+ * 
  * @author Daniele Romagnoli, GeoSolutions
  * @author Simone Giannecchini, GeoSolutions
  */
@@ -28,7 +30,7 @@ public interface URIImageInputStream extends ImageInputStream {
 
     /**
      * Returns the associated {@link URI}
-     *
+     * 
      * @return the associated {@link URI}
      */
     URI getUri();

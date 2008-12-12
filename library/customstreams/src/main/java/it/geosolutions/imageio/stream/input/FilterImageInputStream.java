@@ -25,60 +25,48 @@ import javax.imageio.stream.ImageInputStreamImpl;
 /**
  * Decorator class for the {@link ImageInputStream} subclasses.
  * 
- * @author Simone Giannecchini
- * 
+ * @author Simone Giannecchini, GeoSolutions
  */
 public abstract class FilterImageInputStream extends ImageInputStreamImpl
-		implements ImageInputStream {
+        implements ImageInputStream {
 
-	protected ImageInputStream iis;
+    protected ImageInputStream iis;
 
-	/**
-	 * 
-	 */
-	public FilterImageInputStream(ImageInputStream iis) {
+    /** The constructor */
+    public FilterImageInputStream(ImageInputStream iis) {
+        this.iis = iis;
+    }
 
-		this.iis = iis;
-	}
+    /** Default constructor */
+    public FilterImageInputStream() {
+        this.iis = null;
+    }
 
-	public FilterImageInputStream() {
+    public boolean isCached() {
+        return iis.isCached();
+    }
 
-		this.iis = null;
-	}
+    public boolean isCachedFile() {
+        return iis.isCachedFile();
+    }
 
-	public boolean isCached() {
+    public boolean isCachedMemory() {
+        return iis.isCachedMemory();
+    }
 
-		return iis.isCached();
-	}
+    public int skipBytes(int n) throws IOException {
+        return iis.skipBytes(n);
+    }
 
-	public boolean isCachedFile() {
+    public void setBitOffset(int bitOffset) throws IOException {
+        iis.setBitOffset(bitOffset);
+    }
 
-		return iis.isCachedFile();
-	}
+    public ByteOrder getByteOrder() {
+        return iis.getByteOrder();
+    }
 
-	public boolean isCachedMemory() {
-
-		return iis.isCachedMemory();
-	}
-
-	public int skipBytes(int n) throws IOException {
-
-		return iis.skipBytes(n);
-	}
-
-	public void setBitOffset(int bitOffset) throws IOException {
-		iis.setBitOffset(bitOffset);
-
-	}
-
-	public ByteOrder getByteOrder() {
-
-		return iis.getByteOrder();
-	}
-
-	public void setByteOrder(ByteOrder byteOrder) {
-		iis.setByteOrder(byteOrder);
-
-	}
-
+    public void setByteOrder(ByteOrder byteOrder) {
+        iis.setByteOrder(byteOrder);
+    }
 }

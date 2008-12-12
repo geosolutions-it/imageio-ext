@@ -38,21 +38,21 @@ import com.sun.media.imageio.stream.FileChannelImageOutputStream;
  * 
  * <p>
  * Overall performance is improved with respect to simple
- * {@link FileImageOutputStream}. Somesimplicistic tests showed that
- * performances are close to the poerformaces of the
+ * {@link FileImageOutputStream}. Some simplicistic tests showed that
+ * performances are close to the performances of the
  * {@link FileChannelImageOutputStream} but without the burden of using
  * {@link FileChannel} which on some platform with some older versions of Java
  * can be problematic.
  * 
- * @author Daniele Romagnoli
- * @author Simone Giannecchini(Simboss)
+ * @author Daniele Romagnoli, GeoSolutions
+ * @author Simone Giannecchini, GeoSolutions
  */
 public interface FileImageOutputStreamExt extends ImageOutputStream {
 
-	/**
-	 * Returns the associated eraf
-	 * 
-	 * @return the associated eraf
-	 */
-	public File getFile();
+    /**
+     * Returns the associated {@link File}
+     * 
+     * @return the associated {@link File}
+     */
+    public File getFile();
 }

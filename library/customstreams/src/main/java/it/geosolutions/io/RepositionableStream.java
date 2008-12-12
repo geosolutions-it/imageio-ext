@@ -36,29 +36,31 @@
  */
 package it.geosolutions.io;
 
-
-/** A basic interface specifying positioning methods for a byte stream.
- *
+/**
+ * A basic interface specifying positioning methods for a byte stream.
+ * 
  * @author Sebastiano Vigna
  * @since 4.4
  */
 
 public interface RepositionableStream {
 
-	/** Sets the current stream position.
-	 *
-	 * @param newPosition the new stream position.
-	 */
-	void position( long newPosition ) throws java.io.IOException;
+    /**
+     * Sets the current stream position.
+     * 
+     * @param newPosition
+     *                the new stream position.
+     */
+    void position(long newPosition) throws java.io.IOException;
 
-	/** Returns the current stream position.
-	 *
-	 * @return the current stream position.
-	 */
-	long position() throws java.io.IOException;
+    /**
+     * Returns the current stream position.
+     * 
+     * @return the current stream position.
+     */
+    long position() throws java.io.IOException;
 
 }
-
 
 // Local Variables:
 // mode: jde

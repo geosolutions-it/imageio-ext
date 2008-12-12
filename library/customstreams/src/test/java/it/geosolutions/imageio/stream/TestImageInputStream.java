@@ -19,7 +19,7 @@ package it.geosolutions.imageio.stream;
 /**
  * Testing custom ImageInputStream and ImageOutputStream.
  * 
- * @author Simone Giannecchini
+ * @author Simone Giannecchini, GeoSolutions
  */
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 import it.geosolutions.imageio.stream.input.spi.URLImageInputStreamSpi;

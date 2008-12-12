@@ -32,6 +32,7 @@
 /*
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
+ *    https://imageio-ext.dev.java.net/
  *    (C) 2007 - 2008, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
@@ -51,12 +52,15 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * adds ability to read streams bitewise and also to read predefined amount of bits every read() call
+ * adds ability to read streams bitewise and also to read predefined amount of
+ * bits every read() call
+ * 
  * @author Andrey Kuznetsov
  */
 public class BitInputStream extends FilterInputStream {
 
     int vbits = 0;
+
     int bitbuf = 0;
 
     private int bitsToRead = 8;
@@ -74,10 +78,11 @@ public class BitInputStream extends FilterInputStream {
 
     /**
      * set how much bits is read every read() call (max 8)
+     * 
      * @param bitsToRead
      */
     public void setBitsToRead(int bitsToRead) {
-        if(bitsToRead > 8) {
+        if (bitsToRead > 8) {
             throw new IllegalArgumentException();
         }
         this.bitsToRead = bitsToRead;
@@ -89,26 +94,26 @@ public class BitInputStream extends FilterInputStream {
 
     public int read(int nbits) throws IOException {
         int ret;
-        //nothing to read
+        // nothing to read
         if (nbits == 0) {
             return 0;
         }
-        //too many bits requested
+        // too many bits requested
         if (nbits > 8) {
             throw new IllegalArgumentException("max 8 bits can be read at once");
         }
-        //not anough bits in buffer
+        // not anough bits in buffer
         if (nbits > vbits) {
             fillBuffer(nbits);
         }
-        //buffer still empty => we are reached EOF
+        // buffer still empty => we are reached EOF
         if (vbits == 0) {
             return -1;
         }
         ret = bitbuf << (32 - vbits) >>> (32 - nbits);
         vbits -= nbits;
 
-        if(vbits < 0) {
+        if (vbits < 0) {
             vbits = 0;
         }
 
@@ -121,13 +126,19 @@ public class BitInputStream extends FilterInputStream {
 
     /**
      * Reads data from input stream into an byte array.
-     *
-     * @param b the buffer into which the data is read.
-     * @param off the start offset of the data.
-     * @param len the maximum number of bytes read.
-     * @return the total number of bytes read into the buffer, or -1 if the EOF has been reached.
-     * @exception IOException if an I/O error occurs.
-     * @exception NullPointerException if supplied byte array is null
+     * 
+     * @param b
+     *                the buffer into which the data is read.
+     * @param off
+     *                the start offset of the data.
+     * @param len
+     *                the maximum number of bytes read.
+     * @return the total number of bytes read into the buffer, or -1 if the EOF
+     *         has been reached.
+     * @exception IOException
+     *                    if an I/O error occurs.
+     * @exception NullPointerException
+     *                    if supplied byte array is null
      */
     public int read(byte b[], int off, int len) throws IOException {
         if (len <= 0) {
@@ -159,18 +170,20 @@ public class BitInputStream extends FilterInputStream {
     }
 
     /**
-     * Skips some bytes from the input stream.
-     * If bit buffer is not empty, n - (vbits + 8) / 8 bytes skipped,
-     * then buffer is resetted and filled with same amount of bits as it has before skipping.
-     * @param n the number of bytes to be skipped.
+     * Skips some bytes from the input stream. If bit buffer is not empty, n -
+     * (vbits + 8) / 8 bytes skipped, then buffer is resetted and filled with
+     * same amount of bits as it has before skipping.
+     * 
+     * @param n
+     *                the number of bytes to be skipped.
      * @return the actual number of bytes skipped.
-     * @exception IOException if an I/O error occurs.
+     * @exception IOException
+     *                    if an I/O error occurs.
      */
     public long skip(long n) throws IOException {
         if (vbits == 0) {
             return in.skip(n);
-        }
-        else {
+        } else {
             int b = (vbits + 8) / 8;
             in.skip(n - b);
             int vbits = this.vbits;

@@ -41,62 +41,62 @@ import javax.imageio.stream.ImageOutputStream;
 
 public class URLImageOutputStreamSpi extends ImageOutputStreamSpi {
 
-	/* Logger. */
-	private final static Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.stream.output");
+    /** Logger. */
+    private final static Logger LOGGER = Logger
+            .getLogger("it.geosolutions.imageio.stream.output.spi");
 
-	private static final String vendorName = "GeoSolutions";
+    private static final String vendorName = "GeoSolutions";
 
-	private static final String version = "1.0-rc1";
+    private static final String version = "1.0";
 
-	private static final Class outputClass = URL.class;
+    private static final Class outputClass = URL.class;
 
-	public URLImageOutputStreamSpi() {
-		super(vendorName, version, outputClass);
+    public URLImageOutputStreamSpi() {
+        super(vendorName, version, outputClass);
+    }
 
-	}
+    public String getDescription(Locale locale) {
+        return "Service provider for writing to a URL";
+    }
 
-	public String getDescription(Locale locale) {
-		return "Service provider for writing to a URL";
-	}
+    /**
+     * Returns an instance of the {@link ImageOutputStream} implementation
+     * associated with this service provider.
+     * 
+     * @return an ImageOutputStream instance.
+     * 
+     * @throws IllegalArgumentException
+     *                 if input is not an instance of the correct class or is
+     *                 null.
+     */
+    public ImageOutputStream createOutputStreamInstance(Object output,
+            boolean useCache, File cacheDir) {
 
-	/**
-	 * Returns an instance of the {@link ImageOutputStream} implementation
-	 * associated with this service provider.
-	 * 
-	 * @return an ImageOutputStream instance.
-	 * 
-	 * @throws IllegalArgumentException
-	 *             if input is not an instance of the correct class or is null.
-	 */
-	public ImageOutputStream createOutputStreamInstance(Object output,
-			boolean useCache, File cacheDir) {
+        // is it a URL?
+        if (!(output instanceof URL))
+            return null;
 
-		// is it a URL?
-		if (!(output instanceof URL))
-			return null;
+        // URL that point to a file
+        final URL outputURL = ((URL) output);
+        if (outputURL.getProtocol().compareToIgnoreCase("file") == 0) {
+            File tempFile;
+            try {
+                tempFile = new File(URLDecoder.decode(outputURL.getFile(),
+                        "UTF-8"));
+                return new FileImageOutputStreamExtImpl(tempFile);
+            } catch (UnsupportedEncodingException e) {
+                if (LOGGER.isLoggable(Level.FINE))
+                    LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
+            } catch (FileNotFoundException e) {
+                if (LOGGER.isLoggable(Level.FINE))
+                    LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
+            } catch (IOException e) {
+                if (LOGGER.isLoggable(Level.FINE))
+                    LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
+            }
 
-		// URL that point to a eraf
-		final URL outputURL = ((URL) output);
-		if (outputURL.getProtocol().compareToIgnoreCase("file") == 0) {
-			File tempFile;
-			try {
-				tempFile = new File(URLDecoder.decode(outputURL.getFile(),
-						"UTF-8"));
-				return new FileImageOutputStreamExtImpl(tempFile);
-			} catch (UnsupportedEncodingException e) {
-				if (LOGGER.isLoggable(Level.FINE))
-					LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
-			} catch (FileNotFoundException e) {
-				if (LOGGER.isLoggable(Level.FINE))
-					LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
-			} catch (IOException e) {
-				if (LOGGER.isLoggable(Level.FINE))
-					LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
-			}
+        }
+        return null;
 
-		}
-		return null;
-
-	}
+    }
 }

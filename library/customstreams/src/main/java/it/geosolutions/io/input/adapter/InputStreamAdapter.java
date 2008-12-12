@@ -22,45 +22,45 @@ import java.io.InputStream;
 import javax.imageio.stream.ImageInputStream;
 
 /**
+ * @author Simone Giannecchini, GeoSolutions
  */
 public final class InputStreamAdapter extends InputStream {
 
-	ImageInputStream stream;
+    ImageInputStream stream;
 
-	public InputStreamAdapter(ImageInputStream stream) {
+    public InputStreamAdapter(ImageInputStream stream) {
+        this.stream = stream;
+    }
 
-		this.stream = stream;
-	}
+    public void close() throws IOException {
+        stream.close();
+    }
 
-	public void close() throws IOException {
-		stream.close();
-	}
+    public void mark(int readlimit) {
+        stream.mark();
+    }
 
-	public void mark(int readlimit) {
-		stream.mark();
-	}
+    public boolean markSupported() {
+        return true;
+    }
 
-	public boolean markSupported() {
-		return true;
-	}
+    public int read() throws IOException {
+        return stream.read();
+    }
 
-	public int read() throws IOException {
-		return stream.read();
-	}
+    public int read(byte b[], int off, int len) throws IOException {
+        return stream.read(b, off, len);
+    }
 
-	public int read(byte b[], int off, int len) throws IOException {
-		return stream.read(b, off, len);
-	}
+    public void reset() throws IOException {
+        stream.reset();
+    }
 
-	public void reset() throws IOException {
-		stream.reset();
-	}
+    public long skip(long n) throws IOException {
+        return stream.skipBytes(n);
+    }
 
-	public long skip(long n) throws IOException {
-		return stream.skipBytes(n);
-	}
-
-	public ImageInputStream getWrappedStream() {
-		return stream;
-	}
+    public ImageInputStream getWrappedStream() {
+        return stream;
+    }
 }

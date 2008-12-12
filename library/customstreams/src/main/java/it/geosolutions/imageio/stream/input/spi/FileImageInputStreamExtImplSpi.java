@@ -50,7 +50,7 @@ import com.sun.media.imageio.stream.FileChannelImageInputStream;
  * which gives similar performances for most uses but far less problems.
  * 
  * <p>
- * A special thank to Alex McManus and Russ Rewfor the
+ * A special thank to Alex McManus and Russ Rew for the
  * {@link EnhancedRandomAccessFile} class.
  * 
  * @see ImageInputStream
@@ -64,11 +64,11 @@ public class FileImageInputStreamExtImplSpi extends ImageInputStreamSpi {
 
 	/** Logger. */
 	private final static Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.stream.input");
+			.getLogger("it.geosolutions.imageio.stream.input.spi");
 
 	private static final String vendorName = "GeoSolutions";
 
-	private static final String version = "1.0-RC1";
+	private static final String version = "1.0";
 
 	private static final Class inputClass = File.class;
 

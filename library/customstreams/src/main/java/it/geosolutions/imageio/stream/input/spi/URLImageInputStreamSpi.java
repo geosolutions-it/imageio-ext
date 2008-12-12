@@ -48,10 +48,10 @@ import javax.imageio.stream.MemoryCacheImageInputStream;
  * @see ImageInputStreamSpi
  * @see ImageIO#createImageInputStream(Object)
  * 
- * @author Simone Giannecchini(Simboss)
+ * @author Simone Giannecchini, GeoSolutions
  */
 public class URLImageInputStreamSpi extends ImageInputStreamSpi {
-    /* Logger. */
+    /** Logger. */
     private final static Logger LOGGER = Logger
             .getLogger("it.geosolutions.imageio.stream.input");
 
@@ -108,7 +108,7 @@ public class URLImageInputStreamSpi extends ImageInputStreamSpi {
 
     private static final String vendorName = "GeoSolutions";
 
-    private static final String version = "1.0-RC1";
+    private static final String version = "1.0";
 
     private static final Class inputClass = URL.class;
 

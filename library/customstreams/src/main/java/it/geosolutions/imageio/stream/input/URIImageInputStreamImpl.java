@@ -19,14 +19,17 @@ package it.geosolutions.imageio.stream.input;
 import java.io.IOException;
 import java.net.URI;
 
+import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageInputStreamImpl;
 
 /**
- * @author Daniele Romagnoli, GeoSolutions
+ * An implementation of {@link ImageInputStream} that gets its input from a
+ * {@link URI}.
  * 
  * Note that this class doesn't actually allow read operations. It is actually
- * only used to allow defining an {@link ImageInputStream} referring to an URI.
+ * only used to allow defining an {@link ImageInputStream} for a URI.
  * 
+ * @author Daniele Romagnoli, GeoSolutions
  */
 public class URIImageInputStreamImpl extends ImageInputStreamImpl implements
         URIImageInputStream {

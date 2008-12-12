@@ -21,13 +21,15 @@ import java.io.File;
 import javax.imageio.stream.ImageInputStream;
 
 /**
+ * An {@link ImageInputStream} that gets its input from a {@link File}.
+ * 
  * @author Daniele Romagnoli, GeoSolutions
  * @author Simone Giannecchini, GeoSolutions
  */
-public interface FileImageInputStreamExt extends ImageInputStream  {
+public interface FileImageInputStreamExt extends ImageInputStream {
     /**
      * Returns the associated {@link File}
-     *
+     * 
      * @return the associated {@link File}
      */
     public File getFile();

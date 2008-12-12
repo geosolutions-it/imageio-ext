@@ -22,75 +22,58 @@ import java.io.OutputStream;
 import javax.imageio.stream.ImageOutputStreamImpl;
 
 /**
- * @author Simone Giannecchini
+ * @author Simone Giannecchini, GeoSolutions
  * 
- * Supporting marking is a big issue I should overline this somehow
- * 
+ * Supporting marking is a big issue. I should overline this somehow
  */
 public class ImageOutputStreamAdapter extends ImageOutputStreamImpl {
 
-	private OutputStream os;
+    private OutputStream os;
 
-	/**
-	 * 
-	 */
-	public ImageOutputStreamAdapter(OutputStream os) {
-		this.os = os;
-	}
+    public ImageOutputStreamAdapter(OutputStream os) {
+        this.os = os;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.imageio.stream.ImageOutputStreamImpl#write(int)
-	 */
-	public void write(int b) throws IOException {
-		os.write(b);
+    /**
+     * @see javax.imageio.stream.ImageOutputStreamImpl#write(int)
+     */
+    public void write(int b) throws IOException {
+        os.write(b);
+    }
 
-	}
+    /**
+     * @see javax.imageio.stream.ImageOutputStreamImpl#write(byte[], int, int)
+     */
+    public void write(byte[] b, int off, int len) throws IOException {
+        os.write(b, off, len);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.imageio.stream.ImageOutputStreamImpl#write(byte[], int, int)
-	 */
-	public void write(byte[] b, int off, int len) throws IOException {
-		os.write(b,off,len);
+    /**
+     * @see javax.imageio.stream.ImageInputStreamImpl#read()
+     */
+    public int read() throws IOException {
+        throw new UnsupportedOperationException();
+    }
 
-	}
+    /**
+     * @see javax.imageio.stream.ImageInputStreamImpl#read(byte[], int, int)
+     */
+    public int read(byte[] b, int off, int len) throws IOException {
+        throw new UnsupportedOperationException();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.imageio.stream.ImageInputStreamImpl#read()
-	 */
-	public int read() throws IOException {
-		throw new UnsupportedOperationException();
-	}
+    /**
+     * @see javax.imageio.stream.ImageInputStreamImpl#flush()
+     */
+    public void flush() throws IOException {
+        os.flush();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.imageio.stream.ImageInputStreamImpl#read(byte[], int, int)
-	 */
-	public int read(byte[] b, int off, int len) throws IOException {
-		throw new UnsupportedOperationException();
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.imageio.stream.ImageInputStreamImpl#flush()
-	 */
-	public void flush() throws IOException {
-		os.flush();
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.imageio.stream.ImageInputStreamImpl#close()
-	 */
-	public void close() throws IOException {
-		super.close();
-		os.close();
-	}
-
-	
-
+    /**
+     * @see javax.imageio.stream.ImageInputStreamImpl#close()
+     */
+    public void close() throws IOException {
+        super.close();
+        os.close();
+    }
 }

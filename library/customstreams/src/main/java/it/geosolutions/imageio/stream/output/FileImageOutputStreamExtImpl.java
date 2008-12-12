@@ -28,160 +28,160 @@ import javax.imageio.stream.ImageOutputStream;
 import javax.imageio.stream.ImageOutputStreamImpl;
 
 /**
+ * An implementation of {@link ImageOutputStream} that take its output on a
+ * {@link File}.
  * 
- * @author Daniele Romagnoli
- * @author Simone Giannecchini
+ * @author Daniele Romagnoli, GeoSOlutions
+ * @author Simone Giannecchini, GeoSolutions
  */
-
 public class FileImageOutputStreamExtImpl extends ImageOutputStreamImpl
-		implements FileImageOutputStreamExt {
+        implements FileImageOutputStreamExt {
 
-	protected EnhancedRandomAccessFile eraf;
+    protected EnhancedRandomAccessFile eraf;
 
-	protected File file;
+    protected File file;
 
-	/**
-	 * A constructor which accepts a File as input.
-	 * 
-	 * @param eraf
-	 * 
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-	public FileImageOutputStreamExtImpl(File file)
-			throws FileNotFoundException, IOException {
-		this.file = file;
-		eraf = new EnhancedRandomAccessFile(file, "rw");
-		// NOTE: this must be done accordingly to what ImageInputStreamImpl
-		// does, otherwise some ImageREader subclasses might not work.
-		this.eraf.setByteOrder(ByteOrder.BIG_ENDIAN);
+    /**
+     * A constructor which accepts a File as input.
+     * 
+     * @param eraf
+     * 
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public FileImageOutputStreamExtImpl(File file)
+            throws FileNotFoundException, IOException {
+        this.file = file;
+        eraf = new EnhancedRandomAccessFile(file, "rw");
+        // NOTE: this must be done accordingly to what ImageInputStreamImpl
+        // does, otherwise some ImageREader subclasses might not work.
+        this.eraf.setByteOrder(ByteOrder.BIG_ENDIAN);
 
-	}
-	
-	/**
-	 * A constructor which accepts a File as input.
-	 * 
-	 * @param eraf
-	 * @param bufSize
-	 * 
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-	public FileImageOutputStreamExtImpl(File file, int bufSize)
-			throws FileNotFoundException, IOException {
-		this.file = file;
-		eraf = new EnhancedRandomAccessFile(file, "rw",bufSize);
-		// NOTE: this must be done accordingly to what ImageInputStreamImpl
-		// does, otherwise some ImageREader subclasses might not work.
-		this.eraf.setByteOrder(ByteOrder.BIG_ENDIAN);
+    }
 
-	}
+    /**
+     * A constructor which accepts a File as input.
+     * 
+     * @param eraf
+     * @param bufSize
+     * 
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public FileImageOutputStreamExtImpl(File file, int bufSize)
+            throws FileNotFoundException, IOException {
+        this.file = file;
+        eraf = new EnhancedRandomAccessFile(file, "rw", bufSize);
+        // NOTE: this must be done accordingly to what ImageInputStreamImpl
+        // does, otherwise some ImageREader subclasses might not work.
+        this.eraf.setByteOrder(ByteOrder.BIG_ENDIAN);
 
-	public int read() throws IOException {
-		checkClosed();
-		bitOffset = 0;
-		int val = eraf.read();
-		if (val != -1) {
-			++streamPos;
-		}
-		return val;
-	}
+    }
 
-	public int read(byte[] b, int off, int len) throws IOException {
-		checkClosed();
-		bitOffset = 0;
-		int nbytes = eraf.read(b, off, len);
-		if (nbytes != -1) {
-			streamPos += nbytes;
-		}
-		return nbytes;
-	}
+    public int read() throws IOException {
+        checkClosed();
+        bitOffset = 0;
+        int val = eraf.read();
+        if (val != -1) {
+            ++streamPos;
+        }
+        return val;
+    }
 
-	public void write(int b) throws IOException {
-		checkClosed();
-		flushBits();
-		eraf.write(b);
-		++streamPos;
-	}
+    public int read(byte[] b, int off, int len) throws IOException {
+        checkClosed();
+        bitOffset = 0;
+        int nbytes = eraf.read(b, off, len);
+        if (nbytes != -1) {
+            streamPos += nbytes;
+        }
+        return nbytes;
+    }
 
-	public void write(byte[] b, int off, int len) throws IOException {
-		checkClosed();
-		flushBits();
-		eraf.write(b, off, len);
-		streamPos += len;
-	}
+    public void write(int b) throws IOException {
+        checkClosed();
+        flushBits();
+        eraf.write(b);
+        ++streamPos;
+    }
 
-	public long length() {
-		try {
-			checkClosed();
-			return eraf.length();
-		} catch (IOException e) {
-			return -1L;
-		}
-	}
+    public void write(byte[] b, int off, int len) throws IOException {
+        checkClosed();
+        flushBits();
+        eraf.write(b, off, len);
+        streamPos += len;
+    }
 
-	/**
-	 * Sets the current stream position and resets the bit offset to 0. It is
-	 * legal to seeking past the end of the eraf; an <code>EOFException</code>
-	 * will be thrown only if a read is performed. The eraf length will not be
-	 * increased until a write is performed.
-	 * 
-	 * @exception IndexOutOfBoundsException
-	 *                if <code>pos</code> is smaller than the flushed
-	 *                position.
-	 * @exception IOException
-	 *                if any other I/O error occurs.
-	 */
-	public void seek(long pos) throws IOException {
-		checkClosed();
-		if (pos < flushedPos) {
-			throw new IndexOutOfBoundsException("pos < flushedPos!");
-		}
-		bitOffset = 0;
-		eraf.seek(pos);
-		streamPos = eraf.getFilePointer();
-	}
+    public long length() {
+        try {
+            checkClosed();
+            return eraf.length();
+        } catch (IOException e) {
+            return -1L;
+        }
+    }
 
-	/**
-	 * Closes the underlying {@link EnhancedRandomAccessFile}.
-	 * 
-	 * @throws IOException
-	 *             in case something bad happens.
-	 */
-	public void close() throws IOException {
-		super.close();
-		eraf.close();
-	}
+    /**
+     * Sets the current stream position and resets the bit offset to 0. It is
+     * legal to seeking past the end of the eraf; an <code>EOFException</code>
+     * will be thrown only if a read is performed. The eraf length will not be
+     * increased until a write is performed.
+     * 
+     * @exception IndexOutOfBoundsException
+     *                    if <code>pos</code> is smaller than the flushed
+     *                    position.
+     * @exception IOException
+     *                    if any other I/O error occurs.
+     */
+    public void seek(long pos) throws IOException {
+        checkClosed();
+        if (pos < flushedPos) {
+            throw new IndexOutOfBoundsException("pos < flushedPos!");
+        }
+        bitOffset = 0;
+        eraf.seek(pos);
+        streamPos = eraf.getFilePointer();
+    }
 
-	/**
-	 * Retrieves the {@link File} we are connected to.
-	 */
-	public File getFile() {
-		return file;
-	}
+    /**
+     * Closes the underlying {@link EnhancedRandomAccessFile}.
+     * 
+     * @throws IOException
+     *                 in case something bad happens.
+     */
+    public void close() throws IOException {
+        super.close();
+        eraf.close();
+    }
 
-	/**
-	 * Disposes this {@link FileImageInputStreamExtImpl} by closing its
-	 * underlying {@link EnhancedRandomAccessFile}.
-	 * 
-	 */
-	public void dispose() {
-		try {
-			close();
-		} catch (IOException e) {
+    /**
+     * Retrieves the {@link File} we are connected to.
+     */
+    public File getFile() {
+        return file;
+    }
 
-		}
+    /**
+     * Disposes this {@link FileImageInputStreamExtImpl} by closing its
+     * underlying {@link EnhancedRandomAccessFile}.
+     * 
+     */
+    public void dispose() {
+        try {
+            close();
+        } catch (IOException e) {
 
-	}
+        }
+    }
 
-	/**
-	 * Provides a simple description for this {@link ImageOutputStream}.
-	 * 
-	 * @return a simple description for this {@link ImageOutputStream}.
-	 */
-	public String toString() {
+    /**
+     * Provides a simple description for this {@link ImageOutputStream}.
+     * 
+     * @return a simple description for this {@link ImageOutputStream}.
+     */
+    public String toString() {
 
-		return new StringBuffer("FileImageOutputStreamExtImpl which points to ")
-				.append(this.file.toString()).toString();
-	}
+        return new StringBuffer("FileImageOutputStreamExtImpl which points to ")
+                .append(this.file.toString()).toString();
+    }
 }
