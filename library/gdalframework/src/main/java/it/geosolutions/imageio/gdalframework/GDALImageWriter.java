@@ -136,9 +136,6 @@ public abstract class GDALImageWriter extends ImageWriter {
      */
     private static final int DEFAULT_GDALMEMORYRASTER_MAXSIZE = 1024 * 1024 * 32;
 
-    // private static final String IMAGE_METADATA_NAME =
-    // GDALWritableCommonIIOImageMetadata.nativeMetadataFormatName;
-
     private static final Logger LOGGER = Logger
             .getLogger("it.geosolutions.imageio.gdalframework");
 

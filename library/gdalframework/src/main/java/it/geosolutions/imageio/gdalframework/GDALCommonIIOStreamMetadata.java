@@ -51,7 +51,7 @@ public class GDALCommonIIOStreamMetadata extends IIOMetadata {
      * available within the underlying stream.
      * 
      * @param datasetNames
-     *                the dataset names avaialable within the datasource.
+     *                the dataset names available within the datasource.
      */
     public GDALCommonIIOStreamMetadata(String datasetNames[]) {
         super(false, nativeMetadataFormatName, nativeMetadataFormatClassName,

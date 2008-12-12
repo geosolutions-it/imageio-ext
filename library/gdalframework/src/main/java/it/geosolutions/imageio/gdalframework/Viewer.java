@@ -37,8 +37,11 @@ import com.sun.media.jai.operator.ImageReadDescriptor;
  * within plugin's testCase
  * 
  * @author Daniele Romagnoli, GeoSolutions
- * @TODO: fix visualization, graphic elements overlapping/location settings.
+ * @author Simone Giannecchini, GeoSolutions
  * 
+ * @TODO: fix visualization, graphic elements overlapping/location settings.
+ * This class is used in simple tests which require rendering. 
+ * It can be surely improved. 
  */
 public final class Viewer {
 

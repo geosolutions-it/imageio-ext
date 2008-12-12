@@ -67,8 +67,6 @@ import org.gdal.gdal.gdal;
 import org.gdal.gdalconst.gdalconst;
 import org.gdal.gdalconst.gdalconstConstants;
 
-import com.sun.jndi.toolkit.url.Uri;
-
 /**
  * Main abstract class defining the main framework which needs to be used to
  * extend Image I/O architecture using <a href="http://www.gdal.org/"> GDAL
@@ -192,7 +190,7 @@ public abstract class GDALImageReader extends ImageReader {
         // subdatasets, there are N subdatasets but imageIndex exceeds the
         // subdatasets count.
         // 
-        // It is worthwile to remark that in case of nSubdatasets > 0, the
+        // It is worthwhile to remark that in case of nSubdatasets > 0, the
         // mainDataset is stored in the last position of datasetNames array. In
         // such a case the max valid imageIndex is nSubdatasets.
         // ////////////////////////////////////////////////////////////////////

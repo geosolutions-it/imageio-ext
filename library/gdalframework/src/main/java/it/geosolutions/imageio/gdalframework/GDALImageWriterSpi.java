@@ -90,15 +90,12 @@ public abstract class GDALImageWriterSpi extends ImageWriterSpi {
      * .........................................
      * 
      * You need to set the String returned as the first word (as an instance:
-     * "HFA", if you are building a plugin for the Erdas Image Images)
+     * "HFA", if you are building a plugin for the Erdas Image datasets)
      * 
      * In some circumstances, GDAL provides more than 1 driver to manage a
      * specific format. As an instance, in order to handle HDF4 files, GDAL
      * provides two drivers: HDF4 and HDF4Image (which supports Dataset
      * creation). The HDF4ImageReader will be capable of manage both formats.
-     * 
-     * To specify different formats, just separate them by the ";" symbol. As an
-     * instance: "HDF4;HDF4Image"
      * 
      */
     public List getSupportedFormats() {

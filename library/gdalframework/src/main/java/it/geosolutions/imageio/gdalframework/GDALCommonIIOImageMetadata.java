@@ -101,17 +101,6 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
         
     }
 
-//    /**
-//     * The name of the native metadata format for this object.
-//     */
-//    public static final String nativeMetadataFormatName = "it_geosolutions_imageio_gdalframework_commonImageMetadata_1.0";
-//
-//    /**
-//     * The name of the class implementing <code>IIOMetadataFormat</code> and
-//     * representing the native metadata format for this object.
-//     */
-//    public static final String nativeMetadataFormatClassName = "it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadataFormat";
-
     /**
      * A map containing an HashMap for each domain if available (the Default
      * domain, the ImageStructure domain, as well as any xml prefixed domain)

@@ -16,7 +16,6 @@
  */
 package it.geosolutions.imageio.gdalframework;
 
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 
 import java.io.File;
@@ -79,9 +78,6 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
      * specific format. As an instance, in order to handle HDF4 files, GDAL
      * provides two drivers: HDF4 and HDF4Image (which supports Dataset
      * creation). The HDF4ImageReader will be capable of manage both formats.
-     * 
-     * To specify different formats, just separate them by the ";" symbol. As an
-     * instance: "HDF4;HDF4Image"
      * 
      */
     public List getSupportedFormats() {

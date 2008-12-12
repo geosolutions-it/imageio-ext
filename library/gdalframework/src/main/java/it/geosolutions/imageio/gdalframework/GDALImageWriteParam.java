@@ -42,127 +42,102 @@ public abstract class GDALImageWriteParam extends ImageWriteParam {
     }
 
     public boolean canWriteProgressive() {
-
         return adaptee.canWriteProgressive();
     }
 
     public boolean canWriteTiles() {
-
         return adaptee.canWriteTiles();
     }
 
     public float getBitRate(float quality) {
-
         return adaptee.getBitRate(quality);
     }
 
     public int getCompressionMode() {
-
         return adaptee.getCompressionMode();
     }
 
     public float getCompressionQuality() {
-
         return adaptee.getCompressionQuality();
     }
 
     public String[] getCompressionQualityDescriptions() {
-
         return adaptee.getCompressionQualityDescriptions();
     }
 
     public float[] getCompressionQualityValues() {
-
         return adaptee.getCompressionQualityValues();
     }
 
     public String getCompressionType() {
-
         return adaptee.getCompressionType();
     }
 
     public String[] getCompressionTypes() {
-
         return adaptee.getCompressionTypes();
     }
 
     public String getLocalizedCompressionTypeName() {
-
         return adaptee.getLocalizedCompressionTypeName();
     }
 
     public Dimension[] getPreferredTileSizes() {
-
         return adaptee.getPreferredTileSizes();
     }
 
     public int getProgressiveMode() {
-
         return adaptee.getProgressiveMode();
     }
 
     public int getTileHeight() {
-
         return adaptee.getTileHeight();
     }
 
     public int getTileWidth() {
-
         return adaptee.getTileWidth();
     }
 
     public int getTilingMode() {
-
         return adaptee.getTilingMode();
     }
 
     public boolean isCompressionLossless() {
-
         return adaptee.isCompressionLossless();
     }
 
     public void setCompressionMode(int mode) {
-
         adaptee.setCompressionMode(mode);
     }
 
     public void setCompressionQuality(float quality) {
-
         adaptee.setCompressionQuality(quality);
     }
 
     public void setCompressionType(String compressionType) {
-
         adaptee.setCompressionType(compressionType);
     }
 
     public void setProgressiveMode(int mode) {
-
         adaptee.setProgressiveMode(mode);
     }
 
     public void setTiling(int tileWidth, int tileHeight) {
-
         adaptee.setTiling(tileWidth, tileHeight, 0, 0);
     }
 
     public void setTilingMode(int mode) {
-
         adaptee.setTilingMode(mode);
     }
 
     public void unsetCompression() {
-
         adaptee.unsetCompression();
     }
 
     public void unsetTiling() {
-
         adaptee.unsetTiling();
     }
 
     public void setDestinationType(ImageTypeSpecifier destinationType) {
-
         adaptee.setDestinationType(destinationType);
     }
 
