@@ -54,6 +54,11 @@ public class ArcBinaryGridReadTest extends AbstractArcBinaryGridTestCase {
      * http://download.osgeo.org/gdal/data/aig/nzdem/nzdem500/
      */
     private final static String fileName = "nzdem500/vat.adf";
+    
+    private final static StringBuilder warningMessage = 
+        new StringBuilder("test-data not found: ").append(fileName).
+        append("\n download it at http://download.osgeo.org/gdal/data/aig/nzdem/nzdem500/")
+        .append("\nTests are skipped");
 
     /**
      * Simple test read through JAI - ImageIO
@@ -70,8 +75,7 @@ public class ArcBinaryGridReadTest extends AbstractArcBinaryGridTestCase {
         try {
             file = TestData.file(this, fileName);
         } catch (FileNotFoundException fnfe) {
-            LOGGER.warning("test-data not found: " + fileName
-                    + "\nTests are skipped");
+            LOGGER.warning(warningMessage.toString());
             return;
         }
         pbjImageRead = new ParameterBlockJAI("ImageRead");
@@ -103,8 +107,7 @@ public class ArcBinaryGridReadTest extends AbstractArcBinaryGridTestCase {
         try {
             file = TestData.file(this, fileName);
         } catch (FileNotFoundException fnfe) {
-            LOGGER.warning("test-data not found: " + fileName
-                    + "\nTests are skipped");
+            LOGGER.warning(warningMessage.toString());
             return;
         }
 
