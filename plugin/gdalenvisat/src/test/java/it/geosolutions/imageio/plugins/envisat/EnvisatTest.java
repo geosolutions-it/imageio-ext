@@ -17,6 +17,7 @@
 package it.geosolutions.imageio.plugins.envisat;
 
 import it.geosolutions.imageio.gdalframework.Viewer;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
 import java.io.File;
@@ -38,70 +39,70 @@ import junit.framework.TestSuite;
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class EnvisatTest extends AbstractEnvisatTestCase {
-	public final static String fileName = "ATS_TOA_1CNPDK20030504_111259_000000572016_00080_06146_0157.N1";
+    public final static String fileName = "ATS_TOA_1CNPDK20030504_111259_000000572016_00080_06146_0157.N1";
 
-	public EnvisatTest(String name) {
-		super(name);
-	}
+    public EnvisatTest(String name) {
+        super(name);
+    }
 
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
+    protected void setUp() throws Exception {
+        super.setUp();
+    }
 
-	/**
-	 * Test read exploiting common JAI operations (Crop-Translate-Rotate)
-	 * 
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-	public void testJaiOperations() throws FileNotFoundException, IOException {
-		if (!isGDALAvailable) {
-			return;
-		}
-		File file;
-		try {
-			file = TestData.file(this, fileName);
-		} catch (FileNotFoundException fnfe) {
-			warningMessage();
-			return;
-		}
-		// ////////////////////////////////////////////////////////////////
-		// preparing to read
-		// ////////////////////////////////////////////////////////////////
-		final ParameterBlockJAI pbjImageRead;
-		final ImageReadParam irp = new ImageReadParam();
+    /**
+     * Test read exploiting common JAI operations (Crop-Translate-Rotate)
+     * 
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public void testJaiOperations() throws FileNotFoundException, IOException {
+        if (!isGDALAvailable) {
+            return;
+        }
+        File file;
+        try {
+            file = TestData.file(this, fileName);
+        } catch (FileNotFoundException fnfe) {
+            warningMessage();
+            return;
+        }
+        // ////////////////////////////////////////////////////////////////
+        // preparing to read
+        // ////////////////////////////////////////////////////////////////
+        final ParameterBlockJAI pbjImageRead;
+        final ImageReadParam irp = new ImageReadParam();
 
-		// subsample by 2 on both dimensions
-		final int xSubSampling = 2;
-		final int ySubSampling = 2;
-		final int xSubSamplingOffset = 0;
-		final int ySubSamplingOffset = 0;
-		irp.setSourceSubsampling(xSubSampling, ySubSampling,
-				xSubSamplingOffset, ySubSamplingOffset);
-		pbjImageRead = new ParameterBlockJAI("ImageRead");
-		pbjImageRead.setParameter("Input", file);
-		pbjImageRead.setParameter("readParam", irp);
+        // subsample by 2 on both dimensions
+        final int xSubSampling = 2;
+        final int ySubSampling = 2;
+        final int xSubSamplingOffset = 0;
+        final int ySubSamplingOffset = 0;
+        irp.setSourceSubsampling(xSubSampling, ySubSampling,
+                xSubSamplingOffset, ySubSamplingOffset);
+        pbjImageRead = new ParameterBlockJAI("ImageRead");
+        pbjImageRead.setParameter("Input", file);
+        pbjImageRead.setParameter("readParam", irp);
 
-		// get a RenderedImage
-		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+        // get a RenderedImage
+        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 
-		if (TestData.isInteractiveTest())
-			Viewer.visualize(image, "Subsampling Read");
-		else
-			assertNotNull(image.getTiles());
-	}
+        if (TestData.isInteractiveTest())
+            ImageIOUtilities.visualize(image, "Subsampling Read");
+        else
+            assertNotNull(image.getTiles());
+    }
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite();
+    public static Test suite() {
+        TestSuite suite = new TestSuite();
 
-		// Test read exploiting common JAI operations
-		suite.addTest(new EnvisatTest("testJaiOperations"));
+        // Test read exploiting common JAI operations
+        suite.addTest(new EnvisatTest("testJaiOperations"));
 
-		return suite;
-	}
+        return suite;
+    }
 
-	public static void main(java.lang.String[] args) {
-		junit.textui.TestRunner.run(suite());
-	}
+    public static void main(java.lang.String[] args) {
+        junit.textui.TestRunner.run(suite());
+    }
 
 }

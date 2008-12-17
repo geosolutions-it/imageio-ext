@@ -31,37 +31,37 @@ import junit.framework.TestCase;
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class AbstractENVIHdrTestCase extends TestCase {
-	/** A simple flag set to true in case the GDAL Library is available */
-	protected final static boolean isGDALAvailable = GDALUtilities
-			.isGDALAvailable();
+    /** A simple flag set to true in case the GDAL Library is available */
+    protected final static boolean isGDALAvailable = GDALUtilities
+            .isGDALAvailable();
 
-	protected static final Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.plugins.envihdr");
+    protected static final Logger LOGGER = Logger
+            .getLogger("it.geosolutions.imageio.plugins.envihdr");
 
-	public AbstractENVIHdrTestCase(String name) {
-		super(name);
-	}
+    public AbstractENVIHdrTestCase(String name) {
+        super(name);
+    }
 
-	protected void setUp() throws Exception {
-		super.setUp();
-		if (!isGDALAvailable) {
-			LOGGER.warning("GDAL Library is not Available");
-			return;
-		}
+    protected void setUp() throws Exception {
+        super.setUp();
+        if (!isGDALAvailable) {
+            LOGGER.warning("GDAL Library is not Available");
+            return;
+        }
 
-		File file = TestData.file(this, "test.zip");
-		assertTrue(file.exists());
+        File file = TestData.file(this, "test.zip");
+        assertTrue(file.exists());
 
-		// unzip it
-		TestData.unzipFile(this, "test.zip");
+        // unzip it
+        TestData.unzipFile(this, "test.zip");
 
-		// general settings
-		JAI.getDefaultInstance().getTileScheduler().setParallelism(1);
-		JAI.getDefaultInstance().getTileScheduler().setPriority(5);
-		JAI.getDefaultInstance().getTileScheduler().setPrefetchPriority(5);
-		JAI.getDefaultInstance().getTileScheduler().setPrefetchParallelism(1);
-		JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
-				180 * 1024 * 1024);
-		JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
-	}
+        // general settings
+        JAI.getDefaultInstance().getTileScheduler().setParallelism(1);
+        JAI.getDefaultInstance().getTileScheduler().setPriority(5);
+        JAI.getDefaultInstance().getTileScheduler().setPrefetchPriority(5);
+        JAI.getDefaultInstance().getTileScheduler().setPrefetchParallelism(1);
+        JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
+                180 * 1024 * 1024);
+        JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
+    }
 }

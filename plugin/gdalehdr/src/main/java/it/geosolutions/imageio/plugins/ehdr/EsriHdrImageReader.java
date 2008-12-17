@@ -31,12 +31,12 @@ import java.util.logging.Logger;
  */
 public class EsriHdrImageReader extends GDALImageReader {
 
-	private static final Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.plugins.ehdr");
+    private static final Logger LOGGER = Logger
+            .getLogger("it.geosolutions.imageio.plugins.ehdr");
 
-	public EsriHdrImageReader(EsriHdrImageReaderSpi originatingProvider) {
-		super(originatingProvider, 0);
-		if (LOGGER.isLoggable(Level.FINE))
-			LOGGER.fine("EsriHdrImageReader Constructor");
-	}
+    public EsriHdrImageReader(EsriHdrImageReaderSpi originatingProvider) {
+        super(originatingProvider, 0);
+        if (LOGGER.isLoggable(Level.FINE))
+            LOGGER.fine("EsriHdrImageReader Constructor");
+    }
 }

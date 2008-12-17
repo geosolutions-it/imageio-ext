@@ -31,12 +31,12 @@ import java.util.logging.Logger;
  */
 public class ENVIHdrImageReader extends GDALImageReader {
 
-	private static final Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.plugins.envihdr");
+    private static final Logger LOGGER = Logger
+            .getLogger("it.geosolutions.imageio.plugins.envihdr");
 
-	public ENVIHdrImageReader(ENVIHdrImageReaderSpi originatingProvider) {
-		super(originatingProvider, 0);
-		if (LOGGER.isLoggable(Level.FINE))
-			LOGGER.fine("ENVIHdrImageReader Constructor");
-	}
+    public ENVIHdrImageReader(ENVIHdrImageReaderSpi originatingProvider) {
+        super(originatingProvider, 0);
+        if (LOGGER.isLoggable(Level.FINE))
+            LOGGER.fine("ENVIHdrImageReader Constructor");
+    }
 }

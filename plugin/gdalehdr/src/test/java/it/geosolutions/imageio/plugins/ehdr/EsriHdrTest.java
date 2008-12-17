@@ -16,7 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.ehdr;
 
-import it.geosolutions.imageio.gdalframework.Viewer;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
 import java.awt.image.RenderedImage;
@@ -35,41 +35,43 @@ import junit.framework.TestSuite;
  */
 public class EsriHdrTest extends AbstractEsriHdrTestCase {
 
-	public EsriHdrTest(String name) {
-		super(name);
-	}
+    public EsriHdrTest(String name) {
+        super(name);
+    }
 
-	/**
-	 * Test Read without exploiting JAI-ImageIO Tools
-	 * 
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-	public void testManualRead() throws IOException, FileNotFoundException {
-		if (!isGDALAvailable) {
-			return;
-		}
-		final String fileName = "test.bil";
-		final File file = TestData.file(this, fileName);
-		ImageReader reader = new EsriHdrImageReaderSpi().createReaderInstance();
-		reader.setInput(file);
-		final RenderedImage image = reader.read(0);
-		if (TestData.isInteractiveTest())
-			Viewer.visualize(image);
-		else
-			assertNotNull(image);
-	}
+    /**
+     * Test Read without exploiting JAI-ImageIO Tools
+     * 
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public void testRead() throws IOException, FileNotFoundException {
+        if (!isGDALAvailable) {
+            return;
+        }
+        final String fileName = "elggll.bil";
+        final File file = TestData.file(this, fileName);
+        ImageReader reader = new EsriHdrImageReaderSpi().createReaderInstance();
+        reader.setInput(file);
+        final RenderedImage image = reader.read(0);
+        if (TestData.isInteractiveTest())
+            ImageIOUtilities.visualize(image);
+        else
+            assertNotNull(image);
+        assertEquals(image.getWidth(), 600);
+        assertEquals(image.getHeight(), 600);
+    }
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite();
+    public static Test suite() {
+        TestSuite suite = new TestSuite();
 
-		// Test Read without exploiting JAI-ImageIO tools capabilities
-		suite.addTest(new EsriHdrTest("testManualRead"));
+        // Test Read without exploiting JAI-ImageIO tools capabilities
+        suite.addTest(new EsriHdrTest("testRead"));
 
-		return suite;
-	}
+        return suite;
+    }
 
-	public static void main(java.lang.String[] args) {
-		junit.textui.TestRunner.run(suite());
-	}
+    public static void main(java.lang.String[] args) {
+        junit.textui.TestRunner.run(suite());
+    }
 }

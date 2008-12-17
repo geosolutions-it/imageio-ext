@@ -39,7 +39,7 @@ public class ENVIHdrImageReaderSpi extends GDALImageReaderSpi {
     private static final Logger LOGGER = Logger
             .getLogger("it.geosolutions.imageio.plugins.envihdr");
 
-    static final String[] suffixes = { "bil", "bip", "bsq" };
+    static final String[] suffixes = { "bil", "bip", "bsq", "img" };
 
     static final String[] formatNames = { "ENVI Hdr labelled", "ENVIHDR" };
 
