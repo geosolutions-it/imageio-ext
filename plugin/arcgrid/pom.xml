@@ -19,4 +19,14 @@
       </connection>
       <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/arcgrid</url>
   </scm>
+  
+  <dependencies>
+    <dependency>
+      <groupId>it.geosolutions.imageio-ext</groupId>
+      <artifactId>imageio-ext-utilities</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  
 </project>

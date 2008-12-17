@@ -91,7 +91,7 @@ import java.util.List;
  * <p>
  * It is worth to point out that when using this class it would be great to add
  * to the JVM the hint to augment the lifetime of {@link SoftReference} objects
- * sinche the underlying pool is based on them.
+ * since the underlying pool is based on them.
  * <p>
  * 
  * @author Daniele Romagnoli, GeoSolutions.

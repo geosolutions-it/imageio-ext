@@ -112,7 +112,6 @@ public final class AsciiGridsImageWriterSpi extends ImageWriterSpi {
 	}
 
 	/**
-	 * 
 	 * @see javax.imageio.spi.ImageWriterSpi#createWriterInstance(java.lang.Object)
 	 */
 	public ImageWriter createWriterInstance(Object extension)
@@ -121,7 +120,6 @@ public final class AsciiGridsImageWriterSpi extends ImageWriterSpi {
 	}
 
 	/**
-	 * 
 	 * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
 	 */
 	public String getDescription(Locale locale) {
