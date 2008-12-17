@@ -16,9 +16,11 @@
  */
 package it.geosolutions.imageio.plugins.arcgrid;
 
+import java.io.File;
 import java.util.logging.Logger;
 
 import it.geosolutions.imageio.gdalframework.GDALUtilities;
+import it.geosolutions.resources.TestData;
 
 import javax.media.jai.JAI;
 
@@ -51,5 +53,10 @@ public class AbstractArcGridTestCase extends TestCase {
 		JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
 				128 * 1024 * 1024);
 		JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
+		File file = TestData.file(this, "arcgrid.zip");
+                assertTrue(file.exists());
+
+                // unzip it
+                TestData.unzipFile(this, "arcgrid.zip");
 	}
 }

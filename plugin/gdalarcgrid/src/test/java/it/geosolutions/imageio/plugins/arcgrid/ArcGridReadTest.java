@@ -17,6 +17,7 @@
 package it.geosolutions.imageio.plugins.arcgrid;
 
 import it.geosolutions.imageio.gdalframework.Viewer;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
 import java.awt.Rectangle;
@@ -60,17 +61,17 @@ public class ArcGridReadTest extends AbstractArcGridTestCase {
 			return;
 		}
 		final ParameterBlockJAI pbjImageRead;
-		final String fileName = "arcGrid.asc";
+		final String fileName = "095b_dem_90m.asc";
 		final File file = TestData.file(this, fileName);
 		pbjImageRead = new ParameterBlockJAI("ImageRead");
 		pbjImageRead.setParameter("Input", file);
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 		if (TestData.isInteractiveTest())
-			Viewer.visualize(image, fileName);
+			ImageIOUtilities.visualize(image, fileName);
 		else
 			image.getTiles();
-		assertEquals(120, image.getWidth());
-		assertEquals(85, image.getHeight());
+		assertEquals(351, image.getWidth());
+		assertEquals(350, image.getHeight());
 	}
 
 	/**
@@ -83,7 +84,7 @@ public class ArcGridReadTest extends AbstractArcGridTestCase {
 		if (!isGDALAvailable) {
 			return;
 		}
-		final File file = TestData.file(this, "arcGrid.asc");
+		final File file = TestData.file(this, "095b_dem_90m.asc");
 
 		// //
 		//
@@ -105,7 +106,7 @@ public class ArcGridReadTest extends AbstractArcGridTestCase {
 		reader.setInput(file);
 		RenderedImage image = reader.read(0, rp);
 		if (TestData.isInteractiveTest())
-			Viewer.visualize(image, "subsample read " + file.getName());
+			ImageIOUtilities.visualize(image, "subsample read " + file.getName());
 		reader.reset();
 
 		assertEquals((int) (reader.getWidth(0) / 2.0 + 0.5), image.getWidth());
@@ -122,7 +123,7 @@ public class ArcGridReadTest extends AbstractArcGridTestCase {
 		reader.setInput(file);
 		image = reader.read(0, rp);
 		if (TestData.isInteractiveTest())
-			Viewer.visualize(image, "subsample read " + file.getName());
+			ImageIOUtilities.visualize(image, "subsample read " + file.getName());
 		reader.reset();
 
 		assertEquals(60, image.getWidth());
