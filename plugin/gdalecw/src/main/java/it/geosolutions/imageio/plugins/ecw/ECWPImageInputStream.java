@@ -27,9 +27,11 @@ import java.nio.ByteOrder;
 import javax.imageio.stream.IIOByteBuffer;
 
 /**
- * @author Daniele Romagnoli, GeoSolutions
- * 
  * A simple class which allow to handle ECWP protocol on GDAL.
+ * Actually, this shouldn't be used as a real ImageInputStream.
+ * 
+ * @author Daniele Romagnoli, GeoSolutions
+ * @author Simone Giannecchini, GeoSolutions
  */
 public class ECWPImageInputStream implements URIImageInputStream {
 

@@ -16,7 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.ecw;
 
-import it.geosolutions.imageio.gdalframework.Viewer;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
 import java.awt.Rectangle;
@@ -43,143 +43,110 @@ import junit.framework.TestSuite;
  * @author Daniele Romagnoli, GeoSolutions.
  */
 public class ECWTest extends AbstractECWTestCase {
-    
-    private final static String ECWP = "ecwp://Set a valid link";
-	
-	/** @todo optimize logic for test skipping */
-	
-	public ECWTest(String name) {
-		super(name);
-	}
 
-	/**
-	 * Test reading of a RGB image
-	 * 
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-	public void testImageRead() throws FileNotFoundException, IOException {
-		if (!isDriverAvailable){
-			return;
-		}
-		final ParameterBlockJAI pbjImageRead;
-		final ImageReadParam irp = new ImageReadParam();
-		final String fileName = "dq2807ne.ecw";
-		final File file = TestData.file(this, fileName);
+    private final static String ECWPSkipTest = "ecwp://Set a valid link";
 
-		irp.setSourceSubsampling(8, 8, 0, 0);
-		pbjImageRead = new ParameterBlockJAI("ImageRead");
-		pbjImageRead.setParameter("Input", file);
-		pbjImageRead.setParameter("readParam", irp);
-		final ImageLayout l = new ImageLayout();
-		l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512)
-				.setTileWidth(512);
-		RenderedOp image = JAI.create("ImageRead", pbjImageRead,
-				new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
-		if (TestData.isInteractiveTest())
-			Viewer.visualize(image, fileName);
-		else
-			image.getTiles();
-		assertEquals(784, image.getWidth());
-		assertEquals(878, image.getHeight());
-	}
+    private final static String ECWP = ECWPSkipTest; // Change with a valid
+                                                        // ecwp
 
-	/**
-	 * Test reading of a GrayScale image
-	 * 
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-	public void testGrayScaleImageRead() throws FileNotFoundException,
-			IOException {
-		if (!isDriverAvailable){
-			return;
-		}
-		final ParameterBlockJAI pbjImageRead;
-		final ImageReadParam irp = new ImageReadParam();
-		final String fileName = "wing.ecw";
-		final File file = TestData.file(this, fileName);
-
-		irp.setSourceSubsampling(4, 4, 0, 0);
-		pbjImageRead = new ParameterBlockJAI("ImageRead");
-		pbjImageRead.setParameter("Input", file);
-		pbjImageRead.setParameter("readParam", irp);
-		final ImageLayout l = new ImageLayout();
-		l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512)
-				.setTileWidth(512);
-		RenderedOp image = JAI.create("ImageRead", pbjImageRead,
-				new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
-		if (TestData.isInteractiveTest())
-			Viewer.visualize(image, fileName);
-		else
-			image.getTiles();
-		assertEquals(1969, image.getWidth());
-		assertEquals(1760, image.getHeight());
-	}
-
-	public void testManualRead() throws FileNotFoundException, IOException {
-		if (!isDriverAvailable){
-			return;
-		}
-		final ECWImageReaderSpi spi = new ECWImageReaderSpi();
-		final ECWImageReader mReader = new ECWImageReader(spi);
-		final String fileName = "samplergb.ecw";
-		final File file = TestData.file(this, fileName);
-		final ImageReadParam param = new ImageReadParam();
-		param.setSourceSubsampling(4, 4, 0, 0);
-		final int imageIndex = 0;
-
-		mReader.setInput(file);
-		final RenderedImage image = mReader.readAsRenderedImage(imageIndex,
-				param);
-		if (TestData.isInteractiveTest())
-			Viewer.visualize(image, fileName);
-		assertEquals(688, image.getWidth());
-		assertEquals(471, image.getHeight());
-		mReader.dispose();
-	}
-
-	public void testECWPRead() throws FileNotFoundException, IOException {
-            if (!isDriverAvailable){
-                    return;
-            }
-            
-            final ImageReader mReader = new ECWImageReaderSpi().createReaderInstance();
-            final ECWPImageInputStream ecwp = new ECWPImageInputStream(ECWP);
-            final ImageReadParam param = new ImageReadParam();
-            param.setSourceSubsampling(1, 1, 0, 0);
-            param.setSourceRegion(new Rectangle(1000,1000,2000,2000));
-            final int imageIndex = 0;
-
-            mReader.setInput(ecwp);
-            final RenderedImage image = mReader.readAsRenderedImage(imageIndex,
-                            param);
-            if (TestData.isInteractiveTest())
-                    Viewer.visualize(image, ECWP);
-            mReader.dispose();
+    /** @todo optimize logic for test skipping */
+    public ECWTest(String name) {
+        super(name);
     }
 
-	
-	public static Test suite() {
-		TestSuite suite = new TestSuite();
+    /**
+     * Test reading of a RGB image
+     * 
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public void testImageRead() throws FileNotFoundException, IOException {
+        if (!isDriverAvailable) {
+            return;
+        }
+        final ParameterBlockJAI pbjImageRead;
+        final ImageReadParam irp = new ImageReadParam();
+        final String fileName = "sample.ecw";
+        final File file = TestData.file(this, fileName);
 
-		// Test reading of a GrayScale image
-		suite.addTest(new ECWTest("testGrayScaleImageRead"));
+        irp.setSourceSubsampling(2, 2, 0, 0);
+        pbjImageRead = new ParameterBlockJAI("ImageRead");
+        pbjImageRead.setParameter("Input", file);
+        pbjImageRead.setParameter("readParam", irp);
+        final ImageLayout l = new ImageLayout();
+        l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512)
+                .setTileWidth(512);
+        RenderedOp image = JAI.create("ImageRead", pbjImageRead,
+                new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
+        if (TestData.isInteractiveTest())
+            ImageIOUtilities.visualize(image, fileName);
+        else
+            image.getTiles();
+        assertEquals(200, image.getWidth());
+        assertEquals(100, image.getHeight());
+    }
 
-		// Test reading of a RGB image
-		suite.addTest(new ECWTest("testImageRead"));
+    public void testManualRead() throws FileNotFoundException, IOException {
+        if (!isDriverAvailable) {
+            return;
+        }
+        final ECWImageReaderSpi spi = new ECWImageReaderSpi();
+        final ECWImageReader mReader = new ECWImageReader(spi);
+        final String fileName = "sample.ecw";
+        final File file = TestData.file(this, fileName);
+        final ImageReadParam param = new ImageReadParam();
+        final int imageIndex = 0;
 
-		// Test reading of a RGB image
-		suite.addTest(new ECWTest("testManualRead"));
-		
-//		// Test reading from ECWP
-//                suite.addTest(new ECWTest("testECWPRead"));
+        mReader.setInput(file);
+        final RenderedImage image = mReader.readAsRenderedImage(imageIndex,
+                param);
+        if (TestData.isInteractiveTest())
+            ImageIOUtilities.visualize(image, fileName);
+        assertEquals(400, image.getWidth());
+        assertEquals(200, image.getHeight());
+        mReader.dispose();
+    }
 
-		return suite;
-	}
+    public void testECWPRead() throws FileNotFoundException, IOException {
+        if (!isDriverAvailable) {
+            return;
+        }
+        if (ECWP.equalsIgnoreCase(ECWPSkipTest))
+            return;
 
-	public static void main(java.lang.String[] args) {
-		junit.textui.TestRunner.run(suite());
-	}
+        final ImageReader mReader = new ECWImageReaderSpi()
+                .createReaderInstance();
+        final ECWPImageInputStream ecwp = new ECWPImageInputStream(ECWP);
+        final ImageReadParam param = new ImageReadParam();
+        param.setSourceSubsampling(1, 1, 0, 0);
+        param.setSourceRegion(new Rectangle(1000, 1000, 2000, 2000));
+        final int imageIndex = 0;
+
+        mReader.setInput(ecwp);
+        final RenderedImage image = mReader.readAsRenderedImage(imageIndex,
+                param);
+        if (TestData.isInteractiveTest())
+            ImageIOUtilities.visualize(image, ECWP);
+        mReader.dispose();
+    }
+
+    public static Test suite() {
+        TestSuite suite = new TestSuite();
+
+        // Test reading of a RGB image
+        suite.addTest(new ECWTest("testImageRead"));
+
+        // Test reading of a RGB image
+        suite.addTest(new ECWTest("testManualRead"));
+
+        // Test reading from ECWP
+        suite.addTest(new ECWTest("testECWPRead"));
+
+        return suite;
+    }
+
+    public static void main(java.lang.String[] args) {
+        junit.textui.TestRunner.run(suite());
+    }
 
 }
