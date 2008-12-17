@@ -2,7 +2,7 @@
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
  *    https://imageio-ext.dev.java.net/
- *    (C) 2007 - 2008, GeoSolutions
+ *    (C) 2008, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -31,13 +31,13 @@ import java.util.logging.Logger;
  */
 public class DTEDImageReader extends GDALImageReader {
 
-	private static final Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.plugins.dted");
+    private static final Logger LOGGER = Logger
+            .getLogger("it.geosolutions.imageio.plugins.dted");
 
-	public DTEDImageReader(DTEDImageReaderSpi originatingProvider) {
-		super(originatingProvider, 0);
-		if (LOGGER.isLoggable(Level.FINE))
-			LOGGER.fine("DTEDImageReader Constructor");
-	}
+    public DTEDImageReader(DTEDImageReaderSpi originatingProvider) {
+        super(originatingProvider, 0);
+        if (LOGGER.isLoggable(Level.FINE))
+            LOGGER.fine("DTEDImageReader Constructor");
+    }
 
 }

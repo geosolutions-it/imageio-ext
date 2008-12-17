@@ -17,7 +17,6 @@
 package it.geosolutions.imageio.plugins.dted;
 
 import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
-import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
@@ -43,83 +42,84 @@ import junit.framework.TestSuite;
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class DTEDTest extends AbstractTestCase {
-	public final static String fileName = "n54.dt0";
+    public final static String fileName = "n43.dt0";
 
-	public DTEDTest(String name) {
-		super(name);
-	}
+    public DTEDTest(String name) {
+        super(name);
+    }
 
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
+    protected void setUp() throws Exception {
+        super.setUp();
+    }
 
-	/**
-	 * Test read exploiting common JAI operations (Crop-Translate-Rotate)
-	 * 
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-	public void testImageRead() throws FileNotFoundException, IOException {
-		if (!isGDALAvailable) {
-			return;
-		}
-		File file;
-		try {
-			file = TestData.file(this, fileName);
-		} catch (FileNotFoundException fnfe) {
-			warningMessage();
-			return;
-		}
-		// ////////////////////////////////////////////////////////////////
-		// preparing to read
-		// ////////////////////////////////////////////////////////////////
-		final ParameterBlockJAI pbjImageRead;
-		final ImageReadParam irp = new ImageReadParam();
+    /**
+     * Test read exploiting common JAI operations (Crop-Translate-Rotate)
+     * 
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public void testImageRead() throws FileNotFoundException, IOException {
+        if (!isGDALAvailable) {
+            return;
+        }
+        File file;
+        try {
+            file = TestData.file(this, fileName);
+        } catch (FileNotFoundException fnfe) {
+            warningMessage();
+            return;
+        }
+        // ////////////////////////////////////////////////////////////////
+        // preparing to read
+        // ////////////////////////////////////////////////////////////////
+        final ParameterBlockJAI pbjImageRead;
+        final ImageReadParam irp = new ImageReadParam();
 
-		pbjImageRead = new ParameterBlockJAI("ImageRead");
-		pbjImageRead.setParameter("Input", file);
-		pbjImageRead.setParameter("readParam", irp);
+        pbjImageRead = new ParameterBlockJAI("ImageRead");
+        pbjImageRead.setParameter("Input", file);
+        pbjImageRead.setParameter("readParam", irp);
 
-		final ImageLayout l = new ImageLayout();
-		l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(32)
-				.setTileWidth(32);
+        final ImageLayout l = new ImageLayout();
+        l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(32)
+                .setTileWidth(32);
 
-		// get a RenderedImage
-		RenderedOp image = JAI.create("ImageRead", pbjImageRead,
-				new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
+        // get a RenderedImage
+        RenderedOp image = JAI.create("ImageRead", pbjImageRead,
+                new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
 
-		if (TestData.isInteractiveTest()) {
-			image.getRendering();
-			ImageReader reader = (ImageReader) image
-					.getProperty("JAI.ImageReader");
-			int noDataValue = -32767;
-			if (reader != null) {
-				GDALCommonIIOImageMetadata metadata = (GDALCommonIIOImageMetadata) reader
-						.getImageMetadata(0);
-				try {
-					double d = metadata.getNoDataValue(0);
-					noDataValue = (int) d;
-				} catch (IllegalArgumentException iae) {
-				}
-			}
-			ImageIOUtilities.visualize(image, "test", true, noDataValue);
-		} else
-			assertNotNull(image.getTiles());
-		assertEquals(61, image.getWidth());
-		assertEquals(121, image.getHeight());
-	}
+        if (TestData.isInteractiveTest()) {
+            image.getRendering();
+            ImageReader reader = (ImageReader) image
+                    .getProperty("JAI.ImageReader");
+            int noDataValue = -32767;
+            if (reader != null) {
+                GDALCommonIIOImageMetadata metadata = (GDALCommonIIOImageMetadata) reader
+                        .getImageMetadata(0);
+                try {
+                    double d = metadata.getNoDataValue(0);
+                    noDataValue = (int) d;
+                } catch (IllegalArgumentException iae) {
+                    //No matter since I'm only looking for nodata
+                }
+            }
+            ImageIOUtilities.visualize(image, "test", true, noDataValue);
+        } else
+            assertNotNull(image.getTiles());
+        assertEquals(121, image.getWidth());
+        assertEquals(121, image.getHeight());
+    }
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite();
+    public static Test suite() {
+        TestSuite suite = new TestSuite();
 
-		// Test read exploiting common JAI operations
-		suite.addTest(new DTEDTest("testImageRead"));
+        // Test read exploiting common JAI operations
+        suite.addTest(new DTEDTest("testImageRead"));
 
-		return suite;
-	}
+        return suite;
+    }
 
-	public static void main(java.lang.String[] args) {
-		junit.textui.TestRunner.run(suite());
-	}
+    public static void main(java.lang.String[] args) {
+        junit.textui.TestRunner.run(suite());
+    }
 
 }

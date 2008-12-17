@@ -32,102 +32,97 @@ import javax.imageio.ImageReader;
  * Service provider interface for DTED image reader
  * 
  * @author Daniele Romagnoli, GeoSolutions.
- * @author Simone Giannecchini, GeoSolutions. 
+ * @author Simone Giannecchini, GeoSolutions.
  */
 public class DTEDImageReaderSpi extends GDALImageReaderSpi {
 
-	private static final Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.plugins.dted");
+    private static final Logger LOGGER = Logger
+            .getLogger("it.geosolutions.imageio.plugins.dted");
 
-	static final String[] suffixes = { "n1" };
+    static final String[] suffixes = { "n1" };
 
-	static final String[] formatNames = { "DTED" };
+    static final String[] formatNames = { "DTED" };
 
-	static final String[] MIMETypes = { "image/n1"};
+    static final String[] MIMETypes = { "image/n1" };
 
-	static final String version = "1.0";
+    static final String version = "1.0";
 
-	static final String readerCN = "it.geosolutions.imageio.plugins.dted.DTEDImageReader";
+    static final String readerCN = "it.geosolutions.imageio.plugins.dted.DTEDImageReader";
 
-	static final String vendorName = "GeoSolutions";
+    static final String vendorName = "GeoSolutions";
 
-	// writerSpiNames
-	static final String[] wSN = {null };
+    // writerSpiNames
+    static final String[] wSN = { null };
 
-	// StreamMetadataFormatNames and StreamMetadataFormatClassNames
-	static final boolean supportsStandardStreamMetadataFormat = false;
+    // StreamMetadataFormatNames and StreamMetadataFormatClassNames
+    static final boolean supportsStandardStreamMetadataFormat = false;
 
-	static final String nativeStreamMetadataFormatName = null;
+    static final String nativeStreamMetadataFormatName = null;
 
-	static final String nativeStreamMetadataFormatClassName = null;
+    static final String nativeStreamMetadataFormatClassName = null;
 
-	static final String[] extraStreamMetadataFormatNames = { null };
+    static final String[] extraStreamMetadataFormatNames = { null };
 
-	static final String[] extraStreamMetadataFormatClassNames = { null };
+    static final String[] extraStreamMetadataFormatClassNames = { null };
 
-	// ImageMetadataFormatNames and ImageMetadataFormatClassNames
-	static final boolean supportsStandardImageMetadataFormat = false;
+    // ImageMetadataFormatNames and ImageMetadataFormatClassNames
+    static final boolean supportsStandardImageMetadataFormat = false;
 
-	static final String nativeImageMetadataFormatName = null;
+    static final String nativeImageMetadataFormatName = null;
 
-	static final String nativeImageMetadataFormatClassName = null;
+    static final String nativeImageMetadataFormatClassName = null;
 
-	static final String[] extraImageMetadataFormatNames = { null };
+    static final String[] extraImageMetadataFormatNames = { null };
 
-	static final String[] extraImageMetadataFormatClassNames = { null };
+    static final String[] extraImageMetadataFormatClassNames = { null };
 
-	public DTEDImageReaderSpi() {
-		super(
-				vendorName,
-				version,
-				formatNames,
-				suffixes,
-				MIMETypes,
-				readerCN, // readerClassName
-				new Class[] 
-					        { File.class, FileImageInputStreamExt.class },
-				wSN, // writer Spi Names
-				supportsStandardStreamMetadataFormat,
-				nativeStreamMetadataFormatName,
-				nativeStreamMetadataFormatClassName,
-				extraStreamMetadataFormatNames,
-				extraStreamMetadataFormatClassNames,
-				supportsStandardImageMetadataFormat,
-				nativeImageMetadataFormatName,
-				nativeImageMetadataFormatClassName,
-				extraImageMetadataFormatNames,
-				extraImageMetadataFormatClassNames,
-				Collections.singletonList("DTED"));
-		if (LOGGER.isLoggable(Level.FINE))
-			LOGGER.fine("EnvisatImageReaderSpi Constructor");
-	}
+    public DTEDImageReaderSpi() {
+        super(
+                vendorName,
+                version,
+                formatNames,
+                suffixes,
+                MIMETypes,
+                readerCN, // readerClassName
+                new Class[] { File.class, FileImageInputStreamExt.class },
+                wSN, // writer Spi Names
+                supportsStandardStreamMetadataFormat,
+                nativeStreamMetadataFormatName,
+                nativeStreamMetadataFormatClassName,
+                extraStreamMetadataFormatNames,
+                extraStreamMetadataFormatClassNames,
+                supportsStandardImageMetadataFormat,
+                nativeImageMetadataFormatName,
+                nativeImageMetadataFormatClassName,
+                extraImageMetadataFormatNames,
+                extraImageMetadataFormatClassNames, Collections
+                        .singletonList("DTED"));
+        if (LOGGER.isLoggable(Level.FINE))
+            LOGGER.fine("EnvisatImageReaderSpi Constructor");
+    }
 
-	/**
-	 * This method checks if the provided input can be decoded from this SPI
-	 */
-	public boolean canDecodeInput(Object input) throws IOException {
-		return super.canDecodeInput(input);
-	}
+    /**
+     * This method checks if the provided input can be decoded from this SPI
+     */
+    public boolean canDecodeInput(Object input) throws IOException {
+        return super.canDecodeInput(input);
+    }
 
-	/**
-	 * Returns an instance of the EnvisatImageReader
-	 * 
-	 * @see javax.imageio.spi.ImageReaderSpi#createReaderInstance(java.lang.Object)
-	 */
-	public ImageReader createReaderInstance(Object source) throws IOException {
-		return new DTEDImageReader(this);
-	}
+    /**
+     * Returns an instance of the EnvisatImageReader
+     * 
+     * @see javax.imageio.spi.ImageReaderSpi#createReaderInstance(java.lang.Object)
+     */
+    public ImageReader createReaderInstance(Object source) throws IOException {
+        return new DTEDImageReader(this);
+    }
 
-	/**
-	 * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
-	 */
-	public String getDescription(Locale locale) {
-		return new StringBuffer("DTED Image Reader, version ").append(version)
-				.toString();
-	}
+    /**
+     * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
+     */
+    public String getDescription(Locale locale) {
+        return new StringBuffer("DTED Image Reader, version ").append(version)
+                .toString();
+    }
 
-
-
-
-	
 }
