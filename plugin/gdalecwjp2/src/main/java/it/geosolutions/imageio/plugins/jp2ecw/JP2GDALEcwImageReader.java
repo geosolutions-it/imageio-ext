@@ -31,12 +31,12 @@ import java.util.logging.Logger;
  */
 public class JP2GDALEcwImageReader extends GDALImageReader {
 
-	private static final Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.plugins.jp2ecw");
+    private static final Logger LOGGER = Logger
+            .getLogger("it.geosolutions.imageio.plugins.jp2ecw");
 
-	public JP2GDALEcwImageReader(JP2GDALEcwImageReaderSpi originatingProvider) {
-		super(originatingProvider, 0);
-		if (LOGGER.isLoggable(Level.FINE))
-			LOGGER.fine("JP2GDALEcwImageReader Constructor");
-	}
+    public JP2GDALEcwImageReader(JP2GDALEcwImageReaderSpi originatingProvider) {
+        super(originatingProvider, 0);
+        if (LOGGER.isLoggable(Level.FINE))
+            LOGGER.fine("JP2GDALEcwImageReader Constructor");
+    }
 }
