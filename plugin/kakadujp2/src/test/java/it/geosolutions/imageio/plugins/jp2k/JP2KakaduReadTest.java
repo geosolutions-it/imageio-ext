@@ -16,6 +16,7 @@
 package it.geosolutions.imageio.plugins.jp2k;
 
 import it.geosolutions.imageio.imageioimpl.imagereadmt.ImageReadDescriptorMT;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
 import java.awt.RenderingHints;
@@ -73,7 +74,8 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
 //    }
 
     public void testJaiReadFromFile() throws IOException {
-
+        if (!runTests)
+            return;
         final File file = TestData.file(this, "CB_TM432.jp2");
         ImageReadDescriptorMT.register(JAI.getDefaultInstance());
 
@@ -91,7 +93,7 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
         RenderedOp image = JAI.create("ImageRead", pbjImageRead,
                 new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
         if (TestData.isInteractiveTest())
-            visualize(image, 800, 600);
+            ImageIOUtilities.visualize(image);
         else
             assertNotNull(image.getTiles());
     }
@@ -125,20 +127,20 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
     //
     // }
     public void testManualRead() throws IOException {
+        if (!runTests)
+            return;
         final File file = TestData.file(this, "CB_TM432.jp2");
         JP2KKakaduImageReader reader = new JP2KKakaduImageReader(
                 new JP2KKakaduImageReaderSpi());
 
         reader.setInput(file);
-        ImageReadParam param = new ImageReadParam();
-         param.setSourceSubsampling(4, 4, 0, 0);
-        RenderedImage image = reader.read(0, param);
+        RenderedImage image = reader.read(0);
         if (TestData.isInteractiveTest())
-            visualize(image, "testManualRead");
+            ImageIOUtilities.visualize(image, "testManualRead");
         else
             assertNotNull(image.getData());
-//        assertEquals(361, image.getWidth());
-//        assertEquals(488, image.getHeight());
+        assertEquals(361, image.getWidth());
+        assertEquals(488, image.getHeight());
     }
 
     public static void displayStatistics(boolean b, RenderedImage source) {
@@ -158,6 +160,8 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
     }
 
     public static void main(java.lang.String[] args) {
+        if (!runTests)
+            return;
         junit.textui.TestRunner.run(suite());
     }
 
