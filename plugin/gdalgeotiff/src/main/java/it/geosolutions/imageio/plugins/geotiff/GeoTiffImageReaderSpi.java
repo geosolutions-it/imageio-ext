@@ -36,86 +36,87 @@ import javax.imageio.ImageReader;
  */
 public class GeoTiffImageReaderSpi extends GDALImageReaderSpi {
 
-	private static final Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.plugins.geotiff");
+    private static final Logger LOGGER = Logger
+            .getLogger("it.geosolutions.imageio.plugins.geotiff");
 
-	static final String[] suffixes = { "GeoTiff", "tiff" };
+    static final String[] suffixes = { "GeoTiff", "tiff", "tif" };
 
-	static final String[] formatNames = { "Tiff", "GeoTiff" };
+    static final String[] formatNames = { "Tiff", "GeoTiff", "GeoTIFF",
+            "GEOTIFF" };
 
-	static final String[] MIMETypes = { "image/tiff" };
+    static final String[] MIMETypes = { "image/tiff" };
 
-	static final String version = "1.0";
+    static final String version = "1.0";
 
-	static final String readerCN = "it.geosolutions.imageio.plugins.geotiff.GeoTiffImageReader";
+    static final String readerCN = "it.geosolutions.imageio.plugins.geotiff.GeoTiffImageReader";
 
-	static final String vendorName = "GeoSolutions";
+    static final String vendorName = "GeoSolutions";
 
-	// writerSpiNames
-	static final String[] wSN = { null };
+    // writerSpiNames
+    static final String[] wSN = { null };
 
-	// StreamMetadataFormatNames and StreamMetadataFormatClassNames
-	static final boolean supportsStandardStreamMetadataFormat = false;
+    // StreamMetadataFormatNames and StreamMetadataFormatClassNames
+    static final boolean supportsStandardStreamMetadataFormat = false;
 
-	static final String nativeStreamMetadataFormatName = null;
+    static final String nativeStreamMetadataFormatName = null;
 
-	static final String nativeStreamMetadataFormatClassName = null;
+    static final String nativeStreamMetadataFormatClassName = null;
 
-	static final String[] extraStreamMetadataFormatNames = { null };
+    static final String[] extraStreamMetadataFormatNames = { null };
 
-	static final String[] extraStreamMetadataFormatClassNames = { null };
+    static final String[] extraStreamMetadataFormatClassNames = { null };
 
-	// ImageMetadataFormatNames and ImageMetadataFormatClassNames
-	static final boolean supportsStandardImageMetadataFormat = false;
+    // ImageMetadataFormatNames and ImageMetadataFormatClassNames
+    static final boolean supportsStandardImageMetadataFormat = false;
 
-	static final String nativeImageMetadataFormatName = null;
+    static final String nativeImageMetadataFormatName = null;
 
-	static final String nativeImageMetadataFormatClassName = null;
+    static final String nativeImageMetadataFormatClassName = null;
 
-	static final String[] extraImageMetadataFormatNames = { null };
+    static final String[] extraImageMetadataFormatNames = { null };
 
-	static final String[] extraImageMetadataFormatClassNames = { null };
+    static final String[] extraImageMetadataFormatClassNames = { null };
 
-	public GeoTiffImageReaderSpi() {
-		super(
-				vendorName,
-				version,
-				formatNames,
-				suffixes,
-				MIMETypes,
-				readerCN, // readerClassName
-				new Class[] { File.class, FileImageInputStreamExt.class },
-				wSN, // writer Spi Names
-				supportsStandardStreamMetadataFormat,
-				nativeStreamMetadataFormatName,
-				nativeStreamMetadataFormatClassName,
-				extraStreamMetadataFormatNames,
-				extraStreamMetadataFormatClassNames,
-				supportsStandardImageMetadataFormat,
-				nativeImageMetadataFormatName,
-				nativeImageMetadataFormatClassName,
-				extraImageMetadataFormatNames,
-				extraImageMetadataFormatClassNames, Collections
-						.singletonList("GTiff"));
+    public GeoTiffImageReaderSpi() {
+        super(
+                vendorName,
+                version,
+                formatNames,
+                suffixes,
+                MIMETypes,
+                readerCN, // readerClassName
+                new Class[] { File.class, FileImageInputStreamExt.class },
+                wSN, // writer Spi Names
+                supportsStandardStreamMetadataFormat,
+                nativeStreamMetadataFormatName,
+                nativeStreamMetadataFormatClassName,
+                extraStreamMetadataFormatNames,
+                extraStreamMetadataFormatClassNames,
+                supportsStandardImageMetadataFormat,
+                nativeImageMetadataFormatName,
+                nativeImageMetadataFormatClassName,
+                extraImageMetadataFormatNames,
+                extraImageMetadataFormatClassNames, Collections
+                        .singletonList("GTiff"));
 
-		if (LOGGER.isLoggable(Level.FINE))
-			LOGGER.fine("GeoTiffImageReaderSpi Constructor");
-	}
+        if (LOGGER.isLoggable(Level.FINE))
+            LOGGER.fine("GeoTiffImageReaderSpi Constructor");
+    }
 
-	/**
-	 * Returns an instance of the GeoTiffImageReader
-	 * 
-	 * @see javax.imageio.spi.ImageReaderSpi#createReaderInstance(java.lang.Object)
-	 */
-	public ImageReader createReaderInstance(Object source) throws IOException {
-		return new GeoTiffImageReader(this);
-	}
+    /**
+     * Returns an instance of the GeoTiffImageReader
+     * 
+     * @see javax.imageio.spi.ImageReaderSpi#createReaderInstance(java.lang.Object)
+     */
+    public ImageReader createReaderInstance(Object source) throws IOException {
+        return new GeoTiffImageReader(this);
+    }
 
-	/**
-	 * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
-	 */
-	public String getDescription(Locale locale) {
-		return new StringBuffer("GeoTiff Image Reader, version ").append(
-				version).toString();
-	}
+    /**
+     * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
+     */
+    public String getDescription(Locale locale) {
+        return new StringBuffer("GeoTiff Image Reader, version ").append(
+                version).toString();
+    }
 }

@@ -31,12 +31,12 @@ import java.util.logging.Logger;
  */
 public class NITFImageReader extends GDALImageReader {
 
-	private static final Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.plugins.nitf");
+    private static final Logger LOGGER = Logger
+            .getLogger("it.geosolutions.imageio.plugins.nitf");
 
-	public NITFImageReader(NITFImageReaderSpi originatingProvider) {
-		super(originatingProvider, 0);
-		if (LOGGER.isLoggable(Level.FINE))
-			LOGGER.fine("NITFImageReader Constructor");
-	}
+    public NITFImageReader(NITFImageReaderSpi originatingProvider) {
+        super(originatingProvider, 0);
+        if (LOGGER.isLoggable(Level.FINE))
+            LOGGER.fine("NITFImageReader Constructor");
+    }
 }

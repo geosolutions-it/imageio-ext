@@ -23,36 +23,37 @@ import java.util.logging.Logger;
 import javax.media.jai.JAI;
 
 import junit.framework.TestCase;
+
 /**
  * @author Daniele Romagnoli, GeoSolutions.
- * @author Simone Giannecchini, GeoSolutions. 
+ * @author Simone Giannecchini, GeoSolutions.
  */
 public class AbstractGeoTiffTestCase extends TestCase {
 
-	/** A simple flag set to true in case the GDAL Library is available */
-	protected final static boolean isGDALAvailable = GDALUtilities
-			.isGDALAvailable();
+    /** A simple flag set to true in case the GDAL Library is available */
+    protected final static boolean isGDALAvailable = GDALUtilities
+            .isGDALAvailable();
 
-	protected static final Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.plugins.geotiff");
+    protected static final Logger LOGGER = Logger
+            .getLogger("it.geosolutions.imageio.plugins.geotiff");
 
-	public AbstractGeoTiffTestCase(String name) {
-		super(name);
-	}
+    public AbstractGeoTiffTestCase(String name) {
+        super(name);
+    }
 
-	protected void setUp() throws Exception {
-		super.setUp();
-		if (!isGDALAvailable) {
-			LOGGER.warning("GDAL Library is not Available");
-			return;
-		}
-		// general settings
-		JAI.getDefaultInstance().getTileScheduler().setParallelism(1);
-		JAI.getDefaultInstance().getTileScheduler().setPriority(5);
-		JAI.getDefaultInstance().getTileScheduler().setPrefetchPriority(5);
-		JAI.getDefaultInstance().getTileScheduler().setPrefetchParallelism(1);
-		JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
-				180 * 1024 * 1024);
-		JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
-	}
+    protected void setUp() throws Exception {
+        super.setUp();
+        if (!isGDALAvailable) {
+            LOGGER.warning("GDAL Library is not Available");
+            return;
+        }
+        // general settings
+        JAI.getDefaultInstance().getTileScheduler().setParallelism(1);
+        JAI.getDefaultInstance().getTileScheduler().setPriority(5);
+        JAI.getDefaultInstance().getTileScheduler().setPrefetchPriority(5);
+        JAI.getDefaultInstance().getTileScheduler().setPrefetchParallelism(1);
+        JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
+                180 * 1024 * 1024);
+        JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
+    }
 }

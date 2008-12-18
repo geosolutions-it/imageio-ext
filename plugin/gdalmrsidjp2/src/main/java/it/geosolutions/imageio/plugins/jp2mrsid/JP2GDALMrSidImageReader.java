@@ -31,22 +31,22 @@ import java.util.logging.Logger;
  */
 public class JP2GDALMrSidImageReader extends GDALImageReader {
 
-	private static final Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.plugins.jp2mrsid");
+    private static final Logger LOGGER = Logger
+            .getLogger("it.geosolutions.imageio.plugins.jp2mrsid");
 
-	/**
-	 * Constructs a <code>JP2GDALMrSidImageReader<code> using a 
-	 * {@link JP2GDALMrSidImageReaderSpi}.
-	 * 
-	 * @param originatingProvider
-	 *            The {@link JP2GDALMrSidImageReaderSpi} to use for building 
-	 *            this <code>JP2GDALMrSidImageReader<code>.
-	 */
-	public JP2GDALMrSidImageReader(
-			JP2GDALMrSidImageReaderSpi originatingProvider) {
-		super(originatingProvider, 0);
-		if (LOGGER.isLoggable(Level.FINE))
-			LOGGER.fine("JP2GDALMrSidImageReader Constructor");
-	}
+    /**
+     * Constructs a <code>JP2GDALMrSidImageReader<code> using a 
+     * {@link JP2GDALMrSidImageReaderSpi}.
+     * 
+     * @param originatingProvider
+     *            The {@link JP2GDALMrSidImageReaderSpi} to use for building 
+     *            this <code>JP2GDALMrSidImageReader<code>.
+     */
+    public JP2GDALMrSidImageReader(
+            JP2GDALMrSidImageReaderSpi originatingProvider) {
+        super(originatingProvider, 0);
+        if (LOGGER.isLoggable(Level.FINE))
+            LOGGER.fine("JP2GDALMrSidImageReader Constructor");
+    }
 
 }

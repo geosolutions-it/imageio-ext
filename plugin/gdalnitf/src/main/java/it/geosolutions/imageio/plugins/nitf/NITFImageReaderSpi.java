@@ -32,103 +32,100 @@ import javax.imageio.ImageReader;
  * Service provider interface for NITF image reader
  * 
  * @author Daniele Romagnoli, GeoSolutions.
- * @author Simone Giannecchini, GeoSolutions. 
+ * @author Simone Giannecchini, GeoSolutions.
  */
 public class NITFImageReaderSpi extends GDALImageReaderSpi {
 
-	private static final Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.plugins.nitf");
+    private static final Logger LOGGER = Logger
+            .getLogger("it.geosolutions.imageio.plugins.nitf");
 
-	//suffixes are unspecified due to the wide number of file extensions (>100)
-	//related to NITF files.
-	static final String[] suffixes = { "" };
+    // suffixes are unspecified due to the wide number of file extensions (>100)
+    // related to NITF files.
+    static final String[] suffixes = { "" };
 
-	static final String[] formatNames = { "NITF" };
+    static final String[] formatNames = { "NITF" };
 
-	static final String[] MIMETypes = { "image/nitf"};
+    static final String[] MIMETypes = { "image/nitf" };
 
-	static final String version = "1.0";
+    static final String version = "1.0";
 
-	static final String readerCN = "it.geosolutions.imageio.plugins.nitf.NITFImageReader";
+    static final String readerCN = "it.geosolutions.imageio.plugins.nitf.NITFImageReader";
 
-	static final String vendorName = "GeoSolutions";
+    static final String vendorName = "GeoSolutions";
 
-	// writerSpiNames
-	static final String[] wSN = {null };
+    // writerSpiNames
+    static final String[] wSN = { null };
 
-	// StreamMetadataFormatNames and StreamMetadataFormatClassNames
-	static final boolean supportsStandardStreamMetadataFormat = false;
+    // StreamMetadataFormatNames and StreamMetadataFormatClassNames
+    static final boolean supportsStandardStreamMetadataFormat = false;
 
-	static final String nativeStreamMetadataFormatName = null;
+    static final String nativeStreamMetadataFormatName = null;
 
-	static final String nativeStreamMetadataFormatClassName = null;
+    static final String nativeStreamMetadataFormatClassName = null;
 
-	static final String[] extraStreamMetadataFormatNames = { null };
+    static final String[] extraStreamMetadataFormatNames = { null };
 
-	static final String[] extraStreamMetadataFormatClassNames = { null };
+    static final String[] extraStreamMetadataFormatClassNames = { null };
 
-	// ImageMetadataFormatNames and ImageMetadataFormatClassNames
-	static final boolean supportsStandardImageMetadataFormat = false;
+    // ImageMetadataFormatNames and ImageMetadataFormatClassNames
+    static final boolean supportsStandardImageMetadataFormat = false;
 
-	static final String nativeImageMetadataFormatName = null;
+    static final String nativeImageMetadataFormatName = null;
 
-	static final String nativeImageMetadataFormatClassName = null;
+    static final String nativeImageMetadataFormatClassName = null;
 
-	static final String[] extraImageMetadataFormatNames = { null };
+    static final String[] extraImageMetadataFormatNames = { null };
 
-	static final String[] extraImageMetadataFormatClassNames = { null };
+    static final String[] extraImageMetadataFormatClassNames = { null };
 
-	public NITFImageReaderSpi() {
-		super(
-				vendorName,
-				version,
-				formatNames,
-				suffixes,
-				MIMETypes,
-				readerCN, // readerClassName
-				new Class[] 
-					        { File.class, FileImageInputStreamExt.class },
-				wSN, // writer Spi Names
-				supportsStandardStreamMetadataFormat,
-				nativeStreamMetadataFormatName,
-				nativeStreamMetadataFormatClassName,
-				extraStreamMetadataFormatNames,
-				extraStreamMetadataFormatClassNames,
-				supportsStandardImageMetadataFormat,
-				nativeImageMetadataFormatName,
-				nativeImageMetadataFormatClassName,
-				extraImageMetadataFormatNames,
-				extraImageMetadataFormatClassNames,
-				Collections.singletonList("NITF"));
-		if (LOGGER.isLoggable(Level.FINE))
-			LOGGER.fine("NITFImageReaderSpi Constructor");
+    public NITFImageReaderSpi() {
+        super(
+                vendorName,
+                version,
+                formatNames,
+                suffixes,
+                MIMETypes,
+                readerCN, // readerClassName
+                new Class[] { File.class, FileImageInputStreamExt.class },
+                wSN, // writer Spi Names
+                supportsStandardStreamMetadataFormat,
+                nativeStreamMetadataFormatName,
+                nativeStreamMetadataFormatClassName,
+                extraStreamMetadataFormatNames,
+                extraStreamMetadataFormatClassNames,
+                supportsStandardImageMetadataFormat,
+                nativeImageMetadataFormatName,
+                nativeImageMetadataFormatClassName,
+                extraImageMetadataFormatNames,
+                extraImageMetadataFormatClassNames, Collections
+                        .singletonList("NITF"));
+        if (LOGGER.isLoggable(Level.FINE))
+            LOGGER.fine("NITFImageReaderSpi Constructor");
 
-	}
+    }
 
-	/**
-	 * This method checks if the provided input can be decoded from this SPI
-	 */
-	public boolean canDecodeInput(Object input) throws IOException {
-		return super.canDecodeInput(input);
-	}
+    /**
+     * This method checks if the provided input can be decoded from this SPI
+     */
+    public boolean canDecodeInput(Object input) throws IOException {
+        return super.canDecodeInput(input);
+    }
 
-	/**
-	 * Returns an instance of the NITFImageReader
-	 * 
-	 * @see javax.imageio.spi.ImageReaderSpi#createReaderInstance(java.lang.Object)
-	 */
-	public ImageReader createReaderInstance(Object source) throws IOException {
-		return new NITFImageReader(this);
-	}
+    /**
+     * Returns an instance of the NITFImageReader
+     * 
+     * @see javax.imageio.spi.ImageReaderSpi#createReaderInstance(java.lang.Object)
+     */
+    public ImageReader createReaderInstance(Object source) throws IOException {
+        return new NITFImageReader(this);
+    }
 
-	/**
-	 * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
-	 */
-	public String getDescription(Locale locale) {
-		return new StringBuffer("NITF Image Reader, version ").append(version)
-				.toString();
-	}
+    /**
+     * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
+     */
+    public String getDescription(Locale locale) {
+        return new StringBuffer("NITF Image Reader, version ").append(version)
+                .toString();
+    }
 
-
-	
 }

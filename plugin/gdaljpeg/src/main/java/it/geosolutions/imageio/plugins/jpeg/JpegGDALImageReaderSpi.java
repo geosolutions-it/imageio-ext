@@ -32,132 +32,130 @@ import javax.imageio.ImageReader;
  * Service provider interface for jpeg images
  * 
  * @author Daniele Romagnoli, GeoSolutions.
- * @author Simone Giannecchini, GeoSolutions. 
+ * @author Simone Giannecchini, GeoSolutions.
  */
 public class JpegGDALImageReaderSpi extends GDALImageReaderSpi {
 
-	private static final Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.plugins.jpeg");
+    private static final Logger LOGGER = Logger
+            .getLogger("it.geosolutions.imageio.plugins.jpeg");
 
-	static final String[] suffixes = { "jpg", "jpeg" };
+    static final String[] suffixes = { "jpg", "jpeg" };
 
-	static final String[] formatNames = { "JPEG" };
+    static final String[] formatNames = { "JPEG" };
 
-	static final String[] MIMETypes = { "image/jpeg", "image/jpg" };
+    static final String[] MIMETypes = { "image/jpeg", "image/jpg" };
 
-	static final String version = "1.0";
+    static final String version = "1.0";
 
-	static final String readerCN = "it.geosolutions.imageio.plugins.jpg.JpegGDALImageReader";
+    static final String readerCN = "it.geosolutions.imageio.plugins.jpeg.JpegGDALImageReader";
 
-	static final String vendorName = "GeoSolutions";
+    static final String vendorName = "GeoSolutions";
 
-	// writerSpiNames
-	static final String[] wSN = {/* "javax.imageio.plugins.jpg.JpegGDALImageReaderSpi" */null };
+    // writerSpiNames
+    static final String[] wSN = { null };
 
-	// StreamMetadataFormatNames and StreamMetadataFormatClassNames
-	static final boolean supportsStandardStreamMetadataFormat = false;
+    // StreamMetadataFormatNames and StreamMetadataFormatClassNames
+    static final boolean supportsStandardStreamMetadataFormat = false;
 
-	static final String nativeStreamMetadataFormatName = null;
+    static final String nativeStreamMetadataFormatName = null;
 
-	static final String nativeStreamMetadataFormatClassName = null;
+    static final String nativeStreamMetadataFormatClassName = null;
 
-	static final String[] extraStreamMetadataFormatNames = { null };
+    static final String[] extraStreamMetadataFormatNames = { null };
 
-	static final String[] extraStreamMetadataFormatClassNames = { null };
+    static final String[] extraStreamMetadataFormatClassNames = { null };
 
-	// ImageMetadataFormatNames and ImageMetadataFormatClassNames
-	static final boolean supportsStandardImageMetadataFormat = false;
+    // ImageMetadataFormatNames and ImageMetadataFormatClassNames
+    static final boolean supportsStandardImageMetadataFormat = false;
 
-	static final String nativeImageMetadataFormatName = null;
+    static final String nativeImageMetadataFormatName = null;
 
-	static final String nativeImageMetadataFormatClassName = null;
+    static final String nativeImageMetadataFormatClassName = null;
 
-	static final String[] extraImageMetadataFormatNames = { null };
+    static final String[] extraImageMetadataFormatNames = { null };
 
-	static final String[] extraImageMetadataFormatClassNames = { null };
+    static final String[] extraImageMetadataFormatClassNames = { null };
 
-//	private boolean registered;
+    // private boolean registered;
 
-	public JpegGDALImageReaderSpi() {
-		super(
-				vendorName,
-				version,
-				formatNames,
-				suffixes,
-				MIMETypes,
-				readerCN, // readerClassName
-				new Class[] 
-					        { File.class, FileImageInputStreamExt.class },
-				wSN, // writer Spi Names
-				supportsStandardStreamMetadataFormat,
-				nativeStreamMetadataFormatName,
-				nativeStreamMetadataFormatClassName,
-				extraStreamMetadataFormatNames,
-				extraStreamMetadataFormatClassNames,
-				supportsStandardImageMetadataFormat,
-				nativeImageMetadataFormatName,
-				nativeImageMetadataFormatClassName,
-				extraImageMetadataFormatNames,
-				extraImageMetadataFormatClassNames,
-				Collections.singletonList("JPEG"));
+    public JpegGDALImageReaderSpi() {
+        super(
+                vendorName,
+                version,
+                formatNames,
+                suffixes,
+                MIMETypes,
+                readerCN, // readerClassName
+                new Class[] { File.class, FileImageInputStreamExt.class },
+                wSN, // writer Spi Names
+                supportsStandardStreamMetadataFormat,
+                nativeStreamMetadataFormatName,
+                nativeStreamMetadataFormatClassName,
+                extraStreamMetadataFormatNames,
+                extraStreamMetadataFormatClassNames,
+                supportsStandardImageMetadataFormat,
+                nativeImageMetadataFormatName,
+                nativeImageMetadataFormatClassName,
+                extraImageMetadataFormatNames,
+                extraImageMetadataFormatClassNames, Collections
+                        .singletonList("JPEG"));
 
-		if (LOGGER.isLoggable(Level.FINE))
-			LOGGER.fine("JpegGDALImageReaderSpi Constructor");
+        if (LOGGER.isLoggable(Level.FINE))
+            LOGGER.fine("JpegGDALImageReaderSpi Constructor");
 
-	}
+    }
 
-	/**
-	 * This method checks if the provided input can be decoded from this SPI
-	 */
-	public boolean canDecodeInput(Object input) throws IOException {
-		return super.canDecodeInput(input);
-	}
+    /**
+     * This method checks if the provided input can be decoded from this SPI
+     */
+    public boolean canDecodeInput(Object input) throws IOException {
+        return super.canDecodeInput(input);
+    }
 
-	/**
-	 * Returns an instance of the JpegGDALImageReader
-	 * 
-	 * @see javax.imageio.spi.ImageReaderSpi#createReaderInstance(java.lang.Object)
-	 */
-	public ImageReader createReaderInstance(Object source) throws IOException {
-		return new JpegGDALImageReader(this);
-	}
+    /**
+     * Returns an instance of the JpegGDALImageReader
+     * 
+     * @see javax.imageio.spi.ImageReaderSpi#createReaderInstance(java.lang.Object)
+     */
+    public ImageReader createReaderInstance(Object source) throws IOException {
+        return new JpegGDALImageReader(this);
+    }
 
-	/**
-	 * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
-	 */
-	public String getDescription(Locale locale) {
-		return new StringBuffer("JPEG Image Reader, version ").append(version)
-				.toString();
-	}
+    /**
+     * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
+     */
+    public String getDescription(Locale locale) {
+        return new StringBuffer("JPEG Image Reader, version ").append(version)
+                .toString();
+    }
 
-
-
-//	/**
-//	 * Upon registration, this method ensures that this SPI is listed at the top
-//	 * of the ImageReaderSpi items, so that it will be invoked before the
-//	 * default ImageReaderSpi
-//	 * 
-//	 * @param registry
-//	 *            ServiceRegistry where this object has been registered.
-//	 * @param category
-//	 *            a Class object indicating the registry category under which
-//	 *            this object has been registered.
-//	 */
-//	public void onRegistration(ServiceRegistry registry, Class category) {
-//		super.onRegistration(registry, category);
-//		if (registered) {
-//			return;
-//		}
-//		registered = true;
-//		Iterator readers = com.sun.media.imageioimpl.common.ImageUtil
-//				.getJDKImageReaderWriterSPI(registry, "JPEG", true).iterator();
-//		ImageReaderSpi spi;
-//		while (readers.hasNext()) {
-//			spi = (ImageReaderSpi) readers.next();
-//			if (spi == this)
-//				continue;
-//			registry.deregisterServiceProvider(spi);
-//			registry.setOrdering(category, this, spi);
-//		}
-//	}
+    // /**
+    // * Upon registration, this method ensures that this SPI is listed at the
+    // top
+    // * of the ImageReaderSpi items, so that it will be invoked before the
+    // * default ImageReaderSpi
+    // *
+    // * @param registry
+    // * ServiceRegistry where this object has been registered.
+    // * @param category
+    // * a Class object indicating the registry category under which
+    // * this object has been registered.
+    // */
+    // public void onRegistration(ServiceRegistry registry, Class category) {
+    // super.onRegistration(registry, category);
+    // if (registered) {
+    // return;
+    // }
+    // registered = true;
+    // Iterator readers = com.sun.media.imageioimpl.common.ImageUtil
+    // .getJDKImageReaderWriterSPI(registry, "JPEG", true).iterator();
+    // ImageReaderSpi spi;
+    // while (readers.hasNext()) {
+    // spi = (ImageReaderSpi) readers.next();
+    // if (spi == this)
+    // continue;
+    // registry.deregisterServiceProvider(spi);
+    // registry.setOrdering(category, this, spi);
+    // }
+    // }
 }

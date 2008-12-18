@@ -30,27 +30,26 @@ import junit.framework.TestCase;
  */
 public class AbstractJPEGTestCase extends TestCase {
 
+    /** A simple flag set to true in case the GDAL Library is available */
+    protected final static boolean isGDALAvailable = GDALUtilities
+            .isGDALAvailable();
 
-	/** A simple flag set to true in case the GDAL Library is available */
-	protected final static boolean isGDALAvailable = GDALUtilities
-			.isGDALAvailable();
+    protected static final Logger LOGGER = Logger
+            .getLogger("it.geosolutions.imageio.plugins.jpeg");
 
-	protected static final Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.plugins.jpeg");
+    public AbstractJPEGTestCase(String name) {
+        super(name);
+    }
 
-	public AbstractJPEGTestCase(String name) {
-		super(name);
-	}
-
-	protected void setUp() throws Exception {
-		super.setUp();
-		if (!isGDALAvailable) {
-			LOGGER.warning("GDAL Library is not Available");
-			return;
-		}
-		// general settings
-		JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
-				128 * 1024 * 1024);
-		JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
-	}
+    protected void setUp() throws Exception {
+        super.setUp();
+        if (!isGDALAvailable) {
+            LOGGER.warning("GDAL Library is not Available");
+            return;
+        }
+        // general settings
+        JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
+                128 * 1024 * 1024);
+        JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
+    }
 }

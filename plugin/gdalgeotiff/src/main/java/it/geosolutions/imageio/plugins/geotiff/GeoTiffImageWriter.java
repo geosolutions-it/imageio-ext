@@ -25,12 +25,12 @@ import javax.imageio.ImageWriteParam;
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class GeoTiffImageWriter extends GDALImageWriter {
-	public GeoTiffImageWriter(GeoTiffImageWriterSpi originatingProvider) {
-		super(originatingProvider);
-	}
+    public GeoTiffImageWriter(GeoTiffImageWriterSpi originatingProvider) {
+        super(originatingProvider);
+    }
 
-	public ImageWriteParam getDefaultWriteParam() {
-		return new GeoTiffImageWriteParam();
-	}
+    public ImageWriteParam getDefaultWriteParam() {
+        return new GeoTiffImageWriteParam();
+    }
 
 }
