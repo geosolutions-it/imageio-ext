@@ -54,7 +54,6 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-
 /**
  * Provides access to {@code test-data} directories associated with JUnit tests.
  * <p>
@@ -93,6 +92,7 @@ import java.util.zip.ZipFile;
  *
  * @tutorial http://www.geotools.org/display/GEOT/5.8+Test+Data
  */
+
 public class TestData implements Runnable {
     /**
      * The test data directory.
