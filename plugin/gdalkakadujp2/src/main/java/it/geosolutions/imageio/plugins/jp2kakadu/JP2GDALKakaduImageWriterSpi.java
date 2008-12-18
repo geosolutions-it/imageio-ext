@@ -25,95 +25,90 @@ import java.util.Locale;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriter;
 
-import org.gdal.gdal.gdal;
-
 /**
  * Class which provides a specialized Service Provider Interface which
- * instantiates a {@link JP2GDALKakaduImageWriter} if it is able to decode the input
- * provided.
+ * instantiates a {@link JP2GDALKakaduImageWriter} if it is able to decode the
+ * input provided.
  * 
  * @author Daniele Romagnoli, GeoSolutions.
- * @author Simone Giannecchini, GeoSolutions. 
+ * @author Simone Giannecchini, GeoSolutions.
  */
 public final class JP2GDALKakaduImageWriterSpi extends GDALImageWriterSpi {
-	static final String[] suffixes = { "JP2", "J2C" };
+    static final String[] suffixes = { "JP2", "J2C" };
 
-	static final String[] formatNames = { "JP2", "JPEG 2000", "JP2K"};
+    static final String[] formatNames = { "JP2", "JPEG2000", "JPEG 2000",
+            "JP2K" };
 
-	static final String[] MIMETypes = { "image/jp2" };
+    static final String[] MIMETypes = { "image/jp2" };
 
-	static final String version = "1.0";
+    static final String version = "1.0";
 
-	static final String writerCN = "it.geosolutions.imageio.plugins.jp2kakadu.JP2GDALKakaduImageWriter";
+    static final String writerCN = "it.geosolutions.imageio.plugins.jp2kakadu.JP2GDALKakaduImageWriter";
 
-	static final String vendorName = "GeoSolutions";
+    static final String vendorName = "GeoSolutions";
 
-	// ReaderSpiNames
-	static final String[] readerSpiName = { "it.geosolutions.imageio.plugins.jp2kakadu.JP2GDALKakaduImageReaderSpi" };
+    // ReaderSpiNames
+    static final String[] readerSpiName = { "it.geosolutions.imageio.plugins.jp2kakadu.JP2GDALKakaduImageReaderSpi" };
 
-	// StreamMetadataFormatNames and StreamMetadataFormatClassNames
-	static final boolean supportsStandardStreamMetadataFormat = false;
+    // StreamMetadataFormatNames and StreamMetadataFormatClassNames
+    static final boolean supportsStandardStreamMetadataFormat = false;
 
-	static final String nativeStreamMetadataFormatName = null;
+    static final String nativeStreamMetadataFormatName = null;
 
-	static final String nativeStreamMetadataFormatClassName = null;
+    static final String nativeStreamMetadataFormatClassName = null;
 
-	static final String[] extraStreamMetadataFormatNames = null;
+    static final String[] extraStreamMetadataFormatNames = null;
 
-	static final String[] extraStreamMetadataFormatClassNames = null;
+    static final String[] extraStreamMetadataFormatClassNames = null;
 
-	// ImageMetadataFormatNames and ImageMetadataFormatClassNames
-	static final boolean supportsStandardImageMetadataFormat = false;
+    // ImageMetadataFormatNames and ImageMetadataFormatClassNames
+    static final boolean supportsStandardImageMetadataFormat = false;
 
-	static final String nativeImageMetadataFormatName = null; //"javax.imageio.plugins.jp2k.JP2KImageMetadata_1.0";
+    static final String nativeImageMetadataFormatName = null;
 
-	static final String nativeImageMetadataFormatClassName = null; //"javax.imageio.plugins.jp2k.JP2KImageMetadataFormat";
+    static final String nativeImageMetadataFormatClassName = null;
 
-	static final String[] extraImageMetadataFormatNames = { null };
+    static final String[] extraImageMetadataFormatNames = { null };
 
-	static final String[] extraImageMetadataFormatClassNames = { null };
+    static final String[] extraImageMetadataFormatClassNames = { null };
 
-	/**
-	 * 
-	 */
-	public JP2GDALKakaduImageWriterSpi() {
-		super(vendorName, version, formatNames, suffixes, MIMETypes, writerCN, 
-				STANDARD_OUTPUT_TYPE, readerSpiName, 
-				supportsStandardStreamMetadataFormat,
-				nativeStreamMetadataFormatName,
-				nativeStreamMetadataFormatClassName,
-				extraStreamMetadataFormatNames,
-				extraStreamMetadataFormatClassNames,
-				supportsStandardImageMetadataFormat,
-				nativeImageMetadataFormatName,
-				nativeImageMetadataFormatClassName,
-				extraImageMetadataFormatNames,
-				extraImageMetadataFormatClassNames,
-				Collections.singletonList("JP2KAK"));
-	}
+    /**
+     * 
+     */
+    public JP2GDALKakaduImageWriterSpi() {
+        super(vendorName, version, formatNames, suffixes, MIMETypes, writerCN,
+                STANDARD_OUTPUT_TYPE, readerSpiName,
+                supportsStandardStreamMetadataFormat,
+                nativeStreamMetadataFormatName,
+                nativeStreamMetadataFormatClassName,
+                extraStreamMetadataFormatNames,
+                extraStreamMetadataFormatClassNames,
+                supportsStandardImageMetadataFormat,
+                nativeImageMetadataFormatName,
+                nativeImageMetadataFormatClassName,
+                extraImageMetadataFormatNames,
+                extraImageMetadataFormatClassNames, Collections
+                        .singletonList("JP2KAK"));
+    }
 
-	/**
-	 * 
-	 * @see javax.imageio.spi.ImageWriterSpi#createWriterInstance(java.lang.Object)
-	 */
-	public ImageWriter createWriterInstance(Object extension)
-			throws IOException {
-		return new JP2GDALKakaduImageWriter(this);
-	}
+    /**
+     * 
+     * @see javax.imageio.spi.ImageWriterSpi#createWriterInstance(java.lang.Object)
+     */
+    public ImageWriter createWriterInstance(Object extension)
+            throws IOException {
+        return new JP2GDALKakaduImageWriter(this);
+    }
 
-	/**
-	 * 
-	 * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
-	 */
-	public String getDescription(Locale locale) {
-		return "SPI for JPEG 2000 ImageWriter";
-	}
+    /**
+     * 
+     * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
+     */
+    public String getDescription(Locale locale) {
+        return "SPI for JPEG 2000 ImageWriter";
+    }
 
-	public boolean canEncodeImage(ImageTypeSpecifier type) {
-		// TODO is this correct?
-		return true;
-	}
+    public boolean canEncodeImage(ImageTypeSpecifier type) {
+        return true;
+    }
 }
-
-
-

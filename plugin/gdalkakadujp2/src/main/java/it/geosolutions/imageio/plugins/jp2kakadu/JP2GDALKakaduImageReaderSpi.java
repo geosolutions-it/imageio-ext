@@ -34,133 +34,164 @@ import org.gdal.gdal.gdal;
  * Service provider interface for the jp2k image
  * 
  * @author Daniele Romagnoli, GeoSolutions.
- * @author Simone Giannecchini, GeoSolutions. 
+ * @author Simone Giannecchini, GeoSolutions.
  */
 public class JP2GDALKakaduImageReaderSpi extends GDALImageReaderSpi {
 
-	public final static class KakaduErrorManagement {
+    public enum KakaduErrorManagementType {
+        FUSSY, RESILIENT, FAST;
 
-		public static final int FUSSY = 0;
+    };
 
-		public static final int RESILIENT = 1;
+    public final static class KakaduErrorManagement {
 
-		public static final int FAST = 2;
-	}
+        public static final int FUSSY = 0;
 
-	private static final Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.plugins.jp2kakadu");
+        public static final int RESILIENT = 1;
 
-	static final String[] suffixes = { "JP2", "J2C" };
+        public static final int FAST = 2;
+    }
 
-	static final String[] formatNames = { "JP2", "JPEG 2000", "JP2K"};
+    private static final Logger LOGGER = Logger
+            .getLogger("it.geosolutions.imageio.plugins.jp2kakadu");
 
-	static final String[] MIMETypes = { "image/jp2", "image/jp2k" };
+    static final String[] suffixes = { "JP2", "J2C" };
 
-	static final String version = "1.0";
+    static final String[] formatNames = { "JP2", "JPEG 2000", "JP2K" };
 
-	static final String readerCN = "it.geosolutions.imageio.plugins.jp2kakadu.JP2GDALKakaduImageReader";
+    static final String[] MIMETypes = { "image/jp2", "image/jp2k" };
 
-	static final String vendorName = "GeoSolutions";
+    static final String version = "1.0";
 
-	// writerSpiNames
-	static final String[] wSN = {"it.geosolutions.imageio.plugins.jp2kakadu.JP2GDALKakaduImageWriterSpi"  };
+    static final String readerCN = "it.geosolutions.imageio.plugins.jp2kakadu.JP2GDALKakaduImageReader";
 
-	// StreamMetadataFormatNames and StreamMetadataFormatClassNames
-	static final boolean supportsStandardStreamMetadataFormat = false;
+    static final String vendorName = "GeoSolutions";
 
-	static final String nativeStreamMetadataFormatName = null;
+    // writerSpiNames
+    static final String[] wSN = { "it.geosolutions.imageio.plugins.jp2kakadu.JP2GDALKakaduImageWriterSpi" };
 
-	static final String nativeStreamMetadataFormatClassName = null;
+    // StreamMetadataFormatNames and StreamMetadataFormatClassNames
+    static final boolean supportsStandardStreamMetadataFormat = false;
 
-	static final String[] extraStreamMetadataFormatNames = { null };
+    static final String nativeStreamMetadataFormatName = null;
 
-	static final String[] extraStreamMetadataFormatClassNames = { null };
+    static final String nativeStreamMetadataFormatClassName = null;
 
-	// ImageMetadataFormatNames and ImageMetadataFormatClassNames
-	static final boolean supportsStandardImageMetadataFormat = false;
+    static final String[] extraStreamMetadataFormatNames = { null };
 
-	static final String nativeImageMetadataFormatName = null;
+    static final String[] extraStreamMetadataFormatClassNames = { null };
 
-	static final String nativeImageMetadataFormatClassName = null;
+    // ImageMetadataFormatNames and ImageMetadataFormatClassNames
+    static final boolean supportsStandardImageMetadataFormat = false;
 
-	static final String[] extraImageMetadataFormatNames = { null };
+    static final String nativeImageMetadataFormatName = null;
 
-	static final String[] extraImageMetadataFormatClassNames = { null };
+    static final String nativeImageMetadataFormatClassName = null;
 
-	public JP2GDALKakaduImageReaderSpi() {
-		super(
-				vendorName,
-				version,
-				formatNames,
-				suffixes,
-				MIMETypes,
-				readerCN, // readerClassName
-				new Class[] 
-					        { File.class, FileImageInputStreamExt.class },
-				wSN, // writer Spi Names
-				supportsStandardStreamMetadataFormat,
-				nativeStreamMetadataFormatName,
-				nativeStreamMetadataFormatClassName,
-				extraStreamMetadataFormatNames,
-				extraStreamMetadataFormatClassNames,
-				supportsStandardImageMetadataFormat,
-				nativeImageMetadataFormatName,
-				nativeImageMetadataFormatClassName,
-				extraImageMetadataFormatNames,
-				extraImageMetadataFormatClassNames,
-				Collections.singletonList("JP2KAK"));
+    static final String[] extraImageMetadataFormatNames = { null };
 
-		if (LOGGER.isLoggable(Level.FINE))
-			LOGGER.fine("JP2GDALKakaduImageReaderSpi Constructor");
+    static final String[] extraImageMetadataFormatClassNames = { null };
 
-	}
+    public JP2GDALKakaduImageReaderSpi() {
+        super(
+                vendorName,
+                version,
+                formatNames,
+                suffixes,
+                MIMETypes,
+                readerCN, // readerClassName
+                new Class[] { File.class, FileImageInputStreamExt.class },
+                wSN, // writer Spi Names
+                supportsStandardStreamMetadataFormat,
+                nativeStreamMetadataFormatName,
+                nativeStreamMetadataFormatClassName,
+                extraStreamMetadataFormatNames,
+                extraStreamMetadataFormatClassNames,
+                supportsStandardImageMetadataFormat,
+                nativeImageMetadataFormatName,
+                nativeImageMetadataFormatClassName,
+                extraImageMetadataFormatNames,
+                extraImageMetadataFormatClassNames, Collections
+                        .singletonList("JP2KAK"));
 
-	/**
-	 * This method checks if the provided input can be decoded from this SPI
-	 */
-	public boolean canDecodeInput(Object input) throws IOException {
-		return super.canDecodeInput(input);
-	}
+        if (LOGGER.isLoggable(Level.FINE))
+            LOGGER.fine("JP2GDALKakaduImageReaderSpi Constructor");
 
-	/**
-	 * Returns an instance of the JP2GDALKakaduImageReader
-	 * 
-	 * @see javax.imageio.spi.ImageReaderSpi#createReaderInstance(java.lang.Object)
-	 */
-	public ImageReader createReaderInstance(Object source) throws IOException {
-		return new JP2GDALKakaduImageReader(this);
-	}
+    }
 
-	/**
-	 * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
-	 */
-	public String getDescription(Locale locale) {
-		return new StringBuffer("JP2K Image Reader, version ").append(version)
-				.toString();
-	}
+    /**
+     * This method checks if the provided input can be decoded from this SPI
+     */
+    public boolean canDecodeInput(Object input) throws IOException {
+        return super.canDecodeInput(input);
+    }
 
-	/**
-	 * Allows to customize kakadu error management.
-	 * 
-	 * @param errorManagement
-	 * 
-	 */
-	public final static void setKakaduInputErrorManagement(
-			final int errorManagement) {
-		switch (errorManagement) {
-		case KakaduErrorManagement.FAST:
-			gdal.SetConfigOption("KAKADU_ERROR_LEVEL_MANAGEMENT", "FAST");
-			break;
-		case KakaduErrorManagement.FUSSY:
-			gdal.SetConfigOption("KAKADU_ERROR_LEVEL_MANAGEMENT", "FUSSY");
-			break;
-		case KakaduErrorManagement.RESILIENT:
-			gdal.SetConfigOption("KAKADU_ERROR_LEVEL_MANAGEMENT", "RESILIENT");
-			break;
-		default:
-			throw new IllegalArgumentException(
-					"KAKADU_ERROR_LEVEL_MANAGEMENT unknown! Provided value is "
-							+ errorManagement);
-		}
-	}
+    /**
+     * Returns an instance of the JP2GDALKakaduImageReader
+     * 
+     * @see javax.imageio.spi.ImageReaderSpi#createReaderInstance(java.lang.Object)
+     */
+    public ImageReader createReaderInstance(Object source) throws IOException {
+        return new JP2GDALKakaduImageReader(this);
+    }
+
+    /**
+     * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
+     */
+    public String getDescription(Locale locale) {
+        return new StringBuffer("JP2K Image Reader, version ").append(version)
+                .toString();
+    }
+
+    /**
+     * Allows to customize kakadu error management.
+     * 
+     * @param errorManagement
+     * @deprecated use
+     *             {@link #setKakaduInputErrorManagement(KakaduErrorManagementType)}
+     * 
+     */
+    public final static void setKakaduInputErrorManagement(
+            final int errorManagement) {
+        switch (errorManagement) {
+        case KakaduErrorManagement.FAST:
+            gdal.SetConfigOption("KAKADU_ERROR_LEVEL_MANAGEMENT", "FAST");
+            break;
+        case KakaduErrorManagement.FUSSY:
+            gdal.SetConfigOption("KAKADU_ERROR_LEVEL_MANAGEMENT", "FUSSY");
+            break;
+        case KakaduErrorManagement.RESILIENT:
+            gdal.SetConfigOption("KAKADU_ERROR_LEVEL_MANAGEMENT", "RESILIENT");
+            break;
+        default:
+            throw new IllegalArgumentException(
+                    "KAKADU_ERROR_LEVEL_MANAGEMENT unknown! Provided value is "
+                            + errorManagement);
+        }
+    }
+
+    /**
+     * Allows to customize kakadu error management.
+     * 
+     * @param errorManagement
+     * 
+     */
+    public final static void setKakaduInputErrorManagement(
+            final KakaduErrorManagementType errorManagement) {
+        switch (errorManagement) {
+        case FAST:
+            gdal.SetConfigOption("KAKADU_ERROR_LEVEL_MANAGEMENT", "FAST");
+            break;
+        case FUSSY:
+            gdal.SetConfigOption("KAKADU_ERROR_LEVEL_MANAGEMENT", "FUSSY");
+            break;
+        case RESILIENT:
+            gdal.SetConfigOption("KAKADU_ERROR_LEVEL_MANAGEMENT", "RESILIENT");
+            break;
+        default:
+            throw new IllegalArgumentException(
+                    "KAKADU_ERROR_LEVEL_MANAGEMENT unknown! Provided value is "
+                            + errorManagement);
+        }
+    }
 }

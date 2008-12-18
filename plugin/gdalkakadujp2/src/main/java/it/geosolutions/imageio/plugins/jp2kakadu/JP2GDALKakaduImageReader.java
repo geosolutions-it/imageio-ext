@@ -31,22 +31,21 @@ import java.util.logging.Logger;
  */
 public class JP2GDALKakaduImageReader extends GDALImageReader {
 
-	private static final Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.plugins.jp2kakadu");
+    private static final Logger LOGGER = Logger
+            .getLogger("it.geosolutions.imageio.plugins.jp2kakadu");
 
-	/**
-	 * Constructs a
-	 * <code>JP2GDALKakaduImageReader<code> using a 
-	 * {@link JP2GDALKakaduImageReaderSpi}.
-	 * 
-	 * @param originatingProvider
-	 *            The {@link JP2GDALKakaduImageReaderSpi} to use for building 
-	 *            this <code>JP2GDALKakaduImageReader<code>.
-	 */
-	public JP2GDALKakaduImageReader(
-			JP2GDALKakaduImageReaderSpi originatingProvider) {
-		super(originatingProvider, 0);
-		if (LOGGER.isLoggable(Level.FINE))
-			LOGGER.fine("JP2GDALKakaduImageReader Constructor");
-	}
+    /**
+     * Constructs a <code>JP2GDALKakaduImageReader<code> using a 
+     * {@link JP2GDALKakaduImageReaderSpi}.
+     * 
+     * @param originatingProvider
+     *            The {@link JP2GDALKakaduImageReaderSpi} to use for building 
+     *            this <code>JP2GDALKakaduImageReader<code>.
+     */
+    public JP2GDALKakaduImageReader(
+            JP2GDALKakaduImageReaderSpi originatingProvider) {
+        super(originatingProvider, 0);
+        if (LOGGER.isLoggable(Level.FINE))
+            LOGGER.fine("JP2GDALKakaduImageReader Constructor");
+    }
 }

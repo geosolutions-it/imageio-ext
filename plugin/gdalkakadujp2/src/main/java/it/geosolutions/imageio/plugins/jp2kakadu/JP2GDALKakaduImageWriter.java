@@ -26,24 +26,24 @@ import javax.imageio.ImageWriteParam;
  */
 public class JP2GDALKakaduImageWriter extends GDALImageWriter {
 
-	/**
-	 * Constructs a <code>JP2GDALKakaduImageWriter<code> using a 
-	 * {@link JP2GDALKakaduImageWriterSpi}.
-	 * 
-	 * @param originatingProvider
-	 *            The {@link JP2GDALKakaduImageWriterSpi} to use for building 
-	 *            this <code>JP2GDALKakaduImageWriter<code>.
-	 */
-	public JP2GDALKakaduImageWriter(
-			JP2GDALKakaduImageWriterSpi originatingProvider) {
-		super(originatingProvider);
-	}
+    /**
+     * Constructs a <code>JP2GDALKakaduImageWriter<code> using a 
+     * {@link JP2GDALKakaduImageWriterSpi}.
+     * 
+     * @param originatingProvider
+     *            The {@link JP2GDALKakaduImageWriterSpi} to use for building 
+     *            this <code>JP2GDALKakaduImageWriter<code>.
+     */
+    public JP2GDALKakaduImageWriter(
+            JP2GDALKakaduImageWriterSpi originatingProvider) {
+        super(originatingProvider);
+    }
 
-	/**
-	 * Build a default {@link JP2GDALKakaduImageWriteParam}
-	 */
-	public ImageWriteParam getDefaultWriteParam() {
-		return new JP2GDALKakaduImageWriteParam();
-	}
+    /**
+     * Build a default {@link JP2GDALKakaduImageWriteParam}
+     */
+    public ImageWriteParam getDefaultWriteParam() {
+        return new JP2GDALKakaduImageWriteParam();
+    }
 
 }
