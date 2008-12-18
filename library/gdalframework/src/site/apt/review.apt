@@ -1,12 +1,10 @@
-CustomStreams Module
-~~~~~~~~~~~~~~
+Gdalframework Module
+~~~~~~~~~~~~~~~~~~~~
 
   IP Review:
  
     * Daniele Romagnoli, December 12th, 2008
   
-  STATUS: DIRTY
-      Code is CLEAN, with 5 notices of Public Domain
-
-
-
+  STATUS: OK
+      Code: clean
+      

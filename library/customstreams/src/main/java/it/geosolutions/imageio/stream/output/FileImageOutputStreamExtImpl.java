@@ -31,7 +31,7 @@ import javax.imageio.stream.ImageOutputStreamImpl;
  * An implementation of {@link ImageOutputStream} that take its output on a
  * {@link File}.
  * 
- * @author Daniele Romagnoli, GeoSOlutions
+ * @author Daniele Romagnoli, GeoSolutions
  * @author Simone Giannecchini, GeoSolutions
  */
 public class FileImageOutputStreamExtImpl extends ImageOutputStreamImpl

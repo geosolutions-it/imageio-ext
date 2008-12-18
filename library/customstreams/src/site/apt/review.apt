@@ -5,9 +5,8 @@ Customstreams Module
  
     * Daniele Romagnoli, December 12th, 2008
   
-  STATUS: DIRTY
+  STATUS: To be checked
       Code: see notes
-      
       Data: OK
       
 
@@ -45,7 +44,7 @@ Customstreams Module
   ~~~~~~~~~~~~
 
 ** sample.jpeg
-   data generated with gdal_translate utility, from small_world.tif, freely available at:
+   data generated using the gdal_translate utility, having "small_world.tif" as input file, which is freely available at:
    http://download.osgeo.org/gdal/data/gtiff/
    
 ** sample.jpeg.gz
