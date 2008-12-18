@@ -1,4 +1,4 @@
 it.geosolutions.imageio.stream.output.spi.FileImageOutputStreamExtImplSpi
-it.geosolutions.imageio.stream.output.spi.URLImageOutputStreamImplSpi
-it.geosolutions.imageio.stream.output.spi.StringImageOutputStreamImplSpi
+it.geosolutions.imageio.stream.output.spi.URLImageOutputStreamSpi
+it.geosolutions.imageio.stream.output.spi.StringImageOutputStreamSpi
 
