@@ -17,7 +17,9 @@
 package it.geosolutions.imageio.plugins.erdasimg;
 
 import it.geosolutions.imageio.gdalframework.GDALUtilities;
+import it.geosolutions.resources.TestData;
 
+import java.io.File;
 import java.util.logging.Logger;
 
 import javax.media.jai.JAI;
@@ -30,41 +32,39 @@ import junit.framework.TestCase;
  */
 public class AbstractErdasImgTestCase extends TestCase {
 
-	/** A simple flag set to true in case the GDAL Library is available */
-	protected final static boolean isGDALAvailable = GDALUtilities
-			.isGDALAvailable();
+    /** A simple flag set to true in case the GDAL Library is available */
+    protected final static boolean isGDALAvailable = GDALUtilities
+            .isGDALAvailable();
 
-	protected static final Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.plugins.erdasimg");
+    protected static final Logger LOGGER = Logger
+            .getLogger("it.geosolutions.imageio.plugins.erdasimg");
 
-	public AbstractErdasImgTestCase(String name) {
-		super(name);
-	}
+    public AbstractErdasImgTestCase(String name) {
+        super(name);
+    }
 
-	protected void setUp() throws Exception {
-		super.setUp();
-		if (!isGDALAvailable) {
-			LOGGER.warning("GDAL Library is not Available");
-			return;
-		}
-		// general settings
-		JAI.getDefaultInstance().getTileScheduler().setParallelism(10);
-		JAI.getDefaultInstance().getTileScheduler().setPriority(4);
-		JAI.getDefaultInstance().getTileScheduler().setPrefetchPriority(2);
-		JAI.getDefaultInstance().getTileScheduler().setPrefetchParallelism(5);
-		JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
-				128 * 1024 * 1024);
-		JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
-	}
+    protected void setUp() throws Exception {
+        super.setUp();
+        if (!isGDALAvailable) {
+            LOGGER.warning("GDAL Library is not Available");
+            return;
+        }
+        // general settings
+        JAI.getDefaultInstance().getTileScheduler().setParallelism(10);
+        JAI.getDefaultInstance().getTileScheduler().setPriority(4);
+        JAI.getDefaultInstance().getTileScheduler().setPrefetchPriority(2);
+        JAI.getDefaultInstance().getTileScheduler().setPrefetchParallelism(5);
+        JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
+                128 * 1024 * 1024);
+        JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
+        File file = TestData.file(this, "test.zip");
+        assertTrue(file.exists());
 
-	protected void warningMessage() {
-		StringBuffer sb = new StringBuffer(
-				"Test file not available. Please download it from "
-						+ "http://www.brockmann-consult.de/beam/data/products/ATS_TOA_1CNPDK20030504_111259_000000572016_00080_06146_0157.zip \n"
-						+ "Then unzip it on: plugin/"
-						+ "envisat/src/test/resources/it/geosolutions/"
-						+ "imageio/plugins/envisat/test-data folder and"
-						+ " repeat the test.");
-		LOGGER.info(sb.toString());
-	}
+        // unzip it
+        TestData.unzipFile(this, "test.zip");
+    }
+
+    protected void warningMessage() {
+        LOGGER.info("Test file not available. Tests are skipped");
+    }
 }

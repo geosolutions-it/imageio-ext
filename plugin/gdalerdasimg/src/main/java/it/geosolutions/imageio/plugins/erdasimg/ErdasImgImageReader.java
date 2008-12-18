@@ -31,12 +31,12 @@ import java.util.logging.Logger;
  */
 public class ErdasImgImageReader extends GDALImageReader {
 
-	private static final Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.plugins.erdasimg");
+    private static final Logger LOGGER = Logger
+            .getLogger("it.geosolutions.imageio.plugins.erdasimg");
 
-	public ErdasImgImageReader(ErdasImgImageReaderSpi originatingProvider) {
-		super(originatingProvider, 0);
-		if (LOGGER.isLoggable(Level.FINE))
-			LOGGER.fine("ErdasImgImageReader Constructor");
-	}
+    public ErdasImgImageReader(ErdasImgImageReaderSpi originatingProvider) {
+        super(originatingProvider, 0);
+        if (LOGGER.isLoggable(Level.FINE))
+            LOGGER.fine("ErdasImgImageReader Constructor");
+    }
 }

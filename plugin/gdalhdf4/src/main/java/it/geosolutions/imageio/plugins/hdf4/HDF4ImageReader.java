@@ -29,15 +29,15 @@ import java.awt.image.RenderedImage;
  */
 public class HDF4ImageReader extends GDALImageReader {
 
-	/**
-	 * Constructs a
-	 * <code>HDF4ImageReader<code> using a {@link HDF4ImageReaderSpi}.
-	 * 
-	 * @param originatingProvider
-	 *            The {@link HDF4ImageReaderSpi} to use for building this
-	 *            <code>HDF4ImageReader<code>.
-	 */
-	public HDF4ImageReader(HDF4ImageReaderSpi originatingProvider) {
-		super(originatingProvider);
-	}
+    /**
+     * Constructs a
+     * <code>HDF4ImageReader<code> using a {@link HDF4ImageReaderSpi}.
+     * 
+     * @param originatingProvider
+     *            The {@link HDF4ImageReaderSpi} to use for building this
+     *            <code>HDF4ImageReader<code>.
+     */
+    public HDF4ImageReader(HDF4ImageReaderSpi originatingProvider) {
+        super(originatingProvider);
+    }
 }

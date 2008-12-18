@@ -3,7 +3,7 @@ GDAL JP2ECW plugin
 
   IP Review:
  
-    * Daniele Romagnoli, December 17th, 2008
+    * Daniele Romagnoli, December 18th, 2008
   
 
  STATUS: OK
@@ -14,6 +14,6 @@ GDAL JP2ECW plugin
 * Data Credits
   ~~~~~~~~~~~~
 ** test.jp2: 
-   data generated with gdal_translate utility, from utm.tif, which is freely available at:
+   data generated using the gdal_translate utility, having "utm.tif" as input file, which is freely available at:
    http://download.osgeo.org/gdal/data/gtiff/
 
