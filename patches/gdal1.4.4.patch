@@ -1,47 +1,60 @@
 Index: frmts/jp2kak/makefile.vc
 ===================================================================
---- frmts/jp2kak/makefile.vc	(revision 15809)
+--- frmts/jp2kak/makefile.vc	(revision 15976)
 +++ frmts/jp2kak/makefile.vc	(working copy)
-@@ -4,14 +4,32 @@
+@@ -4,14 +4,45 @@
  !INCLUDE $(GDAL_ROOT)\nmake.opt
  
  OBJ	=	jp2kakdataset.obj
 -EXTRAFLAGS = 	-I$(KAKDIR) /DKDU_PENTIUM_MSVC /GX
  
-+EXTRAFLAGS = 	-I$(KAKDIR) -I$(KAKDIR)\coresys\common -I$(KAKDIR)\apps\compressed_io \
-+	-I$(KAKDIR)\apps\jp2 -I$(KAKDIR)\apps\image -I$(KAKDIR)\apps\args -I$(KAKDIR)\apps\support  /DKDU_PENTIUM_MSVC /GX
++CONFIG=release
 +
-+APPOBJ  = $(KAKDIR)\apps\make\args.obj $(KAKDIR)\apps\make\image_in.obj \
-+	$(KAKDIR)\apps\make\image_out.obj $(KAKDIR)\apps\make\jp2.obj \
-+	$(KAKDIR)\apps\make\mj2.obj $(KAKDIR)\apps\make\palette.obj \
-+	$(KAKDIR)\apps\make\roi_sources.obj
++ARGS_O = $(KAKDIR)\..\v5_generated\v_compress\$(CONFIG)\args.obj
++IMAGE_IN_O = $(KAKDIR)\..\v5_generated\compress\$(CONFIG)\image_in.obj
++IMAGE_OUT_O = $(KAKDIR)\..\v5_generated\expand\$(CONFIG)\image_out.obj
++JP2_O = $(KAKDIR)\..\v5_generated\v_compress\$(CONFIG)\jp2.obj
++MJ2_O = $(KAKDIR)\..\v5_generated\v_compress\$(CONFIG)\mj2.obj
++PALETTE_O = $(KAKDIR)\..\v5_generated\compress\$(CONFIG)\palette.obj
++ROI_O = $(KAKDIR)\..\v5_generated\compress\$(CONFIG)\roi_sources.obj
++KDU_TIFF_O = $(KAKDIR)\..\v5_generated\compress\$(CONFIG)\kdu_tiff.obj
++JPX_O = $(KAKDIR)\..\v5_generated\compress\$(CONFIG)\jpx.obj
++KDU_STRIPE_O = $(KAKDIR)\..\v5_generated\buffered_expand\$(CONFIG)\kdu_stripe_decompressor.obj
++
++EXTRAFLAGS = -I$(KAKDIR) -I$(KAKDIR)\coresys\common -I$(KAKDIR)\apps\compressed_io \
++ -I$(KAKDIR)\apps\kdu_compress -I$(KAKDIR)\apps\jp2 -I$(KAKDIR)\apps\image -I$(KAKDIR)\apps\args -I$(KAKDIR)\apps\support  /DKDU_PENTIUM_MSVC /GX
++
++APPOBJ  = $(ARGS_O) $(IMAGE_IN_O) \
++ $(IMAGE_OUT_O) $JP2_O) \
++ $(MJ2_O) $(PALETTE_O) \
++ $(ROI_O)
 +
 +# The following are just for Kakadu 5.1 or later.
-+APPOBJ = $(KAKDIR)/apps/make/kdu_tiff.obj $(KAKDIR)/apps/make/jpx.obj $(KAKDIR)/apps/make/kdu_stripe_decompressor.obj $APPOBJ
++APPOBJ = $(KDU_TIFF_O) $(JPX_O) $(KDU_STRIPE_O) $(APPOBJ)
 +
  default:	$(OBJ) kakinstall
 -	xcopy /D  /Y *.obj ..\o
-+	copy *.obj ..\o
++ xcopy /D  /Y *.obj ..\o
  
  kakinstall:
 -	copy $(KAKDIR)\*.obj ..\o
-+	copy $(KAKDIR)\apps\make\args.obj ..\o
-+	copy $(KAKDIR)\apps\make\image_in.obj ..\o
-+	copy $(KAKDIR)\apps\make\image_out.obj ..\o
-+	copy $(KAKDIR)\apps\make\jp2.obj ..\o
-+	copy $(KAKDIR)\apps\make\mj2.obj ..\o
-+	copy $(KAKDIR)\apps\make\palette.obj ..\o
-+	copy $(KAKDIR)\apps\make\roi_sources.obj ..\o
-+	copy $(KAKDIR)\apps\make\kdu_tiff.obj ..\o
-+	copy $(KAKDIR)\apps\make\jpx.obj ..\o
-+	copy $(KAKDIR)\apps\make\kdu_stripe_decompressor.obj ..\o
++ xcopy /D  /Y $(ARGS_O) ..\o
++ xcopy /D  /Y $(IMAGE_IN_O) ..\o
++ xcopy /D  /Y $(IMAGE_OUT_O) ..\o
++ xcopy /D  /Y $(JP2_O) ..\o
++ xcopy /D  /Y $(MJ2_O) ..\o
++ xcopy /D  /Y $(PALETTE_O) ..\o
++ xcopy /D  /Y $(ROI_O) ..\o
++ xcopy /D  /Y $(KDU_TIFF_O) ..\o
++ xcopy /D  /Y $(JPX_O) ..\o
++ xcopy /D  /Y $(KDU_STRIPE_O) ..\o
  
  clean:
  	-del *.obj
 -
 Index: frmts/jp2kak/GNUmakefile
 ===================================================================
---- frmts/jp2kak/GNUmakefile	(revision 15809)
+--- frmts/jp2kak/GNUmakefile	(revision 15976)
 +++ frmts/jp2kak/GNUmakefile	(working copy)
 @@ -10,12 +10,12 @@
  OBJ	=	jp2kakdataset.o
@@ -60,7 +73,7 @@ Index: frmts/jp2kak/GNUmakefile
  
 Index: frmts/jp2kak/jp2kakdataset.cpp
 ===================================================================
---- frmts/jp2kak/jp2kakdataset.cpp	(revision 15809)
+--- frmts/jp2kak/jp2kakdataset.cpp	(revision 15976)
 +++ frmts/jp2kak/jp2kakdataset.cpp	(working copy)
 @@ -39,6 +39,7 @@
  #include "kdu_params.h"
@@ -517,9 +530,177 @@ Index: frmts/jp2kak/jp2kakdataset.cpp
  "   <Option name='Qguard' type='integer'/>"
  "   <Option name='Sprofile' type='integer'/>"
  "   <Option name='Rshift' type='string'/>"
+Index: gcore/gdaljp2metadata.cpp
+===================================================================
+--- gcore/gdaljp2metadata.cpp	(revision 15976)
++++ gcore/gdaljp2metadata.cpp	(working copy)
+@@ -606,9 +606,9 @@
+     {
+         adfGeoTransform[0] = poOriginGeometry->getX();
+         adfGeoTransform[1] = atof(papszOffset1Tokens[0]);
+-        adfGeoTransform[2] = atof(papszOffset1Tokens[1]);
++        adfGeoTransform[2] = atof(papszOffset2Tokens[0]);
+         adfGeoTransform[3] = poOriginGeometry->getY();
+-        adfGeoTransform[4] = atof(papszOffset2Tokens[0]);
++        adfGeoTransform[4] = atof(papszOffset1Tokens[1]);
+         adfGeoTransform[5] = atof(papszOffset2Tokens[1]);
+ 
+         // offset from center of pixel.
+@@ -645,6 +645,8 @@
+ /*      If we have gotten a geotransform, then try to interprete the    */
+ /*      srsName.                                                        */
+ /* -------------------------------------------------------------------- */
++    int bNeedAxisFlip = FALSE;
++
+     if( bSuccess && pszSRSName != NULL 
+         && (pszProjection == NULL || strlen(pszProjection) == 0) )
+     {
+@@ -659,7 +661,17 @@
+                  && strstr(pszSRSName,":def:") != NULL
+                  && oSRS.importFromURN(pszSRSName) == OGRERR_NONE )
+         {
++            const char *pszCode = strrchr(pszSRSName,':') + 1;
++
+             oSRS.exportToWkt( &pszProjection );
++
++            // Per #2131
++            if( atoi(pszCode) >= 4000 && atoi(pszCode) <= 4999 )
++            {
++                CPLDebug( "GMLJP2", "Request axis flip for SRS=%s",
++                          pszSRSName );
++                bNeedAxisFlip = TRUE;
++            }
+         }
+         else if( !GMLSRSLookup( pszSRSName ) )
+         {
+@@ -674,6 +686,37 @@
+                   "Got projection from GML box: %s", 
+                  pszProjection );
+ 
++/* -------------------------------------------------------------------- */
++/*      Do we need to flip the axes?                                    */
++/* -------------------------------------------------------------------- */
++    if( bNeedAxisFlip
++        && CSLTestBoolean( CPLGetConfigOption( "GDAL_IGNORE_AXIS_ORIENTATION",
++                                               "FALSE" ) ) )
++    {
++        bNeedAxisFlip = FALSE;
++        CPLDebug( "GMLJP2", "Supressed axis flipping based on GDAL_IGNORE_AXIS_ORIENTATION." );
++    }
++
++    if( bNeedAxisFlip )
++    {
++        double dfTemp;
++
++        CPLDebug( "GMLJP2", 
++                  "Flipping axis orientation in GMLJP2 coverage description." );
++
++        dfTemp = adfGeoTransform[0];
++        adfGeoTransform[0] = adfGeoTransform[3];
++        adfGeoTransform[3] = dfTemp;
++
++        dfTemp = adfGeoTransform[1];
++        adfGeoTransform[1] = adfGeoTransform[4];
++        adfGeoTransform[4] = dfTemp;
++
++        dfTemp = adfGeoTransform[2];
++        adfGeoTransform[2] = adfGeoTransform[5];
++        adfGeoTransform[5] = dfTemp;
++    }
++
+     return pszProjection != NULL && bSuccess;
+ }
+ 
+@@ -763,6 +806,7 @@
+     char *pszWKTCopy = (char *) pszProjection;
+     int nEPSGCode = 0;
+     char szSRSName[100];
++    int  bNeedAxisFlip = FALSE;
+ 
+     if( oSRS.importFromWkt( &pszWKTCopy ) != OGRERR_NONE )
+         return NULL;
+@@ -783,6 +827,7 @@
+         if( pszAuthName != NULL && EQUAL(pszAuthName,"epsg") )
+         {
+             nEPSGCode = atoi(oSRS.GetAuthorityCode( "GEOGCS" ));
++            bNeedAxisFlip = TRUE;
+         }
+     }
+ 
+@@ -793,6 +838,51 @@
+                 "gmljp2://xml/CRSDictionary.gml#ogrcrs1" );
+ 
+ /* -------------------------------------------------------------------- */
++/*      Prepare coverage origin and offset vectors.  Take axis          */
++/*      order into account if needed.                                   */
++/* -------------------------------------------------------------------- */
++    double adfOrigin[2];
++    double adfXVector[2];
++    double adfYVector[2];
++    
++    adfOrigin[0] = adfGeoTransform[0] + adfGeoTransform[1] * 0.5
++        + adfGeoTransform[4] * 0.5;
++    adfOrigin[1] = adfGeoTransform[3] + adfGeoTransform[2] * 0.5
++        + adfGeoTransform[5] * 0.5;
++    adfXVector[0] = adfGeoTransform[1];
++    adfXVector[1] = adfGeoTransform[2];
++        
++    adfYVector[0] = adfGeoTransform[4];
++    adfYVector[1] = adfGeoTransform[5];
++    
++    if( bNeedAxisFlip
++        && CSLTestBoolean( CPLGetConfigOption( "GDAL_IGNORE_AXIS_ORIENTATION",
++                                               "FALSE" ) ) )
++    {
++        bNeedAxisFlip = FALSE;
++        CPLDebug( "GMLJP2", "Supressed axis flipping on write based on GDAL_IGNORE_AXIS_ORIENTATION." );
++    }
++
++    if( bNeedAxisFlip )
++    {
++        double dfTemp;
++        
++        CPLDebug( "GMLJP2", "Flipping GML coverage axis order." );
++        
++        dfTemp = adfOrigin[0];
++        adfOrigin[0] = adfOrigin[1];
++        adfOrigin[1] = dfTemp;
++
++        dfTemp = adfXVector[0];
++        adfXVector[0] = adfXVector[1];
++        adfXVector[1] = dfTemp;
++
++        dfTemp = adfYVector[0];
++        adfYVector[0] = adfYVector[1];
++        adfYVector[1] = dfTemp;
++    }
++
++/* -------------------------------------------------------------------- */
+ /*      For now we hardcode for a minimal instance format.              */
+ /* -------------------------------------------------------------------- */
+     CPLString osDoc;
+@@ -839,15 +929,9 @@
+ "    </gml:FeatureCollection>\n"
+ "  </gml:featureMember>\n"
+ "</gml:FeatureCollection>\n",
+-             nXSize-1, nYSize-1, szSRSName,
+-             adfGeoTransform[0] + adfGeoTransform[1] * 0.5
+-                                + adfGeoTransform[4] * 0.5, 
+-             adfGeoTransform[3] + adfGeoTransform[2] * 0.5
+-                                + adfGeoTransform[5] * 0.5,
+-             szSRSName, 
+-             adfGeoTransform[1], adfGeoTransform[2],
+-             szSRSName,
+-             adfGeoTransform[4], adfGeoTransform[5] );
++             nXSize-1, nYSize-1, szSRSName, adfOrigin[0], adfOrigin[1],
++             szSRSName, adfXVector[0], adfXVector[1], 
++             szSRSName, adfYVector[0], adfYVector[1] );
+ 
+ /* -------------------------------------------------------------------- */
+ /*      If we need a user defined CRSDictionary entry, prepare it       */
 Index: swig/include/java/gdal_java.i
 ===================================================================
---- swig/include/java/gdal_java.i	(revision 15809)
+--- swig/include/java/gdal_java.i	(revision 15976)
 +++ swig/include/java/gdal_java.i	(working copy)
 @@ -77,18 +77,92 @@
      byte[] greens = new byte[size];
