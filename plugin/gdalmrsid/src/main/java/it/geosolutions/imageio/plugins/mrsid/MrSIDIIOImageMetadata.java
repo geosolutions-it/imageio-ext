@@ -51,7 +51,7 @@ public class MrSIDIIOImageMetadata extends GDALCommonIIOImageMetadata {
     /**
      * <code>MrSIDIIOImageMetadata</code> constructor.
      * 
-     * @param sDatasetName
+     * @param dataseName
      *                The name (usually a File path or a subdataset name when
      *                the format supports subdatasets) of the dataset we want to
      *                open.

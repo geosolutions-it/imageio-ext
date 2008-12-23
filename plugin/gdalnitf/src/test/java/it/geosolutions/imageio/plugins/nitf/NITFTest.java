@@ -32,7 +32,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Testing reading capabilities for {@link EnvisatImageReader}.
+ * Testing reading capabilities for {@link NITFImageReader}.
  * 
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.

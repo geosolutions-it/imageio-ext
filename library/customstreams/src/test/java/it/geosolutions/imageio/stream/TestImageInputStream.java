@@ -22,6 +22,7 @@ package it.geosolutions.imageio.stream;
  * @author Simone Giannecchini, GeoSolutions
  */
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
+import it.geosolutions.imageio.stream.input.spi.StringImageInputStreamSpi;
 import it.geosolutions.imageio.stream.input.spi.URLImageInputStreamSpi;
 import it.geosolutions.resources.TestData;
 
@@ -271,12 +272,12 @@ public class TestImageInputStream extends TestCase {
 	}
 
     /**
-     * Testing capabilities of {@link StringImageInputStreamSPI}.
+     * Testing capabilities of {@link StringImageInputStreamSpi}.
      * 
      */
     public void testStringImageInputStream() {
 
-        LOGGER.info("Testing capabilities of StringImageInputStreamSPI");
+        LOGGER.info("Testing capabilities of StringImageInputStreamSpi");
         // get a URL pointing to a FILE
         final String inURLToFile = TestData.getResource(this, "a.txt")
                 .toString();
@@ -289,7 +290,7 @@ public class TestImageInputStream extends TestCase {
             instream = null;
         }
         assertNotNull(
-                "Unable to get an StringImageInputStreamSPI from a URL pointing to a File",
+                "Unable to get an StringImageInputStreamSpi from a URL pointing to a File",
                 instream);
 
         // get a URL pointing to an http page

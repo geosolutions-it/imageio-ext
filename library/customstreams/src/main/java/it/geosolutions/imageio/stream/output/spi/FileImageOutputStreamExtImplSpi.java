@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageio.stream.output.spi;
 
+import it.geosolutions.imageio.stream.output.FileImageOutputStreamExt;
 import it.geosolutions.imageio.stream.output.FileImageOutputStreamExtImpl;
 
 import java.io.File;
@@ -33,7 +34,7 @@ import javax.imageio.stream.ImageOutputStream;
 import com.sun.imageio.spi.FileImageOutputStreamSpi;
 
 /**
- * A Special ImageOutputStream Service Provider Interface which is able to
+ * A special ImageOutputStream Service Provider Interface which is able to
  * provide a {@link FileImageOutputStreamExt}
  * 
  * @author Daniele Romagnoli, GeoSolutions
