@@ -235,8 +235,6 @@
         </configuration>
       </plugin>
 
-
-
       <!-- ======================================================= -->
       <!--     Web site generation.                                -->
       <!-- ======================================================= -->
@@ -247,22 +245,11 @@
           <locales>en</locales>
         </configuration>
       </plugin>
-      
-      <!-- artifact assembly -->
+
+      <!-- basic project information -->
       <plugin>
-          <artifactId>maven-assembly-plugin</artifactId>
-          <version>2.1</version>
-          <configuration>
-           <descriptors>
-            <descriptor>release/src.xml</descriptor>
-            <descriptor>release/javadoc.xml</descriptor>
-           </descriptors>
-           <finalName>imageio-ext-1.0</finalName>
-           <outputDirectory>${project.build.directory}/release</outputDirectory>
-          </configuration>
-   </plugin>
-      
-      
+       <artifactId>maven-project-info-reports-plugin</artifactId>
+      </plugin>
     </plugins>
   </reporting>
 
@@ -504,7 +491,20 @@
             </goals>
            </execution>
           </executions>
-   </plugin>
+     </plugin>
+	<!-- artifact assembly -->
+      <plugin>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>2.1</version>
+          <configuration>
+           <descriptors>
+            <descriptor>release/src.xml</descriptor>
+            <descriptor>release/javadoc.xml</descriptor>
+           </descriptors>
+           <finalName>imageio-ext-1.0</finalName>
+           <outputDirectory>${project.build.directory}/release</outputDirectory>
+          </configuration>
+       </plugin>
     </plugins>
    
   <!-- ======================================================== -->
