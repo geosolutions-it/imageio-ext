@@ -28,9 +28,6 @@ import com.sun.media.imageioimpl.common.ImageUtil;
 
 public class JP2KImageMetadata extends IIOMetadata {
 
-    private static Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.plugins.jp2k");
-
     public static final String nativeMetadataFormatName = "it_geosolutions_imageio_plugins_jp2k_ImageMetadata_1.0";
 
     public static final String NUM_COMPONENTS = "NumberOfComponents";

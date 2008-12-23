@@ -23,6 +23,9 @@ import javax.imageio.metadata.IIOMetadataNode;
  * format. A Channel Definition Box has a length, and a fixed type of "cdef".
  * Its content defines the type of the image channels: color channel, alpha
  * channel or premultiplied alpha channel.
+ *
+ * @author Simone Giannecchini, GeoSolutions
+ * @author Daniele Romagnoli, GeoSolutions
  */
 @SuppressWarnings("serial")
 public class ChannelDefinitionBoxMetadataNode extends BaseJP2KBoxMetadataNode {

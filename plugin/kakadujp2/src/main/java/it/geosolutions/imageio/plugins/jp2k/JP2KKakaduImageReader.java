@@ -108,103 +108,13 @@ public class JP2KKakaduImageReader extends ImageReader {
 
     private JP2KFileWalker fileWalker;
 
-    // /**
-    // * Placeholder for a wide set of codestream properties.
-    // *
-    // * @todo: refactor this with setter, getter, synchronization...
-    // */
-    // private final class JP2KCodestreamProperties {
-    //
-    // /** Number of components of the source. */
-    // private int nComponents;
-    //
-    // private int dataBufferType = -1;
-    //
-    // /** the bitDepth */
-    // private int maxBitDepth;
-    //
-    // /** the whole image width */
-    // private int width;
-    //
-    // /** the whole image height */
-    // private int height;
-    //
-    // /** the tile image width */
-    // private int tileWidth;
-    //
-    // /** the tile image height */
-    // private int tileHeight;
-    //
-    // /** sample model for the whole image */
-    // private SampleModel sm = null;
-    //
-    // /** color model */
-    // private ColorModel cm = null;
-    //
-    // /** max number of available quality layers */
-    // private int maxAvailableQualityLayers = -1;
-    //
-    // /** The source resolution levels. */
-    // private int sourceDWTLevels;
-    //
-    // /** It is simply 2^sourceDWTLevels */
-    // private int maxSupportedSubSamplingFactor;
-    //
-    // private boolean isSigned;
-    //
-    // private int[] bitsPerComponent;
-    //
-    // private int[] componentIndexes;
-    //
-    // protected JP2KCodestreamProperties() {
-    //
-    // }
-    // }
-
     private final List<JP2KCodestreamProperties> multipleCodestreams = new ArrayList<JP2KCodestreamProperties>();
 
     private int numImages = 1;
 
     protected JP2KKakaduImageReader(ImageReaderSpi originatingProvider) {
         super(originatingProvider);
-        initializeKakaduMessagesManagement();
-    }
-
-    /**
-     * Initializing kakadu messages as stated in the KduRender.java example
-     */
-    private void initializeKakaduMessagesManagement() {
-        // try {
-        //
-        // // ////
-        // // Customize error and warning services
-        // // ////
-        //
-        // // Non-throwing message printer
-        // Kdu_sysout_message sysout = new Kdu_sysout_message(false);
-        //
-        // // Exception-throwing message printer
-        // Kdu_sysout_message syserr = new Kdu_sysout_message(true);
-        //
-        // // /////
-        // // Initialize formatted message printer
-        // // ////
-        //
-        // // Non-throwing printer
-        // Kdu_message_formatter pretty_sysout = new Kdu_message_formatter(
-        // sysout);
-        // // Throwing printer
-        // Kdu_message_formatter pretty_syserr = new Kdu_message_formatter(
-        // syserr);
-        // Kdu_global.Kdu_customize_warnings(pretty_sysout);
-        // Kdu_global.Kdu_customize_errors(pretty_syserr);
-        //
-        // } catch (KduException e) {
-        // throw new RuntimeException(
-        // "Error caused by a Kakadu exception during creation of key objects!
-        // ",
-        // e);
-        // }
+        KakaduUtilities.initializeKakaduMessagesManagement();
     }
 
     /**
@@ -371,7 +281,7 @@ public class JP2KKakaduImageReader extends ImageReader {
             // we need to build a proper JP2KakaduImageReadParam prior
             // to start parameters parsing.
             JP2KKakaduImageReadParam jp2kParam = (JP2KKakaduImageReadParam) getDefaultReadParam();
-            jp2kParam.intialize(param);
+            jp2kParam.initialize(param);
             param = jp2kParam;
         }
 
@@ -1787,28 +1697,6 @@ public class JP2KKakaduImageReader extends ImageReader {
         if (node != null) {
             return LazyJP2KBox.getAsOriginalBox((JP2KBox) node);
         }
-
-        // JFrame frame = new JFrame();
-        // frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // JScrollPane treeScroller = new JScrollPane(new JTree(boxesTree) {
-        // public String convertValueToText(Object value, boolean selected,
-        // boolean expanded, boolean leaf, int row, boolean hasFocus) {
-        // if(value instanceof JP2KFileBox)
-        // return "jp2kfile";
-        // JP2KBox box=(JP2KBox) value;
-        // // byte[] content=box.getContent();
-        // // if (content!=null)
-        // // System.out.println(new String(content));
-        // return BoxUtilities.getBoxName(box.getType());
-        // }
-        // });
-        //
-        //
-        // frame.getContentPane().add( treeScroller );
-        //
-        // frame.setSize( 400, 400 );
-        // frame.pack();
-        // frame.show();
 
         return null;
 

@@ -18,6 +18,10 @@ package it.geosolutions.imageio.plugins.jp2k.box;
 
 import it.geosolutions.imageio.plugins.jp2k.JP2KBox;
 
+/**
+ * @author Simone Giannecchini, GeoSolutions
+ * @author Daniele Romagnoli, GeoSolutions
+ */
 public class ASOCBoxMetadataNode extends BaseJP2KBoxMetadataNode{
 
     public ASOCBoxMetadataNode(final JP2KBox box) {

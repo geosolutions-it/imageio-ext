@@ -28,6 +28,9 @@ import com.sun.media.imageioimpl.common.ImageUtil;
  * 
  * This box is necessary only when the bit depth are not identical for all the
  * components.
+ *
+ * @author Simone Giannecchini, GeoSolutions
+ * @author Daniele Romagnoli, GeoSolutions
  */
 @SuppressWarnings("serial")
 public class BitsPerComponentBoxMetadataNode extends BaseJP2KBoxMetadataNode {

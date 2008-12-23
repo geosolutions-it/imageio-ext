@@ -27,7 +27,6 @@ import it.geosolutions.imageio.plugins.jp2k.box.XMLBox;
 import it.geosolutions.imageio.plugins.jp2k.box.XMLBoxMetadataNode;
 
 import java.lang.ref.SoftReference;
-import java.util.logging.Logger;
 
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
@@ -35,15 +34,9 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 
-import kdu_jni.Jp2_family_src;
-import kdu_jni.Jp2_input_box;
-
 import org.w3c.dom.Node;
 
 public class JP2KStreamMetadata extends IIOMetadata {
-
-    private static Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.plugins.jp2k");
 
     public final static String NUM_CODESTREAMS = "NumberOfCodestreams";
 

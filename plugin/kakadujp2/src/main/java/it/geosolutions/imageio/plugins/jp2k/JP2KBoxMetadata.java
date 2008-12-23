@@ -18,6 +18,10 @@ package it.geosolutions.imageio.plugins.jp2k;
 
 import javax.imageio.metadata.IIOMetadataNode;
 
+/**
+ * @author Simone Giannecchini, GeoSolutions.
+ * @author Daniele Romagnoli, GeoSolutions.
+ */
 public interface JP2KBoxMetadata extends JP2KBox{
 
     public IIOMetadataNode getNativeNode();

@@ -984,7 +984,7 @@ public class JP2KTreeController implements JP2KTreeChecker, TreeModelListener{
     }
 
     
-	/**
+    /**
      * Return the index of a {@link JP2KBox} child from the specified parent
      * box, given the requested boxType. Return -1 if the child is not
      * found.
@@ -1012,14 +1012,14 @@ public class JP2KTreeController implements JP2KTreeChecker, TreeModelListener{
         return -1;
     }
 
-/* (non-Javadoc)
+    /**
      * @see javax.swing.event.TreeModelListener#treeNodesChanged(javax.swing.event.TreeModelEvent)
      */
     public void treeNodesChanged(TreeModelEvent e) {
             System.out.println(e.toString());
     }
 
-    /* (non-Javadoc)
+    /**
      * @see javax.swing.event.TreeModelListener#treeNodesInserted(javax.swing.event.TreeModelEvent)
      */
     public void treeNodesInserted(TreeModelEvent e) {
@@ -1046,7 +1046,7 @@ public class JP2KTreeController implements JP2KTreeChecker, TreeModelListener{
                     throw new IllegalStateException("Check failed on this nodes insertion");
     }
 
-    /* (non-Javadoc)
+    /**
      * @see javax.swing.event.TreeModelListener#treeNodesRemoved(javax.swing.event.TreeModelEvent)
      */
     public void treeNodesRemoved(TreeModelEvent e) {
@@ -1054,7 +1054,7 @@ public class JP2KTreeController implements JP2KTreeChecker, TreeModelListener{
 
     }
 
-    /* (non-Javadoc)
+    /**
      * @see javax.swing.event.TreeModelListener#treeStructureChanged(javax.swing.event.TreeModelEvent)
      */
     public void treeStructureChanged(TreeModelEvent e) {

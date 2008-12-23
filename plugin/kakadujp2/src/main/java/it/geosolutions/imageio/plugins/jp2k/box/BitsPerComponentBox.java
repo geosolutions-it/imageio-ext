@@ -73,6 +73,9 @@ import org.w3c.dom.Node;
  * 
  * This box is necessary only when the bit depth are not identical for all the
  * components.
+ *
+ * @author Simone Giannecchini, GeoSolutions
+ * @author Daniele Romagnoli, GeoSolutions
  */
 @SuppressWarnings("serial")
 public class BitsPerComponentBox extends DefaultJP2KBox {

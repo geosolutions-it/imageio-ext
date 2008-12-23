@@ -20,6 +20,10 @@ import it.geosolutions.imageio.plugins.jp2k.JP2KBox;
 
 import javax.imageio.metadata.IIOMetadataNode;
 
+/**
+ * @author Simone Giannecchini, GeoSolutions
+ * @author Daniele Romagnoli, GeoSolutions
+ */
 public abstract class BaseJP2KBoxMetadataNode extends IIOMetadataNode {
 
 //    private final String boxLength;

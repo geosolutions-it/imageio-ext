@@ -73,6 +73,9 @@ import org.w3c.dom.NodeList;
  * Its content contains the method to define the color space, the precedence and 
  * approximation accuracy (0 for JP2 files), the enumerated color space, and 
  * the ICC color profile if any.
+ *
+ * @author Simone Giannecchini, GeoSolutions
+ * @author Daniele Romagnoli, GeoSolutions
  */
 @SuppressWarnings("serial")
 public class ColorSpecificationBox extends BaseJP2KBox {

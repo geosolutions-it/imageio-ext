@@ -21,6 +21,9 @@ import java.awt.image.SampleModel;
 
 /**
  * Placeholder for a wide set of codestream properties.
+ * 
+ * @author Daniele Romagnoli, GeoSolutions
+ * @author Simone Giannecchini, GeoSolutions
  */
 class JP2KCodestreamProperties {
     

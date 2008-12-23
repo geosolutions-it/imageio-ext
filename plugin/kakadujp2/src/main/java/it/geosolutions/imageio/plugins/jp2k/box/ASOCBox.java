@@ -20,6 +20,10 @@ import javax.imageio.metadata.IIOInvalidTreeException;
 
 import org.w3c.dom.Node;
 
+/**
+ * @author Simone Giannecchini, GeoSolutions
+ * @author Daniele Romagnoli, GeoSolutions
+ */
 @SuppressWarnings("serial")
 public class ASOCBox extends DefaultJP2KBox {
 

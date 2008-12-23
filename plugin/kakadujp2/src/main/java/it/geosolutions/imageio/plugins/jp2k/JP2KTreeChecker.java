@@ -24,7 +24,6 @@ import javax.swing.event.TreeModelListener;
  *
  */
 interface JP2KTreeChecker extends TreeModelListener {
-    
     public void checkTreeConsistency();
 
 }

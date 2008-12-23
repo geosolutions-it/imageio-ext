@@ -73,6 +73,9 @@ import org.w3c.dom.NodeList;
  * A Channel Definition Box has a length, and a fixed type of "cdef". 
  * Its content defines the type of the image channels: color channel, alpha channel or 
  * premultiplied alpha channel.
+ *
+ * @author Simone Giannecchini, GeoSolutions
+ * @author Daniele Romagnoli, GeoSolutions
  */
 @SuppressWarnings("serial")
 public class ChannelDefinitionBox extends BaseJP2KBox {

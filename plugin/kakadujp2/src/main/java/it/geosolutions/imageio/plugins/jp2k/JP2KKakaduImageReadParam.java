@@ -21,9 +21,11 @@ import it.geosolutions.imageio.imageioimpl.imagereadmt.CloneableImageReadParam;
 import javax.imageio.ImageReadParam;
 
 /**
- * Class extending     {@link ImageReadParam}     with add for support of JP2 specific parameters.
- * @author     Simone Giannecchini, GeoSolutions.
- * @author     Daniele Romagnoli, GeoSolutions.
+ * Class extending {@link ImageReadParam} with add for support of JP2 specific
+ * parameters.
+ * 
+ * @author Simone Giannecchini, GeoSolutions.
+ * @author Daniele Romagnoli, GeoSolutions.
  */
 public class JP2KKakaduImageReadParam extends CloneableImageReadParam {
 
@@ -55,14 +57,19 @@ public class JP2KKakaduImageReadParam extends CloneableImageReadParam {
     public static final int INTERPOLATION_BILINEAR = 2;
 
     /**
-	 * @uml.property  name="interpolationType"
-	 */
+     * @uml.property name="interpolationType"
+     */
     private int interpolationType;
 
     /**
-	 * Represents the number of available quality layers We set this to -1 by default. If this value does not change, the reader makes no restrictions on the number of quality layers which will be used during read operations. Otherwise, setting this field allows the reader to use only the specified number of quality layers.
-	 * @uml.property  name="qualityLayers"
-	 */
+     * Represents the number of available quality layers We set this to -1 by
+     * default. If this value does not change, the reader makes no restrictions
+     * on the number of quality layers which will be used during read
+     * operations. Otherwise, setting this field allows the reader to use only
+     * the specified number of quality layers.
+     * 
+     * @uml.property name="qualityLayers"
+     */
     private int qualityLayers;
 
     // private int resolutionLevel;
@@ -98,44 +105,52 @@ public class JP2KKakaduImageReadParam extends CloneableImageReadParam {
     // }
 
     /**
-	 * Sets <code>qualityLayers</code>.
-	 * @param qualityLayers     the quality layers involved within the read operation.
-	 * @see  #getQualityLayers()
-	 * @uml.property  name="qualityLayers"
-	 */
+     * Sets <code>qualityLayers</code>.
+     * 
+     * @param qualityLayers
+     *                the quality layers involved within the read operation.
+     * @see #getQualityLayers()
+     * @uml.property name="qualityLayers"
+     */
     public void setQualityLayers(int qualityLayers) {
         this.qualityLayers = qualityLayers;
     }
 
     /**
-	 * Gets <code>qualityLayers</code>.
-	 * @return     the number of quality layers.
-	 * @see  #setQualityLayers(int)
-	 * @uml.property  name="qualityLayers"
-	 */
+     * Gets <code>qualityLayers</code>.
+     * 
+     * @return the number of quality layers.
+     * @see #setQualityLayers(int)
+     * @uml.property name="qualityLayers"
+     */
     public final int getQualityLayers() {
         return qualityLayers;
     }
 
     /**
-	 * Gets <code>InterpolationType</code>.
-	 * @return     the interpolation algorithm which will be used when image need to  be warped
-	 * @uml.property  name="interpolationType"
-	 */
+     * Gets <code>InterpolationType</code>.
+     * 
+     * @return the interpolation algorithm which will be used when image need to
+     *         be warped
+     * @uml.property name="interpolationType"
+     */
     public final int getInterpolationType() {
         return interpolationType;
     }
 
     /**
-	 * Sets <code>InterpolationType</code>.
-	 * @param interpolationType     the interpolation type used during <code>WarpAffine</code>  operation  interpolationType should be one of: -<em>INTERPOLATION_NEAREST</em> -<em>INTERPOLATION_BILINEAR</em> -<em>INTERPOLATION_BICUBIC</em> -<em>INTERPOLATION_BICUBIC2</em>
-	 * @uml.property  name="interpolationType"
-	 */
+     * Sets <code>InterpolationType</code>.
+     * 
+     * @param interpolationType
+     *                the interpolation type used during <code>WarpAffine</code>
+     *                operation interpolationType should be one of: -<em>INTERPOLATION_NEAREST</em> -<em>INTERPOLATION_BILINEAR</em> -<em>INTERPOLATION_BICUBIC</em> -<em>INTERPOLATION_BICUBIC2</em>
+     * @uml.property name="interpolationType"
+     */
     public final void setInterpolationType(int interpolationType) {
         this.interpolationType = interpolationType;
     }
 
-    protected void intialize(ImageReadParam param) {
+    protected void initialize(ImageReadParam param) {
         if (param.hasController()) {
             setController(param.getController());
         }
