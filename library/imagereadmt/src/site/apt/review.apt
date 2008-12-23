@@ -2,17 +2,25 @@ ImageReadMT Module
 ~~~~~~~~~~~~~~~~~~~~
 
   IP Review:
+
     * Daniele Romagnoli, December 12th, 2008
   
   STATUS: to be checked
-      Code: see notes
-      Data is OK
+
+	* Code: see notes
+
+	* Data is OK
       
 * Code Notes
   ~~~~~~~~~~~~
    * it.geosolutions.imageio.imageioimpl.imagereadmt.I18N (SUN Copyright)
+
    * it.geosolutions.imageio.imageioimpl.imagereadmt.ImageIOCollectionImageMT (SUN Copyright)
+
    * it.geosolutions.imageio.imageioimpl.imagereadmt.ImageReadDescriptorMT (SUN Copyright)
+
    * it.geosolutions.imageio.imageioimpl.ImageReadMTCIF (SUN Copyright)
+
    * it.geosolutions.imageio.imageioimpl.ImageReadMTCRIF (SUN Copyright)
+
    * it.geosolutions.imageio.imageioimpl.ImageReadOpImageMT (SUN Copyright)
