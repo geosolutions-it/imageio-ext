@@ -2,18 +2,15 @@ GDAL ECW plugin
 ~~~~~~~~~~~~~~~~
 
   IP Review:
- 
     * Daniele Romagnoli, December 17th, 2008
   
-
- STATUS: OK
+  STATUS: OK
       Code: Clean
       Data: OK
       
-     
 * Data Credits
   ~~~~~~~~~~~~
-** sample.ecw: 
-   data generated using the gdal_translate utility, having "small_world.tif" as input file, which is freely available at:
-   http://download.osgeo.org/gdal/data/gtiff/
+  * sample.ecw: 
+     data generated using the gdal_translate utility, having "small_world.tif" as input file, which is freely available at:
+     http://download.osgeo.org/gdal/data/gtiff/
 

@@ -2,7 +2,6 @@ ArcGrid plugin
 ~~~~~~~~~~~~~~
 
   IP Review:
- 
     * Daniele Romagnoli, December 17th, 2008
   
 
@@ -12,28 +11,26 @@ ArcGrid plugin
       
 * Code Notes
   ~~~~~~~~~~~~
-   it.geosolutions.imageio.plugins.arcgrid.raster.NumberToByteArray
+   * it.geosolutions.imageio.plugins.arcgrid.raster.NumberToByteArray
    
-   code seems coming from:
-   http://etutorials.org/Programming/Java+performance+tuning/Chapter+5.+Strings/5.3+Conversions+to+Strings/
-   chapter 5.3.5
+	code seems coming from:
+	http://etutorials.org/Programming/Java+performance+tuning/Chapter+5.+Strings/5.3+Conversions+to+Strings/
+	chapter 5.3.5
    
-   Check for licensing issues
-   
+	Check for licensing issues
      
 * Data Credits
   ~~~~~~~~~~~~
   
-** arcgrid.zip containing several datasets:
+  * arcgrid.zip containing several datasets:
   
-   *** 095b_dem_90m.asc
-      data freely available at:
-      http://download.osgeo.org/gdal/data/aaigrid/
+    * 095b_dem_90m.asc
+       data freely available at:
+       http://download.osgeo.org/gdal/data/aaigrid/
    
-   *** dem.asc
-      data obtained from 095b_dem_90m.asc using the following GDAL Utility command:
-      gdal_translate -OF AAIGrid -outsize 400% 400% 095b_dem_90m.asc dem.asc
+    * dem.asc
+       data obtained from 095b_dem_90m.asc using the following GDAL Utility command:
+       gdal_translate -OF AAIGrid -outsize 400% 400% 095b_dem_90m.asc dem.asc
       
-      
-   *** spearfish.asc.gz
-      GZipped DEM data taken from GRASS's spearfish example data set   
+    * spearfish.asc.gz
+       GZipped DEM data taken from GRASS's spearfish example data set   
