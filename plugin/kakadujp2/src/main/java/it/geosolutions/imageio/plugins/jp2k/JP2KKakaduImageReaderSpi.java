@@ -47,12 +47,12 @@ import kdu_jni.Kdu_simple_file_source;
 public class JP2KKakaduImageReaderSpi extends ImageReaderSpi {
 
     protected boolean registered = false;
-
-    static final String[] suffixes = { "jp2", "jp2k", "j2k" };
-
-    static final String[] formatNames = { "JP2KSimpleBox" };
-
-    static final String[] MIMETypes = { "image/jp2", "image/jp2k", "image/j2k" };
+    
+    static final String[] suffixes = { "jp2", "jp2k", "j2k", "j2c" };
+     
+    static final String[] formatNames = { "JP2KSimpleBox", "jpeg2000" };
+     
+    static final String[] MIMETypes = { "image/jp2", "image/jp2k", "image/j2k", "image/j2c" };
 
     static final String version = "1.0";
 

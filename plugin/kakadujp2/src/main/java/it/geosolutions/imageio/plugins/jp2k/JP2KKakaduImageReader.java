@@ -46,6 +46,7 @@ import java.awt.image.RasterFormatException;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -61,6 +62,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.stream.ImageInputStream;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeModel;
 
@@ -97,6 +99,10 @@ public class JP2KKakaduImageReader extends ImageReader {
             LOGGER.setLevel(Level.FINE);
         }
     }
+
+    private final static int TEMP_BUFFER_SIZE = 64 * 1024;
+
+    private boolean deleteInputFile;
 
     /** The dataset input source */
     private File inputFile = null;
@@ -172,7 +178,8 @@ public class JP2KKakaduImageReader extends ImageReader {
 
     public IIOMetadata getStreamMetadata() throws IOException {
         if (isRawSource)
-            throw new UnsupportedOperationException("Raw source detected. Actually, unable to get stream metadata");
+            throw new UnsupportedOperationException(
+                    "Raw source detected. Actually, unable to get stream metadata");
         return new JP2KStreamMetadata(fileWalker.getJP2KBoxesTree(), numImages);
     }
 
@@ -503,6 +510,10 @@ public class JP2KKakaduImageReader extends ImageReader {
                     e);
         } catch (RasterFormatException rfe) {
             throw new RuntimeException("Error during raster creation", rfe);
+        } finally {
+            if (deleteInputFile && inputFile.exists()) {
+                inputFile.delete();
+            }
         }
 
         // ////////////////////////////////////////////////////////////////
@@ -513,8 +524,8 @@ public class JP2KKakaduImageReader extends ImageReader {
         //
         // ////////////////////////////////////////////////////////////////
         if (resamplingIsRequired && bi != null)
-            return KakaduUtilities.subsampleImage(codestreamP.getColorModel(), bi,
-                    destinationRegion.width, destinationRegion.height,
+            return KakaduUtilities.subsampleImage(codestreamP.getColorModel(),
+                    bi, destinationRegion.width, destinationRegion.height,
                     interpolationType);
         return bi;
     }
@@ -665,8 +676,8 @@ public class JP2KKakaduImageReader extends ImageReader {
         final boolean changedSubSamplingFactors = (newSubSamplingFactor > maxSupportedSubSamplingFactor);
         if (newSubSamplingFactor > maxSupportedSubSamplingFactor)
             newSubSamplingFactor = maxSupportedSubSamplingFactor;
-        final int info[] = KakaduUtilities.findOptimalResolutionInfo(codestreamP
-                .getSourceDWTLevels(), newSubSamplingFactor);
+        final int info[] = KakaduUtilities.findOptimalResolutionInfo(
+                codestreamP.getSourceDWTLevels(), newSubSamplingFactor);
 
         resamplingIsRequired = subSamplingFactorsAreDifferent
                 || changedSubSamplingFactors || info[0] != newSubSamplingFactor;
@@ -727,6 +738,20 @@ public class JP2KKakaduImageReader extends ImageReader {
                     throw new IllegalArgumentException("Not a Valid Input", e);
                 }
             }
+        } else if (input instanceof ImageInputStream) {
+            try {
+                inputFile = File.createTempFile("buffer", ".j2c");
+                FileOutputStream fos = new FileOutputStream(inputFile);
+                final byte buff[] = new byte[TEMP_BUFFER_SIZE];
+                int bytesRead = 0;
+                while ((bytesRead = ((ImageInputStream) input).read(buff)) != -1)
+                    fos.write(buff, 0, bytesRead);
+                fos.close();
+
+                input = inputFile;
+            } catch (IOException ioe) {
+                throw new RuntimeException("Unable to create a temp file", ioe);
+            }
         }
 
         if (this.inputFile == null)
@@ -740,9 +765,9 @@ public class JP2KKakaduImageReader extends ImageReader {
         // //
         Kdu_simple_file_source rawSource = null; // Must be disposed last
         final Jp2_family_src familySource = new Jp2_family_src(); // Dispose
-                                                                    // last
+        // last
         final Jpx_source wrappedSource = new Jpx_source(); // Dispose in the
-                                                            // middle
+        // middle
         Kdu_codestream codestream = new Kdu_codestream();
         try {
 
@@ -780,7 +805,7 @@ public class JP2KKakaduImageReader extends ImageReader {
                     numImages = 0;
             }
 
-            if(!isRawSource)
+            if (!isRawSource)
                 fileWalker = new JP2KFileWalker(this.fileName);
             for (int cs = 0; cs < numImages; cs++) {
                 if (isRawSource) {
@@ -1021,17 +1046,16 @@ public class JP2KKakaduImageReader extends ImageReader {
                     codestreamP.setColorModel(new ComponentColorModel(cs,
                             codestreamP.getBitsPerComponent(), hasAlpha, false,
                             hasAlpha ? Transparency.TRANSLUCENT
-                                    : Transparency.OPAQUE,
-                            dataBufferType));
+                                    : Transparency.OPAQUE, dataBufferType));
                 }
                 return codestreamP.getColorModel();
             }
         }
 
-        if (codestreamP.getSampleModel()== null)
+        if (codestreamP.getSampleModel() == null)
             codestreamP.setSampleModel(getSampleModel(codestreamP));
 
-        if (codestreamP.getSampleModel()== null)
+        if (codestreamP.getSampleModel() == null)
             return null;
 
         return ImageUtil.createColorModel(codestreamP.getSampleModel());
@@ -1210,8 +1234,9 @@ public class JP2KKakaduImageReader extends ImageReader {
                 return;
 
             if (cs != null) {
-                codestreamP.setColorModel(new ComponentColorModel(cs, bits, hasAlpha,
-                        isPremultiplied[0], hasAlpha ? Transparency.TRANSLUCENT
+                codestreamP.setColorModel(new ComponentColorModel(cs, bits,
+                        hasAlpha, isPremultiplied[0],
+                        hasAlpha ? Transparency.TRANSLUCENT
                                 : Transparency.OPAQUE, type));
             }
         }
@@ -1224,8 +1249,9 @@ public class JP2KKakaduImageReader extends ImageReader {
      * @throws KduException
      */
     private SampleModel getSampleModel(JP2KCodestreamProperties codestreamP) {
-        if (codestreamP==null)
-            throw new IllegalArgumentException("null codestream properties provided");
+        if (codestreamP == null)
+            throw new IllegalArgumentException(
+                    "null codestream properties provided");
         if (codestreamP.getSampleModel() != null)
             return codestreamP.getSampleModel();
 
@@ -1234,30 +1260,27 @@ public class JP2KKakaduImageReader extends ImageReader {
         final int tileWidth = codestreamP.getTileWidth();
         final int tileHeight = codestreamP.getTileHeight();
         if (nComponents == 1
-                && (maxBitDepth == 1
-                        || maxBitDepth == 2 || maxBitDepth == 4))
+                && (maxBitDepth == 1 || maxBitDepth == 2 || maxBitDepth == 4))
             codestreamP.setSampleModel(new MultiPixelPackedSampleModel(
-                    DataBuffer.TYPE_BYTE, tileWidth,
-                    tileHeight, maxBitDepth));
+                    DataBuffer.TYPE_BYTE, tileWidth, tileHeight, maxBitDepth));
         else if (maxBitDepth <= 8)
-            codestreamP.setSampleModel(new PixelInterleavedSampleModel(
-                    DataBuffer.TYPE_BYTE, tileWidth,
-                    tileHeight, nComponents,
-                    tileWidth * nComponents,
-                    codestreamP.getComponentIndexes()));
+            codestreamP
+                    .setSampleModel(new PixelInterleavedSampleModel(
+                            DataBuffer.TYPE_BYTE, tileWidth, tileHeight,
+                            nComponents, tileWidth * nComponents, codestreamP
+                                    .getComponentIndexes()));
         else if (maxBitDepth <= 16)
             codestreamP.setSampleModel(new PixelInterleavedSampleModel(
                     codestreamP.isSigned() ? DataBuffer.TYPE_SHORT
-                            : DataBuffer.TYPE_USHORT, tileWidth,
-                    tileHeight, nComponents,
-                    tileWidth * nComponents,
-                    codestreamP.getComponentIndexes()));
+                            : DataBuffer.TYPE_USHORT, tileWidth, tileHeight,
+                    nComponents, tileWidth * nComponents, codestreamP
+                            .getComponentIndexes()));
         else if (maxBitDepth <= 32)
-            codestreamP.setSampleModel(new PixelInterleavedSampleModel(
-                    DataBuffer.TYPE_INT, tileWidth,
-                    tileHeight, nComponents,
-                    tileWidth * nComponents,
-                    codestreamP.getComponentIndexes()));
+            codestreamP
+                    .setSampleModel(new PixelInterleavedSampleModel(
+                            DataBuffer.TYPE_INT, tileWidth, tileHeight,
+                            nComponents, tileWidth * nComponents, codestreamP
+                                    .getComponentIndexes()));
         else
             throw new IllegalArgumentException("Unhandled sample model");
         return codestreamP.getSampleModel();
