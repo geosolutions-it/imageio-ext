@@ -20,6 +20,7 @@ import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 import it.geosolutions.util.KakaduUtilities;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -148,11 +149,18 @@ public class JP2KKakaduImageReaderSpi extends ImageReaderSpi {
                 familySource.Close();
                 wrappedSource.Close();
                 rawSource = new Kdu_simple_file_source(fileName);
-                // TODO: check some bytes to prevent not-jp2 files read.
-                // if (rawSource != null)
-                // isDecodable = true;
-                // else
-                isDecodable = false;
+                if (rawSource != null){
+                    if (fileName != null){
+                        FileInputStream fis = new FileInputStream (new File(fileName));
+                        byte[] jp2SocMarker = new byte[2];
+                        fis.read(jp2SocMarker);
+                        if (jp2SocMarker[0] == 0xFF && jp2SocMarker[0] == 0x4F)
+                            isDecodable = true;
+                        fis.close();
+                    }
+                }
+                else
+                    isDecodable = false;
             }
 
         } catch (KduException e) {
