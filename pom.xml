@@ -67,6 +67,7 @@
       </repository>
      </distributionManagement>
    </profile>
+   <profile>
    <id>deployosgeo</id>
      <distributionManagement>
       <repository>
