@@ -67,6 +67,16 @@
       </repository>
      </distributionManagement>
    </profile>
+   <id>deployosgeo</id>
+     <distributionManagement>
+      <repository>
+       <uniqueVersion>false</uniqueVersion>
+       <id>osgeo</id>
+       <name>OSGeo Geotools - Maven 2 repo</name>
+       <url>http://download.osgeo.org/webdav/geotools/</url>
+      </repository>
+     </distributionManagement>
+   </profile>
   <!--..................................-->
   <!--      test Repository     -->
   <!--..................................-->
