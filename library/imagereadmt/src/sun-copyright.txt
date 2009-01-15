@@ -1,8 +1,9 @@
 /*
- * --NOTE --
- * We are repeating this copyright that applies to mos source files in this 
- * module which were taken from the imageio project and modified afterwards.
- * -- END NOTE --
+ * ---------------------------- NOTE -------------------------------------
+ * We are repeating this copyright that applies to most source files 
+ * in this module which were taken from the imageio project and modified 
+ * afterwards.
+ * -------------------------- END NOTE -----------------------------------
  * 
  * Copyright (c) 2005 Sun Microsystems, Inc. All  Rights Reserved.
  * 
