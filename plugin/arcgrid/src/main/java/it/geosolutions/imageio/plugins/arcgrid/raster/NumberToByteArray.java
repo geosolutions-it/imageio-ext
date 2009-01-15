@@ -24,8 +24,13 @@ import java.io.IOException;
  * Utility Class used to convert numbers in byte array containing representation
  * of each digit as byte. This will increase write performances.
  * 
+ * 
+ * This code is an adaption/improvement over the code found at the following
+ * address http://etutorials.org/Programming/Java+performance+tuning/Chapter+5.+
+ * Strings/5.3+Conversions+to+Strings/.
+ * 
  * @author Daniele Romagnoli, GeoSolutions.
- * @author Simone Giannecchini, GeoSolutions. 
+ * @author Simone Giannecchini, GeoSolutions.
  */
 final class NumberToByteArray {
 	// Hardcode some byte arrays to make them quickly available
@@ -98,8 +103,6 @@ final class NumberToByteArray {
 	private static final long DoubleSignMask = 0x8000000000000000L;
 
 	private static final long DoubleExpMask = 0x7ff0000000000000L;
-
-	private static final long DoubleFractMask = ~(DoubleSignMask | DoubleExpMask);
 
 	private static final int DoubleExpShift = 52;
 

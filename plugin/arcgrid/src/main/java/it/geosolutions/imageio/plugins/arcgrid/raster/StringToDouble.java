@@ -128,7 +128,7 @@ final class StringToDouble {
 
 	private boolean eof = false;
 
-	private final StringBuffer builder = new StringBuffer(30);
+	private final StringBuilder builder = new StringBuilder(30);
 
 	/**
 	 * Constructor.
@@ -251,7 +251,7 @@ final class StringToDouble {
 				break;
 
 			default:
-				throw new NumberFormatException(new StringBuffer(
+				throw new NumberFormatException(new StringBuilder(
 						"Invalid data value was found. ASCII CODE : ").append(
 						newChar).toString());
 			}
