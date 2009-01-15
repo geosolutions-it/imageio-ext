@@ -5,8 +5,4 @@ Improved TIFF plugin
 
     * Daniele Romagnoli, December 18th, 2008
   
-  STATUS: To Be Checked
-
-	* all classes come from the SUN's JAI-ImageIO Tiff Plugin, having SUN copyright in the header
-
-    
+  STATUS: OK
