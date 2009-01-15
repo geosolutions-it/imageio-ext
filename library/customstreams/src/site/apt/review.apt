@@ -13,35 +13,14 @@ Customstreams Module
 
 * Code Notes
   ~~~~~~~~~~~~
-   * it.geosolutions.imageio.stream.eraf.EnhancedRandomAccessFile (Check license and header)
-
-   * it.geosolutions.imageio.stream.eraf.HTTPRandomAccessFile (Check license and header)
-
-   * it.geosolutions.imageio.stream.eraf.InMemoryRandomAccessFile (Check license and header)
+   * it.geosolutions.imageio.stream.eraf.EnhancedRandomAccessFile 
    
-   * it.geosolutions.imageio.stream.input.ImageInputStreamAdapter contains a note:
-
--------------------------------------------
-    * THIS CLASS IS NOT READY AT ALL!!!
-    *  
-    * @version 0.5
--------------------------------------------
+   * it.geosolutions.imageio.stream.input.ImageInputStreamAdapter 
     
-   * it.geosolutions.imageio.stream.input.FileImageInputStreamExtImplSpi contains:
-
--------------------------------------------------------------------
-    A special thank to Alex McManus and Russ Rew for the
-    {@link EnhancedRandomAccessFile} class.
--------------------------------------------------------------------
-
+   * it.geosolutions.imageio.stream.input.FileImageInputStreamExtImplSpi 
 	
-   * it.geosolutions.imageio.stream.output.ImageOutputStreamAdapter
-
---------------------------------------------------------------
-    Supporting marking is a big issue.
-    I should overline this somehow
---------------------------------------------------------------     
-     
+   * it.geosolutions.imageio.stream.output.ImageOutputStreamAdapter 
+   
    * it.geosolutions.io.
 
 	* it.geosolutions.io.RepositionableStream 
@@ -50,11 +29,7 @@ Customstreams Module
 	
 	* it.geosolutions.io.output.FastBufferedOutputStream
      
-     Sebastiano Vigna code under LGPL  
-     
    * it.geosolutions.io.input.BitInputStream 
-
-      check Andrey Kuznetsov license
      
 * Data Credits
   ~~~~~~~~~~~~

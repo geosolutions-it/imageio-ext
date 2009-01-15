@@ -70,7 +70,6 @@ import java.nio.channels.FileChannel;
  * performed on buffer boundaries, that is, as if the stream was divided in
  * blocks of the size of the buffer.
  * 
- * @since 4.4
  */
 public class FastBufferedInputStream extends InputStream implements
         RepositionableStream {

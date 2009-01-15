@@ -49,9 +49,6 @@ import com.sun.media.imageio.stream.FileChannelImageInputStream;
  * this {@link ImageInputStream} subclass and this {@link ImageInputStreamSpi}
  * which gives similar performances for most uses but far less problems.
  * 
- * <p>
- * A special thank to Alex McManus and Russ Rew for the
- * {@link EnhancedRandomAccessFile} class.
  * 
  * @see ImageInputStream
  * @see ImageInputStreamSpi

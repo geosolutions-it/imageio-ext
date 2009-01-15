@@ -48,6 +48,11 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 
 /**
+ * @author Simone Giannecchini, GeoSolutions.
+ * 
+ * ----NOTES from a class we derived this class from --
+ * 
+ * 
  * RandomAccessFile.java. By Russ Rew, based on BufferedRandomAccessFile by Alex
  * McManus, based on Sun's source code for java.io.RandomAccessFile. For Alex
  * McManus version from which this derives, see his <a
