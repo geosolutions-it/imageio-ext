@@ -39,11 +39,6 @@ import javax.imageio.stream.MemoryCacheImageInputStream;
  * perfomances in some cases.
  * 
  * 
- * <P>
- * THIS CLASS IS NOT READY AT ALL!!!
- * 
- * @version 0.5
- * 
  * @author Simone Giannecchini, GeoSolutions
  */
 public class ImageInputStreamAdapter extends ImageInputStreamImpl {

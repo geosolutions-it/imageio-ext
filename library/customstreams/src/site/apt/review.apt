@@ -3,33 +3,13 @@ Customstreams Module
 
   IP Review:
 
-     * Daniele Romagnoli, December 12th, 2008
+     * Simone Giannecchini, January 15th, 2009
   
-  STATUS: To be checked
+  STATUS: OK
 
-      * Code: see notes
+      * Code: Clean
 
       * Data: OK
-
-* Code Notes
-  ~~~~~~~~~~~~
-   * it.geosolutions.imageio.stream.eraf.EnhancedRandomAccessFile 
-   
-   * it.geosolutions.imageio.stream.input.ImageInputStreamAdapter 
-    
-   * it.geosolutions.imageio.stream.input.FileImageInputStreamExtImplSpi 
-	
-   * it.geosolutions.imageio.stream.output.ImageOutputStreamAdapter 
-   
-   * it.geosolutions.io.
-
-	* it.geosolutions.io.RepositionableStream 
-   
-	* it.geosolutions.io.input.FastBufferedInputStream
-	
-	* it.geosolutions.io.output.FastBufferedOutputStream
-     
-   * it.geosolutions.io.input.BitInputStream 
      
 * Data Credits
   ~~~~~~~~~~~~

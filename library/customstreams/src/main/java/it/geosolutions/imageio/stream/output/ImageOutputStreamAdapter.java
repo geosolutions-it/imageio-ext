@@ -23,11 +23,11 @@ import javax.imageio.stream.ImageOutputStreamImpl;
 
 /**
  * @author Simone Giannecchini, GeoSolutions
- * 
- * Supporting marking is a big issue. I should overline this somehow
  */
 public class ImageOutputStreamAdapter extends ImageOutputStreamImpl {
 
+    // Supporting marking is a big issue. I should overline this somehow 
+    
     private OutputStream os;
 
     public ImageOutputStreamAdapter(OutputStream os) {

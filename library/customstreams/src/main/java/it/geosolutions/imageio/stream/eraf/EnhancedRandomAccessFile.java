@@ -50,7 +50,7 @@ import java.nio.channels.FileChannel;
 /**
  * @author Simone Giannecchini, GeoSolutions.
  * 
- * ----NOTES from a class we derived this class from --
+ * -- NOTES from a class we derived this class from --
  * 
  * 
  * RandomAccessFile.java. By Russ Rew, based on BufferedRandomAccessFile by Alex
