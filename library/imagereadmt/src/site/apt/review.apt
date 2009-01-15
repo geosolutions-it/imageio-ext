@@ -7,20 +7,6 @@ ImageReadMT Module
   
   STATUS: to be checked
 
-	* Code: see notes
+	* Code is OK
 
 	* Data is OK
-      
-* Code Notes
-  ~~~~~~~~~~~~
-   * it.geosolutions.imageio.imageioimpl.imagereadmt.I18N (SUN Copyright)
-
-   * it.geosolutions.imageio.imageioimpl.imagereadmt.ImageIOCollectionImageMT (SUN Copyright)
-
-   * it.geosolutions.imageio.imageioimpl.imagereadmt.ImageReadDescriptorMT (SUN Copyright)
-
-   * it.geosolutions.imageio.imageioimpl.ImageReadMTCIF (SUN Copyright)
-
-   * it.geosolutions.imageio.imageioimpl.ImageReadMTCRIF (SUN Copyright)
-
-   * it.geosolutions.imageio.imageioimpl.ImageReadOpImageMT (SUN Copyright)
