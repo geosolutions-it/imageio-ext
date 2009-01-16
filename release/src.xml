@@ -10,7 +10,7 @@
                      <include>it.geosolutions:imageio-ext-gdalframework</include>
         </includes>
         <sources>
-          <outputDirectory>imageio-ext-1.0-SNAPSHOT/${artifactId}/</outputDirectory>
+          <outputDirectory>imageio-ext-1.0/${artifactId}/</outputDirectory>
         </sources>
       </moduleSet>
   </moduleSets>
@@ -29,6 +29,7 @@
           <include>developer_README.txt</include>
           <include>LICENSE.txt</include>
           <include>MrSID_decoderSDK_license.txt</include>
+          <include>bitinputstream-copyright.txt</include>
         </includes>
       </fileSet>
   </fileSets>
