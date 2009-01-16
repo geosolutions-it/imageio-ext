@@ -139,6 +139,7 @@
         <module>gdalecw</module>
         <module>gdalecwjp2</module>
         <module>gdalmrsidjp2</module>
+        <module>gdalkakadujp2</module>
         <module>gdaljpeg</module>
         <module>gdalarcgrid</module>
         <module>gdalarcbinarygrid</module>
