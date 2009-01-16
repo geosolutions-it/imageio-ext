@@ -84,7 +84,6 @@ import java.util.zip.ZipFile;
  * of this one.
  *
  * @since 2.0
- * @source $URL: http://svn.geotools.org/geotools/branches/2.3.x/module/referencing/src/org/geotools/resources/TestData.java $
  * @version $Id: TestData.java 1041 2007-01-22 16:59:43Z simboss $
  * @author James McGill
  * @author Simone Giannecchini, GeoSolutions
