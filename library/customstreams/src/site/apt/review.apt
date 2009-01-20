@@ -10,6 +10,45 @@ Customstreams Module
       * Code: Clean
 
       * Data: OK
+
+* it.geosolutions.io.input.BitInputStream
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ BitInputStream
+ 
+ IP:
+
+   * non LGPL custom license (completely permissive) by Andrey Kuznetsov
+
+
+* it.geosolutions.io.RepositionableStream
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  IP:
+
+    * Sebastiano Vigna code under LGPL
+
+  
+* it.geosolutions.io.input.FastBufferedInputStream
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  IP:
+
+    * Sebastiano Vigna code under LGPL
+   
+* it.geosolutions.io.output.FastBufferedOutputStream
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  IP:
+
+    * Sebastiano Vigna code under LGPL
+
+* it.geosolutions.imageio.stream.eraf.EnhancedRandomAccessFile
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+  IP:
+
+    * class based on RandomAccessFile released under LGPL by Russ Rew of Unidata UCAR
+
      
 * Data Credits
   ~~~~~~~~~~~~
