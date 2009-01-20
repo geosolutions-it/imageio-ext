@@ -29,7 +29,9 @@
           <include>developer_README.txt</include>
           <include>LICENSE.txt</include>
           <include>MrSID_decoderSDK_license.txt</include>
-          <include>bitinputstream-copyright.txt</include>
+          <include>AndreyKuznetsovLICENSE.txt</include>
+          <include>imageio-ext-tiff-BSD-LICENSE.txt</include>
+          <include>imageio-ext-imagereadmt-BSD-LICENSE.txt</include>
         </includes>
       </fileSet>
   </fileSets>
