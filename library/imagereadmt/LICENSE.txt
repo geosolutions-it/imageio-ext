@@ -1,5 +1,5 @@
- Our derivative work from jai-imageio classe is release ad bsd instead of lpgpl so that it should be much easier to 
- push it back to imageio later on. 
+ Our derivative work from jai-imageio classes is released as BSD instead of LGPL
+ so that it should be much easier to push it back to imageio later on. 
 /*
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
