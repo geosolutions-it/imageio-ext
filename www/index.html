@@ -6,7 +6,10 @@
 	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Linux)">
 	<META NAME="CREATED" CONTENT="0;0">
 	<META NAME="CHANGEDBY" CONTENT="Simone Giannecchini">
-	<META NAME="CHANGED" CONTENT="20090120;18255100">
+	<META NAME="CHANGED" CONTENT="20090120;18393400">
+	<META NAME="CHANGEDBY" CONTENT="Simone Giannecchini">
+	<META NAME="CHANGEDBY" CONTENT="Simone Giannecchini">
+	<META NAME="CHANGEDBY" CONTENT="Simone Giannecchini">
 	<META NAME="CHANGEDBY" CONTENT="Simone Giannecchini">
 	<META NAME="CHANGEDBY" CONTENT="Simone Giannecchini">
 	<META NAME="CHANGEDBY" CONTENT="Simone Giannecchini">
@@ -35,12 +38,10 @@ formats directly or through the integration of other frameworks and
 libraries, like GDAL, JMagick (experimental) and Kakadu. The project
 is Open Source but commercial-friendly, part of the code is released
 under an LGPL license, some other parts (namely, derivative work from
-SUN's imageio soource code) are licensed under BSD license.</P>
-<H3 CLASS="western">Project History</H3>
+SUN's imageio source code) are licensed under BSD license.</P>
 <P ALIGN=JUSTIFY>This work has been started with the Google Summer of
 Code in 2006 by Ing. Daniele Romagnoli mentored by Ing. Simone
-Giannecchini (GeoSolutions). 
-</P>
+Giannecchini (GeoSolutions).</P>
 <H3 CLASS="western">Road Map</H3>
 <P ALIGN=JUSTIFY>The ImageI/O-Ext road map is available <A HREF="http://spreadsheets.google.com/ccc?key=pO9I1hrZsHM1Jdjse4uOIAQ" NAME="roadmap">here</A>.
 </P>
@@ -49,7 +50,9 @@ Giannecchini (GeoSolutions).
 the Document &amp; Files section <A HREF="https://imageio-ext.dev.java.net/servlets/ProjectDocumentList?folderID=10435&amp;expandFolder=10435&amp;folderID=0" NAME="distribution">here</A>.
 <BR>In case you want to enable ECW Decode support, It is mandatory
 you agree with the ECW Eula. Moreover if you want to support ECW
-Decode in a Server you need to BUY a license from ERDAS 
+Decode in a Server application you need to BUY a license from ERDAS.</P>
+<P ALIGN=JUSTIFY>Image I/O-Ext Project source code is available for
+download via <A HREF="https://imageio-ext.dev.java.net/source/browse/imageio-ext/">subversion</A>.
 </P>
 <H3 CLASS="western">Commercial Support</H3>
 <P ALIGN=JUSTIFY>Commercial support is available through
@@ -57,7 +60,26 @@ Decode in a Server you need to BUY a license from ERDAS
 Please contact Ing. Simone Giannecchini at
 simoneDOTgiannecchiniATgeo-solutions.it for further information. 
 </P>
-<H3 CLASS="western">Main Features</H3>
+<H3 CLASS="western"><A NAME="Documentation"></A>Documentation</H3>
+<P>The <A HREF="https://imageio-ext.dev.java.net/servlets/ProjectDocumentList">&quot;Documents
+&amp; Files&quot;</A> section contains some documents which could
+help you in order to set-up and use the ImageI/O-Ext. The available
+documents are: 
+</P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0cm">Set-up Guide, a step-to-step guide
+	in order to set-up the project as well as all the tools/software
+	needed for this purpose</P>
+	<LI><P STYLE="margin-bottom: 0cm">User Guide, a preliminary Guide to
+	use the ImageI/O-Ext. Note that it should be considered a &quot;WORK
+	in PROGRESS&quot;. (It may contains some errors as well as empty
+	chapters...)</P>
+</UL>
+<P ALIGN=JUSTIFY>Finally, a brief document on the JHDF revisited
+libraries has been written. It is available at: <A HREF="https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/library/jhdfaccess/doc/HDFAccessDoc.pdf">HDF
+Access revisited Framework Report</A> 
+</P>
+<H4 CLASS="western">Main Features</H4>
 <P ALIGN=JUSTIFY>The core module of the project is the <B>gdalframework
 </B><SPAN STYLE="font-weight: medium">module which provide a bridge
 between the Java ImageI/O framework and t</SPAN>he Geospatial Data
@@ -69,141 +91,195 @@ ImageI/O-ext plugin is provided which integrates into the standard
 SUN ImageI/O SPI mechanism.</P>
 <H4 CLASS="western"><A NAME="Supported_Formats"></A><FONT FACE="Times New Roman, serif">GDAL
 Supported Formats</FONT></H4>
-<TABLE BORDER=1 CELLPADDING=2 CELLSPACING=1>
+<TABLE WIDTH=292 BORDER=1 CELLPADDING=2 CELLSPACING=3>
+	<COL WIDTH=135>
+	<COL WIDTH=138>
+	<COL WIDTH=0>
 	<TR>
-		<TD>
+		<TD WIDTH=135>
 			<P><B>Format Name</B></P>
 		</TD>
-		<TD>
+		<TD WIDTH=138>
 			<P><B>Access capabilities*</B></P>
 		</TD>
+		<TD>
+			<P><B>License</B></P>
+		</TD>
 	</TR>
 	<TR>
-		<TD>
+		<TD WIDTH=135>
 			<P>Arc/Info ASCII Grid</P>
 		</TD>
-		<TD>
+		<TD WIDTH=138>
 			<P>R</P>
+		</TD>
+		<TD>
+			<P>LGPL</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD>
+		<TD WIDTH=135>
 			<P>Arc/Info Binary Grid</P>
 		</TD>
-		<TD>
+		<TD WIDTH=138>
 			<P>R</P>
+		</TD>
+		<TD>
+			<P>LGPL</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD>
+		<TD WIDTH=135>
 			<P>DTED</P>
 		</TD>
-		<TD>
+		<TD WIDTH=138>
 			<P>R</P>
+		</TD>
+		<TD>
+			<P>LGPL</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD>
+		<TD WIDTH=135>
 			<P>ECW</P>
 		</TD>
-		<TD>
+		<TD WIDTH=138>
 			<P>R</P>
+		</TD>
+		<TD>
+			<P>LGPL</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD>
+		<TD WIDTH=135>
 			<P>EHdr</P>
 		</TD>
-		<TD>
+		<TD WIDTH=138>
 			<P>R</P>
+		</TD>
+		<TD>
+			<P>LGPL</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD>
+		<TD WIDTH=135>
 			<P>ENVI Hdr</P>
 		</TD>
-		<TD>
+		<TD WIDTH=138>
 			<P>R</P>
+		</TD>
+		<TD>
+			<P>LGPL</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD>
+		<TD WIDTH=135>
 			<P>Envisat</P>
 		</TD>
-		<TD>
+		<TD WIDTH=138>
 			<P>R</P>
+		</TD>
+		<TD>
+			<P>LGPL</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD>
+		<TD WIDTH=135>
 			<P>Erdas Imagine HFA</P>
 		</TD>
-		<TD>
+		<TD WIDTH=138>
 			<P>R</P>
+		</TD>
+		<TD>
+			<P>LGPL</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD>
+		<TD WIDTH=135>
 			<P>NITF</P>
 		</TD>
-		<TD>
+		<TD WIDTH=138>
 			<P>R</P>
+		</TD>
+		<TD>
+			<P>LGPL</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD>
+		<TD WIDTH=135>
 			<P>GeoTiff</P>
 		</TD>
-		<TD>
+		<TD WIDTH=138>
 			<P>R/W</P>
+		</TD>
+		<TD>
+			<P>LGPL</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD>
+		<TD WIDTH=135>
 			<P>HDF4</P>
 		</TD>
-		<TD>
+		<TD WIDTH=138>
 			<P>R</P>
+		</TD>
+		<TD>
+			<P>LGPL</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD>
+		<TD WIDTH=135>
 			<P>JPEG</P>
 		</TD>
-		<TD>
+		<TD WIDTH=138>
 			<P>R</P>
+		</TD>
+		<TD>
+			<P>LGPL</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD>
+		<TD WIDTH=135>
 			<P>JPEG 2000 (Kakadu)</P>
 		</TD>
-		<TD>
+		<TD WIDTH=138>
 			<P>R/W</P>
 		</TD>
+		<TD>
+			<P>LGPL</P>
+		</TD>
 	</TR>
 	<TR>
-		<TD>
+		<TD WIDTH=135>
 			<P>JPEG 2000 (MrSID)</P>
 		</TD>
-		<TD>
+		<TD WIDTH=138>
 			<P>R</P>
+		</TD>
+		<TD>
+			<P>LGPL</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD>
+		<TD WIDTH=135>
 			<P>JPEG 2000 (ECW)</P>
 		</TD>
-		<TD>
+		<TD WIDTH=138>
 			<P>R</P>
+		</TD>
+		<TD>
+			<P>LGPL</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD>
+		<TD WIDTH=135>
 			<P>MrSID</P>
 		</TD>
-		<TD>
+		<TD WIDTH=138>
 			<P>R</P>
+		</TD>
+		<TD>
+			<P>LGPL</P>
 		</TD>
 	</TR>
 </TABLE>
@@ -229,82 +305,77 @@ as described here below.</P>
 rely on GDAL):</P>
 <P STYLE="margin-bottom: 0cm"><BR>
 </P>
-<TABLE BORDER=1 CELLPADDING=2 CELLSPACING=1>
+<TABLE WIDTH=680 BORDER=1 CELLPADDING=2 CELLSPACING=3>
+	<COL WIDTH=126>
+	<COL WIDTH=85>
+	<COL WIDTH=377>
+	<COL WIDTH=59>
 	<TR>
-		<TD>
+		<TD WIDTH=126>
 			<P><B>Format Name</B></P>
 		</TD>
-		<TD>
+		<TD WIDTH=85>
 			<P><B>Data access capabilities*</B></P>
 		</TD>
-		<TD>
+		<TD WIDTH=377>
 			<P><B>Additional Notes</B></P>
 		</TD>
+		<TD WIDTH=59>
+			<P><B>License</B></P>
+		</TD>
 	</TR>
 	<TR>
-		<TD>
+		<TD WIDTH=126>
 			<P>Arc/Info ASCII Grid</P>
 		</TD>
-		<TD>
+		<TD WIDTH=85>
 			<P>R/W</P>
 		</TD>
-		<TD></TD>
+		<TD WIDTH=377></TD>
+		<TD WIDTH=59>
+			<P><FONT SIZE=3>LGPL</FONT></P>
+		</TD>
 	</TR>
 	<TR>
-		<TD>
+		<TD WIDTH=126>
 			<P>JPEG</P>
 		</TD>
-		<TD>
+		<TD WIDTH=85>
 			<P>R</P>
 		</TD>
-		<TD>
+		<TD WIDTH=377>
 			<P>Built on the JMagick library</P>
+		</TD>
+		<TD WIDTH=59>
+			<P>LGPL</P>
 		</TD>
 	</TR>
 	<TR>
-		<TD>
+		<TD WIDTH=126>
 			<P>JPEG 2000</P>
 		</TD>
-		<TD>
+		<TD WIDTH=85>
 			<P>R</P>
 		</TD>
-		<TD>
+		<TD WIDTH=377>
 			<P>Built on the Kakadu library. This plugin version leverages
 			on<BR>the powerful multithreading capabilities provided by<BR>the
 			<B>imagereadmt</B> module.</P>
+		</TD>
+		<TD WIDTH=59>
+			<P>LGPL</P>
 		</TD>
 	</TR>
 </TABLE>
 <P>Data access capabilities*: R=Readonly capabilities; R/W=Read and
 write capabilities</P>
-<H3 CLASS="western"><A NAME="Documentation"></A>Documentation</H3>
-<P>The <A HREF="https://imageio-ext.dev.java.net/servlets/ProjectDocumentList">&quot;Documents
-&amp; Files&quot;</A> section contains some documents which could
-help you in order to set-up and use the ImageI/O-Ext. The available
-documents are: 
-</P>
-<UL>
-	<LI><P STYLE="margin-bottom: 0cm">Set-up Guide, a step-to-step guide
-	in order to set-up the project as well as all the tools/software
-	needed for this purpose</P>
-	<LI><P STYLE="margin-bottom: 0cm">User Guide, a preliminary Guide to
-	use the ImageI/O-Ext. Note that it should be considered a &quot;WORK
-	in PROGRESS&quot;. (It may contains some errors as well as empty
-	chapters...)</P>
-</UL>
-<P>Finally, a brief document on the JHDF revisited libraries has been
-written. It is available at: <A HREF="https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/library/jhdfaccess/doc/HDFAccessDoc.pdf">HDF
-Access revisited Framework Report</A> 
-</P>
-<H3 CLASS="western"><A NAME="Downloads"></A>Downloads</H3>
-<P>Image I/O-Ext Project source code is available for download via
-<A HREF="https://imageio-ext.dev.java.net/source/browse/imageio-ext/">subversion</A>.
-</P>
-<H3 CLASS="western"><A NAME="Licenses"></A>Licenses</H3>
-<P>The source code for the Image I/O-Ext Project is licensed under
-the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, version 2.1 of the License. 
-</P>
+<H4 CLASS="western"><A NAME="Licenses"></A>Licenses</H4>
+<P>Most part of the source code for the Image I/O-Ext Project is
+licensed under the terms of the GNU Lesser General Public License as
+published by the Free Software Foundation, version 2.1 of the
+License. Some parts of the source code are licensed under the terms
+of the BSD license. Please, refer to the LICESE.TXT files in the
+source tree.</P>
 <H3 CLASS="western"><A NAME="Reporting_Issues"></A>Reporting Issues</H3>
 <P>Please use the <I>Issue Tracker</I> to track issues (bugs, feature
 requests, etc.) for Image I/O-Ext project. 
@@ -332,17 +403,14 @@ imageio-ext.dev.java.net</FONT>, and <FONT COLOR="#0000ff">users 'at'
 imageio-ext.dev.java.net</FONT> (replace 'at' with @). <A HREF="https://imageio-ext.dev.java.net/servlets/ProjectMailingListList">Click
 here to subscribe</A> to any of these lists. 
 </P>
-<BLOCKQUOTE>The <I>dev</I> list is a list for developers to discuss
-project development issues/artefacts and requirements.<BR>The
-<I>announce</I> list is a low-volume moderated mailing list for
-announcing Image I/O-Ext news and information.<BR>The <I>issues</I>
-list is for automated issues tracking and the <I>commits</I> list is
-for automated subversion commits messages.<BR>Lastly, the <I>users</I>
+<BLOCKQUOTE STYLE="margin-left: 0cm">The <I>dev</I> list is a list
+for developers to discuss project development issues/artefacts and
+requirements.<BR>The <I>announce</I> list is a low-volume moderated
+mailing list for announcing Image I/O-Ext news and information.<BR>The
+<I>issues</I> list is for automated issues tracking and the <I>commits</I>
+list is for automated subversion commits messages.Lastly, the <I>users</I>
 is a general discussion list for the projects end users. 
 </BLOCKQUOTE>
-<H3 CLASS="western"><A NAME="Project_History"></A>Project History</H3>
-<P>This work has been started with the Google Summer of Code in 2006
-by Daniele Romagnoli mentored by Simone Giannecchini (GeoSolutions). 
-</P>
+<H3 CLASS="western"></H3>
 </BODY>
 </HTML>
