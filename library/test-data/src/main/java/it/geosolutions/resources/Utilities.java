@@ -38,8 +38,11 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-
 /**
+ * ----------------------------- NOTE -----------------------------
+ * This class is a copy of the geotools Utilities class.
+ * ----------------------------------------------------------------
+ * 
  * A set of miscellaneous methods.
  *
  * @since 2.0

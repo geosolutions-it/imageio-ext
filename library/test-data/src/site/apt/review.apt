@@ -1,11 +1,11 @@
 Test-Data Module
-~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
   IP Review:
 
     * Daniele Romagnoli, December 18th, 2008
   
-  STATUS: to be checked
+  STATUS: OK
 
-	* Classes come from geotools, I have added the imageio-ext header to the GeoTools header 
+    * Classes come from geotools, released under LGPL.
 

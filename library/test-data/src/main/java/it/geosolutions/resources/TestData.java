@@ -55,6 +55,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 /**
+ * ----------------------------- NOTE -----------------------------
+ * This class contains a modified version of the geotools TestData 
+ * class.
+ * ----------------------------------------------------------------
+ * 
  * Provides access to {@code test-data} directories associated with JUnit tests.
  * <p>
  * We have chosen "{@code test-data}" to follow the javadoc "{@code doc-files}" convention
