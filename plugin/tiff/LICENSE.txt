@@ -37,8 +37,10 @@
 
  The following classes  can be considered derivative work from JAI ImageIO classes, hence we also retain the underlying copyright which 
  brings in an additional limitation as follows:
- "You acknowledge that Software is not designed, licensed or intended for use in the design, construction, operation or maintenance of any nuclear
- facility."
+ " You acknowledge that this software is not designed or intended for 
+   use in the design, construction, operation or maintenance of any 
+   nuclear facility. "
+ 
  
  TIFFDecompressor, TIFFImageReader, TIFFImageReaderSpi, TIFFImageWriter and TIFFImageWriterSpi contain 
  fixed version of the SUN's JAI-ImageIO TIFFDecompressor, TIFFImageReader, TIFFImageReaderSpi, 

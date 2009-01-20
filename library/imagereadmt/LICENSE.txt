@@ -42,8 +42,8 @@
    nuclear facility. "
  
  I18N, ImageIOCollectionImageMT, ImageReadDescriptorMT, ImageReadMTCIF, ImageReadMTCRIF 
- and ImageReadOpImageMT are based on SUN's JAI-ImageIO I18N, ImageIOCollectionImage, ImageReadDescriptor, ImageReadCIF, ImageReadCRIF 
- and ImageReadOpImage classes.
+ and ImageReadOpImageMT are based on SUN's JAI-ImageIO I18N, ImageIOCollectionImage, ImageReadDescriptor, 
+ ImageReadCIF, ImageReadCRIF and ImageReadOpImage classes.
   
 /*
  * Copyright (c) 2005 Sun Microsystems, Inc. All  Rights Reserved.
