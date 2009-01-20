@@ -58,7 +58,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package it.geosolutions.imageio.plugins.mtiff;
+package it.geosolutions.imageio.plugins.tiff;
 
 import java.awt.Rectangle;
 import java.awt.Transparency;

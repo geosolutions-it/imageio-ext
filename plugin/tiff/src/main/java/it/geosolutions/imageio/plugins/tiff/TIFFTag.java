@@ -42,7 +42,7 @@
  * $Date: 2006/04/11 22:10:35 $
  * $State: Exp $
  */
-package it.geosolutions.imageio.plugins.mtiff;
+package it.geosolutions.imageio.plugins.tiff;
 
 import java.util.Map;
 import java.util.HashMap;

@@ -42,10 +42,10 @@
  * $Date: 2006/04/28 01:28:49 $
  * $State: Exp $
  */
-package it.geosolutions.imageio.plugins.mtiff;
+package it.geosolutions.imageio.plugins.tiff;
 
-import it.geosolutions.imageio.plugins.mtiff.TIFFTag;
-import it.geosolutions.imageio.plugins.mtiff.TIFFTagSet;
+import it.geosolutions.imageio.plugins.tiff.TIFFTag;
+import it.geosolutions.imageio.plugins.tiff.TIFFTagSet;
 import it.geosolutions.imageioimpl.plugins.mtiff.TIFFFieldNode;
 
 import java.io.IOException;

@@ -42,7 +42,7 @@
  * $Date: 2006/08/25 00:16:49 $
  * $State: Exp $
  */
-package it.geosolutions.imageio.plugins.mtiff;
+package it.geosolutions.imageio.plugins.tiff;
 
 import it.geosolutions.imageioimpl.plugins.mtiff.TIFFIFD;
 import it.geosolutions.imageioimpl.plugins.mtiff.TIFFImageMetadata;

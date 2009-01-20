@@ -43,7 +43,7 @@
  * $State: Exp $
  */
 
-package it.geosolutions.imageio.plugins.mtiff;
+package it.geosolutions.imageio.plugins.tiff;
 
 import java.util.ArrayList;
 import java.util.List;

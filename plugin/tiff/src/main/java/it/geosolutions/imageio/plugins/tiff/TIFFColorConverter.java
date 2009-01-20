@@ -42,7 +42,7 @@
  * $Date: 2006/04/28 01:01:59 $
  * $State: Exp $
  */
-package it.geosolutions.imageio.plugins.mtiff;
+package it.geosolutions.imageio.plugins.tiff;
 
 /**
  * An abstract class that performs simple color conversion on 3-banded source

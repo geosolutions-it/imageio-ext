@@ -42,7 +42,7 @@
  * $Date: 2005/10/28 16:56:45 $
  * $State: Exp $
  */
-package it.geosolutions.imageio.plugins.mtiff;
+package it.geosolutions.imageio.plugins.tiff;
 
 import java.util.ArrayList;
 import java.util.List;
