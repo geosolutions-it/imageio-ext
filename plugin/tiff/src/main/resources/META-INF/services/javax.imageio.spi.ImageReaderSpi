@@ -1,1 +1,1 @@
-com.sun.media.imageioimpl.plugins.mtiff.TIFFImageReaderSpi
+it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReaderSpi
