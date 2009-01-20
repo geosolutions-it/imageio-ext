@@ -46,7 +46,7 @@ package it.geosolutions.imageio.plugins.tiff;
 
 import it.geosolutions.imageio.plugins.tiff.TIFFTag;
 import it.geosolutions.imageio.plugins.tiff.TIFFTagSet;
-import it.geosolutions.imageioimpl.plugins.mtiff.TIFFFieldNode;
+import it.geosolutions.imageioimpl.plugins.tiff.TIFFFieldNode;
 
 import java.io.IOException;
 import java.io.Serializable;

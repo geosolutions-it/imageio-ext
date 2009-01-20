@@ -44,7 +44,7 @@
  */
 package it.geosolutions.imageio.plugins.tiff;
 
-import it.geosolutions.imageioimpl.plugins.mtiff.TIFFImageWriter;
+import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageWriter;
 
 import java.util.Arrays;
 import java.util.List;

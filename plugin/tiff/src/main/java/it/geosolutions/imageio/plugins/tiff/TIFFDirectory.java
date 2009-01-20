@@ -44,8 +44,8 @@
  */
 package it.geosolutions.imageio.plugins.tiff;
 
-import it.geosolutions.imageioimpl.plugins.mtiff.TIFFIFD;
-import it.geosolutions.imageioimpl.plugins.mtiff.TIFFImageMetadata;
+import it.geosolutions.imageioimpl.plugins.tiff.TIFFIFD;
+import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageMetadata;
 
 import java.util.ArrayList;
 import java.util.Arrays;
