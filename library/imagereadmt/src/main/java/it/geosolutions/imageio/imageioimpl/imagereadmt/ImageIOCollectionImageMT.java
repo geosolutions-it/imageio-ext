@@ -65,6 +65,11 @@ import java.util.ArrayList;
 import javax.media.jai.CollectionImage;
 
 /**
+ * ------------------------------ NOTE ------------------------------  
+ * Class based on SUN's JAI-ImageIO 
+ * com.sun.media.jai.imageioimpl.ImageIOCollectionImage class.
+ * ------------------------------------------------------------------  
+ * 
  * A <code>CollectionImage</code> to be used as the return value from
  * <code>ImageReadMTCIF.create()</code> and
  * <code>ImageWriteCIF.create()</code>. The <code>imageCollection</code>

@@ -66,6 +66,11 @@ import java.util.PropertyResourceBundle;
 import com.sun.media.imageioimpl.common.I18NImpl;
 
 /**
+ * ------------------------------ NOTE ------------------------------  
+ * Class based on SUN's JAI-ImageIO 
+ * com.sun.media.jai.imageioimpl.I18N class.
+ * ------------------------------------------------------------------  
+ * 
  * @author Simone Giannecchini, GeoSolutions.
  */
 final class I18N extends I18NImpl {

@@ -96,7 +96,15 @@ import javax.media.jai.WritablePropertySource;
 
 import com.sun.media.jai.operator.ImageReadDescriptor;
 /**
+ * ------------------------------ NOTE ------------------------------  
+ * Class based on SUN's JAI-ImageIO 
+ * com.sun.media.jai.imageioimpl.ImageReadCRIF class.
+ * ------------------------------------------------------------------  
+ * 
+ *  
  * @author Simone Giannecchini, GeoSolutions
+ * 
+ * 
  */
 public final class ImageReadMTCRIF extends CRIFImpl {
 

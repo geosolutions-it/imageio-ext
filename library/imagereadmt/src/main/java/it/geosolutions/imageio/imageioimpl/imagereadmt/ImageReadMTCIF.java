@@ -72,6 +72,11 @@ import javax.media.jai.PlanarImage;
 
 import com.sun.media.jai.operator.ImageReadDescriptor;
 /**
+ * ------------------------------ NOTE ------------------------------  
+ * Class based on SUN's JAI-ImageIO 
+ * com.sun.media.jai.imageioimpl.ImageReadCIF class.
+ * ------------------------------------------------------------------  
+ * 
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class ImageReadMTCIF implements CollectionImageFactory {

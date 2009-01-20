@@ -87,6 +87,11 @@ import javax.media.jai.registry.RenderedRegistryMode;
 import com.sun.media.jai.util.PropertyGeneratorImpl;
 
 /**
+ * ------------------------------ NOTE ------------------------------  
+ * Class based on SUN's JAI-ImageIO 
+ * com.sun.media.jai.operator.ImageReadDescriptor class
+ * ------------------------------------------------------------------  
+ * 
  * An <code>OperationDescriptor</code> describing the "ImageRead" operation.
  *
  * <p>The "ImageRead" operation uses the

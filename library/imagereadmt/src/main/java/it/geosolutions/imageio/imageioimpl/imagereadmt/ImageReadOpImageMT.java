@@ -82,6 +82,11 @@ import javax.media.jai.OpImage;
 import com.sun.media.jai.operator.ImageReadDescriptor;
 
 /**
+ * ------------------------------ NOTE ------------------------------  
+ * Class based on SUN's JAI-ImageIO 
+ * com.sun.media.jai.imageioimpl.ImageReadOpImage class.
+ * ------------------------------------------------------------------  
+ * 
  * Implementation of the <code>OpImage</code> of the "ImageRead" operation.
  * 
  * @author Simone Giannecchini, GeoSolutions
