@@ -47,16 +47,29 @@
  *    http://www.geo-solutions.it/
  *    https://imageio-ext.dev.java.net/
  *    (C) 2007 - 2008, GeoSolutions
+ *    All rights reserved.
  *
- *    This library is free software; you can redistribute it and/or
- *    modify it under the terms of the GNU Lesser General Public
- *    License as published by the Free Software Foundation;
- *    version 2.1 of the License.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *     * Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *     * Neither the name of the <organization> nor the
+ *       names of its contributors may be used to endorse or promote products
+ *       derived from this software without specific prior written permission.
  *
- *    This library is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *    Lesser General Public License for more details.
+ * THIS SOFTWARE IS PROVIDED BY <copyright holder> ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL <copyright holder> BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package it.geosolutions.imageio.imageioimpl.imagereadmt;
 
@@ -92,60 +105,6 @@ import com.sun.media.jai.operator.ImageReadDescriptor;
  * @author Simone Giannecchini, GeoSolutions
  */
 final class ImageReadOpImageMT extends OpImage {
-
-	/**
-	 * XXX For testing only.
-	 */
-	/*
-	 * XXX public static void main(String[] args) throws Throwable {
-	 * java.io.File file = new java.io.File(args[0]); int imageIndex =
-	 * args.length > 1 ? Integer.valueOf(args[1]).intValue() : 0; int tileSize =
-	 * args.length > 2 ? Integer.valueOf(args[2]).intValue() : 128;
-	 * 
-	 * javax.imageio.stream.ImageInputStream stream = new
-	 * javax.imageio.stream.FileImageInputStream(file);
-	 * 
-	 * Iterator iter = javax.imageio.ImageIO.getImageReaders(stream);
-	 * ImageReader imageReader = (ImageReader)iter.next();
-	 * imageReader.setInput(stream, true, // seekForwardOnly false); //
-	 * ignoreMetadata
-	 * 
-	 * ImageLayout layout = new ImageLayout();
-	 * layout.setTileWidth(tileSize).setTileHeight(tileSize);
-	 * //layout.setTileGridXOffset(42).setTileGridYOffset(7);
-	 * 
-	 * ImageReadParam param = imageReader.getDefaultReadParam();
-	 * param.setSourceSubsampling(2, 2, 0, 0); param.setSourceRegion(new
-	 * Rectangle(128, 0, 256, 256)); param.setSourceBands(new int[] {2, 1, 0});
-	 * param.setDestinationBands(new int[] {0, 1, 2});
-	 * 
-	 * OpImage image = new ImageReadOpImageMT(layout, // ImageLayout null, //
-	 * Map param, // ImageReadParam imageReader, imageIndex, true, null); //
-	 * streamToClose
-	 * 
-	 * System.out.println(new ImageLayout(image));
-	 * 
-	 * System.out.println("\nImage Properties:"); String[] propNames =
-	 * image.getPropertyNames(); if(propNames != null) { for(int i = 0; i <
-	 * propNames.length; i++) { System.out.println(i+" "+propNames[i]+" = "+
-	 * image.getProperty(propNames[i])); } } System.out.println("");
-	 * 
-	 * BufferedImage[] thumbnails = null; Object thumbnailProp =
-	 * image.getProperty(ImageReadDescriptorMT.PROPERTY_NAME_THUMBNAILS);
-	 * if(thumbnailProp != java.awt.Image.UndefinedProperty) { thumbnails =
-	 * (BufferedImage[])thumbnailProp; }
-	 * 
-	 * java.awt.Frame frame = new java.awt.Frame("ImageReadOpImageMT Test:
-	 * "+file); if(thumbnails != null) { frame.setLayout(new
-	 * java.awt.GridLayout(1, thumbnails.length+1)); }
-	 * 
-	 * frame.add(new javax.media.jai.widget.ScrollingImagePanel(image,
-	 * image.getWidth(), image.getHeight())); if(thumbnails != null) { for(int
-	 * i= 0; i < thumbnails.length; i++) { frame.add(new
-	 * javax.media.jai.widget.ScrollingImagePanel(thumbnails[i],
-	 * thumbnails[i].getWidth(), thumbnails[i].getHeight())); } } frame.pack();
-	 * frame.show(); }
-	 */
 
 	/**
 	 * The <code>ImageReadParam</code> used in reading the image.
