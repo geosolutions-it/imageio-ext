@@ -6,7 +6,6 @@
 <!--
 @page { size: 21cm 29.7cm }
 P { color: #000000 }
-TD P { color: #000000 }
 H3 { color: #000000 }
 H3.western { font-family: "Arial Unicode MS" }
 H4 { color: #000000 }
@@ -16,7 +15,6 @@ TH P { color: #000000 }
 -->
 </style>
 </head>
-
 <body style="direction: ltr; color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);" lang="en-GB">
 <p align="justify">The Image I/O-Ext project extends the
 Java Sun's
@@ -110,28 +108,28 @@ I/O-Ext plugin is provided which integrates into the standard SUN
 Image I/O SPI mechanism.</p>
 <h4 class="western"><a name="Supported_Formats"></a><font face="Times New Roman, serif">GDAL
 Supported Formats</font></h4>
-<table border="1" cellpadding="4" cellspacing="0" width="100%">
+<table style="width: 100%;" border="1" cellpadding="4" cellspacing="0">
 <col width="64*"> <col width="64*"> <col width="64*"> <col width="64*"> <thead> <tr valign="top">
-<th bgcolor="#0099ff" width="25%">
-<p><font size="4">Format Name</font></p>
-</th>
-<th bgcolor="#0099ff" width="25%">
-<p><font size="4">Access capabilities*</font></p>
-</th>
-<th bgcolor="#0099ff" width="25%">
-<p align="center"><font size="4"><b>Additional
-Notes</b></font></p>
-</th>
-<th bgcolor="#0099ff" width="25%">
-<p align="center"><font size="4"><b>License</b></font></p>
-</th>
+<td style="width: 25%; text-align: center; vertical-align: middle; background-color: rgb(0, 153, 255); font-weight: bold;">
+<p> Format Name</p>
+</td>
+<td style="width: 25%; text-align: center; vertical-align: middle; background-color: rgb(0, 153, 255); font-weight: bold;">
+<p>Access capabilities*</p>
+</td>
+<td style="width: 25%; background-color: rgb(0, 153, 255); text-align: center; vertical-align: middle; font-weight: bold;">
+<p align="center">Additional
+Notes</p>
+</td>
+<td style="width: 25%; background-color: rgb(0, 153, 255); text-align: center; vertical-align: middle;">
+<p align="center"><b>License</b></p>
+</td>
 </tr>
 </thead> <tbody>
 <tr valign="top">
-<td width="25%">
+<td style="width: 25%;">
 <p align="center">Arc/Info ASCII Grid</p>
 </td>
-<td width="25%">
+<td style="width: 25%;">
 <p align="center">R</p>
 </td>
 <td width="25%">
@@ -401,20 +399,20 @@ rely on GDAL):</p>
 <table style="width: 100%;" border="1" cellpadding="4" cellspacing="0">
 <col width="57*"> <col width="49*"> <col width="109*"> <col width="42*"> <tbody>
 <tr valign="top">
-<td bgcolor="#0099ff" width="19%">
-<p align="center"><font size="4"><b>Format
-Name</b></font></p>
+<td style="width: 19%; background-color: rgb(0, 153, 255); text-align: center; vertical-align: middle;">
+<p align="center"><b>Format
+Name</b></p>
 </td>
-<td bgcolor="#0099ff" width="19%">
-<p align="center"><font size="4"><b>Data
-access capabilities*</b></font></p>
+<td style="width: 19%; background-color: rgb(0, 153, 255); text-align: center; vertical-align: middle;">
+<p align="center"><b>Data
+access capabilities*</b></p>
 </td>
-<td bgcolor="#0099ff" width="42%">
-<p align="center"><font size="4"><b>Additional
-Notes</b></font></p>
+<td style="width: 42%; background-color: rgb(0, 153, 255); text-align: center; vertical-align: middle;">
+<p align="center"><b>Additional
+Notes</b></p>
 </td>
-<td bgcolor="#0099ff" width="16%">
-<p align="center"><font size="4"><b>License</b></font></p>
+<td style="width: 16%; background-color: rgb(0, 153, 255); text-align: center; vertical-align: middle;">
+<p align="center"><b>License</b></p>
 </td>
 </tr>
 <tr valign="top">
@@ -503,31 +501,24 @@ Quick Introduction to Issue Tracking</a> </p>
 <h3 class="western"><a name="Feedback_and_Discussion"></a>Feedback
 and Discussion</h3>
 <p>Five main Image I/O-Ext mailing lists are available in this
-project:&nbsp;<font color="#0000ff">dev 'at'
-imageio-ext.dev.java.net</font>, <font color="#0000ff">announce
+project:&nbsp;<font color="#0000ff"></font></p><ul><li><font color="#0000ff">dev 'at'
+imageio-ext.dev.java.net&nbsp;</font> list for developers to discuss project development
+issues/artefacts and requirements.</li><li><font color="#0000ff">announce
 'at'
-imageio-ext.dev.java.net</font>, <font color="#0000ff">issues
+imageio-ext.dev.java.net&nbsp;</font>low-volume moderated mailing list for announcing Image I/O-Ext news
+and information.</li><li><font color="#0000ff">issues
 'at'
-imageio-ext.dev.java.net</font>, <font color="#0000ff">commits
+imageio-ext.dev.java.net&nbsp;</font></li><li><font color="#0000ff">commits
 'at'
-imageio-ext.dev.java.net</font>, and <font color="#0000ff">users
-'at'
-imageio-ext.dev.java.net</font> (replace 'at' with @). <a href="https://imageio-ext.dev.java.net/servlets/ProjectMailingListList">Click
-here to subscribe</a> to any of these lists. </p>
-<blockquote style="margin-left: 0cm; margin-right: 0cm;">The
-<i>dev</i>
-list is a list for developers to discuss project development
-issues/artefacts and requirements.<br>
-The <i>announce</i> list is a
-low-volume moderated mailing list for announcing Image I/O-Ext news
-and information.<br>
-The <i>issues</i> list is for automated issues
+imageio-ext.dev.java.net&nbsp;</font>for automated issues
 tracking and the <i>commits</i> list is for automated
 subversion
-commits messages.Lastly, the <i>users</i> is a general
+commits</li><li><font color="#0000ff">users
+'at'
+imageio-ext.dev.java.net</font>&nbsp;general
 discussion
-list for the projects end users. </blockquote>
-<h3 class="western">License </h3>
+list for the project and its users.</li></ul>(replace 'at' with @)<br><br>&nbsp;<a href="https://imageio-ext.dev.java.net/servlets/ProjectMailingListList">Click
+here to subscribe</a> to any of these lists.<br><br><h3 class="western">License </h3>
 <p>The Image I/O-Ext project is partly released under LGPL
 license,
 for newly created code as well as for compatible code, and partly
