@@ -11,15 +11,6 @@ Customstreams Module
 
       * Data: OK
 
-* it.geosolutions.io.input.BitInputStream
-  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- BitInputStream
- 
- IP:
-
-   * non LGPL custom license (completely permissive) by Andrey Kuznetsov
-
-
 * it.geosolutions.io.RepositionableStream
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   
