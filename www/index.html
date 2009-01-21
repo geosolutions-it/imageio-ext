@@ -6,7 +6,8 @@
 	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Linux)">
 	<META NAME="CREATED" CONTENT="0;0">
 	<META NAME="CHANGEDBY" CONTENT="Simone Giannecchini">
-	<META NAME="CHANGED" CONTENT="20090121;11123500">
+	<META NAME="CHANGED" CONTENT="20090121;11281200">
+	<META NAME="CHANGEDBY" CONTENT="Simone Giannecchini">
 	<META NAME="CHANGEDBY" CONTENT="Simone Giannecchini">
 	<META NAME="CHANGEDBY" CONTENT="Simone Giannecchini">
 	<META NAME="CHANGEDBY" CONTENT="Simone Giannecchini">
@@ -33,6 +34,7 @@
 		H4.cjk { font-family: "HG Mincho Light J"; font-size: 11pt; font-style: italic }
 		H4.ctl { font-family: "Arial Unicode MS"; font-size: 11pt; font-style: italic }
 		BLOCKQUOTE { color: #000000 }
+		TH P { color: #000000 }
 	-->
 	</STYLE>
 </HEAD>
@@ -49,10 +51,10 @@ Code in 2006 by Ing. Daniele Romagnoli mentored by Ing. Simone
 Giannecchini (GeoSolutions).</P>
 <H3 CLASS="western">Download</H3>
 <H4 CLASS="western">Binaries</H4>
-<P ALIGN=JUSTIFY>The latest released version of the ImageIO-ext
+<P ALIGN=JUSTIFY>The latest released version of the Image I/O-Ext
 project is <B>1.0.1</B> and can be found <A HREF="https://imageio-ext.dev.java.net/servlets/ProjectDocumentList?folderID=10446&amp;expandFolder=10446&amp;folderID=10435">here</A>.
 </P>
-<P ALIGN=JUSTIFY>All the releases for the ImageI/O-Ext project are
+<P ALIGN=JUSTIFY>All the releases for the Image I/O-Ext project are
 available <A HREF="https://imageio-ext.dev.java.net/servlets/ProjectDocumentList?folderID=10435&amp;expandFolder=10435&amp;folderID=0" NAME="distribution">here</A>.</P>
 <P ALIGN=JUSTIFY>Notice that pre-built binaries for various platform
 are available for the download. As time goes by more platform will be
@@ -79,16 +81,16 @@ simoneDOTgiannecchiniATgeo-solutions.it for further information.
 <P ALIGN=JUSTIFY>Being an Open Source project, anyone can freely
 checkout the code (see instructions <A HREF="https://imageio-ext.dev.java.net/source/browse/imageio-ext/">here</A>).
 In case you want to take active membership check out <A HREF="https://imageio-ext.dev.java.net/servlets/ProjectMemberList">this</A>
-page. Various degree of membership are envisioned. Notice that a
+page. Various degrees of membership are envisioned. Notice that a
 java.net account is needed for most operations.</P>
 <H3 CLASS="western"><A NAME="Documentation"></A>Documentation</H3>
 <H4 CLASS="western">Road Map</H4>
-<P ALIGN=JUSTIFY>The ImageI/O-Ext road map is available <A HREF="http://spreadsheets.google.com/ccc?key=pO9I1hrZsHM1Jdjse4uOIAQ" NAME="roadmap">here</A>.
+<P ALIGN=JUSTIFY>The Image I/O-Ext road map is available <A HREF="http://spreadsheets.google.com/ccc?key=pO9I1hrZsHM1Jdjse4uOIAQ" NAME="roadmap">here</A>.
 </P>
 <H4 CLASS="western">Documentation</H4>
 <P>The <A HREF="https://imageio-ext.dev.java.net/servlets/ProjectDocumentList">&quot;Documents
 &amp; Files&quot;</A> section contains some documents which could
-help you in order to set-up and the ImageI/O-Ext. The available
+help you in order to set-up and the Image I/O-Ext. The available
 documents are: 
 </P>
 <UL>
@@ -96,7 +98,7 @@ documents are:
 	in order to set-up the project as well as all the tools/software
 	needed for this purpose</P>
 	<LI><P STYLE="margin-bottom: 0cm">User Guide, a preliminary Guide to
-	use the ImageI/O-Ext. Note that it should be considered a &quot;WORK
+	use the Image I/O-Ext. Note that it should be considered a &quot;WORK
 	in PROGRESS&quot;. (It may contains some errors as well as empty
 	chapters...)</P>
 </UL>
@@ -107,291 +109,363 @@ Access revisited Framework Report</A>
 <H4 CLASS="western">Main Features</H4>
 <P ALIGN=JUSTIFY>The core module of the project is the <B>gdalframework
 </B><SPAN STYLE="font-weight: medium">module which provide a bridge
-between the Java ImageI/O framework and t</SPAN>he Geospatial Data
+between the Java Image I/O framework and t</SPAN>he Geospatial Data
 Abstraction Library (<A HREF="http://www.gdal.org/">GDAL</A>) via
 SWIG's generated Java bindings to provide support for a reach set of
 data formats. Here below a brief list of the current supported
-formats is provided. Note that for each of these formats an
-ImageI/O-ext plugin is provided which integrates into the standard
-SUN ImageI/O SPI mechanism.</P>
+formats is provided. Note that for each of these formats an Image
+I/O-Ext plugin is provided which integrates into the standard SUN
+Image I/O SPI mechanism.</P>
 <H4 CLASS="western"><A NAME="Supported_Formats"></A><FONT FACE="Times New Roman, serif">GDAL
 Supported Formats</FONT></H4>
-<TABLE WIDTH=292 BORDER=1 CELLPADDING=2 CELLSPACING=3>
-	<COL WIDTH=89>
-	<COL WIDTH=90>
-	<COL WIDTH=86>
-	<TR>
-		<TD WIDTH=89>
-			<P><B>Format Name</B></P>
-		</TD>
-		<TD WIDTH=90>
-			<P><B>Access capabilities*</B></P>
-		</TD>
-		<TD WIDTH=86>
-			<P><B>License</B></P>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH=89>
-			<P>Arc/Info ASCII Grid</P>
-		</TD>
-		<TD WIDTH=90>
-			<P>R</P>
-		</TD>
-		<TD WIDTH=86>
-			<P>LGPL</P>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH=89>
-			<P>Arc/Info Binary Grid</P>
-		</TD>
-		<TD WIDTH=90>
-			<P>R</P>
-		</TD>
-		<TD WIDTH=86>
-			<P>LGPL</P>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH=89>
-			<P>DTED</P>
-		</TD>
-		<TD WIDTH=90>
-			<P>R</P>
-		</TD>
-		<TD WIDTH=86>
-			<P>LGPL</P>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH=89>
-			<P>ECW</P>
-		</TD>
-		<TD WIDTH=90>
-			<P>R</P>
-		</TD>
-		<TD WIDTH=86>
-			<P>LGPL</P>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH=89>
-			<P>EHdr</P>
-		</TD>
-		<TD WIDTH=90>
-			<P>R</P>
-		</TD>
-		<TD WIDTH=86>
-			<P>LGPL</P>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH=89>
-			<P>ENVI Hdr</P>
-		</TD>
-		<TD WIDTH=90>
-			<P>R</P>
-		</TD>
-		<TD WIDTH=86>
-			<P>LGPL</P>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH=89>
-			<P>Envisat</P>
-		</TD>
-		<TD WIDTH=90>
-			<P>R</P>
-		</TD>
-		<TD WIDTH=86>
-			<P>LGPL</P>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH=89>
-			<P>Erdas Imagine HFA</P>
-		</TD>
-		<TD WIDTH=90>
-			<P>R</P>
-		</TD>
-		<TD WIDTH=86>
-			<P>LGPL</P>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH=89>
-			<P>NITF</P>
-		</TD>
-		<TD WIDTH=90>
-			<P>R</P>
-		</TD>
-		<TD WIDTH=86>
-			<P>LGPL</P>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH=89>
-			<P>GeoTiff</P>
-		</TD>
-		<TD WIDTH=90>
-			<P>R/W</P>
-		</TD>
-		<TD WIDTH=86>
-			<P>LGPL</P>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH=89>
-			<P>HDF4</P>
-		</TD>
-		<TD WIDTH=90>
-			<P>R</P>
-		</TD>
-		<TD WIDTH=86>
-			<P>LGPL</P>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH=89>
-			<P>JPEG</P>
-		</TD>
-		<TD WIDTH=90>
-			<P>R</P>
-		</TD>
-		<TD WIDTH=86>
-			<P>LGPL</P>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH=89>
-			<P>JPEG 2000 (Kakadu)</P>
-		</TD>
-		<TD WIDTH=90>
-			<P>R/W</P>
-		</TD>
-		<TD WIDTH=86>
-			<P>LGPL</P>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH=89>
-			<P>JPEG 2000 (MrSID)</P>
-		</TD>
-		<TD WIDTH=90>
-			<P>R</P>
-		</TD>
-		<TD WIDTH=86>
-			<P>LGPL</P>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH=89>
-			<P>JPEG 2000 (ECW)</P>
-		</TD>
-		<TD WIDTH=90>
-			<P>R</P>
-		</TD>
-		<TD WIDTH=86>
-			<P>LGPL</P>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH=89>
-			<P>MrSID</P>
-		</TD>
-		<TD WIDTH=90>
-			<P>R</P>
-		</TD>
-		<TD WIDTH=86>
-			<P>LGPL</P>
-		</TD>
-	</TR>
+<TABLE WIDTH=100% BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=64*>
+	<COL WIDTH=64*>
+	<COL WIDTH=64*>
+	<COL WIDTH=64*>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TH WIDTH=25% BGCOLOR="#0099ff">
+				<P><FONT SIZE=4>Format Name</FONT></P>
+			</TH>
+			<TH WIDTH=25% BGCOLOR="#0099ff">
+				<P><FONT SIZE=4>Access capabilities*</FONT></P>
+			</TH>
+			<TD WIDTH=25% BGCOLOR="#0099ff">
+				<P ALIGN=CENTER><FONT SIZE=4><B>Additional Notes</B></FONT></P>
+			</TD>
+			<TD WIDTH=25% BGCOLOR="#0099ff">
+				<P ALIGN=CENTER><FONT SIZE=4><B>License</B></FONT></P>
+			</TD>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>Arc/Info ASCII Grid</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>R</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>LGPL</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>Arc/Info Binary Grid</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>R</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>LGPL</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>DTED</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>R</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>LGPL</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>ECW</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>R</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>LGPL</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>EHdr</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>R</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>LGPL</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>ENVI Hdr</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>R</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>LGPL</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>Envisat</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>R</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>LGPL</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>Erdas Imagine HFA</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>R</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>LGPL</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>NITF</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>R</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>LGPL</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>GeoTiff</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>R/W</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>LGPL</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>HDF4</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>R</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>LGPL</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>JPEG</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>R</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>LGPL</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>JPEG 2000 (Kakadu)</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>R/W</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>LGPL</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>JPEG 2000 (MrSID)</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>R</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>LGPL</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>JPEG 2000 (ECW)</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>R</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>LGPL</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>MrSID</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>R</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER><BR>
+				</P>
+			</TD>
+			<TD WIDTH=25%>
+				<P ALIGN=CENTER>LGPL</P>
+			</TD>
+		</TR>
+	</TBODY>
 </TABLE>
+<P><BR><BR>
+</P>
 <H4 CLASS="western">Utility modules</H4>
 <P>The Image I/O-Ext project provides some additional utility modules
 as described here below.</P>
 <UL>
 	<LI><P STYLE="margin-bottom: 0cm"><B>imagereadmt</B> provides a
 	specific ImageRead operation implementation with support for
-	multithreading. 
-	</P>
+	multithreading. License adopted for this module is a modified BSD.</P>
 	<LI><P STYLE="margin-bottom: 0cm"><B>customstreams</B> contains a
-	wide set of extended input/output streams 
-	</P>
+	wide set of extended input/output streams. License adopted for this
+	module is LGPL.</P>
 	<LI><P><B>jhdfaccess</B> revisited version of the NCSA JHDF
 	libraries which provide access to HDF format. It currently provides
 	only read access to the HDF4 format but write access capabilities
-	could also be added. 
-	</P>
+	could also be added. Liecnse for this module is LGPL.</P>
 </UL>
 <H4 CLASS="western">Additional Supported Modules</H4>
 <P>Image I/O-Ext provides a set of additional plugins (which don't
 rely on GDAL):</P>
-<P STYLE="margin-bottom: 0cm"><BR>
-</P>
-<TABLE WIDTH=680 BORDER=1 CELLPADDING=2 CELLSPACING=3>
-	<COL WIDTH=126>
-	<COL WIDTH=85>
-	<COL WIDTH=377>
-	<COL WIDTH=59>
-	<TR>
-		<TD WIDTH=126>
-			<P><B>Format Name</B></P>
+<TABLE WIDTH=100% BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=57*>
+	<COL WIDTH=49*>
+	<COL WIDTH=109*>
+	<COL WIDTH=42*>
+	<TR VALIGN=TOP>
+		<TD WIDTH=22% BGCOLOR="#0099ff">
+			<P ALIGN=CENTER><FONT SIZE=4><B>Format Name</B></FONT></P>
 		</TD>
-		<TD WIDTH=85>
-			<P><B>Data access capabilities*</B></P>
+		<TD WIDTH=19% BGCOLOR="#0099ff">
+			<P ALIGN=CENTER><FONT SIZE=4><B>Data access capabilities*</B></FONT></P>
 		</TD>
-		<TD WIDTH=377>
-			<P><B>Additional Notes</B></P>
+		<TD WIDTH=42% BGCOLOR="#0099ff">
+			<P ALIGN=CENTER><FONT SIZE=4><B>Additional Notes</B></FONT></P>
 		</TD>
-		<TD WIDTH=59>
-			<P><B>License</B></P>
+		<TD WIDTH=16% BGCOLOR="#0099ff">
+			<P ALIGN=CENTER><FONT SIZE=4><B>License</B></FONT></P>
 		</TD>
 	</TR>
-	<TR>
-		<TD WIDTH=126>
-			<P>Arc/Info ASCII Grid</P>
+	<TR VALIGN=TOP>
+		<TD WIDTH=22%>
+			<P ALIGN=CENTER>Arc/Info ASCII Grid</P>
 		</TD>
-		<TD WIDTH=85>
-			<P>R/W</P>
+		<TD WIDTH=19%>
+			<P ALIGN=CENTER>R/W</P>
 		</TD>
-		<TD WIDTH=377></TD>
-		<TD WIDTH=59>
-			<P><FONT SIZE=3>LGPL</FONT></P>
-		</TD>
-	</TR>
-	<TR>
-		<TD WIDTH=126>
-			<P>JPEG</P>
-		</TD>
-		<TD WIDTH=85>
-			<P>R</P>
-		</TD>
-		<TD WIDTH=377>
-			<P>Built on the JMagick library</P>
-		</TD>
-		<TD WIDTH=59>
-			<P>LGPL</P>
+		<TD WIDTH=42%></TD>
+		<TD WIDTH=16%>
+			<P ALIGN=CENTER><FONT SIZE=3>LGPL</FONT></P>
 		</TD>
 	</TR>
-	<TR>
-		<TD WIDTH=126>
-			<P>JPEG 2000</P>
+	<TR VALIGN=TOP>
+		<TD WIDTH=22%>
+			<P ALIGN=CENTER>JPEG</P>
 		</TD>
-		<TD WIDTH=85>
-			<P>R</P>
+		<TD WIDTH=19%>
+			<P ALIGN=CENTER>R</P>
 		</TD>
-		<TD WIDTH=377>
-			<P>Built on the Kakadu library. This plugin version leverages
-			on<BR>the powerful multithreading capabilities provided by<BR>the
-			<B>imagereadmt</B> module.</P>
+		<TD WIDTH=42%>
+			<P ALIGN=JUSTIFY>Built on the JMagick library</P>
 		</TD>
-		<TD WIDTH=59>
-			<P>LGPL</P>
+		<TD WIDTH=16%>
+			<P ALIGN=CENTER>LGPL</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=22%>
+			<P ALIGN=CENTER>JPEG 2000</P>
+		</TD>
+		<TD WIDTH=19%>
+			<P ALIGN=CENTER>R</P>
+		</TD>
+		<TD WIDTH=42%>
+			<P ALIGN=JUSTIFY>Built on the Kakadu library. This plugin version
+			leverages on<BR>the powerful multithreading capabilities provided
+			by<BR>the <B>imagereadmt</B> module.</P>
+		</TD>
+		<TD WIDTH=16%>
+			<P ALIGN=CENTER>LGPL</P>
 		</TD>
 	</TR>
 </TABLE>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
 <P>Data access capabilities*: R=Readonly capabilities; R/W=Read and
 write capabilities</P>
 <H4 CLASS="western"><A NAME="Licenses"></A>Licenses</H4>
@@ -439,7 +513,7 @@ list for the projects end users.
 </BLOCKQUOTE>
 <H3 CLASS="western">License 
 </H3>
-<P>The  Image I/O-Ext project is partly released under LGPL license,
+<P>The Image I/O-Ext project is partly released under LGPL license,
 for newly created code as well as for compatible code, and partly
 under a modified BSD license (for the SUN's Image I/O derivative
 work).</P>
