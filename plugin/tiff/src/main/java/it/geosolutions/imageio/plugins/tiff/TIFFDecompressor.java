@@ -900,7 +900,7 @@ public abstract class TIFFDecompressor {
                     blueLut[i] = (byte)((colorMap[2*mapSize + i]*255)/65535);
                 }
 
-                int dataType = bitsPerSample[0] == 8 ?
+                int dataType = bitsPerSample[0] <= 8 ?
                     DataBuffer.TYPE_BYTE : DataBuffer.TYPE_USHORT;
                 return ImageTypeSpecifier.createIndexed(redLut,
                                                         greenLut,
