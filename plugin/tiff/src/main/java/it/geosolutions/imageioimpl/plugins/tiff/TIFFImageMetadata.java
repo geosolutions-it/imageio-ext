@@ -107,10 +107,10 @@ public class TIFFImageMetadata extends IIOMetadata {
     // package scope
 
     public static final String nativeMetadataFormatName =
-        "com_sun_media_imageio_plugins_tiff_image_1.0";
+        "it_geosolutions_imageioimpl_plugins_tiff_image_1.0";
 
     public static final String nativeMetadataFormatClassName =
-        "com.sun.media.imageioimpl.plugins.mtiff.TIFFImageMetadataFormat";
+        "it.geosolutions.imageioimpl.plugins.tiff.TIFFImageMetadataFormat";
     
     List tagSets;
 

@@ -87,7 +87,7 @@ public class TIFFStreamMetadata extends IIOMetadata {
         "com_sun_media_imageio_plugins_tiff_stream_1.0";
 
     static final String nativeMetadataFormatClassName =
-        "com.sun.media.imageioimpl.plugins.mtiff.TIFFStreamMetadataFormat";
+        "it.geosolutions.imageioimpl.plugins.tiff.TIFFStreamMetadataFormat";
 
     private static final String bigEndianString =
         ByteOrder.BIG_ENDIAN.toString();

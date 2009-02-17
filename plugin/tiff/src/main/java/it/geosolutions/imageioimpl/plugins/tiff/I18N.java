@@ -77,6 +77,6 @@ import com.sun.media.imageioimpl.common.I18NImpl;
 
 final class I18N extends I18NImpl {
     static String getString(String key) {
-        return getString("com.sun.media.imageioimpl.plugins.mtiff.I18N", key);
+        return getString("it.geosolutions.imageioimpl.plugins.tiff.I18N", key);
     }
 }

@@ -98,10 +98,10 @@ public class TIFFImageReaderSpi extends ImageReaderSpi {
     private static final String[] MIMETypes = { "image/tiff" };
 
     private static final String readerClassName =
-        "com.sun.media.imageioimpl.plugins.mtiff.TIFFImageReader";
+        "it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReader";
 
     private static final String[] writerSpiNames = {
-        "com.sun.media.imageioimpl.plugins.mtiff.TIFFImageWriterSpi"
+        "it.geosolutions.imageioimpl.plugins.tiff.TIFFImageWriterSpi"
     };
 
     private boolean registered = false;
@@ -117,11 +117,11 @@ public class TIFFImageReaderSpi extends ImageReaderSpi {
               writerSpiNames,
               false,
               TIFFStreamMetadata.nativeMetadataFormatName,
-              "com.sun.media.imageioimpl.plugins.mtiff.TIFFStreamMetadataFormat",
+              "it.geosolutions.imageioimpl.plugins.tiff.TIFFStreamMetadataFormat",
               null, null,
               true,
               TIFFImageMetadata.nativeMetadataFormatName,
-              "com.sun.media.imageioimpl.plugins.mtiff.TIFFImageMetadataFormat",
+              "it.geosolutions.imageioimpl.plugins.tiff.TIFFImageMetadataFormat",
               new String[]{""}, new String[]{""}
               );
     }

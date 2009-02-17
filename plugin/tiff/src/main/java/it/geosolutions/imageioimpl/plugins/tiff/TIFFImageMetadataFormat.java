@@ -102,7 +102,7 @@ public class TIFFImageMetadataFormat extends TIFFMetadataFormat {
 
     private TIFFImageMetadataFormat() {
         this.resourceBaseName =
-     "com.sun.media.imageioimpl.plugins.mtiff.TIFFImageMetadataFormatResources";
+     "it.geosolutions.imageioimpl.plugins.tiff.TIFFImageMetadataFormatResources";
         this.rootName = TIFFImageMetadata.nativeMetadataFormatName;
 
         TIFFElementInfo einfo;

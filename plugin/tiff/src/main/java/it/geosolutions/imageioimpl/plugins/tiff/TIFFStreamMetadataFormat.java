@@ -99,7 +99,7 @@ public class TIFFStreamMetadataFormat extends TIFFMetadataFormat {
 
     private TIFFStreamMetadataFormat() {
         this.resourceBaseName =
-    "com.sun.media.imageioimpl.plugins.mtiff.TIFFStreamMetadataFormatResources";
+    "it.geosolutions.imageioimpl.plugins.tiff.TIFFStreamMetadataFormatResources";
         this.rootName = TIFFStreamMetadata.nativeMetadataFormatName;
 
         TIFFElementInfo einfo;
