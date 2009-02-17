@@ -56,7 +56,7 @@
  *     * Redistributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the <organization> nor the
+ *     * Neither the name of GeoSolutions nor the
  *       names of its contributors may be used to endorse or promote products
  *       derived from this software without specific prior written permission.
  *
@@ -91,10 +91,10 @@ public class TIFFImageWriterSpi extends ImageWriterSpi {
     private static final String[] MIMETypes = { "image/tiff" };
 
     private static final String writerClassName =
-        "com.sun.media.imageioimpl.plugins.mtiff.TIFFImageWriter";
+        "it.geosolutions.imageioimpl.plugins.tiff.TIFFImageWriter";
 
     private static final String[] readerSpiNames = {
-        "com.sun.media.imageioimpl.plugins.mtiff.TIFFImageReaderSpi"
+        "it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReaderSpi"
     };
 
     private boolean registered = false;
@@ -110,11 +110,11 @@ public class TIFFImageWriterSpi extends ImageWriterSpi {
               readerSpiNames,
               false,
               TIFFStreamMetadata.nativeMetadataFormatName,
-              "com.sun.media.imageioimpl.plugins.mtiff.TIFFStreamMetadataFormat",
+              "it.geosolutions.imageioimpl.plugins.tiff.TIFFStreamMetadataFormat",
               null, null,
               false,
               TIFFImageMetadata.nativeMetadataFormatName,
-              "com.sun.media.imageioimpl.plugins.mtiff.TIFFImageMetadataFormat",
+              "it.geosolutions.imageioimpl.plugins.tiff.TIFFImageMetadataFormat",
               null, null
               );
     }

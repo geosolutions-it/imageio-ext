@@ -56,7 +56,7 @@
  *     * Redistributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the <organization> nor the
+ *     * Neither the name of GeoSolutions nor the
  *       names of its contributors may be used to endorse or promote products
  *       derived from this software without specific prior written permission.
  *
@@ -102,7 +102,7 @@ public class TIFFImageMetadataFormat extends TIFFMetadataFormat {
 
     private TIFFImageMetadataFormat() {
         this.resourceBaseName =
-     "com.sun.media.imageioimpl.plugins.mtiff.TIFFImageMetadataFormatResources";
+     "it.geosolutions.imageioimpl.plugins.tiff.TIFFImageMetadataFormatResources";
         this.rootName = TIFFImageMetadata.nativeMetadataFormatName;
 
         TIFFElementInfo einfo;
