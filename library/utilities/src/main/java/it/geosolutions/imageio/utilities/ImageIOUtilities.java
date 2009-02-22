@@ -24,7 +24,16 @@ import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.renderable.ParameterBlock;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
 
+import javax.imageio.spi.IIORegistry;
+import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.spi.ImageReaderWriterSpi;
+import javax.imageio.spi.ImageWriterSpi;
+import javax.imageio.spi.ServiceRegistry;
 import javax.media.jai.JAI;
 import javax.media.jai.ROI;
 import javax.media.jai.RenderedOp;
@@ -267,4 +276,54 @@ public class ImageIOUtilities {
         else
             visualize(ri, title);
     }
+    
+    // Method to return JDK core ImageReaderSPI/ImageWriterSPI for a 
+    // given formatName.
+    public static List<ImageReaderWriterSpi> getJDKImageReaderWriterSPI(ServiceRegistry registry,
+			String formatName, boolean isReader) {
+
+		IIORegistry iioRegistry = (IIORegistry) registry;
+
+		final Class<? extends ImageReaderWriterSpi> spiClass;
+		final String descPart;
+		if (isReader) {
+			spiClass = ImageReaderSpi.class;
+			descPart = " image reader";
+		} else {
+			spiClass = ImageWriterSpi.class;
+			descPart = " image writer";
+		}
+
+		final Iterator<? extends ImageReaderWriterSpi> iter = iioRegistry.getServiceProviders(spiClass, true); // useOrdering
+
+		String formatNames[];
+		ImageReaderWriterSpi provider;
+		String desc = "standard " + formatName + descPart;
+		String jiioPath = "com.sun.media.imageioimpl";
+		Locale locale = Locale.getDefault();
+		ArrayList<ImageReaderWriterSpi> list = new ArrayList<ImageReaderWriterSpi>();
+		while (iter.hasNext()) {
+			provider = (ImageReaderWriterSpi) iter.next();
+
+			// Look for JDK core ImageWriterSpi's
+			if (provider.getVendorName().startsWith("Sun Microsystems")
+					&& desc.equalsIgnoreCase(provider.getDescription(locale)) &&
+					// not JAI Image I/O plugins
+					!provider.getPluginClassName().startsWith(jiioPath)) {
+
+				// Get the formatNames supported by this Spi
+				formatNames = provider.getFormatNames();
+				for (int i = 0; i < formatNames.length; i++) {
+					if (formatNames[i].equalsIgnoreCase(formatName)) {
+						// Must be a JDK provided ImageReader/ImageWriter
+						list.add(provider);
+						break;
+					}
+				}
+			}
+		}
+
+		return list;
+	}
+    
 }
