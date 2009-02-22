@@ -134,7 +134,7 @@
                   <arg value="/c"/>
                   <arg value="mvn install:install-file -DgroupId=jmagick -DartifactId=jmagick -Dversion=6.2.6.0 -Dpackaging=jar -Dfile=./jmagick.jar"/>
                 </exec>
-                <!--<exec  executable="cmd">
+                <exec  executable="cmd">
                   <arg value="/c"/>
                   <arg value="mvn install:install-file -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-gdal -Dversion=1.1-SNAPSHOT -Dpackaging=jar -Dfile=./gdal-1.4.4.jar"/>
                 </exec>
@@ -149,7 +149,7 @@
                 <exec  executable="cmd">
                   <arg value="/c"/>
                   <arg value="mvn install:install-file -DgroupId=ncsa -DartifactId=jhdf -Dversion=4.1r5 -Dpackaging=jar -Dfile=./ncsa_jhdf.jar"/>
-                </exec>-->
+                </exec>
                 </tasks>
               </configuration>
               <goals>
