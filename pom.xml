@@ -343,7 +343,7 @@
     <repository>
       <id>geosolutions</id>
       <name>GeoSolutions libraries repository</name>
-      <url>http://mvn.geo-solutions.it/maven_repo/</url>
+      <url>http://mvn.geo-solutions.it/</url>
     </repository>
     <repository>
       <id>codehaus</id>
