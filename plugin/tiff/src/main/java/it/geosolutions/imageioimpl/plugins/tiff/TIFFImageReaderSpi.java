@@ -73,17 +73,15 @@
  */
 package it.geosolutions.imageioimpl.plugins.tiff;
 
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
+
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 
 import javax.imageio.ImageReader;
-import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageReaderWriterSpi;
-import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageInputStream;
 
@@ -153,54 +151,20 @@ public class TIFFImageReaderSpi extends ImageReaderSpi {
         return new TIFFImageReader(this);
     }
 
+  @Override
   public void onRegistration(ServiceRegistry registry, Class category) {
         super.onRegistration(registry, category);
         if (registered) {
             return;
         }
         registered = true;
-        Iterator readers = getJDKImageReaderWriterSPI(registry, "TIFF", true).iterator();
-        ImageReaderSpi spi;
+        Iterator<ImageReaderWriterSpi> readers = ImageIOUtilities.getJDKImageReaderWriterSPI(registry, "TIFF", true).iterator();
         while (readers.hasNext()) {
-            spi = (ImageReaderSpi) readers.next();
+            final ImageReaderSpi spi = (ImageReaderSpi) readers.next();
             if (spi == this)
                 continue;
             registry.deregisterServiceProvider(spi);
             registry.setOrdering(category, this, spi);
         }
     }
-  
-  public static List getJDKImageReaderWriterSPI(ServiceRegistry registry,
-          String formatName, boolean isReader) {
-
-      IIORegistry iioRegistry = (IIORegistry) registry;
-
-      Class spiClass;
-      if (isReader)
-          spiClass = ImageReaderSpi.class;
-      else
-          spiClass = ImageWriterSpi.class;
-
-      Iterator iter = iioRegistry.getServiceProviders(spiClass, true); // useOrdering
-
-      String formatNames[];
-      ImageReaderWriterSpi provider;
-
-      ArrayList list = new ArrayList();
-      while (iter.hasNext()) {
-          provider = (ImageReaderWriterSpi) iter.next();
-
-          // Get the formatNames supported by this Spi
-          formatNames = provider.getFormatNames();
-          final int length = formatNames.length;
-          for (int i = 0; i < length; i++) {
-              if (formatNames[i].equalsIgnoreCase(formatName)) {
-                  // Must be a JDK provided ImageReader/ImageWriter
-                  list.add(provider);
-                  break;
-              }
-          }
-      }
-      return list;
-  }
 }
