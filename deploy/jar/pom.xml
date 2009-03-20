@@ -59,22 +59,22 @@
                   <arg value="-c"/>
                   <arg value="mvn install:install-file -DgroupId=jmagick -DartifactId=jmagick -Dversion=6.2.6.0 -Dpackaging=jar -Dfile=./jmagick.jar"/>
                 </exec>
-                <!--<exec  executable="sh">
+                <exec  executable="sh">
                   <arg value="-c"/>
-                  <arg value="mvn install:install-file  -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-gdal -Dversion=1.0-SNAPSHOT -Dpackaging=jar -Dfile=./gdal-1.4.4.jar"/>
+                  <arg value="mvn install:install-file  -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-gdal-bindings -Dversion=1.4.4 -Dpackaging=jar -Dfile=./gdal-1.4.4.jar"/>
                 </exec>
                 <exec  executable="sh">
                   <arg value="-c"/>
-                  <arg value="mvn install:install-file -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-swanheaderschema -Dversion=1.0-SNAPSHOT -Dpackaging=jar -Dfile=./SwanHeaderSchema.jar"/>
+                  <arg value="mvn install:install-file -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-swanheaderschema -Dversion=1.0 -Dpackaging=jar -Dfile=./SwanHeaderSchema.jar"/>
                 </exec>
                 <exec  executable="sh">
                   <arg value="-c"/>
-                  <arg value="mvn install:install-file -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-kakadujni -Dversion=1.0-SNAPSHOT -Dpackaging=jar -Dfile=./kdu_jni.jar"/>
+                  <arg value="mvn install:install-file -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-kakadujni -Dversion=5.2.6 -Dpackaging=jar -Dfile=./kdu_jni.jar"/>
                 </exec>
-                <exec  executable="sh">
+<!--                <exec  executable="sh">
                   <arg value="-c"/>
-                  <arg value="mvn install:install-file -DgroupId=ncsa -DartifactId=jhdf -Dversion=4.1r5 -Dpackaging=jar -Dfile=./ncsa_jhdf.jar"/>
-                </exec>-->
+                  <arg value="mvn install:install-file -DgroupId=ncsa -DartifactId=jhdf -Dversion=4.2r1 -Dpackaging=jar -Dfile=./ncsa_jhdf.jar"/>
+                </exec> -->
                 </tasks>
               </configuration>
               <goals>
@@ -134,22 +134,22 @@
                   <arg value="/c"/>
                   <arg value="mvn install:install-file -DgroupId=jmagick -DartifactId=jmagick -Dversion=6.2.6.0 -Dpackaging=jar -Dfile=./jmagick.jar"/>
                 </exec>
-                <!--<exec  executable="cmd">
+                <exec  executable="cmd">
                   <arg value="/c"/>
-                  <arg value="mvn install:install-file -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-gdal -Dversion=1.0-SNAPSHOT -Dpackaging=jar -Dfile=./gdal-1.4.4.jar"/>
+                  <arg value="mvn install:install-file -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-gdal-bindings -Dversion=1.4.4 -Dpackaging=jar -Dfile=./gdal-1.4.4.jar"/>
                 </exec>
                 <exec  executable="cmd">
                   <arg value="/c"/>
-                  <arg value="mvn install:install-file -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-swanheaderschema -Dversion=1.0-SNAPSHOT -Dpackaging=jar -Dfile=./SwanHeaderSchema.jar"/>
+                  <arg value="mvn install:install-file -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-swanheaderschema -Dversion=1.1-SNAPSHOT -Dpackaging=jar -Dfile=./SwanHeaderSchema.jar"/>
                 </exec>
                 <exec  executable="cmd">
                   <arg value="/c"/>
-                  <arg value="mvn install:install-file -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-kakadujni -Dversion=1.0-SNAPSHOT -Dpackaging=jar -Dfile=./kdu_jni.jar"/>
+                  <arg value="mvn install:install-file -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-kakadujni -Dversion=5.2.6 -Dpackaging=jar -Dfile=./kdu_jni.jar"/>
                 </exec>
-                <exec  executable="cmd">
+<!--                <exec  executable="cmd">
                   <arg value="/c"/>
-                  <arg value="mvn install:install-file -DgroupId=ncsa -DartifactId=jhdf -Dversion=4.1r5 -Dpackaging=jar -Dfile=./ncsa_jhdf.jar"/>
-                </exec>-->
+                  <arg value="mvn install:install-file -DgroupId=ncsa -DartifactId=jhdf -Dversion=4.2r1 -Dpackaging=jar -Dfile=./ncsa_jhdf.jar"/> 
+                </exec> -->
                 </tasks>
               </configuration>
               <goals>

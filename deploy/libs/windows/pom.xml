@@ -15,6 +15,11 @@
     <mrsid.dll>imageio-ext-gdalmrsiddll</mrsid.dll>
     <hdf.dll>imageio-ext-gdalhdfdll</hdf.dll>
     <jhdf.dll>imageio-ext-jhdfdll</jhdf.dll>
+     <gdal.version>1.4.4</gdal.version>
+    <ecw.version>3.3</ecw.version>
+    <mrsid.version>6.0.7</mrsid.version>
+    <msvc.version>7.1</msvc.version>
+    <hdf.version>4.2r1</hdf.version>
   </properties>
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
@@ -59,22 +64,22 @@
    <dependency>
      <groupId>it.geosolutions.imageio-ext</groupId>
      <artifactId>imageio-ext-gdalmsvcdll</artifactId>
-     <version>1.0-SNAPSHOT</version>
+     <version>${msvc.version}</version>
     </dependency>
     <dependency>
      <groupId>it.geosolutions.imageio-ext</groupId>
      <artifactId>imageio-ext-gdalbasedll</artifactId>
-     <version>1.0-SNAPSHOT</version>
+     <version>${gdal.version}</version>
     </dependency>
     <dependency>
      <groupId>it.geosolutions.imageio-ext</groupId>
      <artifactId>imageio-ext-gdalhdfdll</artifactId>
-     <version>1.0-SNAPSHOT</version>
+     <version>${hdf.version}</version>
     </dependency>
     <dependency>
      <groupId>it.geosolutions.imageio-ext</groupId>
      <artifactId>imageio-ext-jhdfdll</artifactId>
-     <version>1.0-SNAPSHOT</version>
+     <version>${hdf.version}</version>
     </dependency>
     </dependencies>
     <build>
@@ -99,13 +104,13 @@
               <phase>install</phase>
               <configuration>
                <tasks>
-               <unzip src="${m2.localrepo}/${dllpath.prefix}/${base.dll}/${version}/${base.dll}-${version}.jar" dest="${path.native}" overwrite="true">
+               <unzip src="${m2.localrepo}/${dllpath.prefix}/${base.dll}/${gdal.version}/${base.dll}-${gdal.version}.jar" dest="${path.native}" overwrite="true">
                 </unzip>
-                 <unzip src="${m2.localrepo}/${dllpath.prefix}/${msvc.dll}/${version}/${msvc.dll}-${version}.jar" dest="${path.native}" overwrite="true">
+                 <unzip src="${m2.localrepo}/${dllpath.prefix}/${msvc.dll}/${msvc.version}/${msvc.dll}-${msvc.version}.jar" dest="${path.native}" overwrite="true">
                 </unzip>
-                <unzip src="${m2.localrepo}/${dllpath.prefix}/${hdf.dll}/${version}/${hdf.dll}-${version}.jar" dest="${path.native}" overwrite="true">
+                <unzip src="${m2.localrepo}/${dllpath.prefix}/${hdf.dll}/${hdf.version}/${hdf.dll}-${hdf.version}.jar" dest="${path.native}" overwrite="true">
                 </unzip>
-                <unzip src="${m2.localrepo}/${dllpath.prefix}/${jhdf.dll}/${version}/${jhdf.dll}-${version}.jar" dest="${path.native}" overwrite="true">
+                <unzip src="${m2.localrepo}/${dllpath.prefix}/${jhdf.dll}/${hdf.version}/${jhdf.dll}-${hdf.version}.jar" dest="${path.native}" overwrite="true">
                 </unzip>
                 
                 <copy file="${path.native}\msvcp71.dll" tofile="${path.native}\xiodtest.dll" failonerror="false"/>
@@ -144,32 +149,32 @@
      <dependency>
      <groupId>it.geosolutions.imageio-ext</groupId>
      <artifactId>imageio-ext-gdalmsvcdll</artifactId>
-     <version>1.0-SNAPSHOT</version>
+     <version>${msvc.version}</version>
     </dependency>
      <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-gdalfulldll</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>${gdal.version}</version>
     </dependency>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-gdalecwdll</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>${ecw.version}</version>
     </dependency>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-gdalmrsiddll</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>${mrsid.version}</version>
     </dependency>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-gdalhdfdll</artifactId>
-      <version>1.0-SNAPSHOT</version>
+     <version>${hdf.version}</version>
     </dependency>
     <dependency>
      <groupId>it.geosolutions.imageio-ext</groupId>
      <artifactId>imageio-ext-jhdfdll</artifactId>
-     <version>1.0-SNAPSHOT</version>
+     <version>${hdf.version}</version>
     </dependency>
    </dependencies>
    <build>
@@ -194,17 +199,17 @@
               <phase>install</phase>
               <configuration>
                <tasks>
-                <unzip src="${m2.localrepo}/${dllpath.prefix}/${full.dll}/${version}/${full.dll}-${version}.jar" dest="${path.native}" overwrite="true">
+                <unzip src="${m2.localrepo}/${dllpath.prefix}/${full.dll}/${gdal.version}/${full.dll}-${gdal.version}.jar" dest="${path.native}" overwrite="true">
                 </unzip>
-                <unzip src="${m2.localrepo}/${dllpath.prefix}/${ecw.dll}/${version}/${ecw.dll}-${version}.jar" dest="${path.native}" overwrite="true">
+                <unzip src="${m2.localrepo}/${dllpath.prefix}/${ecw.dll}/${ecw.version}/${ecw.dll}-${ecw.version}.jar" dest="${path.native}" overwrite="true">
                 </unzip>
-                <unzip src="${m2.localrepo}/${dllpath.prefix}/${mrsid.dll}/${version}/${mrsid.dll}-${version}.jar" dest="${path.native}" overwrite="true">
+                <unzip src="${m2.localrepo}/${dllpath.prefix}/${mrsid.dll}/${mrsid.version}/${mrsid.dll}-${mrsid.version}.jar" dest="${path.native}" overwrite="true">
                 </unzip>
-                <unzip src="${m2.localrepo}/${dllpath.prefix}/${hdf.dll}/${version}/${hdf.dll}-${version}.jar" dest="${path.native}" overwrite="true">
+                <unzip src="${m2.localrepo}/${dllpath.prefix}/${hdf.dll}/${hdf.version}/${hdf.dll}-${hdf.version}.jar" dest="${path.native}" overwrite="true">
                 </unzip>
-                <unzip src="${m2.localrepo}/${dllpath.prefix}/${jhdf.dll}/${version}/${jhdf.dll}-${version}.jar" dest="${path.native}" overwrite="true">
+                <unzip src="${m2.localrepo}/${dllpath.prefix}/${jhdf.dll}/${hdf.version}/${jhdf.dll}-${hdf.version}.jar" dest="${path.native}" overwrite="true">
                 </unzip>
-                 <unzip src="${m2.localrepo}/${dllpath.prefix}/${msvc.dll}/${version}/${msvc.dll}-${version}.jar" dest="${path.native}" overwrite="true">
+                 <unzip src="${m2.localrepo}/${dllpath.prefix}/${msvc.dll}/${msvc.version}/${msvc.dll}-${msvc.version}.jar" dest="${path.native}" overwrite="true">
                 </unzip>
                 <copy file="${path.native}\msvcp71.dll" tofile="${path.native}\deployedD.dll" failonerror="false"/>
                 <available file="${path.native}\deployedD.dll" property="sign.present"/>
