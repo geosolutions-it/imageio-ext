@@ -100,7 +100,7 @@
       <repository>
        <uniqueVersion>false</uniqueVersion>
        <id>geosolutions</id>
-       <url>ftp://geo-solutions.it</url>
+       <url>ftp://ftp.geo-solutions.it</url>
       </repository>
     </distributionManagement>
    </profile>
