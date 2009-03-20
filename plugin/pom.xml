@@ -89,7 +89,7 @@
        <modules>
         <module>gdalenvisat</module>
         <module>gdalerdasimg</module>
-	      <module>gdalnitf</module>
+	    <module>gdalnitf</module>
         <module>gdalehdr</module>
         <module>gdalenvihdr</module>
         <module>gdaljpeg</module>

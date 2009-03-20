@@ -53,11 +53,6 @@
   <dependencies>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
-      <artifactId>imageio-ext-gdal</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-gdalframework</artifactId>
       <version>${project.version}</version>
     </dependency>
