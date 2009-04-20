@@ -37,9 +37,11 @@ import javax.imageio.stream.ImageOutputStreamImpl;
 public class FileImageOutputStreamExtImpl extends ImageOutputStreamImpl
         implements FileImageOutputStreamExt {
 
-    protected EnhancedRandomAccessFile eraf;
+	private EnhancedRandomAccessFile eraf;
 
-    protected File file;
+    private File file;
+
+	private boolean isClosed;
 
     /**
      * A constructor which accepts a File as input.
@@ -150,8 +152,15 @@ public class FileImageOutputStreamExtImpl extends ImageOutputStreamImpl
      *                 in case something bad happens.
      */
     public void close() throws IOException {
-        super.close();
-        eraf.close();
+    	try{
+	    	if(!isClosed){
+		        super.close();
+		        eraf.close();
+	    	}
+    	}
+    	finally{
+    		isClosed=true;
+    	}
     }
 
     /**
