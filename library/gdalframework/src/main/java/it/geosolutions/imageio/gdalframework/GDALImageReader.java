@@ -820,7 +820,7 @@ public abstract class GDALImageReader extends ImageReader {
     /**
      * Allows resources to be released
      */
-    public synchronized void dispose() {
+    public void dispose() {
         super.dispose();
         synchronized (datasetMap) {
             // Closing imageInputStream
