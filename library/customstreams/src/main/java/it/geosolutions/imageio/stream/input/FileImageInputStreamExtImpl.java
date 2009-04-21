@@ -33,13 +33,15 @@ import javax.imageio.stream.ImageInputStreamImpl;
  * 
  * @author Simone Giannecchini, GeoSolutions
  */
-public final class FileImageInputStreamExtImpl extends ImageInputStreamImpl
+public  class FileImageInputStreamExtImpl extends ImageInputStreamImpl
         implements FileImageInputStreamExt {
 
     /** the associated {@link File}*/
-    protected File file;
+	private File file;
 
-    protected EnhancedRandomAccessFile eraf;
+    private EnhancedRandomAccessFile eraf;
+
+	private boolean isClosed;
 
     public byte readByte() throws IOException {
 
@@ -294,8 +296,15 @@ public final class FileImageInputStreamExtImpl extends ImageInputStreamImpl
      *                 in case something bad happens.
      */
     public void close() throws IOException {
-        super.close();
-        eraf.close();
+    	try{
+	    	if(!isClosed){
+		        super.close();
+		        eraf.close();
+	    	}
+    	}
+    	finally{
+    		isClosed=true;
+    	}
     }
 
     /**
