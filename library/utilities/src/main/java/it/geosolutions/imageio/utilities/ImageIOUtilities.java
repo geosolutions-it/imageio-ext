@@ -116,13 +116,13 @@ public class ImageIOUtilities {
         displayMetadata(root, 0);
     }
 
-    static void indent(int level) {
+    private static void indent(int level) {
         for (int i = 0; i < level; i++) {
             System.out.print("  ");
         }
     }
 
-    static void displayMetadata(Node node, int level) {
+    private static void displayMetadata(Node node, int level) {
         indent(level); // emit open tag
         System.out.print("<" + node.getNodeName());
         NamedNodeMap map = node.getAttributes();
@@ -326,4 +326,49 @@ public class ImageIOUtilities {
 		return list;
 	}
     
+    /**
+     * Replace the original provider with name originalProviderName with the provider with name 
+     * customProviderName for the class providerClass and for the provided format .
+     * @param providerClass the {@link Class} for the providers.
+     * @param customProviderName the name of the provider we want to use as new preferred provider.
+     * @param originalProviderName the name of the provider we want to deregister.
+     * @param format the format for this provi
+     * @return <code>true</code> if we find both of the providers and the replacement succeed, <code>false</code> otherwise.
+     */
+    public static boolean replaceProvider(
+    		final Class<? extends ImageReaderWriterSpi> providerClass,
+    		final String customProviderName,
+    		final String originalProviderName,
+    		final String format){
+		// now we need to set the order 
+		final IIORegistry registry = IIORegistry.getDefaultInstance();
+		ImageReaderWriterSpi standard = null,custom = null;
+
+        for (final Iterator<? extends ImageReaderWriterSpi> it = registry.getServiceProviders(providerClass, false); it.hasNext();) {
+            final ImageReaderWriterSpi provider = it.next();
+            final String providerClassName=provider.getClass().getName();
+            final String[] formats = provider.getFormatNames();
+            for (int i=0; i<formats.length; i++) {
+                if (formats[i].equalsIgnoreCase(format)) {
+                    if (providerClassName.equalsIgnoreCase(originalProviderName)) {
+                    	standard = provider;
+                    } else 
+                    	if (providerClassName.equalsIgnoreCase(customProviderName)) {
+                        custom = provider;
+                    }
+                    break;
+                }
+            }
+        }
+        if (standard!=null && custom!=null) 
+        {
+        	if(ImageReaderSpi.class.isAssignableFrom(standard.getClass()))
+        		return registry.setOrdering(ImageReaderSpi.class, (ImageReaderSpi)custom,(ImageReaderSpi) standard);	
+        	else
+        		return registry.setOrdering(ImageWriterSpi.class, (ImageWriterSpi)custom,(ImageWriterSpi) standard);	
+        }
+
+        //we did not find them
+        return false;
+	}    
 }
