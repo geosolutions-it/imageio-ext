@@ -26,11 +26,6 @@
   <dependencies>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
-      <artifactId>imageio-ext-customstreams</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-test-data</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
