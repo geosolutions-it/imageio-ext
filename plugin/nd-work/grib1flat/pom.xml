@@ -4,18 +4,18 @@
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-ndplugins</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>${version.number}</version>
   </parent>
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>grib1-flat</artifactId>
   <packaging>jar</packaging>
-  <version>1.1-SNAPSHOT</version>
+  <version>${version.number}</version>
   <name>GRIB1 - FLAT Plugin</name>
   <dependencies>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-ndplugin</artifactId>
-      <version>1.1-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
