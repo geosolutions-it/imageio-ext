@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <project xmlns="http://maven.apache.org/POM/4.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                               http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <!--                    -->
+  <!--    PROPERTIES      -->
+  <!--                    -->
+  <properties>
+    <path.native>${env.JAVA_HOME}/bin</path.native>
+    <extensive.tests>false</extensive.tests>
+    <interactive.tests>false</interactive.tests>
+    <test.maxHeapSize>512M</test.maxHeapSize>
+  </properties>
+
+  <!-- Profiles set on the command-line overwrite default properties. -->
+  <profiles>
+    <profile>
+      <id>extensive.tests</id>
+      <properties>
+        <extensive.tests>true</extensive.tests>
+      </properties>
+    </profile>
+    <profile>
+      <id>interactive.tests</id>
+      <properties>
+        <interactive.tests>true</interactive.tests>
+      </properties>
+    </profile>
+  </profiles>
+
+
+  <!--                                                             -->
+  <!--     Project Description                                     -->
+  <!--                                                             -->
+  <groupId>it.geosolutions.imageio-ext</groupId>
+  <artifactId>imageio-ext-ndplugins</artifactId>
+  <packaging>pom</packaging>
+  <version>1.1-SNAPSHOT</version>
+  <name>ND Plugins project</name>
+
+  <description>Container for tools and modules for nd plugins</description>
+
+  <organization>
+    <name>GeoSolutions</name>
+    <url>http://www.geo-solutions.it</url>
+  </organization>
+  <inceptionYear>2006</inceptionYear>
+
+  <licenses>
+    <license>
+      <name>Lesser General Public License (LGPL)</name>
+      <url>http://www.gnu.org/copyleft/lesser.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <!-- ======================================================== -->
+  <!--                 Deployment Repository                    -->
+  <!-- ======================================================== -->
+ 
+  <!--..................................-->
+  <!--      Refractions Repository      -->
+  <!--..................................-->
+  <distributionManagement>
+    <repository>
+      <uniqueVersion>false</uniqueVersion>
+      <id>refractions</id>
+      <name>Refractions Research - Maven 2 repo</name>
+      <url>dav:http://lists.refractions.net/m2</url>
+    </repository>
+  </distributionManagement>
+
+  <!--                                                                       -->
+  <!--     Developers and contributors.                                      -->
+  <!--                                                                       -->
+  <developers>
+    <developer>
+      <name>Alessio Fabiani</name>
+      <id>AlFa</id>
+      <email>alessio.fabiani@gmail.com</email>
+      <organization>GeoSolutions</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Simone Giannecchini</name>
+      <id>Simboss</id>
+      <email>simboss1@gmail.com</email>
+      <organization>GeoSolutions</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Daniele Romagnoli</name>
+      <id>Daniele</id>
+      <email>dany.geotools@gmail.com</email>
+      <organization>GeoSolutions</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+  </developers>
+
+  <!--                          -->
+  <!--    Plugin Repositories   -->
+  <!--                          -->
+  <pluginRepositories>
+    <pluginRepository>
+      <id>codehaus.org</id>
+      <name>CodeHaus Plugin Snapshots</name>
+      <url>http://snapshots.repository.codehaus.org</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+      <id>refractions</id>
+      <name>Refractions Research Maven 2 Repository</name>
+      <url>http://lists.refractions.net/m2</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+
+
+  <!--      Repositories        -->
+  <!--                          -->
+  <!--                          -->
+  <repositories>
+     <repository>
+      <id>geosolutions</id>
+      <name>GeoSolutions libraries repository</name>
+      <url>http://mvn.geo-solutions.it/</url>
+    </repository>
+    <repository>
+      <id>ibiblio</id>
+      <name>ibiblio</name>
+      <url>http://www.ibiblio.org/maven2/</url>
+    </repository>
+    <repository>
+      <id>codehaus</id>
+      <name>Codehaus maven repository</name>
+      <url>http://repository.codehaus.org/</url>
+    </repository>
+    <repository>
+      <id>refractions</id>
+      <name>Refractions Research Maven 2 Repository</name>
+      <url>http://lists.refractions.net/m2</url>
+    </repository>
+    <repository>
+      <id>codehaus.org</id>
+      <name>CodeHaus Snapshots</name>
+      <url>http://snapshots.repository.codehaus.org</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <!--                                                                       -->
+  <!--     Dependencies management.                                          -->
+  <!--     If a POM declares one of those dependencies, then it will use     -->
+  <!--     the version specified here. Otherwise, those dependencies are     -->
+  <!--     ignored.                                                          -->
+  <!--                                                                       -->
+  <dependencies>
+    <!-- Tests or legacy -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <!--                                                             -->
+  <!--                                                             -->
+  <!--     Build Configuration                                     -->
+  <!--                                                             -->
+  <build>
+
+    <!-- ========================================================= -->
+    <!--   Maven plugins dependencies management.                  -->
+    <!--   It should not be needed since Maven select by default   -->
+    <!--   the latest plugins. Unfortunatly, experience shows that -->
+    <!--   new plugin releases sometime introduce new bugs that    -->
+    <!--   break our build. So it is saferto specify plugin        -->
+    <!--   versions that are known to work.  This list is in       -->
+    <!--   alphabetical order for easier comparaison with latest   -->
+    <!--   plugins at                                              -->
+    <!--   http://www.ibiblio.org/maven2/org/apache/maven/plugins/ -->
+    <!-- ========================================================= -->
+    <pluginManagement>
+      <plugins>
+	<plugin>
+	 <groupId>org.apache.maven.plugins</groupId>
+	 <artifactId>maven-eclipse-plugin</artifactId>
+	 <version>2.5</version>
+        </plugin>
+	<plugin>
+	  <groupId>org.apache.maven.plugins</groupId>
+	  <artifactId>maven-cobertura-plugin</artifactId>
+	  <version>1.9.1</version>
+	</plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.2</version>
+          <!-- Current version is 2.3, but it cause the following exception:
+                java.lang.NoClassDefFoundError: com/sun/medialib/mlib/Image
+                    at com.sun.media.jai.mlib.MediaLibAccessor.setUseMlib(MediaLibAccessor.java:245)
+                    at com.sun.media.jai.mlib.MlibAffineRIF.create(MlibAffineRIF.java:71)
+          -->
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>2.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>2.0-beta-5</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <!-- ======================================================= -->
+      <!--     Compilation.                                        -->
+      <!-- ======================================================= -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>  <!-- The -source argument for the Java compiler. -->
+          <target>1.5</target>  <!-- The -target argument for the Java compiler. -->
+          <debug>true</debug>   <!-- Whether to include debugging information.   -->
+          <encoding>ISO-8859-1</encoding> <!-- The -encoding argument for the Java compiler. -->
+        </configuration>
+      </plugin>
+
+
+
+      <!-- ======================================================= -->
+      <!--     Tests.                                              -->
+      <!-- ======================================================= -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <includes>
+            <include>**/*Test.java</include>
+          </includes>
+          <forkMode>once</forkMode>
+          <argLine>-Xmx${test.maxHeapSize} -enableassertions -Dorg.geotools.test.extensive=${extensive.tests} -Dorg.geotools.test.interactive=${interactive.tests}</argLine>
+         </configuration>
+      </plugin>
+    </plugins>
+  
+  <!-- ======================================================== -->
+  <!--              Extensions settings for Deployment          -->
+  <!-- ======================================================== -->
+   <extensions>
+  
+    <!--....................................-->
+    <!-- java.net maven2 (using wagon svn)  -->
+    <!--....................................-->
+    <!-- <extension>                             -->
+    <!--  <groupId>org.jvnet.wagon-svn</groupId> -->
+    <!--  <artifactId>wagon-svn</artifactId>     -->
+    <!--  <version>RELEASE</version>             -->
+    <!-- </extension>                            -->
+   
+    
+    <!--....................................-->
+    <!-- Refractions (using wagon webdav)   -->
+    <!--....................................-->
+    <extension>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-webdav</artifactId>
+      <version>1.0-beta-2</version>
+    </extension>
+   </extensions>
+  </build>
+
+  <!--                                                             -->
+  <!--     Modules for the build in approximate dependency order   -->
+  <!--                                                             -->
+  <modules>
+    <module>ndpluginflat</module>
+    <module>grib1flat</module>
+    <module>hdfflat</module>
+    <module>netcdfflat</module>
+  </modules>
+</project>

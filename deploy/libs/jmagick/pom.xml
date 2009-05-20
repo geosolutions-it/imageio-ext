@@ -13,12 +13,12 @@
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-nativelibsdeployer</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>${version.number}</version>
   </parent>
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-jmagickdeployer</artifactId>
   <packaging>pom</packaging>
-  <version>1.1-SNAPSHOT</version>
+  <version>${version.number}</version>
   <name>-JMagick Native Libraries Dependency Deployer</name>
 
   <scm>
@@ -58,7 +58,7 @@
    <dependency>
      <groupId>it.geosolutions.imageio-ext</groupId>
      <artifactId>imageio-ext-jmagickdll</artifactId>
-     <version>1.1-SNAPSHOT</version>
+     <version>${version.number}</version>
     </dependency>
     </dependencies>
     <build>
@@ -98,21 +98,6 @@
             </execution>
           </executions>
          </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-install-plugin</artifactId>
-          <version>2.1</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>2.0-beta-5</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-eclipse-plugin</artifactId>
-          <version>2.3</version>
-        </plugin>
       </plugins>
     </build>
   </profile>

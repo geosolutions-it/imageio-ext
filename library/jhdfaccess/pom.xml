@@ -4,12 +4,12 @@
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-library</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>${version.number}</version>
   </parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-jhdfaccess</artifactId>
     <packaging>jar</packaging>
-    <version>1.1-SNAPSHOT</version>
+    <version>${version.number}</version>
   <name>Revisited JHDF Access Libraries</name>
  
    <scm>
@@ -33,7 +33,7 @@
   <dependency>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-test-data</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>${project.version}</version>
     <scope>test</scope>
   </dependency>
   <dependency>

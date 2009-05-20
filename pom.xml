@@ -15,16 +15,16 @@
     <extensive.tests>false</extensive.tests>
     <interactive.tests>false</interactive.tests>
     <test.maxHeapSize>512M</test.maxHeapSize>
+    <version.number>1.1-SNAPSHOT</version.number>
   </properties>
 
   <!-- ======================================================== -->
   <!--                    Project Description                   -->
   <!-- ======================================================== -->
-  
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext</artifactId>
   <packaging>pom</packaging>
-  <version>1.1-SNAPSHOT</version>
+  <version>${version.number}</version>
   <name>GeoSolutions Image I/O-Extensions Library Root Project</name>
 
   <scm>
@@ -118,15 +118,15 @@
       </properties>
     </profile>
     <profile>
-        <id>release</id>
-        <activation>
-          <property>
-            <name>release</name>
-          </property>
-        </activation>
-        <modules>
-          <module>release</module>
-        </modules>
+	<id>release</id>
+		<activation>
+			<property>
+				<name>release</name>
+			</property>
+		</activation>
+	<modules>
+		<module>release</module>
+	</modules>
   </profile>
   </profiles>
 
@@ -283,7 +283,7 @@
     <developer>
       <name>Alessio Fabiani</name>
       <id>AlFa</id>
-      <email>alessio.fabiani@gmail.com</email>
+      <email>alessio.fabiani@geo-solutions.it</email>
       <organization>GeoSolutions</organization>
       <roles>
         <role>Java Developer</role>
@@ -292,7 +292,7 @@
     <developer>
       <name>Simone Giannecchini</name>
       <id>Simboss</id>
-      <email>simboss1@gmail.com</email>
+      <email>simone.giannecchini@geo-solutions.it</email>
       <organization>GeoSolutions</organization>
       <roles>
         <role>Java Developer</role>
@@ -302,7 +302,7 @@
     <developer>
       <name>Daniele Romagnoli</name>
       <id>Daniele</id>
-      <email>dany.geotools@gmail.com</email>
+      <email>daniele.romagnoli@geo-solutions.it</email>
       <organization>GeoSolutions</organization>
       <roles>
         <role>Java Developer</role>
@@ -429,11 +429,16 @@
     <!-- ========================================================= -->
     <pluginManagement>
       <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-clover-plugin</artifactId>
-          <version>2.3</version>
+	<plugin>
+	 <groupId>org.apache.maven.plugins</groupId>
+	 <artifactId>maven-eclipse-plugin</artifactId>
+	 <version>2.5</version>
         </plugin>
+	<plugin>
+	  <groupId>org.apache.maven.plugins</groupId>
+	  <artifactId>maven-cobertura-plugin</artifactId>
+	  <version>1.9.1</version>
+	</plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>

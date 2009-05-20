@@ -77,12 +77,13 @@ import it.geosolutions.imageio.utilities.ImageIOUtilities;
 
 import java.util.Iterator;
 import java.util.Locale;
+
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriter;
-import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageReaderWriterSpi;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.spi.ServiceRegistry;
+
 import com.sun.media.imageioimpl.common.PackageUtil;
 
 public class TIFFImageWriterSpi extends ImageWriterSpi {
