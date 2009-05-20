@@ -10,12 +10,12 @@
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-deployer</artifactId>
-    <version>${version.number}</version>
+    <version>1.1-SNAPSHOT</version>
   </parent>
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-jardeployer</artifactId>
   <packaging>pom</packaging>
-  <version>${version.number}</version>
+  <version>1.1-SNAPSHOT</version>
   <name>-JAR Dependency Deployer</name>
   <scm>
     <connection>
@@ -125,7 +125,7 @@
                 </exec>
                 <exec  executable="cmd">
                   <arg value="/c"/>
-                  <arg value="mvn install:install-file -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-swanheaderschema -Dversion=${version.number} -Dpackaging=jar -Dfile=./SwanHeaderSchema.jar"/>
+                  <arg value="mvn install:install-file -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-swanheaderschema -Dversion=1.1-SNAPSHOT -Dpackaging=jar -Dfile=./SwanHeaderSchema.jar"/>
                 </exec>
                 <exec  executable="cmd">
                   <arg value="/c"/>

@@ -7,7 +7,7 @@
   <parent>
 	<groupId>it.geosolutions.imageio-ext</groupId>
 	<artifactId>imageio-ext-plugin</artifactId>
-	<version>${version.number}</version>
+	<version>1.1-SNAPSHOT</version>
   </parent>
 
   <!--                                                             -->
@@ -16,7 +16,7 @@
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-ndplugins</artifactId>
   <packaging>pom</packaging>
-  <version>${version.number}</version>
+  <version>1.1-SNAPSHOT</version>
   <name>ND Plugins project</name>
   <description>Container for tools and modules for nd plugins</description>
   <scm>

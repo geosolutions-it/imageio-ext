@@ -4,13 +4,13 @@
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId> 
     <artifactId>imageio-ext-ndplugins</artifactId> 
-    <version>1.1-SNAPSHOT</version>
+    <version>${version.number}</version>
   </parent>
   <groupId>it.geosolutions.imageio-ext</groupId> 
   <artifactId>netcdf-converters</artifactId>
   <name>netCDF - Converters</name>
   <packaging>jar</packaging>
-  <version>1.1-SNAPSHOT</version>
+  <version>${version.number}</version>
    <dependencies>
     <dependency>
       <groupId>java3d</groupId>
@@ -26,7 +26,7 @@
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId> 
       <artifactId>netcdf-flat</artifactId>
-      <version>1.1-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
