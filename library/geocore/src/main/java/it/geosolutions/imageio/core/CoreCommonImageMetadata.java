@@ -43,7 +43,7 @@ import org.w3c.dom.Node;
 public abstract class CoreCommonImageMetadata extends IIOMetadata {
 
     /** The LOGGER for this class. */
-    private static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.core");
+    private static final Logger LOGGER = Logger.getLogger(CoreCommonImageMetadata.class.toString());
 
     /**
      * The name of the native metadata format for this object.
@@ -99,7 +99,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
      * <LI>elevation: GCPZ -> elevation of GCP in Georeferenced Space</LI>
      * </UL>
      */
-    private List gcps = Collections.EMPTY_LIST;
+    private List<GCP> gcps = Collections.emptyList();
 
     /** The raster width */
     private int width;
@@ -231,12 +231,12 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
         // ////////////////////////////////////////////////////////////////////
         if (gcpNumber > 0) {
             IIOMetadataNode nodeGCPs = new IIOMetadataNode("GCPS");
-            final List gcps = getGcps();
+            final List<GCP> gcps = getGcps();
             if (gcps != null && !gcps.isEmpty()) {
-                final Iterator it = gcps.iterator();
+                final Iterator<GCP> it = gcps.iterator();
                 while (it.hasNext()) {
                     node = new IIOMetadataNode("GCP");
-                    final GCP gcp = (GCP) it.next();
+                    final GCP gcp = it.next();
                     node.setAttribute("x", Double.toString(gcp.getGCPPixel()));
                     node.setAttribute("y", Double.toString(gcp.getGCPLine()));
                     node.setAttribute("id", gcp.getId());
@@ -533,7 +533,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
         this.numOverviews = numOverviews;
     }
 
-    public void setGcps(List gcps) {
+    public void setGcps(final List<GCP> gcps) {
         this.gcps = gcps;
     }
 
@@ -553,7 +553,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     }
 
     /** Returns the Ground Control Points */
-    public synchronized List getGcps() {
+    public synchronized List<GCP> getGcps() {
         return Collections.unmodifiableList(gcps);
     }
 
