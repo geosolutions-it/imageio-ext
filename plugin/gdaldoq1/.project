@@ -1,0 +1,13 @@
+<projectDescription>
+  <name>imageio-ext-gdaldoq1-1.1-SNAPSHOT</name>
+  <comment>Image I/O-Extensions plugin modules.</comment>
+  <projects/>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+  </natures>
+</projectDescription>
