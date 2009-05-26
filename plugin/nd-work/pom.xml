@@ -14,7 +14,7 @@
   <!--     Project Description                                     -->
   <!--                                                             -->
   <groupId>it.geosolutions.imageio-ext</groupId>
-  <artifactId>imageio-ext-ndplugins</artifactId>
+  <artifactId>imageio-ext-nd-work</artifactId>
   <packaging>pom</packaging>
   <version>1.1-SNAPSHOT</version>
   <name>ND Plugins project</name>
@@ -50,22 +50,6 @@
     </license>
   </licenses>
 
-  <!-- ======================================================== -->
-  <!--                 Deployment Repository                    -->
-  <!-- ======================================================== -->
- 
-  <!--..................................-->
-  <!--      Refractions Repository      -->
-  <!--..................................-->
-  <distributionManagement>
-    <repository>
-      <uniqueVersion>false</uniqueVersion>
-      <id>refractions</id>
-      <name>Refractions Research - Maven 2 repo</name>
-      <url>dav:http://lists.refractions.net/m2</url>
-    </repository>
-  </distributionManagement>
-
   <!--                                                                       -->
   <!--     Developers and contributors.                                      -->
   <!--                                                                       -->
@@ -98,108 +82,6 @@
       </roles>
     </developer>
   </developers>
-
-  <!--                          -->
-  <!--    Plugin Repositories   -->
-  <!--                          -->
-  <pluginRepositories>
-    <pluginRepository>
-      <id>codehaus.org</id>
-      <name>CodeHaus Plugin Snapshots</name>
-      <url>http://snapshots.repository.codehaus.org</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </pluginRepository>
-    <pluginRepository>
-      <id>refractions</id>
-      <name>Refractions Research Maven 2 Repository</name>
-      <url>http://lists.refractions.net/m2</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </pluginRepository>
-  </pluginRepositories>
-
-
-  <!--      Repositories        -->
-  <!--                          -->
-  <!--                          -->
-  <repositories>
-     <repository>
-      <id>geosolutions</id>
-      <name>GeoSolutions libraries repository</name>
-      <url>http://mvn.geo-solutions.it/</url>
-    </repository>
-    <repository>
-      <id>ibiblio</id>
-      <name>ibiblio</name>
-      <url>http://www.ibiblio.org/maven2/</url>
-    </repository>
-    <repository>
-      <id>codehaus</id>
-      <name>Codehaus maven repository</name>
-      <url>http://repository.codehaus.org/</url>
-    </repository>
-    <repository>
-      <id>refractions</id>
-      <name>Refractions Research Maven 2 Repository</name>
-      <url>http://lists.refractions.net/m2</url>
-    </repository>
-    <repository>
-      <id>codehaus.org</id>
-      <name>CodeHaus Snapshots</name>
-      <url>http://snapshots.repository.codehaus.org</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-
-  <!-- =========================================================== -->
-  <!--     Build Configuration                                     -->
-  <!--         copies all JARs in a single directory.              -->
-  <!-- =========================================================== -->
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>dependency-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>install</phase>
-              <goals>
-                <goal>copy-dependencies</goal>
-              </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>install</phase>
-            <configuration>
-              <tasks>
-                <delete>
-                  <fileset dir="${project.build.directory}/dependency"/>
-                </delete>
-              </tasks>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins> 
-  </build>
 
   <!--                                                             -->
   <!--     Modules for the build in approximate dependency order   -->

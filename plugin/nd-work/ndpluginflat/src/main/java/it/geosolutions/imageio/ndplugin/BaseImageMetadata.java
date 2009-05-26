@@ -78,11 +78,10 @@ public abstract class BaseImageMetadata extends CoreCommonImageMetadata {
         }
     }
 
-    protected void setMembers(BaseImageReader imageReader) throws IOException {
+    protected void setMembers(final BaseImageReader imageReader) throws IOException {
         // Retrieving raster properties
         if (imageReader == null)
-            throw new IllegalArgumentException(
-                    "Provided BaseImageReader is null");
+            throw new NullPointerException("Provided BaseImageReader is null");
         setWidth(imageReader.getWidth(imageIndex));
         setHeight(imageReader.getHeight(imageIndex));
         setTileWidth(imageReader.getTileWidth(imageIndex));

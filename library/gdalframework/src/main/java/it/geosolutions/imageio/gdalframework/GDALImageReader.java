@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageio.gdalframework;
 
+import it.geosolutions.imageio.core.GCP;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 import it.geosolutions.imageio.stream.input.URIImageInputStream;
 
@@ -79,10 +80,9 @@ import org.gdal.gdalconst.gdalconstConstants;
 public abstract class GDALImageReader extends ImageReader {
 
     /** The LOGGER for this class. */
-    private static final Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.gdalframework");
+    private static final Logger LOGGER = Logger.getLogger(GDALImageReader.class.toString());
 
-    public void setInput(Object input, boolean seekForwardOnly) {
+    public void setInput(final Object input,final  boolean seekForwardOnly) {
         this.setInput(input, seekForwardOnly, false);
     }
 
@@ -113,7 +113,7 @@ public abstract class GDALImageReader extends ImageReader {
      * {@link HashMap} containing couples (datasetName,
      * {@link GDALCommonIIOImageMetadata}).
      */
-    private Map datasetMap = Collections.synchronizedMap(new HashMap(10));
+    private Map<String,GDALCommonIIOImageMetadata> datasetMetadataMap = Collections.synchronizedMap(new HashMap<String,GDALCommonIIOImageMetadata>());
 
     /**
      * Retrieves a {@link GDALCommonIIOImageMetadata} by index.
@@ -123,18 +123,17 @@ public abstract class GDALImageReader extends ImageReader {
      *                {@link GDALCommonIIOImageMetadata}.
      * @return a {@link GDALCommonIIOImageMetadata}
      */
-    public GDALCommonIIOImageMetadata getDatasetMetadata(int imageIndex) {
+    public GDALCommonIIOImageMetadata getDatasetMetadata(final int imageIndex) {
         checkImageIndex(imageIndex);
         // getting dataset name
         final String datasetName = datasetNames[imageIndex];
-        synchronized (datasetMap) {
-            if (datasetMap.containsKey(datasetName))
-                return ((GDALCommonIIOImageMetadata) datasetMap
-                        .get(datasetName));
+        synchronized (datasetMetadataMap) {
+            if (datasetMetadataMap.containsKey(datasetName))
+                return datasetMetadataMap.get(datasetName);
             else {
                 // Add a new GDALCommonIIOImageMetadata to the HashMap
-                GDALCommonIIOImageMetadata datasetMetadata = createDatasetMetadata(datasetName);
-                datasetMap.put(datasetName, datasetMetadata);
+                final GDALCommonIIOImageMetadata datasetMetadata = createDatasetMetadata(datasetName);
+                datasetMetadataMap.put(datasetName, datasetMetadata);
                 return datasetMetadata;
             }
         }
@@ -148,7 +147,7 @@ public abstract class GDALImageReader extends ImageReader {
      *                The {@link GDALImageReaderSpi} to use for building this
      *                <code>GDALImageReader</code>.
      */
-    public GDALImageReader(GDALImageReaderSpi originatingProvider) {
+    public GDALImageReader(final GDALImageReaderSpi originatingProvider) {
         super(originatingProvider);
     }
 
@@ -160,12 +159,10 @@ public abstract class GDALImageReader extends ImageReader {
      *                The {@link GDALImageReaderSpi} to use for building this
      *                <code>GDALImageReader</code>.
      */
-    public GDALImageReader(GDALImageReaderSpi originatingProvider,
-            int numSubdatasets) {
+    public GDALImageReader(final GDALImageReaderSpi originatingProvider,final int numSubdatasets) {
         super(originatingProvider);
         if (numSubdatasets < 0)
-            throw new IllegalArgumentException(
-                    "The provided number of sub datasets is invalid");
+            throw new IllegalArgumentException("The provided number of sub datasets is invalid");
         this.nSubdatasets = numSubdatasets;
     }
 
@@ -199,13 +196,12 @@ public abstract class GDALImageReader extends ImageReader {
             // The specified imageIndex is not valid.
             // Retrieving the valid image index range.
             final int maxImageIndex = nSubdatasets;
-            final StringBuffer sb = new StringBuffer(
-                    "Illegal imageIndex specified = ").append(imageIndex)
+            final StringBuilder sb = new StringBuilder("Illegal imageIndex specified = ")
+            		.append(imageIndex)
                     .append(", while the valid imageIndex");
             if (maxImageIndex > 0)
                 // There are N Subdatasets.
-                sb.append(" range should be (0,").append(maxImageIndex).append(
-                        ")!!");
+                sb.append(" range should be (0,").append(maxImageIndex).append( ")!!");
             else
                 // Only the imageIndex 0 is valid.
                 sb.append(" should be 0!");
@@ -221,11 +217,11 @@ public abstract class GDALImageReader extends ImageReader {
      * @return <code>true</code> if the source of this reader has several
      *         subDatasets.
      */
-    private boolean initialize() {
+    @SuppressWarnings("unchecked")
+	private boolean initialize() {
         if (!GDALUtilities.isGDALAvailable())
-            throw new IllegalStateException(
-                    "GDAL native libraries are not available.");
-        synchronized (datasetMap) {
+            throw new IllegalStateException("GDAL native libraries are not available.");
+        synchronized (datasetMetadataMap) {
             if (!isInitialized) {
                 // Retrieving the fileName in order to open the main dataset
                 
@@ -239,8 +235,7 @@ public abstract class GDALImageReader extends ImageReader {
                         mainDatasetName = uri.toString();
                     }
                 } 
-                final Dataset mainDataset = GDALUtilities.acquireDataSet(
-                        mainDatasetName, gdalconstConstants.GA_ReadOnly);
+                final Dataset mainDataset = GDALUtilities.acquireDataSet( mainDatasetName, gdalconstConstants.GA_ReadOnly);
                 if (mainDataset == null)
                     return false;
                 // /////////////////////////////////////////////////////////////
@@ -248,8 +243,7 @@ public abstract class GDALImageReader extends ImageReader {
                 // Listing available subdatasets
                 //
                 // /////////////////////////////////////////////////////////////
-                final List subdatasets = mainDataset
-                        .GetMetadata_List(GDALUtilities.GDALMetadataDomain.SUBDATASETS);
+                final List subdatasets = mainDataset.GetMetadata_List(GDALUtilities.GDALMetadataDomain.SUBDATASETS);
 
                 // /////////////////////////////////////////////////////////////
                 //
@@ -263,8 +257,7 @@ public abstract class GDALImageReader extends ImageReader {
 
                 // /////////////////////////////////////////////////////////////
                 //
-                // Some formats supporting subdatasets may have no
-                // subdatasets.
+                // Some formats supporting subdatasets may have no subdatasets.
                 // As an instance, the HDF4ImageReader may read HDF4Images
                 // which are single datasets containing no subdatasets.
                 // Thus, theDataset is simply the main dataset.
@@ -275,19 +268,16 @@ public abstract class GDALImageReader extends ImageReader {
                     datasetNames = new String[1];
                     datasetNames[0] = mainDatasetName;
                     final GDALCommonIIOImageMetadata myItem = createDatasetMetadata(datasetNames[0]);
-                    datasetMap.put(datasetNames[0], myItem);
+                    datasetMetadataMap.put(datasetNames[0], myItem);
                 } else {
                     datasetNames = new String[nSubdatasets + 1];
                     for (int i = 0; i < nSubdatasets; i++) {
-                        final String subdatasetName = (subdatasets.get(i * 2))
-                                .toString();
-                        final int nameStartAt = subdatasetName
-                                .lastIndexOf("_NAME=") + 6;
+                        final String subdatasetName = (subdatasets.get(i * 2)).toString();
+                        final int nameStartAt = subdatasetName.lastIndexOf("_NAME=") + 6;
                         datasetNames[i] = subdatasetName.substring(nameStartAt);
                     }
                     datasetNames[nSubdatasets] = mainDatasetName;
-                    datasetMap.put(mainDatasetName, createDatasetMetadata(
-                            mainDataset, mainDatasetName));
+                    datasetMetadataMap.put(mainDatasetName, createDatasetMetadata(mainDataset, mainDatasetName));
                     subdatasets.clear();
                 }
                 isInitialized = true;
@@ -307,8 +297,7 @@ public abstract class GDALImageReader extends ImageReader {
      * @param datasetName
      *                the name of the dataset
      */
-    protected GDALCommonIIOImageMetadata createDatasetMetadata(
-            String datasetName) {
+    protected GDALCommonIIOImageMetadata createDatasetMetadata(final String datasetName) {
         return new GDALCommonIIOImageMetadata(datasetName);
     }
 
@@ -316,10 +305,8 @@ public abstract class GDALImageReader extends ImageReader {
      * Build a proper {@link GDALCommonIIOImageMetadata} given an input dataset
      * as well as the file name containing such a dataset.
      */
-    protected GDALCommonIIOImageMetadata createDatasetMetadata(
-            Dataset mainDataset, String mainDatasetFileName) {
-        return new GDALCommonIIOImageMetadata(mainDataset, mainDatasetFileName,
-                false);
+    protected GDALCommonIIOImageMetadata createDatasetMetadata(final Dataset mainDataset, String mainDatasetFileName) {
+        return new GDALCommonIIOImageMetadata(mainDataset, mainDatasetFileName,false);
     }
 
     /**
@@ -489,11 +476,11 @@ public abstract class GDALImageReader extends ImageReader {
             } else {
                 // The read operation was not successfully computed.
                 // Showing error messages.
-                LOGGER.info(new StringBuffer("Last error: ").append(
+                LOGGER.info(new StringBuilder("Last error: ").append(
                         gdal.GetLastErrorMsg()).toString());
-                LOGGER.info(new StringBuffer("Last error number: ").append(
+                LOGGER.info(new StringBuilder("Last error number: ").append(
                         gdal.GetLastErrorNo()).toString());
-                LOGGER.info(new StringBuffer("Last error type: ").append(
+                LOGGER.info(new StringBuilder("Last error type: ").append(
                         gdal.GetLastErrorType()).toString());
                 GDALUtilities.closeDataSet(dataset);
                 throw new RuntimeException(gdal.GetLastErrorMsg());
@@ -738,8 +725,7 @@ public abstract class GDALImageReader extends ImageReader {
             try {
                 imageInputStream = ImageIO.createImageInputStream(input);
             } catch (IOException e) {
-                throw new RuntimeException(
-                        "Failed to create a valid input stream ", e);
+                throw new RuntimeException("Failed to create a valid input stream ", e);
             }
         }
         // //
@@ -805,12 +791,13 @@ public abstract class GDALImageReader extends ImageReader {
         if (isInputDecodable)
             super.setInput(imageInputStream, seekForwardOnly, ignoreMetadata);
         else {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             if (imageInputStream == null)
-                sb.append(
-                        "Unable to create a valid ImageInputStream "
-                                + "for the provided input:").append(
-                        GDALUtilities.NEWLINE).append(input.toString());
+            {
+                sb.append("Unable to create a valid ImageInputStream for the provided input:");
+                sb.append(GDALUtilities.NEWLINE);
+                sb.append(input.toString());
+            }
             else
                 sb.append("The Provided input is not supported by this reader");
             throw new RuntimeException(sb.toString());
@@ -822,7 +809,7 @@ public abstract class GDALImageReader extends ImageReader {
      */
     public void dispose() {
         super.dispose();
-        synchronized (datasetMap) {
+        synchronized (datasetMetadataMap) {
             // Closing imageInputStream
             if (imageInputStream != null)
                 try {
@@ -833,7 +820,7 @@ public abstract class GDALImageReader extends ImageReader {
             imageInputStream = null;
             
             // Cleaning HashMap
-            datasetMap.clear();
+            datasetMetadataMap.clear();
             datasetNames = null;
         }
     }
@@ -841,7 +828,7 @@ public abstract class GDALImageReader extends ImageReader {
     /**
      * Reset main values
      */
-    public synchronized void reset() {
+    public void reset() {
         super.setInput(null, false, false);
         dispose();
         isInitialized = false;
@@ -863,11 +850,10 @@ public abstract class GDALImageReader extends ImageReader {
      *         which the given image may be decoded, in the form of
      *         <code>ImageTypeSpecifiers</code>s
      */
-    public Iterator getImageTypes(int imageIndex) throws IOException {
-        final List l = new java.util.ArrayList(4);
+    public Iterator<ImageTypeSpecifier> getImageTypes(int imageIndex) throws IOException {
+        final List<ImageTypeSpecifier> l = new java.util.ArrayList<ImageTypeSpecifier>(4);
         final GDALCommonIIOImageMetadata item = getDatasetMetadata(imageIndex);
-        imageType = new ImageTypeSpecifier(item.getColorModel(), item
-                .getSampleModel());
+        imageType = new ImageTypeSpecifier(item.getColorModel(), item.getSampleModel());
         l.add(imageType);
         return l.iterator();
     }
@@ -892,8 +878,7 @@ public abstract class GDALImageReader extends ImageReader {
      *                 if an error occurs when acquiring access to the
      *                 underlying datasource
      */
-    public BufferedImage read(int imageIndex, ImageReadParam param)
-            throws IOException {
+    public BufferedImage read(final int imageIndex,final  ImageReadParam param)throws IOException {
 
         // //
         //
@@ -939,8 +924,8 @@ public abstract class GDALImageReader extends ImageReader {
         // //
         checkReadParamBandSettings(imageReadParam, itemNBands, nDestBands);
         int[] srcBands = imageReadParam.getSourceBands();
-        int[] destBands = imageReadParam.getDestinationBands();
-
+//        int[] destBands = imageReadParam.getDestinationBands();
+//
         // //
         //
         // Third, destination image check
@@ -1159,9 +1144,9 @@ public abstract class GDALImageReader extends ImageReader {
      * @return a <code>List</code> containing the Ground Control Points.
      * 
      */
-    public List getGCPs(final int imageIndex) {
+    public List<? extends GCP> getGCPs(final int imageIndex) {
         checkImageIndex(imageIndex);
-        return getDatasetMetadata(imageIndex).getGcps();
+        return getDatasetMetadata(imageIndex).getGCPs();
     }
 
     /**

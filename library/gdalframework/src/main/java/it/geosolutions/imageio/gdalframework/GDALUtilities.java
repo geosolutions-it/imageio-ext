@@ -88,15 +88,15 @@ public final class GDALUtilities {
     /**
      * Simple placeholder for information about a driver's capabilities.
      */
-    public final static class DriverCreateCapabilities {
+    public enum DriverCreateCapabilities {
         /** {@link Driver} supports up to create. */
-        public final static int CREATE = 0;
+        CREATE,
 
         /** {@link Driver} supports up to create copy. */
-        public final static int CREATE_COPY = 1;
+        CREATE_COPY,
 
         /** {@link Driver} supports up to read only. */
-        public final static int READ_ONLY = 2;
+        READ_ONLY;
     }
 
     private static final String CPL_DEBUG = "CPL_DEBUG";
@@ -109,24 +109,11 @@ public final class GDALUtilities {
 
     private static boolean init = false;
 
-    private static boolean isJAIavailable;
-
-    static {
-        loadGDAL();
-        try {
-            Class.forName("javax.media.jai.JAI");
-            isJAIavailable = true;
-        } catch (ClassNotFoundException cnf) {
-            isJAIavailable = false;
-        }
-    }
-
     /**
      * This {@link Map} link each driver with its writing capabilities.
      * 
      */
-    private final static Map driversWritingCapabilities = Collections
-            .synchronizedMap(new HashMap());
+    private final static Map<String,DriverCreateCapabilities> driversWritingCapabilities = Collections.synchronizedMap(new HashMap<String,DriverCreateCapabilities>());
 
     /** private constructor to prevent instantiation */
     private GDALUtilities() {
@@ -350,15 +337,14 @@ public final class GDALUtilities {
      *                 in case the specified driver name is <code>null</code>
      *                 or a Driver for the specified name is unavailable.
      */
-    public static int formatWritingCapabilities(final String driverName) {
+    public static DriverCreateCapabilities formatWritingCapabilities(final String driverName) {
         if (driverName == null)
             throw new IllegalArgumentException(
                     "The provided driver name is null");
         loadGDAL();
         synchronized (driversWritingCapabilities) {
             if (driversWritingCapabilities.containsKey(driverName))
-                return ((Integer) driversWritingCapabilities.get(driverName))
-                        .intValue();
+                return (driversWritingCapabilities.get(driverName));
             final Driver driver = gdal.GetDriverByName(driverName);
             if (driver == null)
                 throw new IllegalArgumentException(
@@ -369,26 +355,19 @@ public final class GDALUtilities {
             final Map metadata = driver.GetMetadata_Dict("");
             final String create = (String) metadata.get("DCAP_CREATE");
             final String createCopy = (String) metadata.get("DCAP_CREATECOPY");
-            final boolean createSupported = create != null
-                    && create.equalsIgnoreCase("yes");
-            final boolean createCopySupported = createCopy != null
-                    && createCopy.equalsIgnoreCase("yes");
-            int retVal;
+            final boolean createSupported = create != null&& create.equalsIgnoreCase("yes");
+            final boolean createCopySupported = createCopy != null&& createCopy.equalsIgnoreCase("yes");
+            DriverCreateCapabilities retVal;
             if (createSupported) {
-                driversWritingCapabilities.put(driverName, new Integer(
-                        GDALUtilities.DriverCreateCapabilities.CREATE));
-                retVal = GDALUtilities.DriverCreateCapabilities.CREATE;
+                driversWritingCapabilities.put(driverName, GDALUtilities.DriverCreateCapabilities.CREATE);
+                return GDALUtilities.DriverCreateCapabilities.CREATE;
             } else if (createCopySupported) {
-                driversWritingCapabilities.put(driverName, new Integer(
-                        GDALUtilities.DriverCreateCapabilities.CREATE_COPY));
-                retVal = GDALUtilities.DriverCreateCapabilities.CREATE_COPY;
+                driversWritingCapabilities.put(driverName, GDALUtilities.DriverCreateCapabilities.CREATE_COPY);
+                return GDALUtilities.DriverCreateCapabilities.CREATE_COPY;
             } else {
-                driversWritingCapabilities.put(driverName, new Integer(
-                        GDALUtilities.DriverCreateCapabilities.READ_ONLY));
-                retVal = GDALUtilities.DriverCreateCapabilities.READ_ONLY;
+                driversWritingCapabilities.put(driverName, GDALUtilities.DriverCreateCapabilities.READ_ONLY);
+                return GDALUtilities.DriverCreateCapabilities.READ_ONLY;
             }
-            return retVal;
-
         }
     }
 

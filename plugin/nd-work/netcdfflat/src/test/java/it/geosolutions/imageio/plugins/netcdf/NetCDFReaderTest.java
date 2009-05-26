@@ -65,18 +65,17 @@ public class NetCDFReaderTest extends TestCase {
 
     public void testRead() throws IOException {
         File inputFile=new File(fileName);
-//        try {
-//	        inputFile = TestData.file(this, fileName);
-//	        if (!inputFile.exists()) {
-//	            warningMessage();
-//	            return;
-//	        }
-//        } catch (FileNotFoundException fnfe) {
-//        warningMessage();
-//        return;
-//        }
-        final ImageReader ncReader = new NetCDFImageReaderSpi()
-                .createReaderInstance();
+        try {
+	        inputFile = TestData.file(this, fileName);
+	        if (!inputFile.exists()) {
+	            warningMessage();
+	            return;
+	        }
+        } catch (FileNotFoundException fnfe) {
+        		warningMessage();
+				return;
+			}
+        final ImageReader ncReader = new NetCDFImageReaderSpi().createReaderInstance();
         ncReader.setInput(inputFile);
         int numImages = ncReader.getNumImages(false);
         if (numImages / STEP > LIMIT)

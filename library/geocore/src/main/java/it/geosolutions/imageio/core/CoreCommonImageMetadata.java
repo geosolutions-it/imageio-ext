@@ -152,11 +152,12 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     /**
      * Private constructor
      */
-    protected CoreCommonImageMetadata(boolean standardMetadataFormatSupported,
-            String nativeMetadataFormatName,
-            String nativeMetadataFormatClassName,
-            String[] extraMetadataFormatNames,
-            String[] extraMetadataFormatClassNames) {
+    protected CoreCommonImageMetadata(
+    		final boolean standardMetadataFormatSupported,
+    		final String nativeMetadataFormatName,
+    		final String nativeMetadataFormatClassName,
+    		final String[] extraMetadataFormatNames,
+    		final String[] extraMetadataFormatClassNames) {
         super(standardMetadataFormatSupported, nativeMetadataFormatName,
                 nativeMetadataFormatClassName, extraMetadataFormatNames,
                 extraMetadataFormatClassNames);
@@ -171,8 +172,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
      */
     protected Node createCommonNativeTree() {
         // Create root node
-        final IIOMetadataNode root = new IIOMetadataNode(
-                nativeMetadataFormatName);
+        final IIOMetadataNode root = new IIOMetadataNode(nativeMetadataFormatName);
 
         // ////////////////////////////////////////////////////////////////////
         //
@@ -208,20 +208,13 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
         //
         // ////////////////////////////////////////////////////////////////////
         node = new IIOMetadataNode("GeoTransform");
-        final boolean hasgeoTransform = geoTransformation != null
-                && geoTransformation.length > 0;
-        node.setAttribute("m0", hasgeoTransform ? Double
-                .toString(geoTransformation[0]) : null);
-        node.setAttribute("m1", hasgeoTransform ? Double
-                .toString(geoTransformation[1]) : null);
-        node.setAttribute("m2", hasgeoTransform ? Double
-                .toString(geoTransformation[2]) : null);
-        node.setAttribute("m3", hasgeoTransform ? Double
-                .toString(geoTransformation[3]) : null);
-        node.setAttribute("m4", hasgeoTransform ? Double
-                .toString(geoTransformation[4]) : null);
-        node.setAttribute("m5", hasgeoTransform ? Double
-                .toString(geoTransformation[5]) : null);
+        final boolean hasgeoTransform = geoTransformation != null && geoTransformation.length > 0;
+        node.setAttribute("m0", hasgeoTransform ? Double.toString(geoTransformation[0]) : null);
+        node.setAttribute("m1", hasgeoTransform ? Double.toString(geoTransformation[1]) : null);
+        node.setAttribute("m2", hasgeoTransform ? Double.toString(geoTransformation[2]) : null);
+        node.setAttribute("m3", hasgeoTransform ? Double.toString(geoTransformation[3]) : null);
+        node.setAttribute("m4", hasgeoTransform ? Double.toString(geoTransformation[4]) : null);
+        node.setAttribute("m5", hasgeoTransform ? Double.toString(geoTransformation[5]) : null);
         root.appendChild(node);
 
         // ////////////////////////////////////////////////////////////////////
@@ -231,9 +224,9 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
         // ////////////////////////////////////////////////////////////////////
         if (gcpNumber > 0) {
             IIOMetadataNode nodeGCPs = new IIOMetadataNode("GCPS");
-            final List<GCP> gcps = getGcps();
+            final List<? extends GCP> gcps = getGCPs();
             if (gcps != null && !gcps.isEmpty()) {
-                final Iterator<GCP> it = gcps.iterator();
+                final Iterator<? extends GCP> it = gcps.iterator();
                 while (it.hasNext()) {
                     node = new IIOMetadataNode("GCP");
                     final GCP gcp = it.next();
@@ -243,8 +236,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
                     node.setAttribute("info", gcp.getInfo());
                     node.setAttribute("lon", Double.toString(gcp.getGCPX()));
                     node.setAttribute("lat", Double.toString(gcp.getGCPY()));
-                    node.setAttribute("elevation", Double.toString(gcp
-                            .getGCPZ()));
+                    node.setAttribute("elevation", Double.toString(gcp.getGCPZ()));
                     nodeGCPs.appendChild(node);
                 }
             }
@@ -306,8 +298,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
             icm.getReds(rgb[1]);
             icm.getReds(rgb[2]);
             for (int i = 0; i < mapSize; i++) {
-                IIOMetadataNode nodeEntry = new IIOMetadataNode(
-                        "ColorTableEntry");
+                IIOMetadataNode nodeEntry = new IIOMetadataNode("ColorTableEntry");
                 nodeEntry.setAttribute("index", Integer.toString(i));
                 nodeEntry.setAttribute("red", Byte.toString(rgb[0][i]));
                 nodeEntry.setAttribute("green", Byte.toString(rgb[1][i]));
@@ -336,8 +327,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     public Node getAsTree(String formatName) {
         if (nativeMetadataFormatName.equalsIgnoreCase(formatName))
             return createCommonNativeTree();
-        throw new IllegalArgumentException(formatName
-                + " is not a supported format name");
+        throw new IllegalArgumentException(formatName+ " is not a supported format name");
     }
 
     /**
@@ -362,8 +352,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
      */
     public void mergeTree(String formatName, Node root)
             throws IIOInvalidTreeException {
-        throw new UnsupportedOperationException(
-                "mergeTree operation is not allowed");
+        throw new UnsupportedOperationException("mergeTree operation is not allowed");
     }
 
     /**
@@ -375,8 +364,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
      * @see #isReadOnly()
      */
     public void reset() {
-        throw new UnsupportedOperationException(
-                "reset operation is not allowed");
+        throw new UnsupportedOperationException( "reset operation is not allowed");
     }
 
     // ////////////////////////////////////////////////////////////////////////
@@ -519,7 +507,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
         return (Double[]) offsets.clone();
     }
 
-    protected void setOffsets(Double[] offsets) {
+    protected void setOffsets(final Double[] offsets) {
         if (this.offsets!=null)
             throw new UnsupportedOperationException("offsets have already been defined");
         this.offsets = offsets;
@@ -529,8 +517,8 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
         return (int[]) numOverviews.clone();
     }
 
-    protected void setNumOverviews(int[] numOverviews) {
-        this.numOverviews = numOverviews;
+    protected void setNumOverviews(final int[] numOverviews) {
+        this.numOverviews = numOverviews.clone();
     }
 
     public void setGcps(final List<GCP> gcps) {
@@ -553,8 +541,8 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     }
 
     /** Returns the Ground Control Points */
-    public synchronized List<GCP> getGcps() {
-        return Collections.unmodifiableList(gcps);
+    public List<? extends GCP> getGCPs() {
+        return gcps;
     }
 
     // ////////////////////////////////////////////////////////////////////////

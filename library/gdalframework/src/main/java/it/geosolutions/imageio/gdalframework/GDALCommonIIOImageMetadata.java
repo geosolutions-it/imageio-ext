@@ -59,44 +59,44 @@ import org.w3c.dom.Node;
 public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
 
     /** The LOGGER for this class. */
-    private static final Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.gdalframework");
+    private static final Logger LOGGER = Logger.getLogger(GDALCommonIIOImageMetadata.class.toString());
     
     private class GDALGCP implements GCP{
-        private final org.gdal.gdal.GCP gcp;
+    	
+        private final org.gdal.gdal.GCP wrapped;
         
         public GDALGCP(final org.gdal.gdal.GCP gcp){
             if (gcp==null)
-                throw new NullPointerException("provided GCP is null");
-            this.gcp=gcp;
+                throw new NullPointerException("Provided GCP is null");
+            this.wrapped=gcp;
         }
 
         public double getGCPLine() {
-            return gcp.getGCPLine();
+            return wrapped.getGCPLine();
         }
 
         public double getGCPPixel() {
-            return gcp.getGCPPixel();
+            return wrapped.getGCPPixel();
         }
 
         public double getGCPX() {
-            return gcp.getGCPX();
+            return wrapped.getGCPX();
         }
 
         public double getGCPY() {
-            return gcp.getGCPY();
+            return wrapped.getGCPY();
         }
 
         public double getGCPZ() {
-            return gcp.getGCPZ();
+            return wrapped.getGCPZ();
         }
 
         public String getId() {
-            return gcp.getId();
+            return wrapped.getId();
         }
 
         public String getInfo() {
-            return gcp.getInfo();
+            return wrapped.getInfo();
         }
         
     }
@@ -105,7 +105,7 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
      * A map containing an HashMap for each domain if available (the Default
      * domain, the ImageStructure domain, as well as any xml prefixed domain)
      */
-    protected Map gdalMetadataMap;
+    protected Map gdalDomainMetadataMap;
 
     /**
      * <code>GDALCommonIIOImageMetadata</code> constructor. Firstly, it
@@ -120,8 +120,7 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
      *                open.
      */
     public GDALCommonIIOImageMetadata(String sDatasetName) {
-        this(sDatasetName, nativeMetadataFormatName,
-                nativeMetadataFormatClassName);
+        this(sDatasetName, nativeMetadataFormatName,nativeMetadataFormatClassName);
     }
 
     /**
@@ -142,8 +141,7 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
      */
     public GDALCommonIIOImageMetadata(String sDatasetName, String formatName,
             String formatClassName) {
-        this(GDALUtilities.acquireDataSet(sDatasetName, gdalconst.GA_ReadOnly),
-                sDatasetName, formatName, formatClassName);
+        this(GDALUtilities.acquireDataSet(sDatasetName, gdalconst.GA_ReadOnly), sDatasetName, formatName, formatClassName);
     }
 
     /**
@@ -175,25 +173,20 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
             setDriverDescription(driver.GetDescription());
             setDriverName(driver.getShortName());
         }
-        gdalMetadataMap = Collections.synchronizedMap(new HashMap(2));
+        gdalDomainMetadataMap = Collections.synchronizedMap(new HashMap());
 
         // //
         //
         // Getting Metadata from Default domain and Image_structure domain
         //
         // //
-        Map defMap = dataset
-                .GetMetadata_Dict(GDALUtilities.GDALMetadataDomain.DEFAULT);
+        Map defMap = dataset .GetMetadata_Dict(GDALUtilities.GDALMetadataDomain.DEFAULT);
         if (defMap != null && defMap.size() > 0)
-            gdalMetadataMap.put(
-                    GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP, defMap);
+            gdalDomainMetadataMap.put(GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP, defMap);
 
-        Map imageStMap = dataset
-                .GetMetadata_Dict(GDALUtilities.GDALMetadataDomain.IMAGESTRUCTURE);
+        Map imageStMap = dataset.GetMetadata_Dict(GDALUtilities.GDALMetadataDomain.IMAGESTRUCTURE);
         if (imageStMap != null && imageStMap.size() > 0)
-            gdalMetadataMap
-                    .put(GDALUtilities.GDALMetadataDomain.IMAGESTRUCTURE,
-                            imageStMap);
+            gdalDomainMetadataMap.put(GDALUtilities.GDALMetadataDomain.IMAGESTRUCTURE,imageStMap);
 
         // //
         //
@@ -223,7 +216,7 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
      * @param formatClassName
      *                the name of the class of the native metadata format
      */
-    public GDALCommonIIOImageMetadata(Dataset dataset, String name,
+    public GDALCommonIIOImageMetadata( final Dataset dataset, final  String name,
             final String formatName, final String formatClassName) {
         this(dataset, name, true, formatName, formatClassName);
     }
@@ -240,10 +233,9 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
      *                the dataset name
      * 
      */
-    public GDALCommonIIOImageMetadata(Dataset dataset, String name,
+    public GDALCommonIIOImageMetadata(final Dataset dataset,final  String name,
             final boolean initializationRequired) {
-        this(dataset, name, initializationRequired, nativeMetadataFormatName,
-                nativeMetadataFormatClassName);
+        this(dataset, name, initializationRequired, nativeMetadataFormatName, nativeMetadataFormatClassName);
     }
 
     /**
@@ -253,7 +245,7 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
      *                a <code>Dataset</code> from where to retrieve all
      *                georeferencing information available
      */
-    private void setGeoreferencingInfo(Dataset dataset) {
+    private void setGeoreferencingInfo(final Dataset dataset) {
         // Setting CRS's related information
         final double[] geoT = new double[6];
         dataset.GetGeoTransform(geoT);
@@ -460,7 +452,7 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
     }
 
     /** Returns the Ground Control Points */
-    public synchronized List getGcps() {
+    public List<? extends GCP> getGCPs() {
         // TODO: actually the Java bindings do not work properly when getting
         // GCPs (the JVM crash). Uncomment the following code when the method
         // getting GCPs works fine
@@ -482,7 +474,7 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
 //              }
 //            GDALUtilities.closeDataSet(ds);
 //        }
-        return super.getGcps();
+        return super.getGCPs();
     }
 
     // ////////////////////////////////////////////////////////////////////////
@@ -534,16 +526,11 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
     protected Map getGdalMetadataDomain(final String metadataDomain) {
         if (metadataDomain
                 .equalsIgnoreCase(GDALUtilities.GDALMetadataDomain.DEFAULT)) {
-            if (gdalMetadataMap
-                    .containsKey(GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP))
-                return (Map) gdalMetadataMap
-                        .get(GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP);
-        } else if (metadataDomain
-                .equalsIgnoreCase(GDALUtilities.GDALMetadataDomain.IMAGESTRUCTURE)
-                || metadataDomain
-                        .startsWith(GDALUtilities.GDALMetadataDomain.XML_PREFIX)) {
-            if (gdalMetadataMap.containsKey(metadataDomain))
-                return (Map) gdalMetadataMap.get(metadataDomain);
+            if (gdalDomainMetadataMap .containsKey(GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP))
+                return (Map) gdalDomainMetadataMap.get(GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP);
+        } else if (metadataDomain.equalsIgnoreCase(GDALUtilities.GDALMetadataDomain.IMAGESTRUCTURE)|| metadataDomain.startsWith(GDALUtilities.GDALMetadataDomain.XML_PREFIX)) {
+            if (gdalDomainMetadataMap.containsKey(metadataDomain))
+                return (Map) gdalDomainMetadataMap.get(metadataDomain);
         }
         return null;
     }
@@ -555,7 +542,7 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
      *         defined for the dataset on which this instance is based.
      */
     protected List getGdalMetadataDomainsList() {
-        final Set keys = gdalMetadataMap.keySet();
+        final Set keys = gdalDomainMetadataMap.keySet();
         List list = null;
         // //
         // 
@@ -570,8 +557,7 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
             list = new ArrayList(keys.size());
             while (keysIt.hasNext()) {
                 final String key = (String) keysIt.next();
-                if (key
-                        .equals(GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP))
+                if (key.equals(GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP))
                     list.add(GDALUtilities.GDALMetadataDomain.DEFAULT);
                 else
                     list.add(key);
@@ -591,15 +577,14 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
      * capabilities
      */
     public GDALWritableCommonIIOImageMetadata asWritable() {
-        GDALWritableCommonIIOImageMetadata metadata = new GDALWritableCommonIIOImageMetadata(
-                this.getDatasetName());
+        GDALWritableCommonIIOImageMetadata metadata = new GDALWritableCommonIIOImageMetadata(this.getDatasetName());
         metadata.setDatasetDescription(this.getDatasetDescription());
         metadata.setProjection(this.getProjection());
         metadata.setGcpNumber(this.getGcpNumber());
         metadata.setGcpProjection(this.getGcpProjection());
         metadata.setGeoTransformation(this.getGeoTransformation());
-        if (this.gdalMetadataMap != null) {
-            Map inputMap = this.gdalMetadataMap;
+        if (this.gdalDomainMetadataMap != null) {
+            Map inputMap = this.gdalDomainMetadataMap;
             Map map = Collections.synchronizedMap(new HashMap(inputMap.size()));
             final Iterator outKeys = inputMap.keySet().iterator();
             while (outKeys.hasNext()) {
@@ -614,7 +599,7 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
                 }
                 map.put(key, innerMap);
             }
-            metadata.gdalMetadataMap = map;
+            metadata.gdalDomainMetadataMap = map;
         }
         // TODO: Need to clone GCPs ... but actually JVM crashes when getting
         // GCPs
@@ -628,8 +613,7 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
         if (sm != null) {
             final int smWidth = sm.getWidth();
             final int smHeight = sm.getHeight();
-            metadata.setSampleModel(sm.createCompatibleSampleModel(smWidth,
-                    smHeight));
+            metadata.setSampleModel(sm.createCompatibleSampleModel(smWidth,smHeight));
         }
         metadata.setNumBands(this.getNumBands());
 
@@ -653,14 +637,11 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
                 if (icm.hasAlpha()) {
                     byte[] a = new byte[mapSize];
                     icm.getAlphas(a);
-                    metadata.setColorModel(new IndexColorModel(icm
-                            .getPixelSize(), mapSize, r, g, b, a));
+                    metadata.setColorModel(new IndexColorModel(icm.getPixelSize(), mapSize, r, g, b, a));
                 } else
-                    metadata.setColorModel(new IndexColorModel(icm
-                            .getPixelSize(), mapSize, r, g, b));
+                    metadata.setColorModel(new IndexColorModel(icm .getPixelSize(), mapSize, r, g, b));
             } else
-                metadata.setColorModel(GDALUtilities.buildColorModel(metadata
-                        .getSampleModel()));
+                metadata.setColorModel(GDALUtilities.buildColorModel(metadata.getSampleModel()));
         }
 
         metadata.setMaximums(this.getMaximums());
@@ -668,7 +649,6 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
         metadata.setNoDataValues(this.getNoDataValues());
         metadata.setScales(this.getScales());
         metadata.setOffsets(this.getOffsets());
-
         metadata.setNumOverviews(this.getNumOverviews());
         metadata.setColorInterpretations(this.getColorInterpretations());
         return metadata;

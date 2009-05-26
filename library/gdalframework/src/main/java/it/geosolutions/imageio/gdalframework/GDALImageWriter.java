@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageio.gdalframework;
 
+import it.geosolutions.imageio.gdalframework.GDALUtilities.DriverCreateCapabilities;
 import it.geosolutions.imageio.stream.output.FileImageOutputStreamExt;
 
 import java.awt.Color;
@@ -143,8 +144,8 @@ public abstract class GDALImageWriter extends ImageWriter {
     protected File outputFile;
 
     /** Memory driver for creating {@link Dataset}s in memory. */
-    private static class ThreadLocalMemoryDriver extends ThreadLocal {
-        public Object initialValue() {
+    private static class ThreadLocalMemoryDriver extends ThreadLocal<Driver> {
+        public Driver initialValue() {
             return gdal.GetDriverByName("MEM");
         }
     }
@@ -226,11 +227,10 @@ public abstract class GDALImageWriter extends ImageWriter {
         // /////////////////////////////////////////////////////////////////////
         final String driverName = (String) ((GDALImageWriterSpi) this.originatingProvider)
                 .getSupportedFormats().get(0);
-        final int writingCapabilities = GDALUtilities
+        final DriverCreateCapabilities writingCapabilities = GDALUtilities
                 .formatWritingCapabilities(driverName);
         if (writingCapabilities == GDALUtilities.DriverCreateCapabilities.READ_ONLY)
-            throw new IllegalStateException(
-                    "This writer seems to not support either create or create copy");
+            throw new IllegalStateException("This writer seems to not support either create or create copy");
         if (image == null)
             throw new IllegalArgumentException(
                     "The provided input image is invalid.");
@@ -431,7 +431,7 @@ public abstract class GDALImageWriter extends ImageWriter {
         final int gcpNum = imageMetadata.getGcpNumber();
         if (gcpNum != 0) {
             final String gcpProj = imageMetadata.getGcpProjection();
-            List gcps = imageMetadata.getGcps();
+            List gcps = imageMetadata.getGCPs();
 
             // TODO: Fix getGCPs access in SWIG's Java Bindings
             // TODO: set GCPs. Not all dataset support GCPs settings

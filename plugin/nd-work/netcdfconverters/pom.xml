@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId> 
-    <artifactId>imageio-ext-ndplugins</artifactId> 
+    <artifactId>imageio-ext-nd-work</artifactId> 
     <version>${version.number}</version>
   </parent>
   <groupId>it.geosolutions.imageio-ext</groupId> 

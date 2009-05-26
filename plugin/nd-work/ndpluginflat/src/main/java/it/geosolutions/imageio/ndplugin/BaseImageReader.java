@@ -24,21 +24,20 @@ public abstract class BaseImageReader extends ImageReader {
 
     private int numImages = -1;
 
-    public int getNumImages(boolean allowSearch) throws IOException {
+    public int getNumImages(final boolean allowSearch) throws IOException {
         return numImages;
     }
 
-    protected void setNumImages(int numImages) {
+    protected void setNumImages(final int numImages) {
         if (this.numImages == -1)
             this.numImages = numImages;
-        // TODO: Throws an exception if overwriting numImages?
     }
 
-    protected BaseImageReader(ImageReaderSpi originatingProvider) {
+    protected BaseImageReader(final ImageReaderSpi originatingProvider) {
         super(originatingProvider);
     }
 
-    public synchronized void dispose() {
+    public void dispose() {
         numImages = -1;
     }
     
@@ -56,9 +55,7 @@ public abstract class BaseImageReader extends ImageReader {
     protected void checkImageIndex(final int imageIndex) {
         if (imageIndex < 0 || imageIndex >= numImages) {
             throw new IndexOutOfBoundsException(
-                    "Invalid imageIndex. It should "
-                            + (numImages > 0 ? ("belong the range [0," + (numImages - 1))
-                                    : "be 0"));
+                    "Invalid imageIndex. It should " + (numImages > 0 ? ("belong the range [0," + (numImages - 1)) : "be 0"));
         }
     }
 }
