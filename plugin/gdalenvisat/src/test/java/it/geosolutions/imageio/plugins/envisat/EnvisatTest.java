@@ -16,8 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.envisat;
 
+import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.Viewer;
-import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
 import java.io.File;
@@ -32,22 +32,17 @@ import javax.media.jai.RenderedOp;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.junit.Assert;
+
 /**
  * Testing reading capabilities for {@link EnvisatImageReader}.
  * 
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
-public class EnvisatTest extends AbstractEnvisatTestCase {
+public class EnvisatTest extends AbstractGDALTest {
     public final static String fileName = "ATS_TOA_1CNPDK20030504_111259_000000572016_00080_06146_0157.N1";
 
-    public EnvisatTest(String name) {
-        super(name);
-    }
-
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
 
     /**
      * Test read exploiting common JAI operations (Crop-Translate-Rotate)
@@ -87,22 +82,9 @@ public class EnvisatTest extends AbstractEnvisatTestCase {
         RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 
         if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image, "Subsampling Read");
+            Viewer.visualizeAllInformation(image, "Subsampling Read");
         else
-            assertNotNull(image.getTiles());
-    }
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
-
-        // Test read exploiting common JAI operations
-        suite.addTest(new EnvisatTest("testJaiOperations"));
-
-        return suite;
-    }
-
-    public static void main(java.lang.String[] args) {
-        junit.textui.TestRunner.run(suite());
+            Assert.assertNotNull(image.getTiles());
     }
 
 }

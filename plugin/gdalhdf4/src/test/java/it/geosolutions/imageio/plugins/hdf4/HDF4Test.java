@@ -16,7 +16,9 @@
  */
 package it.geosolutions.imageio.plugins.hdf4;
 
-import it.geosolutions.imageio.utilities.ImageIOUtilities;
+import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
+import it.geosolutions.imageio.gdalframework.GDALUtilities;
+import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.resources.TestData;
 
 import java.awt.RenderingHints;
@@ -35,21 +37,29 @@ import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.Assert;
+import org.junit.Before;
 
 /**
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
-public class HDF4Test extends AbstractHDF4TestCase {
+public class HDF4Test extends AbstractGDALTest {
     // Actually, HDF on Linux is not tested. Test are disabled.
-    private final static boolean isLinux = ((String) System
-            .getProperty("os.name")).equalsIgnoreCase("Linux") ? true : false;
-
-    public HDF4Test(String name) {
-        super(name);
-    }
+    private final static boolean isLinux = ((String) System.getProperty("os.name")).equalsIgnoreCase("Linux") ? true : false;
+	/** A simple flag set to true in case the HDF4 driver is available */
+	protected final static boolean isDriverAvailable = GDALUtilities
+	        .isDriverAvailable("HDF4");
+	private final static String msg = "HDF4 Tests are skipped due to missing Driver.\n"
+	+ "Be sure GDAL has been built against HDF4 and the required"
+	+ " libs are in the classpath";
+	private final static String noSampleDataMsg = new StringBuffer(
+	"Test file not available. Please download it at: ").append(
+	"http://www.hdfgroup.uiuc.edu/UserSupport/code-").append(
+	"examples/sample-programs/convert/Conversion.html").append(
+	"\nThen copy it to: plugin/hdf4/src/test/resources/").append(
+	"it/geosolutions/imageio/plugins/hdf4/test-data").append(
+	" and repeat the test.").toString();
 
     /**
      * This test method uses an HDF4 file containing several subdatasets
@@ -82,7 +92,7 @@ public class HDF4Test extends AbstractHDF4TestCase {
                         new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
                 image.getTiles();
                 if (TestData.isInteractiveTest())
-                    ImageIOUtilities.visualize(image, fileName);
+                    Viewer.visualizeAllInformation(image, fileName);
                 mReader.dispose();
             }
         } catch (FileNotFoundException fnfe) {
@@ -101,9 +111,9 @@ public class HDF4Test extends AbstractHDF4TestCase {
             mReader.setInput(file);
             RenderedImage ri = mReader.read(0);
             if (TestData.isInteractiveTest())
-                ImageIOUtilities.visualize(ri);
+                Viewer.visualizeAllInformation(ri,"hdf4");
             else {
-                assertNotNull(ri);
+                Assert.assertNotNull(ri);
                 mReader.dispose();
             }
         } catch (FileNotFoundException fnfe) {
@@ -184,24 +194,20 @@ public class HDF4Test extends AbstractHDF4TestCase {
         }
     }
 
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
-
-        // Test reading of several subdatasets
-        suite.addTest(new HDF4Test("testSubDataset"));
-
-        // Test read without exploiting JAI
-        suite.addTest(new HDF4Test("testManualRead"));
-
-        // Test reading of several subdatasets
-        suite.addTest(new HDF4Test("testRasterBandsProperties"));
-
-        return suite;
-    }
-
-    public static void main(java.lang.String[] args) {
-        if (!isLinux && isDriverAvailable)
-            return;
-        junit.textui.TestRunner.run(suite());
-    }
+    @Before
+    public void setUp() throws Exception {
+	    super.setUp();
+	    if (!isDriverAvailable) {
+	        LOGGER.warning(msg);
+	        return;
+	    }
+	    // general settings
+	    JAI.getDefaultInstance().getTileScheduler().setParallelism(5);
+	    JAI.getDefaultInstance().getTileScheduler().setPriority(4);
+	    JAI.getDefaultInstance().getTileScheduler().setPrefetchPriority(2);
+	    JAI.getDefaultInstance().getTileScheduler().setPrefetchParallelism(5);
+	    JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
+	            180 * 1024 * 1024);
+	    JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
+	}
 }

@@ -34,8 +34,7 @@ import javax.media.jai.PlanarImage;
 import javax.media.jai.RenderedOp;
 import javax.swing.JFrame;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.Assert;
 
 /**
  * Testing reading capabilities for {@link JP2KKakaduImageReader} leveraging on
@@ -48,10 +47,6 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
 
 //    static FileCache fileCache = new FileCache();
 
-    public JP2KakaduReadTest(String name) {
-        super(name);
-
-    }
 
 //    /**
 //     * Test Read exploiting Linear Interpolation
@@ -73,6 +68,7 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
 //            assertNotNull(image.getTiles());
 //    }
 
+	@org.junit.Test
     public void testJaiReadFromFile() throws IOException {
         if (!runTests)
             return;
@@ -95,7 +91,7 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
         if (TestData.isInteractiveTest())
             ImageIOUtilities.visualize(image);
         else
-            assertNotNull(image.getTiles());
+        	Assert.assertNotNull(image.getTiles());
     }
 
     /**
@@ -126,7 +122,8 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
     // reader.dispose();
     //
     // }
-    public void testManualRead() throws IOException {
+	@org.junit.Test
+	public void testManualRead() throws IOException {
         if (!runTests)
             return;
         final File file = TestData.file(this, "CB_TM432.jp2");
@@ -138,9 +135,9 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
         if (TestData.isInteractiveTest())
             ImageIOUtilities.visualize(image, "testManualRead");
         else
-            assertNotNull(image.getData());
-        assertEquals(361, image.getWidth());
-        assertEquals(488, image.getHeight());
+        	Assert.assertNotNull(image.getData());
+        Assert.assertEquals(361, image.getWidth());
+        Assert.assertEquals(488, image.getHeight());
     }
 
     public static void displayStatistics(boolean b, RenderedImage source) {
@@ -159,21 +156,4 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
         frame.show();
     }
 
-    public static void main(java.lang.String[] args) {
-        if (!runTests)
-            return;
-        junit.textui.TestRunner.run(suite());
-    }
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
-
-        suite.addTest(new JP2KakaduReadTest("testJaiReadFromFile"));
-
-        suite.addTest(new JP2KakaduReadTest("testManualRead"));
-//
-//        suite.addTest(new JP2KakaduReadTest("testJaiReadFromUrl"));
-
-        return suite;
-    }
 }

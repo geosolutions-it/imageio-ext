@@ -27,11 +27,9 @@ import java.util.logging.Logger;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Assert;
 
-public class GRIB1ReadTest extends TestCase {
+public class GRIB1ReadTest  {
 
     private static final Logger LOGGER = Logger
             .getLogger("it.geosolutions.imageio.plugins.grib1");
@@ -46,28 +44,13 @@ public class GRIB1ReadTest extends TestCase {
 
     final static String dataPathPrefix = "D:\\work\\Data\\rixen\\lscv08\\METEOAM\\NETTUNO_CNMCA_2008101400\\";
 
-    public GRIB1ReadTest(String name) {
-        super(name);
-    }
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
-
-        // Test reading from a single file
-        suite.addTest(new GRIB1ReadTest("testReadSingleFile"));
-
-        return suite;
-    }
-
-    public static void main(java.lang.String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
 
     /**
      * Simple read from a Grib File containing a lot of records
      * 
      * @throws IOException
      */
+    @org.junit.Test
     public void testReadSingleFile() throws IOException {
         final File inputFile = new File(dataPathPrefix+fileName);
         if (!inputFile.exists()) {
@@ -85,7 +68,7 @@ public class GRIB1ReadTest extends TestCase {
         if (TestData.isInteractiveTest())
             ImageIOUtilities.visualize(ri);
         else
-            assertNotNull(ri.getData());
+            Assert.assertNotNull(ri.getData());
         ImageIOUtilities.displayImageIOMetadata(reader.getImageMetadata(index)
                 .getAsTree(BaseImageMetadata.nativeMetadataFormatName));
         ImageIOUtilities.displayImageIOMetadata(reader.getImageMetadata(index)

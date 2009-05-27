@@ -16,7 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.jpeg;
 
-import it.geosolutions.imageio.utilities.ImageIOUtilities;
+import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
+import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.resources.TestData;
 
 import java.awt.Rectangle;
@@ -38,8 +39,7 @@ import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.Assert;
 
 import com.sun.media.jai.codecimpl.util.RasterFactory;
 
@@ -50,10 +50,7 @@ import com.sun.media.jai.codecimpl.util.RasterFactory;
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
-public class JPEGReadTest extends AbstractJPEGTestCase {
-    public JPEGReadTest(String name) {
-        super(name);
-    }
+public class JPEGReadTest extends AbstractGDALTest {
 
     /**
      * Simple test read
@@ -83,9 +80,9 @@ public class JPEGReadTest extends AbstractJPEGTestCase {
         RenderedOp image = JAI.create("ImageRead", pbjImageRead,
                 new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
         if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image);
+            Viewer.visualizeAllInformation(image,fileName);
         else
-            assertNotNull(image.getTiles());
+            Assert.assertNotNull(image.getTiles());
     }
 
     /**
@@ -140,8 +137,8 @@ public class JPEGReadTest extends AbstractJPEGTestCase {
 
         final int destWidth = srcRegionWidth / subSamplingX;
         final int destHeight = srcRegionHeight / subSamplingY;
-        assertEquals(destWidth, 200);
-        assertEquals(destHeight, 300);
+        Assert.assertEquals(destWidth, 200);
+        Assert.assertEquals(destHeight, 300);
 
         final SampleModel sm = cm.createCompatibleSampleModel(destWidth,
                 destHeight);
@@ -167,25 +164,9 @@ public class JPEGReadTest extends AbstractJPEGTestCase {
                 new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
 
         if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image);
+            Viewer.visualizeAllInformation(image,"imageread");
         else
-            assertNotNull(image.getTiles());
-    }
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
-
-        // Test reading of a simple image
-        suite.addTest(new JPEGReadTest("testRead"));
-
-        // Test reading of a simple image
-        suite.addTest(new JPEGReadTest("testSourceBands"));
-
-        return suite;
-    }
-
-    public static void main(java.lang.String[] args) {
-        junit.textui.TestRunner.run(suite());
+        	Assert.assertNotNull(image.getTiles());
     }
 
 }

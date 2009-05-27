@@ -16,7 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.envihdr;
 
-import it.geosolutions.imageio.utilities.ImageIOUtilities;
+import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
+import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.resources.TestData;
 
 import java.awt.image.RenderedImage;
@@ -26,18 +27,9 @@ import java.io.IOException;
 
 import javax.imageio.ImageReader;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-/**
- * @author Daniele Romagnoli, GeoSolutions.
- * @author Simone Giannecchini, GeoSolutions.
- */
-public class ENVIHdrTest extends AbstractENVIHdrTestCase {
-
-    public ENVIHdrTest(String name) {
-        super(name);
-    }
+import org.junit.Assert;
+import org.junit.Test;
+public class ENVIHdrTest extends AbstractGDALTest {
 
     /**
      * Test Read without exploiting JAI-ImageIO Tools
@@ -45,6 +37,7 @@ public class ENVIHdrTest extends AbstractENVIHdrTestCase {
      * @throws FileNotFoundException
      * @throws IOException
      */
+	@Test
     public void testManualRead() throws IOException, FileNotFoundException {
         if (!isGDALAvailable) {
             return;
@@ -55,21 +48,8 @@ public class ENVIHdrTest extends AbstractENVIHdrTestCase {
         reader.setInput(file);
         final RenderedImage image = reader.read(0);
         if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image);
+            Viewer.visualizeAllInformation(image,fileName);
         else
-            assertNotNull(image);
-    }
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
-
-        // Test Read without exploiting JAI-ImageIO tools capabilities
-        suite.addTest(new ENVIHdrTest("testManualRead"));
-
-        return suite;
-    }
-
-    public static void main(java.lang.String[] args) {
-        junit.textui.TestRunner.run(suite());
+            Assert.assertNotNull(image);
     }
 }

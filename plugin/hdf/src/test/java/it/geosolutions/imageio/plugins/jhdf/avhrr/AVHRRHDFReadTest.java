@@ -36,17 +36,15 @@ import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.Assert;
+import org.junit.Before;
 
 public class AVHRRHDFReadTest extends JHDFTestCase {
 
     private static final Logger LOGGER = Logger
             .getLogger("it.geosolutions.imageio.plugins.jhdf.avhrr");
 
-    public AVHRRHDFReadTest(String name) {
-        super(name);
-    }
+
 
     private void warningMessage() {
         StringBuffer sb = new StringBuffer(
@@ -54,22 +52,11 @@ public class AVHRRHDFReadTest extends JHDFTestCase {
         LOGGER.info(sb.toString());
     }
 
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
+  
 
-        // Test reading of a simple image
-        suite.addTest(new AVHRRHDFReadTest("testRead"));
 
-        // Test reading of a simple image
-        suite.addTest(new AVHRRHDFReadTest("testReadCompare"));
 
-        return suite;
-    }
-
-    public static void main(java.lang.String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
-
+    @org.junit.Test
     public void testRead() throws IOException {
         File file;
         try {
@@ -85,7 +72,7 @@ public class AVHRRHDFReadTest extends JHDFTestCase {
         if (TestData.isInteractiveTest()) {
             ImageIOUtilities.visualize(reader.read(0), "mcsst", true);
         } else
-            assertNotNull(reader.read(index));
+            Assert.assertNotNull(reader.read(index));
 
         IIOMetadata metadata = reader.getImageMetadata(index);
         ImageIOUtilities.displayImageIOMetadata(metadata
@@ -103,6 +90,7 @@ public class AVHRRHDFReadTest extends JHDFTestCase {
      * @throws FileNotFoundException
      * @throws IOException
      */
+    @Before
     public void testReadCompare() throws FileNotFoundException, IOException {
         try {
             final File file = TestData.file(this, "2008.0904.1116.n18.hdf4");
@@ -142,13 +130,13 @@ public class AVHRRHDFReadTest extends JHDFTestCase {
             final BufferedImage buffImage2 = reader.read(0, irp);
             final int w = buffImage.getWidth();
             final int h = buffImage.getHeight();
-            assertEquals(w, buffImage2.getWidth());
-            assertEquals(h, buffImage2.getHeight());
+            Assert.assertEquals(w, buffImage2.getWidth());
+            Assert.assertEquals(h, buffImage2.getHeight());
             final Raster raster1 = buffImage.getData();
             final Raster raster2 = buffImage2.getData();
             for (int i = 0; i < h; i++) {
                 for (int j = 0; j < w; j++) {
-                    assertEquals(raster1.getSample(j, i, 0), raster2.getSample(
+                	Assert.assertEquals(raster1.getSample(j, i, 0), raster2.getSample(
                             j, i, 0));
                 }
             }

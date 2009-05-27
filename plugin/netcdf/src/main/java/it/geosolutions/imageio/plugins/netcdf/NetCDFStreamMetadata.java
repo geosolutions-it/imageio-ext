@@ -1,7 +1,7 @@
 package it.geosolutions.imageio.plugins.netcdf;
 
 import it.geosolutions.imageio.ndplugin.BaseImageReader;
-import it.geosolutions.imageio.ndplugin.util.Utilities;
+import it.geosolutions.imageio.utilities.Utilities;
 
 import java.io.IOException;
 

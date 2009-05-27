@@ -531,7 +531,7 @@ public class TestData implements Runnable {
                         }
                     } catch (SecurityException e) {
                         if (iteration == 0) {
-                            System.err.print(Utilities.getShortClassName(e));
+                            System.err.print(e.getClass().getCanonicalName());
                             System.err.print(": ");
                         }
                     }

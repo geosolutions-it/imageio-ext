@@ -50,7 +50,6 @@ import ucar.ma2.InvalidRangeException;
 import ucar.ma2.Range;
 import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
-import ucar.nc2.dataset.CoordSysBuilder;
 import ucar.nc2.dataset.CoordinateSystem;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dataset.VariableDS;
@@ -69,13 +68,13 @@ import ucar.nc2.util.CancelTask;
  * {@link RenderedImage} from NetCDF-CF sources.
  * 
  * @author Alessio Fabiani, GeoSolutions
+ * @author Simoe Giannecchini, GeoSolutions
  */
 public class NetCDFImageReader extends BaseImageReader implements CancelTask {
 
     protected static final String SEPARATOR = "$_$";
 
-    protected final static Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.plugins.netcdf");
+    protected final static Logger LOGGER = Logger .getLogger(NetCDFImageReader.class.toString());
 
     private CheckType checkType = CheckType.UNSET;
 
@@ -90,11 +89,11 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
      */
     private String lastError;
 
-    /**
-     * {@code true} if {@link CoordSysBuilder#addCoordinateSystems} has been
-     * invoked for current file.
-     */
-    private boolean metadataLoaded;
+//    /**
+//     * {@code true} if {@link CoordSysBuilder#addCoordinateSystems} has been
+//     * invoked for current file.
+//     */
+//    private boolean metadataLoaded;
 
     private int numGlobalAttributes;
 
@@ -124,10 +123,8 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
         public NetCDFVariableWrapper(Variable variable) {
             this.variable = variable;
             rank = variable.getRank();
-            width = variable.getDimension(rank - NetCDFUtilities.X_DIMENSION)
-                    .getLength();
-            height = variable.getDimension(rank - NetCDFUtilities.Y_DIMENSION)
-                    .getLength();
+            width = variable.getDimension(rank - NetCDFUtilities.X_DIMENSION).getLength();
+            height = variable.getDimension(rank - NetCDFUtilities.Y_DIMENSION).getLength();
             final int bufferType = NetCDFUtilities.getRawDataType(variable);
             sampleModel = new BandedSampleModel(bufferType, width, height, 1);
             name = variable.getName();
@@ -195,11 +192,9 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
             initialize();
 
         } catch (IOException e) {
-            throw new IllegalArgumentException(
-                    "Error occurred during NetCDF file parsing", e);
+            throw new IllegalArgumentException("Error occurred during NetCDF file parsing", e);
         } catch (InvalidRangeException e) {
-            throw new IllegalArgumentException(
-                    "Error occurred during NetCDF file parsing", e);
+            throw new IllegalArgumentException( "Error occurred during NetCDF file parsing", e);
         }
     }
 
@@ -220,26 +215,20 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
             if (variables != null) {
                 for (final Variable variable : variables) {
                     if (variable != null && variable instanceof VariableDS) {
-                        if (!NetCDFUtilities.isVariableAccepted(variable,
-                                checkType))
+                        if (!NetCDFUtilities.isVariableAccepted(variable,checkType))
                             continue;
                         int[] shape = variable.getShape();
                         switch (shape.length) {
                         case 2:
-                            indexMap.put(new Range(numImages, numImages + 1),
-                                    new NetCDFVariableWrapper(variable));
+                            indexMap.put(new Range(numImages, numImages + 1),new NetCDFVariableWrapper(variable));
                             numImages++;
                             break;
                         case 3:
-                            indexMap.put(new Range(numImages, numImages
-                                    + shape[0]), new NetCDFVariableWrapper(
-                                    variable));
+                            indexMap.put(new Range(numImages, numImages+ shape[0]), new NetCDFVariableWrapper(variable));
                             numImages += shape[0];
                             break;
                         case 4:
-                            indexMap.put(new Range(numImages, numImages
-                                    + shape[0] * shape[1]),
-                                    new NetCDFVariableWrapper(variable));
+                            indexMap.put(new Range(numImages, numImages+ shape[0] * shape[1]),new NetCDFVariableWrapper(variable));
                             numImages += shape[0] * shape[1];
                             break;
                         }
@@ -315,8 +304,7 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
         checkImageIndex(imageIndex);
         NetCDFVariableWrapper wrapper = null;
         for (Range range : indexMap.keySet()) {
-            if (range.contains(imageIndex) && range.first() <= imageIndex
-                    && imageIndex < range.last()) {
+            if (range.contains(imageIndex) && range.first() <= imageIndex&& imageIndex < range.last()) {
                 wrapper = indexMap.get(range);
             }
         }
@@ -332,8 +320,8 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
         return new NetCDFImageMetadata(this, imageIndex);
     }
 
-    public Iterator getImageTypes(int imageIndex) throws IOException {
-        final List l = new java.util.ArrayList(5);
+    public Iterator<ImageTypeSpecifier> getImageTypes(int imageIndex) throws IOException {
+        final List<ImageTypeSpecifier> l = new java.util.ArrayList<ImageTypeSpecifier>();
         NetCDFVariableWrapper wrapper = getNetCDFVariableWrapper(imageIndex);
         if (wrapper != null) {
             SampleModel sampleModel = wrapper.getSampleModel();
@@ -355,73 +343,18 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
             return wrapper.getWidth();
         return -1;
     }
+//
+//    /**
+//     * Ensures that metadata are loaded.
+//     */
+//    private void ensureMetadataLoaded() throws IOException {
+//        if (!metadataLoaded) {
+//            CoordSysBuilder.addCoordinateSystems(dataset, this);
+//            metadataLoaded = true;
+//        }
+//    }
 
-    /**
-     * Ensures that metadata are loaded.
-     */
-    private void ensureMetadataLoaded() throws IOException {
-        if (!metadataLoaded) {
-            CoordSysBuilder.addCoordinateSystems(dataset, this);
-            metadataLoaded = true;
-        }
-    }
-
-    /**
-     * Flips the source region vertically. This method should be invoked
-     * straight after {@link #computeRegions computeRegions} when the image to
-     * be read will be flipped vertically, for example when the
-     * {@linkplain java.awt.image.Raster raster} sample values are filled in a "{@code for (y=ymax-1; y>=ymin; y--)}"
-     * loop instead of "{@code for (y=ymin; y<ymax; y++)}".
-     * <p>
-     * This method should be invoked as in the example below:
-     * 
-     * <blockquote>
-     * 
-     * <pre>
-     * computeRegions(param, srcWidth, srcHeight, image, srcRegion, destRegion);
-     * flipVertically(param, srcHeight, srcRegion);
-     * </pre>
-     * 
-     * </blockquote>
-     * 
-     * @param param
-     *                The {@code param} argument given to {@code computeRegions}.
-     * @param srcHeight
-     *                The {@code srcHeight} argument given to
-     *                {@code computeRegions}.
-     * @param srcRegion
-     *                The {@code srcRegion} argument given to
-     *                {@code computeRegions}.
-     */
-    private static void flipVertically(final ImageReadParam param,
-            final int srcHeight, final Rectangle srcRegion) {
-        final int spaceLeft = srcRegion.y;
-        srcRegion.y = srcHeight - (srcRegion.y + srcRegion.height);
-        /*
-         * After the flip performed by the above line, we still have 'spaceLeft'
-         * pixels left for a downward translation. We usually don't need to care
-         * about if, except if the source region is very close to the bottom of
-         * the source image, in which case the correction computed below may be
-         * greater than the space left.
-         * 
-         * We are done if there is no vertical subsampling. But if there is
-         * subsampling, then we need an adjustment. The flipping performed above
-         * must be computed as if the source region had exactly the size needed
-         * for reading nothing more than the last line, i.e. 'srcRegion.height'
-         * must be a multiple of 'sourceYSubsampling' plus 1. The "offset"
-         * correction is computed below accordingly.
-         */
-        if (param != null) {
-            int offset = (srcRegion.height - 1) % param.getSourceYSubsampling();
-            srcRegion.y += offset;
-            offset -= spaceLeft;
-            if (offset > 0) {
-                // Happen only if we are very close to image border and
-                // the above translation bring us outside the image area.
-                srcRegion.height -= offset;
-            }
-        }
-    }
+   
 
     /**
      * @see javax.imageio.ImageReader#read(int, javax.imageio.ImageReadParam)
@@ -624,7 +557,7 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
         super.dispose();
         indexMap.clear();
         indexMap = null;
-        metadataLoaded = false;
+//        metadataLoaded = false;
         lastError = null;
         numGlobalAttributes = -1;
         checkType = CheckType.UNSET;

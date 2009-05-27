@@ -20,32 +20,30 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Simone Giannecchini, GeoSolutions
  */
-public class TestImageOutputStream extends TestCase {
-    private final static Logger LOGGER = Logger
-            .getLogger(TestImageOutputStream.class.toString());
+public class TestImageOutputStream {
+    private final static Logger LOGGER = Logger.getLogger(TestImageOutputStream.class.toString());
 
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(TestImageOutputStream.class);
+
+    public TestImageOutputStream() {
+        super();
     }
-
-    public TestImageOutputStream(String arg0) {
-        super(arg0);
-    }
-
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         ImageIO.setUseCache(true);
     }
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @After
+    public void tearDown() throws Exception {
     }
 
+    @Test
     public void test() {
     }
 }

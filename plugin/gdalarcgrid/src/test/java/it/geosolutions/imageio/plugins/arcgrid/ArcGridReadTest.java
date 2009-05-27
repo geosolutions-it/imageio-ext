@@ -16,8 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.arcgrid;
 
+import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.Viewer;
-import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
 import java.awt.Rectangle;
@@ -34,8 +34,8 @@ import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Testing reading capabilities for {@link ArcGridImageReader} leveraging on
@@ -45,9 +45,9 @@ import junit.framework.TestSuite;
  * @author Daniele Romagnoli, GeoSolutions.
  * 
  */
-public class ArcGridReadTest extends AbstractArcGridTestCase {
-	public ArcGridReadTest(String name) {
-		super(name);
+public class ArcGridReadTest extends AbstractGDALTest {
+	public ArcGridReadTest() {
+		super();
 	}
 
 	/**
@@ -56,7 +56,8 @@ public class ArcGridReadTest extends AbstractArcGridTestCase {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	public void testReadJAI() throws FileNotFoundException, IOException {
+	@org.junit.Test
+	public void readJAI() throws FileNotFoundException, IOException {
 		if (!isGDALAvailable) {
 			return;
 		}
@@ -67,11 +68,11 @@ public class ArcGridReadTest extends AbstractArcGridTestCase {
 		pbjImageRead.setParameter("Input", file);
 		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 		if (TestData.isInteractiveTest())
-			ImageIOUtilities.visualize(image, fileName);
+			Viewer.visualizeAllInformation(image, fileName);
 		else
 			image.getTiles();
-		assertEquals(351, image.getWidth());
-		assertEquals(350, image.getHeight());
+		Assert.assertEquals(351, image.getWidth());
+		Assert.assertEquals(350, image.getHeight());
 	}
 
 	/**
@@ -80,7 +81,8 @@ public class ArcGridReadTest extends AbstractArcGridTestCase {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	public void testReadImageIO() throws FileNotFoundException, IOException {
+	@Test
+	public void readImageIO() throws FileNotFoundException, IOException {
 		if (!isGDALAvailable) {
 			return;
 		}
@@ -91,8 +93,8 @@ public class ArcGridReadTest extends AbstractArcGridTestCase {
 		// Try to get a reader for this raster data
 		//
 		// //
-		final Iterator it = ImageIO.getImageReaders(file);
-		assertTrue(it.hasNext());
+		final Iterator<ImageReader> it = ImageIO.getImageReaders(file);
+		Assert.assertTrue(it.hasNext());
 
 		// //
 		//
@@ -100,51 +102,35 @@ public class ArcGridReadTest extends AbstractArcGridTestCase {
 		//
 		// //
 		final ImageReader reader = (ImageReader) it.next();
-		assertTrue(reader instanceof ArcGridImageReader);
+		Assert.assertTrue(reader instanceof ArcGridImageReader);
 		ImageReadParam rp = reader.getDefaultReadParam();
 		rp.setSourceSubsampling(2, 2, 0, 0);
 		reader.setInput(file);
 		RenderedImage image = reader.read(0, rp);
 		if (TestData.isInteractiveTest())
-			ImageIOUtilities.visualize(image, "subsample read " + file.getName());
+			Viewer.visualizeAllInformation(image, "subsample read " + file.getName());
 		reader.reset();
 
-		assertEquals((int) (reader.getWidth(0) / 2.0 + 0.5), image.getWidth());
-		assertEquals((int) (reader.getHeight(0) / 2.0 + 0.5), image.getHeight());
+		Assert.assertEquals((int) (reader.getWidth(0) / 2.0 + 0.5), image.getWidth());
+		Assert.assertEquals((int) (reader.getHeight(0) / 2.0 + 0.5), image.getHeight());
 
 		// //
 		//
 		// read some data from it using sourceregion
 		//
 		// //
-		assertTrue(reader instanceof ArcGridImageReader);
+		Assert.assertTrue(reader instanceof ArcGridImageReader);
 		rp = reader.getDefaultReadParam();
 		rp.setSourceRegion(new Rectangle(0, 0, 60, 42));
 		reader.setInput(file);
 		image = reader.read(0, rp);
 		if (TestData.isInteractiveTest())
-			ImageIOUtilities.visualize(image, "subsample read " + file.getName());
+			Viewer.visualizeAllInformation(image, "subsample read " + file.getName());
 		reader.reset();
 
-		assertEquals(60, image.getWidth());
-		assertEquals(42, image.getHeight());
+		Assert.assertEquals(60, image.getWidth());
+		Assert.assertEquals(42, image.getHeight());
 
 		reader.dispose();
-	}
-
-	public static Test suite() {
-		final TestSuite suite = new TestSuite();
-
-		// Test reading of a simple image
-		suite.addTest(new ArcGridReadTest("testReadJAI"));
-
-		// Test reading of a simple image
-		suite.addTest(new ArcGridReadTest("testReadImageIO"));
-
-		return suite;
-	}
-
-	public static void main(java.lang.String[] args) {
-		junit.textui.TestRunner.run(suite());
 	}
 }

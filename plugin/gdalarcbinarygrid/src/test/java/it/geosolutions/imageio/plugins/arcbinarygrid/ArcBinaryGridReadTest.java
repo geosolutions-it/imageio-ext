@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.arcbinarygrid;
 
+import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
@@ -32,8 +33,7 @@ import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.Assert;
 
 /**
  * Testing reading capabilities for {@link ArcBinaryGridImageReader} leveraging
@@ -43,9 +43,9 @@ import junit.framework.TestSuite;
  * @author Daniele Romagnoli, GeoSolutions.
  * 
  */
-public class ArcBinaryGridReadTest extends AbstractArcBinaryGridTestCase {
-    public ArcBinaryGridReadTest(String name) {
-        super(name);
+public class ArcBinaryGridReadTest extends AbstractGDALTest {
+    public ArcBinaryGridReadTest() {
+        super();
     }
 
     /**
@@ -89,8 +89,8 @@ public class ArcBinaryGridReadTest extends AbstractArcBinaryGridTestCase {
             ImageIOUtilities.visualize(image, fileName, true);
         else
             image.getTiles();
-        assertEquals(251, image.getWidth());
-        assertEquals(369, image.getHeight());
+        Assert.assertEquals(251, image.getWidth());
+        Assert.assertEquals(369, image.getHeight());
     }
 
     /**
@@ -116,8 +116,8 @@ public class ArcBinaryGridReadTest extends AbstractArcBinaryGridTestCase {
         // Try to get a reader for this raster data
         //
         // //
-        final Iterator it = ImageIO.getImageReaders(file);
-        assertTrue(it.hasNext());
+        final Iterator<ImageReader> it = ImageIO.getImageReaders(file);
+        Assert.assertTrue(it.hasNext());
 
         // //
         //
@@ -125,7 +125,7 @@ public class ArcBinaryGridReadTest extends AbstractArcBinaryGridTestCase {
         //
         // //
         final ImageReader reader = (ImageReader) it.next();
-        assertTrue(reader instanceof ArcBinaryGridImageReader);
+        Assert.assertTrue(reader instanceof ArcBinaryGridImageReader);
         ImageReadParam rp = reader.getDefaultReadParam();
         rp.setSourceSubsampling(4, 4, 0, 0);
         reader.setInput(file);
@@ -134,21 +134,5 @@ public class ArcBinaryGridReadTest extends AbstractArcBinaryGridTestCase {
             ImageIOUtilities.visualize(image, "subsample read " + file.getName(), true);
         reader.reset();
         reader.dispose();
-    }
-
-    public static Test suite() {
-        final TestSuite suite = new TestSuite();
-
-        // Test reading of a simple image
-        suite.addTest(new ArcBinaryGridReadTest("testReadJAI"));
-
-        // Test reading of a simple image
-        suite.addTest(new ArcBinaryGridReadTest("testReadImageIO"));
-
-        return suite;
-    }
-
-    public static void main(java.lang.String[] args) {
-        junit.textui.TestRunner.run(suite());
     }
 }

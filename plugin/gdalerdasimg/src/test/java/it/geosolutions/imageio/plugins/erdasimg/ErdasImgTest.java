@@ -16,7 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.erdasimg;
 
-import it.geosolutions.imageio.utilities.ImageIOUtilities;
+import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
+import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.resources.TestData;
 
 import java.io.File;
@@ -27,8 +28,7 @@ import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.Assert;
 
 /**
  * Testing reading capabilities for {@link ErdasImgImageReader}.
@@ -36,16 +36,10 @@ import junit.framework.TestSuite;
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
-public class ErdasImgTest extends AbstractErdasImgTestCase {
+public class ErdasImgTest extends AbstractGDALTest {
     public final static String fileName = "sample.img";
 
-    public ErdasImgTest(String name) {
-        super(name);
-    }
 
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
 
     /**
      * Test read exploiting common JAI operations (Crop-Translate-Rotate)
@@ -75,22 +69,9 @@ public class ErdasImgTest extends AbstractErdasImgTestCase {
         RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 
         if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image, "Read");
+            Viewer.visualizeAllInformation(image, "Read");
         else
-            assertNotNull(image.getTiles());
-    }
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
-
-        // Test read exploiting common JAI operations
-        suite.addTest(new ErdasImgTest("testJaiOperations"));
-
-        return suite;
-    }
-
-    public static void main(java.lang.String[] args) {
-        junit.textui.TestRunner.run(suite());
+            Assert.assertNotNull(image.getTiles());
     }
 
 }

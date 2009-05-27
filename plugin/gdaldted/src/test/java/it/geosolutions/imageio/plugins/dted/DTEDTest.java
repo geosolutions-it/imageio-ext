@@ -16,7 +16,9 @@
  */
 package it.geosolutions.imageio.plugins.dted;
 
+import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
+import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
@@ -32,6 +34,9 @@ import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
 
+import org.junit.Assert;
+import org.junit.Before;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -41,14 +46,12 @@ import junit.framework.TestSuite;
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
-public class DTEDTest extends AbstractTestCase {
+public class DTEDTest extends AbstractGDALTest {
     public final static String fileName = "n43.dt0";
 
-    public DTEDTest(String name) {
-        super(name);
-    }
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
     }
 
@@ -58,7 +61,8 @@ public class DTEDTest extends AbstractTestCase {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public void testImageRead() throws FileNotFoundException, IOException {
+    @org.junit.Test
+    public void imageRead() throws FileNotFoundException, IOException {
         if (!isGDALAvailable) {
             return;
         }
@@ -102,24 +106,12 @@ public class DTEDTest extends AbstractTestCase {
                     //No matter since I'm only looking for nodata
                 }
             }
-            ImageIOUtilities.visualize(image, "test", true, noDataValue);
+            Viewer.visualizeAllInformation(image, "test");
         } else
-            assertNotNull(image.getTiles());
-        assertEquals(121, image.getWidth());
-        assertEquals(121, image.getHeight());
+            Assert.assertNotNull(image.getTiles());
+        Assert.assertEquals(121, image.getWidth());
+        Assert.assertEquals(121, image.getHeight());
     }
 
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
-
-        // Test read exploiting common JAI operations
-        suite.addTest(new DTEDTest("testImageRead"));
-
-        return suite;
-    }
-
-    public static void main(java.lang.String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
-
+    
 }

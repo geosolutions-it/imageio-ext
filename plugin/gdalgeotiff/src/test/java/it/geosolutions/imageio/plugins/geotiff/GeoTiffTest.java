@@ -16,9 +16,9 @@
  */
 package it.geosolutions.imageio.plugins.geotiff;
 
+import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
-import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
 import java.awt.Rectangle;
@@ -39,8 +39,7 @@ import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.Assert;
 
 import com.sun.media.jai.operator.ImageWriteDescriptor;
 
@@ -48,10 +47,10 @@ import com.sun.media.jai.operator.ImageWriteDescriptor;
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
-public class GeoTiffTest extends AbstractGeoTiffTestCase {
+public class GeoTiffTest extends AbstractGDALTest {
 
-    public GeoTiffTest(String name) {
-        super(name);
+    public GeoTiffTest() {
+        super();
     }
 
     /**
@@ -60,7 +59,8 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public void testManualRead() throws IOException, FileNotFoundException {
+    @org.junit.Test
+    public void manualRead() throws IOException, FileNotFoundException {
         if (!isGDALAvailable) {
             return;
         }
@@ -74,9 +74,9 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
         reader.setInput(inputFile);
         final RenderedImage image = reader.readAsRenderedImage(0, irp);
         if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image, fileName);
-        assertEquals(256, image.getWidth());
-        assertEquals(256, image.getHeight());
+            Viewer.visualizeAllInformation(image, fileName);
+        Assert.assertEquals(256, image.getWidth());
+        Assert.assertEquals(256, image.getHeight());
         reader.dispose();
     }
 
@@ -86,7 +86,8 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public void testRead() throws FileNotFoundException, IOException {
+    @org.junit.Test
+    public void read() throws FileNotFoundException, IOException {
         if (!isGDALAvailable) {
             return;
         }
@@ -95,15 +96,13 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
         final File file = TestData.file(this, fileName);
 
         pbjImageRead = new ParameterBlockJAI("ImageRead");
-        pbjImageRead.setParameter("Input",
-                new FileImageInputStreamExtImpl(file));
-        pbjImageRead.setParameter("Reader", new GeoTiffImageReaderSpi()
-                .createReaderInstance());
+        pbjImageRead.setParameter("Input", new FileImageInputStreamExtImpl(file));
+        pbjImageRead.setParameter("Reader", new GeoTiffImageReaderSpi().createReaderInstance());
         RenderedOp image = JAI.create("ImageRead", pbjImageRead);
         if (TestData.isInteractiveTest())
             Viewer.visualizeAllInformation(image, "", true);
         else
-            assertNotNull(image.getTiles());
+        	Assert.assertNotNull(image.getTiles());
     }
 
     /**
@@ -112,7 +111,8 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public void testWrite() throws IOException, FileNotFoundException {
+    @org.junit.Test
+    public void write() throws IOException, FileNotFoundException {
         if (!isGDALAvailable) {
             return;
         }
@@ -127,27 +127,23 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
         reader.setInput(inputFile);
         final IIOMetadata metadata = reader.getImageMetadata(0);
 
-        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
-                "ImageRead");
+        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
         pbjImageRead.setParameter("Input", inputFile);
         pbjImageRead.setParameter("reader", reader);
         pbjImageRead.setParameter("readParam", rparam);
 
         final ImageLayout l = new ImageLayout();
-        l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(256)
-                .setTileWidth(256);
+        l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(256).setTileWidth(256);
 
-        RenderedOp image = JAI.create("ImageRead", pbjImageRead,
-                new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
+        RenderedOp image = JAI.create("ImageRead", pbjImageRead,new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
 
         if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image);
+            Viewer.visualizeAllInformation(image,"geotiff");
 
         // ////////////////////////////////////////////////////////////////
         // preparing to write
         // ////////////////////////////////////////////////////////////////
-        final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
-                "ImageWrite");
+        final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI("ImageWrite");
         ImageWriter writer = new GeoTiffImageWriterSpi().createWriterInstance();
         pbjImageWrite.setParameter("Output", outputFile);
         pbjImageWrite.setParameter("writer", writer);
@@ -160,23 +156,20 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
 
         pbjImageWrite.addSource(image);
         final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
-        final ImageWriter writer2 = (ImageWriter) op
-                .getProperty(ImageWriteDescriptor.PROPERTY_NAME_IMAGE_WRITER);
+        final ImageWriter writer2 = (ImageWriter) op.getProperty(ImageWriteDescriptor.PROPERTY_NAME_IMAGE_WRITER);
         writer2.dispose();
 
         // ////////////////////////////////////////////////////////////////
         // preparing to read again
         // ////////////////////////////////////////////////////////////////
-        final ParameterBlockJAI pbjImageReRead = new ParameterBlockJAI(
-                "ImageRead");
+        final ParameterBlockJAI pbjImageReRead = new ParameterBlockJAI("ImageRead");
         pbjImageReRead.setParameter("Input", outputFile);
-        pbjImageReRead.setParameter("Reader", new GeoTiffImageReaderSpi()
-                .createReaderInstance());
+        pbjImageReRead.setParameter("Reader", new GeoTiffImageReaderSpi() .createReaderInstance());
         final RenderedOp image2 = JAI.create("ImageRead", pbjImageReRead);
         if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image2);
+            Viewer.visualizeAllInformation(image2,"geotif2");
         else
-            assertNotNull(image2.getTiles());
+        	Assert.assertNotNull(image2.getTiles());
     }
 
     /**
@@ -185,7 +178,8 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public void testPaletted() throws FileNotFoundException, IOException {
+    @org.junit.Test
+    public void palette() throws FileNotFoundException, IOException {
         if (!isGDALAvailable) {
             return;
         }
@@ -197,26 +191,22 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
         reader.setInput(inputFile);
         final IIOMetadata metadata = reader.getImageMetadata(0);
 
-        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
-                "ImageRead");
+        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
         pbjImageRead.setParameter("Input", inputFile);
         pbjImageRead.setParameter("reader", reader);
 
         final ImageLayout l = new ImageLayout();
-        l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(256)
-                .setTileWidth(256);
+        l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(256).setTileWidth(256);
 
-        RenderedOp image = JAI.create("ImageRead", pbjImageRead,
-                new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
+        RenderedOp image = JAI.create("ImageRead", pbjImageRead, new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
 
         if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image, "Paletted image read");
+            Viewer.visualizeAllInformation(image, "Paletted image read");
 
         // ////////////////////////////////////////////////////////////////
         // preparing to write
         // ////////////////////////////////////////////////////////////////
-        final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
-                "ImageWrite");
+        final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI("ImageWrite");
         ImageWriter writer = new GeoTiffImageWriterSpi().createWriterInstance();
         pbjImageWrite.setParameter("Output", outputFile);
         pbjImageWrite.setParameter("writer", writer);
@@ -224,45 +214,19 @@ public class GeoTiffTest extends AbstractGeoTiffTestCase {
         pbjImageWrite.setParameter("Transcode", false);
         pbjImageWrite.addSource(image);
         final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
-        final ImageWriter writer2 = (ImageWriter) op
-                .getProperty(ImageWriteDescriptor.PROPERTY_NAME_IMAGE_WRITER);
+        final ImageWriter writer2 = (ImageWriter) op.getProperty(ImageWriteDescriptor.PROPERTY_NAME_IMAGE_WRITER);
         writer2.dispose();
 
         // ////////////////////////////////////////////////////////////////
         // preparing to read again
         // ////////////////////////////////////////////////////////////////
-        final ParameterBlockJAI pbjImageReRead = new ParameterBlockJAI(
-                "ImageRead");
+        final ParameterBlockJAI pbjImageReRead = new ParameterBlockJAI("ImageRead");
         pbjImageReRead.setParameter("Input", outputFile);
-        pbjImageReRead.setParameter("Reader", new GeoTiffImageReaderSpi()
-                .createReaderInstance());
+        pbjImageReRead.setParameter("Reader", new GeoTiffImageReaderSpi().createReaderInstance());
         final RenderedOp image2 = JAI.create("ImageRead", pbjImageReRead);
         if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image2,
-                    "Paletted image read back after writing");
+            Viewer.visualizeAllInformation(image2,"Paletted image read back after writing");
         else
-            assertNotNull(image2.getTiles());
-    }
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
-
-        // Test Read exploiting JAI-ImageIO tools capabilities
-        suite.addTest(new GeoTiffTest("testRead"));
-
-        // Test Read without exploiting JAI-ImageIO tools capabilities
-        suite.addTest(new GeoTiffTest("testManualRead"));
-
-        // Test Write
-        suite.addTest(new GeoTiffTest("testWrite"));
-
-        // Test read and write of a paletted image
-        suite.addTest(new GeoTiffTest("testPaletted"));
-
-        return suite;
-    }
-
-    public static void main(java.lang.String[] args) {
-        junit.textui.TestRunner.run(suite());
+        	Assert.assertNotNull(image2.getTiles());
     }
 }

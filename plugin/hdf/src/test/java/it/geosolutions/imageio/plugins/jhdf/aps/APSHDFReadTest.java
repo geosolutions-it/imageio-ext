@@ -28,17 +28,13 @@ import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class APSHDFReadTest extends JHDFTestCase {
 
     private static final Logger LOGGER = Logger
             .getLogger("it.geosolutions.imageio.plugins.jhdf.aps");
-
-    public APSHDFReadTest(String name) {
-        super(name);
-    }
 
     private void warningMessage() {
         StringBuffer sb = new StringBuffer(
@@ -46,19 +42,7 @@ public class APSHDFReadTest extends JHDFTestCase {
         LOGGER.info(sb.toString());
     }
 
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
-
-        // Test reading of a simple image
-        suite.addTest(new APSHDFReadTest("testRead"));
-
-        return suite;
-    }
-
-    public static void main(java.lang.String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
-
+    @Test
     public void testRead() throws IOException {
         File file;
         try {
@@ -76,7 +60,7 @@ public class APSHDFReadTest extends JHDFTestCase {
             ImageIOUtilities.visualize(reader.read(3), "true_color",  false);
             
         } else
-            assertNotNull(reader.read(index));
+        	Assert.assertNotNull(reader.read(index));
 
         IIOMetadata metadata = reader.getImageMetadata(index);
         ImageIOUtilities.displayImageIOMetadata(metadata

@@ -26,9 +26,6 @@ import java.io.IOException;
 
 import javax.imageio.metadata.IIOMetadata;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
@@ -48,10 +45,8 @@ public class JP2BoxesTest extends AbstractJP2KakaduTestCase {
 
     // private final static String fileName2 = "example.jp2";
 
-    public JP2BoxesTest(String name) {
-        super(name);
-    }
 
+    @org.junit.Test
     public void testBoxInfo() throws IOException {
         if (!runTests)
             return;
@@ -167,17 +162,4 @@ public class JP2BoxesTest extends AbstractJP2KakaduTestCase {
         }
     }
 
-    public static void main(java.lang.String[] args) {
-        if (!runTests)
-            return;
-        junit.textui.TestRunner.run(suite());
-    }
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
-
-        suite.addTest(new JP2BoxesTest("testBoxInfo"));
-
-        return suite;
-    }
 }

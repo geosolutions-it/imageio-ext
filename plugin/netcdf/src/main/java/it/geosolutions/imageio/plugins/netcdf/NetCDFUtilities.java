@@ -43,7 +43,14 @@ import ucar.nc2.dataset.VariableDS;
  * @author Alessio Fabiani, GeoSolutions
  * @author Daniele Romagnoli, GeoSolutions
  */
-public class NetCDFUtilities {
+class NetCDFUtilities {
+
+    /** The LOGGER for this class. */
+    private static final Logger LOGGER = Logger.getLogger(NetCDFUtilities.class.toString());
+    
+    private NetCDFUtilities() {
+
+    }    
 
     public final static String LOWER_LEFT_LONGITUDE = "lower_left_longitude";
 
@@ -52,10 +59,6 @@ public class NetCDFUtilities {
     public final static String UPPER_RIGHT_LONGITUDE = "upper_right_longitude";
 
     public final static String UPPER_RIGHT_LATITUDE = "upper_right_latitude";
-
-    private NetCDFUtilities() {
-
-    }
 
     public final static String LATITUDE = "latitude";
 
@@ -98,9 +101,6 @@ public class NetCDFUtilities {
         OAG, PE_MODEL, NONE, UNSET
     }
 
-    /** The LOGGER for this class. */
-    private static final Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.ndplugin.metadata");
 
     /**
      * The dimension <strong>relative to the rank</strong> in {@link #variable}
@@ -451,15 +451,13 @@ public class NetCDFUtilities {
             if (!((File) input).isDirectory())
                 dataset = NetcdfDataset.openDataset(((File) input).getPath());
             else
-                throw new IllegalArgumentException(
-                        "Error occurred during NetCDF file reading: The input file is a Directory.");
+                throw new IllegalArgumentException("Error occurred during NetCDF file reading: The input file is a Directory.");
         } else if (input instanceof String) {
             File file = new File((String) input);
             if (!file.isDirectory())
                 dataset = NetcdfDataset.openDataset(file.getPath());
             else
-                throw new IllegalArgumentException(
-                        "Error occurred during NetCDF file reading: The input file is a Directory.");
+                throw new IllegalArgumentException( "Error occurred during NetCDF file reading: The input file is a Directory.");
         } else if (input instanceof URL) {
             final URL tempURL = (URL) input;
             if (tempURL.getProtocol().equalsIgnoreCase("file")) {
@@ -467,8 +465,7 @@ public class NetCDFUtilities {
                 if (!file.isDirectory())
                     dataset = NetcdfDataset.openDataset(file.getPath());
                 else
-                    throw new IllegalArgumentException(
-                            "Error occurred during NetCDF file reading: The input file is a Directory.");
+                    throw new IllegalArgumentException( "Error occurred during NetCDF file reading: The input file is a Directory.");
             }
         }
 
@@ -477,8 +474,7 @@ public class NetCDFUtilities {
             if (!file.isDirectory())
                 dataset = NetcdfDataset.openDataset(file.getPath());
             else
-                throw new IllegalArgumentException(
-                        "Error occurred during NetCDF file reading: The input file is a Directory.");
+                throw new IllegalArgumentException("Error occurred during NetCDF file reading: The input file is a Directory.");
         }
         return dataset;
     }

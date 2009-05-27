@@ -14,50 +14,45 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package it.geosolutions.imageio.plugins.dted;
-
-import it.geosolutions.imageio.gdalframework.GDALUtilities;
+package it.geosolutions.imageio.gdalframework;
 
 import java.util.logging.Logger;
 
 import javax.media.jai.JAI;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
-public class AbstractTestCase extends TestCase {
+public class AbstractGDALTest  {
+
     /** A simple flag set to true in case the GDAL Library is available */
-    protected final static boolean isGDALAvailable = GDALUtilities
-            .isGDALAvailable();
+    protected final static boolean isGDALAvailable = GDALUtilities.isGDALAvailable();
 
-    protected static final Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.plugins.dted");
+    protected static final Logger LOGGER = Logger.getLogger(AbstractGDALTest.class.toString());
 
-    public AbstractTestCase(String name) {
-        super(name);
+    public AbstractGDALTest() {
     }
 
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Test
+    public void setUp() throws Exception {
         if (!isGDALAvailable) {
             LOGGER.warning("GDAL Library is not Available");
             return;
         }
         // general settings
-        JAI.getDefaultInstance().getTileScheduler().setParallelism(10);
-        JAI.getDefaultInstance().getTileScheduler().setPriority(4);
-        JAI.getDefaultInstance().getTileScheduler().setPrefetchPriority(2);
-        JAI.getDefaultInstance().getTileScheduler().setPrefetchParallelism(5);
-        JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
-                128 * 1024 * 1024);
+        JAI.getDefaultInstance().getTileScheduler().setParallelism(1);
+        JAI.getDefaultInstance().getTileScheduler().setPriority(5);
+        JAI.getDefaultInstance().getTileScheduler().setPrefetchPriority(5);
+        JAI.getDefaultInstance().getTileScheduler().setPrefetchParallelism(1);
+        JAI.getDefaultInstance().getTileCache().setMemoryCapacity(180 * 1024 * 1024);
         JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
     }
 
-    protected void warningMessage() {
-        StringBuffer sb = new StringBuffer("Test file not available");
-        LOGGER.info(sb.toString());
-    }
+	public static void warningMessage() {
+		LOGGER.info("Test file not available");
+		
+	}
 }

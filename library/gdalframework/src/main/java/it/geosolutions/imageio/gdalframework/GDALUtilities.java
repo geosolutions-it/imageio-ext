@@ -22,7 +22,9 @@ import java.awt.color.ColorSpace;
 import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
+import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -50,6 +52,7 @@ import org.gdal.gdalconst.gdalconst;
 import org.gdal.gdalconst.gdalconstConstants;
 
 import com.sun.media.imageioimpl.common.ImageUtil;
+import com.sun.media.jai.operator.ImageReadDescriptor;
 
 /**
  * Utility class providing a set of static utility methods
@@ -58,11 +61,7 @@ import com.sun.media.imageioimpl.common.ImageUtil;
  * @author Simone Giannecchini, GeoSolutions.
  */
 public final class GDALUtilities {
-
-    public static final String STANDARD_METADATA_NAME = IIOMetadataFormatImpl.standardMetadataFormatName;
-
-    public final static String newLine = System.getProperty("line.separator");
-
+	
     /**
      * Simple placeholder for Strings representing GDAL metadata domains.
      */
@@ -79,6 +78,10 @@ public final class GDALUtilities {
         public final static String XML_PREFIX = "xml:";
     }
 
+
+    public static final String STANDARD_METADATA_NAME = IIOMetadataFormatImpl.standardMetadataFormatName;
+
+    public final static String newLine = System.getProperty("line.separator");
     /**
      * System property name to customize the max supported size of a GDAL In
      * Memory Raster Dataset to be created before using the createCopy method
@@ -99,7 +102,28 @@ public final class GDALUtilities {
         READ_ONLY;
     }
 
-    private static final String CPL_DEBUG = "CPL_DEBUG";
+
+	/**
+	 * An auxiliary simple class containing only contants which are used to
+	 * handle text building and visualization
+	 * 
+	 * @author Daniele Romagnoli
+	 * 
+	 */
+	public enum MetadataChoice {
+	    ONLY_IMAGE_METADATA,
+	
+	    ONLY_STREAM_METADATA,
+	
+	    STREAM_AND_IMAGE_METADATA,
+	    
+	    PROJECT_AND_GEOTRANSF,
+	
+	    EVERYTHING;
+	}
+
+
+	private static final String CPL_DEBUG = "CPL_DEBUG";
 
     private static final Logger LOGGER = Logger
             .getLogger("it.geosolutions.imageio.gdalframework");
@@ -611,4 +635,141 @@ public final class GDALUtilities {
         }
         return colorModel;
     }
+
+	// ////////////////////////////////////////////////////////////////////////
+	//
+	// Provides to retrieve projections from the provided {@lik RenderedImage}
+	// and return the String containing properly formatted text.
+	//
+	// ////////////////////////////////////////////////////////////////////////
+	public static String buildCRSProperties(RenderedImage ri, final int index) {
+	    GDALImageReader reader = (GDALImageReader) ri.getProperty(ImageReadDescriptor.PROPERTY_NAME_IMAGE_READER);
+	
+	    StringBuffer sb = new StringBuffer("CRS Information:").append(newLine);
+	    final String projection = reader.getProjection(index);
+	    if (!projection.equals(""))
+	        sb.append("Projections:").append(projection).append(newLine);
+	
+	    // Retrieving GeoTransformation Information
+	    final double[] geoTransformations = reader.getGeoTransform(index);
+	    if (geoTransformations != null) {
+	        sb.append("Geo Transformation:").append(newLine);
+	        sb
+	                .append("Origin = (")
+	                .append(Double.toString(geoTransformations[0]))
+	                .append(",")
+	                .append(Double.toString(geoTransformations[3]))
+	                .append(")")
+	                .append(newLine)
+	                .append("Pixel Size = (")
+	                .append(Double.toString(geoTransformations[1]))
+	                .append(",")
+	                .append(Double.toString(geoTransformations[5]))
+	                .append(")")
+	                .append(newLine)
+	                .append(newLine)
+	                .append(
+	                        "---------- Affine GeoTransformation Coefficients ----------")
+	                .append(newLine);
+	        for (int i = 0; i < 6; i++)
+	            sb.append("adfTransformCoeff[").append(i).append("]=").append(
+	                    Double.toString(geoTransformations[i])).append(newLine);
+	    }
+	
+	    // Retrieving Ground Control Points Information
+	    final int gcpCount = reader.getGCPCount(index);
+	    if (gcpCount != 0) {
+	        sb.append(newLine).append("Ground Control Points:").append(newLine)
+	                .append("Projections:").append(newLine).append(
+	                        reader.getGCPProjection(index)).append(newLine);
+	
+	        final List gcps = reader.getGCPs(index);
+	
+	        int size = gcps.size();
+	        for (int i = 0; i < size; i++)
+	            sb.append("GCP ").append(i + 1).append(gcps.get(i)).append(
+	                    newLine);
+	    }
+	    return sb.toString();
+	}
+
+	// ///////////////////////////////////////////////////////////////////////
+	//
+	// Provides to retrieve metadata from the provided
+	// <code>RenderedImage</code>}
+	// and return the String containing properly formatted text.
+	//	 
+	// ///////////////////////////////////////////////////////////////////////
+	
+	public static String buildMetadataText(RenderedImage ri,
+	        final MetadataChoice metadataFields, final int index) {
+	    try {
+	        final String newLine = System.getProperty("line.separator");
+	
+	        GDALImageReader reader = (GDALImageReader) ri.getProperty(ImageReadDescriptor.PROPERTY_NAME_IMAGE_READER);
+	
+	        StringBuffer sb = new StringBuffer("");
+	
+	        switch (metadataFields) {
+	        case ONLY_IMAGE_METADATA:
+	        case EVERYTHING:
+	            sb.append(getImageMetadata(reader, index));
+	            break;
+	        case ONLY_STREAM_METADATA:
+	            sb.append(getStreamMetadata(reader));
+	            break;
+	        case STREAM_AND_IMAGE_METADATA:
+	            sb.append(getImageMetadata(reader, index)).append(newLine)
+	                    .append(getStreamMetadata(reader));
+	            break;
+	        }
+	
+	        return sb.toString();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return "";
+	    }
+	}
+
+	// ////////////////////////////////////////////////////////////////////////
+	//
+	// returns a String containing metadata from the provided reader
+	//
+	// ////////////////////////////////////////////////////////////////////////
+	// TODO: change with the new ImageIO - Metadata Capabilities
+	public static String getImageMetadata(GDALImageReader reader,
+	        final int index) {
+	    final GDALCommonIIOImageMetadata mt = reader.getDatasetMetadata(index);
+	    final List metadata = GDALUtilities.getGDALImageMetadata(mt.getDatasetName());
+	    if (metadata != null) {
+	        final int size = metadata.size();
+	        StringBuffer sb = new StringBuffer("Image Metadata:")
+	                .append(newLine);
+	        for (int i = 0; i < size; i++)
+	            sb.append(metadata.get(i)).append(newLine);
+	        return sb.toString();
+	    }
+	    return "Image Metadata not found";
+	}
+
+	// ////////////////////////////////////////////////////////////////////////
+	//
+	// returns a String containing stream metadata from the provided reader
+	//
+	// ////////////////////////////////////////////////////////////////////////
+	public static String getStreamMetadata(GDALImageReader reader)
+	        throws IOException {
+	    final GDALCommonIIOImageMetadata mt = reader.getDatasetMetadata(reader.getNumImages(true) - 1);
+	    final List metadata = GDALUtilities.getGDALStreamMetadata(mt
+	            .getDatasetName());
+	    if (metadata != null) {
+	        final int size = metadata.size();
+	        StringBuffer sb = new StringBuffer("Stream Metadata:")
+	                .append(newLine);
+	        for (int i = 0; i < size; i++)
+	            sb.append(metadata.get(i)).append(newLine);
+	        return sb.toString();
+	    }
+	    return "Stream Metadata not found";
+	}
 }

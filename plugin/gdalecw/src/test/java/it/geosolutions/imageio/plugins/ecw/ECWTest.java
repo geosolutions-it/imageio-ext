@@ -16,7 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.ecw;
 
-import it.geosolutions.imageio.utilities.ImageIOUtilities;
+import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
+import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.resources.TestData;
 
 import java.awt.Rectangle;
@@ -33,8 +34,7 @@ import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.Assert;
 
 /**
  * Testing reading capabilities for {@link ECWImageReader}.
@@ -42,17 +42,13 @@ import junit.framework.TestSuite;
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
  */
-public class ECWTest extends AbstractECWTestCase {
+public class ECWTest extends AbstractGDALTest {
 
     private final static String ECWPSkipTest = "ecwp://Set a valid link";
 
     private final static String ECWP = ECWPSkipTest; // Change with a valid
                                                         // ecwp
 
-    /** @todo optimize logic for test skipping */
-    public ECWTest(String name) {
-        super(name);
-    }
 
     /**
      * Test reading of a RGB image
@@ -61,9 +57,7 @@ public class ECWTest extends AbstractECWTestCase {
      * @throws IOException
      */
     public void testImageRead() throws FileNotFoundException, IOException {
-        if (!isDriverAvailable) {
-            return;
-        }
+
         final ParameterBlockJAI pbjImageRead;
         final ImageReadParam irp = new ImageReadParam();
         final String fileName = "sample.ecw";
@@ -79,17 +73,14 @@ public class ECWTest extends AbstractECWTestCase {
         RenderedOp image = JAI.create("ImageRead", pbjImageRead,
                 new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
         if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image, fileName);
+        	Viewer.visualizeAllInformation(image, fileName);
         else
             image.getTiles();
-        assertEquals(200, image.getWidth());
-        assertEquals(100, image.getHeight());
+        Assert.assertEquals(200, image.getWidth());
+        Assert.assertEquals(100, image.getHeight());
     }
 
     public void testManualRead() throws FileNotFoundException, IOException {
-        if (!isDriverAvailable) {
-            return;
-        }
         final ECWImageReaderSpi spi = new ECWImageReaderSpi();
         final ECWImageReader mReader = new ECWImageReader(spi);
         final String fileName = "sample.ecw";
@@ -101,16 +92,14 @@ public class ECWTest extends AbstractECWTestCase {
         final RenderedImage image = mReader.readAsRenderedImage(imageIndex,
                 param);
         if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image, fileName);
-        assertEquals(400, image.getWidth());
-        assertEquals(200, image.getHeight());
+        	Viewer.visualizeAllInformation(image, fileName);
+        Assert.assertEquals(400, image.getWidth());
+        Assert.assertEquals(200, image.getHeight());
         mReader.dispose();
     }
 
     public void testECWPRead() throws FileNotFoundException, IOException {
-        if (!isDriverAvailable) {
-            return;
-        }
+ 
         if (ECWP.equalsIgnoreCase(ECWPSkipTest))
             return;
 
@@ -126,27 +115,10 @@ public class ECWTest extends AbstractECWTestCase {
         final RenderedImage image = mReader.readAsRenderedImage(imageIndex,
                 param);
         if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image, ECWP);
+            Viewer.visualizeAllInformation(image, ECWP);
         mReader.dispose();
     }
 
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
 
-        // Test reading of a RGB image
-        suite.addTest(new ECWTest("testImageRead"));
-
-        // Test reading of a RGB image
-        suite.addTest(new ECWTest("testManualRead"));
-
-        // Test reading from ECWP
-        suite.addTest(new ECWTest("testECWPRead"));
-
-        return suite;
-    }
-
-    public static void main(java.lang.String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
 
 }

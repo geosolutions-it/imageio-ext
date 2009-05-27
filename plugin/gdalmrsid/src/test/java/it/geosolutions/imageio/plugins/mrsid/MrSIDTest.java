@@ -16,7 +16,9 @@
  */
 package it.geosolutions.imageio.plugins.mrsid;
 
+import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
+import it.geosolutions.imageio.gdalframework.GDALUtilities;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
@@ -45,8 +47,9 @@ import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RasterFactory;
 import javax.media.jai.RenderedOp;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 import com.sun.media.jai.operator.ImageReadDescriptor;
 
@@ -59,11 +62,17 @@ import com.sun.media.jai.operator.ImageReadDescriptor;
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
-public class MrSIDTest extends AbstractMrSIDTestCase {
+public class MrSIDTest extends AbstractGDALTest {
 
-    public MrSIDTest(String name) {
-        super(name);
-    }
+    protected static final String fileName = "n13250i.sid";
+	/** A simple flag set to true in case the MrSID driver is available */
+	protected final static boolean isDriverAvailable = GDALUtilities
+	        .isDriverAvailable("MRSID");
+	private final static String msg = "MRSID Tests are skipped due to missing Driver.\n"
+	+ "Make sure GDAL has been built against MRSID and the required"
+	+ " lib is in the classpath";
+
+
 
     /**
      * Test retrieving all available metadata properties
@@ -71,6 +80,7 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
      * @throws FileNotFoundException
      * @throws IOException
      */
+	@Test
     public void testMetadata() throws FileNotFoundException, IOException {
         if (!isDriverAvailable) {
             return;
@@ -83,7 +93,7 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
             RenderedOp image = JAI.create("ImageRead", pbjImageRead);
             IIOMetadata metadata = (IIOMetadata) image
                     .getProperty(ImageReadDescriptor.PROPERTY_NAME_METADATA_IMAGE);
-            assertTrue(metadata instanceof GDALCommonIIOImageMetadata);
+            Assert.assertTrue(metadata instanceof GDALCommonIIOImageMetadata);
             GDALCommonIIOImageMetadata commonMetadata = (GDALCommonIIOImageMetadata) metadata;
             ImageIOUtilities
                     .displayImageIOMetadata(commonMetadata
@@ -104,6 +114,7 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
      * @throws FileNotFoundException
      * @throws IOException
      */
+    @Test
     public void testJaiOperations() throws FileNotFoundException, IOException {
         if (!isDriverAvailable) {
             return;
@@ -139,9 +150,9 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
                     new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
 
             if (TestData.isInteractiveTest())
-                ImageIOUtilities.visualize(image, "Subsampling Read");
+                Viewer.visualizeAllInformation(image, "Subsampling Read");
             else
-                assertNotNull(image.getTiles());
+            	Assert.assertNotNull(image.getTiles());
 
             // ////////////////////////////////////////////////////////////////
             // preparing to crop
@@ -163,9 +174,9 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 
             final RenderedOp croppedImage = JAI.create("Crop", pbjCrop);
             if (TestData.isInteractiveTest())
-                ImageIOUtilities.visualize(croppedImage, "Cropped Image");
+                Viewer.visualizeAllInformation(croppedImage, "Cropped Image");
             else
-                assertNotNull(croppedImage.getTiles());
+            	Assert.assertNotNull(croppedImage.getTiles());
 
             // ////////////////////////////////////////////////////////////////
             // preparing to translate
@@ -183,9 +194,9 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
             final RenderedOp translatedImage = JAI.create("Translate",
                     pbjTranslate);
             if (TestData.isInteractiveTest())
-                ImageIOUtilities.visualize(translatedImage, "Translated Image");
+                Viewer.visualizeAllInformation(translatedImage, "Translated Image");
             else
-                assertNotNull(image.getTiles());
+            	Assert.assertNotNull(image.getTiles());
 
             // ////////////////////////////////////////////////////////////////
             // preparing to rotate
@@ -204,9 +215,9 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
 
             final RenderedOp rotatedImage = JAI.create("Rotate", pbjRotate);
             if (TestData.isInteractiveTest())
-                ImageIOUtilities.visualize(rotatedImage, "Rotated Image");
+                Viewer.visualizeAllInformation(rotatedImage, "Rotated Image");
             else
-                assertNotNull(image.getTiles());
+            	Assert.assertNotNull(image.getTiles());
 
         } catch (FileNotFoundException fnfe) {
             warningMessage();
@@ -220,6 +231,7 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
      * @throws FileNotFoundException
      * @throws IOException
      */
+    @Test
     public void testSubBandsRead() throws IOException {
         if (!isDriverAvailable) {
             return;
@@ -298,9 +310,9 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
                     new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
 
             if (TestData.isInteractiveTest())
-                ImageIOUtilities.visualize(image, "SourceBand selection");
+                Viewer.visualizeAllInformation(image, "SourceBand selection");
             else
-                assertNotNull(image.getTiles());
+            	Assert.assertNotNull(image.getTiles());
         } catch (FileNotFoundException fnfe) {
             warningMessage();
         }
@@ -312,6 +324,7 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
      * @throws FileNotFoundException
      * @throws IOException
      */
+    @Test
     public void testManualRead() throws IOException {
         if (!isDriverAvailable) {
             return;
@@ -350,35 +363,30 @@ public class MrSIDTest extends AbstractMrSIDTestCase {
             reader.read(0, irp);
 
             if (TestData.isInteractiveTest())
-                ImageIOUtilities.visualize(bi, "MrSID Destination settings");
+                Viewer.visualizeAllInformation(bi, "MrSID Destination settings");
             else
-                assertNotNull(bi);
+            	Assert.assertNotNull(bi);
 
             reader.dispose();
         } catch (FileNotFoundException fnfe) {
-            warningMessage();
+            super.warningMessage();
         }
     }
 
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
-
-        // Test read exploiting common JAI operations (Crop-Translate-Rotate)
-        suite.addTest(new MrSIDTest("testJaiOperations"));
-
-        // Test reading metadata information
-        suite.addTest(new MrSIDTest("testMetadata"));
-
-        // Test read without exploiting JAI
-        suite.addTest(new MrSIDTest("testManualRead"));
-
-        // Test read without exploiting JAI
-        suite.addTest(new MrSIDTest("testSubBandsRead"));
-
-        return suite;
-    }
-
-    public static void main(java.lang.String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
+    @Before
+	public void setUp() throws Exception {
+	    super.setUp();
+	    if (!isDriverAvailable) {
+	        LOGGER.warning(msg);
+	        return;
+	    }
+	    // general settings
+	    JAI.getDefaultInstance().getTileScheduler().setParallelism(10);
+	    JAI.getDefaultInstance().getTileScheduler().setPriority(4);
+	    JAI.getDefaultInstance().getTileScheduler().setPrefetchPriority(2);
+	    JAI.getDefaultInstance().getTileScheduler().setPrefetchParallelism(5);
+	    JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
+	            128 * 1024 * 1024);
+	    JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
+	}
 }

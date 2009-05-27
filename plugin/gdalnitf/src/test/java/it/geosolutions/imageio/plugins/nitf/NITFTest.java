@@ -16,7 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.nitf;
 
-import it.geosolutions.imageio.utilities.ImageIOUtilities;
+import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
+import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.resources.TestData;
 
 import java.io.File;
@@ -28,8 +29,8 @@ import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Testing reading capabilities for {@link NITFImageReader}.
@@ -37,16 +38,9 @@ import junit.framework.TestSuite;
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
-public class NITFTest extends AbstractNITFTestCase {
+public class NITFTest extends  AbstractGDALTest {
     public final static String fileName = "001zc013.on1";
 
-    public NITFTest(String name) {
-        super(name);
-    }
-
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
 
     /**
      * Test read exploiting common JAI operations (Crop-Translate-Rotate)
@@ -54,6 +48,7 @@ public class NITFTest extends AbstractNITFTestCase {
      * @throws FileNotFoundException
      * @throws IOException
      */
+    @Test
     public void testJaiOperations() throws FileNotFoundException, IOException {
         if (!isGDALAvailable) {
             return;
@@ -86,22 +81,10 @@ public class NITFTest extends AbstractNITFTestCase {
         RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 
         if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image, "Subsampling Read");
+            Viewer.visualizeAllInformation(image, "Subsampling Read");
         else
-            assertNotNull(image.getTiles());
+            Assert.assertNotNull(image.getTiles());
     }
 
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
-
-        // Test read exploiting common JAI operations
-        suite.addTest(new NITFTest("testJaiOperations"));
-
-        return suite;
-    }
-
-    public static void main(java.lang.String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
 
 }

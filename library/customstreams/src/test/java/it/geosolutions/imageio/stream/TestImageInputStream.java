@@ -43,24 +43,23 @@ import javax.media.jai.RenderedOp;
 import javax.media.jai.widget.ScrollingImagePanel;
 import javax.swing.JFrame;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class TestImageInputStream extends TestCase {
+import junit.framework.Assert;
+
+public class TestImageInputStream  {
     
         private final String fileName = "a.txt";
         private final String directoryName = "test-data";
-    	private final static Logger LOGGER = Logger
-			.getLogger(TestImageInputStream.class.toString());
+    	private final static Logger LOGGER = Logger.getLogger(TestImageInputStream.class.toString());
 
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(TestImageInputStream.class);
-	}
+
 
 	/**
 	 * Testing {@link 
 	 */
-	public void testImageInputStreamAdapter() {
+    @Test
+	public void imageInputStreamAdapter() {
 		// try {
 		// final BufferedInputStream stream = new BufferedInputStream(
 		// new FileInputStream(TestData.file(this, "sample.jpeg")));
@@ -89,7 +88,8 @@ public class TestImageInputStream extends TestCase {
 		f.setVisible(true);
 	}
 
-	public void testInflaterInputStream() throws FileNotFoundException,
+	@Test
+	public void inflaterInputStream() throws FileNotFoundException,
 			IOException {
 
 		// // open up test eraf
@@ -199,7 +199,8 @@ public class TestImageInputStream extends TestCase {
 	 * Testing capabilities of {@link URLImageInputStreamSpi}.
 	 * 
 	 */
-	public void testURLImageInputStream() {
+	@Test
+	public void URLImageInputStream() {
 
 		LOGGER.info("Testing capabilities of URLImageInputStreamSpi");
 		// get a URL pointing to a FILE
@@ -212,7 +213,7 @@ public class TestImageInputStream extends TestCase {
 			LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
 			instream = null;
 		}
-		assertNotNull(
+		Assert.assertNotNull(
 				"Unable to get an URLImageInputStreamSpi from a URL pointing to a File",
 				instream);
 
@@ -227,7 +228,7 @@ public class TestImageInputStream extends TestCase {
 			LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
 			instream = null;
 		}
-		assertNotNull(
+		Assert.assertNotNull(
 				"Unable to get an URLImageInputStreamSpi from a URL pointing to an http page",
 				instream);
 
@@ -252,7 +253,8 @@ public class TestImageInputStream extends TestCase {
 	 * Testing capabilities of {@link FileImageInputStreamExtImpl}.
 	 * 
 	 */
-	public void testFileImageInputStreamExtImpl() {
+	@Test
+	public void fileImageInputStreamExtImpl() {
 
 		LOGGER.info("Testing capabilities of FileImageInputStreamExt");
 		try {
@@ -275,7 +277,8 @@ public class TestImageInputStream extends TestCase {
      * Testing capabilities of {@link StringImageInputStreamSpi}.
      * 
      */
-    public void testStringImageInputStream() {
+	@Test
+    public void stringImageInputStream() {
 
         LOGGER.info("Testing capabilities of StringImageInputStreamSpi");
         // get a URL pointing to a FILE
@@ -289,7 +292,7 @@ public class TestImageInputStream extends TestCase {
             LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
             instream = null;
         }
-        assertNotNull(
+        Assert.assertNotNull(
                 "Unable to get an StringImageInputStreamSpi from a URL pointing to a File",
                 instream);
 
@@ -305,7 +308,7 @@ public class TestImageInputStream extends TestCase {
             LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
             instream = null;
         }
-        assertNotNull(
+        Assert.assertNotNull(
                 "Unable to get an URLImageInputStreamSpi from a URL pointing to an http page",
                 instream);
 
@@ -329,7 +332,8 @@ public class TestImageInputStream extends TestCase {
     /**
      *  Test if <code>NullPointerException</code> is thrown when null file is passed.
      */
-    public void testImageInputStreamExtInvalidContructor() {
+	@Test
+    public void imageInputStreamExtInvalidContructor() {
 
         try {
             new FileImageInputStreamExtImpl(null);
@@ -344,7 +348,8 @@ public class TestImageInputStream extends TestCase {
     /**
      *  Test if <code>FileNotFoundException</code> is thrown when a non-existing file is passed.
      */
-    public void testImageInputStreamExtInvalidContructor2() {
+	@Test
+    public void imageInputStreamExtInvalidContructor2() {
 
         try {
             File file = new File("this/file/is/invalid");
@@ -360,7 +365,8 @@ public class TestImageInputStream extends TestCase {
     /**
      *  Test if <code>FileNotFoundException</code> is thrown when a directory is passed.
      */
-    public void testImageInputStreamExtInvalidContructor3() {
+	@Test
+    public void imageInputStreamExtInvalidContructor3() {
 
         try {
             URI fileURI = getClass().getResource(directoryName).toURI();
@@ -377,7 +383,8 @@ public class TestImageInputStream extends TestCase {
     /**
      *  Test if no exception is thrown when valid arguments are used.
      */
-    public void testImageInputStreamExtValidContructor() {
+	@Test
+    public void imageInputStreamExtValidContructor() {
 
         try {
             URI fileURI = getClass()

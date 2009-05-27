@@ -16,8 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.doq2;
 
-import it.geosolutions.imageio.plugins.doq2.DOQ2ImageReader;
-import it.geosolutions.imageio.utilities.ImageIOUtilities;
+import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
+import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.resources.TestData;
 
 import java.awt.RenderingHints;
@@ -31,8 +31,9 @@ import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Testing reading capabilities for {@link DOQ2ImageReader}.
@@ -40,14 +41,12 @@ import junit.framework.TestSuite;
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
-public class DOQ2Test extends AbstractTestCase {
+public class DOQ2Test extends AbstractGDALTest {
     public final static String fileName = "C3607614_truncated.NWS";
 
-    public DOQ2Test(String name) {
-        super(name);
-    }
-
-    protected void setUp() throws Exception {
+ 
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
     }
 
@@ -57,7 +56,8 @@ public class DOQ2Test extends AbstractTestCase {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public void testImageRead() throws FileNotFoundException, IOException {
+    @Test
+    public void imageRead() throws FileNotFoundException, IOException {
         if (!isGDALAvailable) {
             return;
         }
@@ -65,7 +65,7 @@ public class DOQ2Test extends AbstractTestCase {
         try {
             file = TestData.file(this, fileName);
         } catch (FileNotFoundException fnfe) {
-            warningMessage();
+            super.warningMessage();
             return;
         }
         // ////////////////////////////////////////////////////////////////
@@ -85,24 +85,11 @@ public class DOQ2Test extends AbstractTestCase {
         RenderedOp image = JAI.create("ImageRead", pbjImageRead,new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
 
         if (TestData.isInteractiveTest()) {
-            ImageIOUtilities.visualize(image, "test");
+            Viewer.visualizeAllInformation(image, "test");
         } else
-            assertNotNull(image.getTiles());
-        assertEquals(500, image.getWidth());
-        assertEquals(7631, image.getHeight());
-    }
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
-
-        // Test read exploiting common JAI operations
-        suite.addTest(new DOQ2Test("testImageRead"));
-
-        return suite;
-    }
-
-    public static void main(java.lang.String[] args) {
-        junit.textui.TestRunner.run(suite());
+            Assert.assertNotNull(image.getTiles());
+        Assert.assertEquals(500, image.getWidth());
+        Assert.assertEquals(7631, image.getHeight());
     }
 
 }

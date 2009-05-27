@@ -16,14 +16,16 @@
  */
 package it.geosolutions.imageio.plugins.jp2mrsid;
 
+import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
+import it.geosolutions.imageio.gdalframework.GDALUtilities;
 import it.geosolutions.imageio.gdalframework.Viewer;
-import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
 import java.awt.RenderingHints;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageReadParam;
@@ -32,8 +34,9 @@ import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.gdal.gdal.Driver;
+import org.gdal.gdal.gdal;
+import org.junit.Assert;
 
 /**
  * Testing reading capabilities for {@link JP2GDALMrSidImageReader} leveraging
@@ -42,18 +45,43 @@ import junit.framework.TestSuite;
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
-public class JP2KReadTest extends AbstractJP2KTestCase {
+public class JP2KReadTest extends AbstractGDALTest {
 
     private static final Logger LOGGER = Logger
             .getLogger("it.geosolutions.imageio.plugins.jp2mrsid");
 
     public final static String fileName = "test.jp2";
 
-    public JP2KReadTest(String name) {
-        super(name);
-    }
+	/** A simple flag set to true in case the JP2 MrSID driver is available */
+	protected static boolean isDriverAvailable;
 
-    /**
+	private final static String msg = "JP2 MRSID Tests are skipped due to missing Driver.\n"
+	+ "Be sure GDAL has been built against MRSID and the required"
+	+ " lib is in the classpath";
+
+    static {
+	    try {
+	        gdal.AllRegister();
+	        final Driver driverkak = gdal.GetDriverByName("JP2KAK");
+	        final Driver driverecw = gdal.GetDriverByName("JP2ECW");
+	        if (driverkak != null || driverecw != null) {
+	            final StringBuffer skipDriver = new StringBuffer("");
+	            if (driverkak != null)
+	                skipDriver.append("JP2KAK ");
+	            if (driverecw != null)
+	                skipDriver.append("JP2ECW");
+	            gdal.SetConfigOption("GDAL_SKIP", skipDriver.toString());
+	        }
+	        isDriverAvailable = GDALUtilities.isDriverAvailable("JP2MrSID");
+	    } catch (UnsatisfiedLinkError e) {
+	        if (LOGGER.isLoggable(Level.WARNING))
+	            LOGGER.warning(new StringBuffer("GDAL library unavailable.")
+	                    .toString());
+	        isDriverAvailable = false;
+	    }
+	}
+
+	/**
      * Simple test read
      * 
      * @throws FileNotFoundException
@@ -75,9 +103,9 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
         RenderedOp image = JAI.create("ImageRead", pbjImageRead,
                 new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout));
         if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image);
+            Viewer.visualizeAllInformation(image,fileName);
         else
-            assertNotNull(image.getTiles());
+            Assert.assertNotNull(image.getTiles());
     }
 
     /**
@@ -119,7 +147,7 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
                 new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout));
 
         if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image, "subsampled");
+            Viewer.visualizeAllInformation(image, "subsampled");
 
         // ////////////////////////////////////////////////////////////////
         // preparing to crop
@@ -139,7 +167,7 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
         final RenderedOp croppedImage = JAI.create("Crop", pbjCrop);
 
         if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(croppedImage, "cropped");
+            Viewer.visualizeAllInformation(croppedImage, "cropped");
 
         // ////////////////////////////////////////////////////////////////
         // preparing to translate
@@ -155,7 +183,7 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
                 .create("Translate", pbjTranslate);
 
         if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(translatedImage, "translated");
+            Viewer.visualizeAllInformation(translatedImage, "translated");
 
         // ////////////////////////////////////////////////////////////////
         // preparing to rotate
@@ -187,24 +215,21 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
                         yOrigin.toString()).append("]-ang[").append(
                         angle.toString()).append("]");
         if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(rotatedImage, title.toString());
+            Viewer.visualizeAllInformation(rotatedImage, title.toString());
         else
-            assertNotNull(rotatedImage.getTiles());
+        	Assert.assertNotNull(rotatedImage.getTiles());
     }
 
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
-
-        // Test read exploiting common JAI operations (Crop-Translate-Rotate)
-        suite.addTest(new JP2KReadTest("testJaiOperations"));
-
-        // Test reading of a simple image
-        suite.addTest(new JP2KReadTest("testRead"));
-
-        return suite;
-    }
-
-    public static void main(java.lang.String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
+    @org.junit.Test
+	public void setUp() throws Exception {
+	    super.setUp();
+	    if (!isDriverAvailable) {
+	        LOGGER.warning(msg);
+	        return;
+	    }
+	    // general settings
+	    JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
+	            64 * 1024 * 1024);
+	    JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
+	}
 }

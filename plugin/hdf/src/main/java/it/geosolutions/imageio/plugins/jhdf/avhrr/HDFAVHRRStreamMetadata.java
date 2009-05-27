@@ -2,7 +2,7 @@ package it.geosolutions.imageio.plugins.jhdf.avhrr;
 
 import it.geosolutions.imageio.core.CoreCommonImageMetadata;
 import it.geosolutions.imageio.ndplugin.BaseImageReader;
-import it.geosolutions.imageio.ndplugin.util.Utilities;
+import it.geosolutions.imageio.utilities.Utilities;
 
 import java.io.IOException;
 

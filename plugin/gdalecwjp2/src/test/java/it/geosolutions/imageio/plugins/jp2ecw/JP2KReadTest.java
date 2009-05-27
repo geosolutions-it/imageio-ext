@@ -16,6 +16,9 @@
  */
 package it.geosolutions.imageio.plugins.jp2ecw;
 
+import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
+import it.geosolutions.imageio.gdalframework.GDALUtilities;
+import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
@@ -23,6 +26,7 @@ import java.awt.RenderingHints;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageReadParam;
@@ -31,8 +35,10 @@ import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.gdal.gdal.Driver;
+import org.gdal.gdal.gdal;
+import org.junit.Assert;
+import org.junit.Before;
 
 /**
  * Testing reading capabilities for {@link JP2GDALEcwImageReader} leveraging on
@@ -41,16 +47,43 @@ import junit.framework.TestSuite;
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
-public class JP2KReadTest extends AbstractJP2KTestCase {
+public class JP2KReadTest extends AbstractGDALTest {
 
     private static final Logger LOGGER = Logger
             .getLogger("it.geosolutions.imageio.plugins.jp2ecw");
 
     public final static String fileName = "test.jp2";
 
-    public JP2KReadTest(String name) {
-        super(name);
-    }
+	/** A simple flag set to true in case the JP2 ECW driver is available */
+	protected static boolean isDriverAvailable;
+
+    static {
+	    try {
+	        gdal.AllRegister();
+	        final Driver driverkak = gdal.GetDriverByName("JP2KAK");
+	        final Driver drivermrsid = gdal.GetDriverByName("JP2MrSID");
+	        if (driverkak != null || drivermrsid != null) {
+	            final StringBuffer skipDriver = new StringBuffer("");
+	            if (driverkak != null)
+	                skipDriver.append("JP2KAK ");
+	            if (drivermrsid != null)
+	                skipDriver.append("JP2MrSID");
+	            gdal.SetConfigOption("GDAL_SKIP", skipDriver.toString());
+	        }
+	        isDriverAvailable = GDALUtilities.isDriverAvailable("JP2ECW");
+	    } catch (UnsatisfiedLinkError e) {
+	        if (LOGGER.isLoggable(Level.WARNING))
+	            LOGGER.warning(new StringBuffer("GDAL library unavailable.")
+	                    .toString());
+	        isDriverAvailable = false;
+	    }
+	}
+
+	private final static String msg = "JP2 ECW Tests are skipped due to missing Driver.\n"
+	+ "Make sure GDAL has been built against ECW and the required"
+	+ " lib is in the classpath";
+
+
 
     /**
      * Simple test read
@@ -58,6 +91,7 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
      * @throws FileNotFoundException
      * @throws IOException
      */
+	@org.junit.Test
     public void testRead() throws FileNotFoundException, IOException {
         if (!isDriverAvailable) {
             return;
@@ -74,9 +108,9 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
         RenderedOp image = JAI.create("ImageRead", pbjImageRead,
                 new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout));
         if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image);
+            Viewer.visualizeAllInformation(image,"gdaljp2k");
         else
-            assertNotNull(image.getTiles());
+            Assert.assertNotNull(image.getTiles());
     }
 
     /**
@@ -85,6 +119,7 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
      * @throws FileNotFoundException
      * @throws IOException
      */
+    @org.junit.Test
     public void testJaiOperations() throws IOException {
         if (!isDriverAvailable) {
             return;
@@ -186,25 +221,22 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
                         yOrigin.toString()).append("]-ang[").append(
                         angle.toString()).append("]");
         if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(rotatedImage, title.toString());
+            Viewer.visualizeAllInformation(rotatedImage, title.toString());
         else
-            assertNotNull(rotatedImage.getTiles());
+            Assert.assertNotNull(rotatedImage.getTiles());
     }
 
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
-
-        // Test read exploiting common JAI operations (Crop-Translate-Rotate)
-        suite.addTest(new JP2KReadTest("testJaiOperations"));
-
-        // Test reading of a simple image
-        suite.addTest(new JP2KReadTest("testRead"));
-
-        return suite;
-    }
-
-    public static void main(java.lang.String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
+    @Before
+    public void setUp() throws Exception {
+	    super.setUp();
+	    // general settings
+	    if (!isDriverAvailable) {
+	        LOGGER.warning(msg);
+	        return;
+	    }
+	    JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
+	            64 * 1024 * 1024);
+	    JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
+	}
 
 }

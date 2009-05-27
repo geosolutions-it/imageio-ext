@@ -16,7 +16,7 @@
 package it.geosolutions.imageio.plugins.grib1;
 
 import it.geosolutions.imageio.ndplugin.BaseImageReader;
-import it.geosolutions.imageio.ndplugin.util.SoftValueHashMap;
+import it.geosolutions.imageio.utilities.SoftValueHashMap;
 
 import java.awt.Point;
 import java.awt.Rectangle;

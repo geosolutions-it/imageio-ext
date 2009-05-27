@@ -20,21 +20,16 @@ import it.geosolutions.util.KakaduUtilities;
 
 import javax.media.jai.JAI;
 
-import junit.framework.TestCase;
-
-public class AbstractJP2KakaduTestCase extends TestCase {
+public class AbstractJP2KakaduTestCase {
     protected static final boolean runTests;
 
     static {
         runTests = KakaduUtilities.isKakaduAvailable();
     }
 
-    public AbstractJP2KakaduTestCase(String name) {
-        super(name);
-    }
+   
 
-    protected void setUp() throws Exception {
-        super.setUp();
+    public void setUp() throws Exception {
         // general settings
          JAI.getDefaultInstance().getTileScheduler().setParallelism(2);
          JAI.getDefaultInstance().getTileScheduler().setPriority(6);

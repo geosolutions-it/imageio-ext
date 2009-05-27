@@ -49,10 +49,11 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import ncsa.hdf.hdflib.HDFConstants;
 import ncsa.hdf.hdflib.HDFException;
+
+import org.junit.Assert;
+import org.junit.Test;
 
 import com.sun.media.imageioimpl.common.ImageUtil;
 import com.sun.media.jai.codecimpl.util.RasterFactory;
@@ -85,7 +86,7 @@ import com.sun.media.jai.codecimpl.util.RasterFactory;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  */
-public class HDFTest extends TestCase {
+public class HDFTest  {
     // Actually, HDF on Linux is not tested. Test are disabled.
     private static final Logger LOGGER = Logger
             .getLogger("it.geosolutions.hdf.object.h4");
@@ -96,50 +97,10 @@ public class HDFTest extends TestCase {
 
     private static final boolean runTests;
 
-    public HDFTest(final String test) {
-        super(test);
-    }
-
-    public static TestSuite suite() {
-        TestSuite suite = new TestSuite();
-
-         // Testing File Annotations (Label/Description), Data Object
-        // (SDS/GRImage) Annotations (Label/Description)
-        suite.addTest(new HDFTest("testAnnotations"));
-
-        // Test attributes management
-        suite.addTest(new HDFTest("testAttributes"));
-
-        // Test group Structure
-        suite.addTest(new HDFTest("testGroups"));
-
-        // Test Dimension scales management
-        suite.addTest(new HDFTest("testDimensionScales"));
-
-        // Test Dimension scales management
-        suite.addTest(new HDFTest("testPredefinedDimensionAttributes"));
-
-         // SDS Data Read/Visualization Test
-         suite.addTest(new HDFTest("testSDSReadAndVisualize"));
-        
-         // Test a MISR HDF source
-         suite.addTest(new HDFTest("testMisrSDS"));
-        
-         // Test Paletted GR Images
-         suite.addTest(new HDFTest("testVisualizePalettedGRImage"));
-
-        return suite;
-    }
-
-    public static void main(java.lang.String[] args) throws HDFException {
-        if (!runTests)
-            return;
-        junit.textui.TestRunner.run(suite());
-    }
-
     /**
      * Test a MISR HDF source
      */
+    @Test
     public void testMisrSDS() throws HDFException, IOException {
         if (!runTests)
             return;
@@ -252,6 +213,7 @@ public class HDFTest extends TestCase {
      * Testing File Annotations (Label/Description), Data Object (SDS/GRImage)
      * Annotations (Label/Description)
      */
+    @Test
     public void testAnnotations() throws HDFException, IOException {
         if (!runTests)
             return;
@@ -410,7 +372,7 @@ public class HDFTest extends TestCase {
             // Annotations are returned as unmodifiable
             try {
                 annotations.remove(2);
-                assertTrue(false);
+                Assert.assertTrue(false);
             } catch (UnsupportedOperationException uoe) {
                 // annotations are returned as an unmodifiable list
                 annotations = null;
@@ -427,6 +389,7 @@ public class HDFTest extends TestCase {
     /**
      * Test attributes management from various object.
      */
+    @Test
     public void testAttributes() throws HDFException, IOException {
         if (!runTests)
             return;
@@ -508,6 +471,7 @@ public class HDFTest extends TestCase {
     /**
      * Test predefined dimension attributes management.
      */
+    @Test
     public void testPredefinedDimensionAttributes() throws HDFException,
             IOException {
         if (!runTests)
@@ -568,6 +532,7 @@ public class HDFTest extends TestCase {
     /**
      * Test group Structure
      */
+    @Test
     public void testGroups() throws HDFException, IOException {
         if (!runTests)
             return;
@@ -618,6 +583,7 @@ public class HDFTest extends TestCase {
     /**
      * Test Dimension scales management
      */
+    @Test
     public void testDimensionScales() throws HDFException, IOException {
         if (!runTests)
             return;
@@ -679,6 +645,7 @@ public class HDFTest extends TestCase {
     /**
      * Test Paletted GR Images
      */
+    @Test
     public void testVisualizePalettedGRImage() throws HDFException, IOException {
         if (!runTests)
             return;
@@ -704,7 +671,7 @@ public class HDFTest extends TestCase {
 
         try {
             it.remove();
-            assertTrue(false);
+            Assert.assertTrue(false);
         } catch (Exception e) {
             // TODO: handle exception
         }
@@ -840,6 +807,7 @@ public class HDFTest extends TestCase {
     /**
      * SDS Data Read/Visualization Test
      */
+    @Test
     public void testSDSReadAndVisualize() throws HDFException, IOException {
         if (!runTests)
             return;
@@ -880,7 +848,7 @@ public class HDFTest extends TestCase {
             if (TestData.isInteractiveTest())
                 visualize(title, bimage, sd);
             else
-                assertNotNull(bimage.getData());
+                Assert.assertNotNull(bimage.getData());
         }
         LOGGER.info("\n" + outSb.toString());
         myFile.dispose();

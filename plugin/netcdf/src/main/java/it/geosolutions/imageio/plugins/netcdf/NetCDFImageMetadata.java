@@ -76,7 +76,7 @@ public class NetCDFImageMetadata extends BaseImageMetadata {
                 setMaximums(new Double[] { Double.valueOf(validRange[1]) });
             }
 
-            // overviews is always 0
+            // overviews are always absent
             setNumOverviews(new int[] { 0 });
 
             // get other attributes
@@ -86,19 +86,14 @@ public class NetCDFImageMetadata extends BaseImageMetadata {
             for (int i = 0; i < numAttributes; i++) {
                 String attributePair;
                 attributePair = flatReader.getAttributeAsString(imageIndex, i);
-                final int separatorIndex = attributePair
-                        .indexOf(NetCDFImageReader.SEPARATOR);
-                final String attributeName = attributePair.substring(0,
-                        separatorIndex);
-                final String attributeValue = attributePair.substring(
-                        separatorIndex + NetCDFImageReader.SEPARATOR.length(),
-                        attributePair.length());
+                final int separatorIndex = attributePair .indexOf(NetCDFImageReader.SEPARATOR);
+                final String attributeName = attributePair.substring(0,separatorIndex);
+                final String attributeValue = attributePair.substring(separatorIndex + NetCDFImageReader.SEPARATOR.length(),attributePair.length());
                 additionalMetadata.put(attributeName, attributeValue);
             }
 
         } else
-            throw new IllegalArgumentException(
-                    "Reader is not a NetCDFImageReader.");
+            throw new IllegalArgumentException( "Reader is not a NetCDFImageReader.");
     }
 
     /**
@@ -107,21 +102,17 @@ public class NetCDFImageMetadata extends BaseImageMetadata {
      * to the conventions defined by a given metadata format name.
      */
     public Node getAsTree(String formatName) {
-        if (NetCDFImageMetadata.nativeMetadataFormatName
-                .equalsIgnoreCase(formatName))
+        if (NetCDFImageMetadata.nativeMetadataFormatName .equalsIgnoreCase(formatName))
             return createNativeTree();
-        else if (CoreCommonImageMetadata.nativeMetadataFormatName
-                .equalsIgnoreCase(formatName))
+        else if (CoreCommonImageMetadata.nativeMetadataFormatName.equalsIgnoreCase(formatName))
             return super.createCommonNativeTree();
-        throw new IllegalArgumentException(formatName
-                + " is not a supported format name");
+        throw new IllegalArgumentException(formatName+ " is not a supported format name");
     }
 
     private synchronized Node createNativeTree() {
         if (this.nativeTree != null)
             return this.nativeTree;
-        nativeTree = new IIOMetadataNode(
-                NetCDFImageMetadata.nativeMetadataFormatName);
+        nativeTree = new IIOMetadataNode(NetCDFImageMetadata.nativeMetadataFormatName);
 
         // ////////////////////////////////////////////////////////////////////
         //

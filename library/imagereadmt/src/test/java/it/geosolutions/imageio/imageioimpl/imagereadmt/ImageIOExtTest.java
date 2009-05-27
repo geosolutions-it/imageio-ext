@@ -34,42 +34,23 @@ import java.io.IOException;
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Assert;
 
 /**
  * @author Simone Giannecchini, GeoSolutions.
  */
-public class ImageIOExtTest extends TestCase {
+public class ImageIOExtTest {
 
-    /**
-     * @param name
-     */
-    public ImageIOExtTest(String name) {
-        super(name);
-    }
 
-    /**
-     * @see junit.framework.TestCase#setUp()
-     */
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
 
-    /**
-     * @see junit.framework.TestCase#tearDown()
-     */
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
+	@org.junit.Test
     public void testImageReadMT() {
         ImageReadDescriptorMT.register(JAI.getDefaultInstance());
         final ParameterBlockJAI pbj = new ParameterBlockJAI("ImageReadMT");
-        assertNotNull(pbj);
+        Assert.assertNotNull(pbj);
     }
 
+	@org.junit.Test
     public void testImageReadMTOperation() throws IOException {
         // final String opName = "ImageReadMT";
         // JAI.getDefaultInstance().getTileScheduler().setParallelism(5);
@@ -122,19 +103,5 @@ public class ImageIOExtTest extends TestCase {
         // jf.getContentPane().add(new ScrollingImagePanel(bi, 800, 800));
         // jf.pack();
         // jf.setVisible(true);
-    }
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
-
-        suite.addTest(new ImageIOExtTest("testImageReadMT"));
-
-        suite.addTest(new ImageIOExtTest("testImageReadMTOperation"));
-
-        return suite;
-    }
-
-    public static void main(java.lang.String[] args) {
-        junit.textui.TestRunner.run(suite());
     }
 }

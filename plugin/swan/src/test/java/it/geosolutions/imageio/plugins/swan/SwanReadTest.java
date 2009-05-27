@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
@@ -49,6 +50,7 @@ import javax.swing.SwingUtilities;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.junit.Assert;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
@@ -58,20 +60,20 @@ import com.sun.media.jai.operator.ImageReadDescriptor;
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
-public class SwanReadTest extends AbstractSwanTest {
+public class SwanReadTest  {
 
-	public SwanReadTest(String name) {
-		super(name);
-	}
+	private static final Logger LOGGER = Logger
+	.getLogger("it.geosolutions.imageio.plugins.swan");
 
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
+
+
 
 	/**
 	 * Read a raster related to the next-to-last forecast of the next-to-last
 	 * Swan Output quantity contained within a single file source
 	 */
+
+	@org.junit.Test
 	public void testReadFromMultipleQuantitiesFile()
 			throws FileNotFoundException, IOException {
 		try {
@@ -136,7 +138,7 @@ public class SwanReadTest extends AbstractSwanTest {
 					if (TestData.isInteractiveTest())
 						visualize(image, title.toString());
 					else
-						assertNotNull(image.getTiles());
+						Assert.assertNotNull(image.getTiles());
 
 				}
 				datasetNode = datasetNode.getNextSibling();
@@ -152,6 +154,8 @@ public class SwanReadTest extends AbstractSwanTest {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
+
+	@org.junit.Test
 	public void testReadSingleQuantity() throws FileNotFoundException,
 			IOException {
 		try {
@@ -169,7 +173,7 @@ public class SwanReadTest extends AbstractSwanTest {
 			if (TestData.isInteractiveTest())
 				visualize(image);
 			else
-				assertNotNull(image.getTiles());
+				Assert.assertNotNull(image.getTiles());
 		} catch (FileNotFoundException fnfe) {
 			warningMessage();
 		}
@@ -182,6 +186,7 @@ public class SwanReadTest extends AbstractSwanTest {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
+	@org.junit.Test
 	public void testBiComponentQuantities() throws FileNotFoundException,
 			IOException {
 		try {
@@ -209,7 +214,7 @@ public class SwanReadTest extends AbstractSwanTest {
 								.length() - 4)
 								+ component, null);
 					else
-						assertNotNull(image.getTiles());
+						Assert.assertNotNull(image.getTiles());
 				}
 			}
 		} catch (FileNotFoundException fnfe) {
@@ -222,6 +227,8 @@ public class SwanReadTest extends AbstractSwanTest {
 	 * containing 3 forecasts of a 2-components quantity (WIND) and the single
 	 * quantity (PDIR).
 	 */
+
+	@org.junit.Test
 	public void testSingleFromMixedQuantities() throws FileNotFoundException,
 			IOException {
 		try {
@@ -235,7 +242,7 @@ public class SwanReadTest extends AbstractSwanTest {
 			if (TestData.isInteractiveTest())
 				visualize(image, "PDIR from mixed file", imageIndex);
 			else
-				assertNotNull(image.getTiles());
+				Assert.assertNotNull(image.getTiles());
 		} catch (FileNotFoundException fnfe) {
 			warningMessage();
 		}
@@ -245,6 +252,7 @@ public class SwanReadTest extends AbstractSwanTest {
 	 * Read the first forecast of the first quantity from files containing only
 	 * single component quantities.
 	 */
+	@org.junit.Test
 	public void testAnyQuantity() throws FileNotFoundException, IOException {
 		try {
 			File[] testFiles;
@@ -271,7 +279,7 @@ public class SwanReadTest extends AbstractSwanTest {
 				if (TestData.isInteractiveTest())
 					visualize(image);
 				else
-					assertNotNull(image.getTiles());
+					Assert.assertNotNull(image.getTiles());
 			}
 		} catch (FileNotFoundException fnfe) {
 			warningMessage();
@@ -284,6 +292,7 @@ public class SwanReadTest extends AbstractSwanTest {
 	 * @throws IOException
 	 */
 
+	@org.junit.Test
 	public void testManualRead() throws IOException {
 		try {
 			File f = TestData.file(this, "depth.swo");
@@ -293,34 +302,11 @@ public class SwanReadTest extends AbstractSwanTest {
 			if (TestData.isInteractiveTest())
 				visualizeRescaled(bi, "Manual Read", null);
 			else
-				assertNotNull(bi.getData());
+				Assert.assertNotNull(bi.getData());
 		} catch (FileNotFoundException fnfe) {
 			warningMessage();
 		}
 	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite();
-		suite.addTest(new SwanReadTest("testReadFromMultipleQuantitiesFile"));
-		suite.addTest(new SwanReadTest("testReadSingleQuantity"));
-		suite.addTest(new SwanReadTest("testAnyQuantity"));
-		suite.addTest(new SwanReadTest("testBiComponentQuantities"));
-		suite.addTest(new SwanReadTest("testSingleFromMixedQuantities"));
-		suite.addTest(new SwanReadTest("testManualRead"));
-		return suite;
-	}
-
-	public static void main(java.lang.String[] args) {
-		junit.textui.TestRunner.run(suite());
-	}
-
-	// ////////////////////////////////////////////////////////////////////////
-	//
-	//
-	// AUXILIARY METHODS
-	//
-	//
-	// ////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * Visualization method with rescaling operation.
@@ -449,5 +435,18 @@ public class SwanReadTest extends AbstractSwanTest {
 		final WritableRaster raster = RasterFactory.createWritableRaster(sm,
 				reducedDb, null);
 		return new BufferedImage(cm, raster, false, null);
+	}
+
+	protected void warningMessage() {
+		StringBuffer sb = new StringBuffer(
+				"Test file not available. Please download it as "
+						+ "anonymous FTP from "
+						+ "ftp://ftp.geo-solutions.it/incoming/swantest.zip"
+						+ "\n Use a tool supporting Active Mode.\n"
+						+ "Then unzip it on: plugin/"
+						+ "swan/src/test/resources/it/geosolutions/"
+						+ "imageio/plugins/swan/test-data folder and"
+						+ " repeat the test.");
+		LOGGER.info(sb.toString());
 	}
 }

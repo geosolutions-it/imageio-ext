@@ -384,30 +384,54 @@
   <!--     the version specified here. Otherwise, those dependencies are     -->
   <!--     ignored.                                                          -->
   <!--                                                                       -->
-  <dependencies>
-    <!-- Tests or legacy -->
-    <dependency>
-      <groupId>javax.media</groupId>
-     <artifactId>jai_core</artifactId>
-     <version>1.1.3</version>
-   </dependency>
-   <dependency>
-     <groupId>javax.media</groupId>
-     <artifactId>jai_codec</artifactId>
-     <version>1.1.3</version>
-   </dependency>
-   <dependency>
-     <groupId>javax.media</groupId>
-     <artifactId>jai_imageio</artifactId>
-     <version>1.1</version>
-   </dependency>       
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+  <dependencyManagement>
+    <dependencies>
+      <!-- Tests or legacy -->
+      <dependency>
+        <groupId>javax.media</groupId>
+       <artifactId>jai_core</artifactId>
+       <version>1.1.3</version>
+     </dependency>
+     <dependency>
+       <groupId>javax.media</groupId>
+       <artifactId>jai_codec</artifactId>
+       <version>1.1.3</version>
+     </dependency>
+     <dependency>
+       <groupId>javax.media</groupId>
+       <artifactId>jai_imageio</artifactId>
+       <version>1.1</version>
+     </dependency>       
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.0</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  
+ <dependencies>
+  <!-- Tests or legacy -->
+  <dependency>
+	<groupId>javax.media</groupId>
+   <artifactId>jai_core</artifactId>
+ </dependency>
+ <dependency>
+   <groupId>javax.media</groupId>
+   <artifactId>jai_codec</artifactId>
+ </dependency>
+ <dependency>
+   <groupId>javax.media</groupId>
+   <artifactId>jai_imageio</artifactId>
+ </dependency>       
+  <dependency>
+	<groupId>junit</groupId>
+	<artifactId>junit</artifactId>
+	<scope>test</scope>
+  </dependency>
+</dependencies>
+
 
   <!-- ======================================================== -->
   <!--                                                          -->

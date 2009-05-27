@@ -17,15 +17,12 @@ package it.geosolutions.imageio.plugins.jhdf;
 
 import javax.media.jai.JAI;
 
-import junit.framework.TestCase;
+import org.junit.Before;
 
-public class JHDFTestCase extends TestCase {
-    public JHDFTestCase(String name) {
-        super(name);
-    }
-
-    protected void setUp() throws Exception {
-        super.setUp();
+public class JHDFTestCase  {
+	
+	@Before
+	protected void setUp() throws Exception {
         JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
                 64 * 1024 * 1024);
         JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);

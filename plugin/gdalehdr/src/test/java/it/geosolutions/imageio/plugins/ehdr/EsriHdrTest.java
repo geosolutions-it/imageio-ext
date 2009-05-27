@@ -16,7 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.ehdr;
 
-import it.geosolutions.imageio.utilities.ImageIOUtilities;
+import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
+import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.resources.TestData;
 
 import java.awt.image.RenderedImage;
@@ -26,18 +27,14 @@ import java.io.IOException;
 
 import javax.imageio.ImageReader;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
-public class EsriHdrTest extends AbstractEsriHdrTestCase {
-
-    public EsriHdrTest(String name) {
-        super(name);
-    }
+public class EsriHdrTest extends AbstractGDALTest {
 
     /**
      * Test Read without exploiting JAI-ImageIO Tools
@@ -45,6 +42,7 @@ public class EsriHdrTest extends AbstractEsriHdrTestCase {
      * @throws FileNotFoundException
      * @throws IOException
      */
+	@Test
     public void testRead() throws IOException, FileNotFoundException {
         if (!isGDALAvailable) {
             return;
@@ -55,23 +53,10 @@ public class EsriHdrTest extends AbstractEsriHdrTestCase {
         reader.setInput(file);
         final RenderedImage image = reader.read(0);
         if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image);
+            Viewer.visualizeAllInformation(image,fileName);
         else
-            assertNotNull(image);
-        assertEquals(image.getWidth(), 600);
-        assertEquals(image.getHeight(), 600);
-    }
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
-
-        // Test Read without exploiting JAI-ImageIO tools capabilities
-        suite.addTest(new EsriHdrTest("testRead"));
-
-        return suite;
-    }
-
-    public static void main(java.lang.String[] args) {
-        junit.textui.TestRunner.run(suite());
+            Assert.assertNotNull(image);
+        Assert.assertEquals(image.getWidth(), 600);
+        Assert.assertEquals(image.getHeight(), 600);
     }
 }

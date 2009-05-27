@@ -23,7 +23,7 @@ import junit.framework.TestSuite;
  * @author Alessio
  * 
  */
-public class NetCDFReaderTest extends TestCase {
+public class NetCDFReaderTest {
 
     private static final Logger LOGGER = Logger
             .getLogger("it.geosolutions.imageio.plugins.netcdf");
@@ -45,24 +45,7 @@ public class NetCDFReaderTest extends TestCase {
 
     private static final int STEP = 10;
 
-
-    public NetCDFReaderTest(String name) {
-        super(name);
-    }
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
-
-        // Test reading from a single file
-        suite.addTest(new NetCDFReaderTest("testRead"));
-
-        return suite;
-    }
-
-    public static void main(java.lang.String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
-
+    @org.junit.Test
     public void testRead() throws IOException {
         File inputFile=new File(fileName);
         try {

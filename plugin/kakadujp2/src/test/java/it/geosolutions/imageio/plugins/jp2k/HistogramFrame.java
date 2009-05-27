@@ -46,16 +46,16 @@ package it.geosolutions.imageio.plugins.jp2k;
  */
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
+
+import javax.media.jai.Histogram;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.media.jai.Histogram;
 
 import com.sun.media.jai.widget.DisplayJAI;
 
@@ -74,7 +74,7 @@ import com.sun.media.jai.widget.DisplayJAI;
  */
 
 @SuppressWarnings("serial")
-public class HistogramFrame extends JFrame {
+class HistogramFrame extends JFrame {
 
 	/**
 	 * The histogram to be displayed or to be used to calculate the statistics.
