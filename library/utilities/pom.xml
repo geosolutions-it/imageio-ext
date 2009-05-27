@@ -24,5 +24,10 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>it.geosolutions.imageio-ext</groupId>
+      <artifactId>imageio-ext-customstreams</artifactId>
+      <version>${project.version}</version>
+    </dependency>      
   </dependencies>
 </project>

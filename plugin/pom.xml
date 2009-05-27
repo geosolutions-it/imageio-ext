@@ -86,7 +86,7 @@
 	    <module>gdaldoq1</module>
 		<module>gdaldoq2</module>
         <module>gdalerdasimg</module>
-	<module>gdalnitf</module>
+		<module>gdalnitf</module>
         <module>gdalehdr</module>
         <module>gdalenvihdr</module>
         <module>gdaljpeg</module>
@@ -124,7 +124,10 @@
         <module>gdaldted</module>
         <module>gdalgeotiff</module>
         <module>tiff</module>
-	<module>nd-work</module>
+		<module>nd-base</module>
+		<module>grib1</module>
+		<module>netcdf</module>
+		<module>hdf</module>
        </modules>
     </profile> 
     <profile>

@@ -28,6 +28,6 @@
       <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-utilities</artifactId>
       <version>${project.version}</version>
-    </dependency>
+    </dependency>  
   </dependencies>
 </project>
