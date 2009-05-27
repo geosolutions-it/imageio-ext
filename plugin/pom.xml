@@ -82,47 +82,19 @@
     <profile>
       <id>base</id>
        <modules>
-        <module>gdalenvisat</module>
-	    <module>gdaldoq1</module>
-		<module>gdaldoq2</module>
-        <module>gdalerdasimg</module>
-		<module>gdalnitf</module>
-        <module>gdalehdr</module>
-        <module>gdalenvihdr</module>
-        <module>gdaljpeg</module>
-        <module>gdalarcgrid</module>
-        <module>gdalarcbinarygrid</module>
+	    <module>gdal</module>
         <module>arcgrid</module>
         <module>swan</module>
-        <module>gdaldted</module>
-        <module>gdalgeotiff</module>
         <module>tiff</module>
       </modules>
     </profile>
     <profile>
       <id>full</id>
       <modules>
-		<module>gdaldoq1</module>
-		<module>gdaldoq2</module>
-        <module>gdalhdf4</module>
-        <module>gdalenvisat</module>
-        <module>gdalerdasimg</module>
-        <module>gdalnitf</module>
-        <module>gdalehdr</module>
-        <module>gdalenvihdr</module>
-        <module>gdalmrsid</module>
-        <module>gdalecw</module>
-        <module>gdalecwjp2</module>
-        <module>gdalmrsidjp2</module>
-        <module>gdalkakadujp2</module>
+		<module>gdal</module>
         <module>kakadujp2</module>
-        <module>gdaljpeg</module>
-        <module>gdalarcgrid</module>
-        <module>gdalarcbinarygrid</module>
         <module>arcgrid</module>
         <module>swan</module>
-        <module>gdaldted</module>
-        <module>gdalgeotiff</module>
         <module>tiff</module>
 		<module>grib1</module>
 		<module>netcdf</module>
@@ -132,21 +104,7 @@
     <profile>
       <id>releasebuild</id>
       <modules>
-		<module>gdaldoq1</module>
-		<module>gdaldoq2</module>
-        <module>gdalenvisat</module>
-        <module>gdalerdasimg</module>
-        <module>gdalnitf</module>
-        <module>gdalehdr</module>
-        <module>gdalenvihdr</module>
-        <module>gdalmrsid</module>
-        <module>gdalecw</module>
-        <module>gdalecwjp2</module>
-        <module>gdalmrsidjp2</module>
-        <module>gdalkakadujp2</module>
-        <module>gdaljpeg</module>
-        <module>gdalarcgrid</module>
-        <module>gdalarcbinarygrid</module>
+	    <module>gdal</module>
         <module>arcgrid</module>
         <module>gdaldted</module>
         <module>gdalgeotiff</module>

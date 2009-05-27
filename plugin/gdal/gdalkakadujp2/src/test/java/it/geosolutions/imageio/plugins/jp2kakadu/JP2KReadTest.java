@@ -32,8 +32,7 @@ import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.Assert;
 
 /**
  * Testing reading capabilities for {@link JP2GDALKakaduImageReader} leveraging
@@ -46,16 +45,13 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
 
     public final static String fileName = "test.jp2";
 
-    public JP2KReadTest(String name) {
-        super(name);
-    }
-
     /**
      * Simple test read
      * 
      * @throws FileNotFoundException
      * @throws IOException
      */
+    @org.junit.Test
     public void testRead() throws FileNotFoundException, IOException {
         if (!isDriverAvailable) {
             return;
@@ -77,7 +73,7 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
         if (TestData.isInteractiveTest())
             Viewer.visualizeBothMetadata(image, "");
         else
-            assertNotNull(image.getTiles());
+            Assert.assertNotNull(image.getTiles());
     }
 
     /**
@@ -86,6 +82,7 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
      * @throws FileNotFoundException
      * @throws IOException
      */
+    @org.junit.Test
     public void testJaiOperations() throws IOException {
         if (!isDriverAvailable) {
             return;
@@ -191,25 +188,9 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
                         yOrigin.toString()).append("]-ang[").append(
                         angle.toString()).append("]");
         if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(rotatedImage, title.toString());
+            Viewer.visualizeAllInformation(rotatedImage, title.toString());
         else
-            assertNotNull(rotatedImage.getTiles());
-    }
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
-
-        // Test read exploiting common JAI operations (Crop-Translate-Rotate)
-        suite.addTest(new JP2KReadTest("testJaiOperations"));
-
-        // Test reading of a simple image
-        suite.addTest(new JP2KReadTest("testRead"));
-
-        return suite;
-    }
-
-    public static void main(java.lang.String[] args) {
-        junit.textui.TestRunner.run(suite());
+            Assert.assertNotNull(rotatedImage.getTiles());
     }
 
 }

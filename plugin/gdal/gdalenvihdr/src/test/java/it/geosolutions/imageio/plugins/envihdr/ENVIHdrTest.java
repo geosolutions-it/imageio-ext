@@ -43,6 +43,7 @@ public class ENVIHdrTest extends AbstractGDALTest {
             return;
         }
         final String fileName = "small_world.img";
+        TestData.unzipFile(this, "test.zip");
         final File file = TestData.file(this, fileName);
         ImageReader reader = new ENVIHdrImageReaderSpi().createReaderInstance();
         reader.setInput(file);

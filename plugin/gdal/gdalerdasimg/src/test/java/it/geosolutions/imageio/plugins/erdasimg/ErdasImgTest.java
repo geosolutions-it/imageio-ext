@@ -54,6 +54,7 @@ public class ErdasImgTest extends AbstractGDALTest {
         File file;
         try {
             file = TestData.file(this, fileName);
+            TestData.unzipFile(this, "test.zip");
         } catch (FileNotFoundException fnfe) {
             warningMessage();
             return;

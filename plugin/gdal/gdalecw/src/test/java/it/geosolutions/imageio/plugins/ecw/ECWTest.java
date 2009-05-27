@@ -35,6 +35,7 @@ import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
 
 import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Testing reading capabilities for {@link ECWImageReader}.
@@ -56,8 +57,10 @@ public class ECWTest extends AbstractGDALTest {
      * @throws FileNotFoundException
      * @throws IOException
      */
+    @Test
     public void testImageRead() throws FileNotFoundException, IOException {
-
+    	if(!isGDALAvailable)
+    		return;
         final ParameterBlockJAI pbjImageRead;
         final ImageReadParam irp = new ImageReadParam();
         final String fileName = "sample.ecw";
@@ -80,7 +83,10 @@ public class ECWTest extends AbstractGDALTest {
         Assert.assertEquals(100, image.getHeight());
     }
 
+    @Test
     public void testManualRead() throws FileNotFoundException, IOException {
+    	if(!isGDALAvailable)
+    		return;
         final ECWImageReaderSpi spi = new ECWImageReaderSpi();
         final ECWImageReader mReader = new ECWImageReader(spi);
         final String fileName = "sample.ecw";
@@ -98,8 +104,10 @@ public class ECWTest extends AbstractGDALTest {
         mReader.dispose();
     }
 
+    @Test
     public void testECWPRead() throws FileNotFoundException, IOException {
- 
+    	if(!isGDALAvailable)
+    		return;
         if (ECWP.equalsIgnoreCase(ECWPSkipTest))
             return;
 

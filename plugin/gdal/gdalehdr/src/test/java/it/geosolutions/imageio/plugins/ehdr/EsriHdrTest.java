@@ -48,6 +48,7 @@ public class EsriHdrTest extends AbstractGDALTest {
             return;
         }
         final String fileName = "elggll.bil";
+        TestData.unzipFile(this, "test.zip");
         final File file = TestData.file(this, fileName);
         ImageReader reader = new EsriHdrImageReaderSpi().createReaderInstance();
         reader.setInput(file);

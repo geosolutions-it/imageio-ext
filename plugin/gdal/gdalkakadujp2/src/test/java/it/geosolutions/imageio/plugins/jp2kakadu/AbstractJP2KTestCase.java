@@ -16,19 +16,20 @@
  */
 package it.geosolutions.imageio.plugins.jp2kakadu;
 
-import java.util.logging.Logger;
-
+import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.GDALUtilities;
+
+import java.util.logging.Logger;
 
 import javax.media.jai.JAI;
 
-import junit.framework.TestCase;
+import org.junit.Before;
 
 /**
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
-public class AbstractJP2KTestCase extends TestCase {
+public class AbstractJP2KTestCase extends AbstractGDALTest {
 
     /** A simple flag set to true in case the JP2 Kakadu driver is available */
     protected final static boolean isDriverAvailable = GDALUtilities
@@ -41,11 +42,9 @@ public class AbstractJP2KTestCase extends TestCase {
     protected static final Logger LOGGER = Logger
             .getLogger("it.geosolutions.imageio.plugins.jp2kakadu");
 
-    public AbstractJP2KTestCase(String name) {
-        super(name);
-    }
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         if (!isDriverAvailable) {
             LOGGER.warning(msg);

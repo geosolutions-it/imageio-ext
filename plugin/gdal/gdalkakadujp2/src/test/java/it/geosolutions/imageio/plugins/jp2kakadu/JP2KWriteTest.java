@@ -37,6 +37,8 @@ import javax.media.jai.RenderedOp;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.junit.Assert;
+
 import com.sun.media.jai.operator.ImageWriteDescriptor;
 
 /**
@@ -63,12 +65,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // When testing write operations on very big images, performing subsampled
     // read may be useful.
     final static boolean ENABLE_SUBSAMPLING = false;
-
-    // final static String testFileName = "spezia_wgs84.tiff";
-
-    public JP2KWriteTest(String name) {
-        super(name);
-    }
+ 
 
     // ////////////////////////////////////////////////////////////////////////
     //
@@ -84,7 +81,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
         // Preparing input/output files
         // //
         final File inputFile = TestData.file(this, testFileName);
-        assertTrue(inputFile.exists());
+        Assert.assertTrue(inputFile.exists());
 
         // Output files resulting from 2 different values of the same create
         // option. In this test, the create option is Clevels.
@@ -182,7 +179,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
         // Preparing input/output files
         // //
         final File inputFile = TestData.file(this, testFileName);
-        assertTrue(inputFile.exists());
+        Assert.assertTrue(inputFile.exists());
 
         // Output files resulting from 2 different values of the same create
         // option. In this test, the create option is Clayers.
@@ -281,7 +278,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
         // Preparing input/output files
         // //
         final File inputFile = TestData.file(this, testFileName);
-        assertTrue(inputFile.exists());
+        Assert.assertTrue(inputFile.exists());
 
         // Output files resulting from 2 different values of the same create
         // option. In this test, the create option is Cprecincts.
@@ -371,7 +368,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
         // Preparing input/output files
         // //
         final File inputFile = TestData.file(this, testFileName);
-        assertTrue(inputFile.exists());
+        Assert.assertTrue(inputFile.exists());
 
         // Output files resulting from 2 different values of the same create
         // option. In this test, the create option is Corder.
@@ -486,7 +483,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
         // Preparing input/output files
         // //
         final File inputFile = TestData.file(this, testFileName);
-        assertTrue(inputFile.exists());
+        Assert.assertTrue(inputFile.exists());
 
         // Output files resulting from 2 different values of the same create
         // option. In this test, the create option is Cblk.
@@ -575,7 +572,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
         // Preparing input/output files
         // //
         final File inputFile = TestData.file(this, testFileName);
-        assertTrue(inputFile.exists());
+        Assert.assertTrue(inputFile.exists());
 
         // //
         // Preparing to read
@@ -649,7 +646,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
         // Preparing input/output files
         // //
         final File inputFile = TestData.file(this, testFileName);
-        assertTrue(inputFile.exists());
+        Assert.assertTrue(inputFile.exists());
 
         // Output files resulting from 2 different values of the same create
         // option. In this test, the create option is ORGgen_plt.
@@ -737,7 +734,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
         // Preparing input/output files
         // //
         final File inputFile = TestData.file(this, "bogota.jp2");
-        assertTrue(inputFile.exists());
+        Assert.assertTrue(inputFile.exists());
 
         // Output files resulting from 2 different values of the same create
         // option. In this test, the create option is GMLJp2.
@@ -825,7 +822,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
         // Preparing input/output files
         // //
         final File inputFile = TestData.file(this, "bogota.jp2");
-        assertTrue(inputFile.exists());
+        Assert.assertTrue(inputFile.exists());
 
         // Output files resulting from 2 different values of the same create
         // option. In this test, the create option is GeoJp2.
@@ -915,7 +912,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
         // Preparing input/output files
         // //
         final File inputFile = TestData.file(this, testFileName);
-        assertTrue(inputFile.exists());
+        Assert.assertTrue(inputFile.exists());
 
         // //
         // Preparing to read
@@ -997,7 +994,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
         // Preparing input/output files
         // //
         final File inputFile = TestData.file(this, testFileName);
-        assertTrue(inputFile.exists());
+        Assert.assertTrue(inputFile.exists());
 
         // Output files resulting from 2 different values of the same create
         // option. In this test, the create option is ORGgen_plt.
@@ -1108,7 +1105,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
         // Preparing input/output files
         // //
         final File inputFile = TestData.file(this, testFileName);
-        assertTrue(inputFile.exists());
+        Assert.assertTrue(inputFile.exists());
 
         final File outputFile1 = TestData.temp(this, "ORGgen_tlm0-.jp2",
                 deleteTempFilesOnExit);
@@ -1165,7 +1162,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
         // Preparing input/output files
         // //
         final File inputFile = TestData.file(this, testFileName);
-        assertTrue(inputFile.exists());
+        Assert.assertTrue(inputFile.exists());
 
         // Output files resulting from 2 different values of the same create
         // option. In this test, the create option is COMSEG.
@@ -1253,7 +1250,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
         // Preparing input/output files
         // //
         final File inputFile = TestData.file(this, testFileName);
-        assertTrue(inputFile.exists());
+        Assert.assertTrue(inputFile.exists());
 
         // Output files resulting from 2 different values of the same create
         // option. In this test, the create option is SProfile.
@@ -1340,7 +1337,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
         // Preparing input/output files
         // //
         final File inputFile = TestData.file(this, testFileName);
-        assertTrue(inputFile.exists());
+        Assert.assertTrue(inputFile.exists());
 
         // Output files resulting from 2 different values of the tiling.
         final int firstTilingParam = 128;
@@ -1437,7 +1434,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
         // Preparing input/output files
         // //
         final File inputFile = TestData.file(this, testFileName);
-        assertTrue(inputFile.exists());
+        Assert.assertTrue(inputFile.exists());
 
         // Output files resulting from 2 different values of the same create
         // option. In this test, the create option is SProfile.
@@ -1531,7 +1528,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
         // Preparing input/output files
         // //
         final File inputFile = TestData.file(this, testFileName);
-        assertTrue(inputFile.exists());
+        Assert.assertTrue(inputFile.exists());
 
         // Output files resulting from 2 different values of the same create
         // option. In this test, the create option is Qguard.
@@ -1619,7 +1616,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
         // Preparing input/output files
         // //
         final File inputFile = TestData.file(this, testFileName);
-        assertTrue(inputFile.exists());
+        Assert.assertTrue(inputFile.exists());
 
         // Output files resulting from 3 different values of the same create
         // option. In this test, the create option is Qstep.
@@ -1742,7 +1739,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
         // Preparing input/output files
         // //
         final File inputFile = TestData.file(this, testFileName);
-        assertTrue(inputFile.exists());
+        Assert.assertTrue(inputFile.exists());
 
         // Output files resulting from 2 different values of the same create
         // option. In this test, the create option is Qstep.
@@ -1836,7 +1833,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
         // Preparing input/output files
         // //
         final File inputFile = TestData.file(this, testFileName);
-        assertTrue(inputFile.exists());
+        Assert.assertTrue(inputFile.exists());
 
         // Output files resulting from 2 different values of the same create
         // option. In this test, the create option is FLUSH.
@@ -1911,91 +1908,6 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
         final RenderedOp op2 = JAI.create("ImageWrite", pbjImageWrite2);
     }
 
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
-
-        if (TestData.isExtensiveTest()) {
-            // Testing "Clevels" Create Option.
-            suite.addTest(new JP2KWriteTest("testWrite_Clevels"));
-
-            // Testing "Clayers" Create Option.
-            suite.addTest(new JP2KWriteTest("testWrite_Clayers"));
-
-            // Testing "Cprecincts" Create Option.
-            suite.addTest(new JP2KWriteTest("testWrite_Cprecincts"));
-
-            // Testing "Corder" Create Option.
-            suite.addTest(new JP2KWriteTest("testWrite_Corder"));
-
-            // Testing "Cblk" Create Option.
-            suite.addTest(new JP2KWriteTest("testWrite_Cblk"));
-
-            // Testing "Cycc" Create Option.
-            suite.addTest(new JP2KWriteTest("testWrite_Cycc"));
-
-            // Testing "Cmodes" Create Option.
-            suite.addTest(new JP2KWriteTest("testWrite_Cmodes"));
-
-            // Testing "SProfile" Create Option.
-            suite.addTest(new JP2KWriteTest("testWrite_SProfile"));
-
-            // Testing "Quality" Create Option.
-            suite.addTest(new JP2KWriteTest("testWrite_Quality"));
-
-            // Testing "ORGtparts" Create Option.
-            suite.addTest(new JP2KWriteTest("testWrite_ORGtparts"));
-
-            // Testing "ORGgen_plt" Create Option.
-            suite.addTest(new JP2KWriteTest("testWrite_ORGgen_plt"));
-
-            // Testing "ORGgen_tlm" Create Option.
-            suite.addTest(new JP2KWriteTest("testWrite_ORGgen_tlm"));
-
-            // Testing "GMLJp2" Create Option.
-            suite.addTest(new JP2KWriteTest("testWrite_GMLJp2"));
-
-            // Testing "GeoJp2" Create Option.
-            suite.addTest(new JP2KWriteTest("testWrite_GeoJp2"));
-
-            // Testing "ROI" Create Option.
-            suite.addTest(new JP2KWriteTest("testWrite_ROI"));
-
-            // Testing "Qguard" Create Option.
-            suite.addTest(new JP2KWriteTest("testWrite_Qguard"));
-
-            // Testing "Qstep" Create Option.
-            suite.addTest(new JP2KWriteTest("testWrite_Qstep"));
-
-            // Testing "COMSEG" Create Option.
-            suite.addTest(new JP2KWriteTest("testWrite_COMSEG"));
-
-            // Testing "FLUSH" Create Option.
-            suite.addTest(new JP2KWriteTest("testWrite_FLUSH"));
-
-            // Testing "Tiling"
-            suite.addTest(new JP2KWriteTest("testWrite_Tiling"));
-
-        }
-
-        suite.addTest(new JP2KWriteTest("testWrite_Parametrized"));
-
-        if (!deleteTempFilesOnExit) {
-            final String message = new StringBuffer(
-                    "------------------------------------------------------------------------\n")
-                    .append(
-                            "Files written during write operations tests will not be automatically deleted.\n")
-                    .append("Several tests will reduce you free disk space.\n")
-                    .append(
-                            "Be sure of deleting written test data files when they are no more needed.\n")
-                    .append(
-                            "------------------------------------------------------------------------------\n")
-                    .toString();
-            LOGGER.info(message);
-        }
-
-        return suite;
-    }
-
     // ////////////////////////////////////////////////////////////////////////
     //
     // Testing parameters-support capabilities for writer.
@@ -2008,7 +1920,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
         final File outputFile = TestData.temp(this, "writetest.jp2", false);
         outputFile.deleteOnExit();
         final File inputFile = TestData.file(this, "test.jp2");
-        assertTrue(inputFile.exists());
+        Assert.assertTrue(inputFile.exists());
 
         // ////////////////////////////////////////////////////////////////////
         //
@@ -2073,9 +1985,5 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
             ImageIOUtilities.visualize(image2, "Written Image");
         else
             image2.getTiles();
-    }
-
-    public static void main(java.lang.String[] args) {
-        junit.textui.TestRunner.run(suite());
     }
 }
