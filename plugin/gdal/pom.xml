@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <project xmlns="http://maven.apache.org/POM/4.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                               http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>it.geosolutions.imageio-ext</groupId>
+    <artifactId>imageio-ext</artifactId>
+    <version>1.1-SNAPSHOT</version>
+  </parent>
+  <groupId>it.geosolutions.imageio-ext</groupId>
+  <artifactId>imageio-ext-gdal-plugin</artifactId>
+  <packaging>pom</packaging>
+  <version>1.1-SNAPSHOT</version>
+  <name>GeoSolutions Image I/O-Extensions plugins</name>
+  <description>
+    Image I/O-Extensions plugin modules.
+  </description>
+  <scm>
+    <connection>
+      scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin
+    </connection>
+    <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin</url>
+  </scm>
+  
+  <!-- ===================================================================== -->
+  <!--     Dependencies management.                                          -->
+  <!-- ===================================================================== -->
+  <dependencies>
+    <dependency>
+      <groupId>it.geosolutions.imageio-ext</groupId>
+      <artifactId>imageio-ext-test-data</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>it.geosolutions.imageio-ext</groupId>
+      <artifactId>imageio-ext-gdalframework</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+      <classifier>tests</classifier>
+    </dependency>
+    <dependency>
+      <groupId>it.geosolutions.imageio-ext</groupId>
+      <artifactId>imageio-ext-gdalframework</artifactId>
+      <version>${project.version}</version>
+    </dependency>    
+  </dependencies>
+  <!-- =========================================================== -->
+  <!--     Build Configuration                                     -->
+  <!--         copies all JARs in a single directory.              -->
+  <!-- =========================================================== -->
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>dependency-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>install</phase>
+              <goals>
+                <goal>copy-dependencies</goal>
+              </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>install</phase>
+            <configuration>
+              <tasks>
+                <delete>
+                  <fileset dir="${project.build.directory}/dependency"/>
+                </delete>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  <!-- =========================================================== -->
+  <!--     Modules for the build in approximate dependency order   -->
+  <!-- =========================================================== -->
+  <profiles>
+    <profile>
+        <id>jmagick</id>
+        <modules>
+           <module>jmagickjpeg</module>
+        </modules>
+    </profile>
+    <profile>
+      <id>base</id>
+       <modules>
+        <module>gdalenvisat</module>
+	    <module>gdaldoq1</module>
+		<module>gdaldoq2</module>
+        <module>gdalerdasimg</module>
+		<module>gdalnitf</module>
+        <module>gdalehdr</module>
+        <module>gdalenvihdr</module>
+        <module>gdaljpeg</module>
+        <module>gdalarcgrid</module>
+        <module>gdalarcbinarygrid</module>
+        <module>gdaldted</module>
+        <module>gdalgeotiff</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>full</id>
+      <modules>
+		<module>gdaldoq1</module>
+		<module>gdaldoq2</module>
+        <module>gdalhdf4</module>
+        <module>gdalenvisat</module>
+        <module>gdalerdasimg</module>
+        <module>gdalnitf</module>
+        <module>gdalehdr</module>
+        <module>gdalenvihdr</module>
+        <module>gdalmrsid</module>
+        <module>gdalecw</module>
+        <module>gdalecwjp2</module>
+        <module>gdalmrsidjp2</module>
+        <module>gdalkakadujp2</module>
+        <module>gdaljpeg</module>
+        <module>gdalarcgrid</module>
+        <module>gdalarcbinarygrid</module>
+        <module>gdaldted</module>
+        <module>gdalgeotiff</module>
+       </modules>
+    </profile> 
+    <profile>
+      <id>releasebuild</id>
+      <modules>
+		<module>gdaldoq1</module>
+		<module>gdaldoq2</module>
+        <module>gdalenvisat</module>
+        <module>gdalerdasimg</module>
+        <module>gdalnitf</module>
+        <module>gdalehdr</module>
+        <module>gdalenvihdr</module>
+        <module>gdalmrsid</module>
+        <module>gdalecw</module>
+        <module>gdalecwjp2</module>
+        <module>gdalmrsidjp2</module>
+        <module>gdalkakadujp2</module>
+        <module>gdaljpeg</module>
+        <module>gdalarcgrid</module>
+        <module>gdalarcbinarygrid</module>
+        <module>gdaldted</module>
+        <module>gdalgeotiff</module>
+       </modules>
+    </profile>
+  </profiles>
+</project>

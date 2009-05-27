@@ -1,0 +1,19 @@
+GDAL DTED plugin
+~~~~~~~~~~~~~~~~
+
+  IP Review:
+
+    * Daniele Romagnoli, December 17th, 2008
+  
+ STATUS: OK
+
+	* Code: Clean
+	
+	* Data: OK
+      
+* Data Credits
+  ~~~~~~~~~~~~
+  * n43.dt0:
+
+     Freely available at: http://download.osgeo.org/gdal/data/dted/
+

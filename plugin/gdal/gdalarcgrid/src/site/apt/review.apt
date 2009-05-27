@@ -1,0 +1,22 @@
+GDAL ArcGrid plugin
+~~~~~~~~~~~~~~~~~~~
+
+  IP Review:
+
+    * Daniele Romagnoli, December 17th, 2008
+  
+  STATUS: OK
+
+	* Code: Clean
+
+	* Data: OK
+     
+* Data Credits
+  ~~~~~~~~~~~~
+    * arcgrid.zip containing the following dataset:
+
+       * 095b_dem_90m.asc
+
+           data freely available at:
+           http://download.osgeo.org/gdal/data/aaigrid/
+   

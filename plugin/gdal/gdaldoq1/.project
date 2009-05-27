@@ -1,0 +1,19 @@
+<projectDescription>
+  <name>imageio-ext-gdaldoq1-1.1-SNAPSHOT</name>
+  <comment>Image I/O-Extensions plugin modules.</comment>
+  <projects>
+    <project>imageio-ext-customstreams-1.1-SNAPSHOT</project>
+    <project>imageio-ext-gdalframework-1.1-SNAPSHOT</project>
+    <project>imageio-ext-geocore-1.1-SNAPSHOT</project>
+    <project>imageio-ext-test-data-1.1-SNAPSHOT</project>
+    <project>imageio-ext-utilities-1.1-SNAPSHOT</project>
+  </projects>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+  </natures>
+</projectDescription>

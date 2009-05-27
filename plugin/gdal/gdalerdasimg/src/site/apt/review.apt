@@ -1,0 +1,23 @@
+GDAL Erdas Image plugin
+~~~~~~~~~~~~~~~~~~~~~~~
+
+  IP Review:
+
+     * Daniele Romagnoli, December 18th, 2008
+  
+
+ STATUS: OK
+
+	* Code: Clean
+
+	* Data: OK
+     
+* Data Credits
+  ~~~~~~~~~~~~
+  * test.zip containing the following dataset:
+
+     * sample.img
+
+       data generated using the gdal_translate utility, having "small_world.tif" as input file, which is freely available at:
+       http://download.osgeo.org/gdal/data/gtiff/
+   
