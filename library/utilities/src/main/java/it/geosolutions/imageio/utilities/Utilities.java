@@ -19,6 +19,8 @@
  */
 package it.geosolutions.imageio.utilities;
 
+import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
+
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
