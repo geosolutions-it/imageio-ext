@@ -34,14 +34,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
-import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
@@ -50,16 +46,14 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
 import javax.media.jai.RasterFactory;
 
-import net.sourceforge.jgrib.GribCollection;
 import net.sourceforge.jgrib.GribFile;
 import net.sourceforge.jgrib.GribRecord;
 import net.sourceforge.jgrib.GribRecordBDS;
 import net.sourceforge.jgrib.GribRecordGDS;
 import net.sourceforge.jgrib.GribRecordPDS;
-import net.sourceforge.jgrib.NoValidGribException;
-import net.sourceforge.jgrib.NotSupportedException;
-import net.sourceforge.jgrib.gds_grids.GribGDSLambert;
-import net.sourceforge.jgrib.gds_grids.GribGDSRotatedLatLon;
+import net.sourceforge.jgrib.GribFile.AccessType;
+import net.sourceforge.jgrib.gdsgrids.GribGDSLambert;
+import net.sourceforge.jgrib.gdsgrids.GribGDSRotatedLatLon;
 import net.sourceforge.jgrib.tables.GribPDSLevel;
 import net.sourceforge.jgrib.tables.GribPDSParameter;
 
@@ -73,20 +67,9 @@ import net.sourceforge.jgrib.tables.GribPDSParameter;
 public class GRIB1ImageReader extends BaseImageReader {
 
     /**
-     * Simple boolean saying if this reader has a single file as its input,
-     * instead of a whole directory.
-     */
-    private boolean isSingleFile = true;
-
-    /**
      * The input file for this reader.
      */
     private GribFile gribFile = null;
-
-    /**
-     * Note that only one of gribFile and gribCollection will be set
-     */
-    private GribCollection gribCollection = null;
 
     private final static ColorModel colorModel = RasterFactory .createComponentColorModel(
     				DataBuffer.TYPE_FLOAT, // dataType
@@ -101,8 +84,6 @@ public class GRIB1ImageReader extends BaseImageReader {
      * This map contains couples <int globalIndex, GribRecordWrapper instance>
      */
     private SoftValueHashMap<Integer, GribRecordWrapper> gribRecordsMap = new SoftValueHashMap<Integer, GribRecordWrapper>();
-
-    private Map<Integer, Integer[]> indexMap = null;
 
     /**
      * A class wrapping a GribRecord and its basic properties and structures
@@ -149,19 +130,8 @@ public class GRIB1ImageReader extends BaseImageReader {
          *                {@link GribRecordWrapper}
          */
         public GribRecordWrapper(int imageIndex) {
-            if (isSingleFile)
-                record = gribFile.getRecord(imageIndex + 1);
-            else {
-                Integer[] indexes = indexMap.get(imageIndex);
-                final int iteratorStep = indexes[0];
-                final int recordIndex = indexes[1];
-                GribFile gf = null;
-                Iterator<GribFile> it = gribCollection.getGribIterator();
-                for (int i = 0; i < iteratorStep; i++) {
-                    gf = it.next();
-                }
-                record = gf.getRecord(recordIndex + 1);
-            }
+            record = gribFile.getRecord(imageIndex + 1);
+            
             bds = record.getBDS();
             pds = record.getPDS();
             level = pds.getLevel();
@@ -258,20 +228,13 @@ public class GRIB1ImageReader extends BaseImageReader {
             if (gribFile == null) {
 
                 if (input instanceof File) {
-                    if (((File) input).isDirectory())
-                        gribCollection = new GribCollection((File) input);
-                    else
-                        gribFile = new GribFile(ImageIO.createImageInputStream((File) input), null);
+                    gribFile = GribFile.open((File) input, AccessType.R);
                 } else if (input instanceof String) {
-                    File file = new File((String) input);
-                    if (file.isDirectory())
-                        gribCollection = new GribCollection(file);
-                    else
-                        gribFile = new GribFile(ImageIO.createImageInputStream(file), null);
+                    gribFile = GribFile.open((File) input, AccessType.R);
                 } else if (input instanceof URL) {
-                    gribFile = new GribFile((URL) input, null);
+                    gribFile =GribFile.open((URL) input, AccessType.R);
                 } else if (input instanceof ImageInputStream) {
-                    gribFile = new GribFile((ImageInputStream) input, null);
+                    gribFile = GribFile.open((ImageInputStream) input, AccessType.R);
 
                 } else if (input instanceof GribFile) {
                     this.gribFile = (GribFile) input;
@@ -282,10 +245,6 @@ public class GRIB1ImageReader extends BaseImageReader {
 
         } catch (IOException e) {
             throw new IllegalArgumentException("Error occurred during grib file parsing", e);
-        } catch (NotSupportedException e) {
-            throw new IllegalArgumentException("Error occurred during grib file parsing", e);
-        } catch (NoValidGribException e) {
-            throw new IllegalArgumentException("Error occurred during grib file parsing", e);
         }
         super.setInput(input, seekForwardOnly, ignoreMetadata);
         initialize();
@@ -295,34 +254,8 @@ public class GRIB1ImageReader extends BaseImageReader {
      * Initialize main properties for this reader.
      */
     private void initialize() {
-        isSingleFile = gribFile != null ? true : false;
         int numImages = 0;
-        if (isSingleFile) {
-            numImages = gribFile.getRecordCount();
-            indexMap = null;
-        } else {
-            Iterator<GribFile> gribFilesIt = gribCollection.getGribIterator();
-            numImages = 0;
-
-            // Estimates the number of records contained in the gribCollection
-            // Just to estimate, we suppose grib files provided as a directory
-            // are small files containing a single record
-            final int numFiles = gribCollection.size();
-            indexMap = Collections.synchronizedMap(new HashMap<Integer, Integer[]>(numFiles));
-            int iteration = 0;
-            int globalIndex = 0;
-            while (gribFilesIt.hasNext()) {
-                iteration++;
-                GribFile gribFile = gribFilesIt.next();
-                final int numRecords = gribFile.getRecordCount();
-                for (int i = 0; i < numRecords; i++) {
-                    Integer[] indexes = new Integer[] { Integer.valueOf(iteration), Integer.valueOf(i) };
-                    indexMap.put(globalIndex, indexes);
-                    globalIndex++;
-                }
-                numImages += numRecords;
-            }
-        }
+        numImages = gribFile.getRecordCount();
         setNumImages(numImages);
     }
 
@@ -779,7 +712,7 @@ public class GRIB1ImageReader extends BaseImageReader {
      * @throws NoValidGribException
      */
     private WritableRaster readBDSRaster(GribRecordWrapper item,
-            ImageReadParam param) throws IOException, NoValidGribException {
+            ImageReadParam param) throws IOException {
 
         // ////////////////////////////////////////////////////////////////////
         //
@@ -934,11 +867,7 @@ public class GRIB1ImageReader extends BaseImageReader {
             IOException ioe = new IOException("Error while reading the Raster");
             ioe.initCause(e);
             throw ioe;
-        } catch (NoValidGribException e) {
-            IOException ioe = new IOException("Error while reading the Raster");
-            ioe.initCause(e);
-            throw ioe;
-        }
+        } 
         return image;
     }
 
@@ -962,22 +891,9 @@ public class GRIB1ImageReader extends BaseImageReader {
      */
     public synchronized void dispose() {
         super.dispose();
-        if (isSingleFile) {
-            if (gribFile != null)
-                gribFile.dispose();
-        } else {
-            if (gribCollection != null) {
-                final Iterator<GribFile> filesIt = gribCollection.getGribIterator();
-                while (filesIt.hasNext()) {
-                    final GribFile file = filesIt.next();
-                    file.dispose();
-                }
-                gribCollection = null;
-            }
-            // TODO: Improve clear??
-            indexMap.clear();
-            gribRecordsMap.clear();
-        }
+        if (gribFile != null)
+            gribFile.dispose();
+        
     }
 
     /**
@@ -1026,7 +942,7 @@ public class GRIB1ImageReader extends BaseImageReader {
             throws IOException {
         try {
             return readBDSRaster(getGribRecordWrapper(imageIndex), param);
-        } catch (NoValidGribException e) {
+        } catch (Throwable e) {
             IOException ioe = new IOException("Error while reading the Raster");
             ioe.initCause(e);
             throw ioe;
@@ -1038,12 +954,9 @@ public class GRIB1ImageReader extends BaseImageReader {
      */
     public void reset() {
         dispose();
-        gribCollection = null;
         gribFile = null;
         gribRecordsMap.clear();
         gribRecordsMap = null;
-        isSingleFile = false;
-        indexMap = null;
     }
 
     String getRecordName(int imageIndex) {

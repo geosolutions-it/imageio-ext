@@ -28,7 +28,6 @@ import java.util.logging.Level;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ServiceRegistry;
 
-import net.sourceforge.jgrib.GribCollection;
 import net.sourceforge.jgrib.GribFile;
 
 /**
@@ -104,16 +103,10 @@ public class GRIB1ImageReaderSpi extends BaseImageReaderSpi {
         }
 
         if (input instanceof File) {
-            if (((File) input).isDirectory())
-                return GribCollection.canDecode((File) input);
-            else
-                return GribFile.canDecodeInput((File) input);
+            return GribFile.canDecodeInput((File) input);
         } else if (input instanceof String) {
             File file = new File((String) input);
-            if (file.isDirectory())
-                return GribCollection.canDecode(file);
-            else
-                return GribFile.canDecodeInput(file);
+            return GribFile.canDecodeInput(file);
         } else if (input instanceof URL) {
             return GribFile.canDecodeInput((URL) input);
         } else if (input instanceof FileImageInputStreamExt) {
