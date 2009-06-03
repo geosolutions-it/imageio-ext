@@ -80,5 +80,6 @@
     <module>gdalframework</module>
     <module>imagereadmt</module>
     <module>jhdfaccess</module>
+	<module>jgrib1</module>
   </modules>
 </project>
