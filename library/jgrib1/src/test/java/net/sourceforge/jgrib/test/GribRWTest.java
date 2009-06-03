@@ -66,7 +66,6 @@ public class GribRWTest  {
 		// Main loop
 		//
 		// /////////////////////////////////////////////////////////////////////
-		StringBuffer buffer;
 		for (int i = 0; i < length; i++) {
 
 			// //
@@ -74,29 +73,22 @@ public class GribRWTest  {
 			// input file
 			//
 			// //
-			buffer = new StringBuffer("Parsing file ").append(files[i])
-					.append("\n");
+			final StringBuilder buffer = new StringBuilder("Parsing file ").append(files[i]).append("\n");
 			gribFile = GribFile.open(files[i],AccessType.R);
 			gribFile.parseGribFile();
 			// file to write out
 			final GribFile file = GribFile.open(null, AccessType.RW);
 
 			// creating a grib record
-			GribRecord record, oldRecord;
-			GribRecordPDS oldPDS;
-			GribRecordBDS oldBDS;
-			GribRecordBMS oldBMS;
-			GribRecordGDS oldGDS;
-			GribRecordIS oldIS;
 			final int recordCount = gribFile.getRecordCount();
 			buffer.append("\n\tnumber of records ").append(recordCount).append(
 					"\n");
 			LOGGER.info(buffer.toString());
 			for (int j = 1; j <= recordCount; j++) {
 
-				oldRecord = gribFile.getRecord(j);
+				final GribRecord oldRecord = gribFile.getRecord(j);
 				Assert.assertNotNull((oldRecord));
-				record = new GribRecord();
+				final GribRecord record = new GribRecord();
 
 				// /////////////////////////////////////////////////////////////
 				//
@@ -104,7 +96,7 @@ public class GribRWTest  {
 				//
 				// /////////////////////////////////////////////////////////////
 				// get the old pds
-				oldPDS = oldRecord.getPDS();
+				final GribRecordPDS oldPDS = oldRecord.getPDS();
 
 				// set the new one
 				record.setPDS(oldPDS.getTableVersion(), oldPDS
@@ -127,7 +119,7 @@ public class GribRWTest  {
 				//
 				// /////////////////////////////////////////////////////////////
 				// get the old gds
-				oldGDS = oldRecord.getGDS();
+				final GribRecordGDS oldGDS = oldRecord.getGDS();
 				final GribRecordGDS gds = GribGDSFactory.getGDS(oldGDS
 						.getGridType());
 				gds.setGridType(oldGDS.getGridType());
@@ -176,7 +168,7 @@ public class GribRWTest  {
 				//
 				//
 				// /////////////////////////////////////////////////////////////
-				oldBMS = gribFile.getRecord(j).getBMS();
+				final GribRecordBMS oldBMS = gribFile.getRecord(j).getBMS();
 				if (oldPDS.bmsExists()) {
 					record.setBMS(oldBMS.getBitmap());
 					//
@@ -191,7 +183,7 @@ public class GribRWTest  {
 				//
 				// /////////////////////////////////////////////////////////////
 				// data
-				oldBDS = oldRecord.getBDS();
+				final GribRecordBDS oldBDS = oldRecord.getBDS();
 				record.setBDS(oldPDS.getDecimalScale(), oldBDS.getNumBits(),
 						oldBDS.getValues(), oldBDS.getIsConstant(), oldBDS
 								.getMaxValue(), oldBDS.getMinValue());
@@ -206,7 +198,7 @@ public class GribRWTest  {
 				//
 				//
 				// /////////////////////////////////////////////////////////////
-				oldIS = oldRecord.getIS();
+				final GribRecordIS oldIS = oldRecord.getIS();
 				record.setIS(oldIS.getGribEdition(), oldPDS.getLength(), oldGDS
 						.getLength(), oldBMS == null ? 0 : oldBMS.getLength(),
 						oldBDS.getLength());

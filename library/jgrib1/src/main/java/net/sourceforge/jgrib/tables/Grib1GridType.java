@@ -57,54 +57,54 @@ import java.util.Map;
  * @version 1.0
  */
 public final  class Grib1GridType {
-    static private HashMap<Integer,String> gridTypes = new HashMap<Integer,String>();
+    static private final HashMap<Integer,String> gridTypes = new HashMap<Integer,String>();
     static private int[][] ranges4Reserved = null;
 
     /**
      * statically loads all the centers into the hash map
      */
     static {
-        Grib1GridType.gridTypes.put(Integer.valueOf(0),
+        Grib1GridType.gridTypes.put(0,
             "Latitude/Longitude Grid - Equidistant Cylindrical or Plate Carree projection");
-        Grib1GridType.gridTypes.put(Integer.valueOf(1), "Mercator Projection Grid");
-        Grib1GridType.gridTypes.put(Integer.valueOf(2), "Gnomonic Projection Grid");
-        Grib1GridType.gridTypes.put(Integer.valueOf(3),
+        Grib1GridType.gridTypes.put(1, "Mercator Projection Grid");
+        Grib1GridType.gridTypes.put(2, "Gnomonic Projection Grid");
+        Grib1GridType.gridTypes.put(3,
             "Lambert Conformal, secant or tangent, conical or bipolar (normal or oblique) projection");
-        Grib1GridType.gridTypes.put(Integer.valueOf(4),
+        Grib1GridType.gridTypes.put(4,
             "Gaussian Latitude/Longitude");
-        Grib1GridType.gridTypes.put(Integer.valueOf(5),
+        Grib1GridType.gridTypes.put(5,
             "Polar Stereographic projection Grid");
-        Grib1GridType.gridTypes.put(Integer.valueOf(6),
+        Grib1GridType.gridTypes.put(6,
             "Universal Transverse Mercator (UTM) projection");
-        Grib1GridType.gridTypes.put(Integer.valueOf(7),
+        Grib1GridType.gridTypes.put(7,
             "Simple polyconic projection");
-        Grib1GridType.gridTypes.put(Integer.valueOf(8),
+        Grib1GridType.gridTypes.put(8,
             "Albers equal-area, secant or tangent, conic or bi-polar, projection");
-        Grib1GridType.gridTypes.put(Integer.valueOf(9),
+        Grib1GridType.gridTypes.put(9,
             "Miller's cylindrical projection");
-        Grib1GridType.gridTypes.put(Integer.valueOf(10),
+        Grib1GridType.gridTypes.put(10,
             "Rotated latitude/longitude grid");
-        Grib1GridType.gridTypes.put(Integer.valueOf(13),
+        Grib1GridType.gridTypes.put(13,
             "Oblique Lambert conformal, secant or tangent, conical or bipolar, projection");
-        Grib1GridType.gridTypes.put(Integer.valueOf(14),
+        Grib1GridType.gridTypes.put(14,
             "Rotated Gaussian latitude/longitude grid");
-        Grib1GridType.gridTypes.put(Integer.valueOf(20),
+        Grib1GridType.gridTypes.put(20,
             "Stretched latitude/longitude grid");
-        Grib1GridType.gridTypes.put(Integer.valueOf(24),
+        Grib1GridType.gridTypes.put(24,
             "Stretched Gaussian latitude/longitude grid");
-        Grib1GridType.gridTypes.put(Integer.valueOf(30),
+        Grib1GridType.gridTypes.put(30,
             "Stretched and rotated latitude/longitude grids");
-        Grib1GridType.gridTypes.put(Integer.valueOf(34),
+        Grib1GridType.gridTypes.put(34,
             "Stretched and rotated Gaussian latitude/longitude grids");
-        Grib1GridType.gridTypes.put(Integer.valueOf(50),
+        Grib1GridType.gridTypes.put(50,
             "Spherical Harmonic Coefficients");
-        Grib1GridType.gridTypes.put(Integer.valueOf(60),
+        Grib1GridType.gridTypes.put(60,
             "Rotated spherical harmonic coefficients");
-        Grib1GridType.gridTypes.put(Integer.valueOf(70),
+        Grib1GridType.gridTypes.put(70,
             "Stretched spherical harmonics");
-        Grib1GridType.gridTypes.put(Integer.valueOf(80),
+        Grib1GridType.gridTypes.put(80,
             "Stretched and rotated spherical harmonic coefficients");
-        Grib1GridType.gridTypes.put(Integer.valueOf(90),
+        Grib1GridType.gridTypes.put(90,
             "Space view perspective or orthographic");
     }
 
@@ -121,8 +121,8 @@ public final  class Grib1GridType {
             return "reserved";
         }
 
-        if (Grib1GridType.gridTypes.containsKey(Integer.valueOf(key))) {
-            return (String) Grib1GridType.gridTypes.get(Integer.valueOf(key));
+        if (Grib1GridType.gridTypes.containsKey(key)) {
+            return (String) Grib1GridType.gridTypes.get(key);
         }
 
         return null;
@@ -152,13 +152,13 @@ public final  class Grib1GridType {
      *
      * @return DOCUMENT ME!
      */
-    public static Map getAll() {
-        Map clone = (Map) Grib1GridType.gridTypes.clone();
+    public static Map<Integer,String> getAll() {
+        Map<Integer,String> clone = new HashMap<Integer,String>(Grib1GridType.gridTypes);
 
         for (int i = 0; i < Grib1GridType.ranges4Reserved.length; i++) {
             for (int j = Grib1GridType.ranges4Reserved[i][0];
                     j <= Grib1GridType.ranges4Reserved[i][1]; j++) {
-                clone.put(Integer.valueOf(j), "reserved");
+                clone.put(j, "reserved");
             }
         }
 

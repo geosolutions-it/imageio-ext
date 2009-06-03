@@ -75,8 +75,7 @@ public class GribGDSFactory {
 	 * @throws NotSupportedException
 	 *             DOCUMENT ME!
 	 */
-	public static GribRecordGDS getGDS(final ImageInputStream in)
-			throws IOException {
+	public static GribRecordGDS getGDS(final ImageInputStream in)throws IOException {
 
 		// octets 1-6 give the common GDS data - before the Table D unique data
 		final int[] data = new int[6];
@@ -90,8 +89,7 @@ public class GribGDSFactory {
 		// octet 6 (grid type - see table 6)
 		final int grid_type = data[5];
 		GribGDSFactorySpi gdf = null;
-		FactoryRegistry registry = new FactoryRegistry(Arrays
-				.asList(new Class[] { GribGDSFactorySpi.class }));
+		final FactoryRegistry registry = new FactoryRegistry(Arrays.asList(new Class[] { GribGDSFactorySpi.class }));
 		Iterator gdfi = registry.getServiceProviders(GribGDSFactorySpi.class);
 		/* FactoryFinder.factories(GribGDSFactorySpi.class, null); */
 
@@ -133,8 +131,7 @@ public class GribGDSFactory {
 	 */
 	public static GribRecordGDS getGDS(int grid_type) {
 		GribGDSFactorySpi gdf = null;
-		FactoryRegistry registry = new FactoryRegistry(Arrays
-				.asList(new Class[] { GribGDSFactorySpi.class }));
+		FactoryRegistry registry = new FactoryRegistry(Arrays.asList(new Class[] { GribGDSFactorySpi.class }));
 		final Iterator gdfi = registry.getServiceProviders(GribGDSFactorySpi.class);
 		while (gdfi.hasNext()) {
 			gdf = (GribGDSFactorySpi) gdfi.next();

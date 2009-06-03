@@ -15,16 +15,15 @@ import java.util.logging.Logger;
  * @version 1.0
  */
 public final class  GribRecordES {
+
+	/** Logger. */
+	final static Logger LOGGER = Logger.getLogger(GribRecordES.class.toString());
 	
 	private final int length=4;
 	
 	public int getLength() {
 		return length;
 	}
-
-	/** Logger. */
-	final static Logger LOGGER = Logger.getLogger(GribRecordES.class
-			.toString());
 	
     /**Serialization of BDS section with emphasis on data packing.
      *
