@@ -528,8 +528,7 @@ public final class GribRecordPDS {
          * of the first year of the twenty-first century); it is to be noted
          * also that year 2000 is a leap year and the 29 February 2000 exists.
          */
-        return ((int) Math.ceil((double) this.baseTime.get(Calendar.YEAR) / 100))
-        & 0x000000ff;
+        return ((int) Math.ceil((double) this.baseTime.get(Calendar.YEAR) / 100))& 0x000000ff;
     }
 
     /**
