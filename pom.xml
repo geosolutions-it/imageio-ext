@@ -52,20 +52,6 @@
   <!-- ======================================================== -->
   
   <profiles>
-  <!--..................................-->
-  <!--      Refractions Repository      -->
-  <!--..................................-->   
-   <profile>
-    <id>deployrefraction</id>
-     <distributionManagement>
-      <repository>
-       <uniqueVersion>false</uniqueVersion>
-       <id>refractions</id>
-       <name>Refractions Research - Maven 2 repo</name>
-       <url>dav:http://lists.refractions.net/m2</url>
-      </repository>
-     </distributionManagement>
-   </profile>
    <profile>
    <id>deployosgeo</id>
      <distributionManagement>
@@ -324,14 +310,6 @@
         <enabled>true</enabled>
       </snapshots>
     </pluginRepository>
-    <pluginRepository>
-      <id>refractions</id>
-      <name>Refractions Research Maven 2 Repository</name>
-      <url>http://lists.refractions.net/m2</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </pluginRepository>
   </pluginRepositories>
 
   
@@ -348,11 +326,6 @@
       <id>codehaus</id>
       <name>Codehaus maven repository</name>
       <url>http://repository.codehaus.org/</url>
-    </repository>
-    <repository>
-      <id>refractions</id>
-      <name>Refractions Research Maven 2 Repository</name>
-      <url>http://lists.refractions.net/m2</url>
     </repository>
     <repository>
       <id>jboss</id>
