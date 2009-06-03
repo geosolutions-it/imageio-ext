@@ -50,9 +50,5 @@ public class AbstractJP2KTestCase extends AbstractGDALTest {
             LOGGER.warning(msg);
             return;
         }
-        // general settings
-        JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
-                64 * 1024 * 1024);
-        JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
     }
 }

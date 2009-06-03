@@ -47,8 +47,7 @@ import org.junit.Assert;
  */
 public class JP2KReadTest extends AbstractGDALTest {
 
-    private static final Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.plugins.jp2mrsid");
+    private static final Logger LOGGER = Logger.getLogger(JP2KReadTest.class.toString());
 
     public final static String fileName = "test.jp2";
 
@@ -61,21 +60,22 @@ public class JP2KReadTest extends AbstractGDALTest {
 
     static {
 	    try {
-	        gdal.AllRegister();
+	        isDriverAvailable = GDALUtilities.isDriverAvailable("JP2MrSID");
 	        final Driver driverkak = gdal.GetDriverByName("JP2KAK");
 	        final Driver driverecw = gdal.GetDriverByName("JP2ECW");
 	        if (driverkak != null || driverecw != null) {
-	            final StringBuffer skipDriver = new StringBuffer("");
+	            final StringBuilder skipDriver = new StringBuilder("");
 	            if (driverkak != null)
 	                skipDriver.append("JP2KAK ");
 	            if (driverecw != null)
 	                skipDriver.append("JP2ECW");
 	            gdal.SetConfigOption("GDAL_SKIP", skipDriver.toString());
+	            gdal.AllRegister();
 	        }
 	        isDriverAvailable = GDALUtilities.isDriverAvailable("JP2MrSID");
 	    } catch (UnsatisfiedLinkError e) {
 	        if (LOGGER.isLoggable(Level.WARNING))
-	            LOGGER.warning(new StringBuffer("GDAL library unavailable.")
+	            LOGGER.warning(new StringBuilder("GDAL library unavailable.")
 	                    .toString());
 	        isDriverAvailable = false;
 	    }
@@ -201,7 +201,7 @@ public class JP2KReadTest extends AbstractGDALTest {
 
         final RenderedOp rotatedImage = JAI.create("Rotate", pbjRotate);
 
-        StringBuffer title = new StringBuffer("SUBSAMP:").append("X[").append(
+        StringBuilder title = new StringBuilder("SUBSAMP:").append("X[").append(
                 xSubSampling.toString()).append("]-Y[").append(
                 ySubSampling.toString()).append("]-Xof[").append(
                 xSubSamplingOffset.toString()).append("]-Yof[").append(
@@ -227,9 +227,5 @@ public class JP2KReadTest extends AbstractGDALTest {
 	        LOGGER.warning(msg);
 	        return;
 	    }
-	    // general settings
-	    JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
-	            64 * 1024 * 1024);
-	    JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
 	}
 }

@@ -63,17 +63,18 @@ public class JP2KReadTest extends AbstractGDALTest {
 	        final Driver driverkak = gdal.GetDriverByName("JP2KAK");
 	        final Driver drivermrsid = gdal.GetDriverByName("JP2MrSID");
 	        if (driverkak != null || drivermrsid != null) {
-	            final StringBuffer skipDriver = new StringBuffer("");
+	            final StringBuilder skipDriver = new StringBuilder("");
 	            if (driverkak != null)
 	                skipDriver.append("JP2KAK ");
 	            if (drivermrsid != null)
 	                skipDriver.append("JP2MrSID");
 	            gdal.SetConfigOption("GDAL_SKIP", skipDriver.toString());
+	            gdal.AllRegister();
 	        }
 	        isDriverAvailable = GDALUtilities.isDriverAvailable("JP2ECW");
 	    } catch (UnsatisfiedLinkError e) {
 	        if (LOGGER.isLoggable(Level.WARNING))
-	            LOGGER.warning(new StringBuffer("GDAL library unavailable.")
+	            LOGGER.warning(new StringBuilder("GDAL library unavailable.")
 	                    .toString());
 	        isDriverAvailable = false;
 	    }
@@ -207,7 +208,7 @@ public class JP2KReadTest extends AbstractGDALTest {
 
         final RenderedOp rotatedImage = JAI.create("Rotate", pbjRotate);
 
-        StringBuffer title = new StringBuffer("SUBSAMP:").append("X[").append(
+        StringBuilder title = new StringBuilder("SUBSAMP:").append("X[").append(
                 xSubSampling.toString()).append("]-Y[").append(
                 ySubSampling.toString()).append("]-Xof[").append(
                 xSubSamplingOffset.toString()).append("]-Yof[").append(
