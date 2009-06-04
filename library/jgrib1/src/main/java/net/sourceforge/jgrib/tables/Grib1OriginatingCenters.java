@@ -25,24 +25,16 @@ public final class Grib1OriginatingCenters {
      * statically loads all the centers into the hash map
      */
     static {
-        Grib1OriginatingCenters.originatingCentersmap.put(1,
-            "Melbourne (WMC)");
-        Grib1OriginatingCenters.originatingCentersmap.put(2,
-            "Melbourne (WMC)");
-        Grib1OriginatingCenters.originatingCentersmap.put(4,
-            "Moscow (WMC)");
-        Grib1OriginatingCenters.originatingCentersmap.put(5,
-            "Moscow (WMC)");
-        Grib1OriginatingCenters.originatingCentersmap.put(7,
-            "US National Weather Service - NCEP (WMC)");
-        Grib1OriginatingCenters.originatingCentersmap.put(8,
-            "US National Weather Service - NWSTG (WMC)");
-        Grib1OriginatingCenters.originatingCentersmap.put(9,
-            "US National Weather Service - Other (WMC)");
-        Grib1OriginatingCenters.originatingCentersmap.put(10,
-            "Cairo (RSMC/RAFC)");
-        Grib1OriginatingCenters.originatingCentersmap.put(12,
-            "Dakar (RSMC/RAFC)");
+        Grib1OriginatingCenters.originatingCentersmap.put(1,"Melbourne (WMC)");
+        Grib1OriginatingCenters.originatingCentersmap.put(2,"Melbourne (WMC)");
+        Grib1OriginatingCenters.originatingCentersmap.put(3,"Melbourne (WMC)");
+        Grib1OriginatingCenters.originatingCentersmap.put(4,"Moscow (WMC)");
+        Grib1OriginatingCenters.originatingCentersmap.put(5,"Moscow (WMC)");
+        Grib1OriginatingCenters.originatingCentersmap.put(7,"US National Weather Service - NCEP (WMC)");
+        Grib1OriginatingCenters.originatingCentersmap.put(8,"US National Weather Service - NWSTG (WMC)");
+        Grib1OriginatingCenters.originatingCentersmap.put(9,"US National Weather Service - Other (WMC)");
+        Grib1OriginatingCenters.originatingCentersmap.put(10,"Cairo (RSMC/RAFC)");
+        Grib1OriginatingCenters.originatingCentersmap.put(12,"Dakar (RSMC/RAFC)");
         Grib1OriginatingCenters.originatingCentersmap.put(14,
             "Nairobi (RSMC/RAFC)");
         Grib1OriginatingCenters.originatingCentersmap.put(16,
