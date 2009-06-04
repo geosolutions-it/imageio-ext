@@ -270,23 +270,7 @@ public final class GribRecordBDS {
 		inStream.skipBytes(size);
 	}
 
-	// /**
-	// * Constructs a <tt>GribRecordBDS</tt> object from a bit input stream. A
-	// * bit map which indicates grid points where no parameter value is defined
-	// * is not available.
-	// *
-	// * @param in bit input stream with PDS content
-	// * @param decimalscale the exponent of the decimal scale
-	// *
-	// * @throws IOException if stream can not be opened etc.
-	// * @throws NoValidGribException if stream contains no valid GRIB file
-	// * @throws NotSupportedException DOCUMENT ME!
-	// */
-	// public GribRecordBDS(final BitInputStream in, final GribRecordGDS gds,
-	// final int decimalscale)
-	// throws IOException,  NotSupportedException {
-	// this(in, decimalscale, gds, null);
-	// }
+
 
 	/**
 	 * Constructs a <tt>GribRecordBDS</tt> object from a bit input stream. A
@@ -297,44 +281,6 @@ public final class GribRecordBDS {
 	 * @throws IOException
 	 */
 	private void parseBDS() throws  IOException {
-		// if (bms != null) {
-		// this.bms = bms.getBitmap();
-		// }
-		// // GDS Mandatory
-		// if (gds == null) {
-		// throw new NotSupportedException("GribRecordBDS::GribRecordBDS: GDS
-		// parameter is mandatory." +
-		// "You MUST specify the Grid shape and direction.");
-		// }
-		// this.gds = gds;
-		//		
-		// //getting BDS
-		// // read rest of section
-		// final int []data= in.readUI8(11);
-		//		
-		// // octets 1-3 (section length)
-		// this.length = MathUtils.uint3(data[0], data[1], data[2]);
-		//		
-		// // octet 4, 1st half (packing flag) see table 11
-		// if ((data[3] & 240) != 0) {
-		// throw new NotSupportedException("GribRecordBDS: No other flag "
-		// + "(octet 4, 1st half) than 0 (= simple packed floats as "
-		// + "grid point data) supported yet in BDS section.");
-		// }
-		//		
-		// // octet 4, 2nd half (number of unused bits at end of this section)
-		// this.unusedBits = data[3] & 15;
-		//		
-		// // octets 5-6 (binary scale factor)
-		// this.binscale = MathUtils.int2(data[4], data[5]);
-		//		
-		// //decimal scale from PDS
-		// this.DecimalScale = decimalscale;
-		//		
-		// // octets 7-10 (reference point = minimum value)
-		// this.refvalue = MathUtils.IBM2FLoat(data[6], data[7], data[8],
-		// data[9]);
-		//		
 		// // octet 11 (number of bits per value)
 		// this.numbits = data[10];
 		this.inStream.seek(this.pos);
@@ -518,8 +464,7 @@ public final class GribRecordBDS {
 			this.parseBDS();
 		}
 
-		return copyValues(new Rectangle(0, 0, this.gds.getGridNX(), this.gds
-				.getGridNY()));
+		return copyValues(new Rectangle(0, 0, this.gds.getGridNX(), this.gds.getGridNY()));
 	}
 
 	public WritableRaster copyValues(final Rectangle2D roi)
@@ -532,18 +477,12 @@ public final class GribRecordBDS {
 				&& (roi.getY() >= 0) && (roi.getY() <= this.gds.getGridNY())
 				&& (roi.getWidth() <= this.gds.getGridNX())
 				&& (roi.getHeight() <= this.gds.getGridNY())) {
-			float[] rasterBuffer = new float[(int) (roi.getWidth() * roi
-					.getHeight())];
-			rasterBuffer = this.values.getSamples((int) roi.getX(), (int) roi
-					.getY(), (int) roi.getWidth(), (int) roi.getHeight(), 0,
-					rasterBuffer);
+			float[] rasterBuffer = new float[(int) (roi.getWidth() * roi.getHeight())];
+			rasterBuffer = this.values.getSamples((int) roi.getX(), (int) roi.getY(), (int) roi.getWidth(), (int) roi.getHeight(), 0,rasterBuffer);
 
-			final DataBuffer db = new javax.media.jai.DataBufferFloat(
-					rasterBuffer, (int) (roi.getWidth() * roi.getHeight()));
+			final DataBuffer db = new javax.media.jai.DataBufferFloat(rasterBuffer, (int) (roi.getWidth() * roi.getHeight()));
 
-			return RasterFactory.createBandedRaster(db, (int) roi.getWidth(),
-					(int) roi.getHeight(), (int) roi.getWidth(),
-					new int[] { 0 }, new int[] { 0 }, null);
+			return RasterFactory.createBandedRaster(db, (int) roi.getWidth(),(int) roi.getHeight(), (int) roi.getWidth(),new int[] { 0 }, new int[] { 0 }, null);
 		}
 
 		throw new IllegalArgumentException(
