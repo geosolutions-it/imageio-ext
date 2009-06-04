@@ -22,12 +22,12 @@ public final class BitInputStream extends FilterInputStream {
     /**
      * Buffer for one byte which will be processed bit by bit.
      */
-    protected int bitBuf = 0;
+    private int bitBuf = 0;
 
     /**
      * Current bit position in <tt>bitBuf</tt>.
      */
-    protected int bitPos = 0;
+    private int bitPos = 0;
 
     /**
      * Constructs a bit input stream from an <tt>InputStream</tt> object.

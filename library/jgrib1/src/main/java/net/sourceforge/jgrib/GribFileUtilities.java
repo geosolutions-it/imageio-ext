@@ -7,12 +7,16 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 
 class GribFileUtilities {
+
+	/** Logger. */
+	private final static Logger LOGGER = Logger.getLogger(GribFileUtilities.class.toString());
 	
 	static void checkFileReadable(final File file){
 		ensureNotNull("file", file);
@@ -105,8 +109,8 @@ class GribFileUtilities {
 					return false;
 			}
 		} catch (IOException ioe) {
-			if(GribRecordIS.LOGGER.isLoggable(Level.FINE))
-				GribRecordIS.LOGGER.log(Level.FINE,"Unable to seek ",ioe);
+			if(LOGGER.isLoggable(Level.FINE))
+				LOGGER.log(Level.FINE,"Unable to seek ",ioe);
 		}
 	
 		return false;
@@ -157,4 +161,28 @@ class GribFileUtilities {
 	
 	    return false;
 	}
+
+	/**
+	 * Count the number of set bits in an int;
+	 * 
+	 * @param x
+	 *            the int to have its bits counted
+	 * @author Tim Tyler tt@iname.com
+	 * @returns the number of bits set in x
+	 */
+	static int bitCount(int x) {
+		int temp;
+	
+		temp = 0x55555555;
+		x = (x & temp) + (x >>> 1 & temp);
+		temp = 0x33333333;
+		x = (x & temp) + (x >>> 2 & temp);
+		temp = 0x07070707;
+		x = (x & temp) + (x >>> 4 & temp);
+		temp = 0x000F000F;
+		x = (x & temp) + (x >>> 8 & temp);
+	
+		return (x & 0x1F) + (x >>> 16);
+	}
+
 }

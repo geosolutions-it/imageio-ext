@@ -34,8 +34,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.imageio.stream.ImageInputStream;
+import javax.media.jai.DataBufferDouble;
 import javax.media.jai.DataBufferFloat;
 import javax.media.jai.RasterFactory;
 
@@ -105,6 +108,9 @@ public final class GribRecordBDS {
 
 	/** Position in the stream at which the compressed data starts. */
 	private long pos;
+
+	/** Logger. */
+	private final static Logger LOGGER = Logger.getLogger(GribRecordBDS.class.toString());
 
 	/**
 	 * GribRecordBDS constructor to be used when creating a GRIB from scratch.
@@ -258,13 +264,12 @@ public final class GribRecordBDS {
 		this.DecimalScale = decimalscale;
 
 		// octets 7-10 (reference point = minimum value)
-		this.refvalue = MathUtils.IBM2FLoat(inStream.read(), inStream.read(),
-				inStream.read(), inStream.read());
+		this.refvalue = MathUtils.IBM2FLoat(inStream.read(), inStream.read(),inStream.read(), inStream.read());
 
 		// octet 11 (number of bits per value)
 		this.numbits = inStream.read();
 
-		// pos and size
+		// pos and size, skipping positions in order to not read data now
 		this.pos = inStream.getStreamPosition();
 		this.size = this.length - 11;
 		inStream.skipBytes(size);
@@ -277,12 +282,11 @@ public final class GribRecordBDS {
 	 * bit map indicates the grid points where no parameter value is defined.
 	 * TODO better support for table 11
 	 * 
-	 * @throws NoValidGribException
+	 * 
 	 * @throws IOException
+	 * @todo TODO XXX optimize me by using the {@link ImageInputStream} directly
 	 */
 	private void parseBDS() throws  IOException {
-		// // octet 11 (number of bits per value)
-		// this.numbits = data[10];
 		this.inStream.seek(this.pos);
 
 		final byte[] buffer = new byte[this.size];
@@ -301,7 +305,7 @@ public final class GribRecordBDS {
 
 		final int W = this.gds.getGridNX();
 		final int H = this.gds.getGridNY();
-		final float[] rasterBuffer = new float[W * H];
+		final double[] rasterBuffer = new double[W * H];
 
 		// preparing the scaling factors
 		final double ref = (Math.pow(10.0, -DecimalScale) * this.refvalue);
@@ -370,7 +374,7 @@ public final class GribRecordBDS {
 		}
 
 		// creating the raster
-		final DataBuffer db = new javax.media.jai.DataBufferFloat(rasterBuffer,W * H);
+		final DataBuffer db = new DataBufferDouble(rasterBuffer,W * H);
 		this.values = RasterFactory.createBandedRaster(db, W, H, W,new int[] { 0 }, new int[] { 0 }, null);
 
 		// clean up
@@ -515,11 +519,9 @@ public final class GribRecordBDS {
 
 			if (adiacent_i) {
 				columnIndex = (plus_i ? (index % W) : ((W - 1) - (index % W)));
-				rowIndex = (int) ((!plus_j) ? (Math.ceil(index / W))
-						: ((H - 1) - Math.ceil(index / W)));
+				rowIndex = (int) ((!plus_j) ? (Math.ceil(index / W)): ((H - 1) - Math.ceil(index / W)));
 			} else {
-				columnIndex = (int) (plus_i ? (Math.ceil(index / H))
-						: ((W - 1) - (Math.ceil(index / H))));
+				columnIndex = (int) (plus_i ? (Math.ceil(index / H)): ((W - 1) - (Math.ceil(index / H))));
 				rowIndex = (plus_j ? (index % H) : ((H - 1) - (index % H)));
 			}
 
@@ -875,29 +877,6 @@ public final class GribRecordBDS {
 		return /* (bitsNumber > 0) ? bitsNumber : 0 */bitsNumber;
 	}
 
-	/**
-	 * Count the number of set bits in an int;
-	 * 
-	 * @param x
-	 *            the int to have its bits counted
-	 * @author Tim Tyler tt@iname.com
-	 * @returns the number of bits set in x
-	 */
-	static int bitCount(int x) {
-		int temp;
-
-		temp = 0x55555555;
-		x = (x & temp) + (x >>> 1 & temp);
-		temp = 0x33333333;
-		x = (x & temp) + (x >>> 2 & temp);
-		temp = 0x07070707;
-		x = (x & temp) + (x >>> 4 & temp);
-		temp = 0x000F000F;
-		x = (x & temp) + (x >>> 8 & temp);
-
-		return (x & 0x1F) + (x >>> 16);
-	}
-
 	private void setBinaryScale(final int bitsNumber) {
 		if (this.numbits == 0) { // VARIABLE NUMBER OF BITS
 			this.numbits = bitsNumber;
@@ -970,9 +949,8 @@ public final class GribRecordBDS {
 				return false;
 			}
 
-			final float[] rasterBufferA = ((DataBufferFloat) thisValues
-					.getDataBuffer()).getData();
-			final float[] rasterBufferB = ((DataBufferFloat) values
+			final double[] rasterBufferA = ((DataBufferDouble) thisValues.getDataBuffer()).getData();
+			final double[] rasterBufferB = ((DataBufferDouble) values
 					.getDataBuffer()).getData();
 
 			for (int i = 0; i < W; i++) {
@@ -999,9 +977,8 @@ public final class GribRecordBDS {
 
 			return true;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-
+			if(LOGGER.isLoggable(Level.FINE))
+				LOGGER.log(Level.FINE,e.getLocalizedMessage(),e);
 			return false;
 		}
 	}

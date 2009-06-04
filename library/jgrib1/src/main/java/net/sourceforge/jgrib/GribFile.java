@@ -224,12 +224,6 @@ public final class GribFile {
 		
 		
 		// the indicator section of a record
-		GribRecordIS is = null;
-		GribRecordPDS pds = null;
-		GribRecordGDS gds = null;
-		GribRecordBMS bms = null;
-		GribRecordBDS bds = null;
-		GribRecord gr = null;
 
 		/** Looking for a new GriB1 record by looking for a 'GRIB' string. */
 		int totalBytes = 0;
@@ -241,7 +235,7 @@ public final class GribFile {
 			/**
 			 * IS
 			 */
-			is = new GribRecordIS(inStream);
+			GribRecordIS is = new GribRecordIS(inStream);
 
 			// total length of the grib file
 			totalBytes = is.getGribLength();
@@ -252,7 +246,7 @@ public final class GribFile {
 			/**
 			 * PDS
 			 */
-			pds = new GribRecordPDS(inStream); // read Product Definition
+			GribRecordPDS pds = new GribRecordPDS(inStream); // read Product Definition
 			// Section
 
 			// Remove PDS length
@@ -262,7 +256,7 @@ public final class GribFile {
 			 * GDS
 			 */
 			if (pds.gdsExists()) {
-				gds = GribGDSFactory.getGDS(inStream);
+				GribRecordGDS gds = GribGDSFactory.getGDS(inStream);
 
 				// Remove GDS length
 				// what remains is the length of the bds
@@ -274,23 +268,18 @@ public final class GribFile {
 				 * 
 				 */
 				final boolean BMS_exists = pds.bmsExists();
-
+				GribRecordBMS bms=null;
 				if (BMS_exists) {
 					bms = new GribRecordBMS(inStream);
 				}
 
+				
 				/**
 				 * 
 				 * BDS
 				 * 
 				 */
-				if (BMS_exists) {
-					bds = new GribRecordBDS(inStream, pds.getDecimalScale(),
-							gds, bms);
-				} else {
-					bds = new GribRecordBDS(inStream, pds.getDecimalScale(),
-							gds, null);
-				}
+				GribRecordBDS bds = new GribRecordBDS(inStream, pds.getDecimalScale(),gds, bms);
 
 				/**
 				 * 
@@ -305,7 +294,7 @@ public final class GribFile {
 					recordCount++;
 
 					// creating a new record
-					gr = new GribRecord(is, pds, gds, bds, bms);
+					GribRecord gr = new GribRecord(is, pds, gds, bds, bms);
 					this.recordList.add(gr);;
 
 				} else {

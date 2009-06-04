@@ -30,13 +30,6 @@ public final class GribPDSParameter {
     private String description;
     private String unit;
 
-    public GribPDSParameter() {
-        this.number = 0;
-        this.name = "UNDEF";
-        this.description = "undefined";
-        this.unit = "undefined";
-    }
-
     public GribPDSParameter(int aNum, String aName, String aDesc, String aUnit) {
         this.number = aNum;
         this.name = aName;

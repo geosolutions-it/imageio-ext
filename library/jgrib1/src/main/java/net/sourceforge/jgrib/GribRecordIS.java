@@ -44,7 +44,7 @@ import javax.imageio.stream.ImageInputStream;
 public final class GribRecordIS {
 
 	/** Logger. */
-	final static Logger LOGGER = Logger.getLogger(GribRecordIS.class.toString());
+	private final static Logger LOGGER = Logger.getLogger(GribRecordIS.class.toString());
 
 	/** Length in bytes of GRIB record. */
 	private int gribLength;
