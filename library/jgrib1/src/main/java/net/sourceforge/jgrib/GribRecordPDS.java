@@ -46,7 +46,7 @@ import net.sourceforge.jgrib.tables.GribPDSParameter;
  * A class representing the product definition section (PDS) of a GRIB record.
  *
  * @author Benjamin Stark
- * @author Simone Giannecchini
+ * @author Simone Giannecchini, GeoSolutions S.A.S.
  * @version 1.0
  */
 public final class GribRecordPDS {
@@ -64,8 +64,6 @@ public final class GribRecordPDS {
 
     /** True, if BMS exists. */
     private boolean bmsExists;
-
-    //rdg - placed attributes that came from the Parameter Table into a GribPDSParameter
 
     /** The parameter as defined in the Parameter Table */
     private GribPDSParameter parameter;
@@ -128,6 +126,7 @@ public final class GribRecordPDS {
      * class. See GribPDSParamTable class for details.
      */
     private GribPDSParamTable parameter_table;
+    
     private double numberIncludedInAverage = 0.0;
     private double numberMissingFromAverage = 0.0;
 
@@ -184,10 +183,8 @@ public final class GribRecordPDS {
         // octets 13-17 (base time of forecast)
         this.baseTime = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
         this.baseTime.clear();
-        this.baseTime.set((data[9] + (100 * (data[21] - 1))), data[10] - 1,
-            data[11], data[12], data[13],0);
+        this.baseTime.set((data[9] + (100 * (data[21] - 1))), data[10] - 1,data[11], data[12], data[13],0);
 
-        /*  RDG - added this code obtained from the sourceforce forum for jgrib*/
         // octet 18 see table 4 for its meaning
         this.forecastTimeUnit = data[14];
 
@@ -195,7 +192,6 @@ public final class GribRecordPDS {
         this.P1 = data[15];
         this.P2 = data[16];
 
-        /* RDG - end of code added 4 Aug 02 */
         // octet 21 (time range indicator) see table 5 for its meaning
         //TODO implementing more row than implemented now.
         this.timeRangeIndicator = data[17];
@@ -1060,7 +1056,6 @@ public final class GribRecordPDS {
 
         //reference time
         int yearOfCentury = this.baseTime.get(Calendar.YEAR) % 100;
-
         if (yearOfCentury == 0) {
             yearOfCentury = 100;
         }

@@ -11,8 +11,8 @@ import java.util.Map;
  *
  * <p>Copyright: Copyright (c) 2005 Simone Giannecchini</p>
  *
- *
- * @author Simone Giannecchini 
+ * @todo XXX TODO use Units!
+ * @author Simone Giannecchini, GeoSolutions
  * @version 1.0
  */
 public final  class Grib1ForecastTimeUnit {
@@ -28,20 +28,18 @@ public final  class Grib1ForecastTimeUnit {
      * statically loads all the centers into the hash map
      */
     static {
-        Grib1ForecastTimeUnit.ForecastTimeUnits.put(Integer.valueOf(0), "Minute");
-        Grib1ForecastTimeUnit.ForecastTimeUnits.put(Integer.valueOf(1), "Hour");
-        Grib1ForecastTimeUnit.ForecastTimeUnits.put(Integer.valueOf(2), "Day");
-        Grib1ForecastTimeUnit.ForecastTimeUnits.put(Integer.valueOf(3), "Month");
-        Grib1ForecastTimeUnit.ForecastTimeUnits.put(Integer.valueOf(4), "Year");
-        Grib1ForecastTimeUnit.ForecastTimeUnits.put(Integer.valueOf(5),
-            "Decade(10 years)");
-        Grib1ForecastTimeUnit.ForecastTimeUnits.put(Integer.valueOf(6),
-            "Normal(30 years)");
-        Grib1ForecastTimeUnit.ForecastTimeUnits.put(Integer.valueOf(7), "Century");
-        Grib1ForecastTimeUnit.ForecastTimeUnits.put(Integer.valueOf(10), "3 hours");
-        Grib1ForecastTimeUnit.ForecastTimeUnits.put(Integer.valueOf(11), "6 hours");
-        Grib1ForecastTimeUnit.ForecastTimeUnits.put(Integer.valueOf(12), "12 hours");
-        Grib1ForecastTimeUnit.ForecastTimeUnits.put(Integer.valueOf(254), "seconds");
+        Grib1ForecastTimeUnit.ForecastTimeUnits.put(0, "Minute");
+        Grib1ForecastTimeUnit.ForecastTimeUnits.put(1, "Hour");
+        Grib1ForecastTimeUnit.ForecastTimeUnits.put(2, "Day");
+        Grib1ForecastTimeUnit.ForecastTimeUnits.put(3, "Month");
+        Grib1ForecastTimeUnit.ForecastTimeUnits.put(4, "Year");
+        Grib1ForecastTimeUnit.ForecastTimeUnits.put(5,"Decade(10 years)");
+        Grib1ForecastTimeUnit.ForecastTimeUnits.put(6,"Normal(30 years)");
+        Grib1ForecastTimeUnit.ForecastTimeUnits.put(7, "Century");
+        Grib1ForecastTimeUnit.ForecastTimeUnits.put(10, "3 hours");
+        Grib1ForecastTimeUnit.ForecastTimeUnits.put(11, "6 hours");
+        Grib1ForecastTimeUnit.ForecastTimeUnits.put(12, "12 hours");
+        Grib1ForecastTimeUnit.ForecastTimeUnits.put(254, "Second");
     }
 
     /**
@@ -55,10 +53,8 @@ public final  class Grib1ForecastTimeUnit {
             return "reserved";
         }
 
-        if (Grib1ForecastTimeUnit.ForecastTimeUnits.containsKey(
-                Integer.valueOf(key))) {
-            return Grib1ForecastTimeUnit.ForecastTimeUnits.get(Integer.valueOf(
-                    key));
+        if (Grib1ForecastTimeUnit.ForecastTimeUnits.containsKey(key)) {
+            return Grib1ForecastTimeUnit.ForecastTimeUnits.get( key);
         }
 
         return null;
@@ -73,7 +69,6 @@ public final  class Grib1ForecastTimeUnit {
 
         for (int i = Grib1ForecastTimeUnit.lowerReserved;
             i <= Grib1ForecastTimeUnit.UpperReserved; i++) {
-            clone.put(Integer.valueOf(i), "reserved");
         }
 
         return clone;

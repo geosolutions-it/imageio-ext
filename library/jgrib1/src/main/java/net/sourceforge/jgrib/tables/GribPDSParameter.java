@@ -25,10 +25,10 @@ package net.sourceforge.jgrib.tables;
  * @version 1.0
  */
 public final class GribPDSParameter {
-    protected int number;
-    protected String name;
-    protected String description;
-    protected String unit;
+    int number;
+    String name;
+    String description;
+    String unit;
 
     public GribPDSParameter() {
         this.number = 0;
