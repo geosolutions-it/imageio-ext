@@ -39,7 +39,6 @@ import java.util.logging.Logger;
 
 import javax.imageio.stream.ImageInputStream;
 import javax.media.jai.DataBufferDouble;
-import javax.media.jai.DataBufferFloat;
 import javax.media.jai.RasterFactory;
 
 /**
@@ -51,7 +50,7 @@ import javax.media.jai.RasterFactory;
  */
 public final class GribRecordBDS {
 	/** Constant value for an undefined grid value. */
-	public static final double UNDEFINED = Float.NaN;
+	public static final double UNDEFINED = Double.NaN;
 
 	/** Length in bytes of this BDS. */
 	private int length = 0;
@@ -60,7 +59,7 @@ public final class GribRecordBDS {
 	private int binscale = 0;
 
 	/** Reference value, the base for all parameter values. */
-	private double refvalue = 0.0;
+	private double referenceValue = 0.0;
 
 	/** Number of bits per value. */
 	private int numbits = 0;
@@ -85,7 +84,7 @@ public final class GribRecordBDS {
 	private boolean isConstant = false;
 
 	/** Decimal scale factor for this record. */
-	private int DecimalScale = 0;
+	private int decimalScale = 0;
 
 	/**
 	 * Number of unused bit at the end of this BDS. Number of unused bit at the
@@ -116,7 +115,7 @@ public final class GribRecordBDS {
 	 * GribRecordBDS constructor to be used when creating a GRIB from scratch.
 	 * In such a case
 	 * 
-	 * @param DecimalScale
+	 * @param decimalScale
 	 *            int >=0.
 	 * @param DatumPointBitLength
 	 *            int If 0 we will use vairbale length.
@@ -147,20 +146,20 @@ public final class GribRecordBDS {
 			this.bms = new GribRecordBMS(bms);
 		}
 
-		this.DecimalScale = DecimalScale;
+		this.decimalScale = DecimalScale;
 		this.numbits = DatumPointBitLength;
 
 		final int W = this.gds.getGridNX();
 		final int H = this.gds.getGridNY();
-		float[] rasterBuffer = new float[W * H];
+		double[] rasterBuffer = new double[W * H];
 
 		for (int i = 0; i < Data.length; i++) {
 			final int[] xy = getPointFromIndex(i);
-			rasterBuffer[xy[0] + (xy[1] * W)] = (float) Data[i];
+			rasterBuffer[xy[0] + (xy[1] * W)] = (double) Data[i];
 		}
 
 		// converting everything to a raster
-		final DataBuffer db = new javax.media.jai.DataBufferFloat(rasterBuffer,W * H);
+		final DataBuffer db = new javax.media.jai.DataBufferDouble(rasterBuffer,W * H);
 		this.values = RasterFactory.createBandedRaster(db, W, H, W,new int[] { 0 }, new int[] { 0 }, null);
 
 		// this.length = 11; //length will never be shorter than this.
@@ -175,11 +174,11 @@ public final class GribRecordBDS {
 	 * GribRecordBDS constructor to be used when creating a GRIB from scratch.
 	 * In such a case
 	 * 
-	 * @param DecimalScale
+	 * @param decimalScale
 	 *            int >=0.
-	 * @param DatumPointBitLength
+	 * @param datumPointBitLength
 	 *            int If 0 we will use vairbale length.
-	 * @param Data
+	 * @param data
 	 *            Raster matrix of data.
 	 * @param isConstant
 	 *            DOCUMENT ME!
@@ -194,8 +193,8 @@ public final class GribRecordBDS {
 	 * @param bms
 	 *            DOCUMENT ME!
 	 */
-	GribRecordBDS(final int DecimalScale, final int DatumPointBitLength,
-			final WritableRaster Data, final boolean isConstant,
+	GribRecordBDS(final int decimalScale, final int datumPointBitLength,
+			final WritableRaster data, final boolean isConstant,
 			final double max, final double min, final int numValidValues,
 			final GribRecordGDS gds, final boolean[] bms) {
 		this.gds = gds;
@@ -204,12 +203,13 @@ public final class GribRecordBDS {
 			this.bms = new GribRecordBMS(bms);
 		}
 
-		this.DecimalScale = DecimalScale;
-		this.numbits = DatumPointBitLength;
-		this.values = Data;
+		this.decimalScale = decimalScale;
+		this.numbits = datumPointBitLength;
+		this.values = data;
 
 		// this.length = 11; //length will never be shorter than this.
 		this.isConstant = isConstant;
+		assert (this.isConstant&&numbits==0)||(!this.isConstant&&numbits>0);
 		this.maxvalue = max;
 		this.minvalue = min;
 		this.numValidValues = numValidValues;
@@ -242,15 +242,14 @@ public final class GribRecordBDS {
 		 */
 
 		// octets 1-3 (section length)
-		this.length = MathUtils.uint3(inStream.read(), inStream.read(),
-				inStream.read());
+		this.length = MathUtils.uint3(inStream.read(), inStream.read(),inStream.read());
 
 		// octet 4, 1st half (packing flag) see table 11
 		final int fourthByte = inStream.read();
 
 		if ((fourthByte & 240) != 0) {
 			throw new UnsupportedOperationException("GribRecordBDS: No other flag "
-					+ "(octet 4, 1st half) than 0 (= simple packed floats as "
+					+ "(octet 4, 1st half) than 0 (= simple packed doubles as "
 					+ "grid point data) supported yet in BDS section.");
 		}
 
@@ -261,13 +260,15 @@ public final class GribRecordBDS {
 		this.binscale = MathUtils.int2(inStream.read(), inStream.read());
 
 		// decimal scale from PDS
-		this.DecimalScale = decimalscale;
+		this.decimalScale = decimalscale;
 
 		// octets 7-10 (reference point = minimum value)
-		this.refvalue = MathUtils.IBM2FLoat(inStream.read(), inStream.read(),inStream.read(), inStream.read());
+		this.referenceValue = MathUtils.IBM2FLoat(inStream.read(), inStream.read(),inStream.read(), inStream.read());
 
 		// octet 11 (number of bits per value)
 		this.numbits = inStream.read();
+		if(numbits==0)
+			isConstant=true;
 
 		// pos and size, skipping positions in order to not read data now
 		this.pos = inStream.getStreamPosition();
@@ -287,34 +288,38 @@ public final class GribRecordBDS {
 	 * @todo TODO XXX optimize me by using the {@link ImageInputStream} directly
 	 */
 	private void parseBDS() throws  IOException {
-		this.inStream.seek(this.pos);
 
-		final byte[] buffer = new byte[this.size];
-		inStream.read(buffer);
-
-		final BitInputStream in = new BitInputStream(new ByteArrayInputStream(buffer));
-
-		if (this.numbits == 0) {
-			isConstant = true;
-
-			/**
-			 * READING VALUES FROM FILE Yi=[Xi2^E + R] 10^(-D)= Xi2^E10^(-D) +
-			 * R10^(-D)
-			 */
-		}
 
 		final int W = this.gds.getGridNX();
 		final int H = this.gds.getGridNY();
 		final double[] rasterBuffer = new double[W * H];
 
 		// preparing the scaling factors
-		final double ref = (Math.pow(10.0, -DecimalScale) * this.refvalue);
-		final double scale = (Math.pow(10.0, -DecimalScale) * Math.pow(2.0,this.binscale));
+		final double ref = (Math.pow(10.0, -decimalScale) * this.referenceValue);
+		final double scale = (Math.pow(10.0, -decimalScale) * Math.pow(2.0,this.binscale));
 
 		// temp variables used during parsing
 		int[] xy = null;
 		double val = 0.0;
 
+		BitInputStream in=null;
+		if (!isConstant) {
+			//seek 
+			this.inStream.seek(this.pos);
+			
+			//read data
+			final byte[] buffer = new byte[this.size];
+			inStream.read(buffer);
+			in = new BitInputStream(new ByteArrayInputStream(buffer));
+
+		}
+		else
+		{
+			//
+			this.numValidValues=1;
+			this.maxvalue=this.minvalue=this.referenceValue;
+		}
+		
 		if (bms != null) {
 			/** DO WE HAVE A BMS TO TAKE CARE OF? */
 			final boolean[] bitmap = bms.getBitmap();
@@ -324,12 +329,14 @@ public final class GribRecordBDS {
 				xy = getPointFromIndex(i);
 
 				if (bitmap[i]) {
-					// valid data
-					this.numValidValues++;
 
 					if (!isConstant) {
+
+						// valid data
+						this.numValidValues++;
+						
 						val = ref + (scale * in.readUBits(this.numbits));
-						rasterBuffer[xy[0] + (xy[1] * W)] = (float) val;
+						rasterBuffer[xy[0] + (xy[1] * W)] = (double) val;
 
 						if (val > this.maxvalue) {
 							this.maxvalue = val;
@@ -341,21 +348,21 @@ public final class GribRecordBDS {
 					} else { // rdg - added this to handle a constant valued
 						// parameter
 						val = ref;
-						rasterBuffer[xy[0] + (xy[1] * W)] = (float) val;
+						rasterBuffer[xy[0] + (xy[1] * W)] = (double) val;
 					}
 				} else {
-					rasterBuffer[xy[0] + (xy[1] * W)] = (float) GribRecordBDS.UNDEFINED;
+					rasterBuffer[xy[0] + (xy[1] * W)] = (double) GribRecordBDS.UNDEFINED;
 				}
 			}
 		} else {
+			//BMS not present
 			if (!isConstant) {
-				this.numValidValues = (((this.length - 11) * 8) - this.unusedBits)
-						/ this.numbits;
+				this.numValidValues = (((this.length - 11) * 8) - this.unusedBits)/ this.numbits;
 
 				for (int i = 0; i < this.numValidValues; i++) {
 					xy = getPointFromIndex(i);
 					val = ref + (scale * in.readUBits(this.numbits));
-					rasterBuffer[xy[0] + (xy[1] * W)] = (float) val;
+					rasterBuffer[xy[0] + (xy[1] * W)] = (double) val;
 
 					if (val > this.maxvalue) {
 						this.maxvalue = val;
@@ -365,12 +372,14 @@ public final class GribRecordBDS {
 						this.minvalue = val;
 					}
 				}
-			} else { // constant valued - same min and max
+			} else { 
+				// constant valued - same min and max
 				this.maxvalue = ref;
 				this.minvalue = ref;
+				this.numValidValues = 1; // rivedi
 			}
 
-			this.numValidValues = 1; // rivedi
+			
 		}
 
 		// creating the raster
@@ -378,7 +387,8 @@ public final class GribRecordBDS {
 		this.values = RasterFactory.createBandedRaster(db, W, H, W,new int[] { 0 }, new int[] { 0 }, null);
 
 		// clean up
-		in.close();
+		if(in!=null)
+			in.close();
 	}
 
 	/**
@@ -414,7 +424,7 @@ public final class GribRecordBDS {
 	 * @return reference value
 	 */
 	public double getReferenceValue() {
-		return this.refvalue;
+		return this.referenceValue;
 	}
 
 	/**
@@ -481,10 +491,10 @@ public final class GribRecordBDS {
 				&& (roi.getY() >= 0) && (roi.getY() <= this.gds.getGridNY())
 				&& (roi.getWidth() <= this.gds.getGridNX())
 				&& (roi.getHeight() <= this.gds.getGridNY())) {
-			float[] rasterBuffer = new float[(int) (roi.getWidth() * roi.getHeight())];
+			double[] rasterBuffer = new double[(int) (roi.getWidth() * roi.getHeight())];
 			rasterBuffer = this.values.getSamples((int) roi.getX(), (int) roi.getY(), (int) roi.getWidth(), (int) roi.getHeight(), 0,rasterBuffer);
 
-			final DataBuffer db = new javax.media.jai.DataBufferFloat(rasterBuffer, (int) (roi.getWidth() * roi.getHeight()));
+			final DataBuffer db = new javax.media.jai.DataBufferDouble(rasterBuffer, (int) (roi.getWidth() * roi.getHeight()));
 
 			return RasterFactory.createBandedRaster(db, (int) roi.getWidth(),(int) roi.getHeight(), (int) roi.getWidth(),new int[] { 0 }, new int[] { 0 }, null);
 		}
@@ -558,7 +568,7 @@ public final class GribRecordBDS {
 	public String toString() {
 		return "    BDS section:" + '\n' + "        min/max value: "
 				+ this.minvalue + " " + this.maxvalue + "\n"
-				+ "        ref. value: " + this.refvalue + "\n"
+				+ "        ref. value: " + this.referenceValue + "\n"
 				+ "        is a constant: " + this.isConstant + "\n"
 				+ "        bin. scale: " + this.binscale + "\n"
 				+ "        num bits: " + this.numbits;
@@ -569,67 +579,44 @@ public final class GribRecordBDS {
 	 * lot of fields need to be computed by complex algorithms. This is the
 	 * place to do that.
 	 */
-	final private void fillFields() {
+	private void fillFields() {
 		// decimal scaling factor
-		final double decScaling = Math.pow(10.0, this.DecimalScale);
+		final double decScaling = Math.pow(10.0, this.decimalScale);
+
 
 		/**
-		 * DO WE HAVE A GRID WITH THE SAME VALUE ALL OVER?
+		 * FIRST STEP, find the minimum of the scaled values if we do not
+		 * have a constant value for the grid
 		 */
-		if (this.isConstant) {
-			/**
-			 * CONSTANT VALUE GRID
-			 */
+		double min = this.minvalue * decScaling;
+		double max = this.maxvalue * decScaling;
 
-			// length already set
-			// setting reference value
-			this.refvalue = this.values.getSampleDouble(0, 0, 0) * decScaling;
+		// setting the reference value
+		this.referenceValue = min;
 
-			/**
-			 * WRITING EVERYTHING
-			 */
+		// how many bits do we need?
+		// we are representing an unsigned integer number here
+		// we do not need any strange technique.
+		int bitsNumber = this.setBitsNumber(max);
 
-			// length (octets 1-3)
-			// bitOut.write(this.length, 24);
-			// octet 4 everything is zero
-			// bitOut.write((byte) 0);
-			// E
-			// bitOut.write((int) 0, 16);
-			// octet 11 set to 0
-			// bitOut.write((byte) 0);
-		} else {
-			/**
-			 * FIRST STEP, find the minimum of the scaled values if we do not
-			 * have a constant value for the grid
-			 */
-			double Min = this.minvalue * decScaling;
-			double Max = this.maxvalue * decScaling;
+		this.setBinaryScale(bitsNumber);
 
-			// setting the reference value
-			this.refvalue = Min;
+		// padding
+		// total bits used
+		this.computeUnusedBits();
 
-			// how many bits do we need?
-			// we are representing an unsigned integer number here
-			// we do not need any strange technique.
-			int bitsNumber = this.setBitsNumber(Max);
-
-			this.setBinaryScale(bitsNumber);
-
-			// padding
-			// total bits used
-			this.computeUnusedBits();
-
-			// now the overall length
-			this.setLength();
-		}
+		// now the overall length
+		this.setLength();
 	}
 
 	final private void setLength() {
-		// 3 bytes
-		this.length = 3 + 1 + 2 + 4 + 1; // length itself, octet 4, binasry
-		// scale, referen value, datum
+		
+		// length itself, octet 4, binary
+		// scale, reference value, datum
 		// poinbits number
-
+		this.length = 3 + 1 + 2 + 4 + 1; 
+		
+		//adding valid values
 		this.length += (int) Math.ceil((numValidValues * this.numbits) / 8.0);
 
 		//
@@ -685,7 +672,7 @@ public final class GribRecordBDS {
 	 * @throws IOException
 	 *             DOCUMENT ME!
 	 */
-	private void fillLength(ByteArrayOutputStream lengthByteArray)
+	private void fillLength(final ByteArrayOutputStream lengthByteArray)
 			throws IOException {
 		lengthByteArray.write(MathUtils.bitVector2ByteVector(this.length, 24));
 	}
@@ -717,7 +704,7 @@ public final class GribRecordBDS {
 		paramsByteArray.write(binScale);
 
 		// writing R (4 bytes)
-		paramsByteArray.write(MathUtils.Float2IBM(this.refvalue));
+		paramsByteArray.write(MathUtils.Float2IBM(this.referenceValue));
 
 		// writing bitsnumber (1 byte)
 		paramsByteArray.write((byte) this.numbits);
@@ -752,7 +739,7 @@ public final class GribRecordBDS {
 		 */
 
 		// decimal scaling factor
-		final double decScaling = Math.pow(10.0, this.DecimalScale);
+		final double decScaling = Math.pow(10.0, this.decimalScale);
 
 		/**
 		 * DO WE HAVE A GRID WITH THE SAME VALUE ALL OVER?
@@ -764,7 +751,10 @@ public final class GribRecordBDS {
 
 			// length already set
 			// setting reference value
-			this.refvalue = this.values.getSampleDouble(0, 0, 0) * decScaling;
+			assert this.referenceValue==this.maxvalue;
+			assert this.referenceValue==this.minvalue;
+			this.referenceValue = this.maxvalue;
+			
 
 			/**
 			 * WRITING EVERYTHING
@@ -780,7 +770,7 @@ public final class GribRecordBDS {
 			bitOut.write(0, 16);
 
 			// R
-			bitOut.write(MathUtils.Float2IBM(this.refvalue));
+			bitOut.write(MathUtils.Float2IBM(this.referenceValue));
 
 			// octet 11 set to 0
 			bitOut.write((byte) 0);
@@ -804,7 +794,7 @@ public final class GribRecordBDS {
 						continue;
 					}
 
-					a = ((val * decScaling) - this.refvalue)
+					a = ((val * decScaling) - this.referenceValue)
 							/ MathUtils.exp2(this.binscale);
 					b = (int) Math.round(a);
 					bitOut.write(b, this.numbits);
@@ -821,7 +811,7 @@ public final class GribRecordBDS {
 						continue;
 					}
 
-					a = ((val * decScaling) - this.refvalue);
+					a = ((val * decScaling) - this.referenceValue);
 					b = (int) Math.round(a);
 					bitOut.write(b, this.numbits);
 				}
@@ -853,20 +843,18 @@ public final class GribRecordBDS {
 			this.unusedBits = 8;
 		}
 
-		int partialUnusedBits = totalBits
-				- ((int) Math.floor(totalBits / 8.0) * 8);
+		int partialUnusedBits = totalBits- ((int) Math.floor(totalBits / 8.0) * 8);
 
 		if (partialUnusedBits > 0) {
 			this.unusedBits += (8 - partialUnusedBits);
 		}
 	}
 
-	private int setBitsNumber(final double Max) {
+	private int setBitsNumber(final double max) {
 		// how many bits do we need?
 		// we are representing an unsigned integer number here
 		// we do not need any strange technique.
-		final double val = Math.floor(Max * 1000000.0 - this.refvalue
-				* 1000000.0) / 1000000.0;
+		final double val = Math.floor(max * 1000000.0 - this.referenceValue* 1000000.0) / 1000000.0;
 		int bitsNumber = (int) Math.ceil(MathUtils.log2(val));
 
 		// take into account case when (Math.round(Max -this.refvalue)) gives
@@ -874,7 +862,7 @@ public final class GribRecordBDS {
 		bitsNumber += (((val) == Math.pow(2.0, bitsNumber)) ? 1 : 0);
 
 		// int bitsNumber = bitCount((int) Math.round(Max - this.refvalue));
-		return /* (bitsNumber > 0) ? bitsNumber : 0 */bitsNumber;
+		return  (bitsNumber > 0) ? bitsNumber : 0;
 	}
 
 	private void setBinaryScale(final int bitsNumber) {
@@ -899,7 +887,7 @@ public final class GribRecordBDS {
 
 			GribRecordBDS bds = (GribRecordBDS) obj;
 
-			if (this.DecimalScale != bds.DecimalScale) {
+			if (this.decimalScale != bds.decimalScale) {
 				return false;
 			}
 
@@ -919,7 +907,7 @@ public final class GribRecordBDS {
 				return false;
 			}
 
-			if (Math.abs(bds.getReferenceValue() - bds.getReferenceValue()) > 0.0001) {
+			if (Math.abs(bds.getReferenceValue() - this.getReferenceValue()) > 0.0001) {
 				return false;
 			}
 
@@ -950,8 +938,7 @@ public final class GribRecordBDS {
 			}
 
 			final double[] rasterBufferA = ((DataBufferDouble) thisValues.getDataBuffer()).getData();
-			final double[] rasterBufferB = ((DataBufferDouble) values
-					.getDataBuffer()).getData();
+			final double[] rasterBufferB = ((DataBufferDouble) values.getDataBuffer()).getData();
 
 			for (int i = 0; i < W; i++) {
 				for (int j = 0; j < H; j++) {
@@ -989,7 +976,6 @@ public final class GribRecordBDS {
 	 * @return
 	 */
 	public int getNumValidValues() {
-		// TODO Auto-generated method stub
 		return this.numValidValues;
 	}
 }

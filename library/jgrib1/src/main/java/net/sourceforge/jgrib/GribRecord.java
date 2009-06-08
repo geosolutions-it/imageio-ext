@@ -363,48 +363,30 @@ public final class GribRecord implements Comparable<GribRecord> {
 	}
 
 	/**
-	 * setBDS
 	 * 
 	 * @param decimalScale
-	 *            int
 	 * @param datumPointLength
-	 *            int
 	 * @param raster
-	 *            WritableRaster
 	 * @param isConstant
-	 *            boolean
 	 * @param max
-	 *            DOCUMENT ME!
 	 * @param min
-	 *            DOCUMENT ME!
-	 * 
+	 * @param d 
 	 * @throws IOException
 	 */
 	public void setBDS(final int decimalScale, final int datumPointLength,
-			final WritableRaster raster, final boolean isConstant,
+			final WritableRaster raster, final boolean isConstant,final int numValidValues,
 			final double max, final double min) throws IOException {
-		// compute valid values and set the bitmap
-		int validValues = raster.getWidth() * raster.getHeight();
 
 		if (bms != null) {
-			validValues = 0;
-
-			boolean[] bitmap = bms.getBitmap();
-
-			for (int i = 0; i < bitmap.length; i++) {
-				if (bitmap[i]) {
-					validValues++;
-				}
-			}
 
 			this.bds = new GribRecordBDS(decimalScale, datumPointLength,
-					raster, isConstant, max, min, validValues, gds, bms
+					raster, isConstant, max, min, numValidValues, gds, bms
 							.getBitmap());
 		} else {
 			this.bds = new GribRecordBDS(decimalScale, datumPointLength,
-					raster, isConstant, max, min, validValues, gds, null);
+					raster, isConstant, max, min, numValidValues, gds, null);
 		}
-	}
+	} 
 
 	/**
 	 * setBMS

@@ -230,7 +230,6 @@ public final class GribFile {
 		int recordCount = 0;
 
 		while (GribFileUtilities.seekHeader(inStream)) {
-			// System.out.println(recordCount);
 
 			/**
 			 * IS
@@ -362,35 +361,6 @@ public final class GribFile {
 	public int getRecordCount() {
 		return this.recordCount;
 	}
-//
-//	public void setOutput(Object output) {
-//		if (output == null) {
-//			throw new IllegalArgumentException(
-//					"GribFile::setOutput(Object output):Provided argument is null");
-//		}
-//
-//		if (output instanceof String) {
-//		}
-//
-//		if (output instanceof File) {
-//		}
-//
-//		if (output instanceof RandomAccessFile) {
-//		}
-//
-//		if (output instanceof String) {
-//		}
-//
-//		if (output instanceof OutputStream) {
-//		}
-//
-//		if (output instanceof ImageOutputStream) {
-//		}
-//
-//		// if we get here throw an exception
-//		throw new IllegalArgumentException(
-//				"GribFile::setOutput(Object output):Provided argument is of a wrong type");
-//	}
 
 	/**
 	 * writeTo

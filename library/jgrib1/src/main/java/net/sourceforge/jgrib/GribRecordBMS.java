@@ -135,20 +135,7 @@ public final class GribRecordBMS {
         this.size = length - 6; //header of BMS is 6 octects long
         this.numBits = ((this.length - 6) * 8) - zero_fill;
         in.skipBytes(size);
-
-        //      // read rest of section
-        //      final int []data= in.readUI8(this.length-3);
-        //      
-        //
-        //     
-        //
-        //      // create new bit map, octet 4 contains number of unused bits at the end
-        //      this.bitmap = new boolean[((this.length - 6) * 8) - zero_fill];
-        //
-        //      // fill bit map
-        //      for (int i = 0; i < this.bitmap.length; i++) {
-        //          this.bitmap[i] = (data[(i / 8) + 3] & bitmask[i % 8]) != 0;
-        //      }        
+     
     }
 
     // *** constructors *******************************************************

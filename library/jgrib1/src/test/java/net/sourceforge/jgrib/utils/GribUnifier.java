@@ -185,6 +185,7 @@ public class GribUnifier extends TestCase {
 						gribFile.getRecord(j).getBDS().getValues(), // data
 						gribFile.getRecord(j).getBDS().getIsConstant(), // is
 						// constant?
+						gribFile.getRecord(j).getBDS().getNumValidValues(),
 						gribFile.getRecord(j).getBDS().getMaxValue(), gribFile
 								.getRecord(j).getBDS().getMinValue());
 

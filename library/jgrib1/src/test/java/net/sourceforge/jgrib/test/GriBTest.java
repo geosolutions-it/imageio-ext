@@ -31,9 +31,9 @@ import org.junit.Test;
  * @author Simone Giannecchini
  * 
  */
-public class GribRWTest  {
+public class GriBTest  {
 
-	private final static Logger LOGGER = Logger.getLogger(GribRWTest.class.toString());
+	private final static Logger LOGGER = Logger.getLogger(GriBTest.class.toString());
 
 	private GribFile gribFile = null;
 
@@ -47,7 +47,7 @@ public class GribRWTest  {
 		//
 		// /////////////////////////////////////////////////////////////////////
 		GribFile gribFile1 = null;
-		final File test_dir = TestData.file(GribRWTest.class, ".");
+		final File test_dir = TestData.file(GriBTest.class, ".");
 		final File files[] = test_dir.listFiles(new FilenameFilter() {
 
 			public boolean accept(File dir, String name) {
@@ -81,10 +81,11 @@ public class GribRWTest  {
 
 			// creating a grib record
 			final int recordCount = gribFile.getRecordCount();
-			buffer.append("\n\tnumber of records ").append(recordCount).append(
-					"\n");
+			buffer.append("\n\tnumber of records ").append(recordCount).append("\n");
 			LOGGER.info(buffer.toString());
 			for (int j = 1; j <= recordCount; j++) {
+				
+				LOGGER.info("testing record "+j);
 
 				final GribRecord oldRecord = gribFile.getRecord(j);
 				Assert.assertNotNull((oldRecord));
@@ -120,8 +121,7 @@ public class GribRWTest  {
 				// /////////////////////////////////////////////////////////////
 				// get the old gds
 				final GribRecordGDS oldGDS = oldRecord.getGDS();
-				final GribRecordGDS gds = GribGDSFactory.getGDS(oldGDS
-						.getGridType());
+				final GribRecordGDS gds = GribGDSFactory.getGDS(oldGDS.getGridType());
 				gds.setGridType(oldGDS.getGridType());
 				gds.setGridMode(oldGDS.getGridMode());
 				gds.setLength(oldGDS.getLength());
@@ -131,8 +131,7 @@ public class GribRWTest  {
 				gds.setGridLat1(oldGDS.getGridLat1());
 				gds.setGridLon1(oldGDS.getGridLon1());
 				gds.setGridLon2(oldGDS.getGridLon2());
-				gds.setGridScanmode(oldGDS.getGridDX() > 0,
-						oldGDS.getGridDY() > 0, oldGDS.isAdiacent_i_Or_j());
+				gds.setGridScanmode(oldGDS.getGridDX() > 0,oldGDS.getGridDY() > 0, oldGDS.isAdiacent_i_Or_j());
 				gds.setGridDX(oldGDS.getGridDX());
 				gds.setGridDY(oldGDS.getGridDY());
 				gds.setGridMode(oldGDS.getGridMode());
@@ -184,12 +183,9 @@ public class GribRWTest  {
 				// /////////////////////////////////////////////////////////////
 				// data
 				final GribRecordBDS oldBDS = oldRecord.getBDS();
-				record.setBDS(oldPDS.getDecimalScale(), oldBDS.getNumBits(),
-						oldBDS.getValues(), oldBDS.getIsConstant(), oldBDS
-								.getMaxValue(), oldBDS.getMinValue());
+				record.setBDS(oldPDS.getDecimalScale(), oldBDS.getNumBits(),oldBDS.getValues(), oldBDS.getIsConstant(), oldBDS.getNumValidValues(),oldBDS.getMaxValue(), oldBDS.getMinValue());
 
-				Assert.assertTrue(record.getBDS().equals(
-						gribFile.getRecord(j).getBDS()));
+				Assert.assertTrue("BDS sections differ",record.getBDS().equals(gribFile.getRecord(j).getBDS()));
 
 				// /////////////////////////////////////////////////////////////
 				//
@@ -199,9 +195,7 @@ public class GribRWTest  {
 				//
 				// /////////////////////////////////////////////////////////////
 				final GribRecordIS oldIS = oldRecord.getIS();
-				record.setIS(oldIS.getGribEdition(), oldPDS.getLength(), oldGDS
-						.getLength(), oldBMS == null ? 0 : oldBMS.getLength(),
-						oldBDS.getLength());
+				record.setIS(oldIS.getGribEdition(), oldPDS.getLength(), oldGDS.getLength(), oldBMS == null ? 0 : oldBMS.getLength(),oldBDS.getLength());
 				// adding record to file
 				file.addRecord(record);
 
@@ -212,8 +206,7 @@ public class GribRWTest  {
 			// file to write to
 			final File tempFile = File.createTempFile("tempfile", ".grib");
 			tempFile.deleteOnExit();
-			final BufferedOutputStream out = new BufferedOutputStream(
-					new FileOutputStream(tempFile), 4096);
+			final BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(tempFile), 4096);
 			file.writeTo(out);
 			out.flush();
 			out.close();
@@ -224,8 +217,7 @@ public class GribRWTest  {
 
 			if (!gribFile1.equals(gribFile)) {
 				LOGGER.severe("errore grib file " + files[i].getName());
-				throw new RuntimeException("errore grib file "
-						+ files[i].getName());
+				throw new RuntimeException("errore grib file "+ files[i].getName());
 
 			}
 			
