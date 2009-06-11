@@ -20,8 +20,6 @@
  */
 package net.sourceforge.jgrib;
 
-import it.geosolutions.factory.NotSupportedException;
-
 import java.awt.image.DataBuffer;
 import java.awt.image.WritableRaster;
 import java.io.ByteArrayOutputStream;
