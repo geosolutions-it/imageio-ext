@@ -21,7 +21,6 @@
  */
 package net.sourceforge.jgrib;
 
-import it.geosolutions.factory.NotSupportedException;
 import it.geosolutions.io.input.BitInputStream;
 import it.geosolutions.io.output.BitOutputStream;
 import it.geosolutions.io.output.MathUtils;

@@ -27,8 +27,6 @@ import it.geosolutions.io.output.MathUtils;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import net.sourceforge.jgrib.factory.GribGDSFactorySpi;
-
 
 /**
  * A class that represents the grid definition section (GDS) of a GRIB record.
@@ -38,7 +36,7 @@ import net.sourceforge.jgrib.factory.GribGDSFactorySpi;
  * @author Simone Giannecchini
  * @version 2.0 4 Sep 02 - Modified to be implemented using GribGDSFactory class. This class is used to store the first 32 octets of the GDS, which are common, or similar, in all GDS types. Sometimes names vary slightly in Table D, but functionality is similar, e.g. Grid type     Octet    Id Lat/Lon       7-8      Ni - Number of points along a latitude circle Lambert       7-8      Nx - Number of points along x-axis Other times, functionality is different, e.g. Lat/Lon      18-20     La2 - latitude of grid point Lambert      18-20     Lov - the orientation of the grid However, all sets have at least 32 octets.  Those 32 are stored here, and the differences are resolved in the child classes, and therefore, all attributes are set from the Child classes. The names of the attributes are the same JGrib originally used , for simplicity and continuity.  The fact that some grids use a different number of octets for doubles is irrelevant, as the conversion is stored, not the octets. The child classes should call the proper setters and getters. The class retains every bit of the original functionality, so it can continue to be used in legacy programs (still limited to grid_type 0 and 10). New users should not create instances of this class directly (in fact, it should be changed to an abstract class - it's on the to do list), but use the GribGDS factory instead, and add new child classes (e.g. GribGDSXxxx) as needed for additional grid_types.
  */
-public abstract class GribRecordGDS extends GribGDSFactorySpi {
+public abstract class GribRecordGDS  {
     /** Length in bytes of this section. */
 	//default 32 octets (GridLatLon)
     protected int length = 32; 

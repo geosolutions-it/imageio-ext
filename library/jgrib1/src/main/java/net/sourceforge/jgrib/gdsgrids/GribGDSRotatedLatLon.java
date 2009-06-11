@@ -739,14 +739,6 @@ public final class GribGDSRotatedLatLon extends GribRecordGDS {
         return GDSType == 10;
     }
 
-    public GribRecordGDS createGridGDS(int GDSType) throws IllegalArgumentException {
-        return new GribGDSRotatedLatLon();
-    }
-
-    public GribRecordGDS createGridGDS(ImageInputStream in, int[] data) throws IOException {
-        return new GribGDSRotatedLatLon(in, data);
-    }
-
     public Map getImplementationHints() {
         return Collections.emptyMap();
     }

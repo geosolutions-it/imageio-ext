@@ -844,15 +844,7 @@ public final class GribGDSLambert extends GribRecordGDS {
     }
 
     public boolean canProduce(int GDSType) {
-        return GDSType ==3;
-    }
-
-    public GribRecordGDS createGridGDS(int GDSType) {
-        return new GribGDSLambert();
-    }
-
-    public GribRecordGDS createGridGDS(ImageInputStream in, int[] data) throws IOException {
-        return new GribGDSLambert(in, data);
+        return GDSType ==LAMBERT_GRID_TYPE;
     }
 
     public Map getImplementationHints() {

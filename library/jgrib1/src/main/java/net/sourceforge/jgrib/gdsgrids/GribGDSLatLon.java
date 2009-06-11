@@ -5,7 +5,6 @@
  */
 package net.sourceforge.jgrib.gdsgrids;
 
-import it.geosolutions.factory.NotSupportedException;
 import it.geosolutions.io.output.MathUtils;
 
 import java.io.IOException;
@@ -438,14 +437,6 @@ public final class GribGDSLatLon extends GribRecordGDS {
 
     public boolean canProduce(int GDSType) {
         return GDSType == LATLON_GRID_TYPE;
-    }
-
-    public GribRecordGDS createGridGDS(int GDSType) throws IllegalArgumentException {
-        return new GribGDSLatLon();
-    }
-
-    public GribRecordGDS createGridGDS(ImageInputStream in, int[] data) throws IOException {
-        return new GribGDSLatLon(in, data);
     }
 
     public Map getImplementationHints() {

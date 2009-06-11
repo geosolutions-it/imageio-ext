@@ -6,7 +6,6 @@
  */
 package net.sourceforge.jgrib.gdsgrids;
 
-import it.geosolutions.factory.NotSupportedException;
 import it.geosolutions.io.output.MathUtils;
 
 import java.io.IOException;
@@ -476,14 +475,6 @@ public final class GribGDSPolarStereo extends GribRecordGDS {
 
     public boolean canProduce(int GDSType) {
         return GDSType == 5;
-    }
-
-    public GribRecordGDS createGridGDS(int GDSType) throws IllegalArgumentException {
-        return new GribGDSPolarStereo();
-    }
-
-    public GribRecordGDS createGridGDS(ImageInputStream in, int[] data) throws IOException {
-        return new GribGDSPolarStereo(in, data);
     }
 
     public Map getImplementationHints() {

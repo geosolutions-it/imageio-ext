@@ -23,7 +23,6 @@
  */
 package net.sourceforge.jgrib;
 
-import it.geosolutions.factory.NotSupportedException;
 import it.geosolutions.io.output.MathUtils;
 
 import java.io.IOException;
