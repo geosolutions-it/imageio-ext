@@ -15,12 +15,14 @@
  *
  */
 
-package net.sourceforge.jgrib.tables;
+package net.sourceforge.jgrib;
 
 import it.geosolutions.io.output.MathUtils;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -28,6 +30,10 @@ import java.io.OutputStream;
  * parameters, levels and units for byte codes from GRIB records.
  */
 public final class GribPDSLevel {
+
+	/** Logger for the GribFile class. */
+	private final static Logger LOGGER = Logger.getLogger(GribPDSLevel.class.toString());
+	
     /**
      * Index number from table 3 - can be used for comparison even if the
      * description of the level changes
@@ -41,10 +47,10 @@ public final class GribPDSLevel {
      * Value of PDS octet10 if separate from 11, otherwise value from
      * octet10&11
      */
-    private float value1 = Float.NaN;
+    private double value1 = Double.NaN;
 
     /** Value of PDS octet11 */
-    private float value2 = Float.NaN;
+    private double value2 = Double.NaN;
 
     /**
      * Stores a short name of the level - same as the string "level" in the
@@ -81,6 +87,7 @@ public final class GribPDSLevel {
      * you will be able to get a value for this level.
      */
     private boolean isNumeric = false;
+
 
     /**
      * Constructor.  Creates a GribPDSLevel based on octets 10-12 of the PDS.
@@ -578,14 +585,14 @@ public final class GribPDSLevel {
         default:
             name = description = "undefined level";
             units = "undefined units";
-            System.out.println("GribPDSLevel: Table 3 level " + index
-                + " is not implemented yet");
+            if(LOGGER.isLoggable(Level.WARNING))
+            	LOGGER.warning("GribPDSLevel: Table 3 level " + index + " is not implemented yet");
 
             break;
         }
     }
 
-    public GribPDSLevel(final int pds10, final float value1, final float value2) {
+    public GribPDSLevel(final int pds10, final double value1, final double value2) {
         this.index = pds10;
 
         switch (index) {
@@ -1067,255 +1074,11 @@ public final class GribPDSLevel {
             name ="DCTL";
             description = level = "Deep convective cloud top level";
             break;
-//        case 20:
-//            name = "Isothermal level";
-//            isSingleLayer = false;
-//            this.value1 = value1;
-//            units = "K";
-//            isNumeric = true;
-//            level = value1 + " K";
-//            description = "Isothermal level at " + (value1 / 100) + units;
-//
-//            break;
-//
-//        case 100:
-//            name = "isobaric level";
-//            this.value1 = value1;
-//            units = "hPa";
-//            isNumeric = true;
-//            isIncreasingUp = false;
-//            isSingleLayer = false;
-//            level = value1 + " " + units;
-//            description = "pressure at " + value1 + " " + units;
-//
-//            break;
-//
-//        case 101:
-//            name = "layer between two isobaric levels";
-//            this.value1 = value1; // convert from kPa to hPa - who uses kPa???
-//            this.value2 = value2;
-//            units = "hPa";
-//            level = value1 + " - " + value2 + " " + units;
-//            description = "layer between " + value1 + " and " + value2 + " "
-//                + units;
-//
-//            break;
-//
-//        case 102:
-//            name = description = level = "mean sea level";
-//
-//            break;
-//
-//        case 103:
-//            name = "Specified altitude above MSL";
-//            this.value1 = value1;
-//            units = "m";
-//            isNumeric = true;
-//            isSingleLayer = false;
-//            level = value1 + " " + units;
-//            description = value1 + " m above mean sea level";
-//
-//            break;
-//
-//        case 104:
-//            name = "Layer between two altitudes above MSL";
-//            this.value1 = value1; // convert hm to m
-//            this.value2 = value2;
-//            units = "m";
-//            level = value1 + "-" + value2 + " " + units;
-//            description = "Layer between " + value1 + " and " + value2
-//                + " m above mean sea level";
-//
-//            break;
-//
-//        case 105:
-//            name = "specified height level above ground";
-//            this.value1 = value1;
-//            units = "m";
-//            isNumeric = true;
-//            isSingleLayer = false;
-//            level = value1 + units;
-//            description = value1 + " m above ground";
-//
-//            break;
-//
-//        case 106:
-//            name = "layer between two specified height levels above ground";
-//            this.value1 = value1; // convert hm to m
-//            this.value2 = value2;
-//            units = "m";
-//            isNumeric = true;
-//            level = value1 + "-" + value2 + " m AGL";
-//            description = "Layer between " + value1 + " and " + value2
-//                + " m above ground";
-//
-//            break;
-//
-//        case 107:
-//            name = "sigma level";
-//            this.value1 = value1;
-//            level = "sigma=" + value1;
-//            units = "sigma";
-//            isNumeric = true;
-//            isSingleLayer = false;
-//            isIncreasingUp = false;
-//            description = "sigma = " + value1;
-//
-//            break;
-//
-//        case 108:
-//            name = "layer between two sigma levels";
-//            this.value1 = (value1 / 100.0f);
-//            this.value2 = (value2 / 100.0f);
-//            isNumeric = true;
-//            level = "sigma " + value1 + "-" + value2;
-//            description = "Layer between sigma levels " + value1 + " and "
-//                + value2;
-//
-//            break;
-//
-//        case 109:
-//            name = "Hybrid level";
-//            this.value1 = value1;
-//            isNumeric = true;
-//            level = "hybrid level " + value1;
-//            description = "hybrid level " + value1;
-//
-//            break;
-//
-//        case 110:
-//            name = "layer between two hybrid levels";
-//            this.value1 = value1;
-//            this.value2 = value2;
-//            isNumeric = true;
-//            level = "hybrid " + value1 + "-" + value2;
-//            description = "Layer between hybrid levels " + value1 + " and "
-//                + value2;
-//
-//            break;
-//
-//        case 111:
-//            name = "depth below land surface";
-//            this.value1 = value1;
-//            units = "cm";
-//            isNumeric = true;
-//            level = value1 + " " + units;
-//            description = value1 + " " + units;
-//
-//            break;
-//
-//        case 112:
-//            name = "layer between two depths below land surface";
-//            this.value1 = value1;
-//            this.value2 = value2;
-//            units = "cm";
-//            isNumeric = true;
-//            level = value1 + " - " + value2 + " " + units;
-//            description = "Layer between " + value1 + " and " + value2
-//                + " cm below land surface";
-//
-//            break;
-//
-//        case 113:
-//            name = "isentropic (theta) level";
-//            this.value1 = value1;
-//            units = "K";
-//            isNumeric = true;
-//            isSingleLayer = false;
-//            level = value1 + " K";
-//            description = value1 + " K";
-//
-//            break;
-//
-//        case 114:
-//            name = "layer between two isentropic levels";
-//            this.value1 = (value1 + 475);
-//            this.value2 = (value2 + 475);
-//            units = "K";
-//            isNumeric = true;
-//            description = "Layer between " + value1 + " and " + value2 + " K";
-//
-//            break;
-//
-//        case 115:
-//            name = "level at specified pressure difference from ground to level";
-//            this.value1 = value1;
-//            units = "hPa";
-//            isNumeric = true;
-//            isSingleLayer = false;
-//            level = value1 + " hPa";
-//            description = value1 + " hPa";
-//
-//            break;
-//
-//        case 116:
-//            name = "Layer between pressure differences from ground to levels";
-//            this.value1 = value1;
-//            this.value2 = value2;
-//            units = "hPa";
-//            isNumeric = true;
-//            level = value1 + units + " - " + value2 + units;
-//            description = "Layer between pressure differences from ground: "
-//                + value1 + " and " + value2 + " K";
-//
-//            break;
-//
-//        case 125:
-//            name = "Height above ground (high precision)";
-//            this.value1 = value1;
-//            units = "cm";
-//            isNumeric = true;
-//            isSingleLayer = false;
-//            level = value1 + " " + units;
-//            description = this.value1 + " " + units + " above ground";
-//
-//            break;
-//
-//        case 160:
-//            name = "Depth below sea level";
-//            this.value1 = value1;
-//            units = "m";
-//            isNumeric = true;
-//            level = value1 + " m below sea level";
-//            description = value1 + " m below sea level";
-//
-//            break;
-//
-//        case 200:
-//            name = description = level = "entire atmosphere layer";
-//
-//            break;
-//
-//        case 201:
-//            name = description = level = "entire ocean layer";
-//
-//            break;
-//
-//        case 204:
-//            name = description = level = "Highest tropospheric freezing level";
-//
-//            break;
-//
-//        case 214:
-//            name = description = level = "Low Cloud Layer";
-//
-//            break;
-//
-//        case 224:
-//            name = description = level = "Middle Cloud Layer";
-//
-//            break;
-//
-//        case 234:
-//            name = description = level = "High Cloud Layer";
-//
-//            break;
-
         default:
             name = description = "undefined level";
             units = "undefined units";
-            System.out.println("GribPDSLevel: Table 3 level " + index
-                + " is not implemented yet");
+            if(LOGGER.isLoggable(Level.WARNING))
+            	LOGGER.warning("GribPDSLevel: Table 3 level " + index + " is not implemented yet");
 
             break;
         }
@@ -1341,11 +1104,11 @@ public final class GribPDSLevel {
         return units;
     }
 
-    public float getValue1() {
+    public double getValue1() {
         return value1;
     }
 
-    public float getValue2() {
+    public double getValue2() {
         return value2;
     }
 
@@ -1402,19 +1165,19 @@ public final class GribPDSLevel {
             return false;
         }
 
-        if (Float.isNaN(value1) != Float.isNaN(lvl.getValue1())) {
+        if (Double.isNaN(value1) != Double.isNaN(lvl.getValue1())) {
             return false;
         }
 
-        if (!Float.isNaN(value1) && (value1 != lvl.getValue1())) {
+        if (!Double.isNaN(value1) && (value1 != lvl.getValue1())) {
             return false;
         }
 
-        if (Float.isNaN(value2) != Float.isNaN(lvl.getValue2())) {
+        if (Double.isNaN(value2) != Double.isNaN(lvl.getValue2())) {
             return false;
         }
 
-        if (!Float.isNaN(value2) && (value2 != lvl.getValue2())) {
+        if (!Double.isNaN(value2) && (value2 != lvl.getValue2())) {
             return false;
         }
 
