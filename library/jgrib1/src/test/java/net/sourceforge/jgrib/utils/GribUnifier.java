@@ -14,7 +14,11 @@ import java.io.FileOutputStream;
 import junit.framework.TestCase;
 import net.sourceforge.jgrib.GribFile;
 import net.sourceforge.jgrib.GribRecord;
+import net.sourceforge.jgrib.GribRecordBDS;
+import net.sourceforge.jgrib.GribRecordBMS;
 import net.sourceforge.jgrib.GribRecordGDS;
+import net.sourceforge.jgrib.GribRecordIS;
+import net.sourceforge.jgrib.GribRecordPDS;
 import net.sourceforge.jgrib.GribFile.AccessType;
 
 /**
@@ -68,7 +72,7 @@ public class GribUnifier extends TestCase {
 				// System.out.println(j);
 				/* PDS */
 				record
-						.setPDS(
+						.setPDS(new GribRecordPDS(
 								gribFile.getRecord(j).getPDS()
 										.getTableVersion(), // paramTableVersion,//currently
 								// 3 for
@@ -126,7 +130,7 @@ public class GribUnifier extends TestCase {
 								gribFile.getRecord(j).getPDS()
 										.getDecimalScale() // short
 						// decimalScaleFactor
-						);
+						));
 				assertTrue(record.getPDS().equals(
 						gribFile.getRecord(j).getPDS()));
 				/* GDSLatLon */
@@ -158,47 +162,37 @@ public class GribUnifier extends TestCase {
 
 				/* BMS */
 				if (gribFile.getRecord(j).getPDS().bmsExists()) {
-					record.setBMS(gribFile.getRecord(j).getBMS().getBitmap());
+					record.setBMS(new GribRecordBMS(gribFile.getRecord(j).getBMS().getBitmap()));
 					assertTrue(record.getBMS().equals(
 							gribFile.getRecord(j).getBMS()));
 				}
 
 				/* BDS */
 				// data
-				record.setBDS(gribFile.getRecord(j).getPDS().getDecimalScale(), // decimal
-						// scale,
-						// using
-						// only
-						// first
-						// 16
-						// bits
-						gribFile.getRecord(j).getBDS().getNumBits(), // datum
-						// point
-						// bit
-						// length
-						// 0
-						// stands
-						// for
-						// variable
-						// bit
-						// length
-						gribFile.getRecord(j).getBDS().getValues(), // data
-						gribFile.getRecord(j).getBDS().getIsConstant(), // is
-						// constant?
-						gribFile.getRecord(j).getBDS().getNumValidValues(),
-						gribFile.getRecord(j).getBDS().getMaxValue(), gribFile
-								.getRecord(j).getBDS().getMinValue());
+				record.setBDS(
+						new GribRecordBDS(
+								gribFile.getRecord(j).getPDS().getDecimalScale(), 
+								gribFile.getRecord(j).getBDS().getNumBits(), 
+								gribFile.getRecord(j).getBDS().getValues(), 
+								gribFile.getRecord(j).getBDS().getIsConstant(),
+								gribFile.getRecord(j).getBDS().getMaxValue(), 
+								gribFile.getRecord(j).getBDS().getMinValue(), 
+								gribFile.getRecord(j).getBDS().getNumValidValues(),
+								gribFile.getRecord(j).getGDS(),
+								gribFile.getRecord(j).getBMS()
+								)
+				);
 
 				assertTrue(record.getBDS().equals(
 						gribFile.getRecord(j).getBDS()));
 
 				/* IS */
-				record.setIS(gribFile.getRecord(j).getIS().getGribEdition(),
+				record.setIS(new GribRecordIS(gribFile.getRecord(j).getIS().getGribEdition(),
 						gribFile.getRecord(j).getPDS().getLength(), gribFile
 								.getRecord(j).getGDS().getLength(), gribFile
 								.getRecord(j).getBMS() == null ? 0 : gribFile
 								.getRecord(j).getBMS().getLength(), gribFile
-								.getRecord(j).getBDS().getLength());
+								.getRecord(j).getBDS().getLength()));
 				// adding record to file
 				file.addRecord(record);
 

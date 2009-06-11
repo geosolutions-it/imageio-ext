@@ -100,7 +100,7 @@ public class GriBTest  {
 				final GribRecordPDS oldPDS = oldRecord.getPDS();
 
 				// set the new one
-				record.setPDS(oldPDS.getTableVersion(), oldPDS
+				record.setPDS(new GribRecordPDS(oldPDS.getTableVersion(), oldPDS
 						.getOriginatingCenterID(), oldPDS
 						.getGeneratingProcessID(), oldPDS.getGridID(), true,
 						oldPDS.bmsExists(), oldPDS.getParameter().getNumber(),
@@ -109,7 +109,7 @@ public class GriBTest  {
 						oldPDS.getGMTBaseTime(), oldPDS.getForecastTimeUnit(),
 						oldPDS.getP1(), oldPDS.getP2(), oldPDS
 								.getTimeRangeIndicator(), 0, 0, oldPDS
-								.getSubcenterID(), oldPDS.getDecimalScale());
+								.getSubcenterID(), oldPDS.getDecimalScale()));
 				// check for equality
 				Assert.assertTrue(record.getPDS().equals(
 						gribFile.getRecord(j).getPDS()));
@@ -169,7 +169,7 @@ public class GriBTest  {
 				// /////////////////////////////////////////////////////////////
 				final GribRecordBMS oldBMS = gribFile.getRecord(j).getBMS();
 				if (oldPDS.bmsExists()) {
-					record.setBMS(oldBMS.getBitmap());
+					record.setBMS(new GribRecordBMS(oldBMS.getBitmap()));
 					//
 					Assert.assertTrue(record.getBMS().equals(oldBMS));
 				}
@@ -183,7 +183,18 @@ public class GriBTest  {
 				// /////////////////////////////////////////////////////////////
 				// data
 				final GribRecordBDS oldBDS = oldRecord.getBDS();
-				record.setBDS(oldPDS.getDecimalScale(), oldBDS.getNumBits(),oldBDS.getValues(), oldBDS.getIsConstant(), oldBDS.getNumValidValues(),oldBDS.getMaxValue(), oldBDS.getMinValue());
+				record.setBDS(
+						new GribRecordBDS(
+								oldPDS.getDecimalScale(), 
+								oldBDS.getNumBits(),
+								oldBDS.getValues(), 
+								oldBDS.getIsConstant(), 
+								oldBDS.getMaxValue(), 
+								oldBDS.getMinValue(),
+								oldBDS.getNumValidValues(),
+								oldGDS,
+								oldBMS)
+				);
 
 				Assert.assertTrue("BDS sections differ",record.getBDS().equals(gribFile.getRecord(j).getBDS()));
 
@@ -195,7 +206,7 @@ public class GriBTest  {
 				//
 				// /////////////////////////////////////////////////////////////
 				final GribRecordIS oldIS = oldRecord.getIS();
-				record.setIS(oldIS.getGribEdition(), oldPDS.getLength(), oldGDS.getLength(), oldBMS == null ? 0 : oldBMS.getLength(),oldBDS.getLength());
+				record.setIS(new GribRecordIS(oldIS.getGribEdition(), oldPDS.getLength(), oldGDS.getLength(), oldBMS == null ? 0 : oldBMS.getLength(),oldBDS.getLength()));
 				// adding record to file
 				file.addRecord(record);
 
