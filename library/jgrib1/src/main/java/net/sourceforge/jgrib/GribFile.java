@@ -8,8 +8,6 @@
  */
 package net.sourceforge.jgrib;
 
-import it.geosolutions.factory.NotSupportedException;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -26,7 +24,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
 
-import net.sourceforge.jgrib.factory.GribGDSFactory;
+import net.sourceforge.jgrib.gdsgrids.GribGDSFactory;
 
 /**
  * A class that represents a GRIB file. It consists of a number of records which
