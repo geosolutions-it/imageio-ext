@@ -75,6 +75,14 @@ public final class GribRecordIS {
 			throw new UnsupportedOperationException(
 					"GribRecordIS:GribRecordIS(final int EDITION)::Only EDITION 1 supported by this library!");
 	}
+	
+	public GribRecordIS(final int edition,final int PDS, final int GDS, final int BMS,
+			final int BDS) {
+		if (1 != edition)
+			throw new UnsupportedOperationException(
+					"GribRecordIS:GribRecordIS(final int EDITION)::Only EDITION 1 supported by this library!");
+		setLength(PDS, GDS, BMS, BDS);
+	}
 
 	/**
 	 * Constructs a <tt>GribRecordIS</tt> object from an image input stream

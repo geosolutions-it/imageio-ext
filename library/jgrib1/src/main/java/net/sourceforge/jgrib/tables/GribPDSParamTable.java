@@ -56,8 +56,6 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.sourceforge.jgrib.util.SmartStringArray;
-
 /**
  * A class containing static methods which deliver descriptions and names of
  * parameters, levels and units for byte codes from GRIB records.
@@ -197,7 +195,7 @@ public final class GribPDSParamTable {
 
 		while (((line = br.readLine()) != null) && (line.length() != 0)) {
 			table = new GribPDSParamTable();
-			tableDefArr = SmartStringArray.split(":", line);
+			tableDefArr = line.split(":");
 
 			table.center_id = Integer.parseInt(tableDefArr[0].trim());
 			table.subcenter_id = Integer.parseInt(tableDefArr[1].trim());
@@ -340,7 +338,7 @@ public final class GribPDSParamTable {
 
 			// Read first
 			String line = br.readLine();
-			String[] tableDefArr = SmartStringArray.split(":", line);
+			String[] tableDefArr = line.split(":");
 
 			center = Integer.parseInt(tableDefArr[1].trim());
 			subcenter = Integer.parseInt(tableDefArr[2].trim());
@@ -361,7 +359,7 @@ public final class GribPDSParamTable {
 			while (((line = br.readLine()) != null) && (line.length() != 0)) {
 				parameter = new GribPDSParameter();
 
-				tableDefArr = SmartStringArray.split(":", line);
+				tableDefArr = line.split(":");
 				parameter.number = Integer.parseInt(tableDefArr[0].trim());
 				parameter.name = tableDefArr[1].trim();
 
@@ -371,7 +369,7 @@ public final class GribPDSParamTable {
 					parameter.description = parameter.unit = tableDefArr[2]
 							.trim();
 				} else {
-					String[] arr2 = SmartStringArray.split("[", tableDefArr[2]);
+					String[] arr2 = tableDefArr[2].split("\\[" );
 
 					parameter.description = arr2[0].trim();
 

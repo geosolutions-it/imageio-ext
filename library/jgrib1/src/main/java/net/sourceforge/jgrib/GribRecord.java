@@ -419,29 +419,9 @@ public final class GribRecord implements Comparable<GribRecord> {
 	 * @param subCenterID
 	 * @param decimalScaleFactor
 	 */
-	public void setPDS(final int paramTableVersion, // currently 3 for
-													// internationa exhange (2
-													// is still accepted)
-			final int centerID, // code table 0
-			final int generatingProcessID, // allocated by originating center
-			final int gridID, boolean GDS, boolean BMS, int paramID, // code
-																		// table
-																		// 2
-			final int levelID, double levelValue1, double levelValue2,
-			final Calendar referenceTime, final int forecastTimeUnitID, int P1,
-			int P2, int timeRangeID, final int includedInAvrage,
-			int missingFromAverage, final int subCenterID,
-			final int decimalScaleFactor) {
+	public void setPDS(final GribRecordPDS pds) {
 		// calling the constructor
-		this.pds = new GribRecordPDS(paramTableVersion, // currently 3 for
-														// internationa exhange
-														// (2 is still accepted)
-				centerID, // code table 0
-				generatingProcessID, // allocated by originating center
-				gridID, GDS, BMS, paramID, // code table 2
-				levelID, levelValue1, levelValue2, referenceTime,
-				forecastTimeUnitID, P1, P2, timeRangeID, includedInAvrage,
-				missingFromAverage, subCenterID, decimalScaleFactor);
+		this.pds = pds;
 	}
 
 	/**
@@ -462,10 +442,8 @@ public final class GribRecord implements Comparable<GribRecord> {
 	 *            int BDS length.
 	 * @throws NotSupportedException
 	 */
-	public void setIS(final int edition, final int PDS, final int GDS,
-			final int BMS, final int BDS)  {
-		this.is = new GribRecordIS(edition);
-		is.setLength(PDS, GDS, BMS, BDS);
+	public void setIS(final GribRecordIS is)  {
+		this.is =is;
 	}
 
 	/*
