@@ -35,9 +35,9 @@ package net.sourceforge.jgrib.util;
 import java.util.Comparator;
 import java.util.GregorianCalendar;
 
+import net.sourceforge.jgrib.GribPDSLevel;
 import net.sourceforge.jgrib.GribRecord;
 import net.sourceforge.jgrib.GribRecordPDS;
-import net.sourceforge.jgrib.tables.GribPDSLevel;
 
 
 public final class GribRecordComparator implements Comparator<GribRecord> {
@@ -56,7 +56,7 @@ public final class GribRecordComparator implements Comparator<GribRecord> {
         final GribRecordPDS pds2=gr2.getPDS();
         final GribPDSLevel level1=pds1.getLevel();
         final GribPDSLevel level2=pds2.getLevel();        
-        float z1 = level1.getValue1(),  z2 = level2.getValue1();
+        double z1 = level1.getValue1(),  z2 = level2.getValue1();
         final GregorianCalendar time1=(GregorianCalendar) pds1.getGMTForecastTime();
         final GregorianCalendar time2=(GregorianCalendar) pds2.getGMTForecastTime();        
 

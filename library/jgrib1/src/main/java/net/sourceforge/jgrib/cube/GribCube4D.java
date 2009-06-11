@@ -18,12 +18,12 @@ package net.sourceforge.jgrib.cube;
 
 import java.util.GregorianCalendar;
 import java.util.Iterator;
-import java.util.SortedSet;
+import java.util.SortedSet; 
 import java.util.TreeSet;
 
+import net.sourceforge.jgrib.GribPDSLevel;
 import net.sourceforge.jgrib.GribRecord;
 import net.sourceforge.jgrib.GribRecordPDS;
-import net.sourceforge.jgrib.tables.GribPDSLevel;
 import net.sourceforge.jgrib.util.GribRecordComparator;
 
 /**
@@ -171,11 +171,11 @@ public final class GribCube4D {
 		return this.levels.isNumeric();
 	}
 
-	public float getMinLevel() {
+	public double getMinLevel() {
 		return this.levels.getMin();
 	}
 
-	public float getMaxLevel() {
+	public double getMaxLevel() {
 		return this.levels.getMax();
 	}
 
@@ -264,7 +264,7 @@ public final class GribCube4D {
 		GribRecordPDS pds = null;
 		GregorianCalendar forecastTime = null;
 		GribPDSLevel level = null;
-		float value1 = 0.0f;
+		double value1 = 0.0f;
 		while (it.hasNext()) {
 			// getting a record
 			record = (GribRecord) it.next();

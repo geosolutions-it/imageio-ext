@@ -37,7 +37,6 @@ import java.util.TimeZone;
 
 import javax.imageio.stream.ImageInputStream;
 
-import net.sourceforge.jgrib.tables.GribPDSLevel;
 import net.sourceforge.jgrib.tables.GribPDSParamTable;
 import net.sourceforge.jgrib.tables.GribPDSParameter;
 
@@ -231,7 +230,7 @@ public final class GribRecordPDS {
         int centerID, //code table 0
         int generatingProcessID, //allocated by originating center
         int gridID, boolean GDS, boolean BMS, int paramID, //code table 2
-        int levelID, float levelValue1, float levelValue2,
+        int levelID, double levelValue1, double levelValue2,
         Calendar referenceTime, int forecastTimeUnitID, int P1, int P2,
         int timeRangeID, int includedInAverage, int missingFromAverage,
         int subCenterID, int decimalScaleFactor) {
@@ -637,7 +636,7 @@ public final class GribRecordPDS {
      *
      * @return name of level (height or pressure)
      */
-    public float getLevelValue() {
+    public double getLevelValue() {
         return this.level.getValue1();
     }
 
@@ -646,7 +645,7 @@ public final class GribRecordPDS {
      *
      * @return name of level (height or pressure)
      */
-    public float getLevelValue2() {
+    public double getLevelValue2() {
         return this.level.getValue2();
     }
 
@@ -702,17 +701,7 @@ public final class GribRecordPDS {
      * @return date and time
      */
     public Calendar getGMTBaseTime() {
-        // Calendar gmtTime = baseTime;
-        //      System.out.println("forecast time = " + gmtTime.getTime());
-        // hopefully this DST offset adjusts to DST automatically
-        //int dstOffset = gmtTime.get(gmtTime.DST_OFFSET) / 3600000;
-        //int gmtOffset = gmtTime.get(Calendar.ZONE_OFFSET) / 3600000; //ms to hours
-        //      System.out.println("offset is " + gmtOffset);
-        //      System.out.println("dst offset is " + dstOffset);
-        //gmtTime.set(Calendar.HOUR,
-        // gmtTime.get(Calendar.HOUR) - gmtOffset - dstOffset); //put offset back
-        //      System.out.println("new time is " + gmtTime.getTime());
-        return baseTime; //gmtTime;
+        return baseTime; 
     }
 
     /**

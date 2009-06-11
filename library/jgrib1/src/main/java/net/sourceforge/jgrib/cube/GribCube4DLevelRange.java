@@ -22,8 +22,8 @@
  */
 package net.sourceforge.jgrib.cube;
 
+import net.sourceforge.jgrib.GribPDSLevel;
 import net.sourceforge.jgrib.GribRecord;
-import net.sourceforge.jgrib.tables.GribPDSLevel;
 
 /**
  * DOCUMENT ME!
@@ -43,10 +43,10 @@ final class GribCube4DLevelRange extends GribCubeMeasurableObject {
 	protected boolean isNumeric = false;
 
 	/** Min value for the level. */
-	protected float min = Float.POSITIVE_INFINITY;
+	protected double min = Double.POSITIVE_INFINITY;
 
 	/** MaxValue for the level set. */
-	protected float max = Float.NEGATIVE_INFINITY;
+	protected double max = Double.NEGATIVE_INFINITY;
 
 	/** Number of levels for this cube. */
 	protected int numberOfLevels = 0;
@@ -104,7 +104,7 @@ final class GribCube4DLevelRange extends GribCubeMeasurableObject {
 		// return false;
 		// getting the parameter to check if we already added it
 		final GribPDSLevel level = record.getPDS().getLevel();
-		final float minVal = level.getValue1();
+		final double minVal = level.getValue1();
 		// final float maxVal = level.getValue2();
 
 		isNumeric = level.getIsNumeric();
@@ -112,22 +112,22 @@ final class GribCube4DLevelRange extends GribCubeMeasurableObject {
 		// setting min and max
 		if (isNumeric()) {
 			if (increasingUp) {
-				if (!Float.isNaN(minVal) && (minVal > max)) {
+				if (!Double.isNaN(minVal) && (minVal > max)) {
 					this.max = minVal;
 				}
 
-				if (!Float.isNaN(minVal) && minVal < min) {
+				if (!Double.isNaN(minVal) && minVal < min) {
 					this.min = minVal;
 				}
 			} else {
 
-				if (Float.isInfinite(max)
-						|| (!Float.isNaN(minVal) && (minVal < max))) {
+				if (Double.isInfinite(max)
+						|| (!Double.isNaN(minVal) && (minVal < max))) {
 					this.max = minVal;
 				}
 
-				if (Float.isInfinite(min)
-						|| (!Float.isNaN(minVal) && minVal > min)) {
+				if (Double.isInfinite(min)
+						|| (!Double.isNaN(minVal) && minVal > min)) {
 					this.min = minVal;
 				}
 			}
@@ -144,11 +144,11 @@ final class GribCube4DLevelRange extends GribCubeMeasurableObject {
 		return true;
 	}
 
-	public float getMax() {
+	public double getMax() {
 		return max;
 	}
 
-	public float getMin() {
+	public double getMin() {
 		return min;
 	}
 

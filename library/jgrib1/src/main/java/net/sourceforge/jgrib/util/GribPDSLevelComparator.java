@@ -34,7 +34,7 @@ package net.sourceforge.jgrib.util;
 
 import java.util.Comparator;
 
-import net.sourceforge.jgrib.tables.GribPDSLevel;
+import net.sourceforge.jgrib.GribPDSLevel;
 
 public final class GribPDSLevelComparator implements Comparator<GribPDSLevel> {
 	/**
@@ -54,8 +54,8 @@ public final class GribPDSLevelComparator implements Comparator<GribPDSLevel> {
 			return 0;
 		}
 
-		float z1;
-		float z2;
+		double z1;
+		double z2;
 //		String levelType1;
 //		String levelType2;
 //		int check;
