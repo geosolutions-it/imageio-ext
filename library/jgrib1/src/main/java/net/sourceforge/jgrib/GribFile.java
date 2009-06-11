@@ -39,14 +39,20 @@ import net.sourceforge.jgrib.factory.GribGDSFactory;
  */
 public final class GribFile {
 	
+	/**
+	 * Access type enumeration.
+	 * 
+	 * @author Simone Giannecchini, GeoSolutions SAS
+	 *
+	 */
 	public enum AccessType{
 		R,
 		
-		RW,
+		RW;
 		
-		RWS,
-		
-		RWD;
+//		RWS,
+//		
+//		RWD;
 	}
 	
 	private Object originatingSource=null;
@@ -414,10 +420,6 @@ public final class GribFile {
 
 			for (int j = 1; j <= i1; j++) {
 				if (!file.getRecord(j).equals(this.getRecord(j))) {
-					System.out.println("Failed comparing Record num: " + j
-							+ "\n");
-					System.out.println(this.getRecord(j));
-					System.out.println(file.getRecord(j));
 					return false;
 				}
 			}

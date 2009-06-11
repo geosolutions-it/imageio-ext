@@ -47,13 +47,6 @@ import net.sourceforge.jgrib.util.GribRecordComparator;
  * @version 1.0
  */
 public final class GribRecord implements Comparable<GribRecord> {
-	/**
-	 * If the file provided to the <code>canDecode</code> method is too big we
-	 * have to limit the size of the search, toherwise we might end up searching
-	 * the sentence GRIB parsing byte by byte a file of size of gigabytes.
-	 */
-	public final static int MAXIMUM_SEARCH_SIZE = 10 * 1024 * 1024;
-
 	/** The indicator section. */
 	private GribRecordIS is;
 
@@ -216,7 +209,7 @@ public final class GribRecord implements Comparable<GribRecord> {
 		// checkBDS();
 		if ((i >= 0) && (i < gds.getGridNX()) && (j >= 0)
 				&& (j < gds.getGridNY())) {
-			final int[] xy = bds.getPointFromIndex((gds.getGridNX() * j) + i);
+			final int[] xy = GribFileUtilities.getPointFromIndex((gds.getGridNX() * j) + i,gds);
 
 			return bds.getValues().getSampleDouble(xy[0], xy[1], 0);
 		}
@@ -362,6 +355,7 @@ public final class GribRecord implements Comparable<GribRecord> {
 				& this.bds.equals(rec.bds) & is.equals(rec.is);
 	}
 
+
 	/**
 	 * 
 	 * @param decimalScale
@@ -373,20 +367,12 @@ public final class GribRecord implements Comparable<GribRecord> {
 	 * @param d 
 	 * @throws IOException
 	 */
-	public void setBDS(final int decimalScale, final int datumPointLength,
-			final WritableRaster raster, final boolean isConstant,final int numValidValues,
-			final double max, final double min) throws IOException {
+	public void setBDS(final GribRecordBDS bds) throws IOException {
 
-		if (bms != null) {
+		this.bds = bds;
 
-			this.bds = new GribRecordBDS(decimalScale, datumPointLength,
-					raster, isConstant, max, min, numValidValues, gds, bms
-							.getBitmap());
-		} else {
-			this.bds = new GribRecordBDS(decimalScale, datumPointLength,
-					raster, isConstant, max, min, numValidValues, gds, null);
-		}
 	} 
+	
 
 	/**
 	 * setBMS
@@ -394,12 +380,8 @@ public final class GribRecord implements Comparable<GribRecord> {
 	 * @param bms
 	 *            boolean[]
 	 */
-	public void setBMS(final boolean[] bms) {
-		if (bms == null) {
-			this.bms = null;
-		} else {
-			this.bms = new GribRecordBMS(bms);
-		}
+	public void setBMS(final GribRecordBMS bms) {
+		this.bms = bms;
 	}
 
 	/**
@@ -445,7 +427,7 @@ public final class GribRecord implements Comparable<GribRecord> {
 			final int gridID, boolean GDS, boolean BMS, int paramID, // code
 																		// table
 																		// 2
-			final int levelID, float levelValue1, float levelValue2,
+			final int levelID, double levelValue1, double levelValue2,
 			final Calendar referenceTime, final int forecastTimeUnitID, int P1,
 			int P2, int timeRangeID, final int includedInAvrage,
 			int missingFromAverage, final int subCenterID,

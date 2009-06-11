@@ -1,5 +1,7 @@
 package net.sourceforge.jgrib;
 
+import java.awt.image.DataBuffer;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -12,6 +14,8 @@ import java.util.logging.Logger;
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
+import javax.media.jai.DataBufferDouble;
+import javax.media.jai.RasterFactory;
 
 class GribFileUtilities {
 
@@ -105,7 +109,7 @@ class GribFileUtilities {
 				iterations += 3;
 	
 				// did we reach the maximum number of iterations.
-				if (iterations >= GribRecord.MAXIMUM_SEARCH_SIZE)
+				if (iterations >= GribFileUtilities.MAXIMUM_SEARCH_SIZE)
 					return false;
 			}
 		} catch (IOException ioe) {
@@ -151,7 +155,7 @@ class GribFileUtilities {
 				iterations += 3;
 	
 				// did we reach the maximum number of iterations.
-				if (iterations >= GribRecord.MAXIMUM_SEARCH_SIZE)
+				if (iterations >= GribFileUtilities.MAXIMUM_SEARCH_SIZE)
 					return false;
 	        }
 	    }
@@ -183,6 +187,77 @@ class GribFileUtilities {
 		x = (x & temp) + (x >>> 8 & temp);
 	
 		return (x & 0x1F) + (x >>> 16);
+	}
+
+	/**
+	 * If the file provided to the <code>canDecode</code> method is too big we
+	 * have to limit the size of the search, toherwise we might end up searching
+	 * the sentence GRIB parsing byte by byte a file of size of gigabytes.
+	 */
+	public final static int MAXIMUM_SEARCH_SIZE = 10 * 1024 * 1024;
+
+	/**
+	 * Get data/parameter value as a double given the GRIB Matrix Index.
+	 * 
+	 * @param index
+	 *            int
+	 * 
+	 * @return double value from raster
+	 * 
+	 * @throws NoValidGribException
+	 *             DOCUMENT ME!
+	 */
+	public static int[] getPointFromIndex(final int index,final GribRecordGDS gds)  {
+		if ((index >= 0)
+				&& (index < (gds.getGridNX() * gds.getGridNY()))) {
+			// checking dimensions
+			int rowIndex = 0;
+			int columnIndex = 0;
+	
+			final int W = gds.getGridNX();
+			final int H = gds.getGridNY();
+			final boolean adiacent_i = gds.isAdiacent_i_Or_j();
+			final boolean plus_i = gds.getGridDX() > 0;
+			final boolean plus_j = gds.getGridDY() > 0;
+	
+			if (adiacent_i) {
+				columnIndex = (plus_i ? (index % W) : ((W - 1) - (index % W)));
+				rowIndex = (int) ((!plus_j) ? (Math.ceil(index / W)): ((H - 1) - Math.ceil(index / W)));
+			} else {
+				columnIndex = (int) (plus_i ? (Math.ceil(index / H)): ((W - 1) - (Math.ceil(index / H))));
+				rowIndex = (plus_j ? (index % H) : ((H - 1) - (index % H)));
+			}
+	
+			return new int[] { columnIndex, rowIndex };
+		}
+	
+		throw new IllegalArgumentException(
+				"GribRecordBDS::getPointFromIndex:Array index out of bounds");
+	}
+
+	/** Constant value for an undefined grid value. */
+	public static final double UNDEFINED = Double.NaN;
+
+	static WritableRaster createValuesRaster(final double[] data, final GribRecordGDS gds) {
+		final int W = gds.getGridNX();
+		final int H = gds.getGridNY();
+		double[] rasterBuffer = new double[W * H];
+	
+		for (int i = 0; i < data.length; i++) {
+			final int[] xy = getPointFromIndex(i,gds);
+			rasterBuffer[xy[0] + (xy[1] * W)] = (double) data[i];
+		}
+	
+		// converting everything to a raster
+		final DataBuffer db = new javax.media.jai.DataBufferDouble(rasterBuffer,W * H);
+		return RasterFactory.createBandedRaster(db, W, H, W,new int[] { 0 }, new int[] { 0 }, null);
+	}
+
+	static GribRecordBMS createBMS(boolean[] bms) {
+		if (bms != null) {
+			return  new GribRecordBMS(bms);
+		}
+		return null;
 	}
 
 }

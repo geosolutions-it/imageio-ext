@@ -49,9 +49,10 @@ import javax.media.jai.RasterFactory;
  * @version 1.0
  */
 public final class GribRecordBDS {
-	/** Constant value for an undefined grid value. */
-	public static final double UNDEFINED = Double.NaN;
 
+	/** Logger. */
+	private final static Logger LOGGER = Logger.getLogger(GribRecordBDS.class.toString());
+	
 	/** Length in bytes of this BDS. */
 	private int length = 0;
 
@@ -94,10 +95,10 @@ public final class GribRecordBDS {
 	private int unusedBits = 0;
 
 	/** Reference to the GDS for this record. */
-	private GribRecordGDS gds = null;
+	private GribRecordGDS gds ;
 
 	/** Reference to the BMS for this record, in case one exists. */
-	private GribRecordBMS bms = null;
+	private GribRecordBMS bms;
 
 	/** Reference to the stram linked to the underlying source. */
 	private ImageInputStream inStream;
@@ -107,68 +108,6 @@ public final class GribRecordBDS {
 
 	/** Position in the stream at which the compressed data starts. */
 	private long pos;
-
-	/** Logger. */
-	private final static Logger LOGGER = Logger.getLogger(GribRecordBDS.class.toString());
-
-	/**
-	 * GribRecordBDS constructor to be used when creating a GRIB from scratch.
-	 * In such a case
-	 * 
-	 * @param decimalScale
-	 *            int >=0.
-	 * @param DatumPointBitLength
-	 *            int If 0 we will use vairbale length.
-	 * @param Data
-	 *            Raster matrix of data.
-	 * @param isConstant
-	 *            DOCUMENT ME!
-	 * @param max
-	 *            DOCUMENT ME!
-	 * @param min
-	 *            DOCUMENT ME!
-	 * @param numValidValues
-	 *            DOCUMENT ME!
-	 * @param gds
-	 *            DOCUMENT ME!
-	 * @param bms
-	 *            DOCUMENT ME!
-	 * 
-	 * @throws NoValidGribException
-	 */
-	GribRecordBDS(final int DecimalScale, final int DatumPointBitLength,
-			final double[] Data, final boolean isConstant, final double max,
-			final double min, final int numValidValues,
-			final GribRecordGDS gds, final boolean[] bms) {
-		this.gds = gds;
-
-		if (bms != null) {
-			this.bms = new GribRecordBMS(bms);
-		}
-
-		this.decimalScale = DecimalScale;
-		this.numbits = DatumPointBitLength;
-
-		final int W = this.gds.getGridNX();
-		final int H = this.gds.getGridNY();
-		double[] rasterBuffer = new double[W * H];
-
-		for (int i = 0; i < Data.length; i++) {
-			final int[] xy = getPointFromIndex(i);
-			rasterBuffer[xy[0] + (xy[1] * W)] = (double) Data[i];
-		}
-
-		// converting everything to a raster
-		final DataBuffer db = new javax.media.jai.DataBufferDouble(rasterBuffer,W * H);
-		this.values = RasterFactory.createBandedRaster(db, W, H, W,new int[] { 0 }, new int[] { 0 }, null);
-
-		// this.length = 11; //length will never be shorter than this.
-		this.isConstant = isConstant;
-		this.maxvalue = max;
-		this.minvalue = min;
-		this.numValidValues = numValidValues;
-		this.fillFields();
-	}
 
 	/**
 	 * GribRecordBDS constructor to be used when creating a GRIB from scratch.
@@ -193,15 +132,18 @@ public final class GribRecordBDS {
 	 * @param bms
 	 *            DOCUMENT ME!
 	 */
-	GribRecordBDS(final int decimalScale, final int datumPointBitLength,
-			final WritableRaster data, final boolean isConstant,
-			final double max, final double min, final int numValidValues,
-			final GribRecordGDS gds, final boolean[] bms) {
+	public GribRecordBDS(
+			final int decimalScale, 
+			final int datumPointBitLength,
+			final WritableRaster data, 
+			final boolean isConstant,
+			final double max, 
+			final double min, 
+			final int numValidValues,
+			final GribRecordGDS gds, 
+			final GribRecordBMS bms) {
 		this.gds = gds;
-
-		if (bms != null) {
-			this.bms = new GribRecordBMS(bms);
-		}
+		this.bms = bms;
 
 		this.decimalScale = decimalScale;
 		this.numbits = datumPointBitLength;
@@ -326,7 +268,7 @@ public final class GribRecordBDS {
 			final int length = bitmap.length;
 
 			for (int i = 0; i < length; i++) {
-				xy = getPointFromIndex(i);
+				xy = GribFileUtilities.getPointFromIndex(i,gds);
 
 				if (bitmap[i]) {
 
@@ -351,7 +293,7 @@ public final class GribRecordBDS {
 						rasterBuffer[xy[0] + (xy[1] * W)] = (double) val;
 					}
 				} else {
-					rasterBuffer[xy[0] + (xy[1] * W)] = (double) GribRecordBDS.UNDEFINED;
+					rasterBuffer[xy[0] + (xy[1] * W)] = (double) GribFileUtilities.UNDEFINED;
 				}
 			}
 		} else {
@@ -360,7 +302,7 @@ public final class GribRecordBDS {
 				this.numValidValues = (((this.length - 11) * 8) - this.unusedBits)/ this.numbits;
 
 				for (int i = 0; i < this.numValidValues; i++) {
-					xy = getPointFromIndex(i);
+					xy = GribFileUtilities.getPointFromIndex(i,gds);
 					val = ref + (scale * in.readUBits(this.numbits));
 					rasterBuffer[xy[0] + (xy[1] * W)] = (double) val;
 
@@ -501,45 +443,6 @@ public final class GribRecordBDS {
 
 		throw new IllegalArgumentException(
 				"GribRecordBDS: Region of Interest out of bounds");
-	}
-
-	/**
-	 * Get data/parameter value as a double given the GRIB Matrix Index.
-	 * 
-	 * @param index
-	 *            int
-	 * 
-	 * @return double value from raster
-	 * 
-	 * @throws NoValidGribException
-	 *             DOCUMENT ME!
-	 */
-	public int[] getPointFromIndex(final int index)  {
-		if ((index >= 0)
-				&& (index < (this.gds.getGridNX() * this.gds.getGridNY()))) {
-			// checking dimensions
-			int rowIndex = 0;
-			int columnIndex = 0;
-
-			final int W = this.gds.getGridNX();
-			final int H = this.gds.getGridNY();
-			final boolean adiacent_i = this.gds.isAdiacent_i_Or_j();
-			final boolean plus_i = this.gds.getGridDX() > 0;
-			final boolean plus_j = this.gds.getGridDY() > 0;
-
-			if (adiacent_i) {
-				columnIndex = (plus_i ? (index % W) : ((W - 1) - (index % W)));
-				rowIndex = (int) ((!plus_j) ? (Math.ceil(index / W)): ((H - 1) - Math.ceil(index / W)));
-			} else {
-				columnIndex = (int) (plus_i ? (Math.ceil(index / H)): ((W - 1) - (Math.ceil(index / H))));
-				rowIndex = (plus_j ? (index % H) : ((H - 1) - (index % H)));
-			}
-
-			return new int[] { columnIndex, rowIndex };
-		}
-
-		throw new IllegalArgumentException(
-				"GribRecordBDS::getPointFromIndex:Array index out of bounds");
 	}
 
 	/**
@@ -784,7 +687,7 @@ public final class GribRecordBDS {
 
 			if (this.binscale != 0) {
 				for (int i = 0; i < length; i++) {
-					xy = getPointFromIndex(i);
+					xy = GribFileUtilities.getPointFromIndex(i,gds);
 					val = this.values.getSampleDouble(xy[0], xy[1], 0); // rasterBuffer[xy[0]
 					// +
 					// xy[1]*W];
@@ -801,7 +704,7 @@ public final class GribRecordBDS {
 				}
 			} else {
 				for (int i = 0; i < length; i++) {
-					xy = getPointFromIndex(i);
+					xy = GribFileUtilities.getPointFromIndex(i,gds);
 					val = this.values.getSampleDouble(xy[0], xy[1], 0); // rasterBuffer[xy[0]
 					// +
 					// xy[1]*W];

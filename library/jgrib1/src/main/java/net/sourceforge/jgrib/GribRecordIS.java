@@ -28,7 +28,6 @@ import it.geosolutions.io.output.MathUtils;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.logging.Logger;
 
 import javax.imageio.stream.ImageInputStream;
 
@@ -36,28 +35,30 @@ import javax.imageio.stream.ImageInputStream;
  * A class that represents the indicator section (IS) of a GRIB record.
  * 
  * @author Benjamin Stark
- * @author Richard D. Gonzalez - modified to indicate support of GRIB edition 1
+ * @author Richard D. Gonzalez - modified to indicate support of GRIB EDITION 1
  *         only
  * @author Simone Giannecchini
  * @version 1.1
  */
 public final class GribRecordIS {
 
-	/** Logger. */
-	private final static Logger LOGGER = Logger.getLogger(GribRecordIS.class.toString());
+	/** Init string for Grib files.*/
+	private final static byte[] GRIB_INIT= new byte[]{(byte) 'G',(byte) 'R',(byte) 'I',(byte) 'B'};
+	
+
+	/** Edition of GRIB specification used. */
+	private final static int EDITION = 1;
+
 
 	/** Length in bytes of GRIB record. */
 	private int gribLength;
 
 	/**
 	 * Length in bytes of IS section. Section gribLength differs between GRIB
-	 * editions 1 and 2 Currently only GRIB edition 1 supported - gribLength is 8
+	 * editions 1 and 2 Currently only GRIB EDITION 1 supported - gribLength is 8
 	 * octets/bytes.
 	 */
 	private int length = 8;
-
-	/** Edition of GRIB specification used. */
-	final private int edition = 1;
 
 	/**
 	 * GribRecordIS. This constructor is used to build the IS section from
@@ -65,14 +66,14 @@ public final class GribRecordIS {
 	 * contains the gribLength of the overall record, therefore it needs to know the
 	 * gribLength of all the other sections of the record itself.
 	 * 
-	 * @param edition
+	 * @param EDITION
 	 *            int Edition of the grib record (MUST be 1)
 	 * @throws NotSupportedException
 	 */
 	public GribRecordIS(final int edition) {
 		if (1 != edition)
 			throw new UnsupportedOperationException(
-					"GribRecordIS:GribRecordIS(final int edition)::Only edition 1 supported by this library!");
+					"GribRecordIS:GribRecordIS(final int EDITION)::Only EDITION 1 supported by this library!");
 	}
 
 	/**
@@ -83,7 +84,7 @@ public final class GribRecordIS {
 	 *            Image input stream with IS content
 	 * 
 	 * @throws NotSupportedException
-	 *             In case the grib edition field is different from 1.
+	 *             In case the grib EDITION field is different from 1.
 	 * @throws IOException
 	 *             If the stream can not be opened etc.
 	 */
@@ -95,14 +96,14 @@ public final class GribRecordIS {
 		// gribLength of GRIB record
 		this.gribLength = MathUtils.uint3(in.read(), in.read(), in.read());
 
-		// edition of GRIB specification
+		// EDITION of GRIB specification
 		final int edition = in.read();
 
 		if (edition == 1) {
 			this.length = 8;
 		} else {
 			throw new UnsupportedOperationException(
-					"GribRecordIS::GribRecordIS(ImageInputStream in):GRIB edition "+ edition + " is not supported");
+					"GribRecordIS::GribRecordIS(ImageInputStream in):GRIB EDITION "+ edition + " is not supported");
 		}
 	}
 
@@ -125,12 +126,12 @@ public final class GribRecordIS {
 	}
 
 	/**
-	 * Get the edition of the GRIB specification used.
+	 * Get the EDITION of the GRIB specification used.
 	 * 
-	 * @return edition number of GRIB specification
+	 * @return EDITION number of GRIB specification
 	 */
 	public int getGribEdition() {
-		return this.edition;
+		return EDITION;
 	}
 
 	/**
@@ -140,7 +141,7 @@ public final class GribRecordIS {
 	 */
 	public String toString() {
 		return "    IS section:" + '\n' + "        Grib Edition "
-				+ this.edition + '\n' + "        gribLength: " + this.gribLength
+				+ EDITION + '\n' + "        gribLength: " + this.gribLength
 				+ " bytes";
 	}
 
@@ -157,16 +158,13 @@ public final class GribRecordIS {
 		GribFileUtilities.ensureNotNull("out", out);
 		
 		// writing first 4 octets
-		out.write((byte) 'G');
-		out.write((byte) 'R');
-		out.write((byte) 'I');
-		out.write((byte) 'B');
+		out.write(GRIB_INIT);
 
 		// gribLength of this message (3 octets)
 		out.write(MathUtils.bitVector2ByteVector(this.gribLength, 24));
 
-		// edition (1 octet)
-		out.write((byte) edition);
+		// EDITION (1 octet)
+		out.write((byte) EDITION);
 	}
 
 	/**
@@ -200,10 +198,8 @@ public final class GribRecordIS {
 
 		final GribRecordIS is = (GribRecordIS) obj;
 
-		if (edition != is.edition) {
-			return false;
-		}
-
+		//EDITION WILL SURELY BE 1, SO WE WON'T CHECK IT EXPLICITLY
+		
 		if (gribLength != is.gribLength) {
 			return false;
 		}
