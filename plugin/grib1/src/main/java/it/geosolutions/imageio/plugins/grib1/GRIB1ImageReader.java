@@ -47,6 +47,7 @@ import javax.imageio.stream.ImageInputStream;
 import javax.media.jai.RasterFactory;
 
 import net.sourceforge.jgrib.GribFile;
+import net.sourceforge.jgrib.GribPDSLevel;
 import net.sourceforge.jgrib.GribRecord;
 import net.sourceforge.jgrib.GribRecordBDS;
 import net.sourceforge.jgrib.GribRecordGDS;
@@ -54,7 +55,6 @@ import net.sourceforge.jgrib.GribRecordPDS;
 import net.sourceforge.jgrib.GribFile.AccessType;
 import net.sourceforge.jgrib.gdsgrids.GribGDSLambert;
 import net.sourceforge.jgrib.gdsgrids.GribGDSRotatedLatLon;
-import net.sourceforge.jgrib.tables.GribPDSLevel;
 import net.sourceforge.jgrib.tables.GribPDSParameter;
 
 /**
@@ -652,14 +652,14 @@ public class GRIB1ImageReader extends BaseImageReader {
 
     String getPDSLevelValues(int imageIndex) throws IOException {
         final GribPDSLevel level = getGribRecordWrapper(imageIndex).getLevel();
-        float v1 = level.getValue1();
-        float v2 = level.getValue2();
+        double v1 = level.getValue1();
+        double v2 = level.getValue2();
         StringBuffer sb = new StringBuffer("");
-        if (!Float.isNaN(v1)) {
-            sb.append(Float.toString(v1));
-            if (!Float.isNaN(v2)) {
+        if (!Double.isNaN(v1)) {
+            sb.append(Double.toString(v1));
+            if (!Double.isNaN(v2)) {
                 sb.append(GRIB1Utilities.VALUES_SEPARATOR).append(
-                        Float.toString(v2));
+                		Double.toString(v2));
             }
         }
         return sb.toString();
