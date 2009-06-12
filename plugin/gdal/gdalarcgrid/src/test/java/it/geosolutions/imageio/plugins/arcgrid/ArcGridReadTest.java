@@ -63,6 +63,7 @@ public class ArcGridReadTest extends AbstractGDALTest {
 		}
 		final ParameterBlockJAI pbjImageRead;
 		final String fileName = "095b_dem_90m.asc";
+		TestData.unzipFile(this, "arcgrid.zip");
 		final File file = TestData.file(this, fileName);
 		pbjImageRead = new ParameterBlockJAI("ImageRead");
 		pbjImageRead.setParameter("Input", file);
