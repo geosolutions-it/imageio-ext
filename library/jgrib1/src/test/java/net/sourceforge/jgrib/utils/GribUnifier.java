@@ -20,6 +20,7 @@ import net.sourceforge.jgrib.GribRecordGDS;
 import net.sourceforge.jgrib.GribRecordIS;
 import net.sourceforge.jgrib.GribRecordPDS;
 import net.sourceforge.jgrib.GribFile.AccessType;
+import net.sourceforge.jgrib.gdsgrids.GribGDSFactory;
 
 /**
  * @author Simone Giannecchini
@@ -134,7 +135,7 @@ public class GribUnifier extends TestCase {
 				assertTrue(record.getPDS().equals(
 						gribFile.getRecord(j).getPDS()));
 				/* GDSLatLon */
-				GribRecordGDS gds = net.sourceforge.jgrib.factory.GribGDSFactory.getGDS(0);
+				GribRecordGDS gds = GribGDSFactory.getGDS(0);
 				// now we have to set each single field we need
 				gds.setGridNX(gribFile.getRecord(j).getGDS().getGridNX());
 				gds.setGridNY(gribFile.getRecord(j).getGDS().getGridNY());

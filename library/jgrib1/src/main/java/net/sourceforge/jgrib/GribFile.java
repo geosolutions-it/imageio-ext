@@ -548,7 +548,9 @@ public final class GribFile {
 			}
 			// were we able to create an input stream
 			if(stream==null)
+			{
 				return false;
+			}
 			
 			// checking if we have GRIB and 7777 for each file
 			stream.mark();

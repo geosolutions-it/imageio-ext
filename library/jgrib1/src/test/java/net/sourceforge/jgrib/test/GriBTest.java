@@ -18,7 +18,7 @@ import net.sourceforge.jgrib.GribRecordGDS;
 import net.sourceforge.jgrib.GribRecordIS;
 import net.sourceforge.jgrib.GribRecordPDS;
 import net.sourceforge.jgrib.GribFile.AccessType;
-import net.sourceforge.jgrib.factory.GribGDSFactory;
+import net.sourceforge.jgrib.gdsgrids.GribGDSFactory;
 import net.sourceforge.jgrib.gdsgrids.GribGDSLambert;
 import net.sourceforge.jgrib.gdsgrids.GribGDSPolarStereo;
 import net.sourceforge.jgrib.gdsgrids.GribGDSRotatedLatLon;
