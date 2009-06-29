@@ -1,0 +1,19 @@
+GDAL DOQ1 plugin
+~~~~~~~~~~~~~~~~
+
+  IP Review:
+
+    * Simone Giannecchini, May  26th, 2009
+  
+ STATUS: OK
+
+	* Code: Clean
+	
+	* Data: OK
+      
+* Data Credits
+  ~~~~~~~~~~~~
+  * n43.dt0:
+
+     Freely available at: http://download.osgeo.org/gdal/data/dted/
+
