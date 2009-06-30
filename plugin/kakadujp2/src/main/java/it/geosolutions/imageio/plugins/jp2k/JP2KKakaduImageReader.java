@@ -2,12 +2,12 @@
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
  *    https://imageio-ext.dev.java.net/
- *    (C) 2007 - 2008, GeoSolutions
+ *    (C) 2007 - 2009, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
  *    License as published by the Free Software Foundation;
- *    version 2.1 of the License.
+ *    either version 3 of the License, or (at your option) any later version.
  *
  *    This library is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -702,7 +702,7 @@ public class JP2KKakaduImageReader extends ImageReader {
         return resamplingIsRequired;
     }
 
-    public synchronized void setInput(Object input, boolean seekForwardOnly,
+    public void setInput(Object input, boolean seekForwardOnly,
             boolean ignoreMetadata) {
 
         // //
@@ -937,12 +937,13 @@ public class JP2KKakaduImageReader extends ImageReader {
      * Disposes all the resources, native and non, used by this
      * {@link ImageReader} subclass.
      */
-    public synchronized void dispose() {
+    public void dispose() {
         super.dispose();
         if (multipleCodestreams != null) {
             multipleCodestreams.clear();
-            numImages = 1;
         }
+        numImages = 1;
+        fileWalker = null;
     }
 
     /**
@@ -1808,7 +1809,7 @@ public class JP2KKakaduImageReader extends ImageReader {
     /**
      * Reset main values
      */
-    public synchronized void reset() {
+    public void reset() {
         super.setInput(null, false, false);
         dispose();
         numImages = -1;
