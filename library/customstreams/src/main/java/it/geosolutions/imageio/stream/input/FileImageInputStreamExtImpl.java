@@ -37,11 +37,11 @@ public  class FileImageInputStreamExtImpl extends ImageInputStreamImpl
         implements FileImageInputStreamExt {
 
     /** the associated {@link File}*/
-	private File file;
+    private File file;
 
     private EnhancedRandomAccessFile eraf;
 
-	private boolean isClosed;
+    private boolean isClosed;
 
     public byte readByte() throws IOException {
 

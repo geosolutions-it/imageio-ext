@@ -39,7 +39,7 @@ public class FileImageOutputStreamExtImpl extends ImageOutputStreamImpl
 
 	private EnhancedRandomAccessFile eraf;
 
-    private File file;
+    	private File file;
 
 	private boolean isClosed;
 

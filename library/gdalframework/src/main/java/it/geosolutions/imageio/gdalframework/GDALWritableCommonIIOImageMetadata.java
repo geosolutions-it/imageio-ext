@@ -48,7 +48,7 @@ public class GDALWritableCommonIIOImageMetadata extends
      */
     public GDALWritableCommonIIOImageMetadata(final String datasetName) {
         super(null, datasetName, false);
-        gdalMetadataMap = Collections.synchronizedMap(new HashMap(2));
+        gdalDomainMetadataMap = Collections.synchronizedMap(new HashMap(2));
     }
 
     /**
@@ -77,6 +77,6 @@ public class GDALWritableCommonIIOImageMetadata extends
         if (domain.equals(GDALUtilities.GDALMetadataDomain.DEFAULT)
                 || domain.length() == 0)
             domain = GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP;
-        gdalMetadataMap.put(domain, metadataNameValuePairs);
+        gdalDomainMetadataMap.put(domain, metadataNameValuePairs);
     }
 }
