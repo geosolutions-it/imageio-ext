@@ -38,14 +38,14 @@
       <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-gdalframework</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
-      <classifier>tests</classifier>
-    </dependency>
+    </dependency>    
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-gdalframework</artifactId>
       <version>${project.version}</version>
-    </dependency>    
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
   </dependencies>
   <!-- =========================================================== -->
   <!--     Build Configuration                                     -->

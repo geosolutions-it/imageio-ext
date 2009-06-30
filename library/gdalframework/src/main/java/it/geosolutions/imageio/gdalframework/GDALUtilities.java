@@ -123,7 +123,7 @@ public final class GDALUtilities {
 	}
 
 
-	private static final String CPL_DEBUG = "CPL_DEBUG";
+    private static final String CPL_DEBUG = "CPL_DEBUG";
 
     private static final Logger LOGGER = Logger
             .getLogger("it.geosolutions.imageio.gdalframework");

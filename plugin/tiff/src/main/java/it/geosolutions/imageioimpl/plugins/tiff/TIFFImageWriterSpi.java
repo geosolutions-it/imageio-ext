@@ -74,7 +74,6 @@
 package it.geosolutions.imageioimpl.plugins.tiff;
 
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
-
 import java.util.Iterator;
 import java.util.Locale;
 

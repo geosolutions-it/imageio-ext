@@ -218,7 +218,7 @@ public abstract class GDALImageReader extends ImageReader {
      *         subDatasets.
      */
     @SuppressWarnings("unchecked")
-	private boolean initialize() {
+    private boolean initialize() {
         if (!GDALUtilities.isGDALAvailable())
             throw new IllegalStateException("GDAL native libraries are not available.");
         synchronized (datasetMetadataMap) {

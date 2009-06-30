@@ -63,6 +63,17 @@
       </repository>
      </distributionManagement>
    </profile>
+   <profile>
+   <id>deployopengeo</id>
+     <distributionManagement>
+      <repository>
+       <uniqueVersion>false</uniqueVersion>
+       <id>opengeo</id>
+       <name>OpenGeo - Maven 2 repo</name>
+       <url>dav:http://repo.opengeo.org</url>
+      </repository>
+     </distributionManagement>
+   </profile>
   <!--..................................-->
   <!--      test Repository     -->
   <!--..................................-->
@@ -317,11 +328,11 @@
   <!--                         Repositories                     -->
   <!-- ======================================================== -->
   <repositories>
-    <repository>
+    <!-- repository>
       <id>refractions</id>
       <name>Refractions libraries repository</name>
       <url>http://lists.refractions.net/m2</url>
-    </repository>
+    </repository -->
     <repository>
       <id>geosolutions</id>
       <name>GeoSolutions libraries repository</name>
@@ -347,6 +358,19 @@
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
+    </repository>
+     <repository>
+      <id>osgeo</id>
+      <name>Open Source Geospatial Foundation Repository</name>
+      <url>http://download.osgeo.org/webdav/geotools/</url>
+    </repository>
+    <repository>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>opengeo</id>
+      <name>OpenGeo Maven Repository</name>
+      <url>http://repo.opengeo.org</url>
     </repository>
     <repository>
       <id>maven2-repository.dev.java.net</id>
