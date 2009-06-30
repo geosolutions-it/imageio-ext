@@ -35,6 +35,7 @@ import javax.media.jai.RenderedOp;
 import javax.swing.JFrame;
 
 import org.junit.Assert;
+import org.junit.Before;
 
 /**
  * Testing reading capabilities for {@link JP2KKakaduImageReader} leveraging on
@@ -45,31 +46,14 @@ import org.junit.Assert;
  */
 public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
 
-//    static FileCache fileCache = new FileCache();
 
-
-//    /**
-//     * Test Read exploiting Linear Interpolation
-//     * 
-//     * @throws IOException
-//     */
-//    public void testJaiReadFromUrl() throws IOException {
-//        final URL url = new URL(
-//                "http://www.microimages.com/gallery/jp2/CB_TM432.jp2");
-//        final File file = fileCache.getFile(url);
-//        final ParameterBlockJAI pbjImageRead;
-//        pbjImageRead = new ParameterBlockJAI("ImageRead");
-//        pbjImageRead.setParameter("Input", file);
-//        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-//        if (TestData.isInteractiveTest())
-//            visualize(image,
-//                    "http://www.microimages.com/gallery/jp2/CB_TM432.jp2");
-//        else
-//            assertNotNull(image.getTiles());
-//    }
-
-	@org.junit.Test
-    public void testJaiReadFromFile() throws IOException {
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+    }
+    
+    @org.junit.Test
+    public void jaiReadFromFile() throws IOException {
         if (!runTests)
             return;
         final File file = TestData.file(this, "CB_TM432.jp2");
@@ -123,7 +107,7 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
     //
     // }
 	@org.junit.Test
-	public void testManualRead() throws IOException {
+	public void manualRead() throws IOException {
         if (!runTests)
             return;
         final File file = TestData.file(this, "CB_TM432.jp2");

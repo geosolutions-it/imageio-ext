@@ -44,13 +44,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.IIOImage;
-import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageWriterSpi;
-import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageOutputStream;
 
 import kdu_jni.Jp2_channels;
@@ -284,9 +282,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             if (q < 0.01) {
                 q = 0.01;
                 if (LOGGER.isLoggable(Level.FINE))
-                    LOGGER
-                            .log(Level.FINE,
-                                    "Quality level should be in the range 0.01 - 1. /n Reassigning it to 0.01");
+                    LOGGER.fine("Quality level should be in the range 0.01 - 1. /n Reassigning it to 0.01");
             }
             quality = q;
             cLevels = jp2Kparam.getCLevels();
@@ -398,17 +394,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
         Jp2_family_tgt familyTarget = null;
 
         // Setting decomposition levels
-        final int power = POWERS_2[cLevels];
-        if (((double) destinationWidth / power) < 20) {
-            int i = 0;
-            for (; i < POWERS_2.length; i++) {
-                final double division = (double) destinationWidth / POWERS_2[i];
-                if (division < 20) {
-                    break;
-                }
-            }
-            cLevels = i > 1 ? i - 1 : 1;
-        }
+       cLevels = setDecompositionLevels(cLevels, destinationWidth);
         
         try {
             if (writeCodeStreamOnly) {
@@ -420,18 +406,14 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                         fileName.length());
                 if (suffix.equalsIgnoreCase(".jp2")
                         && LOGGER.isLoggable(Level.FINE))
-                    LOGGER
-                            .log(
-                                    Level.FINE,
-                                    "When writing codestreams, the \".j2c\" file suffix is suggested instead of \".jp2\"");
-
+                    LOGGER.fine("When writing codestreams, the \".j2c\" file suffix is suggested instead of \".jp2\"");
             } else {
                 familyTarget = new Jp2_family_tgt();
                 familyTarget.Open(fileName);
                 target = new Jp2_target();
                 target.Open(familyTarget);
 
-                // Adding signature, fileType, image header, Jp2Header box bytes
+                // Adding signature, fileType, image header, Jp2Header box bytes 
                 // + jp2c marker.
                 bytesOverHead += 84;
             }
@@ -441,8 +423,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                 bytesOverHead = 0;
 
             final long qualityLayersSize = (long) ((imageSize - (refineBytes ? bytesOverHead
-                    : 0))
-                    * quality * bits * 0.125);
+                    : 0)) * quality * bits * 0.125);
 
             // //
             //
@@ -502,229 +483,18 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                     stripeHeights, sampleGaps, rowGaps, sampleOffsets,
                     precisions, numberOfBits);
 
-            boolean goOn = true;
-            final int stripeSize = rowSize * stripeHeights[0];
-
             // ////////////////////////////////////////////////////////////////
             //
             // Pushing Stripes
             //
             // ////////////////////////////////////////////////////////////////
-
-            // //
-            //
-            // Byte Buffer
-            //
-            // //
-            if (bits <= 8) {
-                byte[] bufferValues = new byte[stripeSize];
-                int y = 0;
-
-                if (!resampleInputImage) {
-                    while (goOn) {
-
-                        // Adjusting the stripeHeight in case of multi-pass
-                        // stripes-push, in case the last stripeHeight is too
-                        // high
-                        if (destinationHeight - y < stripeHeights[0]) {
-                            for (int i = 0; i < nComponents; i++)
-                                stripeHeights[i] = destinationHeight - y;
-                            bufferValues = new byte[rowSize * stripeHeights[0]];
-
-                        }
-
-                        Raster rasterData = inputRenderedImage
-                                .getData(new Rectangle(0, y, destinationWidth,
-                                        stripeHeights[0]));
-                        if (hasPalette && writeCodeStreamOnly) {
-                            DataBuffer buff = rasterData.getDataBuffer();
-                            final int loopLength = buff.getSize();
-                            for (int l = 0; l < loopLength; l++) {
-                                int pixel = buff.getElem(l);
-                                bufferValues[l * 3] = reds[pixel];
-                                bufferValues[(l * 3) + 1] = greens[pixel];
-                                bufferValues[(l * 3) + 2] = blues[pixel];
-                            }
-
-                        } else
-                            rasterData.getDataElements(0, y, destinationWidth,
-                                    stripeHeights[0], bufferValues);
-                        goOn = compressor.Push_stripe(bufferValues,
-                                stripeHeights, sampleOffsets, sampleGaps,
-                                rowGaps, precisions, 0);
-                        y += stripeHeights[0];
-                    }
-                } else {
-                    int lastY = imageBounds.y;
-                    final int lastX = imageBounds.x + imageBounds.width;
-                    ByteBuffer buffer = ByteBuffer.allocate(stripeSize);
-                    ByteBuffer data;
-                    while (goOn) {
-                        if (destinationHeight - y < stripeHeights[0]) {
-                            for (int i = 0; i < nComponents; i++)
-                                stripeHeights[i] = destinationHeight - y;
-                            buffer = ByteBuffer.allocate(rowSize
-                                    * stripeHeights[0]);
-                        }
-                        Rectangle rect = new Rectangle(imageBounds.x, lastY,
-                                imageBounds.width, stripeHeights[0]
-                                        * ySubsamplingFactor);
-                        rect = rect.intersection(originalBounds);
-
-                        Raster rasterData = inputRenderedImage.getData(rect);
-                        lastY = rect.y + rect.height;
-
-                        // SubSampledRead
-                        readSubSampled(rect, originalBounds, lastX, lastY,
-                                xSubsamplingFactor, ySubsamplingFactor,
-                                rasterData, buffer, nComponents);
-                        data = buffer;
-                        if (hasPalette && writeCodeStreamOnly) {
-                            ByteBuffer bb = ByteBuffer.allocate(rowSize
-                                    * stripeHeights[0]);
-                            bufferValues = bb.array();
-                            final int loopLength = buffer.capacity();
-                            for (int l = 0; l < loopLength; l++) {
-                                int pixel = buffer.get();
-                                bufferValues[l * 3] = reds[pixel];
-                                bufferValues[(l * 3) + 1] = greens[pixel];
-                                bufferValues[(l * 3) + 2] = blues[pixel];
-                            }
-                            data = bb;
-                        }
-                        goOn = compressor.Push_stripe(data.array(),
-                                stripeHeights, sampleOffsets, sampleGaps,
-                                rowGaps, precisions, 0);
-
-                        y += stripeHeights[0];
-                        buffer.clear();
-                    }
-                }
-            } else if (bits > 8 && bits <= 16) {
-                // //
-                //
-                // Short Buffer
-                //
-                // //
-                final boolean[] isSigned = new boolean[nComponents];
-                for (int i = 0; i < isSigned.length; i++)
-                    isSigned[i] = isDataSigned;
-                short[] bufferValues = new short[stripeSize];
-                int y = 0;
-
-                if (!resampleInputImage) {
-                    while (goOn) {
-                        if (destinationHeight - y < stripeHeights[0]) {
-                            for (int i = 0; i < nComponents; i++)
-                                stripeHeights[i] = destinationHeight - y;
-                            bufferValues = new short[rowSize * stripeHeights[0]];
-                        }
-                        Raster rasterData = inputRenderedImage
-                                .getData(new Rectangle(0, y, destinationWidth,
-                                        stripeHeights[0]));
-                        rasterData.getDataElements(0, y, destinationWidth,
-                                stripeHeights[0], bufferValues);
-                        goOn = compressor.Push_stripe(bufferValues,
-                                stripeHeights, sampleOffsets, sampleGaps,
-                                rowGaps, precisions, isSigned, 0);
-                        y += stripeHeights[0];
-                    }
-                } else {
-                    final int lastX = imageBounds.x + imageBounds.width;
-                    int lastY = imageBounds.y;
-                    ShortBuffer buffer = ShortBuffer.allocate(stripeSize);
-                    while (goOn) {
-                        if (destinationHeight - y < stripeHeights[0]) {
-                            for (int i = 0; i < nComponents; i++)
-                                stripeHeights[i] = destinationHeight - y;
-                            buffer = ShortBuffer.allocate(rowSize
-                                    * stripeHeights[0]);
-
-                        }
-                        Rectangle rect = new Rectangle(imageBounds.x, lastY,
-                                imageBounds.width, stripeHeights[0]
-                                        * ySubsamplingFactor);
-                        rect = rect.intersection(originalBounds);
-                        final Raster rasterData = inputRenderedImage
-                                .getData(rect);
-                        lastY = rect.y + rect.height;
-
-                        // SubSampledRead
-                        readSubSampled(rect, originalBounds, lastX, lastY,
-                                xSubsamplingFactor, ySubsamplingFactor,
-                                rasterData, buffer, nComponents);
-
-                        goOn = compressor.Push_stripe(buffer.array(),
-                                stripeHeights, sampleOffsets, sampleGaps,
-                                rowGaps, precisions, isSigned, 0);
-
-                        y += stripeHeights[0];
-                        buffer.clear();
-                    }
-                }
-
-            } else if (bits > 16 && bits <= 32) {
-                // //
-                //
-                // Int Buffer
-                //
-                // //
-                int[] bufferValues = new int[stripeSize];
-                int y = 0;
-                while (goOn) {
-                    if (!resampleInputImage) {
-                        if (destinationHeight - y < stripeHeights[0]) {
-                            for (int i = 0; i < nComponents; i++)
-                                stripeHeights[i] = destinationHeight - y;
-                            bufferValues = new int[rowSize * stripeHeights[0]];
-                        }
-
-                        Raster rasterData = inputRenderedImage
-                                .getData(new Rectangle(0, y, destinationWidth,
-                                        stripeHeights[0]));
-
-                        rasterData.getDataElements(0, y, destinationWidth,
-                                stripeHeights[0], bufferValues);
-                        goOn = compressor.Push_stripe(bufferValues,
-                                stripeHeights, sampleOffsets, sampleGaps,
-                                rowGaps, precisions);
-                        y += stripeHeights[0];
-                    } else {
-                        int lastY = imageBounds.y;
-                        final int lastX = imageBounds.x + imageBounds.width;
-                        IntBuffer buffer = IntBuffer.allocate(stripeSize);
-                        while (goOn) {
-                            if (destinationHeight - y < stripeHeights[0]) {
-                                for (int i = 0; i < nComponents; i++)
-                                    stripeHeights[i] = destinationHeight - y;
-                                buffer = IntBuffer.allocate(rowSize
-                                        * stripeHeights[0]);
-
-                            }
-                            Rectangle rect = new Rectangle(imageBounds.x,
-                                    lastY, imageBounds.width, stripeHeights[0]
-                                            * ySubsamplingFactor);
-                            rect = rect.intersection(originalBounds);
-
-                            final Raster rasterData = inputRenderedImage
-                                    .getData(rect);
-                            lastY = rect.y + rect.height;
-
-                            // SubSampledRead
-                            readSubSampled(rect, originalBounds, lastX, lastY,
-                                    xSubsamplingFactor, ySubsamplingFactor,
-                                    rasterData, buffer, nComponents);
-
-                            goOn = compressor.Push_stripe(buffer.array(),
-                                    stripeHeights, sampleOffsets, sampleGaps,
-                                    rowGaps, precisions);
-
-                            y += stripeHeights[0];
-                            buffer.clear();
-                        }
-                    }
-                }
-            }
+            pushStripes(compressor, inputRenderedImage, imageBounds, originalBounds,
+                    isDataSigned, resampleInputImage, writeCodeStreamOnly, hasPalette,
+                    nComponents, bits, destinationWidth, destinationHeight,
+                    xSubsamplingFactor, ySubsamplingFactor,
+                    stripeHeights, sampleGaps, rowGaps, sampleOffsets, precisions,
+                    reds, greens, blues
+                  );
 
             // ////////////////////////////////////////////////////////////////
             //
@@ -791,10 +561,290 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                 int bytesRead = 0;
                 while ((bytesRead = fis.read(buff)) != -1)
                     outputStream.write(buff, 0, bytesRead);
-//                fis.close();
+                fis.close();
                 outputFile.delete();
             }
         }
+    }
+
+    /**
+     * Push data stripes from the inputRenderedImage in compliance with a set of parameters.
+     *   
+     * @param compressor
+     * @param inputRenderedImage
+     * @param imageBounds
+     * @param originalBounds
+     * @param isDataSigned
+     * @param resampleInputImage
+     * @param writeCodeStreamOnly
+     * @param hasPalette
+     * @param nComponents
+     * @param bits
+     * @param destinationWidth 
+     * @param destinationHeight
+     * @param xSubsamplingFactor
+     * @param ySubsamplingFactor
+     * @param stripeHeights
+     * @param sampleGaps
+     * @param rowGaps
+     * @param sampleOffsets
+     * @param precisions
+     * @param reds
+     * @param greens
+     * @param blues
+     * @throws KduException
+     */
+    private void pushStripes(final Kdu_stripe_compressor compressor, 
+            final RenderedImage inputRenderedImage, final Rectangle imageBounds,
+            final Rectangle originalBounds, final boolean isDataSigned,
+            final boolean resampleInputImage, final boolean writeCodeStreamOnly,
+            final boolean hasPalette, final int nComponents, final int bits,
+            final int destinationWidth, final int destinationHeight, 
+            final int xSubsamplingFactor, final int ySubsamplingFactor,
+            final int[] stripeHeights, final int[] sampleGaps, final int[] rowGaps, 
+            final int[] sampleOffsets, final int precisions[], 
+            final byte[] reds, final byte[] greens , final byte[] blues  ) throws KduException {
+        
+        boolean goOn = true;
+        final int rowSize = (destinationWidth * nComponents);
+        final int stripeSize = rowSize * stripeHeights[0];
+        
+        if (bits <= 8) {
+            // //
+            //
+            // Byte Buffer
+            //
+            // //
+            byte[] bufferValues = new byte[stripeSize];
+            int y = 0;
+
+            if (!resampleInputImage) {
+                while (goOn) {
+
+                    // Adjusting the stripeHeight in case of multi-pass
+                    // stripes-push, in case the last stripeHeight is too
+                    // high
+                    if (destinationHeight - y < stripeHeights[0]) {
+                        for (int i = 0; i < nComponents; i++)
+                            stripeHeights[i] = destinationHeight - y;
+                        bufferValues = new byte[rowSize * stripeHeights[0]];
+
+                    }
+
+                    Raster rasterData = inputRenderedImage
+                            .getData(new Rectangle(0, y, destinationWidth,
+                                    stripeHeights[0]));
+                    if (hasPalette && writeCodeStreamOnly) {
+                        DataBuffer buff = rasterData.getDataBuffer();
+                        final int loopLength = buff.getSize();
+                        for (int l = 0; l < loopLength; l++) {
+                            int pixel = buff.getElem(l);
+                            bufferValues[l * 3] = reds[pixel];
+                            bufferValues[(l * 3) + 1] = greens[pixel];
+                            bufferValues[(l * 3) + 2] = blues[pixel];
+                        }
+
+                    } else
+                        rasterData.getDataElements(0, y, destinationWidth,
+                                stripeHeights[0], bufferValues);
+                    goOn = compressor.Push_stripe(bufferValues,
+                            stripeHeights, sampleOffsets, sampleGaps,
+                            rowGaps, precisions, 0);
+                    y += stripeHeights[0];
+                }
+            } else {
+                int lastY = imageBounds.y;
+                final int lastX = imageBounds.x + imageBounds.width;
+                ByteBuffer buffer = ByteBuffer.allocate(stripeSize);
+                ByteBuffer data;
+                while (goOn) {
+                    if (destinationHeight - y < stripeHeights[0]) {
+                        for (int i = 0; i < nComponents; i++)
+                            stripeHeights[i] = destinationHeight - y;
+                        buffer = ByteBuffer.allocate(rowSize
+                                * stripeHeights[0]);
+                    }
+                    Rectangle rect = new Rectangle(imageBounds.x, lastY,
+                            imageBounds.width, stripeHeights[0]
+                                    * ySubsamplingFactor);
+                    rect = rect.intersection(originalBounds);
+
+                    Raster rasterData = inputRenderedImage.getData(rect);
+                    lastY = rect.y + rect.height;
+
+                    // SubSampledRead
+                    readSubSampled(rect, originalBounds, lastX, lastY,
+                            xSubsamplingFactor, ySubsamplingFactor,
+                            rasterData, buffer, nComponents);
+                    data = buffer;
+                    if (hasPalette && writeCodeStreamOnly) {
+                        ByteBuffer bb = ByteBuffer.allocate(rowSize
+                                * stripeHeights[0]);
+                        bufferValues = bb.array();
+                        final int loopLength = buffer.capacity();
+                        for (int l = 0; l < loopLength; l++) {
+                            int pixel = buffer.get();
+                            bufferValues[l * 3] = reds[pixel];
+                            bufferValues[(l * 3) + 1] = greens[pixel];
+                            bufferValues[(l * 3) + 2] = blues[pixel];
+                        }
+                        data = bb;
+                    }
+                    goOn = compressor.Push_stripe(data.array(),
+                            stripeHeights, sampleOffsets, sampleGaps,
+                            rowGaps, precisions, 0);
+
+                    y += stripeHeights[0];
+                    buffer.clear();
+                }
+            }
+        } else if (bits > 8 && bits <= 16) {
+            // //
+            //
+            // Short Buffer
+            //
+            // //
+            final boolean[] isSigned = new boolean[nComponents];
+            for (int i = 0; i < isSigned.length; i++)
+                isSigned[i] = isDataSigned;
+            short[] bufferValues = new short[stripeSize];
+            int y = 0;
+
+            if (!resampleInputImage) {
+                while (goOn) {
+                    if (destinationHeight - y < stripeHeights[0]) {
+                        for (int i = 0; i < nComponents; i++)
+                            stripeHeights[i] = destinationHeight - y;
+                        bufferValues = new short[rowSize * stripeHeights[0]];
+                    }
+                    Raster rasterData = inputRenderedImage
+                            .getData(new Rectangle(0, y, destinationWidth,
+                                    stripeHeights[0]));
+                    rasterData.getDataElements(0, y, destinationWidth,
+                            stripeHeights[0], bufferValues);
+                    goOn = compressor.Push_stripe(bufferValues,
+                            stripeHeights, sampleOffsets, sampleGaps,
+                            rowGaps, precisions, isSigned, 0);
+                    y += stripeHeights[0];
+                }
+            } else {
+                final int lastX = imageBounds.x + imageBounds.width;
+                int lastY = imageBounds.y;
+                ShortBuffer buffer = ShortBuffer.allocate(stripeSize);
+                while (goOn) {
+                    if (destinationHeight - y < stripeHeights[0]) {
+                        for (int i = 0; i < nComponents; i++)
+                            stripeHeights[i] = destinationHeight - y;
+                        buffer = ShortBuffer.allocate(rowSize
+                                * stripeHeights[0]);
+
+                    }
+                    Rectangle rect = new Rectangle(imageBounds.x, lastY,
+                            imageBounds.width, stripeHeights[0]
+                                    * ySubsamplingFactor);
+                    rect = rect.intersection(originalBounds);
+                    final Raster rasterData = inputRenderedImage
+                            .getData(rect);
+                    lastY = rect.y + rect.height;
+
+                    // SubSampledRead
+                    readSubSampled(rect, originalBounds, lastX, lastY,
+                            xSubsamplingFactor, ySubsamplingFactor,
+                            rasterData, buffer, nComponents);
+
+                    goOn = compressor.Push_stripe(buffer.array(),
+                            stripeHeights, sampleOffsets, sampleGaps,
+                            rowGaps, precisions, isSigned, 0);
+
+                    y += stripeHeights[0];
+                    buffer.clear();
+                }
+            }
+
+        } else if (bits > 16 && bits <= 32) {
+            // //
+            //
+            // Int Buffer
+            //
+            // //
+            int[] bufferValues = new int[stripeSize];
+            int y = 0;
+            while (goOn) {
+                if (!resampleInputImage) {
+                    if (destinationHeight - y < stripeHeights[0]) {
+                        for (int i = 0; i < nComponents; i++)
+                            stripeHeights[i] = destinationHeight - y;
+                        bufferValues = new int[rowSize * stripeHeights[0]];
+                    }
+
+                    Raster rasterData = inputRenderedImage
+                            .getData(new Rectangle(0, y, destinationWidth,
+                                    stripeHeights[0]));
+
+                    rasterData.getDataElements(0, y, destinationWidth,
+                            stripeHeights[0], bufferValues);
+                    goOn = compressor.Push_stripe(bufferValues,
+                            stripeHeights, sampleOffsets, sampleGaps,
+                            rowGaps, precisions);
+                    y += stripeHeights[0];
+                } else {
+                    int lastY = imageBounds.y;
+                    final int lastX = imageBounds.x + imageBounds.width;
+                    IntBuffer buffer = IntBuffer.allocate(stripeSize);
+                    while (goOn) {
+                        if (destinationHeight - y < stripeHeights[0]) {
+                            for (int i = 0; i < nComponents; i++)
+                                stripeHeights[i] = destinationHeight - y;
+                            buffer = IntBuffer.allocate(rowSize
+                                    * stripeHeights[0]);
+
+                        }
+                        Rectangle rect = new Rectangle(imageBounds.x,
+                                lastY, imageBounds.width, stripeHeights[0]
+                                        * ySubsamplingFactor);
+                        rect = rect.intersection(originalBounds);
+
+                        final Raster rasterData = inputRenderedImage
+                                .getData(rect);
+                        lastY = rect.y + rect.height;
+
+                        // SubSampledRead
+                        readSubSampled(rect, originalBounds, lastX, lastY,
+                                xSubsamplingFactor, ySubsamplingFactor,
+                                rasterData, buffer, nComponents);
+
+                        goOn = compressor.Push_stripe(buffer.array(),
+                                stripeHeights, sampleOffsets, sampleGaps,
+                                rowGaps, precisions);
+
+                        y += stripeHeights[0];
+                        buffer.clear();
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Set the number of decomposition levels
+     * @param cLevels
+     * @param destinationWidth
+     * @return
+     */
+    private int setDecompositionLevels(final int cLevels, final int destinationWidth) {
+        final int power = POWERS_2[cLevels];
+        int levels = cLevels;
+        if (((double) destinationWidth / power) < 20) {
+            int i = 0;
+            for (; i < POWERS_2.length; i++) {
+                final double division = (double) destinationWidth / POWERS_2[i];
+                if (division < 20) {
+                    break;
+                }
+            }
+            levels = i > 1 ? i - 1 : 1;
+        }
+        return levels;
     }
 
     /**

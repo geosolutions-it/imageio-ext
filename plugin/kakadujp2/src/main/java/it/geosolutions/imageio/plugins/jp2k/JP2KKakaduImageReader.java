@@ -938,8 +938,6 @@ public class JP2KKakaduImageReader extends ImageReader {
      * {@link ImageReader} subclass.
      */
     public synchronized void dispose() {
-        // it actually does nothing but it might turn out to be useful in future
-        // releases of ImageIO
         super.dispose();
         if (multipleCodestreams != null) {
             multipleCodestreams.clear();

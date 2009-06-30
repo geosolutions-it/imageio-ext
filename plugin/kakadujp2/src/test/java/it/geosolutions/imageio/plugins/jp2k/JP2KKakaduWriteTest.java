@@ -20,6 +20,7 @@
 package it.geosolutions.imageio.plugins.jp2k;
 
 import it.geosolutions.resources.TestData;
+import it.geosolutions.util.KakaduUtilities;
 
 import java.awt.Rectangle;
 import java.awt.Transparency;
@@ -107,8 +108,7 @@ public class JP2KKakaduWriteTest extends TestCase {
 
     static {
         try{
-            System.loadLibrary("kdu_jni");
-            isKakaduAvailable = true;
+            isKakaduAvailable = KakaduUtilities.isKakaduAvailable();
         }
         catch (UnsatisfiedLinkError ule){
             isKakaduAvailable = false;
@@ -126,10 +126,7 @@ public class JP2KKakaduWriteTest extends TestCase {
        
     }
 
-    private final static String[] files = new String[] { "IM-0001-30023.bmp",
-            "IM-0001-0008.bmp", "IM-0001-0010.bmp", "IM-0001-0014.bmp",
-            "OT-MONO2-8-hip.bmp", "MR-MONO2-8-16x-heart (12).bmp",
-            "8-bit Uncompressed Gray.bmp" };
+    private final static String[] files = new String[] {  };
 
     private final static String inputFileName = testPath;
 
@@ -221,6 +218,11 @@ public class JP2KKakaduWriteTest extends TestCase {
             .warning("Kakadu libs not found: test are skipped ");
             return;
         }
+        if (files.length==0) {
+            LOGGER.warning("No files have been specified\n This test will be skipped");
+            return;
+        }
+        
         final String fileName = files[0];
         final String filePath = inputFileName + fileName;
         final File file = new File(filePath);
@@ -420,6 +422,7 @@ public class JP2KKakaduWriteTest extends TestCase {
         write(outputFileName + "_JAI_gray8", bi, false, lossLessQuality, true);
         // write(outputFileName + "_JAI_gray12", bi, true, lossyQuality, true);
         // write(outputFileName + "_JAI_gray12", bi, false, lossyQuality, true);
+        LOGGER.info(writeOperations + " write operations performed");
     }
 
     public static void test12BitGray() throws IOException {
@@ -454,6 +457,7 @@ public class JP2KKakaduWriteTest extends TestCase {
         write(outputFileName + "_JAI_gray12", bi, false, lossLessQuality, true);
         // write(outputFileName + "_JAI_gray12", bi, true, lossyQuality, true);
         // write(outputFileName + "_JAI_gray12", bi, false, lossyQuality, true);
+        LOGGER.info(writeOperations + " write operations performed");
     }
 
     public static void test16BitGray() throws IOException {
@@ -494,6 +498,7 @@ public class JP2KKakaduWriteTest extends TestCase {
                 lossyQuality, true, param);
         write(outputFileName + "_JAI_subSampled_gray16", bi, false,
                 lossyQuality, true, param);
+        LOGGER.info(writeOperations + " write operations performed");
     }
 
     public static void test24BitGray() throws IOException {
@@ -533,6 +538,7 @@ public class JP2KKakaduWriteTest extends TestCase {
                 lossyQuality, true, param);
         write(outputFileName + "_JAI_subSampled_gray24", bi, false,
                 lossyQuality, true, param);
+        LOGGER.info(writeOperations + " write operations performed");
     }
 
     public void testOutputStream() throws IOException {
@@ -560,6 +566,7 @@ public class JP2KKakaduWriteTest extends TestCase {
         writer.setOutput(stream);
         writer.write(null, new IIOImage(bi, null, null), param);
         writer.dispose();
+        LOGGER.info(writeOperations + " write operations performed");
     }
     public void testRGB() throws IOException {
         if(!isKakaduAvailable){
@@ -580,6 +587,7 @@ public class JP2KKakaduWriteTest extends TestCase {
         write(outputFileName + "_JAI_RGB", bi, false, lossLessQuality, true);
         // write(outputFileName + "_JAI_RGB", bi, true, lossyQuality, true);
         // write(outputFileName + "_JAI_RGB", bi, false, lossyQuality, true);
+        LOGGER.info(writeOperations + " write operations performed");
     }
 
     public void testPalettedRGB() throws IOException {
@@ -588,11 +596,12 @@ public class JP2KKakaduWriteTest extends TestCase {
             .warning("Kakadu libs not found: test are skipped ");
             return;
         }
-        BufferedImage bi = ImageIO.read(TestData.file(this, "paletted.tif"));
-        write(outputFileName + "_RGB8", bi, true, lossLessQuality);
-        write(outputFileName + "_RGB8", bi, false, lossLessQuality);
-        write(outputFileName + "_JAI_RGB8", bi, true, lossLessQuality, true);
-        write(outputFileName + "_JAI_RGB8", bi, false, lossLessQuality, true);
+//        BufferedImage bi = ImageIO.read(TestData.file(this, "paletted.tif"));
+//        write(outputFileName + "_RGB8", bi, true, lossLessQuality);
+//        write(outputFileName + "_RGB8", bi, false, lossLessQuality);
+//        write(outputFileName + "_JAI_RGB8", bi, true, lossLessQuality, true);
+//        write(outputFileName + "_JAI_RGB8", bi, false, lossLessQuality, true);
+//        LOGGER.info(writeOperations + " write operations performed");
     }
 
     private static void write(String file, final RenderedImage bi,
