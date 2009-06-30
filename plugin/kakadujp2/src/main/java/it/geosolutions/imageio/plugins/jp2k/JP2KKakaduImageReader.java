@@ -702,7 +702,7 @@ public class JP2KKakaduImageReader extends ImageReader {
         return resamplingIsRequired;
     }
 
-    public synchronized void setInput(Object input, boolean seekForwardOnly,
+    public void setInput(Object input, boolean seekForwardOnly,
             boolean ignoreMetadata) {
 
         // //
@@ -937,14 +937,13 @@ public class JP2KKakaduImageReader extends ImageReader {
      * Disposes all the resources, native and non, used by this
      * {@link ImageReader} subclass.
      */
-    public synchronized void dispose() {
-        // it actually does nothing but it might turn out to be useful in future
-        // releases of ImageIO
+    public void dispose() {
         super.dispose();
         if (multipleCodestreams != null) {
             multipleCodestreams.clear();
-            numImages = 1;
         }
+        numImages = 1;
+        fileWalker = null;
     }
 
     /**
@@ -1810,7 +1809,7 @@ public class JP2KKakaduImageReader extends ImageReader {
     /**
      * Reset main values
      */
-    public synchronized void reset() {
+    public void reset() {
         super.setInput(null, false, false);
         dispose();
         numImages = -1;

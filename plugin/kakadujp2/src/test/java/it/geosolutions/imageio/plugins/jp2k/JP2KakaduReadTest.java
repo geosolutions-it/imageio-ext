@@ -46,32 +46,12 @@ import junit.framework.TestSuite;
  */
 public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
 
-//    static FileCache fileCache = new FileCache();
 
     public JP2KakaduReadTest(String name) {
         super(name);
 
     }
-
-//    /**
-//     * Test Read exploiting Linear Interpolation
-//     * 
-//     * @throws IOException
-//     */
-//    public void testJaiReadFromUrl() throws IOException {
-//        final URL url = new URL(
-//                "http://www.microimages.com/gallery/jp2/CB_TM432.jp2");
-//        final File file = fileCache.getFile(url);
-//        final ParameterBlockJAI pbjImageRead;
-//        pbjImageRead = new ParameterBlockJAI("ImageRead");
-//        pbjImageRead.setParameter("Input", file);
-//        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-//        if (TestData.isInteractiveTest())
-//            visualize(image,
-//                    "http://www.microimages.com/gallery/jp2/CB_TM432.jp2");
-//        else
-//            assertNotNull(image.getTiles());
-//    }
+    
 
     public void testJaiReadFromFile() throws IOException {
         if (!runTests)
@@ -171,8 +151,6 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
         suite.addTest(new JP2KakaduReadTest("testJaiReadFromFile"));
 
         suite.addTest(new JP2KakaduReadTest("testManualRead"));
-//
-//        suite.addTest(new JP2KakaduReadTest("testJaiReadFromUrl"));
 
         return suite;
     }
