@@ -1,0 +1,56 @@
+Index: makefile.vc
+===================================================================
+--- makefile.vc	(revision 15924)
++++ makefile.vc	(working copy)
+@@ -5,6 +5,8 @@
+ 
+ OBJ	=	ecwdataset.obj ecwcreatecopy.obj jp2userbox.obj
+ 
++PLUGIN_DLL =	gdal_ECW_JP2ECW.dll
++
+ GDAL_ROOT	=	..\..
+ 
+ !INCLUDE $(GDAL_ROOT)\nmake.opt
+@@ -17,6 +19,7 @@
+ clean:
+ 	-del *.obj
+ 	-del *.exe
++	-del gdal_ECW.*
+ 
+ testecw.exe:	testecw.cpp
+ 	$(CC) /Zi /MD $(EXTRAFLAGS) testecw.cpp $(ECWLIB)
+@@ -24,4 +27,9 @@
+ ecw_example1.exe:	ecw_example1.c
+ 	$(CC) /MD $(EXTRAFLAGS) ecw_example1.c $(ECWLIB)
+ 	
++plugin:	$(PLUGIN_DLL)
+ 
++$(PLUGIN_DLL): $(OBJ)
++	link /dll /out:$(PLUGIN_DLL) $(OBJ) \
++		$(GDALLIB) $(ECWLIB)
++	if exist $(PLUGIN_DLL).manifest mt -manifest $(PLUGIN_DLL).manifest -outputresource:$(PLUGIN_DLL);2
+Index: ecwdataset.cpp
+===================================================================
+--- ecwdataset.cpp	(revision 15924)
++++ ecwdataset.cpp	(working copy)
+@@ -1581,6 +1581,20 @@
+ }
+ 
+ /************************************************************************/
++/*                      GDALRegister_ECW_JP2ECW()                       */
++/*                                                                      */
++/*      This function exists so that when built as a plugin, there      */
++/*      is a function that will register both drivers.                  */
++/************************************************************************/
++
++void GDALRegister_ECW_JP2ECW()
++
++{
++    GDALRegister_ECW();
++    GDALRegister_JP2ECW();
++}
++
++/************************************************************************/
+ /*                        GDALRegister_JP2ECW()                         */
+ /************************************************************************/
+ void GDALRegister_JP2ECW()
