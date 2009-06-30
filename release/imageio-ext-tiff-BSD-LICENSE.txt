@@ -4,7 +4,7 @@
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
  *    https://imageio-ext.dev.java.net/
- *    (C) 2007 - 2008, GeoSolutions
+ *    (C) 2007 - 2009, GeoSolutions
  *    All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
