@@ -328,11 +328,6 @@
   <!--                         Repositories                     -->
   <!-- ======================================================== -->
   <repositories>
-    <!-- repository>
-      <id>refractions</id>
-      <name>Refractions libraries repository</name>
-      <url>http://lists.refractions.net/m2</url>
-    </repository -->
     <repository>
       <id>geosolutions</id>
       <name>GeoSolutions libraries repository</name>
