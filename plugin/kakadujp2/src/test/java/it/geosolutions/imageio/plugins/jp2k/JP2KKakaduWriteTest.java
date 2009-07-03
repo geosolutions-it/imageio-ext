@@ -78,7 +78,7 @@ public class JP2KKakaduWriteTest extends TestCase {
 
     private final static String testPath;
 
-    private final static String fileSeparator = System
+    private final static String FILE_SEPARATOR = System
             .getProperty("file.separator");
 
     /**
@@ -126,13 +126,11 @@ public class JP2KKakaduWriteTest extends TestCase {
        
     }
 
-    private final static String[] files = new String[] {  };
+    private final static String[] files = new String[] { };
 
-    private final static String inputFileName = testPath;
+//    private final static String inputFileName = testPath;
 
-    // private final static String inputFileName12bit = testPath + "test1.jp2";
-
-    private final static String outputFileName = testPath + fileSeparator
+    private final static String outputFileName = testPath + FILE_SEPARATOR
             + "out";
 
     public void testKakaduWriter() throws KduException, FileNotFoundException,
@@ -143,13 +141,16 @@ public class JP2KKakaduWriteTest extends TestCase {
             return;
         }
         for (String fileName : files) {
-            final String filePath = inputFileName + fileName;
-            final File file = new File(filePath);
-            if (!file.exists()) {
+//            final String filePath = inputFileName + fileName;
+//            final File file = new File(filePath);
+        	final File file = TestData.file(this, fileName);
+        	final String filePath = file.getAbsolutePath();
+        	if (!file.exists()) {
                 LOGGER
                         .warning("Unable to find the file "
                                 + filePath
-                                + "\n Be sure you have properly specified the \"data.path\" property linking to the location where test data is available. \n This test will be skipped");
+//                                + "\n Be sure you have properly specified the \"data.path\" property linking to the location where test data is available." 
+                                + "\n This test will be skipped");
                 continue;
             }
             else{
@@ -219,16 +220,21 @@ public class JP2KKakaduWriteTest extends TestCase {
             return;
         }
         if (files.length==0) {
-            LOGGER.warning("No files have been specified\n This test will be skipped");
+            LOGGER.warning("No files have been specified. This test will be skipped");
             return;
         }
         
         final String fileName = files[0];
-        final String filePath = inputFileName + fileName;
-        final File file = new File(filePath);
-        if (!file.exists()) {
-            LOGGER.warning("Unable to find the file " + filePath
-                    + "\n This test will be skipped");
+//        final String filePath = inputFileName + fileName;
+//        final File file = new File(filePath);
+        final File file = TestData.file(this, fileName);
+    	final String filePath = file.getAbsolutePath();
+    	if (!file.exists()) {
+            LOGGER
+                    .warning("Unable to find the file "
+                            + filePath
+//                            + "\n Be sure you have properly specified the \"data.path\" property linking to the location where test data is available." 
+                            + "\n This test will be skipped");
             return;
         }
         final String suffix = fileName.substring(0, fileName.length() - 4);
@@ -364,22 +370,23 @@ public class JP2KKakaduWriteTest extends TestCase {
             .warning("Kakadu libs not found: test are skipped ");
             return;
         }
-        System.setProperty(JP2KKakaduImageWriter.MAX_BUFFER_SIZE_KEY, "16K");
+        System.setProperty(JP2KKakaduImageWriter.MAX_BUFFER_SIZE_KEY, "64K");
         final ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
-        ColorModel cm = new ComponentColorModel(cs, new int[] { 24 }, false,
-                false, Transparency.OPAQUE, DataBuffer.TYPE_INT);
-        final int w = 2048;
-        final int h = 2048;
+        ColorModel cm = new ComponentColorModel(cs, new int[] { 16 }, false,
+                false, Transparency.OPAQUE, DataBuffer.TYPE_USHORT);
+        final int w = 512;
+        final int h = 512;
         SampleModel sm = cm.createCompatibleSampleModel(w, h);
         final int bufferSize = w * h;
-        final int[] bufferValues = new int[bufferSize];
+        final short[] bufferValues = new short[bufferSize];
         for (int i = 0; i < h; i++) {
             for (int j = 0; j < w; j++)
-                // bufferValues[j + (i * h)] = (int) (j + i) * (16777216 /
-                // 4096);
-                bufferValues[j + (i * h)] = (int) (Math.random() * 16777215d);
+                // bufferValues[j + (i * h)] = (short) ((j + i) * (65536 /
+                // 1024));
+                bufferValues[j + (i * h)] = (short) (Math.random() * 65535);
         }
-        DataBuffer imageBuffer = new DataBufferInt(bufferValues, bufferSize);
+
+        DataBuffer imageBuffer = new DataBufferUShort(bufferValues, bufferSize);
         BufferedImage bi = new BufferedImage(cm, Raster.createWritableRaster(
                 sm, imageBuffer, null), false, null);
 
