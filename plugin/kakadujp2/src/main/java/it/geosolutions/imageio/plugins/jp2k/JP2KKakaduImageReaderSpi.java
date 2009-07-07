@@ -50,7 +50,7 @@ public class JP2KKakaduImageReaderSpi extends ImageReaderSpi {
     
     static final String[] suffixes = { "jp2", "jp2k", "j2k", "j2c" };
      
-    static final String[] formatNames = { "JP2KSimpleBox", "jpeg2000" };
+    static final String[] formatNames = { "JP2KSimpleBox", "jpeg2000", "jpeg 2000", "JPEG 2000", "JPEG2000" };
      
     static final String[] MIMETypes = { "image/jp2", "image/jp2k", "image/j2k", "image/j2c" };
 
@@ -216,7 +216,7 @@ public class JP2KKakaduImageReaderSpi extends ImageReaderSpi {
 
         registered = true;
 
-        final List<ImageReaderWriterSpi> readers = KakaduUtilities.getJDKImageReaderWriterSPI(registry,"JP2KSimpleBox", true);
+        final List<ImageReaderWriterSpi> readers = KakaduUtilities.getJDKImageReaderWriterSPI(registry,"jpeg2000", true);
         for (ImageReaderWriterSpi elem:readers) {
         	if (elem instanceof ImageReaderSpi){
 	            final ImageReaderSpi spi = (ImageReaderSpi) elem;;
