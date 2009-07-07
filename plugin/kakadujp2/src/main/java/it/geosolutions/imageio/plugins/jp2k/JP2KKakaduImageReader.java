@@ -46,6 +46,8 @@ import java.awt.image.RasterFormatException;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -139,7 +141,7 @@ public class JP2KKakaduImageReader extends ImageReader {
             final StringBuffer sb = new StringBuffer(
                     "Illegal imageIndex specified = ").append(imageIndex)
                     .append(", while the valid imageIndex");
-            if (numImages > 0)
+            if (numImages > 1)
                 // There are N Images.
                 sb.append(" range should be [0,").append(numImages - 1).append(
                         "]!");
@@ -784,6 +786,14 @@ public class JP2KKakaduImageReader extends ImageReader {
                 wrappedSource.Close();
                 rawSource = new Kdu_simple_file_source(fileName);
                 if (rawSource != null) {
+                	 if (fileName != null){
+                         FileInputStream fis = new FileInputStream (new File(fileName));
+                         byte[] jp2SocMarker = new byte[2];
+                         fis.read(jp2SocMarker);
+                         if (jp2SocMarker[0] != (byte)0xFF || jp2SocMarker[1] != (byte) 0x4F)
+                        	 throw new IllegalArgumentException("Not a JP2K source.");
+                         fis.close();
+                     }
                     isRawSource = true;
                     if (LOGGER.isLoggable(Level.FINE))
                         LOGGER.fine("Detected raw source");
@@ -885,9 +895,15 @@ public class JP2KKakaduImageReader extends ImageReader {
 
         } catch (KduException e) {
             throw new RuntimeException(
-                    "Error caused by a Kakadu exception during creation of key objects! ",
-                    e);
-        } finally {
+                    "Error caused by a Kakadu exception during creation of key objects!" ,e);
+        } catch (FileNotFoundException e) {
+        	 throw new RuntimeException(
+                     "Exception occurred during kakadu reader initialization", e);
+		} catch (IOException e) {
+			throw new RuntimeException(
+                    "Exception occurred during kakadu reader initialization", e);
+			
+		} finally {
             if (!isRawSource && wrappedSource != null) {
                 try {
                     if (wrappedSource.Exists())

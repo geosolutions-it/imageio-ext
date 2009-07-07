@@ -154,8 +154,10 @@ public class JP2KKakaduImageReaderSpi extends ImageReaderSpi {
                         FileInputStream fis = new FileInputStream (new File(fileName));
                         byte[] jp2SocMarker = new byte[2];
                         fis.read(jp2SocMarker);
-                        if (jp2SocMarker[0] == 0xFF && jp2SocMarker[0] == 0x4F)
+                        if (jp2SocMarker[0] == (byte)0xFF && jp2SocMarker[1] == (byte)0x4F)
                             isDecodable = true;
+                        else
+                        	isDecodable = false;
                         fis.close();
                     }
                 }

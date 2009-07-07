@@ -16,18 +16,33 @@
  */
 package it.geosolutions.imageio.plugins.jp2k;
 
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.util.KakaduUtilities;
 
+import javax.imageio.spi.ImageReaderSpi;
 import javax.media.jai.JAI;
 
 public class AbstractJP2KakaduTestCase {
-    protected static final boolean runTests;
+    protected static boolean runTests;
 
     static {
         runTests = KakaduUtilities.isKakaduAvailable();
-    }
+        if(runTests)
+	        try {
+        	
+	        	//check if our jp2k plugin is in the path
+				final String kakaduJp2Name=it.geosolutions.imageio.plugins.jp2k.JP2KKakaduImageReaderSpi.class.getName();
+				Class.forName(kakaduJp2Name);
 
-   
+				// imageio jp2k reader
+				final String standardJp2Name=com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageReaderSpi.class.getName();
+			
+				final boolean succeeded=ImageIOUtilities.replaceProvider(ImageReaderSpi.class, kakaduJp2Name, standardJp2Name, "JPEG2000");
+			} catch (ClassNotFoundException e) {
+				//No reader available
+				runTests = false;
+			} 
+    }
 
     public void setUp() throws Exception {
         // general settings

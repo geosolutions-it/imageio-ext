@@ -19,6 +19,7 @@ import it.geosolutions.imageio.imageioimpl.imagereadmt.ImageReadDescriptorMT;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.RenderedImage;
 import java.awt.image.renderable.ParameterBlock;
@@ -26,6 +27,8 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.FileImageOutputStream;
 import javax.media.jai.Histogram;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
@@ -60,17 +63,20 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
         ImageReadDescriptorMT.register(JAI.getDefaultInstance());
 
         final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
-                "ImageRead");
+                "ImageReadMT");
         ImageLayout l = new ImageLayout();
         l.setTileHeight(256);
         l.setTileWidth(256);
 
-        ImageReadParam rp = new JP2KKakaduImageReadParam();
+        JP2KKakaduImageReadParam rp = new JP2KKakaduImageReadParam();
         rp.setSourceSubsampling(1, 1, 0, 0);
+        rp.setSourceRegion(new Rectangle(10,10,200,200));
+        rp.setInterpolationType(JP2KKakaduImageReadParam.INTERPOLATION_BILINEAR);
+        rp.setQualityLayers(2);
         pbjImageRead.setParameter("ReadParam", rp);
         pbjImageRead.setParameter("Input", file);
         pbjImageRead.setParameter("imageChoice", 0);
-        RenderedOp image = JAI.create("ImageRead", pbjImageRead,
+        RenderedOp image = JAI.create("ImageReadMT", pbjImageRead,
                 new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
         if (TestData.isInteractiveTest())
             ImageIOUtilities.visualize(image);
@@ -78,35 +84,80 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
         	Assert.assertNotNull(image.getTiles());
     }
 
-    /**
-     * Test Read without exploiting JAI-ImageIO Tools
-     * 
-     * @throws IOException
-     */
-    // public void testManualRead() throws IOException {
-    // final File file = new File(sampleFileForDebug);
-    //
-    // ImageReader reader = new JP2KakaduImageReader(
-    // new JP2KakaduImageReaderSpi());
-    // reader.setInput(file);
-    // final int numImages = reader.getNumImages(true);
-    // for (int i = 0; i < numImages; i++) {
-    // ImageReadParam param = new ImageReadParam();
-    // param.setSourceSubsampling(8, 8, 0, 0);
-    // // param.setSourceRegion(new Rectangle(0, 2000, 2000, 700));
-    // RenderedImage image = reader.read(i, param);
-    // if (TestData.isInteractiveTest())
-    // visualize(image, "testManualRead");
-    // else
-    // assertNotNull(PlanarImage.wrapRenderedImage(image).getTiles());
-    // // displayStatistics(false, image);
-    //
-    // reader.reset();
-    // }
-    // reader.dispose();
-    //
-    // }
-	@org.junit.Test
+    @org.junit.Test
+    public void inputsTest() throws IOException {
+        if (!runTests)
+            return;
+
+        // //
+        //
+        // Testing base reader methods 
+        //
+        // //
+        final File file = TestData.file(this, "CB_TM432.jp2");
+        final ImageReader reader = new JP2KKakaduImageReaderSpi().createReaderInstance();
+        reader.setInput(file);
+        Assert.assertEquals(1,reader.getNumImages(false));
+        Assert.assertEquals(488, reader.getTileHeight(0));
+        Assert.assertEquals(361, reader.getTileWidth(0));
+        Assert.assertEquals(488, reader.getHeight(0));
+        Assert.assertEquals(361, reader.getWidth(0));
+        Assert.assertNotNull(reader.getStreamMetadata());
+        Assert.assertNotNull(reader.getImageMetadata(0));
+        Assert.assertNotNull(reader.getImageTypes(0));
+
+        // //
+        //
+        // Quick Test on wrong image index 
+        //
+        // //
+        boolean isValidImageIndex = false; 
+        try{
+        	reader.getWidth(99);
+        	isValidImageIndex = true;
+        } catch (IndexOutOfBoundsException e){
+        	Assert.assertFalse(isValidImageIndex);
+        }
+        
+        // //
+        //
+        // Testing raw jp2 file 
+        //
+        // //
+        final File rawfile = TestData.file(this, "raw.j2c");
+        final ImageReader rawreader = new JP2KKakaduImageReaderSpi().createReaderInstance();
+        rawreader.setInput(rawfile);
+        rawreader.read(0);
+        boolean hasStreamMetadata = false;
+        try{
+        	rawreader.getStreamMetadata();
+        	hasStreamMetadata = true;
+        } catch (UnsupportedOperationException e){
+        	Assert.assertFalse(hasStreamMetadata);
+        }
+        
+        // //
+        //
+        // Testing a file which isn't a jp2 one 
+        //
+        // //
+        boolean isValidInput = false;
+        final File badfile = File.createTempFile("bad", ".jp2");
+        badfile.deleteOnExit();
+        final FileImageOutputStream fios = new FileImageOutputStream(badfile);
+        fios.writeChars("BAD");
+        fios.close();
+        
+        final ImageReader badFileReader = new JP2KKakaduImageReaderSpi().createReaderInstance();
+        try{
+        	badFileReader.setInput(badfile);	
+        	isValidInput = true;
+        } catch (Throwable t){
+        	Assert.assertFalse(isValidInput);
+        }
+    }
+    
+    @org.junit.Test
 	public void manualRead() throws IOException {
         if (!runTests)
             return;
