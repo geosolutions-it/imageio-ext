@@ -27,8 +27,7 @@ import javax.imageio.metadata.IIOMetadataFormatImpl;
  * @author Daniele Romagnoli, GeoSolutions
  * @author Simone Giannecchini, GeoSolutions
  */
-public class CoreCommonImageMetadataFormat extends IIOMetadataFormatImpl
-        implements IIOMetadataFormat {
+public class CoreCommonImageMetadataFormat extends IIOMetadataFormatImpl implements IIOMetadataFormat {
 
     /**
      * A single instance of the <code>CoreCommonImageMetadataFormat</code>
@@ -187,6 +186,7 @@ public class CoreCommonImageMetadataFormat extends IIOMetadataFormatImpl
     /**
      * @see javax.imageio.metadata.IIOMetadataFormatImpl#canNodeAppear(java.lang.String,
      *      javax.imageio.ImageTypeSpecifier)
+     * TODO we should implement this  
      */
     public boolean canNodeAppear(String elementName,
             ImageTypeSpecifier imageType) {

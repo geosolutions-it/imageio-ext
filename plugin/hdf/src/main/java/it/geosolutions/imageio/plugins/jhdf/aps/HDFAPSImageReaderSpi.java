@@ -85,7 +85,7 @@ public class HDFAPSImageReaderSpi extends BaseImageReaderSpi {
                 suffixes,
                 MIMETypes,
                 readerCN, // readerClassName
-                FLAT_STANDARD_INPUT_TYPES,
+                DIRECT_STANDARD_INPUT_TYPES,
                 wSN, // writer Spi Names
                 supportsStandardStreamMetadataFormat,
                 nativeStreamMetadataFormatName,

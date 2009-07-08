@@ -61,7 +61,7 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
     /** The LOGGER for this class. */
     private static final Logger LOGGER = Logger.getLogger(GDALCommonIIOImageMetadata.class.toString());
     
-    private class GDALGCP implements GCP{
+    private static class GDALGCP implements GCP{
     	
         private final org.gdal.gdal.GCP wrapped;
         
@@ -105,7 +105,7 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
      * A map containing an HashMap for each domain if available (the Default
      * domain, the ImageStructure domain, as well as any xml prefixed domain)
      */
-    protected Map gdalDomainMetadataMap;
+    Map gdalDomainMetadataMap;
 
     /**
      * <code>GDALCommonIIOImageMetadata</code> constructor. Firstly, it
@@ -173,14 +173,14 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
             setDriverDescription(driver.GetDescription());
             setDriverName(driver.getShortName());
         }
-        gdalDomainMetadataMap = Collections.synchronizedMap(new HashMap());
+        gdalDomainMetadataMap = new HashMap();
 
         // //
         //
         // Getting Metadata from Default domain and Image_structure domain
         //
         // //
-        Map defMap = dataset .GetMetadata_Dict(GDALUtilities.GDALMetadataDomain.DEFAULT);
+        Map defMap = dataset.GetMetadata_Dict(GDALUtilities.GDALMetadataDomain.DEFAULT);
         if (defMap != null && defMap.size() > 0)
             gdalDomainMetadataMap.put(GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP, defMap);
 
@@ -233,8 +233,7 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
      *                the dataset name
      * 
      */
-    public GDALCommonIIOImageMetadata(final Dataset dataset,final  String name,
-            final boolean initializationRequired) {
+    public GDALCommonIIOImageMetadata(final Dataset dataset,final  String name,final boolean initializationRequired) {
         this(dataset, name, initializationRequired, nativeMetadataFormatName, nativeMetadataFormatClassName);
     }
 

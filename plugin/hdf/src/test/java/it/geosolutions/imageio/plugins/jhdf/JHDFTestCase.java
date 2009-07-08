@@ -22,9 +22,8 @@ import org.junit.Before;
 public class JHDFTestCase  {
 	
 	@Before
-	protected void setUp() throws Exception {
-        JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
-                64 * 1024 * 1024);
+	public void setUp() throws Exception {
+        JAI.getDefaultInstance().getTileCache().setMemoryCapacity(64 * 1024 * 1024);
         JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
 
     }

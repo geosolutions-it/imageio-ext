@@ -1474,17 +1474,16 @@ public abstract class GDALImageWriter extends ImageWriter {
                 dataType, xSubsamplingFactor, ySubsamplingFactor);
     }
 
-    public IIOMetadata getDefaultImageMetadata(ImageTypeSpecifier imageType,
-            ImageWriteParam param) {
-        GDALWritableCommonIIOImageMetadata imageMetadata = new GDALWritableCommonIIOImageMetadata();
+    public IIOMetadata getDefaultImageMetadata(ImageTypeSpecifier imageType,ImageWriteParam param) {
+    	
+        final GDALWritableCommonIIOImageMetadata imageMetadata = new GDALWritableCommonIIOImageMetadata();
         SampleModel sm = imageType.getSampleModel();
 
         final int sourceWidth = sm.getWidth();
         final int sourceHeight = sm.getHeight();
         final int sourceMinX = 0;
         final int sourceMinY = 0;
-        final int dataType = GDALUtilities.retrieveGDALDataBufferType(sm
-                .getDataType());
+        final int dataType = GDALUtilities.retrieveGDALDataBufferType(sm.getDataType());
         final int nBands = sm.getNumBands();
 
         // //
@@ -1492,13 +1491,10 @@ public abstract class GDALImageWriter extends ImageWriter {
         // Setting regions and sizes and retrieving parameters
         //
         // //
-        Rectangle imageBounds = new Rectangle(sourceMinX, sourceMinY,
-                sourceWidth, sourceHeight);
+        Rectangle imageBounds = new Rectangle(sourceMinX, sourceMinY,sourceWidth, sourceHeight);
         Dimension destSize = new Dimension();
         computeRegions(imageBounds, destSize, param);
-        imageMetadata.setWidth(destSize.width);
-        imageMetadata.setHeight(destSize.height);
-        imageMetadata.setNumBands(nBands);
+        imageMetadata.setBasicInfo(destSize.width, destSize.height, nBands);
         // TODO:provides additional settings
 
         return imageMetadata;

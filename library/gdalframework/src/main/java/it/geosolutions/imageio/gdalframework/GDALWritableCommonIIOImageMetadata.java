@@ -79,4 +79,11 @@ public class GDALWritableCommonIIOImageMetadata extends
             domain = GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP;
         gdalDomainMetadataMap.put(domain, metadataNameValuePairs);
     }
+
+	
+	void setBasicInfo(final int width,final int height, final int numBands) {
+		super.setHeight(height);
+		super.setWidth(width);
+		super.setNumBands(numBands);
+	}
 }

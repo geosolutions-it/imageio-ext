@@ -30,7 +30,7 @@ import org.w3c.dom.Node;
  * A basic abstract class containing common metadata such as basic raster
  * properties
  * 
- * @TODO: Add UOM management (Maybe, it is more appropriate to do on the upper
+ * TODO  @TODO: Add UOM management (Maybe, it is more appropriate to do on the upper
  *        class).
  */
 public abstract class BaseImageMetadata extends CoreCommonImageMetadata {
@@ -72,7 +72,7 @@ public abstract class BaseImageMetadata extends CoreCommonImageMetadata {
             setMembers(imageReader);
         } catch (IOException e) {
             if (LOGGER.isLoggable(Level.WARNING))
-                LOGGER.log(Level.WARNING,"Error setting metadata"+ e.getLocalizedMessage(),e);
+                LOGGER.log(Level.WARNING,"Error setting metadata \n"+ e.getLocalizedMessage(),e);
         }
     }
 

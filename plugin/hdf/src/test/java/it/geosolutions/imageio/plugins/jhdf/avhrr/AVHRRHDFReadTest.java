@@ -60,7 +60,7 @@ public class AVHRRHDFReadTest extends JHDFTestCase {
     public void testRead() throws IOException {
         File file;
         try {
-            file = TestData.file(this, "2008.0622.1224.n18.hdf4");
+            file = TestData.file(this, "2008.0626.0351.n15.hdf4");
         } catch (FileNotFoundException fnfe) {
             warningMessage();
             return;
@@ -93,7 +93,7 @@ public class AVHRRHDFReadTest extends JHDFTestCase {
     @Before
     public void testReadCompare() throws FileNotFoundException, IOException {
         try {
-            final File file = TestData.file(this, "2008.0904.1116.n18.hdf4");
+            final File file = TestData.file(this, "2008.0626.0351.n15.hdf4");
 
             // ////////////////////////////////////////////////////////////////
             // preparing the ImageRead

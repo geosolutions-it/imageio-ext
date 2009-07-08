@@ -47,7 +47,7 @@ public class APSHDFReadTest extends JHDFTestCase {
         File file;
         try {
             file = TestData
-                    .file(this, "MODPM2008242115741.L3_000_EAST_MED_1");
+                    .file(this, "MODPM2008275124021.L3_000_LIGURIAN.hdf4");
         } catch (FileNotFoundException fnfe) {
             warningMessage();
             return;

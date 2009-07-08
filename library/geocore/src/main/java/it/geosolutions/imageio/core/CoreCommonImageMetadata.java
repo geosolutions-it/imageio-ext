@@ -158,9 +158,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     		final String nativeMetadataFormatClassName,
     		final String[] extraMetadataFormatNames,
     		final String[] extraMetadataFormatClassNames) {
-        super(standardMetadataFormatSupported, nativeMetadataFormatName,
-                nativeMetadataFormatClassName, extraMetadataFormatNames,
-                extraMetadataFormatClassNames);
+        super(standardMetadataFormatSupported, nativeMetadataFormatName,nativeMetadataFormatClassName, extraMetadataFormatNames,extraMetadataFormatClassNames);
     }
 
     /**
@@ -441,7 +439,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
      * Returns the <code>ColorModel</code> for the dataset held by this
      * object.
      */
-    public final ColorModel getColorModel() {
+    public ColorModel getColorModel() {
         return colorModel;
     }
 
@@ -449,7 +447,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
      * Returns the <code>SampleModel</code> for the dataset held by this
      * object.
      */
-    public final SampleModel getSampleModel() {
+    public SampleModel getSampleModel() {
         return sampleModel;
     }
 
@@ -463,7 +461,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
         return projection;
     }
 
-    protected Double[] getMaximums() {
+    public Double[] getMaximums() {
         return (Double[]) maximums.clone();
     }
 
@@ -473,7 +471,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
         this.maximums = maximums;
     }
 
-    protected Double[] getMinimums() {
+    public Double[] getMinimums() {
         return (Double[]) minimums.clone();
     }
 
@@ -483,7 +481,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
         this.minimums = minimums;
     }
 
-    protected Double[] getNoDataValues() {
+    public Double[] getNoDataValues() {
         return (Double[]) noDataValues.clone();
     }
 
@@ -493,7 +491,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
         this.noDataValues = noDataValues;
     }
 
-    protected Double[] getScales() {
+    public Double[] getScales() {
         return (Double[]) scales.clone();
     }
 
@@ -503,7 +501,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
         this.scales = scales;
     }
 
-    protected Double[] getOffsets() {
+    public Double[] getOffsets() {
         return (Double[]) offsets.clone();
     }
 
@@ -513,7 +511,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
         this.offsets = offsets;
     }
 
-    protected int[] getNumOverviews() {
+    public int[] getNumOverviews() {
         return (int[]) numOverviews.clone();
     }
 
@@ -521,7 +519,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
         this.numOverviews = numOverviews.clone();
     }
 
-    public void setGcps(final List<GCP> gcps) {
+    protected void setGcps(final List<GCP> gcps) {
         this.gcps = gcps;
     }
 
@@ -542,7 +540,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
 
     /** Returns the Ground Control Points */
     public List<? extends GCP> getGCPs() {
-        return gcps;
+        return Collections.unmodifiableList(gcps);
     }
 
     // ////////////////////////////////////////////////////////////////////////
@@ -694,9 +692,8 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     private void checkBandIndex(final int bandIndex)
             throws IllegalArgumentException {
         if (bandIndex < 0 || bandIndex > numBands) {
-            final StringBuffer sb = new StringBuffer("Specified band index (")
-                    .append(bandIndex).append(
-                            ") is out of range. It should be in the range [0,")
+            final StringBuilder sb = new StringBuilder("Specified band index (")
+                    .append(bandIndex).append( ") is out of range. It should be in the range [0,")
                     .append(numBands - 1).append("]");
             throw new IllegalArgumentException(sb.toString());
         }
@@ -706,47 +703,47 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
         return datasetDescription;
     }
 
-    public void setDatasetDescription(String datasetDescription) {
+    protected void setDatasetDescription(String datasetDescription) {
         this.datasetDescription = datasetDescription;
     }
 
-    public void setDriverName(String driverName) {
+    protected void setDriverName(String driverName) {
         this.driverName = driverName;
     }
 
-    public void setDriverDescription(String driverDescription) {
+    protected void setDriverDescription(String driverDescription) {
         this.driverDescription = driverDescription;
     }
 
-    public void setDatasetName(String datasetName) {
+    protected void setDatasetName(String datasetName) {
         this.datasetName = datasetName;
     }
 
-    public void setProjection(String projection) {
+    protected void setProjection(String projection) {
         this.projection = projection;
     }
 
-    public void setGcpNumber(int gcpNumber) {
+    protected void setGcpNumber(int gcpNumber) {
         this.gcpNumber = gcpNumber;
     }
 
-    public void setGcpProjection(String gcpProjection) {
+    protected void setGcpProjection(String gcpProjection) {
         this.gcpProjection = gcpProjection;
     }
 
-    public void setWidth(int width) {
+    protected void setWidth(int width) {
         this.width = width;
     }
 
-    public void setHeight(int height) {
+    protected void setHeight(int height) {
         this.height = height;
     }
 
-    public void setTileHeight(int tileHeight) {
+    protected void setTileHeight(int tileHeight) {
         this.tileHeight = tileHeight;
     }
 
-    public void setTileWidth(int tileWidth) {
+    protected void setTileWidth(int tileWidth) {
         this.tileWidth = tileWidth;
     }
 
@@ -758,7 +755,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
         this.sampleModel = sampleModel;
     }
 
-    public void setNumBands(int numBands) {
+    protected void setNumBands(int numBands) {
         this.numBands = numBands;
     }
 
