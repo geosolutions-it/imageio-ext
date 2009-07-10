@@ -39,7 +39,7 @@
     <module>utilities</module>
     <module>gdalframework</module>
     <module>imagereadmt</module>
-    <module>jhdfaccess</module>
+    <module>jhdf4</module>
     <module>jgrib1</module>
   </modules>
 </project>

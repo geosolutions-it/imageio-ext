@@ -125,7 +125,7 @@
                 </exec>
                 <exec  executable="cmd">
                   <arg value="/c"/>
-                  <arg value="mvn install:install-file -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-swanheaderschema -Dversion=1.1-SNAPSHOT -Dpackaging=jar -Dfile=./SwanHeaderSchema.jar"/>
+                  <arg value="mvn install:install-file -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-swanheaderschema -Dversion=1.0 -Dpackaging=jar -Dfile=./SwanHeaderSchema.jar"/>
                 </exec>
                 <exec  executable="cmd">
                   <arg value="/c"/>

@@ -10,7 +10,7 @@
   <artifactId>imageio-ext-grib1</artifactId>
   <packaging>jar</packaging>
   <version>1.1-SNAPSHOT</version>
-  <name>GRIB1 - FLAT Plugin</name>
+  <name>GRIB1 - Direct Plugin</name>
   <dependencies>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
