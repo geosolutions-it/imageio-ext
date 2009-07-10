@@ -18,6 +18,7 @@ package it.geosolutions.imageio.plugins.netcdf;
 import it.geosolutions.imageio.core.CoreCommonImageMetadata;
 import it.geosolutions.imageio.ndplugin.BaseImageMetadata;
 import it.geosolutions.imageio.ndplugin.BaseImageReader;
+import it.geosolutions.imageio.plugins.netcdf.NetCDFImageReader.KeyValuePair;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -84,11 +85,10 @@ public class NetCDFImageMetadata extends BaseImageMetadata {
             final int numAttributes = flatReader.getNumAttributes(imageIndex);
             this.additionalMetadata = new HashMap<String, String>(numAttributes);
             for (int i = 0; i < numAttributes; i++) {
-                String attributePair;
+                KeyValuePair attributePair;
                 attributePair = flatReader.getAttributeAsString(imageIndex, i);
-                final int separatorIndex = attributePair .indexOf(NetCDFImageReader.SEPARATOR);
-                final String attributeName = attributePair.substring(0,separatorIndex);
-                final String attributeValue = attributePair.substring(separatorIndex + NetCDFImageReader.SEPARATOR.length(),attributePair.length());
+                final String attributeName = attributePair.getKey();
+                final String attributeValue = attributePair.getValue();
                 additionalMetadata.put(attributeName, attributeValue);
             }
 

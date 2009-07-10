@@ -15,10 +15,6 @@ import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 /**
  * @author Alessio
  * 
@@ -34,9 +30,10 @@ public class NetCDFReaderTest {
         LOGGER.info(sb.toString());
     }
 
-    private final static String filePath = "C:\\Work\\data\\rixen\\lsvc08\\SHOM";
+//    private final static String filePath = "C:\\Work\\data\\rixen\\lsvc08\\SHOM";
+    private final static String filePath = "y:";
     private final static String subPath = "\\";
-        private final static String name = "ww3.dir.nc_2008092400";
+        private final static String name = "HOPS1km_H_080929_T.nc";
             
     private final static String fileName = filePath+subPath+name;
 //    final static String fileName = "ext-mercatorPsy2v3R1v_med_mean_20080903_R20080903.nc";

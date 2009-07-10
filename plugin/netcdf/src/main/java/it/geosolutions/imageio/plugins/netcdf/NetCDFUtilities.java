@@ -76,31 +76,30 @@ class NetCDFUtilities {
 
     public final static String TIME = "time";
     
-    private final static HashMap TSS_OAG_ACCEPTED = new HashMap();
-
-    private final static HashMap TSS_PE_ACCEPTED = new HashMap();
-
-    static {
-        String[] values = new String[] { "temp", "temperr", "tempmean", "salt",
-                "salterr", "saltmean", "dynht", "dynhterr", "dynhtmean" };
-        int nValues = values.length;
-        for (int i = 0; i < nValues; i++) {
-            TSS_OAG_ACCEPTED.put(values[i], null);
-        }
-        values = new String[] { "temp", "temperr", "tempmean", "salt",
-                "salterr", "saltmean", "dynht", "dynhterr", "dynhtmean",
-                "vtot", "vclin", "NO3", "CELLNO3", "zoo", "NH4", "detritus",
-                "CHL", "CELLNH4", "NH4pr", "NH3pr", "zgrphy", "u", "v" };
-        nValues = values.length;
-        for (int i = 0; i < nValues; i++) {
-            TSS_PE_ACCEPTED.put(values[i], null);
-        }
-    }
+//    private final static HashMap TSS_OAG_ACCEPTED = new HashMap();
+//
+//    private final static HashMap TSS_PE_ACCEPTED = new HashMap();
+//
+//    static {
+//        String[] values = new String[] { "temp", "temperr", "tempmean", "salt",
+//                "salterr", "saltmean", "dynht", "dynhterr", "dynhtmean" };
+//        int nValues = values.length;
+//        for (int i = 0; i < nValues; i++) {
+//            TSS_OAG_ACCEPTED.put(values[i], null);
+//        }
+//        values = new String[] { "temp", "temperr", "tempmean", "salt",
+//                "salterr", "saltmean", "dynht", "dynhterr", "dynhtmean",
+//                "vtot", "vclin", "NO3", "CELLNO3", "zoo", "NH4", "detritus",
+//                "CHL", "CELLNH4", "NH4pr", "NH3pr", "zgrphy", "u", "v" };
+//        nValues = values.length;
+//        for (int i = 0; i < nValues; i++) {
+//            TSS_PE_ACCEPTED.put(values[i], null);
+//        }
+//    }
 
     public static enum CheckType {
-        OAG, PE_MODEL, NONE, UNSET
+        /*OAG, PE_MODEL,*/ NONE, UNSET
     }
-
 
     /**
      * The dimension <strong>relative to the rank</strong> in {@link #variable}
@@ -425,10 +424,11 @@ class NetCDFUtilities {
                 return false;
             else
                 return true;
-        } else if (checkType == CheckType.OAG)
-            return TSS_OAG_ACCEPTED.containsKey(name);
-        else if (checkType == CheckType.PE_MODEL)
-            return TSS_PE_ACCEPTED.containsKey(name);
+        } 
+//        else if (checkType == CheckType.OAG)
+//            return TSS_OAG_ACCEPTED.containsKey(name);
+//        else if (checkType == CheckType.PE_MODEL)
+//            return TSS_PE_ACCEPTED.containsKey(name);
         return true;
 
     }
@@ -496,14 +496,14 @@ class NetCDFUtilities {
         CheckType ct = CheckType.UNSET;
         if (dataset != null) {
             ct = CheckType.NONE;
-            Attribute attribute = dataset.findGlobalAttribute("type");
-            if (attribute != null) {
-                String value = attribute.getStringValue();
-                if (value.length() <= 3 && value.contains("OA"))
-                    ct = CheckType.OAG;
-                else if (value.contains("PE MODEL"))
-                    ct = CheckType.PE_MODEL;
-            }
+//            Attribute attribute = dataset.findGlobalAttribute("type");
+//            if (attribute != null) {
+//                String value = attribute.getStringValue();
+//                if (value.length() <= 3 && value.contains("OA"))
+//                    ct = CheckType.OAG;
+//                else if (value.contains("PE MODEL"))
+//                    ct = CheckType.PE_MODEL;
+//            }
         }
         return ct;
     }

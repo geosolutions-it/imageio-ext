@@ -1,6 +1,7 @@
 package it.geosolutions.imageio.plugins.netcdf;
 
 import it.geosolutions.imageio.ndplugin.BaseImageReader;
+import it.geosolutions.imageio.plugins.netcdf.NetCDFImageReader.KeyValuePair;
 import it.geosolutions.imageio.utilities.Utilities;
 
 import java.io.IOException;
@@ -49,15 +50,10 @@ public class NetCDFStreamMetadata extends IIOMetadata {
             final int numAttributes = flatReader.getNumGlobalAttributes();
             try {
                 for (int i = 0; i < numAttributes; i++) {
-                    String attributePair= flatReader.getGlobalAttributeAsString(i);
-                    final int separatorIndex = attributePair
-                            .indexOf(NetCDFImageReader.SEPARATOR);
-                    String attributeName = attributePair.substring(0,
-                            separatorIndex);
-                    final String attributeValue = attributePair.substring(
-                            separatorIndex
-                                    + NetCDFImageReader.SEPARATOR.length(),
-                            attributePair.length());
+                	final KeyValuePair keyValuePair = flatReader.getGlobalAttributeAsString(i);  
+                    String attributeName = keyValuePair.getKey();
+                    final String attributeValue = keyValuePair.getValue();
+
                     // //
                     // Note: IIOMetadata doesn't allow to set attribute name
                     // containing "\\". Therefore we replace that char
