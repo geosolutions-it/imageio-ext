@@ -21,6 +21,8 @@ import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,6 +30,8 @@ import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 
 import ucar.nc2.NetcdfFile;
+import ucar.nc2.dataset.NetcdfDataset;
+import ucar.nc2.dataset.NetcdfDataset.Enhance;
 
 /**
  * Service provider interface for the NetCDF Image
@@ -36,6 +40,10 @@ import ucar.nc2.NetcdfFile;
  */
 public class NetCDFImageReaderSpi extends BaseImageReaderSpi {
 
+	static{
+		NetcdfDataset.setDefaultEnhanceMode(EnumSet.of(Enhance.CoordSystems));
+	}
+	
     /** Default Logger * */
     private static final Logger LOGGER = Logger
             .getLogger("it.geosolutions.imageio.plugins.netcdf");

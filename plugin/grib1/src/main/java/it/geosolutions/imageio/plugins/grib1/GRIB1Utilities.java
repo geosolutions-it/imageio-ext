@@ -32,7 +32,11 @@ import net.sourceforge.jgrib.tables.GribPDSParameter;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  */
-class GRIB1Utilities {
+public class GRIB1Utilities {
+	
+	private GRIB1Utilities(){
+		
+	}
 
     public final static String DATE_SEPARATOR = "/";
 

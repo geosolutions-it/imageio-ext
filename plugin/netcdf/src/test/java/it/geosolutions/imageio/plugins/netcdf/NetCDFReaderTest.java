@@ -1,5 +1,18 @@
-/**
- * 
+/*
+ *    ImageI/O-Ext - OpenSource Java Image translation Library
+ *    http://www.geo-solutions.it/
+ *    https://imageio-ext.dev.java.net/
+ *    (C) 2007 - 2009, GeoSolutions
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    either version 3 of the License, or (at your option) any later version.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 package it.geosolutions.imageio.plugins.netcdf;
 
@@ -31,9 +44,9 @@ public class NetCDFReaderTest {
     }
 
 //    private final static String filePath = "C:\\Work\\data\\rixen\\lsvc08\\SHOM";
-    private final static String filePath = "y:";
-    private final static String subPath = "\\";
-        private final static String name = "HOPS1km_H_080929_T.nc";
+    private final static String filePath = "y:/data/netcdf/decoded";
+    private final static String subPath = "/";
+        private final static String name = "ext-mercatorPsy2v3R1v_med_mean_20080925_R20080924.nc";
             
     private final static String fileName = filePath+subPath+name;
 //    final static String fileName = "ext-mercatorPsy2v3R1v_med_mean_20080903_R20080903.nc";
@@ -74,7 +87,7 @@ public class NetCDFReaderTest {
 
             if (TestData.isInteractiveTest()) {
                 ImageIOUtilities.visualize(ncReader.read(i),
-                        ((NetCDFImageReader) ncReader).getVariableName(i));
+                        ((NetCDFImageReader) ncReader).getVariableName(i),true);
             } else
                 ncReader.read(i);
             ncReader.dispose();
