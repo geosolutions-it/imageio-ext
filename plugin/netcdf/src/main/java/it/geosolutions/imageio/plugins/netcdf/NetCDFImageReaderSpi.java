@@ -21,7 +21,6 @@ import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Locale;
 import java.util.logging.Level;

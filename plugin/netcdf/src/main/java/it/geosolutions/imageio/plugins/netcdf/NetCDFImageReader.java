@@ -18,6 +18,7 @@ package it.geosolutions.imageio.plugins.netcdf;
 
 import it.geosolutions.imageio.ndplugin.BaseImageReader;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.CheckType;
+import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.KeyValuePair;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 
 import java.awt.Point;
@@ -75,53 +76,6 @@ import ucar.nc2.util.CancelTask;
  */
 public class NetCDFImageReader extends BaseImageReader implements CancelTask {
 
-		static class KeyValuePair implements Map.Entry<String, String> {
-		
-		public KeyValuePair(final String key, final String value){
-			this.key = key;
-			this.value = value;
-		}
-			
-		private String key;
-		private String value;
-
-		public String getKey() {
-			return key;
-		}
-
-		public String getValue() {
-			return value;
-		}
-
-		private boolean equal(Object a, Object b) {
-			return a == b || a != null && a.equals(b);
-		}
-
-		public boolean equals(Object o) {
-			return o instanceof KeyValuePair
-					&& equal(((KeyValuePair) o).key, key)
-					&& equal(((KeyValuePair) o).value, value);
-		}
-
-		private static int hashCode(Object a) {
-			return a == null ? 42 : a.hashCode();
-		}
-
-		public int hashCode() {
-			return hashCode(key) * 3 + hashCode(value);
-		}
-
-		public String toString() {
-			return "(" + key + "," + value + ")";
-		}
-
-		public String setValue(String value) {
-			this.value = value;
-			return value;
-
-		}
-	}
-	
     protected final static Logger LOGGER = Logger .getLogger(NetCDFImageReader.class.toString());
 
     private CheckType checkType = CheckType.UNSET;
@@ -144,7 +98,7 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
      */
     private Map<Range, NetCDFVariableWrapper> indexMap = null;
 
-    private class NetCDFVariableWrapper {
+    private static class NetCDFVariableWrapper {
 
         private Variable variable;
 
@@ -280,7 +234,7 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
         }
         setNumImages(numImages);
         numGlobalAttributes = 0;
-        List globalAttributes = dataset.getGlobalAttributes();
+        final List<Attribute> globalAttributes = dataset.getGlobalAttributes();
         if (globalAttributes != null && !globalAttributes.isEmpty())
             numGlobalAttributes = globalAttributes.size();
     }
@@ -720,11 +674,11 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
         return range;
     }
 
-    String getAttributeAsString(int imageIndex, String attributeName) {
+    String getAttributeAsString(final int imageIndex, final String attributeName) {
         return getAttributeAsString(imageIndex, attributeName, false);
     }
 
-    String getAttributeAsString(int imageIndex, String attributeName,
+    String getAttributeAsString(final int imageIndex, final String attributeName,
             final boolean isUnsigned) {
         String attributeValue = "";
         final NetCDFVariableWrapper wrapper = getNetCDFVariableWrapper(imageIndex);
@@ -734,68 +688,17 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
                     isUnsigned);
         return attributeValue;
     }
+    
+    KeyValuePair getAttribute(final int imageIndex, final int attributeIndex)
+    throws IOException {
+		KeyValuePair attributePair = null;
+		final Variable var = getVariable(imageIndex);
+		if (var != null) 
+			attributePair = NetCDFUtilities.getAttribute(var, attributeIndex);
+		return attributePair;
+	}
 
-    /**
-     * Return a global attribute as a {@code String}. The required global
-     * attribute is specified by name
-     * 
-     * @param attributeName
-     *                the name of the required attribute.
-     * @return the value of the required attribute. Returns an empty String in
-     *         case the required attribute is not found.
-     */
-    String getGlobalAttributeAsString(String attributeName) {
-        String attributeValue = "";
-        if (dataset != null) {
-        	final List<Attribute> globalAttributes = dataset.getGlobalAttributes();
-            if (globalAttributes != null && !globalAttributes.isEmpty()) {
-                for (Attribute attrib: globalAttributes){
-                    if (attrib.getName().equals(attributeName)) {
-                        attributeValue = NetCDFUtilities
-                                .getAttributesAsString(attrib);
-                        break;
-                    }
-                }
-            }
-        }
-        return attributeValue;
-    }
-
-    KeyValuePair getGlobalAttributeAsString(final int imageIndex) throws IOException {
-    	KeyValuePair attributePair = null;
-        if (dataset != null) {
-        	final List<Attribute> globalAttributes = dataset.getGlobalAttributes();
-            if (globalAttributes != null && !globalAttributes.isEmpty()) {
-            	final Attribute attribute = (Attribute) globalAttributes
-                        .get(imageIndex);
-                if (attribute != null) {
-                    attributePair = new KeyValuePair(attribute.getName(),
-                    		NetCDFUtilities.getAttributesAsString(attribute));
-                }
-            }
-        }
-        return attributePair;
-    }
-
-    KeyValuePair getAttributeAsString(final int imageIndex, final int attributeIndex)
-            throws IOException {
-    	KeyValuePair attributePair = null;
-        final Variable var = getVariable(imageIndex);
-        if (var != null) {
-        	final List<Attribute> attributes = var.getAttributes();
-            if (attributes != null && !attributes.isEmpty()) {
-            	final Attribute attribute = (Attribute) attributes
-                        .get(attributeIndex);
-                if (attribute != null) {
-                    attributePair = new KeyValuePair(attribute.getName(),
-                            NetCDFUtilities.getAttributesAsString(attribute));
-                }
-            }
-        }
-        return attributePair;
-    }
-
-    Variable getVariable(int imageIndex) {
+    Variable getVariable(final int imageIndex) {
         Variable var = null;
         final NetCDFVariableWrapper wrapper = getNetCDFVariableWrapper(imageIndex);
         if (wrapper != null)
@@ -837,4 +740,8 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
         }
         return numAttribs;
     }
+
+	KeyValuePair getGlobalAttribute(final int attributeIndex) throws IOException {
+		return NetCDFUtilities.getGlobalAttribute(dataset, attributeIndex);
+	}
 }

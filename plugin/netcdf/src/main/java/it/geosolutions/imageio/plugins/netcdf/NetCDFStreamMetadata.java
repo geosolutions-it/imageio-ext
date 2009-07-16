@@ -17,7 +17,7 @@
 package it.geosolutions.imageio.plugins.netcdf;
 
 import it.geosolutions.imageio.ndplugin.BaseImageReader;
-import it.geosolutions.imageio.plugins.netcdf.NetCDFImageReader.KeyValuePair;
+import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.KeyValuePair;
 import it.geosolutions.imageio.utilities.Utilities;
 
 import java.io.IOException;
@@ -62,11 +62,11 @@ public class NetCDFStreamMetadata extends IIOMetadata {
         // ////////////////////////////////////////////////////////////////////
         IIOMetadataNode node = new IIOMetadataNode(GLOBAL_ATTRIBUTES);
         if (reader instanceof NetCDFImageReader) {
-            NetCDFImageReader flatReader = (NetCDFImageReader) reader;
-            final int numAttributes = flatReader.getNumGlobalAttributes();
+            NetCDFImageReader directReader = (NetCDFImageReader) reader;
+            final int numAttributes = directReader.getNumGlobalAttributes();
             try {
                 for (int i = 0; i < numAttributes; i++) {
-                	final KeyValuePair keyValuePair = flatReader.getGlobalAttributeAsString(i);  
+                	KeyValuePair keyValuePair = directReader.getGlobalAttribute(i);  
                     String attributeName = keyValuePair.getKey();
                     final String attributeValue = keyValuePair.getValue();
 
