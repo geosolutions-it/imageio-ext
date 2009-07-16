@@ -16,11 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.jhdf.aps;
 
-import it.geosolutions.hdf.object.h4.H4Attribute;
-import it.geosolutions.hdf.object.h4.H4File;
-import it.geosolutions.hdf.object.h4.H4SDSCollection;
-import it.geosolutions.hdf.object.h4.H4Utilities;
 import it.geosolutions.imageio.ndplugin.BaseImageReaderSpi;
+import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 
 import java.io.File;
@@ -32,6 +29,8 @@ import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 
 import ncsa.hdf.hdflib.HDFException;
+import ucar.nc2.Attribute;
+import ucar.nc2.dataset.NetcdfDataset;
 
 /**
  * Service provider interface for the APS-HDF Image
@@ -108,38 +107,15 @@ public class HDFAPSImageReaderSpi extends BaseImageReaderSpi {
         if (input instanceof FileImageInputStreamExtImpl) {
             input = ((FileImageInputStreamExtImpl) input).getFile();
         }
-        if (!H4Utilities.isJHDFLibAvailable())
-            return false;
         if (input instanceof File) {
             try {
-                final String filepath = ((File) input).getPath();
-                final H4File h4File = new H4File(filepath);
-                if (h4File != null) {
-                    final H4SDSCollection sdscoll = h4File.getH4SdsCollection();
-                    if (sdscoll != null) {
-                        final int numAttributes = sdscoll.getNumAttributes();
-                        if (numAttributes != 0) {
-                            H4Attribute attrib = sdscoll
-                                    .getAttribute(HDFAPSProperties.STD_FA_CREATESOFTWARE);
-                            if (attrib != null) {
-                                final Object attValue = attrib.getValues();
-                                byte[] bb = (byte[]) attValue;
-                                final int size = bb.length;
-                                StringBuffer sb = new StringBuffer(size);
-                                for (int i = 0; i < size && bb[i] != 0; i++) {
-                                    sb.append(new String(bb, i, 1));
-                                }
-                                final String value = sb.toString();
-                                if (value.startsWith("APS")) {
+                final NetcdfDataset dataset = NetCDFUtilities.getDataset(input);
+                if (dataset != null) {
+                	final String attrib = NetCDFUtilities.getGlobalAttributeAsString(dataset, HDFAPSProperties.STD_FA_CREATESOFTWARE); 
+                    if (attrib != null && attrib.length()>0 && attrib.startsWith("APS"))
                                     found = true;
-                                }
-                            }
-                        }
-                    }
-                    h4File.dispose();
+                    dataset.close();
                 }
-            } catch (HDFException e) {
-                found = false;
             } catch (IllegalArgumentException e) {
                 found = false;
             }

@@ -22,7 +22,7 @@ public class HDFAPSProperties {
 
     public static class APSProducts extends HDFProducts {
         public APSProducts() {
-        	super(5);
+        	super(14);
             int index = 0;
             HDFProduct sst = new HDFProduct("sst", 1);
             add(index++, sst);
@@ -36,35 +36,35 @@ public class HDFAPSProperties {
             HDFProduct chl_oc3m = new HDFProduct("chl_oc3m", 1);
             add(index++, chl_oc3m);
 
-//            HDFProduct k_490 = new HDFProduct("K_490", 1);
-//            add(index++, k_490);
+            HDFProduct k_490 = new HDFProduct("K_490", 1);
+            add(index++, k_490);
             
-//            HDFProduct albedo_ch1 = new HDFProduct("albedo_ch1", 1);
-//            add(index++, albedo_ch1);
-//
-//            HDFProduct albedo_ch2 = new HDFProduct("albedo_ch2", 1);
-//            add(index++, albedo_ch2);
-//
-//            HDFProduct albedo_ch3 = new HDFProduct("albedo_ch3", 1);
-//            add(index++, albedo_ch3);
-//
-//            HDFProduct btemp_ch4 = new HDFProduct("btemp_ch4", 1);
-//            add(index++, btemp_ch4);
-//
-//            HDFProduct btemp_ch5 = new HDFProduct("btemp_ch5", 1);
-//            add(index++, btemp_ch5);
-//
-//            HDFProduct k_PAR = new HDFProduct("K_PAR", 1);
-//            add(index++, k_PAR);
-//
-//            HDFProduct c_660 = new HDFProduct("c_660", 1);
-//            add(index++, c_660);
+            HDFProduct albedo_ch1 = new HDFProduct("albedo_ch1", 1);
+            add(index++, albedo_ch1);
+
+            HDFProduct albedo_ch2 = new HDFProduct("albedo_ch2", 1);
+            add(index++, albedo_ch2);
+
+            HDFProduct albedo_ch3 = new HDFProduct("albedo_ch3", 1);
+            add(index++, albedo_ch3);
+
+            HDFProduct btemp_ch4 = new HDFProduct("btemp_ch4", 1);
+            add(index++, btemp_ch4);
+
+            HDFProduct btemp_ch5 = new HDFProduct("btemp_ch5", 1);
+            add(index++, btemp_ch5);
+
+            HDFProduct k_PAR = new HDFProduct("K_PAR", 1);
+            add(index++, k_PAR);
+
+            HDFProduct c_660 = new HDFProduct("c_660", 1);
+            add(index++, c_660);
             
             HDFProduct salinity = new HDFProduct("salinity", 1);
             add(index++, salinity);
             
-//            HDFProduct true_color = new HDFProduct("true_color", 3);
-//            add(index++, true_color);
+            HDFProduct true_color = new HDFProduct("true_color", 3);
+            add(index++, true_color);
        	
             // TODO: Add more APS supported products
         }
@@ -427,6 +427,8 @@ public class HDFAPSProperties {
             PDSA_ADDITIONALUNITS_2, PDSA_PRODUCTSTATUS, PDSA_VALIDRANGE,
             PDSA_INVALID, PDSA_BADDATA, PDSA_PRODUCTSCALING, PDSA_SCALINGSLOPE,
             PDSA_SCALINGINTERCEPT, PDSA_BROWSEFUNC, PDSA_BROWSERANGES };
+
+	public static final String PRODLIST = "prodList";
 
     /**
      * Build an ISO8601 formatted time from an input <code>String</code>

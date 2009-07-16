@@ -55,9 +55,9 @@ public class APSHDFReadTest extends JHDFTestCase {
         ImageReader reader = new HDFAPSImageReaderSpi().createReaderInstance();
         reader.setInput(file);
         final int index = 0;
-        if (TestData.isInteractiveTest()) {
+        if (true || TestData.isInteractiveTest()) {
 //            ImageIOUtilities.visualize(reader.read(0), "sst",  true);
-            ImageIOUtilities.visualize(reader.read(3), "true_color",  false);
+            ImageIOUtilities.visualize(reader.read(0), "true_color",  false);
             
         } else
         	Assert.assertNotNull(reader.read(index));

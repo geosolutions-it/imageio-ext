@@ -16,9 +16,11 @@
  */
 package it.geosolutions.imageio.plugins.jhdf.avhrr;
 
-import it.geosolutions.hdf.object.h4.H4SDS;
-import it.geosolutions.hdf.object.h4.H4SDSCollection;
 import it.geosolutions.imageio.plugins.jhdf.HDFProducts;
+
+import java.util.List;
+
+import ucar.nc2.Variable;
 
 public class HDFAVHRRProperties {
 
@@ -51,30 +53,33 @@ public class HDFAVHRRProperties {
      * @return A <code>String</code> array containing a refined list of
      *         products
      */
-    static String[] refineProductList(H4SDSCollection collection) {
-        final int inputProducts = collection.size();
-        final String[] products = new String[inputProducts];
-        int j = 0;
-        final boolean[] accepted = new boolean[inputProducts];
-
-        for (int i = 0; i < inputProducts; i++) {
-            String productName = ((H4SDS) collection.get(i)).getName();
-            products[i] = productName;
-            if (HDFAVHRRProperties.avhrrProducts.get(productName) != null) {
-                accepted[i] = true;
-                j++;
-            } else
-                accepted[i] = false;
-        }
-        if (j == inputProducts)
-            return products;
-        final String[] returnedProductsList = new String[j];
-        j = 0;
-        for (int i = 0; i < inputProducts; i++) {
-            if (accepted[i])
-                returnedProductsList[j++] = products[i];
-        }
-        return returnedProductsList;
+    static String[] refineProductList(final List<Variable> variables) {
+    	if (variables!=null && !variables.isEmpty()){
+	    	final int inputProducts = variables.size();
+	        final String[] products = new String[inputProducts];
+	        int j = 0;
+	        final boolean[] accepted = new boolean[inputProducts];
+	
+	        for (int i = 0; i < inputProducts; i++) {
+	            final String productName = variables.get(i).getName();
+	            products[i] = productName;
+	            if (HDFAVHRRProperties.avhrrProducts.get(productName) != null) {
+	                accepted[i] = true;
+	                j++;
+	            } else
+	                accepted[i] = false;
+	        }
+	        if (j == inputProducts)
+	            return products;
+	        final String[] returnedProductsList = new String[j];
+	        j = 0;
+	        for (int i = 0; i < inputProducts; i++) {
+	            if (accepted[i])
+	                returnedProductsList[j++] = products[i];
+	        }
+	        return returnedProductsList;
+    	}
+    	return null;
     }
 
     public final static HDFAVHRRProperties.AVHRRProducts avhrrProducts = new HDFAVHRRProperties.AVHRRProducts();

@@ -60,7 +60,7 @@ public class AVHRRHDFReadTest extends JHDFTestCase {
     public void testRead() throws IOException {
         File file;
         try {
-            file = TestData.file(this, "2008.0626.0351.n15.hdf4");
+            file = TestData.file(this, "2008.0603.1222.n18.hdf4");
         } catch (FileNotFoundException fnfe) {
             warningMessage();
             return;
@@ -70,7 +70,7 @@ public class AVHRRHDFReadTest extends JHDFTestCase {
         reader.setInput(file);
         final int index = 0;
         if (TestData.isInteractiveTest()) {
-            ImageIOUtilities.visualize(reader.read(0), "mcsst", true);
+            ImageIOUtilities.visualize(reader.read(0), "mcsst", false);
         } else
             Assert.assertNotNull(reader.read(index));
 

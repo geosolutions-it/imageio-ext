@@ -18,6 +18,7 @@ package it.geosolutions.imageio.plugins.jhdf.avhrr;
 
 import it.geosolutions.imageio.core.CoreCommonImageMetadata;
 import it.geosolutions.imageio.ndplugin.BaseImageReader;
+import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.KeyValuePair;
 import it.geosolutions.imageio.utilities.Utilities;
 
 import java.io.IOException;
@@ -40,7 +41,6 @@ public class HDFAVHRRStreamMetadata extends IIOMetadata {
 
     public HDFAVHRRStreamMetadata(final BaseImageReader reader) {
         this.reader = reader;
-
     }
 
     /**
@@ -60,31 +60,23 @@ public class HDFAVHRRStreamMetadata extends IIOMetadata {
         // GlobalAttributes
         //
         // ////////////////////////////////////////////////////////////////////
-        IIOMetadataNode node = new IIOMetadataNode(GLOBAL_ATTRIBUTES);
+        final IIOMetadataNode node = new IIOMetadataNode(GLOBAL_ATTRIBUTES);
         if (reader instanceof HDFAVHRRImageReader) {
-            HDFAVHRRImageReader flatReader = (HDFAVHRRImageReader) reader;
-            final int numAttributes = flatReader.getNumGlobalAttributes();
+            final HDFAVHRRImageReader directReader = (HDFAVHRRImageReader) reader;
+            final int numAttributes = directReader.getNumGlobalAttributes();
             try {
                 for (int i = 0; i < numAttributes; i++) {
-                    String attributePair;
-
-                    attributePair = flatReader.getGlobalAttributeAsString(i);
-                    final int separatorIndex = attributePair
-                            .indexOf(HDFAVHRRImageReader.SEPARATOR);
-                    String attributeName = attributePair.substring(0,
-                            separatorIndex);
-                    final String attributeValue = attributePair.substring(
-                            separatorIndex
-                                    + HDFAVHRRImageReader.SEPARATOR.length(),
-                            attributePair.length());
+                	 final KeyValuePair keyValuePair = directReader.getGlobalAttribute(i);
+                     String attribName = keyValuePair.getKey();
+                     final String attribValue = keyValuePair.getValue();
                     // //
                     // Note: IIOMetadata doesn't allow to set attribute name
                     // containing "\\". Therefore we replace that char
                     // //
-                    if (attributeName.contains("\\"))
-                        attributeName = Utilities
-                                .adjustAttributeName(attributeName);
-                    node.setAttribute(attributeName, attributeValue);
+                    if (attribName.contains("\\"))
+                    	attribName = Utilities
+                                .adjustAttributeName(attribName);
+                    node.setAttribute(attribName, attribValue);
                 }
             } catch (IOException e) {
                 throw new IllegalArgumentException("Unable to parse attribute",

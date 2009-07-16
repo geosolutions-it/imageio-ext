@@ -16,10 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.jhdf.avhrr;
 
-import it.geosolutions.hdf.object.h4.H4File;
-import it.geosolutions.hdf.object.h4.H4SDSCollection;
-import it.geosolutions.hdf.object.h4.H4Utilities;
 import it.geosolutions.imageio.ndplugin.BaseImageReaderSpi;
+import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 
 import java.io.File;
@@ -27,6 +25,8 @@ import java.io.IOException;
 import java.util.Locale;
 
 import javax.imageio.ImageReader;
+
+import ucar.nc2.dataset.NetcdfDataset;
 
 public class HDFAVHRRImageReaderSpi extends BaseImageReaderSpi {
 
@@ -91,30 +91,25 @@ public class HDFAVHRRImageReaderSpi extends BaseImageReaderSpi {
 
     public boolean canDecodeInput(Object input) throws IOException {
         boolean found = false;
-        if (!H4Utilities.isJHDFLibAvailable())
-            return false;
+
         if (input instanceof FileImageInputStreamExtImpl) {
             input = ((FileImageInputStreamExtImpl) input).getFile();
         }
 
         if (input instanceof File) {
             try {
-                final String filepath = ((File) input).getPath();
-                final H4File h4File = new H4File(filepath);
-                if (h4File != null) {
-                    final H4SDSCollection sdscoll = h4File.getH4SdsCollection();
-                    final int productsNum = HDFAVHRRProperties.avhrrProducts
-                            .getNProducts();
-                    for (int i = 0; i < productsNum; i++) {
-                        if (sdscoll.get(HDFAVHRRProperties.avhrrProducts
-                                .get(i).getProductName()) != null) {
-                            found = true;
-                            break;
-                        }
-
-                    }
-
-                    h4File.dispose();
+                final NetcdfDataset dataset = NetCDFUtilities.getDataset(input);
+                if (dataset != null) {
+                	final int productsNum = HDFAVHRRProperties.avhrrProducts.getNProducts();
+                	for (int i = 0; i < productsNum; i++) {
+                		if (dataset.findVariable(HDFAVHRRProperties.avhrrProducts
+                                .get(i).getProductName())!=null){
+                			found = true;
+                			break;
+                		}
+                			
+                	}
+                	dataset.close();
                 }
             } catch (IllegalArgumentException e) {
                 found = false;

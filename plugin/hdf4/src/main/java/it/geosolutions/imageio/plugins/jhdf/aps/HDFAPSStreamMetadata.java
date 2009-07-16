@@ -16,7 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.jhdf.aps;
 
-import it.geosolutions.imageio.plugins.jhdf.AbstractHDFImageReader;
+import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.KeyValuePair;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -72,6 +72,8 @@ public class HDFAPSStreamMetadata extends IIOMetadata {
 	public static final String GENERICS_NODE = "GenericAttributes";
 
 	public static final String PROJECTION_NODE = "Projection";
+
+	public static final String ZONE = "Zone";
 
     // TODO: Provides to build a proper structure to get CP_Pixels, CP_Lines,
     // CP_Latitudes, CP_Longitudes information
@@ -262,10 +264,10 @@ public class HDFAPSStreamMetadata extends IIOMetadata {
     }
 
 //    public synchronized void buildMetadata(H4SDSCollection root) {
-    public synchronized void buildMetadata(HDFAPSImageReader reader) {
+    public synchronized void buildMetadata(HDFAPSImageReader directReader) {
         try {
         	
-        	final int numAttributes = reader.getNumGlobalAttributes();
+        	final int numAttributes = directReader.getNumGlobalAttributes();
 
             // number of supported attributes
             final int nStdFileAttribMap = HDFAPSProperties.STD_FA_ATTRIB.length;
@@ -277,18 +279,9 @@ public class HDFAPSStreamMetadata extends IIOMetadata {
 
             for (int i = 0; i < numAttributes; i++) {
                 // get Attributes
-                String attributePair;
-                attributePair = reader.getGlobalAttributeAsString(i);
-                final int separatorIndex = attributePair
-                        .indexOf(AbstractHDFImageReader.SEPARATOR);
-                final String attribName = attributePair.substring(0,
-                        separatorIndex);
-                final String attribValue = attributePair.substring(
-                        separatorIndex + AbstractHDFImageReader.SEPARATOR.length(),
-                        attributePair.length());
-            	
-//            	final H4Attribute att = (H4Attribute) root.getAttribute(i);
-
+                final KeyValuePair keyValuePair = directReader.getGlobalAttribute(i);
+                final String attribName = keyValuePair.getKey();
+                final String attribValue = keyValuePair.getValue();
                 // get Attribute Name
                 // checks if the attribute name matches one of the supported
                 // attributes
@@ -431,7 +424,7 @@ public class HDFAPSStreamMetadata extends IIOMetadata {
 //                        projectionMap = buildProjectionAttributesMap(data,
 //                                datatype);
 //                }
-            Map<String,String> originalMap = reader.projectionMap;
+            Map<String,String> originalMap = directReader.projectionMap;
             projectionMap = new LinkedHashMap<String, String>(originalMap.size());
             for (String key : originalMap.keySet()){
             	String value = originalMap.get(key);

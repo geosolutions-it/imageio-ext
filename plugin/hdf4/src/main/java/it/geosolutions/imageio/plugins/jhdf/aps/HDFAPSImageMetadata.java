@@ -20,6 +20,7 @@ import it.geosolutions.imageio.core.CoreCommonImageMetadata;
 import it.geosolutions.imageio.ndplugin.BaseImageMetadata;
 import it.geosolutions.imageio.ndplugin.BaseImageReader;
 import it.geosolutions.imageio.plugins.jhdf.AbstractHDFImageReader;
+import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.KeyValuePair;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -89,19 +90,13 @@ public class HDFAPSImageMetadata extends BaseImageMetadata {
             // overviews is always 0
             setNumOverviews(new int[] { 0 });
             
-            HDFAPSImageReader flatReader = (HDFAPSImageReader) imageReader;
-            final int numAttributes = flatReader.getNumAttributes(imageIndex);
+            final HDFAPSImageReader directReader = (HDFAPSImageReader) imageReader;
+            final int numAttributes = directReader.getNumAttributes(imageIndex);
             this.additionalMetadata = new HashMap<String, String>(numAttributes);
             for (int i = 0; i < numAttributes; i++) {
-                String attributePair;
-                attributePair = flatReader.getAttributeAsString(imageIndex, i);
-                final int separatorIndex = attributePair
-                        .indexOf(AbstractHDFImageReader.SEPARATOR);
-                final String attributeName = attributePair.substring(0,
-                        separatorIndex);
-                final String attributeValue = attributePair.substring(
-                        separatorIndex + AbstractHDFImageReader.SEPARATOR.length(),
-                        attributePair.length());
+            	final KeyValuePair attributePair = directReader.getAttribute(imageIndex, i);
+                final String attributeName = attributePair.getKey();
+                final String attributeValue = attributePair.getValue();
                 additionalMetadata.put(attributeName, attributeValue);
             }
         }
