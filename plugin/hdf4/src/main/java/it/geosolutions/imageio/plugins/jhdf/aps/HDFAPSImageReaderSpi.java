@@ -28,8 +28,6 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageReader;
 
-import ncsa.hdf.hdflib.HDFException;
-import ucar.nc2.Attribute;
 import ucar.nc2.dataset.NetcdfDataset;
 
 /**
