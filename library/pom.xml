@@ -40,6 +40,7 @@
     <module>gdalframework</module>
     <module>imagereadmt</module>
     <module>jhdf</module>
+    <module>netcdf-support</module>
     <module>jgrib1</module>
   </modules>
 </project>

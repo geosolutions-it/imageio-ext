@@ -14,20 +14,8 @@
    <dependencies>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
-      <artifactId>imageio-ext-netcdf</artifactId>
+      <artifactId>imageio-ext-netcdf-support</artifactId>
       <version>${project.version}</version>
-    </dependency>
-     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>1.5.6</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>java3d</groupId>
-      <artifactId>vecmath</artifactId>
-      <version>1.3.1</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>
