@@ -32,6 +32,5 @@
       <artifactId>imageio-ext-jgrib1</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <!-- GeoTools Dependencies -->
   </dependencies>
  </project>

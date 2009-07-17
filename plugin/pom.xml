@@ -54,20 +54,21 @@
     <profile>
       <id>full</id>
       <modules>
-	    <module>gdal</module>
+	<module>gdal</module>
         <module>kakadujp2</module>
         <module>arcgrid</module>
         <module>swan</module>
         <module>tiff</module>
-	    <module>grib1</module>
-	    <module>netcdf</module>
-	    <module>hdf4</module>
-       </modules>
+	<module>grib1</module>
+	<module>netcdf</module>
+	<module>hdf4</module>
+      </modules>
     </profile> 
     <profile>
       <id>releasebuild</id>
       <modules>
-	    <module>gdal</module>
+	<module>gdal</module>
+	<module>kakadujp2</module>
         <module>arcgrid</module>
         <module>tiff</module>
        </modules>

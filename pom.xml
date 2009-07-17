@@ -15,6 +15,8 @@
     <extensive.tests>false</extensive.tests>
     <interactive.tests>false</interactive.tests>
     <test.maxHeapSize>512M</test.maxHeapSize>
+    <gdal.version>1.4.5</gdal.version>
+    <kakadu.version>5.2.6</kakadu.version>
   </properties>
 
   <!-- ======================================================== -->
@@ -404,6 +406,17 @@
         <artifactId>junit</artifactId>
         <version>4.0</version>
       </dependency>
+      <dependency>
+       <groupId>it.geosolutions.imageio-ext</groupId>
+       <artifactId>imageio-ext-gdal-bindings</artifactId>
+       <version>${gdal.version}</version>
+     </dependency>
+     <dependency>
+    	<groupId>it.geosolutions.imageio-ext</groupId>
+  	<artifactId>imageio-ext-kakadujni</artifactId>
+	<version>${kakadu.version}</version>
+    </dependency>
+
     </dependencies>
   </dependencyManagement>
   

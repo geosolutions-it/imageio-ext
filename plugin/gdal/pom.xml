@@ -99,10 +99,10 @@
       <id>base</id>
        <modules>
         <module>gdalenvisat</module>
-	    <module>gdaldoq1</module>
-		<module>gdaldoq2</module>
+        <module>gdaldoq1</module>
+	<module>gdaldoq2</module>
         <module>gdalerdasimg</module>
-		<module>gdalnitf</module>
+	<module>gdalnitf</module>
         <module>gdalehdr</module>
         <module>gdalenvihdr</module>
         <module>gdaljpeg</module>
@@ -115,8 +115,8 @@
     <profile>
       <id>full</id>
       <modules>
-		<module>gdaldoq1</module>
-		<module>gdaldoq2</module>
+	<module>gdaldoq1</module>
+	<module>gdaldoq2</module>
         <module>gdalhdf4</module>
         <module>gdalenvisat</module>
         <module>gdalerdasimg</module>
@@ -138,8 +138,8 @@
     <profile>
       <id>releasebuild</id>
       <modules>
-		<module>gdaldoq1</module>
-		<module>gdaldoq2</module>
+	<module>gdaldoq1</module>
+	<module>gdaldoq2</module>
         <module>gdalenvisat</module>
         <module>gdalerdasimg</module>
         <module>gdalnitf</module>

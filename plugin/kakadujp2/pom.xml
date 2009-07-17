@@ -15,19 +15,19 @@
   </properties>
   <dependencies>
     <dependency>
-  		<groupId>it.geosolutions.imageio-ext</groupId>
-  		<artifactId>imageio-ext-customstreams</artifactId>
-			<version>${project.version}</version>
+	<groupId>it.geosolutions.imageio-ext</groupId>
+	<artifactId>imageio-ext-customstreams</artifactId>
+	<version>${project.version}</version>
     </dependency>
     <dependency>
-  		<groupId>it.geosolutions.imageio-ext</groupId>
-  		<artifactId>imageio-ext-imagereadmt</artifactId>
-			<version>${project.version}</version>
+	<groupId>it.geosolutions.imageio-ext</groupId>
+	<artifactId>imageio-ext-imagereadmt</artifactId>
+	<version>${project.version}</version>
     </dependency>
     <dependency>
-  		<groupId>it.geosolutions.imageio-ext</groupId>
-  		<artifactId>imageio-ext-test-data</artifactId>
-			<version>${project.version}</version>
+	<groupId>it.geosolutions.imageio-ext</groupId>
+	<artifactId>imageio-ext-test-data</artifactId>
+	<version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
@@ -37,8 +37,7 @@
     </dependency>
     <dependency>
     	<groupId>it.geosolutions.imageio-ext</groupId>
-  		<artifactId>imageio-ext-kakadujni</artifactId>
-			<version>5.2.6</version>
+  	<artifactId>imageio-ext-kakadujni</artifactId>
     </dependency>
   </dependencies>
   <name>Direct Kakadu Jpeg2000 Plugin</name>

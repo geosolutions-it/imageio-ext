@@ -14,8 +14,8 @@
    
    <repositories>
     <repository>
-      <id>geosolutions</id>
-      <name>GeoSolutions libraries repository</name>
+      <id>netcdfunifi</id>
+      <name>Java-NetCDF repository at University of Florence</name>
       <url>http://ulisse.pin.unifi.it:8080/archiva/repository/ext.public.rel/</url>
     </repository>
   </repositories>
