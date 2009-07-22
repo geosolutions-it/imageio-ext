@@ -8,7 +8,7 @@
   </parent>
   <groupId>it.geosolutions.imageio-ext</groupId> 
   <artifactId>imageio-ext-netcdf-support</artifactId>
-  <name>NetCDF - Library support</name>
+  <name>Image I/O-Extensions - NetCDF Library support</name>
   <packaging>jar</packaging>
   <version>1.1-SNAPSHOT</version>
    

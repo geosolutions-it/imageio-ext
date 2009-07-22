@@ -15,8 +15,13 @@
  */
 package it.geosolutions.imageio.plugins.grib1;
 
+import java.awt.Transparency;
+import java.awt.color.ColorSpace;
+import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
 import java.io.IOException;
+
+import javax.media.jai.RasterFactory;
 
 import ucar.ma2.Array;
 import ucar.nc2.Variable;
@@ -28,6 +33,41 @@ import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities;
  * @author Daniele Romagnoli, GeoSolutions
  */
 public class GRIB1Utilities {
+
+	private final static ColorModel INT_COLOR_MODEL = buildColorModel(DataBuffer.TYPE_INT);
+
+	private final static ColorModel SHORT_COLOR_MODEL = buildColorModel(DataBuffer.TYPE_USHORT);
+
+	private final static ColorModel FLOAT_COLOR_MODEL = buildColorModel(DataBuffer.TYPE_FLOAT);
+
+	private final static ColorModel DOUBLE_COLOR_MODEL = buildColorModel(DataBuffer.TYPE_DOUBLE);
+
+	public static ColorModel getColorModel(final int type) {
+		switch (type) {
+		case DataBuffer.TYPE_INT:
+			return INT_COLOR_MODEL;
+
+		case DataBuffer.TYPE_USHORT:
+			return SHORT_COLOR_MODEL;
+
+		case DataBuffer.TYPE_FLOAT:
+			return FLOAT_COLOR_MODEL;
+
+		case DataBuffer.TYPE_DOUBLE:
+			return DOUBLE_COLOR_MODEL;
+
+		default:
+			return buildColorModel(type);
+		}
+	}
+
+	private static ColorModel buildColorModel(final int type) {
+		return RasterFactory.createComponentColorModel(type, // dataType
+				ColorSpace.getInstance(ColorSpace.CS_GRAY), // color space
+				false, // has alpha
+				false, // is alphaPremultiplied
+				Transparency.OPAQUE); // transparency
+	}
 
 	final static String GRIB_PARAM_PREFIX = "GRIB_param_";
 
@@ -48,7 +88,7 @@ public class GRIB1Utilities {
 	final static String BOUNDS = "bounds";
 
 	final static int UNDEFINED_NUMBER = Integer.MIN_VALUE;
-	
+
 	final static String VALUES_SEPARATOR = " ";
 
 	private GRIB1Utilities() {
@@ -118,29 +158,29 @@ public class GRIB1Utilities {
 		try {
 			final int size = indexes.length;
 			final Array values = variable.read();
-			for (int i=0;i<size;i++){
+			for (int i = 0; i < size; i++) {
 
-			switch (dataType) {
-			// TODO: ADD MORE.
-			case DataBuffer.TYPE_SHORT:
-				final short val1s = values.getShort(indexes[i]);
-				sb.append(Short.toString(val1s));
-				break;
-			case DataBuffer.TYPE_INT:
-				final int val1 = values.getInt(indexes[i]);
-				sb.append(Integer.toString(val1));
-				break;
-			case DataBuffer.TYPE_FLOAT:
-				final float val1f = values.getFloat(indexes[i]);
-				sb.append(Float.toString(val1f));
-				break;
-			case DataBuffer.TYPE_DOUBLE:
-				final double val1d = values.getDouble(indexes[i]);
-				sb.append(Double.toString(val1d));
-				break;
-			}
-			if (i>0&&i!=size-1)
-				sb.append(VALUES_SEPARATOR);
+				switch (dataType) {
+				// TODO: ADD MORE.
+				case DataBuffer.TYPE_SHORT:
+					final short val1s = values.getShort(indexes[i]);
+					sb.append(Short.toString(val1s));
+					break;
+				case DataBuffer.TYPE_INT:
+					final int val1 = values.getInt(indexes[i]);
+					sb.append(Integer.toString(val1));
+					break;
+				case DataBuffer.TYPE_FLOAT:
+					final float val1f = values.getFloat(indexes[i]);
+					sb.append(Float.toString(val1f));
+					break;
+				case DataBuffer.TYPE_DOUBLE:
+					final double val1d = values.getDouble(indexes[i]);
+					sb.append(Double.toString(val1d));
+					break;
+				}
+				if (i > 0 && i != size - 1)
+					sb.append(VALUES_SEPARATOR);
 			}
 
 		} catch (IOException e) {

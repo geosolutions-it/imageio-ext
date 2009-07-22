@@ -38,18 +38,17 @@ public class HDFAPSStreamMetadata extends IIOMetadata {
     
     public static final String PFA_IPA_NODE = "InputParameterAttributes";
 	
-    
-    public static final  String DATUM = "Datum";
+    public static final String DATUM = "Datum";
 
     public static final String PROJECTION = "Projection";
 
     public static final String SEMI_MAJOR_AXIS = "Param0";
 
-    public static final  String SEMI_MINOR_AXIS = "Param1";
+    public static final String SEMI_MINOR_AXIS = "Param1";
 
-    public static final  String LONGITUDE_OF_CENTRAL_MERIDIAN = "LongitudeOfCentralMeridian";
+    public static final String LONGITUDE_OF_CENTRAL_MERIDIAN = "LongitudeOfCentralMeridian";
 
-    public static final  String LATITUDE_OF_TRUE_SCALE = "LatitudeOfTrueScale";
+    public static final String LATITUDE_OF_TRUE_SCALE = "LatitudeOfTrueScale";
 
     public static final String FALSE_EASTINGS = "FalseEastings";
 

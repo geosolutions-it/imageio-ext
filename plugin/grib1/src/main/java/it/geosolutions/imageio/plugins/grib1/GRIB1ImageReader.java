@@ -94,13 +94,6 @@ public class GRIB1ImageReader extends BaseImageReader {
     
     protected final static Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.grib1");
     
-    private final static ColorModel colorModel = RasterFactory .createComponentColorModel(
-    				DataBuffer.TYPE_FLOAT, // dataType
-                    ColorSpace.getInstance(ColorSpace.CS_GRAY), // color space
-                    false, // has alpha
-                    false, // is alphaPremultiplied
-                    Transparency.OPAQUE); // transparency
-
 	private HashMap<Range, GribVariableWrapper> indexMap;
 	
 	class VerticalLevel{
@@ -639,10 +632,10 @@ public class GRIB1ImageReader extends BaseImageReader {
     public Iterator<ImageTypeSpecifier> getImageTypes(int imageIndex)
             throws IOException {
         final List<ImageTypeSpecifier> l = new java.util.ArrayList<ImageTypeSpecifier>(1);
-
         // Getting a proper GribVariableWrapper for the specified index
         final GribVariableWrapper gw = getGribVariableWrapper(imageIndex);
-        ImageTypeSpecifier imageType = new ImageTypeSpecifier(colorModel, gw.getSampleModel());
+        final SampleModel sm = gw.getSampleModel();
+        ImageTypeSpecifier imageType = new ImageTypeSpecifier(GRIB1Utilities.getColorModel(sm.getDataType()), sm);
         l.add(imageType);
         return l.iterator();
     }
