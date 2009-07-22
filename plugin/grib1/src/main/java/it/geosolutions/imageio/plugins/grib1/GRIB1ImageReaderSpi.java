@@ -17,6 +17,7 @@ package it.geosolutions.imageio.plugins.grib1;
 
 import it.geosolutions.imageio.ndplugin.BaseImageReaderSpi;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
+import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +29,7 @@ import java.util.logging.Level;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ServiceRegistry;
 
-import net.sourceforge.jgrib.GribFile;
+import ucar.nc2.NetcdfFile;
 
 /**
  * Service provider interface for the GRIB1 Image
@@ -97,24 +98,36 @@ public class GRIB1ImageReaderSpi extends BaseImageReaderSpi {
         }
     }
 
-    public boolean canDecodeInput(Object input) throws IOException {
-        if (input instanceof URI) {
-            input = ((URI) input).toURL();
+    public boolean canDecodeInput(Object source) throws IOException {
+        boolean canDecode = false;
+        File input = null;
+        if (source instanceof FileImageInputStreamExtImpl) {
+            input = ((FileImageInputStreamExtImpl) source).getFile();
+            if (LOGGER.isLoggable(Level.FINE))
+                LOGGER.fine("Found a valid FileImageInputStream");
         }
 
-        if (input instanceof File) {
-            return GribFile.canDecodeInput((File) input);
-        } else if (input instanceof String) {
-            File file = new File((String) input);
-            return GribFile.canDecodeInput(file);
-        } else if (input instanceof URL) {
-            return GribFile.canDecodeInput((URL) input);
-        } else if (input instanceof FileImageInputStreamExt) {
-            return GribFile.canDecodeInput(((FileImageInputStreamExt) input)
-                    .getFile());
+        if (source instanceof File) {
+            input = (File) source;
+        }
+        if (input != null) {
+            NetcdfFile file = null;
+            try {
+                file = NetcdfFile.open(input.getPath());
+                if (file != null) {
+                    if (LOGGER.isLoggable(Level.FINE))
+                        LOGGER.fine("File successfully opened");
+                    canDecode = true;
+                }
+            } catch (IOException ioe) {
+                canDecode = false;
+            } finally {
+                if (file != null)
+                    file.close();
+            }
 
         }
-        return false;
+        return canDecode;
     }
 
     public ImageReader createReaderInstance(Object input) throws IOException {
@@ -125,13 +138,4 @@ public class GRIB1ImageReaderSpi extends BaseImageReaderSpi {
         return "GRIB1 Image Reader, version " + version;
     }
 
-    @Override
-    public void onRegistration(ServiceRegistry registry, Class<?> category) {
-        try {
-            Class.forName("net.sourceforge.jgrib.GribCollection");
-        } catch (ClassNotFoundException e) {
-            registry.deregisterServiceProvider(this);
-        }
-        super.onRegistration(registry, category);
-    }
 }
