@@ -110,6 +110,8 @@ public class NetCDFUtilities {
 
     public final static String UPPER_RIGHT_LATITUDE = "upper_right_latitude";
 
+    public static final String COORDSYS = "latLonCoordSys";
+    
     public final static String LATITUDE = "latitude";
 
     public final static String LAT = "lat";
@@ -122,9 +124,22 @@ public class NetCDFUtilities {
 
     public final static String ZETA = "z";
     
+	private static final String BOUNDS = "bounds";
+    
     public final static String HEIGHT = "height";
 
     public final static String TIME = "time";
+    
+    public final static String COORDINATE_AXIS_TYPE = "_CoordinateAxisType";
+    
+    public static final String POSITIVE = "positive";
+    
+    public static final String UNITS = "units";
+    
+    public static final String NAME = "name";
+    
+    public static final String LONG_NAME = "long_name";
+    
     
 //    private final static HashMap TSS_OAG_ACCEPTED = new HashMap();
 //
@@ -180,6 +195,9 @@ public class NetCDFUtilities {
      * variables to assign to images.
      */
     public static final Set<DataType> VALID_TYPES = new HashSet<DataType>(12);
+
+	
+
     static {
         VALID_TYPES.add(DataType.BOOLEAN);
         VALID_TYPES.add(DataType.BYTE);
@@ -316,6 +334,28 @@ public class NetCDFUtilities {
 
     public static String getAttributesAsString(Attribute attr) {
         return getAttributesAsString(attr, false);
+    }
+    
+    public static String getAttributesAsString(final Variable var, final String attributeName) {
+        String value = "";
+        if (var != null){
+        	Attribute attribute = var.findAttribute(attributeName);
+        	if (attribute != null)
+        		value = getAttributesAsString(attribute, false); 
+        	
+        }
+    	return value;
+    }
+    
+    public static Number getAttributesAsNumber(final Variable var, final String attributeName) {
+        Number value = null;
+        if (var != null){
+        	Attribute attribute = var.findAttribute(attributeName);
+        	if (attribute != null)
+        		value = attribute.getNumericValue(); 
+        	
+        }
+    	return value;
     }
 
     /**
@@ -469,7 +509,9 @@ public class NetCDFUtilities {
                     || name.equalsIgnoreCase(TIME)
                     || name.equalsIgnoreCase(DEPTH)
                     || name.equalsIgnoreCase(ZETA)
-                    || name.equalsIgnoreCase(HEIGHT))
+                    || name.equalsIgnoreCase(HEIGHT)
+                    || name.toLowerCase().contains(COORDSYS.toLowerCase())
+                    || name.endsWith(BOUNDS))
                 
                 return false;
             else
