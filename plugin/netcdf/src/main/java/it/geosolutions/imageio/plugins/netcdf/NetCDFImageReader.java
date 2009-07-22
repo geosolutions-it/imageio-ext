@@ -538,7 +538,7 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
      * 
      * @throws IOException
      */
-    public synchronized void dispose() {
+    public void dispose() {
         super.dispose();
         indexMap.clear();
         indexMap = null;
@@ -562,7 +562,7 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
     /**
      * Reset the status of this reader
      */
-    public synchronized void reset() {
+    public void reset() {
         super.setInput(null, false, false);
         dispose();
     }

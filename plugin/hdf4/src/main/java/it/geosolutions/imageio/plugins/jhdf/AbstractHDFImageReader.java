@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageReadParam;
@@ -246,6 +247,17 @@ public abstract class AbstractHDFImageReader extends BaseImageReader {
     public synchronized void dispose() {
         super.dispose();
         isInitialized = false;
+        try {
+            if (dataset != null) {
+                dataset.close();
+            }
+        } catch (IOException e) {
+            if (LOGGER.isLoggable(Level.WARNING))
+                LOGGER.warning("Errors closing NetCDF dataset."
+                        + e.getLocalizedMessage());
+        } finally {
+            dataset = null;
+        }
     }
 
     public IIOMetadata getStreamMetadata() throws IOException {
@@ -475,8 +487,6 @@ public abstract class AbstractHDFImageReader extends BaseImageReader {
         /*
          * Reads the requested sub-region only.
          */
-        final int xmin = destRegion.x;
-        final int ymin = destRegion.y;
         final int size = destHeight*destWidth*numBands;
 //        for (int zi = 0; zi < numBands; zi++) {
             Array array = null;
