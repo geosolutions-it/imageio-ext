@@ -23,8 +23,6 @@ import it.geosolutions.imageio.utilities.ImageIOUtilities;
 
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Transparency;
-import java.awt.color.ColorSpace;
 import java.awt.image.BandedSampleModel;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
@@ -53,7 +51,6 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
-import javax.media.jai.RasterFactory;
 
 import ucar.grib.grib1.GribPDSLevel;
 import ucar.ma2.Array;
@@ -298,6 +295,7 @@ public class GRIB1ImageReader extends BaseImageReader {
             final int bufferType = NetCDFUtilities.getRawDataType(variable);
           	name = variable.getName();
             sampleModel = new BandedSampleModel(bufferType, width, height, 1);
+            initParam();
             initVerticalLevel();
             Variable temporalAxis = getTemporalAxis();
             if (temporalAxis!=null){
@@ -307,7 +305,32 @@ public class GRIB1ImageReader extends BaseImageReader {
             
         }
 
-        /**
+        private void initParam() {
+        	productDefinitionType = NetCDFUtilities.getAttributesAsString(variable, GRIB1Utilities.GRIB_PRODUCT_DEFINITION_TYPE);
+            parameterName = NetCDFUtilities.getAttributesAsString(variable, GRIB1Utilities.GRIB_PARAM_NAME);
+            parameterUnit = NetCDFUtilities.getAttributesAsString(variable, GRIB1Utilities.GRIB_PARAM_UNIT);
+          //TODO: REMOVE ME: Testing JSR
+//            Unit unit = null;
+//            if (parameterUnit.equalsIgnoreCase("fraction") || parameterUnit.equalsIgnoreCase("%") )
+//            	unit = Unit.ONE;
+//            else if (parameterUnit.equalsIgnoreCase("degrees"))
+//        		unit = NonSI.DEGREE_ANGLE;
+//            else{
+//            	parameterUnit = parameterUnit.replace("^", "");
+//            	parameterUnit = parameterUnit.replace(" ", "*");
+//            	try{
+//            		unit = Unit.valueOf(parameterUnit);
+//            	}catch(IllegalArgumentException iae){
+//            		System.out.println(dataset.getLocation());
+//            	}
+//            }
+            parameterCenterID = NetCDFUtilities.getAttributesAsNumber(variable, GRIB1Utilities.GRIB_PARAM_CENTER_ID).intValue();
+            parameterNumber = NetCDFUtilities.getAttributesAsNumber(variable, GRIB1Utilities.GRIB_PARAM_NUMBER).intValue();
+            parameterTableVersion = NetCDFUtilities.getAttributesAsNumber(variable, GRIB1Utilities.GRIB_TABLE_ID).intValue();
+			
+		}
+
+		/**
          * Setting vertical level 
          */
         private void initVerticalLevel() {
@@ -328,12 +351,6 @@ public class GRIB1ImageReader extends BaseImageReader {
 	        }
             
             verticalLevel = new VerticalLevel(levelType,levelName,levelDescription,levelUnits,hasExplicitVerticalAxis,axisType,positive);
-            productDefinitionType = NetCDFUtilities.getAttributesAsString(variable, GRIB1Utilities.GRIB_PRODUCT_DEFINITION_TYPE);
-            parameterName = NetCDFUtilities.getAttributesAsString(variable, GRIB1Utilities.GRIB_PARAM_NAME);
-            parameterUnit = NetCDFUtilities.getAttributesAsString(variable, GRIB1Utilities.GRIB_PARAM_UNIT);
-            parameterCenterID = NetCDFUtilities.getAttributesAsNumber(variable, GRIB1Utilities.GRIB_PARAM_CENTER_ID).intValue();
-            parameterNumber = NetCDFUtilities.getAttributesAsNumber(variable, GRIB1Utilities.GRIB_PARAM_NUMBER).intValue();
-            parameterTableVersion = NetCDFUtilities.getAttributesAsNumber(variable, GRIB1Utilities.GRIB_TABLE_ID).intValue();
 		}
 
 		public VerticalLevel getVerticalLevel() {

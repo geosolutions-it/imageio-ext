@@ -179,7 +179,7 @@ public class GRIB1Utilities {
 					sb.append(Double.toString(val1d));
 					break;
 				}
-				if (i > 0 && i != size - 1)
+				if (size > 1 && i != size - 1)
 					sb.append(VALUES_SEPARATOR);
 			}
 
