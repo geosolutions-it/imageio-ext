@@ -46,8 +46,6 @@ public class GRIB1ImageMetadata extends BaseImageMetadata {
 
     public final static String PDS = "ProductDefinitionSection";
     
-    public final static String UNIT = "Unit";
-
     public final static String GRID_DELTA_X = "GridDeltaX";
 
     public final static String GRID_DELTA_Y = "GridDeltaY";
@@ -109,6 +107,8 @@ public class GRIB1ImageMetadata extends BaseImageMetadata {
     public final static String PROD_PARAMTABLE_TABLEVERSION = "TableVersion";
 
     public final static String PROD_PARAMTABLE_PARAMETERNUMBER = "ParameterNumber";
+    
+    public final static String PROD_PARAMETER_UNIT = "Unit";
 
     public final static String PDS_LEVEL = "PDS_Level";
 
@@ -238,7 +238,7 @@ public class GRIB1ImageMetadata extends BaseImageMetadata {
 //                    pdsNode.setAttribute(PROD_PARAMTABLE_SUBCENTERID, Integer.toString(params[1]));
                 pdsNode.setAttribute(PROD_PARAMTABLE_TABLEVERSION, Integer.toString(wrapper.getParameterTableVersion()));
                 pdsNode.setAttribute(PROD_PARAMTABLE_PARAMETERNUMBER,Integer.toString(wrapper.getParameterNumber()));
-                pdsNode.setAttribute(UNIT, wrapper.getParameterUnit());
+                pdsNode.setAttribute(PROD_PARAMETER_UNIT, wrapper.getParameterUnit());
                 
                 root.appendChild(pdsNode);
                 IIOMetadataNode pdsLevelNode = new IIOMetadataNode(PDS_LEVEL);

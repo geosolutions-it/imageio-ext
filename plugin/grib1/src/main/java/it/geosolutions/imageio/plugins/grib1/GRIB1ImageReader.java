@@ -309,21 +309,6 @@ public class GRIB1ImageReader extends BaseImageReader {
         	productDefinitionType = NetCDFUtilities.getAttributesAsString(variable, GRIB1Utilities.GRIB_PRODUCT_DEFINITION_TYPE);
             parameterName = NetCDFUtilities.getAttributesAsString(variable, GRIB1Utilities.GRIB_PARAM_NAME);
             parameterUnit = NetCDFUtilities.getAttributesAsString(variable, GRIB1Utilities.GRIB_PARAM_UNIT);
-          //TODO: REMOVE ME: Testing JSR
-//            Unit unit = null;
-//            if (parameterUnit.equalsIgnoreCase("fraction") || parameterUnit.equalsIgnoreCase("%") )
-//            	unit = Unit.ONE;
-//            else if (parameterUnit.equalsIgnoreCase("degrees"))
-//        		unit = NonSI.DEGREE_ANGLE;
-//            else{
-//            	parameterUnit = parameterUnit.replace("^", "");
-//            	parameterUnit = parameterUnit.replace(" ", "*");
-//            	try{
-//            		unit = Unit.valueOf(parameterUnit);
-//            	}catch(IllegalArgumentException iae){
-//            		System.out.println(dataset.getLocation());
-//            	}
-//            }
             parameterCenterID = NetCDFUtilities.getAttributesAsNumber(variable, GRIB1Utilities.GRIB_PARAM_CENTER_ID).intValue();
             parameterNumber = NetCDFUtilities.getAttributesAsNumber(variable, GRIB1Utilities.GRIB_PARAM_NUMBER).intValue();
             parameterTableVersion = NetCDFUtilities.getAttributesAsNumber(variable, GRIB1Utilities.GRIB_TABLE_ID).intValue();
