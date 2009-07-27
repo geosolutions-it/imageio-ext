@@ -13,8 +13,8 @@
   <name>Jpeg2000 (ECW) Plugin that internally uses GDAL</name>
    <scm>
      <connection>
-       scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/gdalecwjp2
+       scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/gdal/gdalecwjp2
      </connection>
-     <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/gdalecwjp2</url>
+     <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/gdal/gdalecwjp2</url>
   </scm>
 </project>
