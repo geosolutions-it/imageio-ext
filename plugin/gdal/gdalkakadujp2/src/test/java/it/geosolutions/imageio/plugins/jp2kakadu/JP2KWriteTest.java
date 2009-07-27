@@ -34,10 +34,8 @@ import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.junit.Assert;
+import org.junit.Test;
 
 import com.sun.media.jai.operator.ImageWriteDescriptor;
 
@@ -72,7 +70,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // Testing "Clevels" Create Option.
     //
     // ////////////////////////////////////////////////////////////////////////
-    public void testWrite_Clevels() throws IOException, FileNotFoundException {
+    @Test
+    public void write_Clevels() throws IOException, FileNotFoundException {
         if (!isDriverAvailable)
             return;
 
@@ -171,7 +170,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // Testing "Clayers" Create Option.
     //
     // ////////////////////////////////////////////////////////////////////////
-    public void testWrite_Clayers() throws IOException, FileNotFoundException {
+    @Test
+    public void write_Clayers() throws IOException, FileNotFoundException {
         if (!isDriverAvailable)
             return;
         LOGGER.info("Testing JP2 Write operation with Clayers option setting");
@@ -268,7 +268,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // Testing "Cprecincts" Create Option.
     //
     // ////////////////////////////////////////////////////////////////////////
-    public void testWrite_Cprecincts() throws IOException,
+    @Test
+    public void write_Cprecincts() throws IOException,
             FileNotFoundException {
         if (!isDriverAvailable)
             return;
@@ -360,7 +361,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // Testing "Corder" Create Option.
     //
     // ////////////////////////////////////////////////////////////////////////
-    public void testWrite_Corder() throws IOException, FileNotFoundException {
+    @Test
+    public void write_Corder() throws IOException, FileNotFoundException {
         if (!isDriverAvailable)
             return;
         LOGGER.info("Testing JP2 Write operation with Corder option setting");
@@ -475,7 +477,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // Testing "Cblk" Create Option.
     //
     // ////////////////////////////////////////////////////////////////////////
-    public void testWrite_Cblk() throws IOException, FileNotFoundException {
+    @Test
+    public void write_Cblk() throws IOException, FileNotFoundException {
         if (!isDriverAvailable)
             return;
         LOGGER.info("Testing JP2 Write operation with Cblk option setting");
@@ -563,8 +566,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // Testing "CModes" Create Option.
     //
     // ////////////////////////////////////////////////////////////////////////
-
-    public void testWrite_Cmodes() throws IOException, FileNotFoundException {
+    @Test
+    public void write_Cmodes() throws IOException, FileNotFoundException {
         if (!isDriverAvailable)
             return;
         LOGGER.info("Testing JP2 Write operation with CModes option setting");
@@ -638,7 +641,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // Testing "Cycc" Create Option.
     //
     // ////////////////////////////////////////////////////////////////////////
-    public void testWrite_Cycc() throws IOException, FileNotFoundException {
+    @Test
+    public void write_Cycc() throws IOException, FileNotFoundException {
         if (!isDriverAvailable)
             return;
         LOGGER.info("Testing JP2 Write operation with Cycc option setting");
@@ -726,7 +730,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // Testing "GMLJp2" Create Option.
     //
     // ////////////////////////////////////////////////////////////////////////
-    public void testWrite_GMLJp2() throws IOException, FileNotFoundException {
+    @Test
+    public void write_GMLJp2() throws IOException, FileNotFoundException {
         if (!isDriverAvailable)
             return;
         LOGGER.info("Testing JP2 Write operation with GMLJp2 option setting");
@@ -814,7 +819,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // Testing "GeoJp2" Create Option.
     //
     // ////////////////////////////////////////////////////////////////////////
-    public void testWrite_GeoJp2() throws IOException, FileNotFoundException {
+    @Test
+    public void write_GeoJp2() throws IOException, FileNotFoundException {
         if (!isDriverAvailable)
             return;
         LOGGER.info("Testing JP2 Write operation with GeoJp2 option setting");
@@ -902,8 +908,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // Testing "ORGtparts" Create Option.
     //
     // ////////////////////////////////////////////////////////////////////////
-
-    public void testWrite_ORGtparts() throws IOException, FileNotFoundException {
+    @Test
+    public void write_ORGtparts() throws IOException, FileNotFoundException {
         if (!isDriverAvailable)
             return;
         LOGGER
@@ -984,7 +990,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // Testing "ORGgen_plt" Create Option.
     //
     // ////////////////////////////////////////////////////////////////////////
-    public void testWrite_ORGgen_plt() throws IOException,
+    @Test
+    public void write_ORGgen_plt() throws IOException,
             FileNotFoundException {
         if (!isDriverAvailable)
             return;
@@ -1095,7 +1102,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // be generated at run-time if the number of declared maximum number of
     // tile-parts turns out to be insufficient.
     // ------------------------------------------------------------------------
-    public void testWrite_ORGgen_tlm() throws IOException,
+    @Test
+    public void write_ORGgen_tlm() throws IOException,
             FileNotFoundException {
         if (!isDriverAvailable)
             return;
@@ -1154,7 +1162,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // Testing "COMSEG" Create Option.
     //
     // ////////////////////////////////////////////////////////////////////////
-    public void testWrite_COMSEG() throws IOException, FileNotFoundException {
+    @Test
+    public void write_COMSEG() throws IOException, FileNotFoundException {
         if (!isDriverAvailable)
             return;
         LOGGER.info("Testing JP2 Write operation with COMSEG option setting");
@@ -1242,7 +1251,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // Testing "SProfile" Create Option.
     //
     // ////////////////////////////////////////////////////////////////////////
-    public void testWrite_SProfile() throws IOException, FileNotFoundException {
+    @Test
+    public void write_SProfile() throws IOException, FileNotFoundException {
         if (!isDriverAvailable)
             return;
         LOGGER.info("Testing JP2 Write operation with SProfile option setting");
@@ -1329,7 +1339,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // Testing "Tiling" Create Option.
     //
     // ////////////////////////////////////////////////////////////////////////
-    public void testWrite_Tiling() throws IOException, FileNotFoundException {
+    @Test
+    public void write_Tiling() throws IOException, FileNotFoundException {
         if (!isDriverAvailable)
             return;
         LOGGER.info("Testing JP2 Write operation with Tiling option setting");
@@ -1426,7 +1437,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // Testing "ROI" Create Options and related options.
     //
     // ////////////////////////////////////////////////////////////////////////
-    public void testWrite_ROI() throws IOException, FileNotFoundException {
+    @Test
+    public void write_ROI() throws IOException, FileNotFoundException {
         if (!isDriverAvailable)
             return;
         LOGGER.info("Testing JP2 Write operation with ROI option setting");
@@ -1520,7 +1532,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // Testing "Qguard" Create Option.
     //
     // ////////////////////////////////////////////////////////////////////////
-    public void testWrite_Qguard() throws IOException, FileNotFoundException {
+    @Test
+    public void write_Qguard() throws IOException, FileNotFoundException {
         if (!isDriverAvailable)
             return;
         LOGGER.info("Testing JP2 Write operation with Qguard option setting");
@@ -1608,7 +1621,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // Testing "Qstep" Create Option.
     //
     // ////////////////////////////////////////////////////////////////////////
-    public void testWrite_Qstep() throws IOException, FileNotFoundException {
+    @Test
+    public void write_Qstep() throws IOException, FileNotFoundException {
         if (!isDriverAvailable)
             return;
         LOGGER.info("Testing JP2 Write operation with Qstep option setting");
@@ -1731,7 +1745,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // ////////////////////////////////////////////////////////////////////////
     // TODO: Investigate the strange displaying of a 100% quality factor write
     // of an input UINT16 jpeg2000 image.
-    public void testWrite_Quality() throws IOException, FileNotFoundException {
+    @Test
+    public void write_Quality() throws IOException, FileNotFoundException {
         if (!isDriverAvailable)
             return;
         LOGGER.info("Testing JP2 Write operation with Quality option setting");
@@ -1825,7 +1840,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // Testing "FLUSH" Create Option.
     //
     // ////////////////////////////////////////////////////////////////////////
-    public void testWrite_FLUSH() throws IOException, FileNotFoundException {
+    @Test
+    public void write_FLUSH() throws IOException, FileNotFoundException {
         if (!isDriverAvailable)
             return;
         LOGGER.info("Testing JP2 Write operation with FLUSH option setting");
@@ -1913,7 +1929,8 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // Testing parameters-support capabilities for writer.
     //
     // ////////////////////////////////////////////////////////////////////////
-    public void testWrite_Parametrized() throws IOException,
+    @Test
+    public void write_Parametrized() throws IOException,
             FileNotFoundException {
         if (!isDriverAvailable)
             return;

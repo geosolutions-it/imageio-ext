@@ -80,8 +80,8 @@ public class MrSIDTest extends AbstractGDALTest {
      * @throws FileNotFoundException
      * @throws IOException
      */
-	@Test
-    public void testMetadata() throws FileNotFoundException, IOException {
+    @Test
+    public void metadataAccess() throws FileNotFoundException, IOException {
         if (!isDriverAvailable) {
             return;
         }
@@ -115,7 +115,7 @@ public class MrSIDTest extends AbstractGDALTest {
      * @throws IOException
      */
     @Test
-    public void testJaiOperations() throws FileNotFoundException, IOException {
+    public void jaiOperations() throws FileNotFoundException, IOException {
         if (!isDriverAvailable) {
             return;
         }
@@ -232,7 +232,7 @@ public class MrSIDTest extends AbstractGDALTest {
      * @throws IOException
      */
     @Test
-    public void testSubBandsRead() throws IOException {
+    public void subBandsRead() throws IOException {
         if (!isDriverAvailable) {
             return;
         }
@@ -325,7 +325,7 @@ public class MrSIDTest extends AbstractGDALTest {
      * @throws IOException
      */
     @Test
-    public void testManualRead() throws IOException {
+    public void manualRead() throws IOException {
         if (!isDriverAvailable) {
             return;
         }
@@ -374,19 +374,19 @@ public class MrSIDTest extends AbstractGDALTest {
     }
 
     @Before
-	public void setUp() throws Exception {
-	    super.setUp();
-	    if (!isDriverAvailable) {
-	        LOGGER.warning(msg);
-	        return;
-	    }
-	    // general settings
-	    JAI.getDefaultInstance().getTileScheduler().setParallelism(10);
-	    JAI.getDefaultInstance().getTileScheduler().setPriority(4);
-	    JAI.getDefaultInstance().getTileScheduler().setPrefetchPriority(2);
-	    JAI.getDefaultInstance().getTileScheduler().setPrefetchParallelism(5);
-	    JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
-	            128 * 1024 * 1024);
-	    JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
-	}
+    public void setUp() throws Exception {
+        super.setUp();
+        if (!isDriverAvailable) {
+            LOGGER.warning(msg);
+            return;
+        }
+        // general settings
+        JAI.getDefaultInstance().getTileScheduler().setParallelism(10);
+        JAI.getDefaultInstance().getTileScheduler().setPriority(4);
+        JAI.getDefaultInstance().getTileScheduler().setPrefetchPriority(2);
+        JAI.getDefaultInstance().getTileScheduler().setPrefetchParallelism(5);
+        JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
+                128 * 1024 * 1024);
+        JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
+    }
 }

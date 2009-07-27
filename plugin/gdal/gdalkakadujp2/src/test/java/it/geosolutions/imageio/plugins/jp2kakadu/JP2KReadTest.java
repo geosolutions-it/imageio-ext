@@ -33,6 +33,7 @@ import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
 
 import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Testing reading capabilities for {@link JP2GDALKakaduImageReader} leveraging
@@ -51,8 +52,8 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    @org.junit.Test
-    public void testRead() throws FileNotFoundException, IOException {
+    @Test
+    public void read() throws FileNotFoundException, IOException {
         if (!isDriverAvailable) {
             return;
         }
@@ -82,8 +83,8 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    @org.junit.Test
-    public void testJaiOperations() throws IOException {
+    @Test
+    public void jaiOperations() throws IOException {
         if (!isDriverAvailable) {
             return;
         }

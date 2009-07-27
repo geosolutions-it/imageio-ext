@@ -39,6 +39,7 @@ import javax.media.jai.RenderedOp;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Daniele Romagnoli, GeoSolutions.
@@ -64,7 +65,8 @@ public class HDF4Test extends AbstractGDALTest {
     /**
      * This test method uses an HDF4 file containing several subdatasets
      */
-    public void testSubDataset() throws FileNotFoundException, IOException {
+    @Test
+    public void subDatasets() throws FileNotFoundException, IOException {
         if (!isLinux && isDriverAvailable)
             return;
         try {
@@ -100,7 +102,8 @@ public class HDF4Test extends AbstractGDALTest {
         }
     }
 
-    public void testManualRead() throws FileNotFoundException, IOException {
+    @Test
+    public void read() throws FileNotFoundException, IOException {
         if (!isLinux && isDriverAvailable)
             return;
         try {
@@ -125,7 +128,8 @@ public class HDF4Test extends AbstractGDALTest {
      * This test method retrieves properties from each band of the sample
      * dataset
      */
-    public void testRasterBandsProperties() throws FileNotFoundException,
+    @Test
+    public void rasterBandsProperties() throws FileNotFoundException,
             IOException {
         if (!isLinux && isDriverAvailable)
             return;

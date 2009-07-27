@@ -29,8 +29,7 @@ import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.Test;
 
 import org.junit.Assert;
 
@@ -50,7 +49,8 @@ public class EnvisatTest extends AbstractGDALTest {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public void testJaiOperations() throws FileNotFoundException, IOException {
+    @Test
+    public void jaiOperations() throws FileNotFoundException, IOException {
         if (!isGDALAvailable) {
             return;
         }

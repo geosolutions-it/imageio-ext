@@ -37,6 +37,7 @@ import javax.media.jai.RenderedOp;
 import org.gdal.gdal.Driver;
 import org.gdal.gdal.gdal;
 import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Testing reading capabilities for {@link JP2GDALMrSidImageReader} leveraging
@@ -87,7 +88,8 @@ public class JP2KReadTest extends AbstractGDALTest {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public void testRead() throws FileNotFoundException, IOException {
+    @Test
+    public void read() throws FileNotFoundException, IOException {
         if (!isDriverAvailable) {
             return;
         }
@@ -114,7 +116,8 @@ public class JP2KReadTest extends AbstractGDALTest {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public void testJaiOperations() throws IOException {
+    @Test
+    public void jaiOperations() throws IOException {
         if (!isDriverAvailable) {
             return;
         }
@@ -220,12 +223,11 @@ public class JP2KReadTest extends AbstractGDALTest {
         	Assert.assertNotNull(rotatedImage.getTiles());
     }
 
-    @org.junit.Test
-	public void setUp() throws Exception {
-	    super.setUp();
-	    if (!isDriverAvailable) {
-	        LOGGER.warning(msg);
-	        return;
-	    }
+    public void setUp() throws Exception {
+	super.setUp();
+	if (!isDriverAvailable) {
+	    LOGGER.warning(msg);
+	    return;
 	}
+    }
 }

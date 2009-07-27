@@ -40,6 +40,7 @@ import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
 
 import org.junit.Assert;
+import org.junit.Test;
 
 import com.sun.media.jai.codecimpl.util.RasterFactory;
 
@@ -58,7 +59,8 @@ public class JPEGReadTest extends AbstractGDALTest {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public void testRead() throws FileNotFoundException, IOException {
+    @Test
+    public void read() throws FileNotFoundException, IOException {
         if (!isGDALAvailable) {
             return;
         }
@@ -91,7 +93,8 @@ public class JPEGReadTest extends AbstractGDALTest {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public void testSourceBands() throws IOException, FileNotFoundException {
+    @Test
+    public void sourceBands() throws IOException, FileNotFoundException {
         if (!isGDALAvailable) {
             return;
         }

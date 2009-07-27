@@ -40,6 +40,7 @@ import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
 
 import org.junit.Assert;
+import org.junit.Test;
 
 import com.sun.media.jai.operator.ImageWriteDescriptor;
 
@@ -59,7 +60,7 @@ public class GeoTiffTest extends AbstractGDALTest {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    @org.junit.Test
+    @Test
     public void manualRead() throws IOException, FileNotFoundException {
         if (!isGDALAvailable) {
             return;
@@ -86,7 +87,7 @@ public class GeoTiffTest extends AbstractGDALTest {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    @org.junit.Test
+    @Test
     public void read() throws FileNotFoundException, IOException {
         if (!isGDALAvailable) {
             return;
@@ -111,7 +112,7 @@ public class GeoTiffTest extends AbstractGDALTest {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    @org.junit.Test
+    @Test
     public void write() throws IOException, FileNotFoundException {
         if (!isGDALAvailable) {
             return;
@@ -178,7 +179,7 @@ public class GeoTiffTest extends AbstractGDALTest {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    @org.junit.Test
+    @Test
     public void palette() throws FileNotFoundException, IOException {
         if (!isGDALAvailable) {
             return;

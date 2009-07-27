@@ -29,6 +29,7 @@ import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
 
 import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Testing reading capabilities for {@link ErdasImgImageReader}.
@@ -47,7 +48,8 @@ public class ErdasImgTest extends AbstractGDALTest {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public void testJaiOperations() throws FileNotFoundException, IOException {
+    @Test
+    public void jaiOperations() throws FileNotFoundException, IOException {
         if (!isGDALAvailable) {
             return;
         }

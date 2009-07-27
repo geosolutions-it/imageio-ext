@@ -60,7 +60,7 @@ public class ECWTest extends AbstractGDALTest {
      * @throws IOException
      */
     @Test
-    public void testImageRead() throws FileNotFoundException, IOException {
+    public void imageRead() throws FileNotFoundException, IOException {
     	if(!isDriverAvailable)
     		return;
         final ParameterBlockJAI pbjImageRead;
@@ -86,7 +86,7 @@ public class ECWTest extends AbstractGDALTest {
     }
 
     @Test
-    public void testManualRead() throws FileNotFoundException, IOException {
+    public void manualRead() throws FileNotFoundException, IOException {
     	if(!isDriverAvailable)
     		return;
         final ECWImageReaderSpi spi = new ECWImageReaderSpi();
@@ -107,7 +107,7 @@ public class ECWTest extends AbstractGDALTest {
     }
 
     @Test
-    public void testECWPRead() throws FileNotFoundException, IOException {
+    public void ecwpRead() throws FileNotFoundException, IOException {
     	if(!isDriverAvailable)
     		return;
         if (ECWP.equalsIgnoreCase(ECWPSkipTest))
