@@ -19,10 +19,11 @@ package it.geosolutions.imageio.plugins.jp2kakadu;
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.GDALUtilities;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.media.jai.JAI;
-
+import org.gdal.gdal.Driver;
+import org.gdal.gdal.gdal;
 import org.junit.Before;
 
 /**
@@ -31,9 +32,7 @@ import org.junit.Before;
  */
 public class AbstractJP2KTestCase extends AbstractGDALTest {
 
-    /** A simple flag set to true in case the JP2 Kakadu driver is available */
-    protected final static boolean isDriverAvailable = GDALUtilities
-            .isDriverAvailable("JP2KAK");
+    protected static boolean isDriverAvailable;
 
     private final static String msg = "JP2GDAL Kakadu Tests are skipped due to missing Driver.\n"
             + "Be sure GDAL has been built against Kakadu and the required"
@@ -42,6 +41,28 @@ public class AbstractJP2KTestCase extends AbstractGDALTest {
     protected static final Logger LOGGER = Logger
             .getLogger("it.geosolutions.imageio.plugins.jp2kakadu");
 
+    static {
+        try {
+            gdal.AllRegister();
+            final Driver driverEcw = gdal.GetDriverByName("JP2ECW");
+            final Driver drivermrsid = gdal.GetDriverByName("JP2MrSID");
+            if (driverEcw != null || drivermrsid != null) {
+                final StringBuilder skipDriver = new StringBuilder("");
+                if (driverEcw != null)
+                    skipDriver.append("JP2ECW ");
+                if (drivermrsid != null)
+                    skipDriver.append("JP2MrSID");
+                gdal.SetConfigOption("GDAL_SKIP", skipDriver.toString());
+                gdal.AllRegister();
+            }
+            isDriverAvailable = GDALUtilities.isDriverAvailable("JP2KAK");
+        } catch (UnsatisfiedLinkError e) {
+            if (LOGGER.isLoggable(Level.WARNING))
+                LOGGER.warning(new StringBuilder("GDAL library unavailable.")
+                        .toString());
+            isDriverAvailable = false;
+        }
+    }
 
     @Before
     public void setUp() throws Exception {
