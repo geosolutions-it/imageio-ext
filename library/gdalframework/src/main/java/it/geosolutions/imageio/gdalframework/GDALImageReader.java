@@ -442,17 +442,19 @@ public abstract class GDALImageReader extends ImageReader {
                         bandsMap[i] = selectedBands[i] + 1;
                     returnVal = dataset.ReadRaster_Direct(srcRegionXOffset,
                             srcRegionYOffset, srcRegionWidth, srcRegionHeight,
-                            dstWidth, dstHeight, bufferType, nBands, bandsMap,
+                            dstWidth, dstHeight, bufferType, dataBuffer, bandsMap,
                             nBands * typeSizeInBytes, dstWidth * nBands
-                                    * typeSizeInBytes, typeSizeInBytes,
-                            dataBuffer);
+                                    * typeSizeInBytes, typeSizeInBytes);
                 } else {
+                    final int bandsMap[] = new int[nBands];
+                    for (int i = 0; i < nBands; i++)
+                        bandsMap[i] = i + 1;
                     returnVal = dataset.ReadRaster_Direct(srcRegionXOffset,
                             srcRegionYOffset, srcRegionWidth, srcRegionHeight,
-                            dstWidth, dstHeight, bufferType, nBands, nBands
-                                    * typeSizeInBytes, dstWidth * nBands
-                                    * typeSizeInBytes, typeSizeInBytes,
-                            dataBuffer);
+                            dstWidth, dstHeight, bufferType, dataBuffer, bandsMap,
+                                    nBands * typeSizeInBytes, dstWidth * nBands
+                                    * typeSizeInBytes, typeSizeInBytes
+                            );
                 }
                 bands[k] = dataBuffer;
             } else {

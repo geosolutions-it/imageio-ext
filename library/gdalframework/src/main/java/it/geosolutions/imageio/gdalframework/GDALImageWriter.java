@@ -738,13 +738,17 @@ public abstract class GDALImageWriter extends ImageWriter {
                 // 
                 // ////////////////////////////////////////////////////////////////////
                 if (!splitBands) {
+                    final int[] bands = new int[nBands];
+                    for (int i = 0; i < nBands; i++)
+                        bands[i]=i+1;
                     // I can perform a single Write operation.
                     dataset.WriteRaster_Direct(xOff, yOff, dstWidth, dstHeight,
-                            dstWidth, dstHeight, dataType, nBands, nBands
-                                    * typeSizeInBytes, dstWidth * nBands
-                                    * typeSizeInBytes, 1, bandsBuffer[0]);
+                            dstWidth, dstHeight, dataType, bandsBuffer[0], bands, 
+                            nBands  * typeSizeInBytes, dstWidth * nBands
+                                    * typeSizeInBytes, 1);
                 } else {
                     // I need to perform a write operation for each band.
+                    final int[] bands = new int[nBands];
                     for (int i = 0; i < nBands; i++)
                         dataset.GetRasterBand(i + 1).WriteRaster_Direct(xOff,
                                 yOff, dstWidth, dstHeight, dstWidth, dstHeight,
@@ -1451,7 +1455,7 @@ public abstract class GDALImageWriter extends ImageWriter {
             // Dataset from data in memory by specifying the address of the
             // memory containing data.
             tempDs = getMemoryDriver().Create(tempFile, width, height, nBands,
-                    dataType, null);
+                    dataType, (String[])null);
         }
         if (tempDs == null) {
             // //
@@ -1462,7 +1466,7 @@ public abstract class GDALImageWriter extends ImageWriter {
             // //
             final Driver driver = gdal.GetDriverByName("GTiff");
             tempDs = driver.Create(tempFile, width, height, nBands, dataType,
-                    null);
+                    (String[])null);
         }
 
         // //

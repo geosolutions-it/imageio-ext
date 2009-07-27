@@ -15,7 +15,7 @@
     <extensive.tests>false</extensive.tests>
     <interactive.tests>false</interactive.tests>
     <test.maxHeapSize>512M</test.maxHeapSize>
-    <gdal.version>1.4.5</gdal.version>
+    <gdal.version>1.6.1</gdal.version>
     <kakadu.version>5.2.6</kakadu.version>
   </properties>
 
@@ -524,7 +524,7 @@
             <descriptor>release/src.xml</descriptor>
             <descriptor>release/javadoc.xml</descriptor>
            </descriptors>
-           <finalName>imageio-ext-1.0</finalName>
+           <finalName>imageio-ext-1.1</finalName>
            <outputDirectory>${project.build.directory}/release</outputDirectory>
           </configuration>
        </plugin>
