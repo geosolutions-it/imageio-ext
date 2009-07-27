@@ -7,7 +7,7 @@
     <version>1.1-SNAPSHOT</version>
   </parent>
   <groupId>it.geosolutions.imageio-ext</groupId>
-  <artifactId>imageio-ext-grib1-netcdf</artifactId>
+  <artifactId>imageio-ext-grib1</artifactId>
   <packaging>jar</packaging>
   <version>1.1-SNAPSHOT</version>
   <name>GRIB1 - Direct Plugin</name>
