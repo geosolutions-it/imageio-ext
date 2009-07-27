@@ -95,6 +95,7 @@
         <module>gdalarcbinarygrid</module>
         <module>gdaldted</module>
         <module>gdalgeotiff</module>
+        <module>gdalwms</module>
        </modules>
     </profile> 
     <profile>
@@ -117,6 +118,7 @@
         <module>gdalarcbinarygrid</module>
         <module>gdaldted</module>
         <module>gdalgeotiff</module>
+        <module>gdalwms</module>
        </modules>
     </profile>
   </profiles>
