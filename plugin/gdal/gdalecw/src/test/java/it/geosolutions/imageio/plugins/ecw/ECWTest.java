@@ -17,6 +17,7 @@
 package it.geosolutions.imageio.plugins.ecw;
 
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
+import it.geosolutions.imageio.gdalframework.GDALUtilities;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.resources.TestData;
 
@@ -44,13 +45,14 @@ import org.junit.Test;
  * @author Daniele Romagnoli, GeoSolutions.
  */
 public class ECWTest extends AbstractGDALTest {
+    
+    private final static boolean isDriverAvailable = isGDALAvailable && 
+    GDALUtilities.isDriverAvailable("JP2KAK");
 
     private final static String ECWPSkipTest = "ecwp://Set a valid link";
 
     private final static String ECWP = ECWPSkipTest; // Change with a valid
                                                         // ecwp
-
-
     /**
      * Test reading of a RGB image
      * 
@@ -59,7 +61,7 @@ public class ECWTest extends AbstractGDALTest {
      */
     @Test
     public void testImageRead() throws FileNotFoundException, IOException {
-    	if(!isGDALAvailable)
+    	if(!isDriverAvailable)
     		return;
         final ParameterBlockJAI pbjImageRead;
         final ImageReadParam irp = new ImageReadParam();
@@ -85,7 +87,7 @@ public class ECWTest extends AbstractGDALTest {
 
     @Test
     public void testManualRead() throws FileNotFoundException, IOException {
-    	if(!isGDALAvailable)
+    	if(!isDriverAvailable)
     		return;
         final ECWImageReaderSpi spi = new ECWImageReaderSpi();
         final ECWImageReader mReader = new ECWImageReader(spi);
@@ -106,7 +108,7 @@ public class ECWTest extends AbstractGDALTest {
 
     @Test
     public void testECWPRead() throws FileNotFoundException, IOException {
-    	if(!isGDALAvailable)
+    	if(!isDriverAvailable)
     		return;
         if (ECWP.equalsIgnoreCase(ECWPSkipTest))
             return;
