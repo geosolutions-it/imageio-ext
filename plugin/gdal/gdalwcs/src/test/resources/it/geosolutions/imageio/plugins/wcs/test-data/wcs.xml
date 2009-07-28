@@ -1,0 +1,82 @@
+<WCS_GDAL>
+  <ServiceURL>http://maps.opengeo.org/geoserver/wcs?</ServiceURL>
+  <CoverageName>topp:new_york_city_latlon</CoverageName>
+  <Timeout>75</Timeout>
+  <CoverageOffering>
+    <description>/var/lib/geoserver_data/default/data/new_york_city_latlon.tif</description>
+    <name>topp:new_york_city_latlon</name>
+    <label>new_york_city_latlon is a Tagged Image File Format with Geographic information</label>
+    <lonLatEnvelope srsName="WGS84(DD)">
+      <pos>-74.25106863023242 40.49568738049266</pos>
+      <pos>-73.74026585944871 41.004469170976535</pos>
+    </lonLatEnvelope>
+    <keywords>
+      <keyword>WCS</keyword>
+      <keyword>new_york_shade_lat</keyword>
+      <keyword>new_york_city_latlon</keyword>
+    </keywords>
+    <domainSet>
+      <spatialDomain>
+        <Envelope srsName="EPSG:4326">
+          <pos>-74.25106863023242 40.49568738049266</pos>
+          <pos>-73.74026585944871 41.004469170976535</pos>
+        </Envelope>
+        <RectifiedGrid dimension="2">
+          <limits>
+            <GridEnvelope>
+              <low>0 0 </low>
+              <high>500 500</high>
+            </GridEnvelope>
+          </limits>
+          <axisName>GRAY_INDEX</axisName>
+          <origin>
+            <pos>-74.25101810572492 41.00441864646904</pos>
+          </origin>
+          <offsetVector>1.010490149918316E-3 0.0</offsetVector>
+          <offsetVector>0.0 -1.010490149918316E-3</offsetVector>
+        </RectifiedGrid>
+      </spatialDomain>
+    </domainSet>
+    <rangeSet>
+      <RangeSet>
+        <name>topp:new_york_city_latlon</name>
+        <label>new_york_city_latlon is a Tagged Image File Format with Geographic information</label>
+        <axisDescription>
+          <AxisDescription>
+            <name>Band</name>
+            <label>Band</label>
+            <values>
+              <singleValue>1</singleValue>
+            </values>
+          </AxisDescription>
+        </axisDescription>
+        <nullValues>
+          <singleValue>0</singleValue>
+        </nullValues>
+      </RangeSet>
+    </rangeSet>
+    <supportedCRSs>
+      <requestResponseCRSs>EPSG:4326  </requestResponseCRSs>
+    </supportedCRSs>
+    <supportedFormats nativeFormat="GeoTIFF">
+      <formats>IMAGEMOSAIC</formats>
+      <formats>ARCGRID</formats>
+      <formats>GeoTIFF</formats>
+      <formats>GIF</formats>
+      <formats>PNG</formats>
+      <formats>JPEG</formats>
+      <formats>TIFF</formats>
+      <formats>GTOPO30</formats>
+    </supportedFormats>
+    <supportedInterpolations default="nearest neighbor">
+      <interpolationMethod>nearest neighbor</interpolationMethod>
+      <interpolationMethod>bilinear</interpolationMethod>
+      <interpolationMethod>bicubic</interpolationMethod>
+    </supportedInterpolations>
+  </CoverageOffering>
+  <PreferredFormat>GeoTIFF</PreferredFormat>
+  <NoDataValue>0</NoDataValue>
+  <BandIdentifier>Band</BandIdentifier>
+  <BandCount>1</BandCount>
+  <BandType>Byte</BandType>
+</WCS_GDAL>

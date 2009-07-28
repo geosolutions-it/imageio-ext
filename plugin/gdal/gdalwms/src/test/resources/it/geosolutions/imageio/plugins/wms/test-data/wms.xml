@@ -1,19 +1,19 @@
 <GDAL_WMS>
     <Service name="WMS">
 	<Version>1.1.1</Version>
-	<ServerUrl>http://192.168.1.17:8081/geoserver/wms</ServerUrl>
+	<ServerUrl>http://labs.metacarta.com/wms/vmap0?</ServerUrl>
 	<SRS>EPSG:4326</SRS>
         <ImageFormat>image/jpeg</ImageFormat>
-        <Layers>it.geosolutions:BMNG</Layers>
-        <Styles>raster</Styles>
+        <Layers>basic</Layers>
+        <Styles></Styles>
     </Service>
     <DataWindow>
         <UpperLeftX>-180.0</UpperLeftX>
         <UpperLeftY>90.0</UpperLeftY>
         <LowerRightX>180.0</LowerRightX>
         <LowerRightY>-90.0</LowerRightY>
-        <SizeX>400</SizeX>
-        <SizeY>200</SizeY>
+        <SizeX>800</SizeX>
+        <SizeY>800</SizeY>
     </DataWindow>
     <BlockSizeX>512</BlockSizeX>
     <BlockSizeY>512</BlockSizeY>

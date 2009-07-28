@@ -1,0 +1,17 @@
+GDAL Envisat plugin
+~~~~~~~~~~~~~~~~~~~
+
+  IP Review:
+
+     * Daniele Romagnoli, December 17th, 2008
+ 
+ STATUS: OK
+
+	* Code: Clean
+
+	* Data: Waiting for confirm
+           
+* Data Credits
+  ~~~~~~~~~~~~
+  * Test code contains a reference to http://www.brockmann-consult.de/beam/data/products/ATS_TOA_1CNPDK20030504_111259_000000572016_00080_06146_0157.zip
+    waiting for more info from brockmann-consult
