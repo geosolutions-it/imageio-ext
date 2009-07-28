@@ -42,7 +42,7 @@ public class EsriHdrTest extends AbstractGDALTest {
      * @throws FileNotFoundException
      * @throws IOException
      */
-	@Test
+    @Test
     public void testRead() throws IOException, FileNotFoundException {
         if (!isGDALAvailable) {
             return;

@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadataFormat;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
 import javax.imageio.metadata.IIOMetadataNode;
@@ -643,54 +644,56 @@ public final class GDALUtilities {
 	//
 	// ////////////////////////////////////////////////////////////////////////
 	public static String buildCRSProperties(RenderedImage ri, final int index) {
-	    GDALImageReader reader = (GDALImageReader) ri.getProperty(ImageReadDescriptor.PROPERTY_NAME_IMAGE_READER);
-	
-	    StringBuffer sb = new StringBuffer("CRS Information:").append(newLine);
-	    final String projection = reader.getProjection(index);
-	    if (!projection.equals(""))
-	        sb.append("Projections:").append(projection).append(newLine);
-	
-	    // Retrieving GeoTransformation Information
-	    final double[] geoTransformations = reader.getGeoTransform(index);
-	    if (geoTransformations != null) {
-	        sb.append("Geo Transformation:").append(newLine);
-	        sb
-	                .append("Origin = (")
-	                .append(Double.toString(geoTransformations[0]))
-	                .append(",")
-	                .append(Double.toString(geoTransformations[3]))
-	                .append(")")
-	                .append(newLine)
-	                .append("Pixel Size = (")
-	                .append(Double.toString(geoTransformations[1]))
-	                .append(",")
-	                .append(Double.toString(geoTransformations[5]))
-	                .append(")")
-	                .append(newLine)
-	                .append(newLine)
-	                .append(
-	                        "---------- Affine GeoTransformation Coefficients ----------")
-	                .append(newLine);
-	        for (int i = 0; i < 6; i++)
-	            sb.append("adfTransformCoeff[").append(i).append("]=").append(
-	                    Double.toString(geoTransformations[i])).append(newLine);
-	    }
-	
-	    // Retrieving Ground Control Points Information
-	    final int gcpCount = reader.getGCPCount(index);
-	    if (gcpCount != 0) {
-	        sb.append(newLine).append("Ground Control Points:").append(newLine)
-	                .append("Projections:").append(newLine).append(
-	                        reader.getGCPProjection(index)).append(newLine);
-	
-	        final List gcps = reader.getGCPs(index);
-	
-	        int size = gcps.size();
-	        for (int i = 0; i < size; i++)
-	            sb.append("GCP ").append(i + 1).append(gcps.get(i)).append(
-	                    newLine);
-	    }
-	    return sb.toString();
+	    final Object imageReader = ri.getProperty(ImageReadDescriptor.PROPERTY_NAME_IMAGE_READER);
+            StringBuffer sb = new StringBuffer("CRS Information:").append(newLine);
+            if (imageReader != null && imageReader instanceof ImageReader){
+                    final GDALImageReader reader = (GDALImageReader) imageReader;
+        	    final String projection = reader.getProjection(index);
+        	    if (!projection.equals(""))
+        	        sb.append("Projections:").append(projection).append(newLine);
+        	
+        	    // Retrieving GeoTransformation Information
+        	    final double[] geoTransformations = reader.getGeoTransform(index);
+        	    if (geoTransformations != null) {
+        	        sb.append("Geo Transformation:").append(newLine);
+        	        sb
+        	                .append("Origin = (")
+        	                .append(Double.toString(geoTransformations[0]))
+        	                .append(",")
+        	                .append(Double.toString(geoTransformations[3]))
+        	                .append(")")
+        	                .append(newLine)
+        	                .append("Pixel Size = (")
+        	                .append(Double.toString(geoTransformations[1]))
+        	                .append(",")
+        	                .append(Double.toString(geoTransformations[5]))
+        	                .append(")")
+        	                .append(newLine)
+        	                .append(newLine)
+        	                .append(
+        	                        "---------- Affine GeoTransformation Coefficients ----------")
+        	                .append(newLine);
+        	        for (int i = 0; i < 6; i++)
+        	            sb.append("adfTransformCoeff[").append(i).append("]=").append(
+        	                    Double.toString(geoTransformations[i])).append(newLine);
+        	    }
+        	
+        	    // Retrieving Ground Control Points Information
+        	    final int gcpCount = reader.getGCPCount(index);
+        	    if (gcpCount != 0) {
+        	        sb.append(newLine).append("Ground Control Points:").append(newLine)
+        	                .append("Projections:").append(newLine).append(
+        	                        reader.getGCPProjection(index)).append(newLine);
+        	
+        	        final List gcps = reader.getGCPs(index);
+        	
+        	        int size = gcps.size();
+        	        for (int i = 0; i < size; i++)
+        	            sb.append("GCP ").append(i + 1).append(gcps.get(i)).append(
+        	                    newLine);
+        	    }
+            }
+            return sb.toString();
 	}
 
 	// ///////////////////////////////////////////////////////////////////////
@@ -705,28 +708,28 @@ public final class GDALUtilities {
 	        final MetadataChoice metadataFields, final int index) {
 	    try {
 	        final String newLine = System.getProperty("line.separator");
-	
-	        GDALImageReader reader = (GDALImageReader) ri.getProperty(ImageReadDescriptor.PROPERTY_NAME_IMAGE_READER);
-	
+	        final Object imageReader = ri.getProperty(ImageReadDescriptor.PROPERTY_NAME_IMAGE_READER);
 	        StringBuffer sb = new StringBuffer("");
-	
-	        switch (metadataFields) {
-	        case ONLY_IMAGE_METADATA:
-	        case EVERYTHING:
-	            sb.append(getImageMetadata(reader, index));
-	            break;
-	        case ONLY_STREAM_METADATA:
-	            sb.append(getStreamMetadata(reader));
-	            break;
-	        case STREAM_AND_IMAGE_METADATA:
-	            sb.append(getImageMetadata(reader, index)).append(newLine)
-	                    .append(getStreamMetadata(reader));
-	            break;
+	        if (imageReader != null && imageReader instanceof ImageReader){
+        	        final GDALImageReader reader = (GDALImageReader) imageReader;
+        	        switch (metadataFields) {
+        	        case ONLY_IMAGE_METADATA:
+        	        case EVERYTHING:
+        	            sb.append(getImageMetadata(reader, index));
+        	            break;
+        	        case ONLY_STREAM_METADATA:
+        	            sb.append(getStreamMetadata(reader));
+        	            break;
+        	        case STREAM_AND_IMAGE_METADATA:
+        	            sb.append(getImageMetadata(reader, index)).append(newLine)
+        	                    .append(getStreamMetadata(reader));
+        	            break;
+        	        }
 	        }
-	
 	        return sb.toString();
 	    } catch (Exception e) {
-	        e.printStackTrace();
+	        if (LOGGER.isLoggable(Level.WARNING))
+	            LOGGER.warning(e.getLocalizedMessage());
 	        return "";
 	    }
 	}
