@@ -47,7 +47,7 @@ import org.junit.Test;
 public class ECWTest extends AbstractGDALTest {
     
     private final static boolean isDriverAvailable = isGDALAvailable && 
-    GDALUtilities.isDriverAvailable("JP2KAK");
+    GDALUtilities.isDriverAvailable("ECW");
 
     private final static String ECWPSkipTest = "ecwp://Set a valid link";
 
