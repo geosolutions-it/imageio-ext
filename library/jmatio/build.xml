@@ -1,0 +1,132 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== 
+     JMatIO
+     The Matlab MAT-file IO API in Java
+                   
+     wgradkowski                                                                
+     ====================================================================== -->
+<project name="JMatIO" default="package">
+	<description>
+		The Matlab MAT-file IO API in Java
+    </description>
+
+	<!-- ================================= 
+          target: init              
+         ================================= -->
+	<target name="init" description="--> initialization">
+		
+		<property name="name" value="jmatio"/>
+		<property name="version" value="0.2"/>
+		<property name="author" value="Wojciech Gradkowski"/>
+		<property name="year" value="2007"/>
+
+		
+		
+		<property name="dev.dir" location="${basedir}"/>
+		<property name="dev.src" location="${dev.dir}\prod"/>
+		<property name="dev.extern" location="${dev.dir}\extern"/>
+		<property name="dev.native" location="${dev.dir}\native"/>
+		<property name="dev.test" location="${dev.dir}\test"/>
+
+		<property name="build.dir" location="${basedir}\build\JMatIO"/>
+		<property name="build.src" location="${build.dir}\src"/>
+		<property name="build.bin" location="${build.dir}\bin"/>
+		<property name="build.extern" location="${build.dir}\extern"/>
+		<property name="build.native" location="${build.dir}\native"/>
+		<property name="build.package" location="${build.dir}\lib"/>
+		<property name="build.test" location="${build.dir}\test"/>
+		<property name="build.resource" location="${build.dir}\"/>
+		<property name="build.javadocs" location="${build.dir}\doc"/>
+		
+	</target>
+
+	<!-- ================================= 
+          target: prepare-src              
+         ================================= -->
+	<target name="prepare-src" depends="init" description="--> Copies source folder">
+		<mkdir dir="${build.src}"/>
+		<copy todir="${build.src}">
+			<fileset dir="${dev.src}">
+				<include name="**/*.java"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- ================================= 
+          target: copy-resources              
+         ================================= -->
+	<target name="copy-resources" depends="init" description="--> Copies resource files">
+		<copy todir="${build.resource}">
+			<fileset dir="${dev.dir}">
+				<include name="**/*.txt"/>
+			</fileset>
+		</copy>
+		<copy todir="${build.test}">
+			<fileset dir="${dev.test}"/>
+		</copy>
+	</target>
+
+	<!-- ================================= 
+          target: compile              
+         ================================= -->
+	<target name="compile" depends="prepare-src, copy-resources" description="--> Compiles source folder">
+		<mkdir dir="${build.bin}"/>
+		<javac srcdir="${build.src}" 
+			   destdir="${build.bin}" 
+			   classpath="" 
+			   debug="no"
+			   optimize="yes"
+			   target="1.5"
+		/>
+	</target>
+	
+	
+	<!-- ================================= 
+          target: package              
+         ================================= -->
+    <target name="package" depends="compile" description="--> Creates a .jar package">
+		
+        <mkdir dir="${build.bin}/META-INF"/>
+    	<manifest file="${build.bin}/META-INF/MANIFEST.MF">
+            <attribute name="Built-By" value="${user.name}"/>
+        </manifest>
+    	
+    	
+    	<mkdir dir="${build.package}"/>
+        <jar destfile="${build.package}\${name}.jar" 
+        	excludes="META-INF/MANIFEST.MF"
+        	manifest="${build.bin}/META-INF/MANIFEST.MF"
+        	basedir="${build.bin}"
+        />
+    </target>
+
+	<!-- ================================= 
+          target: clean              
+         ================================= -->
+    <target name="clean" depends="init" description="--> Performs clean">
+    	<delete includeEmptyDirs="true" quiet="true">
+        	<fileset dir="${build.bin}"/>
+	    	<fileset dir="${build.extern}"/>
+    		<fileset dir="${build.native}"/>
+    		<fileset dir="${build.package}"/>
+    		<fileset dir="${build.exec}"/>
+    	</delete>
+    </target>
+
+    <!-- =================================================================== -->
+    <!-- Creates the API documentation                                       -->
+    <!-- =================================================================== -->
+    <target name="javadoc" depends="prepare-src"
+        description="Creates the API documentation">
+        <mkdir dir="${build.javadocs}"/>
+        <javadoc packagenames="*" sourcepath="${build.src}"
+            destdir="${build.javadocs}" author="true" version="true" use="true"
+            splitindex="true" noindex="false" windowtitle="${ant.project.name} v${version}"
+            doctitle="${ant.project.name} v${version}&lt;br&gt;API Specification"
+            header="&lt;b&gt;${ant.project.name}&lt;br&gt;&lt;font size='-1'&gt;${version}&lt;/font&gt;&lt;/b&gt;"
+            bottom="Copyright &#169; ${year} ${author}. All Rights Reserved.">
+        </javadoc>
+    </target>
+	
+
+</project>
