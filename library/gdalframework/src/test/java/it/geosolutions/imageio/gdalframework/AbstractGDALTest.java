@@ -30,6 +30,15 @@ public class AbstractGDALTest  {
 
     /** A simple flag set to true in case the GDAL Library is available */
     protected final static boolean isGDALAvailable = GDALUtilities.isGDALAvailable();
+    
+    public final static String GDAL_DATA = "GDAL_DATA";
+    
+    protected final static boolean isGDALDATAEnvSet;
+    
+    static{
+        final String gdalData = System.getenv(GDAL_DATA);
+        isGDALDATAEnvSet = gdalData!=null && gdalData.trim().length()>0;
+    }
 
     protected static final Logger LOGGER = Logger.getLogger(AbstractGDALTest.class.toString());
 
@@ -51,8 +60,11 @@ public class AbstractGDALTest  {
         JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
     }
 
-	public static void warningMessage() {
-		LOGGER.info("Test file not available");
-		
-	}
+    public static void warningMessage() {
+        LOGGER.info("Test file not available");
+    }
+    
+    public static void warningMessage(final String customMessage) {
+        LOGGER.info(customMessage);
+    }
 }

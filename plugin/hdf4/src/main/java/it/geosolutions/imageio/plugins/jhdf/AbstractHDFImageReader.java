@@ -20,8 +20,8 @@ import it.geosolutions.imageio.ndplugin.BaseImageReader;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.KeyValuePair;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
-import it.geosolutions.imageio.stream.input.spi.URLImageInputStreamSpi;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
+import it.geosolutions.imageio.utilities.Utilities;
 
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -298,7 +298,7 @@ public abstract class AbstractHDFImageReader extends BaseImageReader {
         } else if (input instanceof URL) {
             final URL tempURL = (URL) input;
             if (tempURL.getProtocol().equalsIgnoreCase("file")) {
-                File file = URLImageInputStreamSpi.urlToFile(tempURL);
+                File file = Utilities.urlToFile(tempURL);
                 if (!file.isDirectory())
                     dataset = NetcdfDataset.openDataset(file.getPath());
                 else

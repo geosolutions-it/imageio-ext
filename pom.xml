@@ -76,6 +76,17 @@
       </repository>
      </distributionManagement>
    </profile>
+   <profile>
+   <id>deploygeosdi</id>
+     <distributionManagement>
+      <repository>
+       <uniqueVersion>false</uniqueVersion>
+       <id>geosdi</id>
+       <name>GeoSDI - Archiva repo</name>
+       <url>http://repo.geosdi.org/archiva/repository/geoSDI/</url>
+      </repository>
+     </distributionManagement>
+   </profile>
   <!--..................................-->
   <!--      test Repository     -->
   <!--..................................-->
@@ -554,7 +565,7 @@
       </extension>                                
    
     <!--....................................-->
-    <!-- Refractions (using wagon webdav)   -->
+    <!--        (using wagon webdav)        -->
     <!--....................................-->
       <extension>
        <groupId>org.apache.maven.wagon</groupId>

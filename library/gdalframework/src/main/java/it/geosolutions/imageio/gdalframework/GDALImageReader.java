@@ -19,6 +19,7 @@ package it.geosolutions.imageio.gdalframework;
 import it.geosolutions.imageio.core.GCP;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 import it.geosolutions.imageio.stream.input.URIImageInputStream;
+import it.geosolutions.imageio.utilities.Utilities;
 
 import java.awt.Rectangle;
 import java.awt.image.BandedSampleModel;
@@ -680,13 +681,11 @@ public abstract class GDALImageReader extends ImageReader {
             else if (input instanceof URL) {
                 final URL tempURL = (URL) input;
                 if (tempURL.getProtocol().equalsIgnoreCase("file")) {
-                    try {
-                        datasetSource = new File(URLDecoder.decode(tempURL
-                                .getFile(), "UTF-8"));
-                    } catch (UnsupportedEncodingException e) {
-                        throw new RuntimeException("Not a Valid Input ", e);
-                    }
+                        datasetSource = Utilities.urlToFile(tempURL);
                 }
+                else
+                    throw new IllegalArgumentException("Not a supported Input");
+
             } else
                 // should never happen
                 throw new RuntimeException(

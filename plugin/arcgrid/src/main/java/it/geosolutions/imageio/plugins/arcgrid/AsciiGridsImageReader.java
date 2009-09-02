@@ -20,6 +20,7 @@ import it.geosolutions.imageio.plugins.arcgrid.raster.AsciiGridRaster;
 import it.geosolutions.imageio.plugins.arcgrid.raster.EsriAsciiGridRaster;
 import it.geosolutions.imageio.plugins.arcgrid.raster.GrassAsciiGridRaster;
 import it.geosolutions.imageio.plugins.arcgrid.spi.AsciiGridsImageReaderSpi;
+import it.geosolutions.imageio.utilities.Utilities;
 
 import java.awt.Rectangle;
 import java.awt.Transparency;
@@ -34,9 +35,7 @@ import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -216,23 +215,12 @@ public final class AsciiGridsImageReader extends ImageReader {
 			}
 			// now we know it is pointing to a file
 			// let's see if it exists
-			try {
-				final File inFile = new File(URLDecoder.decode(testUrl
-						.getFile(), "UTF-8"));
-				if (!inFile.exists()) {
-					// is not a file let's reject it
-					if (LOGGER.isLoggable(Level.SEVERE))
-						LOGGER.severe("Input file does not exists!");
-					throw new IllegalArgumentException(
-							"Input file does not exists!");
-				}
-			} catch (UnsupportedEncodingException e) {
-				// a problem occurred
-				if (LOGGER.isLoggable(Level.SEVERE))
-					LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
-				final IllegalArgumentException ex = new IllegalArgumentException();
-				ex.initCause(e);
-				throw ex;
+			final File inFile = Utilities.urlToFile(testUrl);
+			if (!inFile.exists()) {
+			    // is not a file let's reject it
+			    if (LOGGER.isLoggable(Level.SEVERE))
+				LOGGER.severe("Input file does not exists!");
+			    throw new IllegalArgumentException("Input file does not exists!");
 			}
 		} else
 

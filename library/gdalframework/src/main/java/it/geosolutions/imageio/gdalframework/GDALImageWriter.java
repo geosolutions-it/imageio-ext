@@ -18,6 +18,7 @@ package it.geosolutions.imageio.gdalframework;
 
 import it.geosolutions.imageio.gdalframework.GDALUtilities.DriverCreateCapabilities;
 import it.geosolutions.imageio.stream.output.FileImageOutputStreamExt;
+import it.geosolutions.imageio.utilities.Utilities;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -1551,14 +1552,10 @@ public abstract class GDALImageWriter extends ImageWriter {
         else if (output instanceof URL) {
             final URL tempURL = (URL) output;
             if (tempURL.getProtocol().equalsIgnoreCase("file")) {
-                try {
-                    outputFile = new File(URLDecoder.decode(tempURL.getFile(),
-                            "UTF-8"));
-
-                } catch (IOException e) {
-                    throw new RuntimeException("Not a Valid Input", e);
-                }
+                    outputFile = Utilities.urlToFile(tempURL);
             }
+            else
+                throw new IllegalArgumentException("Not a Valid Input");
         }
     }
 

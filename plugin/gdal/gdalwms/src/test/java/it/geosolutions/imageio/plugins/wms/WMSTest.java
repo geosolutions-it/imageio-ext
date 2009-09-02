@@ -54,6 +54,10 @@ public class WMSTest extends AbstractGDALTest {
         if (!isDriverAvailable) {
             return;
         }
+        if (!isGDALDATAEnvSet){
+            warningMessage("GDAL_DATA environment variable has not been set. Tests are skipped");
+            return;
+        }
         File file;
         try {
             file = TestData.file(this, fileName);

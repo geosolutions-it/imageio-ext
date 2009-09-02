@@ -17,6 +17,7 @@
 package it.geosolutions.imageio.stream.input.spi;
 
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
+import it.geosolutions.imageio.utilities.Utilities;
 
 import java.io.File;
 import java.io.IOException;
@@ -90,8 +91,7 @@ public class StringImageInputStreamSpi extends ImageInputStreamSpi {
         // ////////////////////////////////////////////////////////////////////
         final URL tempURL = new URL(sourceString);
         if (tempURL.getProtocol().compareToIgnoreCase("eraf") == 0) {
-            final File tempFile = new File(URLDecoder.decode(tempURL.getFile(),
-                    "UTF-8"));
+            final File tempFile = Utilities.urlToFile(tempURL);
             if (!tempFile.exists()) {
                 if (LOGGER.isLoggable(Level.FINE))
                     LOGGER.fine("The provided input eraf does not exist.");

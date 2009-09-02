@@ -17,6 +17,7 @@
 package it.geosolutions.imageio.plugins.jp2k;
 
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
+import it.geosolutions.imageio.utilities.Utilities;
 import it.geosolutions.util.KakaduUtilities;
 
 import java.io.File;
@@ -124,12 +125,7 @@ public class JP2KKakaduImageReaderSpi extends ImageReaderSpi {
         } else if (input instanceof URL) {
             final URL tempURL = (URL) input;
             if (tempURL.getProtocol().equalsIgnoreCase("file")) {
-                try {
-                    source = new File(URLDecoder.decode(tempURL.getFile(),
-                            "UTF-8"));
-                } catch (IOException e) {
-                    throw new RuntimeException("Not a Valid Input", e);
-                }
+                source = Utilities.urlToFile(tempURL);
             }
         } else
             return false;

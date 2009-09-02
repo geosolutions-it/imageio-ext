@@ -56,7 +56,7 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
     /**
      * <code>List</code> of gdal formats supported by this plugin.
      */
-    private List supportedFormats;
+    private List<String> supportedFormats;
 
     /**
      * Methods returning the formats which are supported by a plugin.
@@ -80,7 +80,7 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
      * creation). The HDF4ImageReader will be capable of manage both formats.
      * 
      */
-    public List getSupportedFormats() {
+    public List<String> getSupportedFormats() {
         return Collections.unmodifiableList(this.supportedFormats);
     }
 
@@ -98,7 +98,7 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
             String nativeImageMetadataFormatClassName,
             String[] extraImageMetadataFormatNames,
             String[] extraImageMetadataFormatClassNames,
-            Collection supportedFormats) {
+            Collection<String> supportedFormats) {
 
         super(
                 vendorName,
@@ -219,8 +219,8 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
         if (!GDALUtilities.isGDALAvailable())
             return false;
         // now check that all the drivers are available
-        final List supportedFormats = getSupportedFormats();
-        final Iterator it = supportedFormats.iterator();
+        final List<String> supportedFormats = getSupportedFormats();
+        final Iterator<String> it = supportedFormats.iterator();
         if (!it.hasNext())
             return false;
         while (it.hasNext()) {

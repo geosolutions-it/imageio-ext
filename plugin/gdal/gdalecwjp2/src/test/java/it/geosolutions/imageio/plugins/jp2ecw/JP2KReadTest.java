@@ -74,8 +74,7 @@ public class JP2KReadTest extends AbstractGDALTest {
 	        isDriverAvailable = GDALUtilities.isDriverAvailable("JP2ECW");
 	    } catch (UnsatisfiedLinkError e) {
 	        if (LOGGER.isLoggable(Level.WARNING))
-	            LOGGER.warning(new StringBuilder("GDAL library unavailable.")
-	                    .toString());
+	            LOGGER.warning("GDAL library unavailable.");
 	        isDriverAvailable = false;
 	    }
 	}

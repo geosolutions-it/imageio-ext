@@ -19,12 +19,10 @@
  */
 package it.geosolutions.imageio.utilities;
 
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
-
 import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.Arrays;
 
 /**
@@ -38,34 +36,6 @@ public final class Utilities {
 
     private Utilities() {
 
-    }
-
-    /**
-     * Returns an {@code URI} given an inputSource which could be a {@code File},
-     * a {@code String}, an {@code URL} or a {@code FileImageInputStreamExt}.
-     * 
-     * @param source
-     * @return
-     * @throws URISyntaxException
-     */
-    public static URI getURIFromSource(Object source) {
-        URI uri = null;
-        try {
-            if (source instanceof String) {
-
-                uri = new URI((String) source);
-            } else if (source instanceof File) {
-                uri = ((File) source).toURI();
-            } else if (source instanceof URL) {
-                uri = ((URL) source).toURI();
-            } else if (source instanceof FileImageInputStreamExt) {
-                uri = (((FileImageInputStreamExt) source).getFile()).toURI();
-                // uri = new URI(((URL)source).toString());
-            }
-        } catch (URISyntaxException e) {
-            // XXX
-        }
-        return uri;
     }
 
     /**
@@ -204,6 +174,54 @@ public final class Utilities {
         return name;
     }
 
+    /**
+     * Takes a URL and converts it to a File. The attempts to deal with 
+     * Windows UNC format specific problems, specifically files located
+     * on network shares and different drives.
+     * 
+     * If the URL.getAuthority() returns null or is empty, then only the
+     * url's path property is used to construct the file. Otherwise, the
+     * authority is prefixed before the path.
+     * 
+     * It is assumed that url.getProtocol returns "file".
+     * 
+     * Authority is the drive or network share the file is located on.
+     * Such as "C:", "E:", "\\fooServer"
+     * 
+     * @param url a URL object that uses protocol "file"
+     * @return a File that corresponds to the URL's location
+     */
+    public static File urlToFile(URL url) {
+        String string = url.toExternalForm();
+
+        try {
+            string = URLDecoder.decode(string, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            // Shouldn't happen
+        }
+        
+        String path3;
+        String simplePrefix = "file:/";
+        String standardPrefix = simplePrefix+"/";
+        
+        if( string.startsWith(standardPrefix) ){
+            path3 = string.substring(standardPrefix.length());
+        } else if( string.startsWith(simplePrefix)){
+            path3 = string.substring(simplePrefix.length()-1);            
+        } else {
+            String auth = url.getAuthority();
+            String path2 = url.getPath().replace("%20", " ");
+            File f = null;
+            if (auth != null && !auth.equals("")) {
+                path3 = "//" + auth + path2;
+            } else {
+                path3 = path2;
+            }
+        }
+        
+        return new File(path3);
+    }
+    
     /**
      * Returns a short class name for the specified object. This method will
      * omit the package name. For example, it will return "String" instead of
