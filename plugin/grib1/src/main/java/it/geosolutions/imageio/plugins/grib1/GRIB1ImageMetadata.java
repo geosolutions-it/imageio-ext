@@ -161,14 +161,11 @@ public class GRIB1ImageMetadata extends BaseImageMetadata {
      *                the name of the requested metadata format.
      */
     public Node getAsTree(String formatName) {
-        if (GRIB1ImageMetadata.nativeMetadataFormatName
-                .equalsIgnoreCase(formatName))
+        if (GRIB1ImageMetadata.nativeMetadataFormatName.equalsIgnoreCase(formatName))
             return createNativeTree();
-        else if (CoreCommonImageMetadata.nativeMetadataFormatName
-                .equalsIgnoreCase(formatName))
+        else if (CoreCommonImageMetadata.nativeMetadataFormatName.equalsIgnoreCase(formatName))
             return super.createCommonNativeTree();
-        throw new IllegalArgumentException(formatName
-                + " is not a supported format name");
+        throw new IllegalArgumentException(formatName+ " is not a supported format name");
     }
 
     private Node createNativeTree() {

@@ -80,24 +80,27 @@ import ucar.nc2.dataset.VariableDS;
  */
 public class GRIB1ImageReader extends BaseImageReader {
 	
+    protected final static Logger LOGGER = Logger.getLogger(GRIB1ImageReader.class.toString());
+    
 	private Map<String,Variable> boundsMap = new HashMap<String,Variable>();
+	
 	private Map<String,CoordinateAxis> coordSysMap = new HashMap<String,CoordinateAxis>();
 	
 	private Variable horizontalGrid;
 	
-    private int numGlobalAttributes;
-	
     private NetcdfDataset dataset;
-    
-    protected final static Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.grib1");
     
 	private HashMap<Range, GribVariableWrapper> indexMap;
 	
-	class VerticalLevel{
+	static class VerticalLevel{
 		
-		public VerticalLevel(final int levelType, final String levelName, 
-				final String levelDescription, final String levelUnits, 
-				final boolean hasExplicitVerticalAxis, final String axisType,
+		public VerticalLevel(
+				final int levelType, 
+				final String levelName, 
+				final String levelDescription, 
+				final String levelUnits, 
+				final boolean hasExplicitVerticalAxis, 
+				final String axisType,
 				final String positive){
 			this.levelType=levelType;
 			this.levelDescription=levelDescription;
@@ -198,11 +201,7 @@ public class GRIB1ImageReader extends BaseImageReader {
 		private VerticalLevel verticalLevel;
     	
 		private Variable variable;
-
-        public Variable getVariable() {
-			return variable;
-		}
-
+		
 		private String name;
 
         private int width;
@@ -214,10 +213,6 @@ public class GRIB1ImageReader extends BaseImageReader {
         private SampleModel sampleModel;
 
         private int rank;
-    	
-        public int getRank() {
-			return rank;
-		}
 
         private String paramID;
 
@@ -241,7 +236,15 @@ public class GRIB1ImageReader extends BaseImageReader {
 
 		private String parameterName;
 		
-		public String getName() {
+        public Variable getVariable() {
+			return variable;
+		}
+    	
+        public int getRank() {
+			return rank;
+		}
+
+        public String getName() {
 			return name;
 		}
 
@@ -535,7 +538,6 @@ public class GRIB1ImageReader extends BaseImageReader {
      * @throws exception
      *                 {@link InvalidRangeException}
      */
-    @SuppressWarnings("unchecked")
     private synchronized void initialize() throws InvalidRangeException {
         int numImages = 0;
         indexMap = new HashMap<Range, GribVariableWrapper>();
@@ -575,10 +577,10 @@ public class GRIB1ImageReader extends BaseImageReader {
             }
         }
         setNumImages(numImages);
-        numGlobalAttributes = 0;
-        final List<Attribute> globalAttributes = dataset.getGlobalAttributes();
-        if (globalAttributes != null && !globalAttributes.isEmpty())
-            numGlobalAttributes = globalAttributes.size();
+//        numGlobalAttributes = 0;
+//        final List<Attribute> globalAttributes = dataset.getGlobalAttributes();
+//        if (globalAttributes != null && !globalAttributes.isEmpty())
+//            numGlobalAttributes = globalAttributes.size();
     }
 
     /**

@@ -16,18 +16,14 @@
 package it.geosolutions.imageio.plugins.grib1;
 
 import it.geosolutions.imageio.ndplugin.BaseImageReaderSpi;
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
 import java.util.Locale;
 import java.util.logging.Level;
 
 import javax.imageio.ImageReader;
-import javax.imageio.spi.ServiceRegistry;
 
 import ucar.nc2.NetcdfFile;
 

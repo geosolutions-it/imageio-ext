@@ -23,21 +23,21 @@ import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 
 import org.junit.Assert;
-
+/**
+ * 
+ * @author Simone Giannecchini, GeoSolutions
+ *
+ */
 public class GRIB1ReadTest {
 
-    private static final Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.plugins.grib1");
-
-    final static String dataPathPrefix = "y:/data/grib/";
-
-    final static String fileName = "sample.grb";
+    private static final Logger LOGGER = Logger.getLogger(GRIB1ReadTest.class.toString());
 
     /**
      * Simple read from a Grib File containing a lot of records
@@ -57,28 +57,36 @@ public class GRIB1ReadTest {
             }
         });
         for (File inputFile : files) {
+        	if(LOGGER.isLoggable(Level.INFO))
+        		LOGGER.info("Testing file "+ inputFile.getAbsolutePath());
 
-            final ImageReader reader = new GRIB1ImageReaderSpi()
-                    .createReaderInstance();
-            reader.setInput(inputFile);
-            final int nImages = reader.getNumImages(false);
-            for (int index = 0; index < nImages; index++) {
-                final ImageReadParam param = new ImageReadParam();
-                param.setSourceSubsampling(2, 2, 0, 0);
-
-                RenderedImage ri = reader.read(index, param);
-                if (TestData.isInteractiveTest())
-                    ImageIOUtilities.visualize(ri);
-                else
-                    Assert.assertNotNull(ri.getData());
-                ImageIOUtilities.displayImageIOMetadata(reader
-                        .getImageMetadata(index).getAsTree(
-                                BaseImageMetadata.nativeMetadataFormatName));
-                ImageIOUtilities.displayImageIOMetadata(reader
-                        .getImageMetadata(index).getAsTree(
-                                GRIB1ImageMetadata.nativeMetadataFormatName));
+            ImageReader reader = new GRIB1ImageReaderSpi().createReaderInstance();
+            try{
+	            reader.setInput(inputFile);
+	            final int nImages = reader.getNumImages(false);
+	            for (int index = 0; index < nImages; index++) {
+	                final ImageReadParam param = new ImageReadParam();
+	                param.setSourceSubsampling(2, 2, 0, 0);
+	
+	                RenderedImage ri = reader.read(index, param);
+	                if (TestData.isInteractiveTest())
+	                    ImageIOUtilities.visualize(ri);
+	                else
+	                    Assert.assertNotNull(ri.getData());
+	                ImageIOUtilities.displayImageIOMetadata(reader.getImageMetadata(index).getAsTree(BaseImageMetadata.nativeMetadataFormatName));
+	                ImageIOUtilities.displayImageIOMetadata(reader.getImageMetadata(index).getAsTree(GRIB1ImageMetadata.nativeMetadataFormatName));
+	            }
             }
-            reader.dispose();
+            finally{
+            	try{
+            		reader.dispose();
+            	}
+            	catch (Throwable e) {
+					if(LOGGER.isLoggable(Level.FINE))
+						LOGGER.log(Level.FINE,e.getLocalizedMessage(),e);
+				}
+            }
+            
         }
     }
 }
