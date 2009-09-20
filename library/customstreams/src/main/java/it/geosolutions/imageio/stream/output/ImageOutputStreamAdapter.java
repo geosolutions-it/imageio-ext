@@ -52,14 +52,14 @@ public class ImageOutputStreamAdapter extends ImageOutputStreamImpl {
      * @see javax.imageio.stream.ImageInputStreamImpl#read()
      */
     public int read() throws IOException {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
      * @see javax.imageio.stream.ImageInputStreamImpl#read(byte[], int, int)
      */
     public int read(byte[] b, int off, int len) throws IOException {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Operation not supported.");
     }
 
     /**
@@ -73,7 +73,10 @@ public class ImageOutputStreamAdapter extends ImageOutputStreamImpl {
      * @see javax.imageio.stream.ImageInputStreamImpl#close()
      */
     public void close() throws IOException {
-        super.close();
-        os.close();
+    	try{
+    		super.close();
+    	}finally{
+    		os.close();
+    	}
     }
 }
