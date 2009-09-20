@@ -19,8 +19,6 @@ import it.geosolutions.imageio.core.CoreCommonImageMetadata;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.imageio.ImageTypeSpecifier;
 
@@ -36,9 +34,6 @@ import org.w3c.dom.Node;
 public abstract class BaseImageMetadata extends CoreCommonImageMetadata {
 
     public final static String ATTRIBUTES_NODE = "Attributes";
-
-    /** The LOGGER for this class. */
-    private static final Logger LOGGER = Logger.getLogger(BaseImageMetadata.class.toString());
 
     protected final BaseImageReader imageReader;
 
@@ -71,8 +66,7 @@ public abstract class BaseImageMetadata extends CoreCommonImageMetadata {
         try {
             setMembers(imageReader);
         } catch (IOException e) {
-            if (LOGGER.isLoggable(Level.WARNING))
-                LOGGER.log(Level.WARNING,"Error setting metadata \n"+ e.getLocalizedMessage(),e);
+            throw new IllegalArgumentException(e);
         }
     }
 

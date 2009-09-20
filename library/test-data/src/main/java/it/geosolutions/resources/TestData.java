@@ -129,9 +129,9 @@ public class TestData implements Runnable {
 
     /**
      * The files to delete at shutdown time. {@link File#deleteOnExit} alone doesn't seem
-     * suffisient since it will preserve any overwritten files.
+     * sufficient since it will preserve any overwritten files.
      */
-    private static final LinkedList toDelete = new LinkedList();
+    private static final LinkedList<Deletable> toDelete = new LinkedList<Deletable>();
 
     /**
      * Register the thread to be automatically executed at shutdown time.
@@ -187,7 +187,8 @@ public class TestData implements Runnable {
      *
      * @see #url
      */
-    public static URL getResource(final Object caller, String name) {
+    @SuppressWarnings("unchecked")
+	public static URL getResource(final Object caller, String name) {
         if (name == null || (name=name.trim()).length() == 0) {
             name = DIRECTORY;
         } else {
@@ -317,32 +318,6 @@ public class TestData implements Runnable {
     }
 
     /**
-     * Provides a {@link java.io.BufferedReader} for named test data.
-     * It is the caller responsability to close this reader after usage.
-     *
-     * @param  caller The class of the object associated with named data.
-     * @param  name of test data to load.
-     * @return The reader, or {@code null} if the named test data are not found.
-     * @throws IOException if an error occurs during an input operation.
-     *
-     * @deprecated Use {@link #openReader} instead. The {@code openReader} method throws an
-     *  exception if the resource is not found, instead of returning null. This make debugging
-     *  easier, since it replaces infamous {@link NullPointerException} by a more explicit error
-     *  message during tests. Furthermore, the {@code openReader} name make it more obvious that
-     *  the stream is not closed automatically and is also consistent with other method names in
-     *  this class.
-     */
-    public static BufferedReader getReader(final Object caller, final String name)
-            throws IOException
-    {
-        final URL url = getResource(caller, name);
-        if (url == null) {
-            return null; // echo handling of getResource( ... )
-        }
-        return new BufferedReader(new InputStreamReader(url.openStream()));
-    }
-
-    /**
      * Provides a channel for named test data. It is the caller responsability to close this
      * chanel after usage.
      *
@@ -389,10 +364,10 @@ public class TestData implements Runnable {
         final File        file    = file(caller, name);
         final File        parent  = file.getParentFile().getAbsoluteFile();
         final ZipFile     zipFile = new ZipFile(file);
-        final Enumeration entries = zipFile.entries();
+        final Enumeration<? extends ZipEntry> entries = zipFile.entries();
         final byte[]      buffer  = new byte[4096];
         while (entries.hasMoreElements()) {
-            final ZipEntry entry = (ZipEntry) entries.nextElement();
+            final ZipEntry entry = entries.nextElement();
             if (entry.isDirectory()) {
                 continue;
             }
@@ -522,8 +497,8 @@ public class TestData implements Runnable {
                  */
                 System.gc();
                 System.runFinalization();
-                for (final Iterator it=toDelete.iterator(); it.hasNext();) {
-                    final Deletable f = (Deletable) it.next();
+                for (final Iterator<Deletable> it=toDelete.iterator(); it.hasNext();) {
+                    final Deletable f = it.next();
                     try {
                         if (f.delete()) {
                             it.remove();

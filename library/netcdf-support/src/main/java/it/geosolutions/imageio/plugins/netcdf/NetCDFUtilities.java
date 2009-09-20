@@ -540,8 +540,9 @@ public class NetCDFUtilities {
     public static NetcdfDataset getDataset(Object input) throws IOException {
         NetcdfDataset dataset = null;
         if (input instanceof File) {
-            if (!((File) input).isDirectory())
-                dataset = NetcdfDataset.openDataset(((File) input).getPath());
+        	final File file= (File) input;
+            if (!file.isDirectory())
+                dataset = NetcdfDataset.openDataset(file.getPath());
             else
                 throw new IllegalArgumentException("Error occurred during NetCDF file reading: The input file is a Directory.");
         } else if (input instanceof String) {

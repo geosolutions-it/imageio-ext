@@ -22,7 +22,6 @@ import java.awt.image.SampleModel;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
@@ -41,9 +40,6 @@ import org.w3c.dom.Node;
  * @author Daniele Romagnoli, GeoSolutions.
  */
 public abstract class CoreCommonImageMetadata extends IIOMetadata {
-
-    /** The LOGGER for this class. */
-    private static final Logger LOGGER = Logger.getLogger(CoreCommonImageMetadata.class.toString());
 
     /**
      * The name of the native metadata format for this object.
