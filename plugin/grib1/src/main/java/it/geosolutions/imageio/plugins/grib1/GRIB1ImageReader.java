@@ -470,10 +470,7 @@ public class GRIB1ImageReader extends BaseImageReader {
 					return axis;
 			}
 			return temporalAxis;
-				
-			
 		}
-
 
 		public String getParameterUnit() {
 			return parameterUnit;

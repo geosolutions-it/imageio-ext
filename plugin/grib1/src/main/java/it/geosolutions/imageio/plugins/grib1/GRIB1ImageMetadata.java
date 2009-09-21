@@ -46,21 +46,31 @@ public class GRIB1ImageMetadata extends BaseImageMetadata {
 
     public final static String PDS = "ProductDefinitionSection";
     
-    public final static String GRID_DELTA_X = "GridDeltaX";
+    public final static String GRID_DELTA_X = "Dx";
 
-    public final static String GRID_DELTA_Y = "GridDeltaY";
-    
+    public final static String GRID_DELTA_Y = "Dy";
+
     public final static String GRID_N_X = "GridNX";
 
     public final static String GRID_N_Y = "GridNY";
 
-    public final static String GRID_LAT_1 = "GridLat1";
+    public final static String GRID_LAT_1 = "La1";
 
-    public final static String GRID_LAT_2 = "GridLat2";
+    public final static String GRID_LAT_2 = "La2";
 
-    public final static String GRID_LON_1 = "GridLon1";
+//  public final static String GRID_LAT_1 = "GridLat1";
+//  public final static String GRID_LAT_2 = "GridLat2";
+//  public final static String GRID_LON_1 = "GridLon1";
+//  public final static String GRID_LON_2 = "GridLon2";
+//  public final static String GRID_DELTA_X = "GridDeltaX";
+//  public final static String GRID_DELTA_Y = "GridDeltaY";
+//  public final static String GRID_TYPE = "GridType";
+    
+    public final static String GRID_TYPE = "grid_type";
+    
+    public final static String GRID_LON_1 = "Lo1";
 
-    public final static String GRID_LON_2 = "GridLon2";
+    public final static String GRID_LON_2 = "Lo2";
 
     public final static String GRID_LATIN_1 = "GridLatin1";
 
@@ -81,8 +91,6 @@ public class GRIB1ImageMetadata extends BaseImageMetadata {
     public final static String GRID_LAT_SPST = "GridLatSPST";
 
     public final static String GRID_LON_SPST = "GridLonSPST";
-
-    public final static String GRID_TYPE = "GridType";
 
     public final static String PROD_TIME_RANGE_INDICATOR = "ProductTimeRangeIndicator";
     

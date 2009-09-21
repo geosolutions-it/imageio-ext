@@ -89,7 +89,7 @@ public class GRIB1Utilities {
 
 	final static int UNDEFINED_NUMBER = Integer.MIN_VALUE;
 
-	final static String VALUES_SEPARATOR = " ";
+	public final static String VALUES_SEPARATOR = " ";
 
 	private GRIB1Utilities() {
 
