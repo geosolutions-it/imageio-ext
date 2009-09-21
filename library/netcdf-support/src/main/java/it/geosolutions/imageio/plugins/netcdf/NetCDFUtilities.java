@@ -23,11 +23,17 @@ import java.awt.image.DataBuffer;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.Format;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,6 +42,7 @@ import ucar.ma2.Range;
 import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
 import ucar.nc2.VariableIF;
+import ucar.nc2.constants.AxisType;
 import ucar.nc2.dataset.CoordinateAxis1D;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dataset.VariableDS;
@@ -522,9 +529,28 @@ public class NetCDFUtilities {
 //        else if (checkType == CheckType.PE_MODEL)
 //            return TSS_PE_ACCEPTED.containsKey(name);
         return true;
-
     }
 
+    /**
+     * 
+     * @param value
+     * @return
+     */
+    public static String trimFractionalPart(String value) {
+        value = value.trim();
+        for (int i = value.length(); --i >= 0;) {
+            switch (value.charAt(i)) {
+            case '0':
+                continue;
+            case '.':
+                return value.substring(0, i);
+            default:
+                return value;
+            }
+        }
+        return value;
+    }
+    
     /**
      * Returns a {@code NetcdfDataset} given an input object
      * 
@@ -570,6 +596,102 @@ public class NetCDFUtilities {
                 throw new IllegalArgumentException("Error occurred during NetCDF file reading: The input file is a Directory.");
         }
         return dataset;
+    }
+    
+    /**
+     * Returns a format to use for parsing values along the specified axis type.
+     * This method is invoked when parsing the date part of axis units like "<cite>days
+     * since 1990-01-01 00:00:00</cite>". Subclasses should override this
+     * method if the date part is formatted in a different way. The default
+     * implementation returns the following formats:
+     * <p>
+     * <ul>
+     * <li>For {@linkplain AxisType#Time time axis}, a {@link DateFormat}
+     * using the {@code "yyyy-MM-dd HH:mm:ss"} pattern in UTC
+     * {@linkplain TimeZone timezone}.</li>
+     * <li>For all other kind of axis, a {@link NumberFormat}.</li>
+     * </ul>
+     * <p>
+     * The {@linkplain Locale#CANADA Canada locale} is used by default for most
+     * formats because it is relatively close to ISO (for example regarding days
+     * and months order in dates) while using the English symbols.
+     * 
+     * @param type
+     *                The type of the axis.
+     * @param prototype
+     *                An example of the values to be parsed. Implementations may
+     *                parse this prototype when the axis type alone is not
+     *                sufficient. For example the {@linkplain AxisType#Time time
+     *                axis type} should uses the {@code "yyyy-MM-dd"} date
+     *                pattern, but some files do not follow this convention and
+     *                use the default local instead.
+     * @return The format for parsing values along the axis.
+     */
+    public static Format getAxisFormat(final AxisType type,
+            final String prototype) {
+        if (!type.equals(AxisType.Time)) {
+            return NumberFormat.getNumberInstance(Locale.CANADA);
+        }
+        char dateSeparator = '-'; // The separator used in ISO format.
+        boolean yearLast = false; // Year is first in ISO pattern.
+        boolean namedMonth = false; // Months are numbers in the ISO pattern.
+        boolean addT = false;
+        boolean appendZ = false; 
+        if (prototype != null) {
+            /*
+             * Performs a quick check on the prototype content. If the prototype
+             * seems to use a different date separator than the ISO one, we will
+             * adjust the pattern accordingly. Also checks if the year seems to
+             * appears last rather than first, and if the month seems to be
+             * written using letters rather than digits.
+             */
+            int field = 1;
+            int digitCount = 0;
+
+            final int length = prototype.length();
+            for (int i = 0; i < length; i++) {
+                final char c = prototype.charAt(i);
+                if (Character.isWhitespace(c)) {
+                    break; // Checks only the dates, ignore the hours.
+                }
+                if (Character.isDigit(c)) {
+                    digitCount++;
+                    continue; // Digits are legal in all cases.
+                }
+                if (field == 2 && Character.isLetter(c)) {
+                    namedMonth = true;
+                    continue; // Letters are legal for month only.
+                }
+                if (field == 1) {
+                    dateSeparator = c;
+                }
+                if (c=='T')
+                	addT = true;
+                if (c=='Z' && i==length-1)
+                	appendZ = true;
+                digitCount = 0;
+                field++;
+            }
+            if (digitCount >= 4) {
+                yearLast = true;
+            }
+        }
+        String pattern;
+        if (yearLast) {
+            pattern = namedMonth ? "dd-MMM-yyyy" : "dd-MM-yyyy";
+        } else {
+            pattern = namedMonth ? "yyyy-MMM-dd" : "yyyy-MM-dd";
+        }
+        pattern = pattern.replace('-', dateSeparator);
+        pattern += addT? "'T'":" ";
+        pattern += prototype != null && prototype.lastIndexOf(":") >= 16 ? "HH:mm:ss"
+                : "HH:mm";
+        //TODO: Improve me:
+        //Handle timeZone
+        pattern += appendZ?"'Z'":"";
+        final DateFormat format = new SimpleDateFormat(pattern, Locale.CANADA);
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return format;
     }
 
     /**
