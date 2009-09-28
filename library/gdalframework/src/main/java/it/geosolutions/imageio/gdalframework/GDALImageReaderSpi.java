@@ -16,12 +16,14 @@
  */
 package it.geosolutions.imageio.gdalframework;
 
+import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
+import it.geosolutions.imageio.stream.input.spi.StringImageInputStreamSpi;
+import it.geosolutions.imageio.stream.input.spi.URLImageInputStreamSpi;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,6 +32,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.imageio.ImageIO;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
@@ -47,16 +50,25 @@ import org.gdal.gdalconst.gdalconst;
  */
 public abstract class GDALImageReaderSpi extends ImageReaderSpi {
 
-    private static final Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.gdalframework");
+    private static final Logger LOGGER = Logger.getLogger(GDALImageReaderSpi.class.toString());
     static {
         GDALUtilities.loadGDAL();
     }
 
     /**
+     * Cached instance of {@link StringImageInputStreamSpi} for creating streams out of {@link String}s.
+     */
+    private final static StringImageInputStreamSpi stringSPI= new StringImageInputStreamSpi();    
+    
+    /**
+     * Cached instance of {@link URLImageInputStreamSpi} for creating streams out of {@link URL}s.
+     */
+    private final static URLImageInputStreamSpi URLSPI= new URLImageInputStreamSpi();   
+   
+    /**
      * <code>List</code> of gdal formats supported by this plugin.
      */
-    private List supportedFormats;
+    private List<String> supportedFormats;
 
     /**
      * Methods returning the formats which are supported by a plugin.
@@ -80,13 +92,13 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
      * creation). The HDF4ImageReader will be capable of manage both formats.
      * 
      */
-    public List getSupportedFormats() {
+    public List<String> getSupportedFormats() {
         return Collections.unmodifiableList(this.supportedFormats);
     }
 
     public GDALImageReaderSpi(String vendorName, String version,
             String[] names, String[] suffixes, String[] MIMETypes,
-            String readerClassName, Class[] inputTypes,
+            String readerClassName, Class<?>[] inputTypes,
             String[] writerSpiNames,
             boolean supportsStandardStreamMetadataFormat,
             String nativeStreamMetadataFormatName,
@@ -98,7 +110,7 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
             String nativeImageMetadataFormatClassName,
             String[] extraImageMetadataFormatNames,
             String[] extraImageMetadataFormatClassNames,
-            Collection supportedFormats) {
+            Collection<String> supportedFormats) {
 
         super(
                 vendorName,
@@ -119,7 +131,7 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
                 nativeImageMetadataFormatClassName,
                 extraImageMetadataFormatNames,
                 extraImageMetadataFormatClassNames);
-        this.supportedFormats = new ArrayList(supportedFormats);
+        this.supportedFormats = new ArrayList<String>(supportedFormats);
     }
 
     /**
@@ -131,45 +143,76 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
      * 		<code>true</code> if the input can be successfully decoded.
      */
     public boolean canDecodeInput(Object input) throws IOException {
+    	if(input==null)
+    		return false;
         if (LOGGER.isLoggable(Level.FINE))
-            LOGGER.fine("Can Decode Input");
+            LOGGER.fine("Can Decode Input called with object "+input.toString());
 
-        if (input instanceof ImageInputStream)
-            ((ImageInputStream) input).mark();
 
         // if input source is a string,
-        // convert input from String to File
+        // convert input from String to File the try URL
         if (input instanceof String)
-            input = new File((String) input);
+        {
+        	try{
+        		input =stringSPI.createInputStreamInstance(input,ImageIO.getUseCache(),ImageIO.getCacheDirectory());
+        	}
+        	catch (Throwable e) {
+                if (LOGGER.isLoggable(Level.FINE))
+                    LOGGER.log(Level.FINE,"Input filed does not exist or cannot be read",e);
+                return false;
+			}
+        }
 
         // if input source is an URL, open an InputStream
         if (input instanceof URL) {
-            final URL tempURL = (URL) input;
-            if (tempURL.getProtocol().equalsIgnoreCase("file"))
-                input = new File(URLDecoder.decode(tempURL.getFile(), "UTF8"));
-            else
-                input = ((URL) input).openStream();
+            try{
+            	input= URLSPI.createInputStreamInstance(input,ImageIO.getUseCache(),ImageIO.getCacheDirectory());
+            }catch (Throwable e) {
+                if (LOGGER.isLoggable(Level.FINE))
+                    LOGGER.log(Level.FINE,"Input filed does not exist or cannot be read",e);
+                return false;
+			}
         }
 
         // if input source is a File,
         // convert input from File to FileInputStream
         if (input instanceof File)
-            input = new FileImageInputStreamExtImpl((File) input);
+        	 try{
+        		 input = new FileImageInputStreamExtImpl((File) input);
+             }catch (Throwable e) {
+                 if (LOGGER.isLoggable(Level.FINE))
+                     LOGGER.log(Level.FINE,"Input filed does not exist or cannot be read",e);
+                 return false;
+ 			}
+        
+        assert input instanceof ImageInputStream;
+        // at this point it must be an instance of FileImageInputStreamExt to be able to proceed
+        if(!(input instanceof FileImageInputStreamExt))
+        	return false;
+        final FileImageInputStreamExt stream=(FileImageInputStreamExt) input;
+        	
 
         boolean isInputDecodable = false;
         // Checking if this specific SPI can decode the provided input
+        Dataset ds =null;
         try {
-            final String s = ((FileImageInputStreamExtImpl) input).getFile()
-                    .getAbsolutePath();
-
-            final Dataset ds = GDALUtilities.acquireDataSet(s,
-                    gdalconst.GA_ReadOnly);
+            final String s = stream.getFile().getAbsolutePath();
+            ds = GDALUtilities.acquireDataSet(s,gdalconst.GA_ReadOnly);
             isInputDecodable = isDecodable(ds);
 
-            // Closing the dataset
-            GDALUtilities.closeDataSet(ds);
-        } catch (Exception e) {
-        } catch (NoClassDefFoundError missingDLLs) {
+        } catch (Throwable e) {
+        	if(LOGGER.isLoggable(Level.FINE))
+				LOGGER.log(Level.FINE,e.getLocalizedMessage(),e);
+        }
+        finally{
+        	if(ds!=null)
+        		try{
+                    // Closing the dataset
+                    GDALUtilities.closeDataSet(ds);
+        		}catch (Throwable e) {
+					if(LOGGER.isLoggable(Level.FINEST))
+						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
+				}
         }
         return isInputDecodable;
     }
@@ -219,8 +262,8 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
         if (!GDALUtilities.isGDALAvailable())
             return false;
         // now check that all the drivers are available
-        final List supportedFormats = getSupportedFormats();
-        final Iterator it = supportedFormats.iterator();
+        final List<String> supportedFormats = getSupportedFormats();
+        final Iterator<String> it = supportedFormats.iterator();
         if (!it.hasNext())
             return false;
         while (it.hasNext()) {
@@ -235,14 +278,14 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
      * Allows to deregister GDAL based spi in case GDAL libraries are
      * unavailable.
      */
-    public synchronized void onRegistration(ServiceRegistry registry,
-            Class category) {
+    public synchronized void onRegistration(
+    		final ServiceRegistry registry,
+            final Class<?> category) {
         super.onRegistration(registry, category);
         if (!GDALUtilities.isGDALAvailable()) {
             IIORegistry iioRegistry = (IIORegistry) registry;
-            Class spiClass = ImageReaderSpi.class;
-            final Iterator iter = iioRegistry.getServiceProviders(spiClass,
-                    true);
+            final Class<ImageReaderSpi> spiClass = ImageReaderSpi.class;
+            final Iterator<ImageReaderSpi> iter = iioRegistry.getServiceProviders(spiClass,true);
             while (iter.hasNext()) {
                 final ImageReaderSpi provider = (ImageReaderSpi) iter.next();
                 if (provider instanceof GDALImageReaderSpi) {
