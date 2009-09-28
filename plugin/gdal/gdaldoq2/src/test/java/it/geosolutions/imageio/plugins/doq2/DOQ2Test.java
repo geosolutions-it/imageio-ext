@@ -35,7 +35,6 @@ import javax.media.jai.RenderedOp;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.Ignore;
 
 /**
  * Testing reading capabilities for {@link DOQ2ImageReader}.
