@@ -52,8 +52,7 @@ import javax.imageio.stream.MemoryCacheImageInputStream;
  */
 public class URLImageInputStreamSpi extends ImageInputStreamSpi {
     /** Logger. */
-    private final static Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.stream.input");
+    private final static Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.stream.input");
 
     private static final FileImageInputStreamExtImplSpi fileStreamSPI = new FileImageInputStreamExtImplSpi();
 
@@ -61,7 +60,7 @@ public class URLImageInputStreamSpi extends ImageInputStreamSpi {
 
     private static final String version = "1.0";
 
-    private static final Class inputClass = URL.class;
+    private static final Class<?> inputClass = URL.class;
 
     /**
      * Default constructor for a {@link URLImageInputStreamSpi};
@@ -89,15 +88,13 @@ public class URLImageInputStreamSpi extends ImageInputStreamSpi {
             final URL sourceURL = ((URL) input);
             final File tempFile = Utilities.urlToFile(sourceURL);
             if (tempFile.exists() && tempFile.isFile() && tempFile.canRead())
-                return fileStreamSPI.createInputStreamInstance(tempFile,
-                        useCache, cacheDir);
+                return fileStreamSPI.createInputStreamInstance(tempFile,useCache, cacheDir);
 
             // URL that does NOT points to a file, let's open up a stream
             if (useCache)
                 return new MemoryCacheImageInputStream(sourceURL.openStream());
             else
-                return new FileCacheImageInputStream(sourceURL.openStream(),
-                        cacheDir);
+                return new FileCacheImageInputStream(sourceURL.openStream(), cacheDir);
 
         } catch (IOException e) {
             if (LOGGER.isLoggable(Level.FINE))

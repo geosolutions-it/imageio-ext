@@ -21,9 +21,6 @@ import it.geosolutions.imageio.stream.eraf.EnhancedRandomAccessFile;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.ByteOrder;
 
 import javax.imageio.stream.ImageInputStream;
@@ -200,7 +197,7 @@ public  class FileImageInputStreamExtImpl extends ImageInputStreamImpl
      *                    if an I/O error occurs.
      */
     public FileImageInputStreamExtImpl(File f, int bufferSize)
-            throws FileNotFoundException, IOException {
+            throws IOException {
         // //
         //
         // Check that the input file is a valid file
@@ -339,33 +336,5 @@ public  class FileImageInputStreamExtImpl extends ImageInputStreamImpl
 
         return new StringBuffer("FileImageInputStreamExtImpl which points to ")
                 .append(this.file.toString()).toString();
-    }
-    
-    /**
-     * Returns an {@code URI} given an inputSource which could be a {@code File},
-     * a {@code String}, an {@code URL} or a {@code FileImageInputStreamExt}.
-     * 
-     * @param source
-     * @return
-     * @throws URISyntaxException
-     */
-    public static URI getURIFromSource(Object source) {
-        URI uri = null;
-        try {
-            if (source instanceof String) {
-
-                uri = new URI((String) source);
-            } else if (source instanceof File) {
-                uri = ((File) source).toURI();
-            } else if (source instanceof URL) {
-                uri = ((URL) source).toURI();
-            } else if (source instanceof FileImageInputStreamExt) {
-                uri = (((FileImageInputStreamExt) source).getFile()).toURI();
-                // uri = new URI(((URL)source).toString());
-            }
-        } catch (URISyntaxException e) {
-            // XXX
-        }
-        return uri;
     }
 }

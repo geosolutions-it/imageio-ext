@@ -17,22 +17,18 @@
 package it.geosolutions.imageio.stream.input.spi;
 
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
-import it.geosolutions.imageio.utilities.Utilities;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.imageio.spi.ImageInputStreamSpi;
-import javax.imageio.stream.FileCacheImageInputStream;
 import javax.imageio.stream.ImageInputStream;
-import javax.imageio.stream.MemoryCacheImageInputStream;
 
 /**
  * Implementation of an {@link ImageInputStreamSpi} for instantiating an
@@ -61,7 +57,7 @@ public class StringImageInputStreamSpi extends ImageInputStreamSpi {
 
     private static final String version = "1.0";
 
-    private static final Class inputClass = String.class;
+    private static final Class<String> inputClass = String.class;
 
     /**
      * Default constructor for a {@link StringImageInputStreamSpi};
@@ -76,7 +72,7 @@ public class StringImageInputStreamSpi extends ImageInputStreamSpi {
      */
     public ImageInputStream createInputStreamInstance(Object input,
             boolean useCache, File cacheDir) throws IOException {
-        // is it a URL?
+        // is it a String?
         if (!(input instanceof String)) {
             if (LOGGER.isLoggable(Level.FINE))
                 LOGGER.fine("The provided input is not a valid String.");
@@ -84,50 +80,30 @@ public class StringImageInputStreamSpi extends ImageInputStreamSpi {
         }
 
         final String sourceString = ((String) input);
-        // ////////////////////////////////////////////////////////////////////
+        
         //
-        // URL
+        // as a URL
         //
-        // ////////////////////////////////////////////////////////////////////
-        final URL tempURL = new URL(sourceString);
-        if (tempURL.getProtocol().compareToIgnoreCase("eraf") == 0) {
-            final File tempFile = Utilities.urlToFile(tempURL);
-            if (!tempFile.exists()) {
-                if (LOGGER.isLoggable(Level.FINE))
-                    LOGGER.fine("The provided input eraf does not exist.");
-                return null;
-            }
-            return new FileImageInputStreamExtImpl(tempFile);
+        try{
+        	// the needed checks are done inside the constructor
+        	final URL tempURL = new URL(sourceString);
+        	return new URLImageInputStreamSpi().createInputStreamInstance(tempURL,ImageIO.getUseCache(),ImageIO.getCacheDirectory());
+        }catch (Throwable e) {
+			if(LOGGER.isLoggable(Level.FINE))
+				LOGGER.log(Level.FINE,e.getLocalizedMessage(),e);
+		}
+       
 
-        } else {
-            // is it a valid InputStream
-            InputStream inStream;
-            try {
-                inStream = tempURL.openStream();
-
-                if (useCache)
-                    return new MemoryCacheImageInputStream(inStream);
-                else
-                    return new FileCacheImageInputStream(inStream, cacheDir);
-            } catch (IOException e) {
-                if (LOGGER.isLoggable(Level.FINE))
-                    LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
-
-            }
-
-        }
-        // ////////////////////////////////////////////////////////////////////
         //
-        // FILE
+        // as a FILE
         //
-        // ////////////////////////////////////////////////////////////////////
         final File tempFile = new File(sourceString);
-        if (!tempFile.exists()) {
-            if (LOGGER.isLoggable(Level.FINE))
-                LOGGER.fine("The provided input eraf does not exist.");
-            return null;
-        } else
-            return new FileImageInputStreamExtImpl(tempFile);
+        try{
+        	// the needed checks are done inside the constructor
+        	return new FileImageInputStreamExtImpl(tempFile);
+        }catch (Throwable e) {
+			throw new IllegalArgumentException(e);
+		}
     }
 
     /**
