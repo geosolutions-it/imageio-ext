@@ -33,7 +33,6 @@ import java.util.logging.Logger;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
-import javax.imageio.stream.ImageInputStream;
 
 import org.gdal.gdal.Dataset;
 import org.gdal.gdal.Driver;
@@ -47,8 +46,7 @@ import org.gdal.gdalconst.gdalconst;
  */
 public abstract class GDALImageReaderSpi extends ImageReaderSpi {
 
-    private static final Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.gdalframework");
+    private static final Logger LOGGER = Logger.getLogger(GDALImageReaderSpi.class.toString());
     static {
         GDALUtilities.loadGDAL();
     }
@@ -86,7 +84,7 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
 
     public GDALImageReaderSpi(String vendorName, String version,
             String[] names, String[] suffixes, String[] MIMETypes,
-            String readerClassName, Class[] inputTypes,
+            String readerClassName, Class<?>[] inputTypes,
             String[] writerSpiNames,
             boolean supportsStandardStreamMetadataFormat,
             String nativeStreamMetadataFormatName,
@@ -119,7 +117,7 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
                 nativeImageMetadataFormatClassName,
                 extraImageMetadataFormatNames,
                 extraImageMetadataFormatClassNames);
-        this.supportedFormats = new ArrayList(supportedFormats);
+        this.supportedFormats = new ArrayList<String>(supportedFormats);
     }
 
     /**
@@ -131,16 +129,21 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
      * 		<code>true</code> if the input can be successfully decoded.
      */
     public boolean canDecodeInput(Object input) throws IOException {
-        if (LOGGER.isLoggable(Level.FINE))
-            LOGGER.fine("Can Decode Input");
+    	if(input==null)
+    		return false;
+        if (LOGGER.isLoggable(Level.FINEST))
+            LOGGER.finest("Can Decode Input called with object "+input.toString());
 
-        if (input instanceof ImageInputStream)
-            ((ImageInputStream) input).mark();
 
         // if input source is a string,
         // convert input from String to File
         if (input instanceof String)
-            input = new File((String) input);
+        {
+        	final File inFile = new File((String) input);
+        	if(!inFile.exists())
+        		return false;
+        	input=inFile;
+        }
 
         // if input source is an URL, open an InputStream
         if (input instanceof URL) {
@@ -148,28 +151,37 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
             if (tempURL.getProtocol().equalsIgnoreCase("file"))
                 input = new File(URLDecoder.decode(tempURL.getFile(), "UTF8"));
             else
-                input = ((URL) input).openStream();
+                return false;
         }
 
         // if input source is a File,
         // convert input from File to FileInputStream
         if (input instanceof File)
             input = new FileImageInputStreamExtImpl((File) input);
+        else
+        	return false;
 
         boolean isInputDecodable = false;
         // Checking if this specific SPI can decode the provided input
+        Dataset ds =null;
         try {
-            final String s = ((FileImageInputStreamExtImpl) input).getFile()
-                    .getAbsolutePath();
-
-            final Dataset ds = GDALUtilities.acquireDataSet(s,
-                    gdalconst.GA_ReadOnly);
+            final String s = ((FileImageInputStreamExtImpl) input).getFile().getAbsolutePath();
+            ds = GDALUtilities.acquireDataSet(s,gdalconst.GA_ReadOnly);
             isInputDecodable = isDecodable(ds);
 
-            // Closing the dataset
-            GDALUtilities.closeDataSet(ds);
-        } catch (Exception e) {
-        } catch (NoClassDefFoundError missingDLLs) {
+        } catch (Throwable e) {
+        	if(LOGGER.isLoggable(Level.FINE))
+				LOGGER.log(Level.FINE,e.getLocalizedMessage(),e);
+        }
+        finally{
+        	if(ds!=null)
+        		try{
+                    // Closing the dataset
+                    GDALUtilities.closeDataSet(ds);
+        		}catch (Throwable e) {
+					if(LOGGER.isLoggable(Level.FINEST))
+						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
+				}
         }
         return isInputDecodable;
     }
@@ -235,14 +247,14 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
      * Allows to deregister GDAL based spi in case GDAL libraries are
      * unavailable.
      */
-    public synchronized void onRegistration(ServiceRegistry registry,
-            Class category) {
+    public synchronized void onRegistration(
+    		final ServiceRegistry registry,
+            final Class<?> category) {
         super.onRegistration(registry, category);
         if (!GDALUtilities.isGDALAvailable()) {
             IIORegistry iioRegistry = (IIORegistry) registry;
-            Class spiClass = ImageReaderSpi.class;
-            final Iterator iter = iioRegistry.getServiceProviders(spiClass,
-                    true);
+            final Class<ImageReaderSpi> spiClass = ImageReaderSpi.class;
+            final Iterator<ImageReaderSpi> iter = iioRegistry.getServiceProviders(spiClass,true);
             while (iter.hasNext()) {
                 final ImageReaderSpi provider = (ImageReaderSpi) iter.next();
                 if (provider instanceof GDALImageReaderSpi) {
