@@ -67,7 +67,7 @@ public class FileImageInputStreamExtImplSpi extends ImageInputStreamSpi {
 
 	private static final String version = "1.0";
 
-	private static final Class inputClass = File.class;
+	private static final Class<File> inputClass = File.class;
 
 	/**
 	 * Constructs a blank {@link ImageInputStreamSpi}. It is up to the subclass
@@ -97,13 +97,11 @@ public class FileImageInputStreamExtImplSpi extends ImageInputStreamSpi {
 	 *            a Class object indicating the registry category under which
 	 *            this object has been registered.
 	 */
-	public void onRegistration(ServiceRegistry registry, Class category) {
+	public void onRegistration(ServiceRegistry registry, Class<?> category) {
 		super.onRegistration(registry, category);
-		Object other;
-		Class targetClass = ImageInputStreamSpi.class;
-		for (Iterator i = registry.getServiceProviders(targetClass, true); i
-				.hasNext();) {
-			other = i.next();
+		Class<ImageInputStreamSpi> targetClass = ImageInputStreamSpi.class;
+		for (Iterator<? extends ImageInputStreamSpi> i = registry.getServiceProviders(targetClass, true); i.hasNext();) {
+			ImageInputStreamSpi other = i.next();
 
 			if (other instanceof FileImageInputStreamSpi)
 				registry.deregisterServiceProvider(other);

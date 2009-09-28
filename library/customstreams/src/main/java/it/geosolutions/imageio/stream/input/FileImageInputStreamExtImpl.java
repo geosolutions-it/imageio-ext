@@ -197,7 +197,7 @@ public  class FileImageInputStreamExtImpl extends ImageInputStreamImpl
      *                    if an I/O error occurs.
      */
     public FileImageInputStreamExtImpl(File f, int bufferSize)
-            throws FileNotFoundException, IOException {
+            throws IOException {
         // //
         //
         // Check that the input file is a valid file
@@ -337,4 +337,6 @@ public  class FileImageInputStreamExtImpl extends ImageInputStreamImpl
         return new StringBuffer("FileImageInputStreamExtImpl which points to ")
                 .append(this.file.toString()).toString();
     }
+    
+  
 }
