@@ -16,12 +16,14 @@
  */
 package it.geosolutions.imageio.gdalframework;
 
+import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
+import it.geosolutions.imageio.stream.input.spi.StringImageInputStreamSpi;
+import it.geosolutions.imageio.stream.input.spi.URLImageInputStreamSpi;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,9 +32,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.imageio.ImageIO;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
+import javax.imageio.stream.ImageInputStream;
 
 import org.gdal.gdal.Dataset;
 import org.gdal.gdal.Driver;
@@ -51,6 +55,16 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
         GDALUtilities.loadGDAL();
     }
 
+    /**
+     * Cached instance of {@link StringImageInputStreamSpi} for creating streams out of {@link String}s.
+     */
+    private final static StringImageInputStreamSpi stringSPI= new StringImageInputStreamSpi();    
+    
+    /**
+     * Cached instance of {@link URLImageInputStreamSpi} for creating streams out of {@link URL}s.
+     */
+    private final static URLImageInputStreamSpi URLSPI= new URLImageInputStreamSpi();   
+   
     /**
      * <code>List</code> of gdal formats supported by this plugin.
      */
@@ -131,41 +145,58 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
     public boolean canDecodeInput(Object input) throws IOException {
     	if(input==null)
     		return false;
-        if (LOGGER.isLoggable(Level.FINEST))
-            LOGGER.finest("Can Decode Input called with object "+input.toString());
+        if (LOGGER.isLoggable(Level.FINE))
+            LOGGER.fine("Can Decode Input called with object "+input.toString());
 
 
         // if input source is a string,
-        // convert input from String to File
+        // convert input from String to File the try URL
         if (input instanceof String)
         {
-        	final File inFile = new File((String) input);
-        	if(!inFile.exists())
-        		return false;
-        	input=inFile;
+        	try{
+        		input =stringSPI.createInputStreamInstance(input,ImageIO.getUseCache(),ImageIO.getCacheDirectory());
+        	}
+        	catch (Throwable e) {
+                if (LOGGER.isLoggable(Level.FINE))
+                    LOGGER.log(Level.FINE,"Input filed does not exist or cannot be read",e);
+                return false;
+			}
         }
 
         // if input source is an URL, open an InputStream
         if (input instanceof URL) {
-            final URL tempURL = (URL) input;
-            if (tempURL.getProtocol().equalsIgnoreCase("file"))
-                input = new File(URLDecoder.decode(tempURL.getFile(), "UTF8"));
-            else
+            try{
+            	input= URLSPI.createInputStreamInstance(input,ImageIO.getUseCache(),ImageIO.getCacheDirectory());
+            }catch (Throwable e) {
+                if (LOGGER.isLoggable(Level.FINE))
+                    LOGGER.log(Level.FINE,"Input filed does not exist or cannot be read",e);
                 return false;
+			}
         }
 
         // if input source is a File,
         // convert input from File to FileInputStream
         if (input instanceof File)
-            input = new FileImageInputStreamExtImpl((File) input);
-        else
+        	 try{
+        		 input = new FileImageInputStreamExtImpl((File) input);
+             }catch (Throwable e) {
+                 if (LOGGER.isLoggable(Level.FINE))
+                     LOGGER.log(Level.FINE,"Input filed does not exist or cannot be read",e);
+                 return false;
+ 			}
+        
+        assert input instanceof ImageInputStream;
+        // at this point it must be an instance of FileImageInputStreamExt to be able to proceed
+        if(!(input instanceof FileImageInputStreamExt))
         	return false;
+        final FileImageInputStreamExt stream=(FileImageInputStreamExt) input;
+        	
 
         boolean isInputDecodable = false;
         // Checking if this specific SPI can decode the provided input
         Dataset ds =null;
         try {
-            final String s = ((FileImageInputStreamExtImpl) input).getFile().getAbsolutePath();
+            final String s = stream.getFile().getAbsolutePath();
             ds = GDALUtilities.acquireDataSet(s,gdalconst.GA_ReadOnly);
             isInputDecodable = isDecodable(ds);
 

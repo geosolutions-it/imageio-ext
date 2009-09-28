@@ -62,16 +62,16 @@ public final class Utilities {
      * different interfaces exist for different coordinate system geometries ({@code CartesianCS},
      * {@code PolarCS}, etc.).
      */
-    public static boolean sameInterfaces(final Class object1,
-            final Class object2, final Class base) {
+    public static boolean sameInterfaces(final Class<?> object1,
+            final Class<?> object2, final Class<?> base) {
         if (object1 == object2) {
             return true;
         }
         if (object1 == null || object2 == null) {
             return false;
         }
-        final Class[] c1 = object1.getInterfaces();
-        final Class[] c2 = object2.getInterfaces();
+        final Class<?>[] c1 = object1.getInterfaces();
+        final Class<?>[] c2 = object2.getInterfaces();
         /*
          * Trim all interfaces that are not assignable to 'base' in the 'c2'
          * array. Doing this once will avoid to redo the same test many time in
@@ -79,7 +79,7 @@ public final class Utilities {
          */
         int n = 0;
         for (int i = 0; i < c2.length; i++) {
-            final Class c = c2[i];
+            final Class<?> c = c2[i];
             if (base.isAssignableFrom(c)) {
                 c2[n++] = c;
             }
@@ -89,7 +89,7 @@ public final class Utilities {
          * this interface exists also in the 'c2' array. Order doesn't matter.
          */
         compare: for (int i = 0; i < c1.length; i++) {
-            final Class c = c1[i];
+            final Class<?> c = c1[i];
             if (base.isAssignableFrom(c)) {
                 for (int j = 0; j < n; j++) {
                     if (c.equals(c2[j])) {
@@ -150,12 +150,12 @@ public final class Utilities {
      * @todo Consider replacing by {@link Class#getSimpleName} when we will be
      *       allowed to compile for J2SE 1.5.
      */
-    public static String getShortName(Class classe) {
+    public static String getShortName(Class<?> classe) {
         if (classe == null) {
             return "<*>";
         }
         int dimension = 0;
-        Class el;
+        Class<?> el;
         while ((el = classe.getComponentType()) != null) {
             classe = el;
             dimension++;
@@ -211,7 +211,6 @@ public final class Utilities {
         } else {
             String auth = url.getAuthority();
             String path2 = url.getPath().replace("%20", " ");
-            File f = null;
             if (auth != null && !auth.equals("")) {
                 path3 = "//" + auth + path2;
             } else {

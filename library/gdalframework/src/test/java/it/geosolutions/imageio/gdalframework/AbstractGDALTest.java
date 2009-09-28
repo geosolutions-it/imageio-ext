@@ -51,13 +51,7 @@ public class AbstractGDALTest  {
             LOGGER.warning("GDAL Library is not Available");
             return;
         }
-        // general settings
-        JAI.getDefaultInstance().getTileScheduler().setParallelism(1);
-        JAI.getDefaultInstance().getTileScheduler().setPriority(5);
-        JAI.getDefaultInstance().getTileScheduler().setPrefetchPriority(5);
-        JAI.getDefaultInstance().getTileScheduler().setPrefetchParallelism(1);
-        JAI.getDefaultInstance().getTileCache().setMemoryCapacity(180 * 1024 * 1024);
-        JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
+
     }
 
     public static void warningMessage() {
