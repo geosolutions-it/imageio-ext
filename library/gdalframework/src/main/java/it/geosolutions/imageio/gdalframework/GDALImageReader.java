@@ -19,6 +19,7 @@ package it.geosolutions.imageio.gdalframework;
 import it.geosolutions.imageio.core.GCP;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 import it.geosolutions.imageio.stream.input.URIImageInputStream;
+import it.geosolutions.imageio.utilities.Utilities;
 
 import java.awt.Rectangle;
 import java.awt.image.BandedSampleModel;
@@ -26,6 +27,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferDouble;
 import java.awt.image.DataBufferFloat;
 import java.awt.image.DataBufferInt;
 import java.awt.image.DataBufferShort;
@@ -60,7 +62,6 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
-import javax.media.jai.DataBufferDouble;
 
 import org.gdal.gdal.Band;
 import org.gdal.gdal.Dataset;
@@ -423,7 +424,7 @@ public abstract class GDALImageReader extends ImageReader {
             splitBands = true;
         }
         int dataBufferType = -1;
-        ByteBuffer[] bands = new ByteBuffer[nBands];
+        byte[][] byteBands = new byte[nBands][];
         for (int k = 0; k < nBands; k++) {
 
             // If I'm reading n Bands at once and I performed the first read,
@@ -431,7 +432,7 @@ public abstract class GDALImageReader extends ImageReader {
             if (k > 0 && !splitBands)
                 break;
 
-            final ByteBuffer dataBuffer = ByteBuffer.allocateDirect(bufferSize);
+            final byte[] dataBuffer = new byte[bufferSize];
 
             final int returnVal;
             if (!splitBands) {
@@ -454,14 +455,14 @@ public abstract class GDALImageReader extends ImageReader {
                                     * typeSizeInBytes, typeSizeInBytes,
                             dataBuffer);
                 }
-                bands[k] = dataBuffer;
+                byteBands[k] = dataBuffer;
             } else {
                 // I need to read 1 band at a time.
                 returnVal = dataset.GetRasterBand(k + 1).ReadRaster_Direct(
                         srcRegionXOffset, srcRegionYOffset, srcRegionWidth,
                         srcRegionHeight, dstWidth, dstHeight, bufferType,
                         dataBuffer);
-                bands[k] = dataBuffer;
+                byteBands[k] = dataBuffer;
             }
             if (returnVal == gdalconstConstants.CE_None) {
                 if (!splitBands)
@@ -486,14 +487,14 @@ public abstract class GDALImageReader extends ImageReader {
                 throw new RuntimeException(gdal.GetLastErrorMsg());
             }
         }
-
+        
         // ////////////////////////////////////////////////////////////////////
         //
         // -------------------------------------------------------------------
         // Raster Creation >>> Step 3: Setting DataBuffer
         // -------------------------------------------------------------------
         //
-        // ////////////////////////////////////////////////////////////////////
+        // //////       //////////////////////////////////////////////////////////////
 
         // /////////////////////////////////////////////////////////////////////
         //
@@ -502,19 +503,26 @@ public abstract class GDALImageReader extends ImageReader {
         // /////////////////////////////////////////////////////////////////////
         if (bufferType == gdalconstConstants.GDT_Byte) {
             if (!splitBands) {
-                final byte[] bytes = new byte[nBands * pixels];
-                bands[0].get(bytes, 0, nBands * pixels);
-                imgBuffer = new DataBufferByte(bytes, nBands * pixels);
+//                final byte[] bytes = new byte[nBands * pixels];
+//                bands[0].get(bytes, 0, nBands * pixels);
+                imgBuffer = new DataBufferByte(byteBands[0], nBands * pixels);
             } else {
-                final byte[][] bytes = new byte[nBands][];
-                for (int i = 0; i < nBands; i++) {
-                    bytes[i] = new byte[pixels];
-                    bands[i].get(bytes[i], 0, pixels);
-                }
-                imgBuffer = new DataBufferByte(bytes, pixels);
+//                final byte[][] bytes = new byte[nBands][];
+//                for (int i = 0; i < nBands; i++) {
+////                    bytes[i] = new byte[pixels];
+//                    bands[i].get(bytes[i], 0, pixels);
+//                }
+                imgBuffer = new DataBufferByte(byteBands, pixels);
             }
             dataBufferType = DataBuffer.TYPE_BYTE;
-        } else if (bufferType == gdalconstConstants.GDT_Int16
+        }
+        else {
+            ByteBuffer bands[] = new ByteBuffer[nBands];
+            for (int k = 0; k < nBands; k++) {
+                bands[k]=ByteBuffer.wrap(byteBands[k],0,byteBands[k].length);
+            }
+            
+            if (bufferType == gdalconstConstants.GDT_Int16
                 || bufferType == gdalconstConstants.GDT_UInt16) {
             // ////////////////////////////////////////////////////////////////
             //
@@ -632,10 +640,11 @@ public abstract class GDALImageReader extends ImageReader {
             dataBufferType = DataBuffer.TYPE_DOUBLE;
 
         } else {
-            // TODO: Handle more cases if needed. Show the name of the type
-            // instead of the numeric value.
-            LOGGER.info("The specified data type is actually unsupported: "
-                    + bufferType);
+                // TODO: Handle more cases if needed. Show the name of the type
+                // instead of the numeric value.
+                LOGGER.info("The specified data type is actually unsupported: "
+                        + bufferType);
+            }
         }
 
         // ////////////////////////////////////////////////////////////////////
@@ -678,13 +687,11 @@ public abstract class GDALImageReader extends ImageReader {
             else if (input instanceof URL) {
                 final URL tempURL = (URL) input;
                 if (tempURL.getProtocol().equalsIgnoreCase("file")) {
-                    try {
-                        datasetSource = new File(URLDecoder.decode(tempURL
-                                .getFile(), "UTF-8"));
-                    } catch (UnsupportedEncodingException e) {
-                        throw new RuntimeException("Not a Valid Input ", e);
-                    }
+                        datasetSource = Utilities.urlToFile(tempURL);
                 }
+                else
+                    throw new IllegalArgumentException("Not a supported Input");
+
             } else
                 // should never happen
                 throw new RuntimeException(

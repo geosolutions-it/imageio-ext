@@ -15,7 +15,7 @@
     <mrsid.dll>imageio-ext-gdalmrsiddll</mrsid.dll>
     <hdf.dll>imageio-ext-gdalhdfdll</hdf.dll>
     <jhdf.dll>imageio-ext-jhdfdll</jhdf.dll>
-     <gdal.version>1.4.5</gdal.version>
+     <gdal.version>1.4.5b</gdal.version>
     <ecw.version>3.3</ecw.version>
     <mrsid.version>6.0.7</mrsid.version>
     <msvc.version>7.1</msvc.version>

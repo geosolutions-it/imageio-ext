@@ -27,7 +27,7 @@
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-gdal-bindings</artifactId>
-      <version>1.4.5</version>
+      <version>1.4.5b</version>
     </dependency>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>

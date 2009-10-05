@@ -32,7 +32,7 @@ public class AbstractDOQ1TestCase extends TestCase {
 
     protected final static String fileName = "fakedoq1.doq";
 
-    /** A simple flag set to true in case the MrSID driver is available */
+    /** A simple flag set to true in case the DOQ1 driver is available */
     protected final static boolean isGDALAvailable = GDALUtilities
     .isGDALAvailable();
 

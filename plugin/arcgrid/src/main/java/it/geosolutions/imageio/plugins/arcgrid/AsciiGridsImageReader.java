@@ -20,6 +20,7 @@ import it.geosolutions.imageio.plugins.arcgrid.raster.AsciiGridRaster;
 import it.geosolutions.imageio.plugins.arcgrid.raster.EsriAsciiGridRaster;
 import it.geosolutions.imageio.plugins.arcgrid.raster.GrassAsciiGridRaster;
 import it.geosolutions.imageio.plugins.arcgrid.spi.AsciiGridsImageReaderSpi;
+import it.geosolutions.imageio.utilities.Utilities;
 
 import java.awt.Rectangle;
 import java.awt.Transparency;
@@ -34,9 +35,7 @@ import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -59,8 +58,7 @@ import javax.media.jai.RasterFactory;
  */
 public final class AsciiGridsImageReader extends ImageReader {
 	/** Logger. */
-	private static final Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.plugins.arcgrid");
+	private static final Logger LOGGER = Logger.getLogger(AsciiGridsImageReader.class.toString());
 
 	/** <code>true</code> if there are some listeners attached to this reader */
 	private boolean hasListeners;
@@ -211,28 +209,17 @@ public final class AsciiGridsImageReader extends ImageReader {
 				// is not a file let's reject it
 				if (LOGGER.isLoggable(Level.SEVERE))
 					LOGGER.severe("Unsupported URL provided as input!");
-				throw new IllegalArgumentException(
-						"Unsupported URL provided as input!");
+				throw new IllegalArgumentException("Unsupported URL provided as input!");
 			}
 			// now we know it is pointing to a file
 			// let's see if it exists
-			try {
-				final File inFile = new File(URLDecoder.decode(testUrl
-						.getFile(), "UTF-8"));
-				if (!inFile.exists()) {
-					// is not a file let's reject it
-					if (LOGGER.isLoggable(Level.SEVERE))
-						LOGGER.severe("Input file does not exists!");
-					throw new IllegalArgumentException(
+			final File inFile = Utilities.urlToFile(testUrl);
+			if (!inFile.exists()) {
+			    // is not a file let's reject it
+			    if (LOGGER.isLoggable(Level.SEVERE))
+				LOGGER.severe("Input file does not exists!");
+				throw new IllegalArgumentException(
 							"Input file does not exists!");
-				}
-			} catch (UnsupportedEncodingException e) {
-				// a problem occurred
-				if (LOGGER.isLoggable(Level.SEVERE))
-					LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
-				final IllegalArgumentException ex = new IllegalArgumentException();
-				ex.initCause(e);
-				throw ex;
 			}
 		} else
 
@@ -261,9 +248,7 @@ public final class AsciiGridsImageReader extends ImageReader {
 			try {
 				imageInputStream = ImageIO.createImageInputStream(input);
 				if (imageInputStream == null) {
-					// XXXXX
-					throw new IllegalArgumentException(
-							"Unsupported object provided as input!");
+					throw new IllegalArgumentException("Unsupported object provided as input!");
 				}
 			} catch (IOException e) {
 				if (LOGGER.isLoggable(Level.SEVERE))
@@ -282,8 +267,7 @@ public final class AsciiGridsImageReader extends ImageReader {
 		} catch (IOException e) {
 			if (LOGGER.isLoggable(Level.SEVERE))
 				LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
-			final IllegalArgumentException ex = new IllegalArgumentException(
-					"Unable to parse the header for the provided input");
+			final IllegalArgumentException ex = new IllegalArgumentException("Unable to parse the header for the provided input");
 			ex.initCause(e);
 			throw ex;
 		}
@@ -341,13 +325,10 @@ public final class AsciiGridsImageReader extends ImageReader {
 		width = rasterReader.getNCols();
 		height = rasterReader.getNRows();
 
-		sm = cm.createCompatibleSampleModel(width, height);
-
 		// calculating the imageSize. Its value is given by
 		// nRows*nCols*sampleSizeByte (if DataType is Float
 		// the size of each sample is 32 bit = 4 Byte)
-		final int dataType = sm.getDataType();
-		final int sampleSizeBit = DataBuffer.getDataTypeSize(dataType);
+		final int sampleSizeBit = cm.getPixelSize();
 		final int sampleSizeByte = (sampleSizeBit + 7) / 8;
 
 		imageSize = width * height * sampleSizeByte;
@@ -388,6 +369,8 @@ public final class AsciiGridsImageReader extends ImageReader {
 			tileHeight = height;
 		}
 
+		// this is a trick to workaround
+		sm = cm.createCompatibleSampleModel(tileHeight, tileWidth);
 		// image type specifier
 		imageType = new ImageTypeSpecifier(cm, sm);
 	}
@@ -407,7 +390,7 @@ public final class AsciiGridsImageReader extends ImageReader {
 	private void checkImageIndex(final int imageIndex) {
 		/* AsciiGrid file format can "contain" only 1 image */
 		if (imageIndex != 0)
-			throw new IndexOutOfBoundsException("illegal Index");
+			throw new IndexOutOfBoundsException("illegal Index: "+imageIndex);
 	}
 
 	/**

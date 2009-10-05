@@ -19,6 +19,7 @@ package it.geosolutions.imageio.plugins.doq1;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.resources.TestData;
 
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -77,6 +78,10 @@ public class DOQ1Test extends AbstractDOQ1TestCase {
         pbjImageRead.setParameter("Input", file);
         pbjImageRead.setParameter("readParam", irp);
 
+        //NOTE that the actual sample data (fakedoq1.doq) only contains a row.
+        //Therefore, we need to force the read on that reduced area.
+        //Requesting a bigger image height will result in a GDAL ReadBlock error. 
+        irp.setSourceRegion(new Rectangle(0,0,500,1));
         final ImageLayout l = new ImageLayout();
         l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(32).setTileWidth(32);
 
@@ -88,7 +93,7 @@ public class DOQ1Test extends AbstractDOQ1TestCase {
         } else
         Assert.assertNotNull(image.getTiles());
         Assert.assertEquals(500, image.getWidth());
-        Assert.assertEquals(500, image.getHeight());
+        Assert.assertEquals(1, image.getHeight());
     }
     
     public static Test suite() {

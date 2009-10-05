@@ -15,6 +15,8 @@
     <extensive.tests>false</extensive.tests>
     <interactive.tests>false</interactive.tests>
     <test.maxHeapSize>512M</test.maxHeapSize>
+    <gdal.version>1.4.5b</gdal.version>
+    <kakadu.version>5.2.6</kakadu.version>
   </properties>
 
   <!-- ======================================================== -->
@@ -351,11 +353,6 @@
       <url>http://repository.codehaus.org/</url>
     </repository>
     <repository>
-      <id>refractions</id>
-      <name>Refractions Research Maven 2 Repository</name>
-      <url>http://lists.refractions.net/m2</url>
-    </repository>
-    <repository>
       <id>jboss</id>
       <name>jboss</name>
       <url>http://repository.jboss.org/maven2/</url>
@@ -421,6 +418,16 @@
         <artifactId>junit</artifactId>
       <version>3.8.1</version>
       </dependency>
+      <dependency>
+       <groupId>it.geosolutions.imageio-ext</groupId>
+       <artifactId>imageio-ext-gdal-bindings</artifactId>
+       <version>${gdal.version}</version>
+     </dependency>
+     <dependency>
+    	<groupId>it.geosolutions.imageio-ext</groupId>
+  	<artifactId>imageio-ext-kakadujni</artifactId>
+	<version>${kakadu.version}</version>
+    </dependency>
     </dependencies>
   </dependencyManagement>
   
@@ -465,36 +472,11 @@
     <!-- ========================================================= -->
     <pluginManagement>
       <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-clover-plugin</artifactId>
-          <version>2.3</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-eclipse-plugin</artifactId>
-          <version>2.5</version>
-        </plugin>		
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.2</version>
-          <!-- Current version is 2.3, but it cause the following exception:
-                java.lang.NoClassDefFoundError: com/sun/medialib/mlib/Image
-                    at com.sun.media.jai.mlib.MediaLibAccessor.setUseMlib(MediaLibAccessor.java:245)
-                    at com.sun.media.jai.mlib.MlibAffineRIF.create(MlibAffineRIF.java:71)
-          -->
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-install-plugin</artifactId>
-          <version>2.1</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>2.0-beta-5</version>
-        </plugin>
+	<plugin>
+	 <groupId>org.apache.maven.plugins</groupId>
+	 <artifactId>maven-eclipse-plugin</artifactId>
+	 <version>2.5</version>
+    </plugin>
       </plugins>
     </pluginManagement>
       
@@ -583,7 +565,7 @@
       </extension>                                
    
     <!--....................................-->
-    <!-- Refractions (using wagon webdav)   -->
+    <!--        (using wagon webdav)        -->
     <!--....................................-->
       <extension>
        <groupId>org.apache.maven.wagon</groupId>

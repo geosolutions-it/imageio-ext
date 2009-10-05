@@ -61,7 +61,7 @@
                 </exec>
                 <exec  executable="sh">
                   <arg value="-c"/>
-                  <arg value="mvn install:install-file  -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-gdal-bindings -Dversion=1.4.5 -Dpackaging=jar -Dfile=./gdal-1.4.5.jar"/>
+                  <arg value="mvn install:install-file  -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-gdal-bindings -Dversion=1.4.5b -Dpackaging=jar -Dfile=./gdal-1.4.5b.jar"/>
                 </exec>
                 <exec  executable="sh">
                   <arg value="-c"/>
@@ -136,7 +136,7 @@
                 </exec>
                 <exec  executable="cmd">
                   <arg value="/c"/>
-                  <arg value="mvn install:install-file -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-gdal-bindings -Dversion=1.4.5 -Dpackaging=jar -Dfile=./gdal-1.4.5.jar"/>
+                  <arg value="mvn install:install-file -DgroupId=it.geosolutions.imageio-ext -DartifactId=imageio-ext-gdal-bindings -Dversion=1.4.5b -Dpackaging=jar -Dfile=./gdal-1.4.5b.jar"/>
                 </exec>
                 <exec  executable="cmd">
                   <arg value="/c"/>

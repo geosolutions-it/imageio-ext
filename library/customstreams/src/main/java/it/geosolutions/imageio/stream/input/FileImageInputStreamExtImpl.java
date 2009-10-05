@@ -337,6 +337,4 @@ public  class FileImageInputStreamExtImpl extends ImageInputStreamImpl
         return new StringBuffer("FileImageInputStreamExtImpl which points to ")
                 .append(this.file.toString()).toString();
     }
-    
-  
 }

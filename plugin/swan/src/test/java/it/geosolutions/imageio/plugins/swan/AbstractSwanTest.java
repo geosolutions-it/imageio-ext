@@ -37,6 +37,10 @@ public class AbstractSwanTest extends TestCase {
 		super.setUp();
 	}
 
+	public void test(){
+	    
+	}
+	
 	protected void warningMessage() {
 		StringBuffer sb = new StringBuffer(
 				"Test file not available. Please download it as "

@@ -79,7 +79,7 @@ public class DOQ2Test extends AbstractDOQ2TestCase {
         pbjImageRead.setParameter("readParam", irp);
 
         final ImageLayout l = new ImageLayout();
-        l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(32).setTileWidth(32);
+        l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512).setTileWidth(512);
 
         // get a RenderedImage
         RenderedOp image = JAI.create("ImageRead", pbjImageRead,new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));

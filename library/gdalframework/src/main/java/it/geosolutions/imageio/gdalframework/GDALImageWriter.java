@@ -18,6 +18,7 @@ package it.geosolutions.imageio.gdalframework;
 
 import it.geosolutions.imageio.gdalframework.GDALUtilities.DriverCreateCapabilities;
 import it.geosolutions.imageio.stream.output.FileImageOutputStreamExt;
+import it.geosolutions.imageio.utilities.Utilities;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -30,7 +31,6 @@ import java.awt.image.SampleModel;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.DoubleBuffer;
@@ -742,13 +742,13 @@ public abstract class GDALImageWriter extends ImageWriter {
                     dataset.WriteRaster_Direct(xOff, yOff, dstWidth, dstHeight,
                             dstWidth, dstHeight, dataType, nBands, nBands
                                     * typeSizeInBytes, dstWidth * nBands
-                                    * typeSizeInBytes, 1, bandsBuffer[0]);
+                                    * typeSizeInBytes, 1, bandsBuffer[0].array());
                 } else {
                     // I need to perform a write operation for each band.
                     for (int i = 0; i < nBands; i++)
                         dataset.GetRasterBand(i + 1).WriteRaster_Direct(xOff,
                                 yOff, dstWidth, dstHeight, dstWidth, dstHeight,
-                                dataType, bandsBuffer[i]);
+                                dataType, bandsBuffer[i].array());
                 }
                 // Updating the X offset position for writing in the dataset
                 xOff += dstWidth;
@@ -853,7 +853,7 @@ public abstract class GDALImageWriter extends ImageWriter {
             //
             // //
             for (int k = 0; k < nBands; k++) {
-                bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
+                bandsBuffer[k] = ByteBuffer.allocate(capacity);
                 if (!splitBands)
                     break;
             }
@@ -895,7 +895,7 @@ public abstract class GDALImageWriter extends ImageWriter {
             // //
             final ShortBuffer buf[] = new ShortBuffer[nBands];
             for (int k = 0; k < nBands; k++) {
-                bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
+                bandsBuffer[k] = ByteBuffer.allocate(capacity);
                 bandsBuffer[k].order(ByteOrder.nativeOrder());
                 buf[k] = bandsBuffer[k].asShortBuffer();
                 if (!splitBands)
@@ -939,7 +939,7 @@ public abstract class GDALImageWriter extends ImageWriter {
             // //
             final ShortBuffer buf[] = new ShortBuffer[nBands];
             for (int k = 0; k < nBands; k++) {
-                bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
+                bandsBuffer[k] = ByteBuffer.allocate(capacity);
                 bandsBuffer[k].order(ByteOrder.nativeOrder());
                 buf[k] = bandsBuffer[k].asShortBuffer();
                 if (!splitBands)
@@ -988,7 +988,7 @@ public abstract class GDALImageWriter extends ImageWriter {
             // //
             final IntBuffer buf[] = new IntBuffer[nBands];
             for (int k = 0; k < nBands; k++) {
-                bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
+                bandsBuffer[k] = ByteBuffer.allocate(capacity);
                 bandsBuffer[k].order(ByteOrder.nativeOrder());
                 buf[k] = bandsBuffer[k].asIntBuffer();
                 if (!splitBands)
@@ -1032,7 +1032,7 @@ public abstract class GDALImageWriter extends ImageWriter {
             // //
             final FloatBuffer buf[] = new FloatBuffer[nBands];
             for (int k = 0; k < nBands; k++) {
-                bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
+                bandsBuffer[k] = ByteBuffer.allocate(capacity);
                 bandsBuffer[k].order(ByteOrder.nativeOrder());
                 buf[k] = bandsBuffer[k].asFloatBuffer();
                 if (!splitBands)
@@ -1075,7 +1075,7 @@ public abstract class GDALImageWriter extends ImageWriter {
             // //
             final DoubleBuffer buf[] = new DoubleBuffer[nBands];
             for (int k = 0; k < nBands; k++) {
-                bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
+                bandsBuffer[k] = ByteBuffer.allocate(capacity);
                 bandsBuffer[k].order(ByteOrder.nativeOrder());
                 buf[k] = bandsBuffer[k].asDoubleBuffer();
                 if (!splitBands)
@@ -1189,7 +1189,7 @@ public abstract class GDALImageWriter extends ImageWriter {
             //
             // //
             for (int k = 0; k < nBands; k++) {
-                bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
+                bandsBuffer[k] = ByteBuffer.allocate(capacity);
                 if (!splitBands)
                     break;
             }
@@ -1223,7 +1223,7 @@ public abstract class GDALImageWriter extends ImageWriter {
             // //
             final ShortBuffer buf[] = new ShortBuffer[nBands];
             for (int k = 0; k < nBands; k++) {
-                bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
+                bandsBuffer[k] = ByteBuffer.allocate(capacity);
                 bandsBuffer[k].order(ByteOrder.nativeOrder());
                 buf[k] = bandsBuffer[k].asShortBuffer();
                 if (!splitBands)
@@ -1259,7 +1259,7 @@ public abstract class GDALImageWriter extends ImageWriter {
             // //
             final ShortBuffer buf[] = new ShortBuffer[nBands];
             for (int k = 0; k < nBands; k++) {
-                bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
+                bandsBuffer[k] = ByteBuffer.allocate(capacity);
                 bandsBuffer[k].order(ByteOrder.nativeOrder());
                 buf[k] = bandsBuffer[k].asShortBuffer();
                 if (!splitBands)
@@ -1300,7 +1300,7 @@ public abstract class GDALImageWriter extends ImageWriter {
             // //
             final IntBuffer buf[] = new IntBuffer[nBands];
             for (int k = 0; k < nBands; k++) {
-                bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
+                bandsBuffer[k] = ByteBuffer.allocate(capacity);
                 bandsBuffer[k].order(ByteOrder.nativeOrder());
                 buf[k] = bandsBuffer[k].asIntBuffer();
                 if (!splitBands)
@@ -1336,7 +1336,7 @@ public abstract class GDALImageWriter extends ImageWriter {
             // //
             final FloatBuffer buf[] = new FloatBuffer[nBands];
             for (int k = 0; k < nBands; k++) {
-                bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
+                bandsBuffer[k] = ByteBuffer.allocate(capacity);
                 bandsBuffer[k].order(ByteOrder.nativeOrder());
                 buf[k] = bandsBuffer[k].asFloatBuffer();
                 if (!splitBands)
@@ -1372,7 +1372,7 @@ public abstract class GDALImageWriter extends ImageWriter {
             // //
             final DoubleBuffer buf[] = new DoubleBuffer[nBands];
             for (int k = 0; k < nBands; k++) {
-                bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
+                bandsBuffer[k] = ByteBuffer.allocate(capacity);
                 bandsBuffer[k].order(ByteOrder.nativeOrder());
                 buf[k] = bandsBuffer[k].asDoubleBuffer();
                 if (!splitBands)
@@ -1551,14 +1551,10 @@ public abstract class GDALImageWriter extends ImageWriter {
         else if (output instanceof URL) {
             final URL tempURL = (URL) output;
             if (tempURL.getProtocol().equalsIgnoreCase("file")) {
-                try {
-                    outputFile = new File(URLDecoder.decode(tempURL.getFile(),
-                            "UTF-8"));
-
-                } catch (IOException e) {
-                    throw new RuntimeException("Not a Valid Input", e);
-                }
+                    outputFile = Utilities.urlToFile(tempURL);
             }
+            else
+                throw new IllegalArgumentException("Not a Valid Input");
         }
     }
 

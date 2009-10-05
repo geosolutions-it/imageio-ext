@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadataFormat;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
 import javax.imageio.metadata.IIOMetadataNode;
@@ -643,9 +644,11 @@ public final class GDALUtilities {
 	//
 	// ////////////////////////////////////////////////////////////////////////
 	public static String buildCRSProperties(RenderedImage ri, final int index) {
-	    GDALImageReader reader = (GDALImageReader) ri.getProperty(ImageReadDescriptor.PROPERTY_NAME_IMAGE_READER);
+	    final Object imageReader = ri.getProperty(ImageReadDescriptor.PROPERTY_NAME_IMAGE_READER);
 	
 	    StringBuffer sb = new StringBuffer("CRS Information:").append(newLine);
+            if (imageReader != null && imageReader instanceof ImageReader){
+                    final GDALImageReader reader = (GDALImageReader) imageReader;
 	    final String projection = reader.getProjection(index);
 	    if (!projection.equals(""))
 	        sb.append("Projections:").append(projection).append(newLine);
@@ -689,6 +692,7 @@ public final class GDALUtilities {
 	        for (int i = 0; i < size; i++)
 	            sb.append("GCP ").append(i + 1).append(gcps.get(i)).append(
 	                    newLine);
+        	    }
 	    }
 	    return sb.toString();
 	}
@@ -705,11 +709,10 @@ public final class GDALUtilities {
 	        final MetadataChoice metadataFields, final int index) {
 	    try {
 	        final String newLine = System.getProperty("line.separator");
-	
-	        GDALImageReader reader = (GDALImageReader) ri.getProperty(ImageReadDescriptor.PROPERTY_NAME_IMAGE_READER);
-	
+	        final Object imageReader = ri.getProperty(ImageReadDescriptor.PROPERTY_NAME_IMAGE_READER);
 	        StringBuffer sb = new StringBuffer("");
-	
+	        if (imageReader != null && imageReader instanceof ImageReader){
+        	        final GDALImageReader reader = (GDALImageReader) imageReader;
 	        switch (metadataFields) {
 	        case ONLY_IMAGE_METADATA:
 	        case EVERYTHING:
@@ -723,10 +726,11 @@ public final class GDALUtilities {
 	                    .append(getStreamMetadata(reader));
 	            break;
 	        }
-	
+	        }
 	        return sb.toString();
 	    } catch (Exception e) {
-	        e.printStackTrace();
+	        if (LOGGER.isLoggable(Level.WARNING))
+	            LOGGER.warning(e.getLocalizedMessage());
 	        return "";
 	    }
 	}
