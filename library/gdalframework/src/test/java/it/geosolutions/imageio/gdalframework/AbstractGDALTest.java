@@ -18,8 +18,6 @@ package it.geosolutions.imageio.gdalframework;
 
 import java.util.logging.Logger;
 
-import javax.media.jai.JAI;
-
 import org.junit.Test;
 
 /**

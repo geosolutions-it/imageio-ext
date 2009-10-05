@@ -27,6 +27,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferDouble;
 import java.awt.image.DataBufferFloat;
 import java.awt.image.DataBufferInt;
 import java.awt.image.DataBufferShort;
@@ -61,7 +62,6 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
-import javax.media.jai.DataBufferDouble;
 
 import org.gdal.gdal.Band;
 import org.gdal.gdal.Dataset;
@@ -429,7 +429,7 @@ public abstract class GDALImageReader extends ImageReader {
 
             // If I'm reading n Bands at once and I performed the first read,
             // I quit the loop
-            if (k > 0 && !splitBands)
+            if (k > 0 && !splitBands)   
                 break;
 
             final ByteBuffer dataBuffer = ByteBuffer.allocateDirect(bufferSize);

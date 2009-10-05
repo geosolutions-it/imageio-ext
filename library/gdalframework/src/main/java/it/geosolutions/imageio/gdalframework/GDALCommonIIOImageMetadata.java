@@ -233,7 +233,7 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
      *                the dataset name
      * 
      */
-    public GDALCommonIIOImageMetadata(final Dataset dataset,final  String name,final boolean initializationRequired) {
+    public GDALCommonIIOImageMetadata(final Dataset dataset,final  String name, final boolean initializationRequired) {
         this(dataset, name, initializationRequired, nativeMetadataFormatName, nativeMetadataFormatClassName);
     }
 
