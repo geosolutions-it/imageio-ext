@@ -19,7 +19,6 @@ package it.geosolutions.imageio.plugins.dted;
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
 import it.geosolutions.imageio.gdalframework.Viewer;
-import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
 import java.awt.RenderingHints;
@@ -36,9 +35,6 @@ import javax.media.jai.RenderedOp;
 
 import org.junit.Assert;
 import org.junit.Before;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 /**
  * Testing reading capabilities for {@link DTEDImageReader}.
@@ -112,6 +108,4 @@ public class DTEDTest extends AbstractGDALTest {
         Assert.assertEquals(121, image.getWidth());
         Assert.assertEquals(121, image.getHeight());
     }
-
-    
 }

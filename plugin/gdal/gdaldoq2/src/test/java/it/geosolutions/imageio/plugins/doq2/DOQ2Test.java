@@ -78,14 +78,14 @@ public class DOQ2Test extends AbstractGDALTest {
         pbjImageRead = new ParameterBlockJAI("ImageRead");
         pbjImageRead.setParameter("Input", file);
         pbjImageRead.setParameter("readParam", irp);
-        
+
         //NOTE that the actual sample data (fakedoq1.doq) only contains a row.
         //Therefore, we need to force the read on that reduced area.
         //Requesting a bigger image height will result in a GDAL ReadBlock error. 
         irp.setSourceRegion(new Rectangle(0,0,500,1));
-
+        
         final ImageLayout l = new ImageLayout();
-        l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(32).setTileWidth(32);
+        l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512).setTileWidth(512);
 
         // get a RenderedImage
         RenderedOp image = JAI.create("ImageRead", pbjImageRead,new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
