@@ -39,11 +39,11 @@ public class JP2GDALEcwImageReaderSpi extends GDALImageReaderSpi {
     private static final Logger LOGGER = Logger
             .getLogger("it.geosolutions.imageio.plugins.jp2ecw");
 
-    static final String[] suffixes = { "jp2", "jp2" };
-
-    static final String[] formatNames = { "JPEG2000" };
-
-    static final String[] MIMETypes = { "image/jp2", "image/jp2k" };
+    private static String[] formatNames =    {"jpeg 2000", "JPEG 2000", "jpeg2000", "JPEG2000"};
+    
+    private static String[] extensions =    {"jp2"}; // Should add jpx or jpm
+    
+    private static String[] mimeTypes = {"image/jp2", "image/jpeg2000"};	
 
     static final String version = "1.0";
 
@@ -81,8 +81,8 @@ public class JP2GDALEcwImageReaderSpi extends GDALImageReaderSpi {
                 vendorName,
                 version,
                 formatNames,
-                suffixes,
-                MIMETypes,
+                extensions,
+                mimeTypes,
                 readerCN, // readerClassName
                 new Class[] { File.class, FileImageInputStreamExt.class },
                 wSN, // writer Spi Names
