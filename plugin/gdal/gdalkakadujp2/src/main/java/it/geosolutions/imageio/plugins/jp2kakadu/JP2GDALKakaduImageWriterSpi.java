@@ -34,12 +34,11 @@ import javax.imageio.ImageWriter;
  * @author Simone Giannecchini, GeoSolutions.
  */
 public final class JP2GDALKakaduImageWriterSpi extends GDALImageWriterSpi {
-    static final String[] suffixes = { "JP2", "J2C" };
-
-    static final String[] formatNames = { "JP2", "JPEG2000", "JPEG 2000",
-            "JP2K" };
-
-    static final String[] MIMETypes = { "image/jp2" };
+    private static final String[] formatNames = {"jpeg 2000", "JPEG 2000", "jpeg2000", "JPEG2000"};
+    
+    private static final String[] extensions = {"jp2"}; // Should add jpx or jpm
+    
+    private static final String[] mimeTypes = {"image/jp2", "image/jpeg2000"};
 
     static final String version = "1.0";
 
@@ -76,7 +75,7 @@ public final class JP2GDALKakaduImageWriterSpi extends GDALImageWriterSpi {
      * 
      */
     public JP2GDALKakaduImageWriterSpi() {
-        super(vendorName, version, formatNames, suffixes, MIMETypes, writerCN,
+        super(vendorName, version, formatNames, extensions, mimeTypes, writerCN,
                 STANDARD_OUTPUT_TYPE, readerSpiName,
                 supportsStandardStreamMetadataFormat,
                 nativeStreamMetadataFormatName,
