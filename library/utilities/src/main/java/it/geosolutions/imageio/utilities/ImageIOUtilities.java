@@ -358,16 +358,14 @@ public class ImageIOUtilities {
                     	if (providerClassName.equalsIgnoreCase(customProviderName)) {
                         custom = provider;
                     }
-                    break;
+                    if (standard!=null && custom!=null){
+                        if(ImageReaderSpi.class.isAssignableFrom(standard.getClass()))
+                            return registry.setOrdering(ImageReaderSpi.class, (ImageReaderSpi)custom,(ImageReaderSpi) standard);    
+                        else
+                            return registry.setOrdering(ImageWriterSpi.class, (ImageWriterSpi)custom,(ImageWriterSpi) standard);    
+                    }
                 }
             }
-        }
-        if (standard!=null && custom!=null) 
-        {
-        	if(ImageReaderSpi.class.isAssignableFrom(standard.getClass()))
-        		return registry.setOrdering(ImageReaderSpi.class, (ImageReaderSpi)custom,(ImageReaderSpi) standard);	
-        	else
-        		return registry.setOrdering(ImageWriterSpi.class, (ImageWriterSpi)custom,(ImageWriterSpi) standard);	
         }
 
         //we did not find them

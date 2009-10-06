@@ -6,7 +6,7 @@ Index: nmake.opt
  #GEOTIFF_LIB =   C:/warmerda/libgeotiff/geotiff_i.lib
  
  # Uncomment the following and update to enable ECW support.
-+#ECW_PLUGIN = NO
++#ECW_PLUGIN = YES
  #ECWDIR  = 	C:\warmerda\libecwj2-3.3
  #ECWLIB  = 	$(ECWDIR)\Source\NCSBuildQmake\Debug\libecwj2.lib
  
