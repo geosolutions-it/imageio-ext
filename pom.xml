@@ -535,7 +535,7 @@
             <descriptor>release/src.xml</descriptor>
             <descriptor>release/javadoc.xml</descriptor>
            </descriptors>
-           <finalName>imageio-ext-1.0</finalName>
+           <finalName>imageio-ext-1.0-SNAPSHOT</finalName>
            <outputDirectory>${project.build.directory}/release</outputDirectory>
           </configuration>
        </plugin>
