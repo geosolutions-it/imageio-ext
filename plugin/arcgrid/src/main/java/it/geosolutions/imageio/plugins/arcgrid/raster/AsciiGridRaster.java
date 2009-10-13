@@ -575,7 +575,7 @@ public abstract class AsciiGridRaster {
 				// Case 1: Exact key
 				if (markedPos != null) {
 
-					imageIS.seek(markedPos.intValue());
+					imageIS.seek(markedPos.longValue());
 					samplesCounted = samplesToThrowAwayBeforeFirstValidSample;
 
 					// I have found a stream Position associated to the number
@@ -600,7 +600,7 @@ public abstract class AsciiGridRaster {
 							// number. Thus, I need to manually count the
 							// remaining number of spaces.
 
-							imageIS.seek(markedPos.intValue());
+							imageIS.seek(markedPos.longValue());
 							samplesCounted = key.intValue();
 						}
 					} else {
