@@ -569,13 +569,12 @@ public abstract class AsciiGridRaster {
 		imageIS.seek(dataStartAt);
 		if (samplesToThrowAwayBeforeFirstValidSample > 0) {
 			synchronized (tileTreeMutex) {
-				Long markedPos = (Long) tileMarker.get(new Long(
-						samplesToThrowAwayBeforeFirstValidSample));
+				Long markedPos = (Long) tileMarker.get(new Long(samplesToThrowAwayBeforeFirstValidSample));
 
 				// Case 1: Exact key
 				if (markedPos != null) {
 
-					imageIS.seek(markedPos.intValue());
+					imageIS.seek(markedPos.longValue());
 					samplesCounted = samplesToThrowAwayBeforeFirstValidSample;
 
 					// I have found a stream Position associated to the number
@@ -584,8 +583,7 @@ public abstract class AsciiGridRaster {
 
 				} else {
 					// Case 2: Nearest(Lower) Key
-					SortedMap sm = tileMarker.headMap(new Long(
-							samplesToThrowAwayBeforeFirstValidSample));
+					SortedMap sm = tileMarker.headMap(new Long(samplesToThrowAwayBeforeFirstValidSample));
 
 					if (!sm.entrySet().isEmpty()) {
 						// searching the nearest key (belower)
@@ -600,7 +598,7 @@ public abstract class AsciiGridRaster {
 							// number. Thus, I need to manually count the
 							// remaining number of spaces.
 
-							imageIS.seek(markedPos.intValue());
+							imageIS.seek(markedPos.longValue());
 							samplesCounted = key.intValue();
 						}
 					} else {
