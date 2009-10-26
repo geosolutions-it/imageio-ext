@@ -73,6 +73,12 @@
       </modules>
     </profile> 
     <profile>
+      <id>mat</id>
+      <modules>
+	      <module>matlab</module>
+      </modules>
+    </profile> 
+    <profile>
       <id>releasebuild</id>
       <modules>
 	<module>gdal</module>

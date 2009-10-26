@@ -13,9 +13,9 @@
   <artifactId>imageio-ext-gdal-plugin</artifactId>
   <packaging>pom</packaging>
   <version>1.1-SNAPSHOT</version>
-  <name>GeoSolutions Image I/O-Extensions plugins</name>
+  <name>GeoSolutions Image I/O-Extensions GDAL plugins</name>
   <description>
-    Image I/O-Extensions plugin modules.
+    Image I/O-Extensions GDAL plugin modules.
   </description>
   <scm>
     <connection>
