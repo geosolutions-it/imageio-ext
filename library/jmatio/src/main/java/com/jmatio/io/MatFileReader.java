@@ -216,9 +216,9 @@ public class MatFileReader {
     }
 
     private boolean init() throws IOException {
-        EnhancedRandomAccessFile raFile = new EnhancedRandomAccessFile(inputFile, "r");
-        FileChannel roChannel = raFile.getChannel();
-        ByteBuffer buf = ByteBuffer.allocateDirect(128);
+    	final EnhancedRandomAccessFile raFile = new EnhancedRandomAccessFile(inputFile, "r");
+        final FileChannel roChannel = raFile.getChannel();
+        final ByteBuffer buf = ByteBuffer.allocateDirect(128);
         roChannel.read(buf, 0);
         buf.rewind();
         try {
@@ -227,10 +227,18 @@ public class MatFileReader {
             return false;
         } finally {
             if (roChannel != null) {
-                roChannel.close();
+            	try	{
+            		roChannel.close();
+            	} catch (Throwable ioe){
+            			
+            	} 
             }
             if (raFile != null) {
-                raFile.close();
+            	try	{
+            		raFile.close();
+            	} catch (Throwable ioe){
+            			
+            	} 
             }
         }
         if (matFileHeader != null)
@@ -343,7 +351,7 @@ public class MatFileReader {
                 buf.rewind();
                 break;
             case HEAP_BYTE_BUFFER:
-                int filesize = (int) roChannel.size();
+                final int filesize = (int) roChannel.size();
 //                System.gc();
                 buf = ByteBuffer.allocate(filesize);
 
@@ -356,7 +364,7 @@ public class MatFileReader {
                 // parameter.
                 // roChannel.read(buf, 0); // ends up in outOfMemory
                 // raFile.readFully(buf.array()); // ends up in outOfMemory
-                int numberOfBlocks = filesize / DIRECT_BUFFER_LIMIT
+                final int numberOfBlocks = filesize / DIRECT_BUFFER_LIMIT
                         + ((filesize % DIRECT_BUFFER_LIMIT) > 0 ? 1 : 0);
                 if (numberOfBlocks > 1) {
                     ByteBuffer tempByteBuffer = ByteBuffer
