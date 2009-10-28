@@ -112,6 +112,11 @@
                           <artifactId>imageio-ext-gdalkakadujp2</artifactId>
      <version>${project.version}</version>
      </dependency>
+     <dependency>
+                          <groupId>it.geosolutions.imageio-ext</groupId>
+                          <artifactId>imageio-ext-tiff</artifactId>
+     <version>${project.version}</version>
+     </dependency>
      <!-- <dependency>
                           <groupId>it.geosolutions.imageio-ext</groupId>
                           <artifactId>imageio-ext-directkakadu</artifactId>
