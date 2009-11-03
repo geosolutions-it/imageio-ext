@@ -24,6 +24,7 @@ import it.geosolutions.imageio.plugins.jp2k.box.ComponentMappingBox;
 import it.geosolutions.imageio.plugins.jp2k.box.ImageHeaderBox;
 import it.geosolutions.imageio.plugins.jp2k.box.PaletteBox;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
+import it.geosolutions.imageio.utilities.Utilities;
 import it.geosolutions.util.KakaduUtilities;
 
 import java.awt.Rectangle;
@@ -732,13 +733,7 @@ public class JP2KKakaduImageReader extends ImageReader {
         } else if (input instanceof URL) {
             final URL tempURL = (URL) input;
             if (tempURL.getProtocol().equalsIgnoreCase("file")) {
-
-                try {
-                    inputFile = new File(URLDecoder.decode(tempURL.getFile(),
-                            "UTF-8"));
-                } catch (IOException e) {
-                    throw new IllegalArgumentException("Not a Valid Input", e);
-                }
+                    inputFile = Utilities.urlToFile(tempURL);
             }
         } else if (input instanceof ImageInputStream) {
             try {

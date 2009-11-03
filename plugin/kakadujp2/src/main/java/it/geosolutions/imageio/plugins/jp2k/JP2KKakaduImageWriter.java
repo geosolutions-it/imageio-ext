@@ -20,6 +20,7 @@
 package it.geosolutions.imageio.plugins.jp2k;
 
 import it.geosolutions.imageio.stream.output.FileImageOutputStreamExt;
+import it.geosolutions.imageio.utilities.Utilities;
 import it.geosolutions.util.KakaduUtilities;
 
 import java.awt.Dimension;
@@ -243,13 +244,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
         else if (output instanceof URL) {
             final URL tempURL = (URL) output;
             if (tempURL.getProtocol().equalsIgnoreCase("file")) {
-                try {
-                    outputFile = new File(URLDecoder.decode(tempURL.getFile(),
-                            "UTF-8"));
-
-                } catch (IOException e) {
-                    throw new RuntimeException("Not a Valid Input", e);
-                }
+                outputFile = Utilities.urlToFile(tempURL);
             }
         } else if (output instanceof ImageOutputStream) {
             try {

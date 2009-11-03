@@ -27,6 +27,8 @@ import it.geosolutions.imageio.plugins.jp2k.box.XMLBox;
 import it.geosolutions.imageio.plugins.jp2k.box.XMLBoxMetadataNode;
 
 import java.lang.ref.SoftReference;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
@@ -155,36 +157,61 @@ public class JP2KStreamMetadata extends IIOMetadata {
      * Search the first occurrence of a node related to the specified box type
      * and return it as a {@link IIOMetadataNode} or null in case of not found.
      * Search is performed visiting the children of a node before the brothers.
-     * 
      */
     public IIOMetadataNode searchFirstOccurrenceNode(final int requestedBoxType) {
         final Node rootNode = getAsTree(nativeMetadataFormatName);
-        final IIOMetadataNode returnedNode[] = new IIOMetadataNode[1];
-        searchFirstOccurrenceNode(rootNode, BoxUtilities
-                .getName(requestedBoxType), returnedNode);
-        if (returnedNode[0] != null)
-            return returnedNode[0];
+        final List<IIOMetadataNode> returnedNodes = new ArrayList<IIOMetadataNode>(1);
+        searchOccurrencesNode(rootNode, BoxUtilities
+                .getName(requestedBoxType), returnedNodes, true);
+        if (!returnedNodes.isEmpty())
+            return returnedNodes.get(0);
         return null;
     }
+    
+    /**
+     * Search any JP2 Box metadata node occurrence of the specified type.
+     * @param requestedBoxType 
+     * 			the box type to be searched.
+     * @return
+     * 			a List containing any occurrence found.
+     */
+    public List<IIOMetadataNode> searchOccurrencesNode(final int requestedBoxType) {
+        final Node rootNode = getAsTree(nativeMetadataFormatName);
+        final List<IIOMetadataNode> returnedNodes = new ArrayList<IIOMetadataNode>(1);
+        searchOccurrencesNode(rootNode, BoxUtilities
+                .getName(requestedBoxType), returnedNodes, false);
+        return returnedNodes;
+    }
 
-    private void searchFirstOccurrenceNode(Node node,
-            final String requestedBoxType, IIOMetadataNode[] returnedNode) {
+    private void searchOccurrencesNode(final Node node, final String requestedBoxType, 
+    		final List<IIOMetadataNode> returnedNodes, final boolean exitFirstFound) {
         if (node != null) {
             if (node.getNodeName().equalsIgnoreCase(requestedBoxType)) {
-                returnedNode[0] = (IIOMetadataNode) node;
-                return;
+            	boolean sameNode = false;
+            	for (IIOMetadataNode foundNode : returnedNodes){
+            		if (foundNode == node){
+            			sameNode = true;
+            			break;
+            		}
+            	}
+            	if (!sameNode){
+            		returnedNodes.add((IIOMetadataNode) node);
+            		if (exitFirstFound)
+            			return;
+            	}
+                
             }
 
             if (node.hasChildNodes()) {
-                searchFirstOccurrenceNode(node.getFirstChild(),
-                        requestedBoxType, returnedNode);
-                if (returnedNode[0] != null)
+                searchOccurrencesNode(node.getFirstChild(),
+                        requestedBoxType, returnedNodes, exitFirstFound);
+                if (returnedNodes != null && !returnedNodes.isEmpty() && exitFirstFound)
                     return;
                 Node sibling = node.getNextSibling();
                 while (sibling != null) {
-                    searchFirstOccurrenceNode(sibling, requestedBoxType,
-                            returnedNode);
-                    if (returnedNode[0] != null)
+                    searchOccurrencesNode(sibling, requestedBoxType,
+                            returnedNodes, exitFirstFound);
+                    if (returnedNodes != null && !returnedNodes.isEmpty() && exitFirstFound)
                         return;
                     sibling = sibling.getNextSibling();
                 }
