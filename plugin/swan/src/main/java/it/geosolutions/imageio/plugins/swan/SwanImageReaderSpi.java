@@ -18,11 +18,11 @@ package it.geosolutions.imageio.plugins.swan;
 
 import it.geosolutions.imageio.plugins.swan.raster.SwanRaster;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
+import it.geosolutions.imageio.utilities.Utilities;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -139,7 +139,7 @@ public final class SwanImageReaderSpi extends ImageReaderSpi {
 		if (input instanceof URL) {
 			final URL tempURL = (URL) input;
 			if (tempURL.getProtocol().equalsIgnoreCase("file"))
-				input = new File(URLDecoder.decode(tempURL.getFile(), "UTF8"));
+				input = Utilities.urlToFile(tempURL);
 			else
 				input = ((URL) input).openStream();
 //			closeMe = true;

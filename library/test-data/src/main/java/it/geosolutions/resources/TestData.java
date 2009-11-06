@@ -32,6 +32,8 @@
  */
 package it.geosolutions.resources;
 
+import it.geosolutions.imageio.utilities.Utilities;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -239,7 +241,7 @@ public class TestData implements Runnable {
      */
     public static File file(final Object caller, final String path) throws IOException {
         final URL url = url(caller, path);
-        final File file = new File(URLDecoder.decode(url.getPath(), ENCODING));
+        final File file = Utilities.urlToFile(url);
         if (!file.exists()) {
             throw new FileNotFoundException("Could not locate test-data: " + path);
         }
@@ -333,7 +335,7 @@ public class TestData implements Runnable {
             throws IOException
     {
         final URL url = url(caller, name);
-        final File file = new File(URLDecoder.decode(url.getPath(), ENCODING));
+        final File file = Utilities.urlToFile(url);
         if (file.exists()) {
             return new RandomAccessFile(file, "r").getChannel();
         }

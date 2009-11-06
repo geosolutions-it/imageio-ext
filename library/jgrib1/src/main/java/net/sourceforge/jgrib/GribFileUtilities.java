@@ -1,5 +1,7 @@
 package net.sourceforge.jgrib;
 
+import it.geosolutions.imageio.utilities.Utilities;
+
 import java.awt.image.DataBuffer;
 import java.awt.image.WritableRaster;
 import java.io.File;
@@ -14,7 +16,6 @@ import java.util.logging.Logger;
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
-import javax.media.jai.DataBufferDouble;
 import javax.media.jai.RasterFactory;
 
 class GribFileUtilities {
@@ -70,7 +71,7 @@ class GribFileUtilities {
 		ensureNotNull("url", url);
 		final String protocol = url.getProtocol();
 		if (protocol.equalsIgnoreCase("file"))
-			return new FileImageInputStream(new File(URLDecoder.decode(url.getFile(), "utf8")));
+			return new FileImageInputStream(Utilities.urlToFile(url));
 		else if (protocol.equalsIgnoreCase("http"))
 			return new MemoryCacheImageInputStream(url.openStream());
 		return null;

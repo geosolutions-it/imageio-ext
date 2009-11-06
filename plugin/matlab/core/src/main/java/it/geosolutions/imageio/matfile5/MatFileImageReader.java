@@ -18,6 +18,7 @@ package it.geosolutions.imageio.matfile5;
 
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
+import it.geosolutions.imageio.utilities.Utilities;
 
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
@@ -97,12 +98,7 @@ public abstract class MatFileImageReader extends ImageReader {
             else if (input instanceof URL) {
                 final URL tempURL = (URL) input;
                 if (tempURL.getProtocol().equalsIgnoreCase("file")) {
-                    try {
-                        dataSource = new File(URLDecoder.decode(tempURL
-                                .getFile(), "UTF-8"));
-                    } catch (UnsupportedEncodingException e) {
-                        throw new RuntimeException("Not a Valid Input ", e);
-                    }
+                	dataSource = Utilities.urlToFile(tempURL);
                 }
             } else
                 // should never happen
@@ -167,8 +163,7 @@ public abstract class MatFileImageReader extends ImageReader {
             if (tempURL.getProtocol().equalsIgnoreCase("file")) {
 
                 try {
-                    dataSource = new File(URLDecoder.decode(tempURL
-                            .getFile(), "UTF-8"));
+                    dataSource = Utilities.urlToFile(tempURL);
                     imageInputStream = ImageIO.createImageInputStream(input);
                 } catch (IOException e) {
                     throw new RuntimeException(

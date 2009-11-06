@@ -17,6 +17,7 @@
 package it.geosolutions.imageio.matfile5;
 
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
+import it.geosolutions.imageio.utilities.Utilities;
 
 import java.io.File;
 import java.io.IOException;
@@ -164,7 +165,7 @@ public abstract class MatFileImageReaderSpi extends ImageReaderSpi {
         if (input instanceof URL) {
             final URL tempURL = (URL) input;
             if (tempURL.getProtocol().equalsIgnoreCase("file"))
-                input = new File(URLDecoder.decode(tempURL.getFile(), "UTF8"));
+                input = Utilities.urlToFile(tempURL);
             else
                 input = ((URL) input).openStream();
         }

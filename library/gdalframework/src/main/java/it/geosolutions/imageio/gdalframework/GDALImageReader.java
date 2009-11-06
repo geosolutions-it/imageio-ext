@@ -748,8 +748,7 @@ public abstract class GDALImageReader extends ImageReader {
             if (tempURL.getProtocol().equalsIgnoreCase("file")) {
 
                 try {
-                    datasetSource = new File(URLDecoder.decode(tempURL
-                            .getFile(), "UTF-8"));
+                    datasetSource = Utilities.urlToFile(tempURL);
                     imageInputStream = ImageIO.createImageInputStream(input);
                 } catch (IOException e) {
                     throw new RuntimeException(

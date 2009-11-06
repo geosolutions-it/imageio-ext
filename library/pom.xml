@@ -33,13 +33,14 @@
   <!--     Modules for the build in approximate dependency order   -->
   <!-- =========================================================== -->
   <modules>
+    <module>utilities</module>
     <module>test-data</module>
     <module>customstreams</module>
     <module>geocore</module>
-    <module>utilities</module>
     <module>gdalframework</module>
     <module>imagereadmt</module>
     <module>jhdf</module>
+    <module>jmatio</module>
     <module>netcdf-support</module>
     <module>jgrib1</module>
   </modules>
