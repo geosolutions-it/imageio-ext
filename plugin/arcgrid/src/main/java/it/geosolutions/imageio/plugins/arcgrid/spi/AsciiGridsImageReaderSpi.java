@@ -19,6 +19,7 @@ import it.geosolutions.imageio.plugins.arcgrid.AsciiGridsImageReader;
 import it.geosolutions.imageio.plugins.arcgrid.raster.AsciiGridRaster;
 import it.geosolutions.imageio.plugins.arcgrid.raster.EsriAsciiGridRaster;
 import it.geosolutions.imageio.plugins.arcgrid.raster.GrassAsciiGridRaster;
+import it.geosolutions.imageio.utilities.Utilities;
 
 import java.io.File;
 import java.io.IOException;
@@ -141,7 +142,7 @@ public final class AsciiGridsImageReaderSpi extends ImageReaderSpi {
 		if (input instanceof URL) {
 			final URL tempURL = (URL) input;
 			if (tempURL.getProtocol().equalsIgnoreCase("file"))
-				input = new File(URLDecoder.decode(tempURL.getFile(), "UTF8"));
+				input = Utilities.urlToFile(tempURL);
 			else
 				input = ((URL) input).openStream();
 			closeMe = true;

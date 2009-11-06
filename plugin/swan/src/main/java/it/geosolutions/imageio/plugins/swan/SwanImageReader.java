@@ -17,6 +17,7 @@
 package it.geosolutions.imageio.plugins.swan;
 
 import it.geosolutions.imageio.plugins.swan.raster.SwanRaster;
+import it.geosolutions.imageio.utilities.Utilities;
 
 import java.awt.Rectangle;
 import java.awt.Transparency;
@@ -306,23 +307,13 @@ public final class SwanImageReader extends ImageReader {
 			}
 			// now we know it is pointing to a file
 			// let's see if it exists
-			try {
-				final File inFile = new File(URLDecoder.decode(testUrl
-						.getFile(), "UTF-8"));
-				if (!inFile.exists()) {
-					// is not a file let's reject it
-					if (LOGGER.isLoggable(Level.SEVERE))
-						LOGGER.severe("Input file does not exists!");
-					throw new IllegalArgumentException(
-							"Input file does not exists!");
-				}
-			} catch (UnsupportedEncodingException e) {
-				// a problem occurred
+			final File inFile = Utilities.urlToFile(testUrl);
+			if (!inFile.exists()) {
+				// is not a file let's reject it
 				if (LOGGER.isLoggable(Level.SEVERE))
-					LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
-				final IllegalArgumentException ex = new IllegalArgumentException();
-				ex.initCause(e);
-				throw ex;
+					LOGGER.severe("Input file does not exists!");
+				throw new IllegalArgumentException(
+						"Input file does not exists!");
 			}
 		} else
 

@@ -18,11 +18,11 @@ package it.geosolutions.imageio.plugins.swan;
 
 import it.geosolutions.imageio.plugins.swan.raster.SwanRaster;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
+import it.geosolutions.imageio.utilities.Utilities;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -123,38 +123,31 @@ public final class SwanImageReaderSpi extends ImageReaderSpi {
 		 * Checking input source types and creating an ImageInputStream
 		 */
 
-		// temp vars
-//		ImageInputStream spiImageInputStream;
-//		boolean closeMe = false;// if the stream is opened here we need to close
 		// it before leaving
 
 		// if input source is a string,
 		// convert input from String to File
 		if (input instanceof String) {
 			input = new File((String) input);
-//			closeMe = true;
 		}
 
 		// if input source is an URL, open an InputStream
 		if (input instanceof URL) {
 			final URL tempURL = (URL) input;
 			if (tempURL.getProtocol().equalsIgnoreCase("file"))
-				input = new File(URLDecoder.decode(tempURL.getFile(), "UTF8"));
+				input = Utilities.urlToFile(tempURL);
 			else
 				input = ((URL) input).openStream();
-//			closeMe = true;
 		}
 
 		// if input source is a File,
 		// convert input from File to FileInputStream
 		if (input instanceof File) {
 			input = new FileImageInputStreamExtImpl((File) input);
-//			closeMe = true;
 		}
 
 		if (input instanceof ImageInputStream) {
 			((ImageInputStream) input).mark();
-//			spiImageInputStream = (ImageInputStream) input;
 		} else {
 			return false;
 		}
@@ -166,21 +159,15 @@ public final class SwanImageReaderSpi extends ImageReaderSpi {
 			if (LOGGER.isLoggable(Level.SEVERE))
 				LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
 			((ImageInputStream) input).reset();
-//			if (closeMe)
-//				spiImageInputStream.close();
 			return false;
 		} catch (IOException e) {
 			if (LOGGER.isLoggable(Level.SEVERE))
 				LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
 			((ImageInputStream) input).reset();
-//			if (closeMe)
-//				spiImageInputStream.close();
 			return false;
 		}
 		if (input instanceof ImageInputStream)
 			((ImageInputStream) input).reset();
-//		if (closeMe)
-//			spiImageInputStream.close();
 		return true;
 	}
 
