@@ -569,8 +569,7 @@ public abstract class AsciiGridRaster {
 		imageIS.seek(dataStartAt);
 		if (samplesToThrowAwayBeforeFirstValidSample > 0) {
 			synchronized (tileTreeMutex) {
-				Long markedPos = (Long) tileMarker.get(new Long(
-						samplesToThrowAwayBeforeFirstValidSample));
+				Long markedPos = (Long) tileMarker.get(new Long(samplesToThrowAwayBeforeFirstValidSample));
 
 				// Case 1: Exact key
 				if (markedPos != null) {
@@ -584,8 +583,7 @@ public abstract class AsciiGridRaster {
 
 				} else {
 					// Case 2: Nearest(Lower) Key
-					SortedMap sm = tileMarker.headMap(new Long(
-							samplesToThrowAwayBeforeFirstValidSample));
+					SortedMap sm = tileMarker.headMap(new Long(samplesToThrowAwayBeforeFirstValidSample));
 
 					if (!sm.entrySet().isEmpty()) {
 						// searching the nearest key (belower)
@@ -1038,9 +1036,9 @@ public abstract class AsciiGridRaster {
 					continue;
 
 			}
-			// only digits, +, e, E, . are allowed
+			// only digits, '+', 'e', 'E', '*', '.' and ',' are allowed
 			if ((b < 48 || b > 57) && b != 43 && b != 45 && b != 69 && b != 101
-					&& b != 46 && b != 42)
+					&& b != 46 && b != 42 && b != 44)
 				return Double.NEGATIVE_INFINITY;
 			validBytesRead++;
 
