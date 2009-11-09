@@ -40,7 +40,7 @@ import org.junit.Assert;
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class EnvisatTest extends AbstractGDALTest {
-    public final static String fileName = "ATS_TOA_1CNPDK20030504_111259_000000572016_00080_06146_0157.N1";
+    public final static String fileName = "aea.dat";
 
 
     /**
@@ -50,7 +50,7 @@ public class EnvisatTest extends AbstractGDALTest {
      * @throws IOException
      */
     @Test
-    public void jaiOperations() throws FileNotFoundException, IOException {
+    public void testEnvisat() throws FileNotFoundException, IOException {
         if (!isGDALAvailable) {
             return;
         }
@@ -61,6 +61,7 @@ public class EnvisatTest extends AbstractGDALTest {
             warningMessage();
             return;
         }
+        
         // ////////////////////////////////////////////////////////////////
         // preparing to read
         // ////////////////////////////////////////////////////////////////
@@ -72,8 +73,7 @@ public class EnvisatTest extends AbstractGDALTest {
         final int ySubSampling = 2;
         final int xSubSamplingOffset = 0;
         final int ySubSamplingOffset = 0;
-        irp.setSourceSubsampling(xSubSampling, ySubSampling,
-                xSubSamplingOffset, ySubSamplingOffset);
+        irp.setSourceSubsampling(xSubSampling, ySubSampling,xSubSamplingOffset, ySubSamplingOffset);
         pbjImageRead = new ParameterBlockJAI("ImageRead");
         pbjImageRead.setParameter("Input", file);
         pbjImageRead.setParameter("readParam", irp);
