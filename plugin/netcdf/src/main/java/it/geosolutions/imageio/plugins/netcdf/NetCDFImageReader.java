@@ -200,7 +200,6 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
      * @throws exception
      *                 {@link InvalidRangeException}
      */
-    @SuppressWarnings("unchecked")
     private synchronized void initialize() throws InvalidRangeException {
         int numImages = 0;
         indexMap = new HashMap<Range, NetCDFVariableWrapper>();
