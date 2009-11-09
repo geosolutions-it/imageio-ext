@@ -825,7 +825,7 @@ public class GRIB1ImageReader extends BaseImageReader {
     /**
      */
     public synchronized IIOMetadata getStreamMetadata() {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Stream Metadata are currently unsupported for this reader");
     }
 
     /**
