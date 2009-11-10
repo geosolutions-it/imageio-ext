@@ -47,7 +47,6 @@ public class JP2KKakaduImageWriteParam extends ImageWriteParam {
     /**
      * Specifies the quality of the output image as a compression ratio. As an
      * instance, a value of 0.2 means a 5:1 compression ratio.
-     * 
      */
     private double quality;
     
@@ -79,7 +78,7 @@ public class JP2KKakaduImageWriteParam extends ImageWriteParam {
      *                will be written into the output.
      * @see #isWriteCodeStreamOnly()
      */
-    public void setWriteCodeStreamOnly(boolean writeCodeStreamOnly) {
+    public void setWriteCodeStreamOnly(final boolean writeCodeStreamOnly) {
         this.writeCodeStreamOnly = writeCodeStreamOnly;
     }
 

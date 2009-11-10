@@ -231,7 +231,7 @@ public abstract class GDALImageReader extends ImageReader {
                 if (!(datainput instanceof URIImageInputStream)){
                     mainDatasetName = getDatasetSource(datainput).getAbsolutePath();
                 } else {
-                    URI uri = ((URIImageInputStream)datainput).getUri();
+                    final URI uri = ((URIImageInputStream)datainput).getUri();
                     if (uri != null){
                         mainDatasetName = uri.toString();
                     }
@@ -751,8 +751,7 @@ public abstract class GDALImageReader extends ImageReader {
                     datasetSource = Utilities.urlToFile(tempURL);
                     imageInputStream = ImageIO.createImageInputStream(input);
                 } catch (IOException e) {
-                    throw new RuntimeException(
-                            "Failed to create a valid input stream ", e);
+                    throw new RuntimeException("Failed to create a valid input stream ", e);
                 }
             }
         }

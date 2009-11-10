@@ -315,6 +315,7 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
         return new NetCDFImageMetadata(this, imageIndex);
     }
 
+    @Override
     public Iterator<ImageTypeSpecifier> getImageTypes(int imageIndex) throws IOException {
         final List<ImageTypeSpecifier> l = new java.util.ArrayList<ImageTypeSpecifier>();
         final NetCDFVariableWrapper wrapper = getNetCDFVariableWrapper(imageIndex);

@@ -88,6 +88,8 @@ public class GRIB1ImageReader extends BaseImageReader {
 	
 	private Variable horizontalGrid;
 	
+//    private int numGlobalAttributes;
+	
     private NetcdfDataset dataset;
     
 	private HashMap<Range, GribVariableWrapper> indexMap;

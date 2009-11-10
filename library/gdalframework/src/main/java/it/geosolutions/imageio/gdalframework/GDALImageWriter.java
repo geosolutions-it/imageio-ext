@@ -1495,7 +1495,7 @@ public abstract class GDALImageWriter extends ImageWriter {
         // Setting regions and sizes and retrieving parameters
         //
         // //
-        Rectangle imageBounds = new Rectangle(sourceMinX, sourceMinY,sourceWidth, sourceHeight);
+        Rectangle imageBounds = new Rectangle(sourceMinX, sourceMinY, sourceWidth, sourceHeight);
         Dimension destSize = new Dimension();
         computeRegions(imageBounds, destSize, param);
         imageMetadata.setBasicInfo(destSize.width, destSize.height, nBands);
