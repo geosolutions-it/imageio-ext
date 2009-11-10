@@ -38,10 +38,8 @@ import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.DoubleBuffer;
@@ -231,7 +229,7 @@ public abstract class GDALImageReader extends ImageReader {
                 if (!(datainput instanceof URIImageInputStream)){
                     mainDatasetName = getDatasetSource(datainput).getAbsolutePath();
                 } else {
-                    URI uri = ((URIImageInputStream)datainput).getUri();
+                    final URI uri = ((URIImageInputStream)datainput).getUri();
                     if (uri != null){
                         mainDatasetName = uri.toString();
                     }

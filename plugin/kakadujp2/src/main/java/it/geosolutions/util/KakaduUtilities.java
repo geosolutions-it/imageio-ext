@@ -208,22 +208,15 @@ public class KakaduUtilities {
         final WritableRaster raster = cm.createCompatibleWritableRaster(
                 destinationWidth, destinationHeight);
 
-        final BufferedImage finalImage = new BufferedImage(cm, raster, false,
-                null);
+        final BufferedImage finalImage = new BufferedImage(cm, raster, false, null);
         final Graphics2D gc2D = finalImage.createGraphics();
-        gc2D.setRenderingHint(RenderingHints.KEY_RENDERING,
-                RenderingHints.VALUE_RENDER_SPEED);
-        gc2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_OFF);
-        gc2D.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,
-                RenderingHints.VALUE_COLOR_RENDER_SPEED);
-        gc2D
-                .setRenderingHint(
-                        RenderingHints.KEY_INTERPOLATION,
+        gc2D.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+        gc2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        gc2D.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
+        gc2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
                         interpolationType == JP2KKakaduImageReadParam.INTERPOLATION_NEAREST ? RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR
                                 : RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        gc2D.drawImage(bi, 0, 0, destinationWidth, destinationHeight, 0, 0, bi
-                .getWidth(), bi.getHeight(), null);
+        gc2D.drawImage(bi, 0, 0, destinationWidth, destinationHeight, 0, 0, bi.getWidth(), bi.getHeight(), null);
         gc2D.dispose();
         bi.flush();
         bi = null;

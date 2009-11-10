@@ -19,6 +19,7 @@ package it.geosolutions.imageio.plugins.jp2k;
 import it.geosolutions.imageio.imageioimpl.imagereadmt.CloneableImageReadParam;
 
 import javax.imageio.ImageReadParam;
+import javax.imageio.ImageTypeSpecifier;
 
 /**
  * Class extending {@link ImageReadParam} with add for support of JP2 specific
@@ -112,7 +113,7 @@ public class JP2KKakaduImageReadParam extends CloneableImageReadParam {
      * @see #getQualityLayers()
      * @uml.property name="qualityLayers"
      */
-    public void setQualityLayers(int qualityLayers) {
+    public void setQualityLayers(final int qualityLayers) {
         this.qualityLayers = qualityLayers;
     }
 
@@ -146,24 +147,24 @@ public class JP2KKakaduImageReadParam extends CloneableImageReadParam {
      *                operation interpolationType should be one of: -<em>INTERPOLATION_NEAREST</em> -<em>INTERPOLATION_BILINEAR</em> -<em>INTERPOLATION_BICUBIC</em> -<em>INTERPOLATION_BICUBIC2</em>
      * @uml.property name="interpolationType"
      */
-    public final void setInterpolationType(int interpolationType) {
+    public final void setInterpolationType(final int interpolationType) {
         this.interpolationType = interpolationType;
     }
 
     protected void initialize(ImageReadParam param) {
-        if (param.hasController()) {
+        if (param.hasController()) 
             setController(param.getController());
-        }
         setSourceRegion(param.getSourceRegion());
         setSourceBands(param.getSourceBands());
         setDestinationBands(param.getDestinationBands());
         setDestination(param.getDestination());
-
         setDestinationOffset(param.getDestinationOffset());
         setSourceSubsampling(param.getSourceXSubsampling(), param
                 .getSourceYSubsampling(), param.getSubsamplingXOffset(), param
                 .getSubsamplingYOffset());
-        setDestinationType(param.getDestinationType());
+        final ImageTypeSpecifier type = param.getDestinationType();
+        if (type != null)
+        	setDestinationType(type);
 
     }
 }

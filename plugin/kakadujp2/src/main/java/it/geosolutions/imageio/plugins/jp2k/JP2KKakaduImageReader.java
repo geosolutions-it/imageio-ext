@@ -52,7 +52,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -103,6 +102,7 @@ public class JP2KKakaduImageReader extends ImageReader {
         }
     }
 
+    /** Size of the Temp Buffer, used when reading from an image input stream */
     private final static int TEMP_BUFFER_SIZE = 64 * 1024;
 
     private boolean deleteInputFile;
@@ -115,6 +115,7 @@ public class JP2KKakaduImageReader extends ImageReader {
 
     private boolean isRawSource;
 
+    /** A fileWalker to scan boxes */
     private JP2KFileWalker fileWalker;
 
     private final List<JP2KCodestreamProperties> multipleCodestreams = new ArrayList<JP2KCodestreamProperties>();
@@ -144,8 +145,7 @@ public class JP2KKakaduImageReader extends ImageReader {
                     .append(", while the valid imageIndex");
             if (numImages > 1)
                 // There are N Images.
-                sb.append(" range should be [0,").append(numImages - 1).append(
-                        "]!");
+                sb.append(" range should be [0,").append(numImages - 1).append("]!");
             else
                 // Only the imageIndex 0 is valid.
                 sb.append(" should be 0!");
@@ -175,10 +175,27 @@ public class JP2KKakaduImageReader extends ImageReader {
         return multipleCodestreams.get(imageIndex).getWidth();
     }
 
+    /**
+     * Returns an <code>IIOMetadata</code> object containing metadata
+     * associated with the given image.
+     *
+     * @param imageIndex the index of the image whose metadata is to
+     * be retrieved. 
+     *
+     * @return an <code>IIOMetadata</code> object.
+     * @see javax.imageio.ImageReader#getImageMetadata(int)
+     */
     public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
         return new JP2KImageMetadata(multipleCodestreams.get(imageIndex));
     }
 
+    /**
+     * Returns an <code>IIOMetadata</code> object representing the
+     * metadata associated with the input source as a whole. 
+     *
+     * @return an <code>IIOMetadata</code> object.
+     * @see javax.imageio.ImageReader#getStreamMetadata()
+     */
     public IIOMetadata getStreamMetadata() throws IOException {
         if (isRawSource)
             throw new UnsupportedOperationException(
@@ -186,15 +203,30 @@ public class JP2KKakaduImageReader extends ImageReader {
         return new JP2KStreamMetadata(fileWalker.getJP2KBoxesTree(), numImages);
     }
 
+    /**
+     * Returns an <code>Iterator</code> containing possible image types to
+     * which the given image may be decoded, in the form of
+     * <code>ImageTypeSpecifiers</code>s. At least one legal image type will
+     * be returned. This implementation simply returns an
+     * <code>ImageTypeSpecifier</code> set in compliance with the property of
+     * the dataset contained within the underlying data source.
+     * 
+     * @param imageIndex
+     *                the index of the image to be retrieved.
+     * 
+     * @return an <code>Iterator</code> containing possible image types to
+     *         which the given image may be decoded, in the form of
+     *         <code>ImageTypeSpecifiers</code>s
+     * @see javax.imageio.ImageReader#getImageTypes(int)
+     */
     public Iterator<ImageTypeSpecifier> getImageTypes(int imageIndex)
             throws IOException {
         checkImageIndex(imageIndex);
         final List<ImageTypeSpecifier> l = new java.util.ArrayList<ImageTypeSpecifier>();
-        final JP2KCodestreamProperties codestreamP = multipleCodestreams
-                .get(imageIndex);
+        final JP2KCodestreamProperties codestreamP = multipleCodestreams.get(imageIndex);
+
         // Setting SampleModel and ColorModel for the whole image
-        if (codestreamP.getColorModel() == null
-                || codestreamP.getSampleModel() == null) {
+        if (codestreamP.getColorModel() == null || codestreamP.getSampleModel() == null) {
             try {
                 initializeSampleModelAndColorModel(codestreamP);
             } catch (KduException kdue) {
@@ -361,8 +393,7 @@ public class JP2KKakaduImageReader extends ImageReader {
                 localWrappedSource = new Jpx_source();
                 localFamilySource.Open(fileName);
                 localWrappedSource.Open(localFamilySource, true);
-                final Jpx_codestream_source stream = localWrappedSource
-                        .Access_codestream(imageIndex);
+                final Jpx_codestream_source stream = localWrappedSource.Access_codestream(imageIndex);
                 final Jpx_input_box inputbox = stream.Open_stream();
                 codestream.Create(inputbox);
             } else {
@@ -376,22 +407,20 @@ public class JP2KKakaduImageReader extends ImageReader {
             // -------
             // Set parameters for stripe decompression
             // ////////////////////////////////////////////////////////////////
-            Kdu_dims dims = new Kdu_dims();
-            codestream.Apply_input_restrictions(0, nComponents, nDiscardLevels,
-                    qualityLayers, null, Kdu_global.KDU_WANT_OUTPUT_COMPONENTS);
+            final Kdu_dims dims = new Kdu_dims();
+//            codestream.Set_persistent();
+            
+            codestream.Apply_input_restrictions(0, nComponents, nDiscardLevels, qualityLayers, null, Kdu_global.KDU_WANT_OUTPUT_COMPONENTS);
             codestream.Get_dims(0, dims);
-
-            Kdu_dims dimsROI = new Kdu_dims();
-            dims.Access_pos().Set_x(
-                    dims.Access_pos().Get_x() + requiredRegion.x);
-            dims.Access_pos().Set_y(
-                    dims.Access_pos().Get_y() + requiredRegion.y);
+            
+            final Kdu_dims dimsROI = new Kdu_dims();
+            dims.Access_pos().Set_x(dims.Access_pos().Get_x() + requiredRegion.x);
+            dims.Access_pos().Set_y(dims.Access_pos().Get_y() + requiredRegion.y);
             dims.Access_size().Set_x(requiredRegion.width);
             dims.Access_size().Set_y(requiredRegion.height);
 
             // Getting a region of interest.
             codestream.Map_region(0, dims, dimsROI);
-
             codestream.Apply_input_restrictions(nComponents, componentIndexes,
                     nDiscardLevels, qualityLayers, dimsROI,
                     Kdu_global.KDU_WANT_OUTPUT_COMPONENTS);
@@ -484,16 +513,6 @@ public class JP2KKakaduImageReader extends ImageReader {
             decompressor.Finish();
             decompressor.Native_destroy();
             codestream.Destroy();
-            if (!isRawSource) {
-                if (localWrappedSource.Exists())
-                    localWrappedSource.Close();
-                localWrappedSource.Native_destroy();
-                if (localFamilySource.Exists())
-                    localFamilySource.Close();
-                localFamilySource.Native_destroy();
-
-            } else
-                localRawSource.Native_destroy();
 
             // ////////////////////////////////////////////////////////////////
             //
@@ -514,6 +533,23 @@ public class JP2KKakaduImageReader extends ImageReader {
         } catch (RasterFormatException rfe) {
             throw new RuntimeException("Error during raster creation", rfe);
         } finally {
+        	if (!isRawSource) {
+                try {
+					if (localWrappedSource.Exists())
+					    localWrappedSource.Close();
+				} catch (KduException e) {
+				}
+                localWrappedSource.Native_destroy();
+                try {
+					if (localFamilySource.Exists())
+					    localFamilySource.Close();
+				} catch (KduException e) {
+				}
+                localFamilySource.Native_destroy();
+
+            } else
+                localRawSource.Native_destroy();
+        	
             if (deleteInputFile && inputFile.exists()) {
                 inputFile.delete();
             }
@@ -527,9 +563,7 @@ public class JP2KKakaduImageReader extends ImageReader {
         //
         // ////////////////////////////////////////////////////////////////
         if (resamplingIsRequired && bi != null)
-            return KakaduUtilities.subsampleImage(codestreamP.getColorModel(),
-                    bi, destinationRegion.width, destinationRegion.height,
-                    interpolationType);
+            return KakaduUtilities.subsampleImage(codestreamP.getColorModel(), bi, destinationRegion.width, destinationRegion.height,interpolationType);
         return bi;
     }
 
@@ -619,10 +653,10 @@ public class JP2KKakaduImageReader extends ImageReader {
         destinationRegion.height = ((destinationRegion.height - 1) / ySubsamplingFactor) + 1;
 
         if (sourceRegion.x != 0) {
-            destinationRegion.x = ((sourceRegion.x - 1) / xSubsamplingFactor) + 1;
+            destinationRegion.x = sourceRegion.x  / xSubsamplingFactor;
         }
         if (sourceRegion.y != 0) {
-            destinationRegion.y = ((sourceRegion.y - 1) / xSubsamplingFactor) + 1;
+            destinationRegion.y = sourceRegion.y / ySubsamplingFactor;
         }
     }
 
@@ -694,10 +728,10 @@ public class JP2KKakaduImageReader extends ImageReader {
             requiredRegion.width = ((sourceRegion.width - 1) / newSubSamplingFactor) + 1;
             requiredRegion.height = ((sourceRegion.height - 1) / newSubSamplingFactor) + 1;
             if (sourceRegion.x != 0) {
-                requiredRegion.x = ((sourceRegion.x - 1) / newSubSamplingFactor) + 1;
+                requiredRegion.x = sourceRegion.x / newSubSamplingFactor;
             }
             if (sourceRegion.y != 0) {
-                requiredRegion.y = ((sourceRegion.y - 1) / newSubSamplingFactor) + 1;
+                requiredRegion.y = sourceRegion.y / newSubSamplingFactor;
             }
         }
         resolutionInfo[0] = newSubSamplingFactor;
@@ -999,7 +1033,7 @@ public class JP2KKakaduImageReader extends ImageReader {
         if (codestreamP.getSampleModel() != null
                 && codestreamP.getColorModel() != null)
             return;
-
+        parseBoxes(codestreamP);
         if (codestreamP.getColorModel() == null)
             codestreamP.setColorModel(getColorModel(codestreamP));
 
@@ -1014,12 +1048,12 @@ public class JP2KKakaduImageReader extends ImageReader {
      * @throws KduException
      * 
      */
-    private ColorModel getColorModel(JP2KCodestreamProperties codestreamP)
+    private static ColorModel getColorModel(JP2KCodestreamProperties codestreamP)
             throws KduException {
         if (codestreamP.getColorModel() != null)
             return codestreamP.getColorModel();
 
-        parseBoxes(codestreamP);
+        
         if (codestreamP.getColorModel() != null)
             return codestreamP.getColorModel();
 
@@ -1258,7 +1292,7 @@ public class JP2KKakaduImageReader extends ImageReader {
      * @return a sample model.
      * @throws KduException
      */
-    private SampleModel getSampleModel(JP2KCodestreamProperties codestreamP) {
+    private static SampleModel getSampleModel(JP2KCodestreamProperties codestreamP) {
         if (codestreamP == null)
             throw new IllegalArgumentException(
                     "null codestream properties provided");
