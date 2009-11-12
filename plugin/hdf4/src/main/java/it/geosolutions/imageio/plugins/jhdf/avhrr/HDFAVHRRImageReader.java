@@ -16,7 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.jhdf.avhrr;
 
-import it.geosolutions.imageio.plugins.jhdf.AbstractHDFImageReader;
+import it.geosolutions.imageio.plugins.jhdf.BaseHDF4ImageReader;
 
 import java.io.IOException;
 import java.util.HashMap;

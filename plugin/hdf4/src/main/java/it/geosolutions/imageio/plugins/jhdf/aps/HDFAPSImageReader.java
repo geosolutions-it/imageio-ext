@@ -16,7 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.jhdf.aps;
 
-import it.geosolutions.imageio.plugins.jhdf.AbstractHDFImageReader;
+import it.geosolutions.imageio.plugins.jhdf.BaseHDF4ImageReader;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities;
 
 import java.awt.image.DataBuffer;

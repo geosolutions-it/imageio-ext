@@ -19,7 +19,7 @@ package it.geosolutions.imageio.plugins.jhdf.aps;
 import it.geosolutions.imageio.core.CoreCommonImageMetadata;
 import it.geosolutions.imageio.ndplugin.BaseImageMetadata;
 import it.geosolutions.imageio.ndplugin.BaseImageReader;
-import it.geosolutions.imageio.plugins.jhdf.AbstractHDFImageReader;
+import it.geosolutions.imageio.plugins.jhdf.BaseHDF4ImageReader;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.KeyValuePair;
 
 import java.io.IOException;
