@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package it.geosolutions.imageio.plugins.jhdf.avhrr;
+package it.geosolutions.imageio.plugins.hdf4.terascan;
 
 import it.geosolutions.imageio.core.CoreCommonImageMetadata;
 import it.geosolutions.imageio.ndplugin.BaseImageMetadata;
@@ -28,7 +28,7 @@ import javax.imageio.metadata.IIOMetadataNode;
 
 import org.w3c.dom.Node;
 
-public class HDFAVHRRImageMetadata extends BaseImageMetadata {
+public class HDF4TERASCANImageMetadata extends BaseImageMetadata {
     public static final String nativeMetadataFormatName = "it_geosolutions_imageio_plugins_jhdf_avhrr_avhrrImageMetadata_1.0";
 
     //
@@ -43,7 +43,7 @@ public class HDFAVHRRImageMetadata extends BaseImageMetadata {
 
     private IIOMetadataNode nativeTree;
 
-    public HDFAVHRRImageMetadata(final BaseImageReader reader,
+    public HDF4TERASCANImageMetadata(final BaseImageReader reader,
             final int imageIndex) {
         super(reader, imageIndex);
     }
@@ -104,7 +104,7 @@ public class HDFAVHRRImageMetadata extends BaseImageMetadata {
      *                the name of the requested metadata format.
      */
     public Node getAsTree(String formatName) {
-        if (HDFAVHRRImageMetadata.nativeMetadataFormatName
+        if (HDF4TERASCANImageMetadata.nativeMetadataFormatName
                 .equalsIgnoreCase(formatName))
             return createNativeTree();
         else if (CoreCommonImageMetadata.nativeMetadataFormatName
@@ -118,7 +118,7 @@ public class HDFAVHRRImageMetadata extends BaseImageMetadata {
         if (this.nativeTree != null)
             return this.nativeTree;
         nativeTree = new IIOMetadataNode(
-                HDFAVHRRImageMetadata.nativeMetadataFormatName);
+                HDF4TERASCANImageMetadata.nativeMetadataFormatName);
 
         // ////////////////////////////////////////////////////////////////////
         //

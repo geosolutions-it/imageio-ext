@@ -59,7 +59,7 @@ public class HDFAVHRRImageReaderSpi extends BaseImageReaderSpi {
     // ImageMetadataFormatNames and ImageMetadataFormatClassNames
     static final boolean supportsStandardImageMetadataFormat = false;
 
-    static final String nativeImageMetadataFormatName = HDFAVHRRImageMetadata.nativeMetadataFormatName;
+    static final String nativeImageMetadataFormatName = HDF4TERASCANImageMetadata.nativeMetadataFormatName;
 
     static final String nativeImageMetadataFormatClassName = null;
 

@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package it.geosolutions.imageio.plugins.jhdf.avhrr;
+package it.geosolutions.imageio.plugins.hdf4.terascan;
 
 import it.geosolutions.imageio.plugins.jhdf.BaseHDF4ImageReader;
 
@@ -100,7 +100,7 @@ public class HDFAVHRRImageReader extends BaseHDF4ImageReader {
     public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
         initialize();
         checkImageIndex(imageIndex);
-        return new HDFAVHRRImageMetadata(this, imageIndex);
+        return new HDF4TERASCANImageMetadata(this, imageIndex);
     }
 
     /**
