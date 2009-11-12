@@ -52,7 +52,7 @@ public class APSHDFReadTest extends JHDFTestCase {
             warningMessage();
             return;
         }
-        ImageReader reader = new HDFAPSImageReaderSpi().createReaderInstance();
+        ImageReader reader = new HDF4APSImageReaderSpi().createReaderInstance();
         reader.setInput(file);
         final int index = 0;
         if (true || TestData.isInteractiveTest()) {
@@ -66,11 +66,11 @@ public class APSHDFReadTest extends JHDFTestCase {
         ImageIOUtilities.displayImageIOMetadata(metadata
                 .getAsTree(BaseImageMetadata.nativeMetadataFormatName));
         ImageIOUtilities.displayImageIOMetadata(metadata
-                .getAsTree(HDFAPSImageMetadata.nativeMetadataFormatName));
+                .getAsTree(HDF4APSImageMetadata.nativeMetadataFormatName));
         
         IIOMetadata streamMetadata = reader.getStreamMetadata();
         ImageIOUtilities.displayImageIOMetadata(streamMetadata
-                .getAsTree(HDFAPSStreamMetadata.nativeMetadataFormatName));
+                .getAsTree(HDF4APSStreamMetadata.nativeMetadataFormatName));
         reader.dispose();
     }
 }

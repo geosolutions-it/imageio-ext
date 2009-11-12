@@ -65,7 +65,7 @@ public class AVHRRHDFReadTest extends JHDFTestCase {
             warningMessage();
             return;
         }
-        ImageReader reader = new HDFAVHRRImageReaderSpi()
+        ImageReader reader = new HDF4TeraScanImageReaderSpi()
                 .createReaderInstance();
         reader.setInput(file);
         final int index = 0;
@@ -78,7 +78,7 @@ public class AVHRRHDFReadTest extends JHDFTestCase {
         ImageIOUtilities.displayImageIOMetadata(metadata
                 .getAsTree(CoreCommonImageMetadata.nativeMetadataFormatName));
         ImageIOUtilities.displayImageIOMetadata(metadata
-                .getAsTree(HDFAVHRRImageMetadata.nativeMetadataFormatName));
+                .getAsTree(HDF4TeraScanImageMetadata.nativeMetadataFormatName));
         reader.reset();
         reader.setInput(file);
         reader.dispose();
@@ -124,7 +124,7 @@ public class AVHRRHDFReadTest extends JHDFTestCase {
             
             // Silly equality test
             final BufferedImage buffImage = image.getAsBufferedImage();
-            final ImageReader reader = new HDFAVHRRImageReaderSpi()
+            final ImageReader reader = new HDF4TeraScanImageReaderSpi()
                     .createReaderInstance();
             reader.setInput(file);
             final BufferedImage buffImage2 = reader.read(0, irp);
