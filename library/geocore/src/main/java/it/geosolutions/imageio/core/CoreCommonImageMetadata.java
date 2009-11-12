@@ -224,13 +224,13 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
                 while (it.hasNext()) {
                     node = new IIOMetadataNode("GCP");
                     final GCP gcp = it.next();
-                    node.setAttribute("x", Double.toString(gcp.getGCPPixel()));
-                    node.setAttribute("y", Double.toString(gcp.getGCPLine()));
+                    node.setAttribute("column", Double.toString(gcp.getColumn()));
+                    node.setAttribute("row", Double.toString(gcp.getRow()));
                     node.setAttribute("id", gcp.getId());
-                    node.setAttribute("info", gcp.getInfo());
-                    node.setAttribute("lon", Double.toString(gcp.getGCPX()));
-                    node.setAttribute("lat", Double.toString(gcp.getGCPY()));
-                    node.setAttribute("elevation", Double.toString(gcp.getGCPZ()));
+                    node.setAttribute("info", gcp.getDescription());
+                    node.setAttribute("easting", Double.toString(gcp.getEasting()));
+                    node.setAttribute("northing", Double.toString(gcp.getNorthing()));
+                    node.setAttribute("elevation", Double.toString(gcp.getElevation()));
                     nodeGCPs.appendChild(node);
                 }
             }
@@ -251,28 +251,29 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
         // //
         for (int i = 0; i < numBands; i++) {
             node = new IIOMetadataNode("BandInfo");
-            node.setAttribute("index", Integer.toString(i));
-            node.setAttribute("colorInterpretation",
-                    colorInterpretations != null
-                            && colorInterpretations.length > i ? Integer
-                            .toBinaryString(colorInterpretations[i]) : "");
-            node.setAttribute("noData",
-                    noDataValues != null && noDataValues.length > i
-                            && noDataValues[i] != null ? noDataValues[i]
-                            .toString() : null);
-            node.setAttribute("maximum", maximums != null
-                    && maximums.length > i && maximums[i] != null ? maximums[i]
-                    .toString() : null);
-            node.setAttribute("minimum", minimums != null
-                    && minimums.length > i && minimums[i] != null ? minimums[i]
-                    .toString() : null);
-            node.setAttribute("scale", scales != null && scales.length > i
-                    && scales[i] != null ? scales[i].toString() : null);
-            node.setAttribute("offset", offsets != null && offsets.length > i
-                    && offsets[i] != null ? offsets[i].toString() : null);
-            node.setAttribute("numOverviews", numOverviews != null
-                    && numOverviews.length > i ? Integer
-                    .toString(numOverviews[i]) : null);
+            node.setAttribute(
+            		"index", 
+            		Integer.toString(i));
+            node.setAttribute(
+            		"colorInterpretation", 
+            		colorInterpretations != null&& colorInterpretations.length > i ? Integer .toBinaryString(colorInterpretations[i]) : "");
+            node.setAttribute(
+            		"noData",
+            		noDataValues != null && noDataValues.length > i&& noDataValues[i] != null ? noDataValues[i].toString() : null);
+            node.setAttribute(
+            		"maximum", 
+            		maximums != null&& maximums.length > i && maximums[i] != null ? maximums[i].toString() : null);
+            node.setAttribute(
+            		"minimum", 
+            		minimums != null && minimums.length > i && minimums[i] != null ? minimums[i].toString() : null);
+            node.setAttribute(
+            		"scale", 
+            		scales != null && scales.length > i&& scales[i] != null ? scales[i].toString() : null);
+            node.setAttribute(
+            		"offset", 
+            		offsets != null && offsets.length > i&& offsets[i] != null ? offsets[i].toString() : null);
+            node.setAttribute(
+            		"numOverviews", numOverviews != null&& numOverviews.length > i ? Integer.toString(numOverviews[i]) : null);
             bandsNode.appendChild(node);
         }
 
@@ -285,8 +286,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
             final IndexColorModel icm = (IndexColorModel) colorModel;
             final int mapSize = icm.getMapSize();
             IIOMetadataNode node1 = new IIOMetadataNode("ColorTable");
-            node1.setAttribute("sizeOfLocalColorTable", Integer
-                    .toString(mapSize));
+            node1.setAttribute("sizeOfLocalColorTable", Integer.toString(mapSize));
             final byte rgb[][] = new byte[3][mapSize];
             icm.getReds(rgb[0]);
             icm.getReds(rgb[1]);
