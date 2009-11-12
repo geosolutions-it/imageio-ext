@@ -13,10 +13,9 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package it.geosolutions.imageio.plugins.jhdf.avhrr;
+package it.geosolutions.imageio.plugins.hdf4.terascan;
 
 import it.geosolutions.imageio.core.CoreCommonImageMetadata;
-import it.geosolutions.imageio.plugins.jhdf.JHDFTestCase;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
@@ -36,10 +35,12 @@ import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
 
+import junit.framework.TestCase;
+
 import org.junit.Assert;
 import org.junit.Before;
 
-public class AVHRRHDFReadTest extends JHDFTestCase {
+public class AVHRRHDFReadTest extends TestCase {
 
     private static final Logger LOGGER = Logger
             .getLogger("it.geosolutions.imageio.plugins.jhdf.avhrr");
