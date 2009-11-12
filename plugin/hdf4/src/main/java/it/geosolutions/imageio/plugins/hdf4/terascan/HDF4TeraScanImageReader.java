@@ -16,12 +16,13 @@
  */
 package it.geosolutions.imageio.plugins.hdf4.terascan;
 
-import it.geosolutions.imageio.plugins.hdf4.BaseHDF4ImageReader;
+import it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
@@ -31,12 +32,12 @@ import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
 
 /**
- * Specific Implementation of the <code>BaseHDF4ImageReader</code> needed
+ * Specific Implementation of the <code>HDF4ImageReader</code> needed
  * to work on AVHRR produced HDF
  * 
  * @author Romagnoli Daniele
  */
-public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
+public class HDF4TeraScanImageReader extends HDF4ImageReader {
 
     /** The Products Dataset List contained within the APS File */
     private String[] productList;
@@ -95,12 +96,6 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
                 }
             }
         }
-    }
-
-    public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
-        initialize();
-        checkImageIndex(imageIndex);
-        return new HDF4TeraScanImageMetadata(this, imageIndex);
     }
 
     /**
@@ -203,18 +198,10 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
      */
     double getOffset(final int imageIndex) throws IOException {
         double offset = Double.NaN;
-        String offsetS = getAttributeAsString(imageIndex,
-                HDF4TeraScanProperties.DatasetAttribs.ADD_OFFSET);
+        String offsetS = getAttributeAsString(imageIndex,HDF4TeraScanProperties.DatasetAttribs.ADD_OFFSET);
         if (offsetS != null && offsetS.trim().length() > 0)
             offset = Double.parseDouble(offsetS);
         return offset;
-    }
-
-    @Override
-    public synchronized IIOMetadata getStreamMetadata() throws IOException {
-        if (streamMetadata == null)
-            streamMetadata = new HDF4TeraScanStreamMetadata(this);
-        return streamMetadata;
     }
 
     int getNumAttributes(int imageIndex) {
@@ -224,5 +211,34 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
     public void reset() {
         super.reset();
     }
+
+	/* (non-Javadoc)
+	 * @see javax.imageio.ImageReader#getImageMetadata(int, java.lang.String, java.util.Set)
+	 */
+	@Override
+	public IIOMetadata getImageMetadata(int imageIndex, String formatName,
+			Set<String> nodeNames) throws IOException {
+		initialize();
+        checkImageIndex(imageIndex);
+        if(formatName.equalsIgnoreCase(HDF4TeraScanImageMetadata.nativeMetadataFormatName))
+        	return new HDF4TeraScanImageMetadata(this, imageIndex);
+        
+        // fallback on the super type metadata
+		return super.getImageMetadata(imageIndex, formatName, nodeNames);
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.imageio.ImageReader#getStreamMetadata(java.lang.String, java.util.Set)
+	 */
+	@Override
+	public synchronized IIOMetadata getStreamMetadata(String formatName,
+			Set<String> nodeNames) throws IOException {
+		if(formatName.equalsIgnoreCase(HDF4TeraScanStreamMetadata.nativeMetadataFormatName)){
+	        if (streamMetadata == null)
+	            streamMetadata = new HDF4TeraScanStreamMetadata(this);
+	        return streamMetadata;
+		}
+		return super.getStreamMetadata(formatName, nodeNames);
+	}
 
 }

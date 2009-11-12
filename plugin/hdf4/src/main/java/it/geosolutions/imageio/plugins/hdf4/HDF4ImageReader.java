@@ -19,9 +19,7 @@ package it.geosolutions.imageio.plugins.hdf4;
 import it.geosolutions.imageio.ndplugin.BaseImageReader;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.KeyValuePair;
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
-import it.geosolutions.imageio.utilities.Utilities;
 
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -38,9 +36,7 @@ import java.awt.image.PixelInterleavedSampleModel;
 import java.awt.image.Raster;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -66,7 +62,7 @@ import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
 
-public abstract class BaseHDF4ImageReader extends BaseImageReader {
+public abstract class HDF4ImageReader extends BaseImageReader {
 
 	protected class HDF4DatasetWrapper{
         private Variable variable;
@@ -191,7 +187,7 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
      */
     protected abstract void initializeProfile() throws IOException;
 
-    protected BaseHDF4ImageReader(ImageReaderSpi originatingProvider) {
+    protected HDF4ImageReader(ImageReaderSpi originatingProvider) {
         super(originatingProvider);
     }
 
@@ -216,7 +212,7 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
             // input = ((URI) input).toURL();
             // }
         	if (dataset == null) {
-                dataset = getDataset(input);
+                dataset = NetCDFUtilities.getDataset(input);
             }
             super.setInput(input, seekForwardOnly, ignoreMetadata);
             initialize();
@@ -244,7 +240,7 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
         }
     }
 
-    public synchronized void dispose() {
+    public void dispose() {
         super.dispose();
         isInitialized = false;
         try {
@@ -261,59 +257,12 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
     }
 
     public IIOMetadata getStreamMetadata() throws IOException {
-        // TODO message and/or implement
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Stream Metadata is not implemented for the base class, use corecommonstreammetadata");
     }
 
     public synchronized void reset() {
         super.setInput(null, false, false);
         dispose();
-    }
-    
-    /**
-     * Returns a {@code NetcdfDataset} given an input object
-     * 
-     * @param input
-     *                the input object (usually a {@code File}, a
-     *                {@code String} or a {@code FileImageInputStreamExt).
-     * @return {@code NetcdfDataset} in case of success.
-     * @throws IOException
-     *                 if some error occur while opening the dataset.
-     * @throws {@link IllegalArgumentException}
-     *                 in case the specified input is a directory
-     */
-    public static NetcdfDataset getDataset(Object input) throws IOException {
-        NetcdfDataset dataset = null;
-        if (input instanceof File) {
-            if (!((File) input).isDirectory())
-                dataset = NetcdfDataset.openDataset(((File) input).getPath());
-            else
-                throw new IllegalArgumentException("Error occurred during NetCDF file reading: The input file is a Directory.");
-        } else if (input instanceof String) {
-            File file = new File((String) input);
-            if (!file.isDirectory())
-                dataset = NetcdfDataset.openDataset(file.getPath());
-            else
-                throw new IllegalArgumentException( "Error occurred during NetCDF file reading: The input file is a Directory.");
-        } else if (input instanceof URL) {
-            final URL tempURL = (URL) input;
-            if (tempURL.getProtocol().equalsIgnoreCase("file")) {
-                File file = Utilities.urlToFile(tempURL);
-                if (!file.isDirectory())
-                    dataset = NetcdfDataset.openDataset(file.getPath());
-                else
-                    throw new IllegalArgumentException( "Error occurred during NetCDF file reading: The input file is a Directory.");
-            }
-        }
-
-        else if (input instanceof FileImageInputStreamExt) {
-            File file = ((FileImageInputStreamExt) input).getFile();
-            if (!file.isDirectory())
-                dataset = NetcdfDataset.openDataset(file.getPath());
-            else
-                throw new IllegalArgumentException("Error occurred during NetCDF file reading: The input file is a Directory.");
-        }
-        return dataset;
     }
     
     public KeyValuePair getGlobalAttribute(final int attributeIndex) throws IOException {
@@ -479,40 +428,35 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
         /*
          * Setting SampleModel and ColorModel.
          */
-        SampleModel sampleModel = wrapper.getSampleModel()
-                .createCompatibleSampleModel(destWidth, destHeight);
-        ColorModel colorModel = ImageIOUtilities
-                .getCompatibleColorModel(sampleModel);
+        final SampleModel sampleModel = wrapper.getSampleModel().createCompatibleSampleModel(destWidth, destHeight);
+        final ColorModel colorModel = ImageIOUtilities.getCompatibleColorModel(sampleModel);
 
         /*
          * Reads the requested sub-region only.
          */
         final int size = destHeight*destWidth*numBands;
-//        for (int zi = 0; zi < numBands; zi++) {
-            Array array = null;
-            try {
-                array = variable.read(sections);
-                DataBuffer dataBuffer = null;
-                if (array instanceof ArrayByte){
-                	dataBuffer = new DataBufferByte((byte[])array.get1DJavaArray(byte.class),size);
-                } else if (array instanceof ArrayShort){
-                	dataBuffer = new DataBufferShort((short[])array.get1DJavaArray(short.class),size);
-                } else if (array instanceof ArrayInt){
-                	dataBuffer = new DataBufferInt((int[])array.get1DJavaArray(int.class),size);
-                } else if (array instanceof ArrayFloat){
-                	dataBuffer = new DataBufferFloat((float[])array.get1DJavaArray(float.class),size);
-                } else if (array instanceof ArrayDouble){
-                	dataBuffer = new DataBufferDouble((double[])array.get1DJavaArray(double.class),size);
-                }
-                
-                WritableRaster raster = Raster.createWritableRaster(sampleModel, dataBuffer, new Point(0,0));
-                image = new BufferedImage(colorModel, raster,
-                        colorModel.isAlphaPremultiplied(), null);
-            } catch (InvalidRangeException e) {
-            	//TODO LOGME
-            } 
+        Array array = null;
+        try {
+            array = variable.read(sections);
+            DataBuffer dataBuffer = null;
+            if (array instanceof ArrayByte){
+            	dataBuffer = new DataBufferByte((byte[])array.get1DJavaArray(byte.class),size);
+            } else if (array instanceof ArrayShort){
+            	dataBuffer = new DataBufferShort((short[])array.get1DJavaArray(short.class),size);
+            } else if (array instanceof ArrayInt){
+            	dataBuffer = new DataBufferInt((int[])array.get1DJavaArray(int.class),size);
+            } else if (array instanceof ArrayFloat){
+            	dataBuffer = new DataBufferFloat((float[])array.get1DJavaArray(float.class),size);
+            } else if (array instanceof ArrayDouble){
+            	dataBuffer = new DataBufferDouble((double[])array.get1DJavaArray(double.class),size);
+            }
             
-//        }
+            WritableRaster raster = Raster.createWritableRaster(sampleModel, dataBuffer, new Point(0,0));
+            image = new BufferedImage(colorModel, raster,
+                    colorModel.isAlphaPremultiplied(), null);
+        } catch (InvalidRangeException e) {
+        	//TODO LOGME
+        } 
         return image;
     }
     
@@ -521,4 +465,12 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
             throws IOException {
     	return read2DVariable(imageIndex, param);
     }
+
+	/* (non-Javadoc)
+	 * @see javax.imageio.ImageReader#getImageMetadata(int)
+	 */
+	@Override
+	public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
+		throw new UnsupportedOperationException("Change me as soon as possible to use corecommonimagemetadata");
+	}
 }

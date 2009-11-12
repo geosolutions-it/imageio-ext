@@ -16,6 +16,7 @@
 package it.geosolutions.imageio.plugins.hdf4.aps;
 
 import it.geosolutions.imageio.ndplugin.BaseImageMetadata;
+import it.geosolutions.imageio.plugins.hdf4.HDF4ImageReaderSpi;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
@@ -34,12 +35,10 @@ import org.junit.Test;
 
 public class APSHDFReadTest extends TestCase {
 
-    private static final Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.plugins.jhdf.aps");
+    private static final Logger LOGGER = Logger.getLogger(APSHDFReadTest.class.toString());
 
-    private void warningMessage() {
-        StringBuffer sb = new StringBuffer(
-                "Test file not available. Test are skipped");
+    private static void warningMessage() {
+        StringBuffer sb = new StringBuffer( "Test file not available. Test are skipped");
         LOGGER.info(sb.toString());
     }
 
@@ -47,31 +46,26 @@ public class APSHDFReadTest extends TestCase {
     public void testRead() throws IOException {
         File file;
         try {
-            file = TestData
-                    .file(this, "MODPM2008275124021.L3_000_LIGURIAN.hdf4");
+            file = TestData.file(this, "MODPM2008275124021.L3_000_LIGURIAN.hdf4");
         } catch (FileNotFoundException fnfe) {
             warningMessage();
             return;
         }
-        ImageReader reader = new HDF4APSImageReaderSpi().createReaderInstance();
+        ImageReader reader = new HDF4ImageReaderSpi().createReaderInstance();
         reader.setInput(file);
         final int index = 0;
         if (true || TestData.isInteractiveTest()) {
-//            ImageIOUtilities.visualize(reader.read(0), "sst",  true);
             ImageIOUtilities.visualize(reader.read(0), "true_color",  false);
             
         } else
         	Assert.assertNotNull(reader.read(index));
 
         IIOMetadata metadata = reader.getImageMetadata(index);
-        ImageIOUtilities.displayImageIOMetadata(metadata
-                .getAsTree(BaseImageMetadata.nativeMetadataFormatName));
-        ImageIOUtilities.displayImageIOMetadata(metadata
-                .getAsTree(HDF4APSImageMetadata.nativeMetadataFormatName));
+        ImageIOUtilities.displayImageIOMetadata(metadata.getAsTree(BaseImageMetadata.nativeMetadataFormatName));
+        ImageIOUtilities.displayImageIOMetadata(metadata.getAsTree(HDF4APSImageMetadata.nativeMetadataFormatName));
         
         IIOMetadata streamMetadata = reader.getStreamMetadata();
-        ImageIOUtilities.displayImageIOMetadata(streamMetadata
-                .getAsTree(HDF4APSStreamMetadata.nativeMetadataFormatName));
+        ImageIOUtilities.displayImageIOMetadata(streamMetadata.getAsTree(HDF4APSStreamMetadata.nativeMetadataFormatName));
         reader.dispose();
     }
 }

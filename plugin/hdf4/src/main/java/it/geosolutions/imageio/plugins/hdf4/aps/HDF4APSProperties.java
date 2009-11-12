@@ -18,9 +18,9 @@ package it.geosolutions.imageio.plugins.hdf4.aps;
 
 import it.geosolutions.imageio.plugins.hdf4.HDF4Products;
 
-class HDF4APSProperties {
+public class HDF4APSProperties {
 
-    static class APSProducts extends HDF4Products {
+	public static class APSProducts extends HDF4Products {
         public APSProducts() {
         	super(14);
             int index = 0;

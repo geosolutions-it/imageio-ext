@@ -14,33 +14,44 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package it.geosolutions.imageio.plugins.hdf4.terascan;
+package it.geosolutions.imageio.plugins.hdf4;
 
 import it.geosolutions.imageio.ndplugin.BaseImageReaderSpi;
+import it.geosolutions.imageio.plugins.hdf4.aps.HDF4APSImageReader;
+import it.geosolutions.imageio.plugins.hdf4.aps.HDF4APSProperties;
+import it.geosolutions.imageio.plugins.hdf4.terascan.HDF4TeraScanProperties;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageReader;
 
 import ucar.nc2.dataset.NetcdfDataset;
+import ucar.nc2.iosp.hdf4.H4iosp;
 
-public class HDF4TeraScanImageReaderSpi extends BaseImageReaderSpi {
+/**
+ * Service provider interface for the APS-HDF Image
+ * 
+ * @author Daniele Romagnoli
+ */
+public class HDF4ImageReaderSpi extends BaseImageReaderSpi {
+
+    private static final Logger LOGGER = Logger.getLogger(HDF4ImageReaderSpi.class.toString());
 
     static final String[] suffixes = { "hdf", "hdf4" };
 
-    static final String[] formatNames = { "HDF", "HDF4" };
+    static final String[] formatNames = { "HDF4" };
 
-    static final String[] mimeTypes = { "image/hdf" };
+    static final String[] MIMETypes = { "image/hdf4" };
 
     static final String version = "1.0";
 
-    static final String readerCN = "it.geosolutions.imageio.plugins.jhdf.avhrr.HDFAVHRRImageReader";
-
-    static final String vendorName = "GeoSolutions";
+    static final String readerCN = "it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader";
 
     // writerSpiNames
     static final String[] wSN = { null };
@@ -48,7 +59,7 @@ public class HDF4TeraScanImageReaderSpi extends BaseImageReaderSpi {
     // StreamMetadataFormatNames and StreamMetadataFormatClassNames
     static final boolean supportsStandardStreamMetadataFormat = false;
 
-    static final String nativeStreamMetadataFormatName = HDF4TeraScanStreamMetadata.nativeMetadataFormatName;
+    static final String nativeStreamMetadataFormatName = null;
 
     static final String nativeStreamMetadataFormatClassName = null;
 
@@ -59,7 +70,7 @@ public class HDF4TeraScanImageReaderSpi extends BaseImageReaderSpi {
     // ImageMetadataFormatNames and ImageMetadataFormatClassNames
     static final boolean supportsStandardImageMetadataFormat = false;
 
-    static final String nativeImageMetadataFormatName = HDF4TeraScanImageMetadata.nativeMetadataFormatName;
+    static final String nativeImageMetadataFormatName = null;
 
     static final String nativeImageMetadataFormatClassName = null;
 
@@ -67,13 +78,13 @@ public class HDF4TeraScanImageReaderSpi extends BaseImageReaderSpi {
 
     static final String[] extraImageMetadataFormatClassNames = { null };
 
-    public HDF4TeraScanImageReaderSpi() {
+    public HDF4ImageReaderSpi() {
         super(
                 vendorName,
                 version,
                 formatNames,
                 suffixes,
-                mimeTypes,
+                MIMETypes,
                 readerCN, // readerClassName
                 DIRECT_STANDARD_INPUT_TYPES,
                 wSN, // writer Spi Names
@@ -87,52 +98,63 @@ public class HDF4TeraScanImageReaderSpi extends BaseImageReaderSpi {
                 nativeImageMetadataFormatClassName,
                 extraImageMetadataFormatNames,
                 extraImageMetadataFormatClassNames);
+
+        if (LOGGER.isLoggable(Level.FINE))
+            LOGGER.fine("HDF4APSImageReaderSpi Constructor");
     }
 
     public boolean canDecodeInput(Object input) throws IOException {
         boolean found = false;
-
+        
         if (input instanceof FileImageInputStreamExtImpl) {
             input = ((FileImageInputStreamExtImpl) input).getFile();
         }
-
+        // check if this is an 
         if (input instanceof File) {
-            try {
-                final NetcdfDataset dataset = NetCDFUtilities.getDataset(input);
-                if (dataset != null) {
-                	final int productsNum = HDF4TeraScanProperties.avhrrProducts.getNProducts();
-                	for (int i = 0; i < productsNum; i++) {
-                		if (dataset.findVariable(HDF4TeraScanProperties.avhrrProducts
-                                .get(i).getProductName())!=null){
-                			found = true;
-                			break;
-                		}
-                			
-                	}
-                	dataset.close();
-                }
-            } catch (IllegalArgumentException e) {
-                found = false;
-            }
+        	// open up as a netcdf dataset
+            final NetcdfDataset dataset = NetCDFUtilities.getDataset(input);            
+            if (dataset != null) {
+            	
+            	// first of all is it an HDF4??
+            	// TODO change this when we will be allowed to use >= 4.0.46
+            	if(!(dataset.getIosp() instanceof H4iosp))
+            		return false;
+            	
+            	// now, check if we can read it
+            	try{
+	            	// APS
+	            	final String attrib = NetCDFUtilities.getGlobalAttributeAsString(dataset, HDF4APSProperties.STD_FA_CREATESOFTWARE); 
+	                if (attrib != null && attrib.length()>0 && attrib.startsWith("APS"))
+	                                found = true;
+	                
+	                // TERASCAN
+	            	final int productsNum = HDF4TeraScanProperties.avhrrProducts.getNProducts();
+	            	for (int i = 0; i < productsNum; i++) {
+	            		if (dataset.findVariable(HDF4TeraScanProperties.avhrrProducts.get(i).getProductName())!=null){
+	            			found = true;
+	            			break;
+	            		}
+	            	}
+            	}
+            	finally {
+            		try{
+            			dataset.close();
+            		}
+            		catch (Throwable e) {
+						if(LOGGER.isLoggable(Level.FINE))
+							LOGGER.log(Level.FINE,e.getLocalizedMessage(),e);
+					}
+            	}
+        	}
         }
         return found;
     }
 
-    /**
-     * Returns an instance of the HDFImageReader
-     * 
-     * @see javax.imageio.spi.ImageReaderSpi#createReaderInstance(java.lang.Object)
-     */
-    public ImageReader createReaderInstance(Object source) throws IOException {
-        return new HDF4TeraScanImageReader(this);
+    public ImageReader createReaderInstance(Object input) throws IOException {
+        return new HDF4APSImageReader(this);
     }
 
-    /**
-     * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
-     */
     public String getDescription(Locale locale) {
-        return new StringBuffer("AVHRR Compliant HDF Image Reader, version ")
-                .append(version).toString();
+        return "HDF4 Image Reader, version " + version;
     }
-
 }

@@ -16,6 +16,7 @@
 package it.geosolutions.imageio.plugins.hdf4.terascan;
 
 import it.geosolutions.imageio.core.CoreCommonImageMetadata;
+import it.geosolutions.imageio.plugins.hdf4.HDF4ImageReaderSpi;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
@@ -66,7 +67,7 @@ public class AVHRRHDFReadTest extends TestCase {
             warningMessage();
             return;
         }
-        ImageReader reader = new HDF4TeraScanImageReaderSpi()
+        ImageReader reader = new HDF4ImageReaderSpi()
                 .createReaderInstance();
         reader.setInput(file);
         final int index = 0;
@@ -125,7 +126,7 @@ public class AVHRRHDFReadTest extends TestCase {
             
             // Silly equality test
             final BufferedImage buffImage = image.getAsBufferedImage();
-            final ImageReader reader = new HDF4TeraScanImageReaderSpi()
+            final ImageReader reader = new HDF4ImageReaderSpi()
                     .createReaderInstance();
             reader.setInput(file);
             final BufferedImage buffImage2 = reader.read(0, irp);

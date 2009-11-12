@@ -29,7 +29,7 @@ import javax.imageio.metadata.IIOMetadataNode;
 
 import org.w3c.dom.Node;
 
-public class HDF4TeraScanStreamMetadata extends IIOMetadata {
+class HDF4TeraScanStreamMetadata extends IIOMetadata {
     /**
      * The name of the native metadata format for this object.
      */
@@ -111,12 +111,12 @@ public class HDF4TeraScanStreamMetadata extends IIOMetadata {
     @Override
     public void mergeTree(String formatName, Node root)
             throws IIOInvalidTreeException {
-        // TODO: add message
-        throw new UnsupportedOperationException();
+    	throw new UnsupportedOperationException("mergeTree operation is not allowed");
     }
 
     @Override
     public void reset() {
+    	throw new UnsupportedOperationException("reset operation is not allowed");
     }
 
 }

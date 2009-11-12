@@ -19,7 +19,7 @@ package it.geosolutions.imageio.plugins.hdf4.aps;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
 
-public class HDF4APSStreamMetadataFormat extends IIOMetadataFormatImpl {
+class HDF4APSStreamMetadataFormat extends IIOMetadataFormatImpl {
 
     public HDF4APSStreamMetadataFormat() {
         super(HDF4APSStreamMetadata.nativeMetadataFormatName,
@@ -218,8 +218,7 @@ public class HDF4APSStreamMetadataFormat extends IIOMetadataFormatImpl {
 
     }
 
-    public boolean canNodeAppear(String elementName,
-            ImageTypeSpecifier imageType) {
+    public boolean canNodeAppear(String elementName,ImageTypeSpecifier imageType) {
         // @todo @task TODO
         return true;
     }

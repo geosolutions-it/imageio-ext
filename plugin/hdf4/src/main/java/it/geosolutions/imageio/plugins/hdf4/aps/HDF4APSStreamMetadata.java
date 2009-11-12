@@ -36,7 +36,7 @@ import org.w3c.dom.Node;
  * @author Simone Giannecchini, GeoSolutions SAS
  *
  */
-public class HDF4APSStreamMetadata extends IIOMetadata {
+class HDF4APSStreamMetadata extends IIOMetadata {
     public static final String nativeMetadataFormatName = "it_geosolutions_imageio_plugins_jhdf_aps_APSStreamMetadata_1.0";
 
     public static final String PFA_NODE = "ProductFilesAttributes";
@@ -249,21 +249,22 @@ public class HDF4APSStreamMetadata extends IIOMetadata {
         root.appendChild(referencingNode);
         return root;
     }
-
+    @Override
     public boolean isReadOnly() {
-        return false;
+        return true;
     }
 
+    @Override
     public void mergeTree(String formatName, Node root)
             throws IIOInvalidTreeException {
-
+    	throw new UnsupportedOperationException("mergeTree operation is not allowed");
     }
-
+    @Override
     public void reset() {
+    	throw new UnsupportedOperationException("reset operation is not allowed");
     }
 
-//    public synchronized void buildMetadata(H4SDSCollection root) {
-    public synchronized void buildMetadata(HDF4APSImageReader directReader) {
+    synchronized void buildMetadata(HDF4APSImageReader directReader) {
         try {
         	
         	final int numAttributes = directReader.getNumGlobalAttributes();
@@ -314,12 +315,10 @@ public class HDF4APSStreamMetadata extends IIOMetadata {
                 for (int k = 0; k < nFileInputParamAttribMap && !found; k++) {
                     // if matched
                     if (attribName.equals(HDF4APSProperties.PFA_IPA_ATTRIB[k])) {
-                        fileInputParamAttribMap.put((String) attribName,
-                                attribValue);
+                        fileInputParamAttribMap.put((String) attribName,attribValue);
                         if (attribName.equals(HDF4APSProperties.PFA_IPA_PRODLIST)) {
                             String products[] = attribValue.split(",");
-                            prodList = HDF4APSProperties
-                                    .refineProductList(products);
+                            prodList = HDF4APSProperties.refineProductList(products);
                         }
                         found = true;
                     }
@@ -329,8 +328,7 @@ public class HDF4APSStreamMetadata extends IIOMetadata {
                     // if matched
                     if (attribName.equals(HDF4APSProperties.PFA_NA_ATTRIB[k])) {
                         fileNavAttribMap.put((String) attribName, attribValue);
-                        if (attribName
-                                .equals(HDF4APSProperties.PFA_NA_MAPPROJECTION))
+                        if (attribName .equals(HDF4APSProperties.PFA_NA_MAPPROJECTION))
                             projectionDatasetName = attribValue;
                         found = true;
                     }
@@ -339,8 +337,7 @@ public class HDF4APSStreamMetadata extends IIOMetadata {
                 for (int k = 0; k < nFileInGeoCovAttribMap && !found; k++) {
                     // if matched
                     if (attribName.equals(HDF4APSProperties.PFA_IGCA_ATTRIB[k])) {
-                        fileInGeoCovAttribMap.put((String) attribName,
-                                attribValue);
+                        fileInGeoCovAttribMap.put((String) attribName,attribValue);
                         found = true;
                     }
                 }

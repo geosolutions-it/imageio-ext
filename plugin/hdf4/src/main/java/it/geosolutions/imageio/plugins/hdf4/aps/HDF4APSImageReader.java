@@ -16,7 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.hdf4.aps;
 
-import it.geosolutions.imageio.plugins.hdf4.BaseHDF4ImageReader;
+import it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities;
 
 import java.awt.image.DataBuffer;
@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
@@ -43,7 +44,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  * 
  * @author Daniele Romagnoli
  */
-public class HDF4APSImageReader extends BaseHDF4ImageReader {
+public class HDF4APSImageReader extends HDF4ImageReader {
 	
     /** The Products Dataset List contained within the APS File */
     private String[] productList;
@@ -53,13 +54,6 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
 
     private HDF4APSStreamMetadata streamMetadata;
     
-//    private static ColorModel colorModel = RasterFactory
-//            .createComponentColorModel(DataBuffer.TYPE_FLOAT, // dataType
-//                    ColorSpace.getInstance(ColorSpace.CS_GRAY), // color space
-//                    false, // has alpha
-//                    false, // is alphaPremultiplied
-//                    Transparency.OPAQUE); // transparency
-
     private Map<Integer, APSDatasetWrapper> apsDatasetsWrapperMap = null;
 
     Map<String, String> projectionMap = null;
@@ -119,8 +113,7 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
 
         // getting map dataset
         varProjection = dataset.findVariable(projectionDatasetName);
-        if (varProjection != null
-                && varProjection.getName().equalsIgnoreCase(projectionDatasetName)) {
+        if (varProjection != null&& varProjection.getName().equalsIgnoreCase(projectionDatasetName)) {
             // TODO: All projection share the same dataset
             // structure?
             Array data = varProjection.read();
@@ -146,64 +139,15 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
         }
     }
 
-    // /**
-    // * Build a proper ISO8601 Time given start/end times obtained as
-    // attributes
-    // * of the input {@code H4SDSCollection}. In case start time is equal to
-    // the
-    // * end time, simply returns a Joda {@link Instant}. Otherwise, returns a
-    // * proper Joda {@link Interval}.
-    // *
-    // * @param startTime
-    // * the starting time
-    // * @param endTime
-    // * the ending time
-    // * @return a proper Joda Time (Instant/Interval).
-    // * @throws ParseException
-    // */
-    // private TemporalObject parseTemporalDomain(H4SDSCollection collection)
-    // throws HDFException {
-    // // TODO: Discover why parse set a compile pattern containing Japaneses
-    // // chars.
-    // final String startTime = collection.getAttribute(
-    // HDF4APSProperties.STD_TA_TIMESTART).getValuesAsString();
-    // final String endTime = collection.getAttribute(
-    // HDF4APSProperties.STD_TA_TIMEEND).getValuesAsString();
-    // // Setup an ISO8601 Start Time
-    // final String iso8601StartTime = HDF4APSProperties
-    // .buildISO8601Time(startTime);
-    // try {
-    // if (startTime.equalsIgnoreCase(endTime))
-    // return new DefaultInstant(new DefaultPosition(Utils
-    // .getDateFromString(iso8601StartTime)));
-    //
-    // // Setup an ISO8601 End Time in case it isn't equal to the startime
-    // final String iso8601EndTime = HDF4APSProperties
-    // .buildISO8601Time(endTime);
-    //
-    // // Build an Interval given start time and end time.
-    // return new DefaultPeriod(new DefaultInstant(new DefaultPosition(
-    // Utils.getDateFromString(iso8601StartTime))),
-    // new DefaultInstant(new DefaultPosition(Utils
-    // .getDateFromString(iso8601EndTime))));
-    // } catch (ParseException pse) {
-    // LOGGER
-    // .warning("Error parsing the ISO8601 string; Fix the parseTemporalDomain
-    // method."
-    // + "For the moment, we return the actual date");
-    // return new DefaultInstant(new DefaultPosition(new Date(System
-    // .currentTimeMillis())));
-    // }
-    // }
+  
 
-    private Map<String,String> buildProjectionAttributesMap(final Array data, int datatype) {
+    private static Map<String,String> buildProjectionAttributesMap(final Array data, int datatype) {
         final Map<String,String> projMap = new LinkedHashMap<String,String>(29);
 
         if (datatype == DataBuffer.TYPE_DOUBLE && data instanceof ArrayDouble) {
             double[] values = (double[])data.get1DJavaArray(double.class);
-            // synchronized (projMap) {
             // TODO: I need to build a parser or a formatter to properly
-            // interprete these settings
+            // interpret these settings
             projMap.put("Code", Double.toString(values[0]));
             projMap.put(HDF4APSStreamMetadata.PROJECTION, Double.toString(values[1]));
             projMap.put(HDF4APSStreamMetadata.ZONE, Double.toString(values[2]));
@@ -233,7 +177,6 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
             projMap.put("Latitude_2", Double.toString(values[26]));
             projMap.put("Delta", Double.toString(values[27]));
             projMap.put("Aspect", Double.toString(values[28]));
-            // }
         }
         return projMap;
     }
@@ -242,12 +185,6 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
         super(originatingProvider);
     }
     
-    @Override
-    public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
-        checkImageIndex(imageIndex);
-        return new HDF4APSImageMetadata(this, imageIndex);
-    }
-
     /**
      * Returns a {@link APSDatasetWrapper} given a specified imageIndex.
      * 
@@ -273,8 +210,6 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
         apsDatasetsWrapperMap = null;
         streamMetadata = null;
         setNumGlobalAttributes(-1);
-//        projectionMap.clear();
-//        projectionMap = null;
     }
 
     String getDatasetName(final int imageIndex) {
@@ -287,78 +222,46 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
         return datasetName;
     }
 
-//    String getAttributeAsString(final int imageIndex,
-//            String attributeName) {
-//        String attributeValue = "";
-//        try {
-//            APSDatasetWrapper wrapper = getApsDatasetWrapper(imageIndex);
-//            if (wrapper != null) {
-//                H4Attribute attribute = wrapper.getSds().getAttribute(
-//                        attributeName);
-//                if (attribute != null) {
-//                    attributeValue = attribute.getValuesAsString();
-//                }
-//            }
-//        } catch (HDFException hdfe) {
-//            if (LOGGER.isLoggable(Level.WARNING))
-//                LOGGER.warning("HDF Exception while getting the attribute "
-//                        + attributeName);
-//        }
-//
-//        return attributeValue;
-//    }
-//    
-//    String getGlobalAttributeAsString(final int index) throws IOException {
-//        String attributePair = "";
-//        H4Attribute attribute;
-//        try {
-//            attribute = getH4file().getH4SdsCollection().getAttribute(index);
-//            if (attribute != null) {
-//                attributePair = attribute.getName() + SEPARATOR
-//                        + attribute.getValuesAsString();
-//            }
-//        } catch (HDFException e) {
-//            IOException ioe = new IOException();
-//            ioe.initCause(e);
-//            throw ioe;
-//        }
-//
-//        return attributePair;
-//    }
-//    
-//    String getAttributeAsString(int imageIndex, final int attributeIndex)
-//			throws IOException {
-//		initialize();
-//		String attributePair = "";
-//		H4Attribute attribute;
-//		APSDatasetWrapper wrapper = getApsDatasetWrapper(imageIndex);
-//		try {
-//			attribute = wrapper.getSds().getAttribute(attributeIndex);
-//			if (attribute != null) {
-//				attributePair = attribute.getName() + SEPARATOR
-//						+ attribute.getValuesAsString();
-//			}
-//		} catch (HDFException e) {
-//			IOException ioe = new IOException();
-//			ioe.initCause(e);
-//			throw ioe;
-//		}
-//
-//		return attributePair;
-//	}
+
 
     public void reset(){
         super.reset();
     }
     
-    public synchronized IIOMetadata getStreamMetadata() throws IOException {
-        if (streamMetadata == null){
-        	streamMetadata = new HDF4APSStreamMetadata(this);
-        }
-        return streamMetadata;
-    }
-    
     int getNumAttributes(int imageIndex) {
         return getDatasetWrapper(imageIndex).getNumAttributes();
     }
+
+
+
+	/* (non-Javadoc)
+	 * @see javax.imageio.ImageReader#getImageMetadata(int, java.lang.String, java.util.Set)
+	 */
+	@Override
+	public IIOMetadata getImageMetadata(int imageIndex, String formatName,
+			Set<String> nodeNames) throws IOException {
+		initialize();
+	    checkImageIndex(imageIndex);
+	    if(formatName.equalsIgnoreCase(HDF4APSImageMetadata.nativeMetadataFormatName))
+	    	return new HDF4APSImageMetadata(this, imageIndex);
+	    
+	    // fallback on the super type metadata
+		return super.getImageMetadata(imageIndex, formatName, nodeNames);
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see javax.imageio.ImageReader#getStreamMetadata(java.lang.String, java.util.Set)
+	 */
+	@Override
+	public synchronized IIOMetadata getStreamMetadata(String formatName,
+			Set<String> nodeNames) throws IOException {
+		if(formatName.equalsIgnoreCase(HDF4APSStreamMetadata.nativeMetadataFormatName)){
+	        if (streamMetadata == null)
+	            streamMetadata = new HDF4APSStreamMetadata(this);
+	        return streamMetadata;
+		}
+		return super.getStreamMetadata(formatName, nodeNames);
+	}
 }

@@ -1082,16 +1082,14 @@ public class TIFFImageWriter extends ImageWriter {
         }
         if (bitDepth == 3) {
             bitDepth = 4;
-        } else if (bitDepth > 4 && bitDepth < 8) {
+        } else if (bitDepth > 4 && bitDepth <= 8) {
             bitDepth = 8;
-        } else if (bitDepth > 8 && bitDepth < 16) {
+        } else if (bitDepth > 8 && bitDepth <= 16) {
             bitDepth = 16;
-        } else if (bitDepth == 32) {
+        } else if (bitDepth > 16 && bitDepth <=32) {
             bitDepth = 32;
-        }
-        else if (bitDepth == 64) {
-            bitDepth = 64;
-        }
+        }else if (bitDepth > 32)
+        	bitDepth = 64;
 
         for (int i = 0; i < bitsPerSample.length; i++) {
             bitsPerSample[i] = (char)bitDepth;
