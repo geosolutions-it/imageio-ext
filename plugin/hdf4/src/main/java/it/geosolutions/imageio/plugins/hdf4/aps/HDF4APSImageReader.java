@@ -14,9 +14,9 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package it.geosolutions.imageio.plugins.jhdf.aps;
+package it.geosolutions.imageio.plugins.hdf4.aps;
 
-import it.geosolutions.imageio.plugins.jhdf.BaseHDF4ImageReader;
+import it.geosolutions.imageio.plugins.hdf4.BaseHDF4ImageReader;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities;
 
 import java.awt.image.DataBuffer;

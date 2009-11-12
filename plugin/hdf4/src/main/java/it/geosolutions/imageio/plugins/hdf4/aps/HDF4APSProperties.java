@@ -14,9 +14,10 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package it.geosolutions.imageio.plugins.jhdf.aps;
+package it.geosolutions.imageio.plugins.hdf4.aps;
 
-import it.geosolutions.imageio.plugins.jhdf.HDF4Products;
+import it.geosolutions.imageio.plugins.hdf4.HDF4Products;
+import it.geosolutions.imageio.plugins.hdf4.HDF4Products.HDF4Product;
 
 public class HDF4APSProperties {
 
