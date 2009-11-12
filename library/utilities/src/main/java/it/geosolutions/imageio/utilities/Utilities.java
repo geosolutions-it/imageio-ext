@@ -1,5 +1,5 @@
 /*
- *    JImageIO-extension - OpenSource Java Image translation Library
+ *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
  *    (C) 2007, GeoSolutions
  *    GeoTools - OpenSource mapping toolkit
