@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageio.gdalframework;
 
+import it.geosolutions.imageio.core.CoreCommonIIOStreamMetadata;
 import it.geosolutions.imageio.core.GCP;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 import it.geosolutions.imageio.stream.input.URIImageInputStream;
@@ -38,10 +39,8 @@ import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.DoubleBuffer;
@@ -1278,7 +1277,7 @@ public abstract class GDALImageReader extends ImageReader {
      */
     public IIOMetadata getStreamMetadata() throws IOException {
         initialize();
-        return new GDALCommonIIOStreamMetadata(datasetNames);
+        return new CoreCommonIIOStreamMetadata(datasetNames);
     }
 
     /**
