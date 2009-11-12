@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package it.geosolutions.imageio.plugins.jhdf.avhrr;
+package it.geosolutions.imageio.plugins.hdf4.terascan;
 
 import it.geosolutions.imageio.ndplugin.BaseImageReaderSpi;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities;
@@ -28,7 +28,7 @@ import javax.imageio.ImageReader;
 
 import ucar.nc2.dataset.NetcdfDataset;
 
-public class HDFAVHRRImageReaderSpi extends BaseImageReaderSpi {
+public class HDF4TeraScanImageReaderSpi extends BaseImageReaderSpi {
 
     static final String[] suffixes = { "hdf", "hdf4" };
 
@@ -48,7 +48,7 @@ public class HDFAVHRRImageReaderSpi extends BaseImageReaderSpi {
     // StreamMetadataFormatNames and StreamMetadataFormatClassNames
     static final boolean supportsStandardStreamMetadataFormat = false;
 
-    static final String nativeStreamMetadataFormatName = HDFAVHRRStreamMetadata.nativeMetadataFormatName;
+    static final String nativeStreamMetadataFormatName = HDF4TeraScanStreamMetadata.nativeMetadataFormatName;
 
     static final String nativeStreamMetadataFormatClassName = null;
 
@@ -59,7 +59,7 @@ public class HDFAVHRRImageReaderSpi extends BaseImageReaderSpi {
     // ImageMetadataFormatNames and ImageMetadataFormatClassNames
     static final boolean supportsStandardImageMetadataFormat = false;
 
-    static final String nativeImageMetadataFormatName = HDF4TERASCANImageMetadata.nativeMetadataFormatName;
+    static final String nativeImageMetadataFormatName = HDF4TeraScanImageMetadata.nativeMetadataFormatName;
 
     static final String nativeImageMetadataFormatClassName = null;
 
@@ -67,7 +67,7 @@ public class HDFAVHRRImageReaderSpi extends BaseImageReaderSpi {
 
     static final String[] extraImageMetadataFormatClassNames = { null };
 
-    public HDFAVHRRImageReaderSpi() {
+    public HDF4TeraScanImageReaderSpi() {
         super(
                 vendorName,
                 version,
@@ -100,9 +100,9 @@ public class HDFAVHRRImageReaderSpi extends BaseImageReaderSpi {
             try {
                 final NetcdfDataset dataset = NetCDFUtilities.getDataset(input);
                 if (dataset != null) {
-                	final int productsNum = HDFAVHRRProperties.avhrrProducts.getNProducts();
+                	final int productsNum = HDF4TeraScanProperties.avhrrProducts.getNProducts();
                 	for (int i = 0; i < productsNum; i++) {
-                		if (dataset.findVariable(HDFAVHRRProperties.avhrrProducts
+                		if (dataset.findVariable(HDF4TeraScanProperties.avhrrProducts
                                 .get(i).getProductName())!=null){
                 			found = true;
                 			break;
@@ -124,7 +124,7 @@ public class HDFAVHRRImageReaderSpi extends BaseImageReaderSpi {
      * @see javax.imageio.spi.ImageReaderSpi#createReaderInstance(java.lang.Object)
      */
     public ImageReader createReaderInstance(Object source) throws IOException {
-        return new HDFAVHRRImageReader(this);
+        return new HDF4TeraScanImageReader(this);
     }
 
     /**

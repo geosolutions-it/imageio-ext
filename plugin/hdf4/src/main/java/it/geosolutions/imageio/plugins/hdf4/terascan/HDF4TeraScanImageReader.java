@@ -16,7 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.hdf4.terascan;
 
-import it.geosolutions.imageio.plugins.jhdf.BaseHDF4ImageReader;
+import it.geosolutions.imageio.plugins.hdf4.BaseHDF4ImageReader;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -36,14 +36,14 @@ import ucar.nc2.dataset.NetcdfDataset;
  * 
  * @author Romagnoli Daniele
  */
-public class HDFAVHRRImageReader extends BaseHDF4ImageReader {
+public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
 
     /** The Products Dataset List contained within the APS File */
     private String[] productList;
 
     private IIOMetadata streamMetadata = null;
 
-    public HDFAVHRRImageReader(ImageReaderSpi originatingProvider) {
+    public HDF4TeraScanImageReader(ImageReaderSpi originatingProvider) {
         super(originatingProvider);
     }
 
@@ -76,7 +76,7 @@ public class HDFAVHRRImageReader extends BaseHDF4ImageReader {
         final List<Variable> variables = dataset.getVariables();
         final List<Attribute> attributes = dataset.getGlobalAttributes();
         setNumGlobalAttributes(attributes.size());
-        productList = HDFAVHRRProperties.refineProductList(variables);
+        productList = HDF4TeraScanProperties.refineProductList(variables);
         int numImages = productList!=null?productList.length:0;
         setNumImages(numImages);
 
@@ -100,7 +100,7 @@ public class HDFAVHRRImageReader extends BaseHDF4ImageReader {
     public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
         initialize();
         checkImageIndex(imageIndex);
-        return new HDF4TERASCANImageMetadata(this, imageIndex);
+        return new HDF4TeraScanImageMetadata(this, imageIndex);
     }
 
     /**
@@ -135,7 +135,7 @@ public class HDFAVHRRImageReader extends BaseHDF4ImageReader {
     double[] getValidRange(final int imageIndex) throws IOException {
         double[] range = new double[] { Double.NaN, Double.NaN };
         String validRange = getAttributeAsString(imageIndex,
-                HDFAVHRRProperties.DatasetAttribs.VALID_RANGE);
+                HDF4TeraScanProperties.DatasetAttribs.VALID_RANGE);
         if (validRange != null && validRange.trim().length() > 0) {
             String validRanges[] = validRange.split(" ");
             if (validRanges.length == 2) {
@@ -155,14 +155,14 @@ public class HDFAVHRRImageReader extends BaseHDF4ImageReader {
     double getFillValue(final int imageIndex) throws IOException {
         double fillValue = Double.NaN;
         String fillS = getAttributeAsString(imageIndex,
-                HDFAVHRRProperties.DatasetAttribs.FILL_VALUE);
+                HDF4TeraScanProperties.DatasetAttribs.FILL_VALUE);
         if (fillS != null && fillS.trim().length() > 0)
             fillValue = Double.parseDouble(fillS);
         return fillValue;
     }
 
     protected int getBandNumberFromProduct(String productName) {
-        return HDFAVHRRProperties.avhrrProducts.get(productName).getNBands();
+        return HDF4TeraScanProperties.avhrrProducts.get(productName).getNBands();
     }
 
     /**
@@ -173,7 +173,7 @@ public class HDFAVHRRImageReader extends BaseHDF4ImageReader {
     String getLongName(final int imageIndex) throws IOException {
         String name = "";
         String nameS = getAttributeAsString(imageIndex,
-                HDFAVHRRProperties.DatasetAttribs.LONG_NAME);
+                HDF4TeraScanProperties.DatasetAttribs.LONG_NAME);
         if (nameS != null) {
             name = nameS;
         }
@@ -189,7 +189,7 @@ public class HDFAVHRRImageReader extends BaseHDF4ImageReader {
     double getScale(final int imageIndex) throws IOException {
         double scale = Double.NaN;
         String scaleS = getAttributeAsString(imageIndex,
-                HDFAVHRRProperties.DatasetAttribs.SCALE_FACTOR);
+                HDF4TeraScanProperties.DatasetAttribs.SCALE_FACTOR);
         if (scaleS != null && scaleS.trim().length() > 0)
             scale = Double.parseDouble(scaleS);
         return scale;
@@ -204,7 +204,7 @@ public class HDFAVHRRImageReader extends BaseHDF4ImageReader {
     double getOffset(final int imageIndex) throws IOException {
         double offset = Double.NaN;
         String offsetS = getAttributeAsString(imageIndex,
-                HDFAVHRRProperties.DatasetAttribs.ADD_OFFSET);
+                HDF4TeraScanProperties.DatasetAttribs.ADD_OFFSET);
         if (offsetS != null && offsetS.trim().length() > 0)
             offset = Double.parseDouble(offsetS);
         return offset;
@@ -213,7 +213,7 @@ public class HDFAVHRRImageReader extends BaseHDF4ImageReader {
     @Override
     public synchronized IIOMetadata getStreamMetadata() throws IOException {
         if (streamMetadata == null)
-            streamMetadata = new HDFAVHRRStreamMetadata(this);
+            streamMetadata = new HDF4TeraScanStreamMetadata(this);
         return streamMetadata;
     }
 

@@ -28,7 +28,7 @@ import javax.imageio.metadata.IIOMetadataNode;
 
 import org.w3c.dom.Node;
 
-public class HDF4TERASCANImageMetadata extends BaseImageMetadata {
+public class HDF4TeraScanImageMetadata extends BaseImageMetadata {
     public static final String nativeMetadataFormatName = "it_geosolutions_imageio_plugins_jhdf_avhrr_avhrrImageMetadata_1.0";
 
     //
@@ -43,7 +43,7 @@ public class HDF4TERASCANImageMetadata extends BaseImageMetadata {
 
     private IIOMetadataNode nativeTree;
 
-    public HDF4TERASCANImageMetadata(final BaseImageReader reader,
+    public HDF4TeraScanImageMetadata(final BaseImageReader reader,
             final int imageIndex) {
         super(reader, imageIndex);
     }
@@ -51,8 +51,8 @@ public class HDF4TERASCANImageMetadata extends BaseImageMetadata {
     protected void setMembers(BaseImageReader imageReader) throws IOException {
         super.setMembers(imageReader);
         final int imageIndex = getImageIndex();
-        if (imageReader instanceof HDFAVHRRImageReader) {
-            HDFAVHRRImageReader reader = (HDFAVHRRImageReader) imageReader;
+        if (imageReader instanceof HDF4TeraScanImageReader) {
+            HDF4TeraScanImageReader reader = (HDF4TeraScanImageReader) imageReader;
             setDriverDescription(driverDescription);
             setDriverName(driverName);
             final double scale = reader.getScale(imageIndex);
@@ -83,7 +83,7 @@ public class HDF4TERASCANImageMetadata extends BaseImageMetadata {
             // overviews is always 0
             setNumOverviews(new int[] { 0 });
             
-            HDFAVHRRImageReader directReader = (HDFAVHRRImageReader) imageReader;
+            HDF4TeraScanImageReader directReader = (HDF4TeraScanImageReader) imageReader;
             final int numAttributes = directReader.getNumAttributes(imageIndex);
             this.additionalMetadata = new HashMap<String, String>(numAttributes);
             for (int i = 0; i < numAttributes; i++) {
@@ -104,7 +104,7 @@ public class HDF4TERASCANImageMetadata extends BaseImageMetadata {
      *                the name of the requested metadata format.
      */
     public Node getAsTree(String formatName) {
-        if (HDF4TERASCANImageMetadata.nativeMetadataFormatName
+        if (HDF4TeraScanImageMetadata.nativeMetadataFormatName
                 .equalsIgnoreCase(formatName))
             return createNativeTree();
         else if (CoreCommonImageMetadata.nativeMetadataFormatName
@@ -118,7 +118,7 @@ public class HDF4TERASCANImageMetadata extends BaseImageMetadata {
         if (this.nativeTree != null)
             return this.nativeTree;
         nativeTree = new IIOMetadataNode(
-                HDF4TERASCANImageMetadata.nativeMetadataFormatName);
+                HDF4TeraScanImageMetadata.nativeMetadataFormatName);
 
         // ////////////////////////////////////////////////////////////////////
         //

@@ -14,19 +14,19 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package it.geosolutions.imageio.plugins.jhdf.avhrr;
+package it.geosolutions.imageio.plugins.hdf4.terascan;
 
-import it.geosolutions.imageio.plugins.jhdf.HDF4Products;
+import it.geosolutions.imageio.plugins.hdf4.HDF4Products;
 
 import java.util.List;
 
 import ucar.nc2.Variable;
 
-public class HDFAVHRRProperties {
+public class HDF4TeraScanProperties {
 
     // TODO: Leverages on a properties file
-    public static class AVHRRProducts extends HDF4Products {
-        public AVHRRProducts() {
+    public static class TeraScanProducts extends HDF4Products {
+        public TeraScanProducts() {
             super(2);
             int i = 0;
             HDF4Product mcsst = new HDF4Product("mcsst", 1);
@@ -39,7 +39,7 @@ public class HDFAVHRRProperties {
         }
     }
 
-    private HDFAVHRRProperties() {
+    private HDF4TeraScanProperties() {
 
     }
 
@@ -63,7 +63,7 @@ public class HDFAVHRRProperties {
 	        for (int i = 0; i < inputProducts; i++) {
 	            final String productName = variables.get(i).getName();
 	            products[i] = productName;
-	            if (HDFAVHRRProperties.avhrrProducts.get(productName) != null) {
+	            if (HDF4TeraScanProperties.avhrrProducts.get(productName) != null) {
 	                accepted[i] = true;
 	                j++;
 	            } else
@@ -82,7 +82,7 @@ public class HDFAVHRRProperties {
     	return null;
     }
 
-    public final static HDFAVHRRProperties.AVHRRProducts avhrrProducts = new HDFAVHRRProperties.AVHRRProducts();
+    public final static HDF4TeraScanProperties.TeraScanProducts avhrrProducts = new HDF4TeraScanProperties.TeraScanProducts();
 
     public static class DatasetAttribs {
         public final static String VALID_RANGE = "valid_range";

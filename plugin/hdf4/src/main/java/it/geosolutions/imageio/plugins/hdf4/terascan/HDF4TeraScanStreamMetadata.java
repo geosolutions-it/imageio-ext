@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package it.geosolutions.imageio.plugins.jhdf.avhrr;
+package it.geosolutions.imageio.plugins.hdf4.terascan;
 
 import it.geosolutions.imageio.core.CoreCommonImageMetadata;
 import it.geosolutions.imageio.ndplugin.BaseImageReader;
@@ -29,7 +29,7 @@ import javax.imageio.metadata.IIOMetadataNode;
 
 import org.w3c.dom.Node;
 
-public class HDFAVHRRStreamMetadata extends IIOMetadata {
+public class HDF4TeraScanStreamMetadata extends IIOMetadata {
     /**
      * The name of the native metadata format for this object.
      */
@@ -39,7 +39,7 @@ public class HDFAVHRRStreamMetadata extends IIOMetadata {
 
     public final static String GLOBAL_ATTRIBUTES = "GlobalAttributes";
 
-    public HDFAVHRRStreamMetadata(final BaseImageReader reader) {
+    public HDF4TeraScanStreamMetadata(final BaseImageReader reader) {
         this.reader = reader;
     }
 
@@ -61,8 +61,8 @@ public class HDFAVHRRStreamMetadata extends IIOMetadata {
         //
         // ////////////////////////////////////////////////////////////////////
         final IIOMetadataNode node = new IIOMetadataNode(GLOBAL_ATTRIBUTES);
-        if (reader instanceof HDFAVHRRImageReader) {
-            final HDFAVHRRImageReader directReader = (HDFAVHRRImageReader) reader;
+        if (reader instanceof HDF4TeraScanImageReader) {
+            final HDF4TeraScanImageReader directReader = (HDF4TeraScanImageReader) reader;
             final int numAttributes = directReader.getNumGlobalAttributes();
             try {
                 for (int i = 0; i < numAttributes; i++) {
