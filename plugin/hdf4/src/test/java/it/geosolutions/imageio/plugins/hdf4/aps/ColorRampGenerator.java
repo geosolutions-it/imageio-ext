@@ -1,10 +1,10 @@
 /**
  * 
  */
-package it.geosolutions.imageio.plugins.jhdf.aps;
+package it.geosolutions.imageio.plugins.hdf4.aps;
 
 /**
- * @author Fabiania
+ * @author Alessio Fabiani, GeoSolutions S.A.S.
  * 
  */
 public class ColorRampGenerator {

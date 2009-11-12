@@ -13,10 +13,9 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package it.geosolutions.imageio.plugins.jhdf.aps;
+package it.geosolutions.imageio.plugins.hdf4.aps;
 
 import it.geosolutions.imageio.ndplugin.BaseImageMetadata;
-import it.geosolutions.imageio.plugins.jhdf.JHDFTestCase;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
@@ -28,10 +27,12 @@ import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
 
+import junit.framework.TestCase;
+
 import org.junit.Assert;
 import org.junit.Test;
 
-public class APSHDFReadTest extends JHDFTestCase {
+public class APSHDFReadTest extends TestCase {
 
     private static final Logger LOGGER = Logger
             .getLogger("it.geosolutions.imageio.plugins.jhdf.aps");
