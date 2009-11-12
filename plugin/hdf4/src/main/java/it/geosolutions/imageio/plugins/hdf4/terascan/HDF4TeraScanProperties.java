@@ -22,7 +22,7 @@ import java.util.List;
 
 import ucar.nc2.Variable;
 
-public class HDF4TeraScanProperties {
+class HDF4TeraScanProperties {
 
     // TODO: Leverages on a properties file
     public static class TeraScanProducts extends HDF4Products {

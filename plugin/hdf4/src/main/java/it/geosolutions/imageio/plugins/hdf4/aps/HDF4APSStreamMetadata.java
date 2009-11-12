@@ -139,11 +139,6 @@ public class HDF4APSStreamMetadata extends IIOMetadata {
         super(false, nativeMetadataFormatName, null, null, null);
     }
 
-//    public HDF4APSStreamMetadata(H4SDSCollection root) {
-//        this();
-//        buildMetadata(root);
-//    }
-
     public HDF4APSStreamMetadata(HDF4APSImageReader reader) {
         this();
         buildMetadata(reader);

@@ -52,8 +52,7 @@ public class HDF4TeraScanStreamMetadata extends IIOMetadata {
      */
     protected Node createCommonNativeTree() {
         // Create root node
-        final IIOMetadataNode root = new IIOMetadataNode(
-                nativeMetadataFormatName);
+        final IIOMetadataNode root = new IIOMetadataNode(nativeMetadataFormatName);
 
         // ////////////////////////////////////////////////////////////////////
         //
@@ -71,16 +70,14 @@ public class HDF4TeraScanStreamMetadata extends IIOMetadata {
                      final String attribValue = keyValuePair.getValue();
                     // //
                     // Note: IIOMetadata doesn't allow to set attribute name
-                    // containing "\\". Therefore we replace that char
+                    // containing "\". Therefore we replace that char
                     // //
                     if (attribName.contains("\\"))
-                    	attribName = Utilities
-                                .adjustAttributeName(attribName);
+                    	attribName = Utilities.adjustAttributeName(attribName);
                     node.setAttribute(attribName, attribValue);
                 }
             } catch (IOException e) {
-                throw new IllegalArgumentException("Unable to parse attribute",
-                        e);
+                throw new IllegalArgumentException("Unable to parse attribute",e);
             }
 
             root.appendChild(node);
@@ -103,8 +100,7 @@ public class HDF4TeraScanStreamMetadata extends IIOMetadata {
     public Node getAsTree(String formatName) {
         if (nativeMetadataFormatName.equalsIgnoreCase(formatName))
             return createCommonNativeTree();
-        throw new IllegalArgumentException(formatName
-                + " is not a supported format name");
+        throw new IllegalArgumentException(formatName+ " is not a supported format name");
     }
 
     @Override

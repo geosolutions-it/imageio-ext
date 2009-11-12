@@ -47,16 +47,16 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
         super(originatingProvider);
     }
 
-    private Map<Integer, AVHRRDatasetWrapper> avhrrDatasetsWrapperMap = null;
+    private Map<Integer, TerascanDatasetWrapper> avhrrDatasetsWrapperMap = null;
 
     /**
      * Inner class to represent interesting attributes of a APS Dataset
      * 
      * @author Daniele Romagnoli, GeoSolutions.
      */
-    private class AVHRRDatasetWrapper extends HDF4DatasetWrapper{
+    private class TerascanDatasetWrapper extends HDF4DatasetWrapper{
 
-       public AVHRRDatasetWrapper(final Variable var) {
+       public TerascanDatasetWrapper(final Variable var) {
     	   super(var);
        }
     }
@@ -80,7 +80,7 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
         int numImages = productList!=null?productList.length:0;
         setNumImages(numImages);
 
-        avhrrDatasetsWrapperMap = new HashMap<Integer, AVHRRDatasetWrapper>(
+        avhrrDatasetsWrapperMap = new HashMap<Integer, TerascanDatasetWrapper>(
                 numImages);
 
      // Scanning all the datasets
@@ -90,7 +90,7 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
                 // Checking if the actual dataset is a product.
             	if (!checkProducts || name.equals(productList[j])) {
                     // Updating the subDatasetsMap map
-                	avhrrDatasetsWrapperMap.put(j, new AVHRRDatasetWrapper(var));
+                	avhrrDatasetsWrapperMap.put(j, new TerascanDatasetWrapper(var));
                     break;
                 }
             }
@@ -104,15 +104,15 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
     }
 
     /**
-     * Returns a {@link AVHRRDatasetWrapper} given a specified imageIndex.
+     * Returns a {@link TerascanDatasetWrapper} given a specified imageIndex.
      * 
      * @param imageIndex
-     * @return a {@link AVHRRDatasetWrapper}.
+     * @return a {@link TerascanDatasetWrapper}.
      */
     @Override
     protected HDF4DatasetWrapper getDatasetWrapper(int imageIndex) {
         checkImageIndex(imageIndex);
-        final AVHRRDatasetWrapper wrapper = avhrrDatasetsWrapperMap.get(imageIndex);
+        final TerascanDatasetWrapper wrapper = avhrrDatasetsWrapperMap.get(imageIndex);
         return wrapper;
     }
 
