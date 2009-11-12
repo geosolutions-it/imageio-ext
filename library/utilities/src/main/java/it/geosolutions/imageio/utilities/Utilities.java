@@ -34,6 +34,10 @@ import java.util.Arrays;
  */
 public final class Utilities {
 
+	private static final int MAX_SUBSAMPLING_FACTOR = Integer.MAX_VALUE;
+	
+	private static final int MAX_LEVELS = 31;
+	
     private Utilities() {
 
     }
@@ -219,6 +223,68 @@ public final class Utilities {
         }
         
         return new File(path3);
+    }
+    
+    /**
+     * Given a pair of xSubsamplingFactor (xSSF) and ySubsamplingFactor (ySFF), 
+     * look for a subsampling factor (SSF) in case xSSF != ySSF and they are not
+     * powers of 2.
+     * In case xSSF == ySSF == 2^N, the method return 0 (No optimal subsampling factor found).
+     * 
+     * @param xSubsamplingFactor
+     * @param ySubsamplingFactor
+     * @return 
+     */
+    public static int getSubSamplingFactor2(final int xSubsamplingFactor, final int ySubsamplingFactor) {
+        boolean resamplingIsRequired = false;
+        int newSubSamplingFactor = 0;
+
+        // Preliminar check: Are xSSF and ySSF different?
+        final boolean subSamplingFactorsAreDifferent = (xSubsamplingFactor != ySubsamplingFactor);
+
+        // Let be nSSF the minimum of xSSF and ySSF (They may be equals).
+        newSubSamplingFactor = (xSubsamplingFactor <= ySubsamplingFactor) ? xSubsamplingFactor
+                : ySubsamplingFactor;
+        // if nSSF is greater than the maxSupportedSubSamplingFactor
+        // (MaxSupSSF), it needs to be adjusted.
+        final boolean changedSubSamplingFactors = (newSubSamplingFactor > MAX_SUBSAMPLING_FACTOR);
+        if (newSubSamplingFactor > MAX_SUBSAMPLING_FACTOR)
+            newSubSamplingFactor = MAX_SUBSAMPLING_FACTOR;
+        final int optimalSubsampling = findOptimalSubSampling(newSubSamplingFactor);
+
+        resamplingIsRequired = subSamplingFactorsAreDifferent
+                || changedSubSamplingFactors || optimalSubsampling != newSubSamplingFactor;
+        if (!resamplingIsRequired) {
+            // xSSF and ySSF are equal and they are not greater than MaxSuppSSF
+        	newSubSamplingFactor = 0;
+        } else {
+            // xSSF and ySSF are different or they are greater than MaxSuppSFF.
+            // We need to find a new subsampling factor to load a proper region.
+            newSubSamplingFactor = optimalSubsampling;
+        }
+        return newSubSamplingFactor;
+    }
+	
+	private static int findOptimalSubSampling(final int newSubSamplingFactor) {
+        int optimalSubSamplingFactor = 1;
+
+        // finding the available subsampling factors from the number of
+        // resolution levels
+        for (int level = 0; level < MAX_LEVELS; level++) {
+            // double the subSamplingFactor until it is lower than the
+            // input subSamplingFactor
+            if (optimalSubSamplingFactor < newSubSamplingFactor)
+                optimalSubSamplingFactor = 1 << level;
+            // if the calculated subSamplingFactor is greater than the input
+            // subSamplingFactor, we need to step back by halving it.
+            else if (optimalSubSamplingFactor > newSubSamplingFactor) {
+                optimalSubSamplingFactor = optimalSubSamplingFactor >> 1;
+                break;
+            } else if (optimalSubSamplingFactor == newSubSamplingFactor) {
+                break;
+            }
+        }
+        return optimalSubSamplingFactor;
     }
     
     /**
