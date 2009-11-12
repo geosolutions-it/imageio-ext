@@ -64,7 +64,7 @@ public class HDFAPSImageReader extends BaseHDF4ImageReader {
 
     Map<String, String> projectionMap = null;
 
-    private class APSDatasetWrapper extends HDFDatasetWrapper{
+    private class APSDatasetWrapper extends HDF4DatasetWrapper{
         private APSDatasetWrapper(Variable var) {
         	super(var);
 		}
@@ -255,7 +255,7 @@ public class HDFAPSImageReader extends BaseHDF4ImageReader {
      * @return a {@link APSDatasetWrapper}.
      */
     @Override
-    protected HDFDatasetWrapper getDatasetWrapper(final int imageIndex) {
+    protected HDF4DatasetWrapper getDatasetWrapper(final int imageIndex) {
         checkImageIndex(imageIndex);
         final APSDatasetWrapper wrapper = apsDatasetsWrapperMap.get(imageIndex);
         return wrapper;

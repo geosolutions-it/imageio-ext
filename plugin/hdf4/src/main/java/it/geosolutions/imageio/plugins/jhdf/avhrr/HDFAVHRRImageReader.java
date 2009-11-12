@@ -54,7 +54,7 @@ public class HDFAVHRRImageReader extends BaseHDF4ImageReader {
      * 
      * @author Daniele Romagnoli, GeoSolutions.
      */
-    private class AVHRRDatasetWrapper extends HDFDatasetWrapper{
+    private class AVHRRDatasetWrapper extends HDF4DatasetWrapper{
 
        public AVHRRDatasetWrapper(final Variable var) {
     	   super(var);
@@ -110,7 +110,7 @@ public class HDFAVHRRImageReader extends BaseHDF4ImageReader {
      * @return a {@link AVHRRDatasetWrapper}.
      */
     @Override
-    protected HDFDatasetWrapper getDatasetWrapper(int imageIndex) {
+    protected HDF4DatasetWrapper getDatasetWrapper(int imageIndex) {
         checkImageIndex(imageIndex);
         final AVHRRDatasetWrapper wrapper = avhrrDatasetsWrapperMap.get(imageIndex);
         return wrapper;
