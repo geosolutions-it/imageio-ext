@@ -19,7 +19,6 @@ package it.geosolutions.imageio.plugins.jhdf.aps;
 import it.geosolutions.imageio.core.CoreCommonImageMetadata;
 import it.geosolutions.imageio.ndplugin.BaseImageMetadata;
 import it.geosolutions.imageio.ndplugin.BaseImageReader;
-import it.geosolutions.imageio.plugins.jhdf.BaseHDF4ImageReader;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.KeyValuePair;
 
 import java.io.IOException;
@@ -35,7 +34,7 @@ import org.w3c.dom.Node;
  * @author Simone Giannecchini, GeoSolutions SAS
  *
  */
-public class HDFAPSImageMetadata extends BaseImageMetadata {
+public class HDF4APSImageMetadata extends BaseImageMetadata {
 	
     public static final String nativeMetadataFormatName = "it_geosolutions_imageio_plugins_jhdf_aps_APSImageMetadata_1.0";
 
@@ -47,15 +46,15 @@ public class HDFAPSImageMetadata extends BaseImageMetadata {
     
     private IIOMetadataNode nativeTree;
 
-    public HDFAPSImageMetadata(final BaseImageReader reader,final int imageIndex) {
+    public HDF4APSImageMetadata(final BaseImageReader reader,final int imageIndex) {
         super(reader, imageIndex);
     }
 
     protected void setMembers(BaseImageReader imageReader) throws IOException {
         super.setMembers(imageReader);
         final int imageIndex = getImageIndex();
-        if (imageReader instanceof HDFAPSImageReader) {
-            HDFAPSImageReader reader = (HDFAPSImageReader) imageReader;
+        if (imageReader instanceof HDF4APSImageReader) {
+            HDF4APSImageReader reader = (HDF4APSImageReader) imageReader;
             setDriverDescription(driverDescription);
             setDriverName(driverName);
             String scale = reader.getAttributeAsString(imageIndex,HDFAPSProperties.PDSA_SCALINGSLOPE);
@@ -91,7 +90,7 @@ public class HDFAPSImageMetadata extends BaseImageMetadata {
             // overviews is always 0, we can just do decimation on reading
             setNumOverviews(new int[] { 0 });
             
-            final HDFAPSImageReader directReader = (HDFAPSImageReader) imageReader;
+            final HDF4APSImageReader directReader = (HDF4APSImageReader) imageReader;
             final int numAttributes = directReader.getNumAttributes(imageIndex);
             this.additionalMetadata = new HashMap<String, String>(numAttributes);
             for (int i = 0; i < numAttributes; i++) {
@@ -112,7 +111,7 @@ public class HDFAPSImageMetadata extends BaseImageMetadata {
      *                the name of the requested metadata format.
      */
     public Node getAsTree(String formatName) {
-        if (HDFAPSImageMetadata.nativeMetadataFormatName.equalsIgnoreCase(formatName))
+        if (HDF4APSImageMetadata.nativeMetadataFormatName.equalsIgnoreCase(formatName))
             return createNativeTree();
         else if (CoreCommonImageMetadata.nativeMetadataFormatName.equalsIgnoreCase(formatName))
             return super.createCommonNativeTree();
@@ -122,7 +121,7 @@ public class HDFAPSImageMetadata extends BaseImageMetadata {
     private synchronized Node createNativeTree() {
         if (this.nativeTree != null)
             return this.nativeTree;
-        nativeTree = new IIOMetadataNode(HDFAPSImageMetadata.nativeMetadataFormatName);
+        nativeTree = new IIOMetadataNode(HDF4APSImageMetadata.nativeMetadataFormatName);
 
         // ////////////////////////////////////////////////////////////////////
         //

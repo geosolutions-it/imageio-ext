@@ -38,12 +38,12 @@ import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
 
 /**
- * {@link HDFAPSImageReader} is a {@link ImageReader} able to create
+ * {@link HDF4APSImageReader} is a {@link ImageReader} able to create
  * {@link RenderedImage} from APS generated HDF sources.
  * 
  * @author Daniele Romagnoli
  */
-public class HDFAPSImageReader extends BaseHDF4ImageReader {
+public class HDF4APSImageReader extends BaseHDF4ImageReader {
 	
     /** The Products Dataset List contained within the APS File */
     private String[] productList;
@@ -71,7 +71,7 @@ public class HDFAPSImageReader extends BaseHDF4ImageReader {
     }
 
     /**
-     * Initialize main properties for this <code>HDFAPSImageReader</code>
+     * Initialize main properties for this <code>HDF4APSImageReader</code>
      */
     protected void initializeProfile() throws IOException {
         final NetcdfDataset dataset = getDataset();
@@ -238,14 +238,14 @@ public class HDFAPSImageReader extends BaseHDF4ImageReader {
         return projMap;
     }
 
-    public HDFAPSImageReader(ImageReaderSpi originatingProvider) {
+    public HDF4APSImageReader(ImageReaderSpi originatingProvider) {
         super(originatingProvider);
     }
     
     @Override
     public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
         checkImageIndex(imageIndex);
-        return new HDFAPSImageMetadata(this, imageIndex);
+        return new HDF4APSImageMetadata(this, imageIndex);
     }
 
     /**

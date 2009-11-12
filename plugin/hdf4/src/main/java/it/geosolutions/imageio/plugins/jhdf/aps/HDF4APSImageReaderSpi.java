@@ -35,7 +35,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  * 
  * @author Daniele Romagnoli
  */
-public class HDFAPSImageReaderSpi extends BaseImageReaderSpi {
+public class HDF4APSImageReaderSpi extends BaseImageReaderSpi {
 
     private static final Logger LOGGER = Logger
             .getLogger("it.geosolutions.imageio.plugins.jhdf.aps");
@@ -48,7 +48,7 @@ public class HDFAPSImageReaderSpi extends BaseImageReaderSpi {
 
     static final String version = "1.0";
 
-    static final String readerCN = "it.geosolutions.imageio.plugins.jhdf.aps.HDFAPSImageReader";
+    static final String readerCN = "it.geosolutions.imageio.plugins.jhdf.aps.HDF4APSImageReader";
 
     // writerSpiNames
     static final String[] wSN = { null };
@@ -75,7 +75,7 @@ public class HDFAPSImageReaderSpi extends BaseImageReaderSpi {
 
     static final String[] extraImageMetadataFormatClassNames = { null };
 
-    public HDFAPSImageReaderSpi() {
+    public HDF4APSImageReaderSpi() {
         super(
                 vendorName,
                 version,
@@ -97,7 +97,7 @@ public class HDFAPSImageReaderSpi extends BaseImageReaderSpi {
                 extraImageMetadataFormatClassNames);
 
         if (LOGGER.isLoggable(Level.FINE))
-            LOGGER.fine("HDFAPSImageReaderSpi Constructor");
+            LOGGER.fine("HDF4APSImageReaderSpi Constructor");
     }
 
     public boolean canDecodeInput(Object input) throws IOException {
@@ -122,7 +122,7 @@ public class HDFAPSImageReaderSpi extends BaseImageReaderSpi {
     }
 
     public ImageReader createReaderInstance(Object input) throws IOException {
-        return new HDFAPSImageReader(this);
+        return new HDF4APSImageReader(this);
     }
 
     public String getDescription(Locale locale) {

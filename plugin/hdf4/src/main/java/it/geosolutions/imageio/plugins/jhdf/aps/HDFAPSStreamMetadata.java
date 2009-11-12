@@ -144,7 +144,7 @@ public class HDFAPSStreamMetadata extends IIOMetadata {
 //        buildMetadata(root);
 //    }
 
-    public HDFAPSStreamMetadata(HDFAPSImageReader reader) {
+    public HDFAPSStreamMetadata(HDF4APSImageReader reader) {
         this();
         buildMetadata(reader);
     }
@@ -268,7 +268,7 @@ public class HDFAPSStreamMetadata extends IIOMetadata {
     }
 
 //    public synchronized void buildMetadata(H4SDSCollection root) {
-    public synchronized void buildMetadata(HDFAPSImageReader directReader) {
+    public synchronized void buildMetadata(HDF4APSImageReader directReader) {
         try {
         	
         	final int numAttributes = directReader.getNumGlobalAttributes();
