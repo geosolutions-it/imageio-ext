@@ -69,6 +69,8 @@ import org.gdal.gdalconst.gdalconstConstants;
  * @author Simone Giannecchini, GeoSolutions.
  */
 public abstract class GDALImageWriter extends ImageWriter {
+	
+    private static final Logger LOGGER = Logger.getLogger(GDALImageWriter.class.toString());
 
     /**
      * Utility method which checks if a system property has been specified to
@@ -136,9 +138,6 @@ public abstract class GDALImageWriter extends ImageWriter {
      * Memory" Dataset in case of createcopy
      */
     private static final int DEFAULT_GDALMEMORYRASTER_MAXSIZE = 1024 * 1024 * 32;
-
-    private static final Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.gdalframework");
 
     /** Output File */
     protected File outputFile;

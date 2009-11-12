@@ -27,7 +27,6 @@ import java.awt.image.IndexColorModel;
 import java.awt.image.PixelInterleavedSampleModel;
 import java.awt.image.SampleModel;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -60,52 +59,13 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
 
     /** The LOGGER for this class. */
     private static final Logger LOGGER = Logger.getLogger(GDALCommonIIOImageMetadata.class.toString());
-    
-    private static class GDALGCP implements GCP{
-    	
-        private final org.gdal.gdal.GCP wrapped;
-        
-        public GDALGCP(final org.gdal.gdal.GCP gcp){
-            if (gcp==null)
-                throw new NullPointerException("Provided GCP is null");
-            this.wrapped=gcp;
-        }
-
-        public double getGCPLine() {
-            return wrapped.getGCPLine();
-        }
-
-        public double getGCPPixel() {
-            return wrapped.getGCPPixel();
-        }
-
-        public double getGCPX() {
-            return wrapped.getGCPX();
-        }
-
-        public double getGCPY() {
-            return wrapped.getGCPY();
-        }
-
-        public double getGCPZ() {
-            return wrapped.getGCPZ();
-        }
-
-        public String getId() {
-            return wrapped.getId();
-        }
-
-        public String getInfo() {
-            return wrapped.getInfo();
-        }
-        
-    }
+  
 
     /**
      * A map containing an HashMap for each domain if available (the Default
      * domain, the ImageStructure domain, as well as any xml prefixed domain)
      */
-    Map gdalDomainMetadataMap;
+    Map<String, Map<String, String>> gdalDomainMetadataMap;
 
     /**
      * <code>GDALCommonIIOImageMetadata</code> constructor. Firstly, it
@@ -173,18 +133,18 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
             setDriverDescription(driver.GetDescription());
             setDriverName(driver.getShortName());
         }
-        gdalDomainMetadataMap = new HashMap();
+        gdalDomainMetadataMap = new HashMap<String, Map<String, String>>();
 
         // //
         //
         // Getting Metadata from Default domain and Image_structure domain
         //
         // //
-        Map defMap = dataset.GetMetadata_Dict(GDALUtilities.GDALMetadataDomain.DEFAULT);
+        Map<String, String> defMap = dataset.GetMetadata_Dict(GDALUtilities.GDALMetadataDomain.DEFAULT);
         if (defMap != null && defMap.size() > 0)
             gdalDomainMetadataMap.put(GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP, defMap);
 
-        Map imageStMap = dataset.GetMetadata_Dict(GDALUtilities.GDALMetadataDomain.IMAGESTRUCTURE);
+        Map<String, String> imageStMap = dataset.GetMetadata_Dict(GDALUtilities.GDALMetadataDomain.IMAGESTRUCTURE);
         if (imageStMap != null && imageStMap.size() > 0)
             gdalDomainMetadataMap.put(GDALUtilities.GDALMetadataDomain.IMAGESTRUCTURE,imageStMap);
 
@@ -526,10 +486,10 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
         if (metadataDomain
                 .equalsIgnoreCase(GDALUtilities.GDALMetadataDomain.DEFAULT)) {
             if (gdalDomainMetadataMap .containsKey(GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP))
-                return (Map) gdalDomainMetadataMap.get(GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP);
+                return gdalDomainMetadataMap.get(GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP);
         } else if (metadataDomain.equalsIgnoreCase(GDALUtilities.GDALMetadataDomain.IMAGESTRUCTURE)|| metadataDomain.startsWith(GDALUtilities.GDALMetadataDomain.XML_PREFIX)) {
             if (gdalDomainMetadataMap.containsKey(metadataDomain))
-                return (Map) gdalDomainMetadataMap.get(metadataDomain);
+                return gdalDomainMetadataMap.get(metadataDomain);
         }
         return null;
     }
@@ -540,9 +500,9 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
      * @return a list of <code>String</code>s representing metadata domains
      *         defined for the dataset on which this instance is based.
      */
-    protected List getGdalMetadataDomainsList() {
-        final Set keys = gdalDomainMetadataMap.keySet();
-        List list = null;
+    protected List<String> getGdalMetadataDomainsList() {
+        final Set<String> keys = gdalDomainMetadataMap.keySet();
+        List<String> list = null;
         // //
         // 
         // Since the GDAL default metadata domain is an empty String (which
@@ -552,10 +512,10 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
         //
         // //
         if (keys != null) {
-            final Iterator keysIt = keys.iterator();
-            list = new ArrayList(keys.size());
+            final Iterator<String> keysIt = keys.iterator();
+            list = new ArrayList<String>(keys.size());
             while (keysIt.hasNext()) {
-                final String key = (String) keysIt.next();
+                final String key = keysIt.next();
                 if (key.equals(GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP))
                     list.add(GDALUtilities.GDALMetadataDomain.DEFAULT);
                 else
@@ -583,14 +543,14 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
         metadata.setGcpProjection(this.getGcpProjection());
         metadata.setGeoTransformation(this.getGeoTransformation());
         if (this.gdalDomainMetadataMap != null) {
-            Map inputMap = this.gdalDomainMetadataMap;
-            Map map = Collections.synchronizedMap(new HashMap(inputMap.size()));
-            final Iterator outKeys = inputMap.keySet().iterator();
+            Map<String, Map<String, String>> inputMap = this.gdalDomainMetadataMap;
+            Map<String, Map<String, String>> map = new HashMap<String, Map<String, String>>(inputMap.size());
+            final Iterator<String> outKeys = inputMap.keySet().iterator();
             while (outKeys.hasNext()) {
-                final String key = (String) outKeys.next();
-                final Map valuesMap = (Map) inputMap.get(key);
-                final Iterator inKeys = valuesMap.keySet().iterator();
-                final Map innerMap = new HashMap(valuesMap.size());
+                final String key = outKeys.next();
+                final Map<String,String> valuesMap = inputMap.get(key);
+                final Iterator<String> inKeys = valuesMap.keySet().iterator();
+                final Map<String, String> innerMap = new HashMap<String, String>(valuesMap.size());
                 while (inKeys.hasNext()) {
                     final String ikey = (String) inKeys.next();
                     final String value = (String) valuesMap.get(ikey);
