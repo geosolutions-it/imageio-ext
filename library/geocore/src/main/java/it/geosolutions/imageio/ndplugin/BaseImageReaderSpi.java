@@ -1,5 +1,7 @@
 package it.geosolutions.imageio.ndplugin;
 
+import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
+
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
@@ -10,9 +12,10 @@ import javax.imageio.stream.ImageInputStream;
 
 public abstract class BaseImageReaderSpi extends ImageReaderSpi {
 
-	protected static final Class<?>[] DIRECT_STANDARD_INPUT_TYPES = new Class[] {ImageInputStream.class,File.class,URL.class,URI.class };
-	protected static final Logger LOGGER = Logger.getLogger(
-	            "it.geosolutions.imageio.plugin");
+	protected static final Class<?>[] STANDARD_INPUT_TYPES = new Class[] {FileImageInputStreamExt.class,ImageInputStream.class,File.class,URL.class,URI.class };
+	
+	protected static final Logger LOGGER = Logger.getLogger(BaseImageReaderSpi.class.toString());
+	
 	protected static final String vendorName = "GeoSolutions";
 
 	public BaseImageReaderSpi() {

@@ -152,7 +152,6 @@ public class CoreCommonImageMetadataFormat extends IIOMetadataFormatImpl impleme
      * TODO we should implement this  
      */
     public boolean canNodeAppear(String elementName,ImageTypeSpecifier imageType) {
-        // TODO implement me
-        return true;
+    	throw new UnsupportedOperationException("Implement me");
     }
 }
