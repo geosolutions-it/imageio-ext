@@ -16,54 +16,54 @@
  */
 package it.geosolutions.imageio.plugins.jhdf.aps;
 
-import it.geosolutions.imageio.plugins.jhdf.HDFProducts;
+import it.geosolutions.imageio.plugins.jhdf.HDF4Products;
 
 public class HDFAPSProperties {
 
-    public static class APSProducts extends HDFProducts {
+    public static class APSProducts extends HDF4Products {
         public APSProducts() {
         	super(14);
             int index = 0;
-            HDFProduct sst = new HDFProduct("sst", 1);
+            HDF4Product sst = new HDF4Product("sst", 1);
             add(index++, sst);
             
-            HDFProduct sst4 = new HDFProduct("sst4", 1);
+            HDF4Product sst4 = new HDF4Product("sst4", 1);
             add(index++, sst4);
 
-            HDFProduct chl_oc3 = new HDFProduct("chl_oc3", 1);
+            HDF4Product chl_oc3 = new HDF4Product("chl_oc3", 1);
             add(index++, chl_oc3);
             
-            HDFProduct chl_oc3m = new HDFProduct("chl_oc3m", 1);
+            HDF4Product chl_oc3m = new HDF4Product("chl_oc3m", 1);
             add(index++, chl_oc3m);
 
-            HDFProduct k_490 = new HDFProduct("K_490", 1);
+            HDF4Product k_490 = new HDF4Product("K_490", 1);
             add(index++, k_490);
             
-            HDFProduct albedo_ch1 = new HDFProduct("albedo_ch1", 1);
+            HDF4Product albedo_ch1 = new HDF4Product("albedo_ch1", 1);
             add(index++, albedo_ch1);
 
-            HDFProduct albedo_ch2 = new HDFProduct("albedo_ch2", 1);
+            HDF4Product albedo_ch2 = new HDF4Product("albedo_ch2", 1);
             add(index++, albedo_ch2);
 
-            HDFProduct albedo_ch3 = new HDFProduct("albedo_ch3", 1);
+            HDF4Product albedo_ch3 = new HDF4Product("albedo_ch3", 1);
             add(index++, albedo_ch3);
 
-            HDFProduct btemp_ch4 = new HDFProduct("btemp_ch4", 1);
+            HDF4Product btemp_ch4 = new HDF4Product("btemp_ch4", 1);
             add(index++, btemp_ch4);
 
-            HDFProduct btemp_ch5 = new HDFProduct("btemp_ch5", 1);
+            HDF4Product btemp_ch5 = new HDF4Product("btemp_ch5", 1);
             add(index++, btemp_ch5);
 
-            HDFProduct k_PAR = new HDFProduct("K_PAR", 1);
+            HDF4Product k_PAR = new HDF4Product("K_PAR", 1);
             add(index++, k_PAR);
 
-            HDFProduct c_660 = new HDFProduct("c_660", 1);
+            HDF4Product c_660 = new HDF4Product("c_660", 1);
             add(index++, c_660);
             
-            HDFProduct salinity = new HDFProduct("salinity", 1);
+            HDF4Product salinity = new HDF4Product("salinity", 1);
             add(index++, salinity);
             
-            HDFProduct true_color = new HDFProduct("true_color", 3);
+            HDF4Product true_color = new HDF4Product("true_color", 3);
             add(index++, true_color);
        	
             // TODO: Add more APS supported products

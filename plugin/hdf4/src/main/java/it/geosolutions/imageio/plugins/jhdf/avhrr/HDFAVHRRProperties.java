@@ -16,7 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.jhdf.avhrr;
 
-import it.geosolutions.imageio.plugins.jhdf.HDFProducts;
+import it.geosolutions.imageio.plugins.jhdf.HDF4Products;
 
 import java.util.List;
 
@@ -25,16 +25,16 @@ import ucar.nc2.Variable;
 public class HDFAVHRRProperties {
 
     // TODO: Leverages on a properties file
-    public static class AVHRRProducts extends HDFProducts {
+    public static class AVHRRProducts extends HDF4Products {
         public AVHRRProducts() {
             super(2);
             int i = 0;
-            HDFProduct mcsst = new HDFProduct("mcsst", 1);
+            HDF4Product mcsst = new HDF4Product("mcsst", 1);
             add(i++, mcsst);
 
             // TODO: check the exact product name. The TSS paper states
             // lowclouds while the sample data contains a lowcloud product
-            HDFProduct lowcloud = new HDFProduct("lowcloud", 1);
+            HDF4Product lowcloud = new HDF4Product("lowcloud", 1);
             add(i++, lowcloud);
         }
     }

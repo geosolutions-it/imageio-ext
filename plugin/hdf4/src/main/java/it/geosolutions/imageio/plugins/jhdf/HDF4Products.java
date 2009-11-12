@@ -26,19 +26,19 @@ import java.util.ListIterator;
  * @author Simone Giannecchini, GeoSolutions SAS
  *
  */
-public abstract class HDFProducts implements List<HDFProducts.HDFProduct> {
+public abstract class HDF4Products implements List<HDF4Products.HDF4Product> {
     
-	private ArrayList<HDFProduct> productList;
+	private ArrayList<HDF4Product> productList;
     
-    private class HDFProductsIterator implements Iterator<HDFProduct> {
+    private class HDF4ProductsIterator implements Iterator<HDF4Product> {
 
-        private Iterator<HDFProduct> it;
+        private Iterator<HDF4Product> it;
 
         public boolean hasNext() {
             return it.hasNext();
         }
 
-        public HDFProduct next() {
+        public HDF4Product next() {
             return it.next();
         }
 
@@ -47,24 +47,24 @@ public abstract class HDFProducts implements List<HDFProducts.HDFProduct> {
 
         }
 
-        public HDFProductsIterator(Iterator<HDFProduct> it) {
+        public HDF4ProductsIterator(Iterator<HDF4Product> it) {
             this.it = it;
         }
     }
 
-    public boolean add(HDFProduct o) {
+    public boolean add(HDF4Product o) {
         return false;
     }
 
-    public void add(int index, HDFProduct element) {
+    public void add(int index, HDF4Product element) {
         productList.add(index, element);
     }
 
-    public boolean addAll(Collection<? extends HDFProduct> c) {
+    public boolean addAll(Collection<? extends HDF4Product> c) {
         throw new UnsupportedOperationException ();
     }
 
-    public boolean addAll(int index, Collection<? extends HDFProduct> c) {
+    public boolean addAll(int index, Collection<? extends HDF4Product> c) {
         throw new UnsupportedOperationException ();
     }
 
@@ -82,7 +82,7 @@ public abstract class HDFProducts implements List<HDFProducts.HDFProduct> {
         throw new UnsupportedOperationException ();
     }
 
-    public HDFProduct get(int productIndex) {
+    public HDF4Product get(int productIndex) {
         if (productIndex > nProducts)
             throw new ArrayIndexOutOfBoundsException(
                     "Specified product index is out of range");
@@ -98,23 +98,23 @@ public abstract class HDFProducts implements List<HDFProducts.HDFProduct> {
         return productList.isEmpty();
     }
 
-    public Iterator<HDFProduct> iterator() {
-        return new HDFProductsIterator(productList.iterator());
+    public Iterator<HDF4Product> iterator() {
+        return new HDF4ProductsIterator(productList.iterator());
     }
 
     public int lastIndexOf(Object o) {
         return productList.lastIndexOf(o);
     }
 
-    public ListIterator<HDFProduct> listIterator() {
+    public ListIterator<HDF4Product> listIterator() {
         throw new UnsupportedOperationException ();
     }
 
-    public ListIterator<HDFProduct> listIterator(int index) {
+    public ListIterator<HDF4Product> listIterator(int index) {
         throw new UnsupportedOperationException ();
     }
 
-    public HDFProduct remove(int index) {
+    public HDF4Product remove(int index) {
         throw new UnsupportedOperationException ();
     }
 
@@ -130,7 +130,7 @@ public abstract class HDFProducts implements List<HDFProducts.HDFProduct> {
         throw new UnsupportedOperationException ();
     }
 
-    public HDFProduct set(int productIndex, HDFProduct product) {
+    public HDF4Product set(int productIndex, HDF4Product product) {
         if (productIndex > nProducts)
             throw new ArrayIndexOutOfBoundsException(
                     "Specified product index is out of range");
@@ -143,7 +143,7 @@ public abstract class HDFProducts implements List<HDFProducts.HDFProduct> {
         return productList.size();
     }
 
-    public List<HDFProduct> subList(int fromIndex, int toIndex) {
+    public List<HDF4Product> subList(int fromIndex, int toIndex) {
         throw new UnsupportedOperationException ();
     }
 
@@ -157,27 +157,27 @@ public abstract class HDFProducts implements List<HDFProducts.HDFProduct> {
 
     private int nProducts;
 
-    public HDFProducts(final int nProducts) {
-        productList = new ArrayList<HDFProduct>(nProducts);
+    public HDF4Products(final int nProducts) {
+        productList = new ArrayList<HDF4Product>(nProducts);
         this.nProducts = nProducts;
     }
 
-    public HDFProduct get(final String productName) {
+    public HDF4Product get(final String productName) {
         final int prodNum = nProducts;
         for (int i = 0; i < prodNum; i++) {
-            final HDFProduct product = productList.get(i);
+            final HDF4Product product = productList.get(i);
             if (product.getProductName().equals(productName))
                 return product;
         }
         return null;
     }
 
-    public class HDFProduct {
+    public class HDF4Product {
         private String productName;
 
         private int nBands;
 
-        public HDFProduct(final String productName, final int nBands) {
+        public HDF4Product(final String productName, final int nBands) {
             this.productName = productName;
             this.nBands = nBands;
         }
