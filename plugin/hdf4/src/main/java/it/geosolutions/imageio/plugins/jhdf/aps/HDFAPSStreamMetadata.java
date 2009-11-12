@@ -31,6 +31,11 @@ import javax.imageio.metadata.IIOMetadataNode;
 
 import org.w3c.dom.Node;
 
+/**
+ * 
+ * @author Simone Giannecchini, GeoSolutions SAS
+ *
+ */
 public class HDFAPSStreamMetadata extends IIOMetadata {
     public static final String nativeMetadataFormatName = "it_geosolutions_imageio_plugins_jhdf_aps_APSStreamMetadata_1.0";
 

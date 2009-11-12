@@ -43,7 +43,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  * 
  * @author Daniele Romagnoli
  */
-public class HDFAPSImageReader extends AbstractHDFImageReader {
+public class HDFAPSImageReader extends BaseHDF4ImageReader {
 	
     /** The Products Dataset List contained within the APS File */
     private String[] productList;

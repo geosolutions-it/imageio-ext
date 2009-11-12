@@ -28,7 +28,13 @@ import java.util.HashMap;
 import javax.imageio.metadata.IIOMetadataNode;
 
 import org.w3c.dom.Node;
-
+/**
+ * APS specific image metadata.
+ * 
+ * @author Daniele Romagnoli, GeoSolutions SAS
+ * @author Simone Giannecchini, GeoSolutions SAS
+ *
+ */
 public class HDFAPSImageMetadata extends BaseImageMetadata {
 	
     public static final String nativeMetadataFormatName = "it_geosolutions_imageio_plugins_jhdf_aps_APSImageMetadata_1.0";
@@ -41,8 +47,7 @@ public class HDFAPSImageMetadata extends BaseImageMetadata {
     
     private IIOMetadataNode nativeTree;
 
-    public HDFAPSImageMetadata(final BaseImageReader reader,
-            final int imageIndex) {
+    public HDFAPSImageMetadata(final BaseImageReader reader,final int imageIndex) {
         super(reader, imageIndex);
     }
 
@@ -53,25 +58,21 @@ public class HDFAPSImageMetadata extends BaseImageMetadata {
             HDFAPSImageReader reader = (HDFAPSImageReader) imageReader;
             setDriverDescription(driverDescription);
             setDriverName(driverName);
-            String scale = reader.getAttributeAsString(imageIndex,
-                    HDFAPSProperties.PDSA_SCALINGSLOPE);
+            String scale = reader.getAttributeAsString(imageIndex,HDFAPSProperties.PDSA_SCALINGSLOPE);
             if (scale != null && scale.trim().length() > 0) {
                 setScales(new Double[] { Double.parseDouble(scale) });
             }
-            String offset = reader.getAttributeAsString(imageIndex,
-                    HDFAPSProperties.PDSA_SCALINGINTERCEPT);
+            String offset = reader.getAttributeAsString(imageIndex,HDFAPSProperties.PDSA_SCALINGINTERCEPT);
             if (offset != null && offset.trim().length() > 0) {
                 setOffsets(new Double[] { Double.parseDouble(offset) });
             }
-            String noData = reader.getAttributeAsString(imageIndex,
-                    HDFAPSProperties.PDSA_INVALID);
+            String noData = reader.getAttributeAsString(imageIndex,HDFAPSProperties.PDSA_INVALID);
             if (noData != null && noData.trim().length() > 0) {
                 setNoDataValues(new Double[] { Double.parseDouble(noData) });
             }
 
             // TODO: Setting valid range as max min is ok?
-            String validRange = reader.getAttributeAsString(imageIndex,
-                    HDFAPSProperties.PDSA_VALIDRANGE);
+            String validRange = reader.getAttributeAsString(imageIndex,HDFAPSProperties.PDSA_VALIDRANGE);
             
             // ValidRange not found. Try with BrowseRange. Is that ok?
             if (validRange == null || validRange.trim().length() < 1)
@@ -87,7 +88,7 @@ public class HDFAPSImageMetadata extends BaseImageMetadata {
             }
             setDatasetName(reader.getDatasetName(imageIndex));
             
-            // overviews is always 0
+            // overviews is always 0, we can just do decimation on reading
             setNumOverviews(new int[] { 0 });
             
             final HDFAPSImageReader directReader = (HDFAPSImageReader) imageReader;
@@ -111,21 +112,17 @@ public class HDFAPSImageMetadata extends BaseImageMetadata {
      *                the name of the requested metadata format.
      */
     public Node getAsTree(String formatName) {
-        if (HDFAPSImageMetadata.nativeMetadataFormatName
-                .equalsIgnoreCase(formatName))
+        if (HDFAPSImageMetadata.nativeMetadataFormatName.equalsIgnoreCase(formatName))
             return createNativeTree();
-        else if (CoreCommonImageMetadata.nativeMetadataFormatName
-                .equalsIgnoreCase(formatName))
+        else if (CoreCommonImageMetadata.nativeMetadataFormatName.equalsIgnoreCase(formatName))
             return super.createCommonNativeTree();
-        throw new IllegalArgumentException(formatName
-                + " is not a supported format name");
+        throw new IllegalArgumentException(formatName+ " is not a supported format name");
     }
     
-    private Node createNativeTree() {
+    private synchronized Node createNativeTree() {
         if (this.nativeTree != null)
             return this.nativeTree;
-        nativeTree = new IIOMetadataNode(
-        		HDFAPSImageMetadata.nativeMetadataFormatName);
+        nativeTree = new IIOMetadataNode(HDFAPSImageMetadata.nativeMetadataFormatName);
 
         // ////////////////////////////////////////////////////////////////////
         //

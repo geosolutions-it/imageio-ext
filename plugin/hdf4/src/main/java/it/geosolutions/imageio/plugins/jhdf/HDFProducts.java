@@ -21,9 +21,14 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-
+/**
+ * Utility class for supporting HDF products like SST, Albedo, etc..
+ * @author Simone Giannecchini, GeoSolutions SAS
+ *
+ */
 public abstract class HDFProducts implements List<HDFProducts.HDFProduct> {
-    private ArrayList<HDFProduct> productList;
+    
+	private ArrayList<HDFProduct> productList;
     
     private class HDFProductsIterator implements Iterator<HDFProduct> {
 

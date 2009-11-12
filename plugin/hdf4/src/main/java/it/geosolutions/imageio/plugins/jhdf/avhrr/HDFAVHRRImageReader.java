@@ -31,12 +31,12 @@ import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
 
 /**
- * Specific Implementation of the <code>AbstractHDFImageReader</code> needed
+ * Specific Implementation of the <code>BaseHDF4ImageReader</code> needed
  * to work on AVHRR produced HDF
  * 
  * @author Romagnoli Daniele
  */
-public class HDFAVHRRImageReader extends AbstractHDFImageReader {
+public class HDFAVHRRImageReader extends BaseHDF4ImageReader {
 
     /** The Products Dataset List contained within the APS File */
     private String[] productList;
