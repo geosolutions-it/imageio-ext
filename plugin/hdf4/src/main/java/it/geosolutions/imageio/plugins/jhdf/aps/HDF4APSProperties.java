@@ -18,7 +18,7 @@ package it.geosolutions.imageio.plugins.jhdf.aps;
 
 import it.geosolutions.imageio.plugins.jhdf.HDF4Products;
 
-public class HDFAPSProperties {
+public class HDF4APSProperties {
 
     public static class APSProducts extends HDF4Products {
         public APSProducts() {
@@ -70,11 +70,11 @@ public class HDFAPSProperties {
         }
     }
 
-    private HDFAPSProperties() {
+    private HDF4APSProperties() {
 
     }
 
-    public final static HDFAPSProperties.APSProducts apsProducts = new HDFAPSProperties.APSProducts();
+    public final static HDF4APSProperties.APSProducts apsProducts = new HDF4APSProperties.APSProducts();
 
     /**
      * ------------------------- Standard: File Attributes
@@ -525,7 +525,7 @@ public class HDFAPSProperties {
     private static boolean isAcceptedItem(String productName) {
         if (productName.endsWith("_flags"))
         	return false;
-        if (HDFAPSProperties.apsProducts.get(productName) != null)
+        if (HDF4APSProperties.apsProducts.get(productName) != null)
             return true;
         return false;
     }

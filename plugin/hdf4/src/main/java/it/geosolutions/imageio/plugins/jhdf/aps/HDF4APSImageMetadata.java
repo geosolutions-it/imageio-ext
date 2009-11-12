@@ -57,25 +57,25 @@ public class HDF4APSImageMetadata extends BaseImageMetadata {
             HDF4APSImageReader reader = (HDF4APSImageReader) imageReader;
             setDriverDescription(driverDescription);
             setDriverName(driverName);
-            String scale = reader.getAttributeAsString(imageIndex,HDFAPSProperties.PDSA_SCALINGSLOPE);
+            String scale = reader.getAttributeAsString(imageIndex,HDF4APSProperties.PDSA_SCALINGSLOPE);
             if (scale != null && scale.trim().length() > 0) {
                 setScales(new Double[] { Double.parseDouble(scale) });
             }
-            String offset = reader.getAttributeAsString(imageIndex,HDFAPSProperties.PDSA_SCALINGINTERCEPT);
+            String offset = reader.getAttributeAsString(imageIndex,HDF4APSProperties.PDSA_SCALINGINTERCEPT);
             if (offset != null && offset.trim().length() > 0) {
                 setOffsets(new Double[] { Double.parseDouble(offset) });
             }
-            String noData = reader.getAttributeAsString(imageIndex,HDFAPSProperties.PDSA_INVALID);
+            String noData = reader.getAttributeAsString(imageIndex,HDF4APSProperties.PDSA_INVALID);
             if (noData != null && noData.trim().length() > 0) {
                 setNoDataValues(new Double[] { Double.parseDouble(noData) });
             }
 
             // TODO: Setting valid range as max min is ok?
-            String validRange = reader.getAttributeAsString(imageIndex,HDFAPSProperties.PDSA_VALIDRANGE);
+            String validRange = reader.getAttributeAsString(imageIndex,HDF4APSProperties.PDSA_VALIDRANGE);
             
             // ValidRange not found. Try with BrowseRange. Is that ok?
             if (validRange == null || validRange.trim().length() < 1)
-            	validRange = reader.getAttributeAsString(imageIndex, HDFAPSProperties.PDSA_BROWSERANGES);
+            	validRange = reader.getAttributeAsString(imageIndex, HDF4APSProperties.PDSA_BROWSERANGES);
             if (validRange != null && validRange.trim().length() > 0) {
                 String values[] = validRange.split(" ");
                 if (values.length == 2) {

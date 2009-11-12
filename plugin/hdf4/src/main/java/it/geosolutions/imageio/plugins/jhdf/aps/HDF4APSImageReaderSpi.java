@@ -109,7 +109,7 @@ public class HDF4APSImageReaderSpi extends BaseImageReaderSpi {
             try {
                 final NetcdfDataset dataset = NetCDFUtilities.getDataset(input);
                 if (dataset != null) {
-                	final String attrib = NetCDFUtilities.getGlobalAttributeAsString(dataset, HDFAPSProperties.STD_FA_CREATESOFTWARE); 
+                	final String attrib = NetCDFUtilities.getGlobalAttributeAsString(dataset, HDF4APSProperties.STD_FA_CREATESOFTWARE); 
                     if (attrib != null && attrib.length()>0 && attrib.startsWith("APS"))
                                     found = true;
                     dataset.close();

@@ -51,7 +51,7 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
     /** The name of the SDS containing projection */
     private String projectionDatasetName;
 
-    private HDFAPSStreamMetadata streamMetadata;
+    private HDF4APSStreamMetadata streamMetadata;
     
 //    private static ColorModel colorModel = RasterFactory
 //            .createComponentColorModel(DataBuffer.TYPE_FLOAT, // dataType
@@ -91,17 +91,17 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
         // //
         
         final String navAttrib = NetCDFUtilities.getGlobalAttributeAsString(dataset,
-        		HDFAPSProperties.PFA_NA_MAPPROJECTION);
+        		HDF4APSProperties.PFA_NA_MAPPROJECTION);
         if (navAttrib != null && navAttrib.length()>0) {
             projectionDatasetName = navAttrib;
         }
 
         final String prodAttrib = NetCDFUtilities.getGlobalAttributeAsString(dataset,
-        		HDFAPSProperties.PRODLIST);
+        		HDF4APSProperties.PRODLIST);
         int numImages = 0;
         if (prodAttrib != null && prodAttrib.length()>0) {
             String products[] = prodAttrib.split(",");
-            productList = HDFAPSProperties.refineProductList(products);
+            productList = HDF4APSProperties.refineProductList(products);
             numImages = productList.length;
         } else {
             numImages = numVars;
@@ -166,11 +166,11 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
     // // TODO: Discover why parse set a compile pattern containing Japaneses
     // // chars.
     // final String startTime = collection.getAttribute(
-    // HDFAPSProperties.STD_TA_TIMESTART).getValuesAsString();
+    // HDF4APSProperties.STD_TA_TIMESTART).getValuesAsString();
     // final String endTime = collection.getAttribute(
-    // HDFAPSProperties.STD_TA_TIMEEND).getValuesAsString();
+    // HDF4APSProperties.STD_TA_TIMEEND).getValuesAsString();
     // // Setup an ISO8601 Start Time
-    // final String iso8601StartTime = HDFAPSProperties
+    // final String iso8601StartTime = HDF4APSProperties
     // .buildISO8601Time(startTime);
     // try {
     // if (startTime.equalsIgnoreCase(endTime))
@@ -178,7 +178,7 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
     // .getDateFromString(iso8601StartTime)));
     //
     // // Setup an ISO8601 End Time in case it isn't equal to the startime
-    // final String iso8601EndTime = HDFAPSProperties
+    // final String iso8601EndTime = HDF4APSProperties
     // .buildISO8601Time(endTime);
     //
     // // Build an Interval given start time and end time.
@@ -205,17 +205,17 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
             // TODO: I need to build a parser or a formatter to properly
             // interprete these settings
             projMap.put("Code", Double.toString(values[0]));
-            projMap.put(HDFAPSStreamMetadata.PROJECTION, Double.toString(values[1]));
-            projMap.put(HDFAPSStreamMetadata.ZONE, Double.toString(values[2]));
-            projMap.put(HDFAPSStreamMetadata.DATUM, Double.toString(values[3]));
-            projMap.put(HDFAPSStreamMetadata.SEMI_MAJOR_AXIS, Double.toString(values[4]));
-            projMap.put(HDFAPSStreamMetadata.SEMI_MINOR_AXIS, Double.toString(values[5]));
+            projMap.put(HDF4APSStreamMetadata.PROJECTION, Double.toString(values[1]));
+            projMap.put(HDF4APSStreamMetadata.ZONE, Double.toString(values[2]));
+            projMap.put(HDF4APSStreamMetadata.DATUM, Double.toString(values[3]));
+            projMap.put(HDF4APSStreamMetadata.SEMI_MAJOR_AXIS, Double.toString(values[4]));
+            projMap.put(HDF4APSStreamMetadata.SEMI_MINOR_AXIS, Double.toString(values[5]));
             projMap.put("Param2", Double.toString(values[6]));
             projMap.put("Param3", Double.toString(values[7]));
-            projMap.put(HDFAPSStreamMetadata.LONGITUDE_OF_CENTRAL_MERIDIAN, Double.toString(values[8]));
-            projMap.put(HDFAPSStreamMetadata.LATITUDE_OF_TRUE_SCALE, Double.toString(values[9]));
-            projMap.put(HDFAPSStreamMetadata.FALSE_EASTINGS, Double.toString(values[10]));
-            projMap.put(HDFAPSStreamMetadata.FALSE_NORTHINGS, Double.toString(values[11]));
+            projMap.put(HDF4APSStreamMetadata.LONGITUDE_OF_CENTRAL_MERIDIAN, Double.toString(values[8]));
+            projMap.put(HDF4APSStreamMetadata.LATITUDE_OF_TRUE_SCALE, Double.toString(values[9]));
+            projMap.put(HDF4APSStreamMetadata.FALSE_EASTINGS, Double.toString(values[10]));
+            projMap.put(HDF4APSStreamMetadata.FALSE_NORTHINGS, Double.toString(values[11]));
             projMap.put("Param8", Double.toString(values[12]));
             projMap.put("Param9", Double.toString(values[13]));
             projMap.put("Param10", Double.toString(values[14]));
@@ -262,7 +262,7 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
     }
 
     protected int getBandNumberFromProduct(String productName) {
-        return HDFAPSProperties.apsProducts.get(productName).getNBands();
+        return HDF4APSProperties.apsProducts.get(productName).getNBands();
     }
 
     public void dispose() {
@@ -353,7 +353,7 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
     
     public synchronized IIOMetadata getStreamMetadata() throws IOException {
         if (streamMetadata == null){
-        	streamMetadata = new HDFAPSStreamMetadata(this);
+        	streamMetadata = new HDF4APSStreamMetadata(this);
         }
         return streamMetadata;
     }

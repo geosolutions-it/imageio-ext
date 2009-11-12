@@ -36,7 +36,7 @@ import org.w3c.dom.Node;
  * @author Simone Giannecchini, GeoSolutions SAS
  *
  */
-public class HDFAPSStreamMetadata extends IIOMetadata {
+public class HDF4APSStreamMetadata extends IIOMetadata {
     public static final String nativeMetadataFormatName = "it_geosolutions_imageio_plugins_jhdf_aps_APSStreamMetadata_1.0";
 
     public static final String PFA_NODE = "ProductFilesAttributes";
@@ -135,16 +135,16 @@ public class HDFAPSStreamMetadata extends IIOMetadata {
 
     private String projectionDatasetName;
 
-    public HDFAPSStreamMetadata() {
+    public HDF4APSStreamMetadata() {
         super(false, nativeMetadataFormatName, null, null, null);
     }
 
-//    public HDFAPSStreamMetadata(H4SDSCollection root) {
+//    public HDF4APSStreamMetadata(H4SDSCollection root) {
 //        this();
 //        buildMetadata(root);
 //    }
 
-    public HDFAPSStreamMetadata(HDF4APSImageReader reader) {
+    public HDF4APSStreamMetadata(HDF4APSImageReader reader) {
         this();
         buildMetadata(reader);
     }
@@ -274,12 +274,12 @@ public class HDFAPSStreamMetadata extends IIOMetadata {
         	final int numAttributes = directReader.getNumGlobalAttributes();
 
             // number of supported attributes
-            final int nStdFileAttribMap = HDFAPSProperties.STD_FA_ATTRIB.length;
-            final int nStdTimeAttribMap = HDFAPSProperties.STD_TA_ATTRIB.length;
-            final int nStdSensorAttribMap = HDFAPSProperties.STD_SA_ATTRIB.length;
-            final int nFileInputParamAttribMap = HDFAPSProperties.PFA_IPA_ATTRIB.length;
-            final int nFileNavAttribMap = HDFAPSProperties.PFA_NA_ATTRIB.length;
-            final int nFileInGeoCovAttribMap = HDFAPSProperties.PFA_IGCA_ATTRIB.length;
+            final int nStdFileAttribMap = HDF4APSProperties.STD_FA_ATTRIB.length;
+            final int nStdTimeAttribMap = HDF4APSProperties.STD_TA_ATTRIB.length;
+            final int nStdSensorAttribMap = HDF4APSProperties.STD_SA_ATTRIB.length;
+            final int nFileInputParamAttribMap = HDF4APSProperties.PFA_IPA_ATTRIB.length;
+            final int nFileNavAttribMap = HDF4APSProperties.PFA_NA_ATTRIB.length;
+            final int nFileInGeoCovAttribMap = HDF4APSProperties.PFA_IGCA_ATTRIB.length;
 
             for (int i = 0; i < numAttributes; i++) {
                 // get Attributes
@@ -293,7 +293,7 @@ public class HDFAPSStreamMetadata extends IIOMetadata {
                 boolean found = false;
                 for (int k = 0; k < nStdFileAttribMap && !found; k++) {
                     // if matched
-                    if (attribName.equals(HDFAPSProperties.STD_FA_ATTRIB[k])) {
+                    if (attribName.equals(HDF4APSProperties.STD_FA_ATTRIB[k])) {
                         stdFileAttribMap.put((String) attribName, attribValue);
                         found = true;
                     }
@@ -301,7 +301,7 @@ public class HDFAPSStreamMetadata extends IIOMetadata {
 
                 for (int k = 0; k < nStdTimeAttribMap && !found; k++) {
                     // if matched
-                    if (attribName.equals(HDFAPSProperties.STD_TA_ATTRIB[k])) {
+                    if (attribName.equals(HDF4APSProperties.STD_TA_ATTRIB[k])) {
                         stdTimeAttribMap.put((String) attribName, attribValue);
                         found = true;
                     }
@@ -309,7 +309,7 @@ public class HDFAPSStreamMetadata extends IIOMetadata {
 
                 for (int k = 0; k < nStdSensorAttribMap && !found; k++) {
                     // if matched
-                    if (attribName.equals(HDFAPSProperties.STD_SA_ATTRIB[k])) {
+                    if (attribName.equals(HDF4APSProperties.STD_SA_ATTRIB[k])) {
                         stdSensorAttribMap
                                 .put((String) attribName, attribValue);
                         found = true;
@@ -318,12 +318,12 @@ public class HDFAPSStreamMetadata extends IIOMetadata {
 
                 for (int k = 0; k < nFileInputParamAttribMap && !found; k++) {
                     // if matched
-                    if (attribName.equals(HDFAPSProperties.PFA_IPA_ATTRIB[k])) {
+                    if (attribName.equals(HDF4APSProperties.PFA_IPA_ATTRIB[k])) {
                         fileInputParamAttribMap.put((String) attribName,
                                 attribValue);
-                        if (attribName.equals(HDFAPSProperties.PFA_IPA_PRODLIST)) {
+                        if (attribName.equals(HDF4APSProperties.PFA_IPA_PRODLIST)) {
                             String products[] = attribValue.split(",");
-                            prodList = HDFAPSProperties
+                            prodList = HDF4APSProperties
                                     .refineProductList(products);
                         }
                         found = true;
@@ -332,10 +332,10 @@ public class HDFAPSStreamMetadata extends IIOMetadata {
 
                 for (int k = 0; k < nFileNavAttribMap && !found; k++) {
                     // if matched
-                    if (attribName.equals(HDFAPSProperties.PFA_NA_ATTRIB[k])) {
+                    if (attribName.equals(HDF4APSProperties.PFA_NA_ATTRIB[k])) {
                         fileNavAttribMap.put((String) attribName, attribValue);
                         if (attribName
-                                .equals(HDFAPSProperties.PFA_NA_MAPPROJECTION))
+                                .equals(HDF4APSProperties.PFA_NA_MAPPROJECTION))
                             projectionDatasetName = attribValue;
                         found = true;
                     }
@@ -343,7 +343,7 @@ public class HDFAPSStreamMetadata extends IIOMetadata {
 
                 for (int k = 0; k < nFileInGeoCovAttribMap && !found; k++) {
                     // if matched
-                    if (attribName.equals(HDFAPSProperties.PFA_IGCA_ATTRIB[k])) {
+                    if (attribName.equals(HDF4APSProperties.PFA_IGCA_ATTRIB[k])) {
                         fileInGeoCovAttribMap.put((String) attribName,
                                 attribValue);
                         found = true;
@@ -374,7 +374,7 @@ public class HDFAPSStreamMetadata extends IIOMetadata {
 //                        final int sdsAttributes = sds.getNumAttributes();
 //                        if (sdsAttributes != 0) {
 //
-//                            final int nPdsAttrib = HDFAPSProperties.PDSA_ATTRIB.length;
+//                            final int nPdsAttrib = HDF4APSProperties.PDSA_ATTRIB.length;
 //                            final LinkedHashMap<String,String> pdsAttribMap = new LinkedHashMap<String,String>(
 //                                    nPdsAttrib);
 //                            final LinkedHashMap<String,String> pdsGenericAttribMap = new LinkedHashMap<String,String>(
@@ -397,7 +397,7 @@ public class HDFAPSStreamMetadata extends IIOMetadata {
 //                                        && !attributeFound; k++) {
 //                                    // if matched
 //                                    if (attribName
-//                                            .equals(HDFAPSProperties.PDSA_ATTRIB[k])) {
+//                                            .equals(HDF4APSProperties.PDSA_ATTRIB[k])) {
 //                                        pdsAttribMap.put(attribName,
 //                                                attribValue);
 //

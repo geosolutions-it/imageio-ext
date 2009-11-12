@@ -19,164 +19,164 @@ package it.geosolutions.imageio.plugins.jhdf.aps;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
 
-public class HDFAPSStreamMetadataFormat extends IIOMetadataFormatImpl {
+public class HDF4APSStreamMetadataFormat extends IIOMetadataFormatImpl {
 
-    public HDFAPSStreamMetadataFormat() {
-        super(HDFAPSStreamMetadata.nativeMetadataFormatName,
+    public HDF4APSStreamMetadataFormat() {
+        super(HDF4APSStreamMetadata.nativeMetadataFormatName,
                 IIOMetadataFormatImpl.CHILD_POLICY_ALL);
         addElement("StandardAPSAttributes",
-                HDFAPSStreamMetadata.nativeMetadataFormatName, CHILD_POLICY_ALL);
+                HDF4APSStreamMetadata.nativeMetadataFormatName, CHILD_POLICY_ALL);
 
         addElement("FileAttributes", "StandardAPSAttributes",
                 CHILD_POLICY_EMPTY);
-        addAttribute("FileAttributes", HDFAPSProperties.STD_FA_FILE,
+        addAttribute("FileAttributes", HDF4APSProperties.STD_FA_FILE,
                 DATATYPE_STRING, false, null);
-        addAttribute("FileAttributes", HDFAPSProperties.STD_FA_FILECLASSIFICATION,
+        addAttribute("FileAttributes", HDF4APSProperties.STD_FA_FILECLASSIFICATION,
                 DATATYPE_STRING, true, null);
-        addAttribute("FileAttributes", HDFAPSProperties.STD_FA_FILESTATUS,
+        addAttribute("FileAttributes", HDF4APSProperties.STD_FA_FILESTATUS,
                 DATATYPE_STRING, false, null);
-        addAttribute("FileAttributes", HDFAPSProperties.STD_FA_FILETITLE,
+        addAttribute("FileAttributes", HDF4APSProperties.STD_FA_FILETITLE,
                 DATATYPE_STRING, false, null);
-        addAttribute("FileAttributes", HDFAPSProperties.STD_FA_FILEVERSION,
+        addAttribute("FileAttributes", HDF4APSProperties.STD_FA_FILEVERSION,
                 DATATYPE_STRING, false, null);
-        addAttribute("FileAttributes", HDFAPSProperties.STD_FA_CREATEAGENCY,
+        addAttribute("FileAttributes", HDF4APSProperties.STD_FA_CREATEAGENCY,
                 DATATYPE_STRING, false, null);
-        addAttribute("FileAttributes", HDFAPSProperties.STD_FA_CREATESOFTWARE,
+        addAttribute("FileAttributes", HDF4APSProperties.STD_FA_CREATESOFTWARE,
                 DATATYPE_STRING, false, null);
-        addAttribute("FileAttributes", HDFAPSProperties.STD_FA_CREATEPLATFORM,
+        addAttribute("FileAttributes", HDF4APSProperties.STD_FA_CREATEPLATFORM,
                 DATATYPE_STRING, false, null);
-        addAttribute("FileAttributes", HDFAPSProperties.STD_FA_CREATETIME,
+        addAttribute("FileAttributes", HDF4APSProperties.STD_FA_CREATETIME,
                 DATATYPE_STRING, false, null);
-        addAttribute("FileAttributes", HDFAPSProperties.STD_FA_CREATEUSER,
+        addAttribute("FileAttributes", HDF4APSProperties.STD_FA_CREATEUSER,
                 DATATYPE_STRING, false, null);
 
         addElement("TimeAttributes", "StandardHDFAPSProperties",
                 CHILD_POLICY_EMPTY);
-        addAttribute("TimeAttributes", HDFAPSProperties.STD_TA_TIMESTART,
+        addAttribute("TimeAttributes", HDF4APSProperties.STD_TA_TIMESTART,
                 DATATYPE_STRING, true, null);
-        addAttribute("TimeAttributes", HDFAPSProperties.STD_TA_TIMESTARTYEAR,
+        addAttribute("TimeAttributes", HDF4APSProperties.STD_TA_TIMESTARTYEAR,
                 DATATYPE_INTEGER, true, null);
-        addAttribute("TimeAttributes", HDFAPSProperties.STD_TA_TIMESTARTDAY,
+        addAttribute("TimeAttributes", HDF4APSProperties.STD_TA_TIMESTARTDAY,
                 DATATYPE_INTEGER, true, null);
-        addAttribute("TimeAttributes", HDFAPSProperties.STD_TA_TIMESTARTTIME,
+        addAttribute("TimeAttributes", HDF4APSProperties.STD_TA_TIMESTARTTIME,
                 DATATYPE_INTEGER, true, null);
-        addAttribute("TimeAttributes", HDFAPSProperties.STD_TA_TIMEEND,
+        addAttribute("TimeAttributes", HDF4APSProperties.STD_TA_TIMEEND,
                 DATATYPE_STRING, true, null);
-        addAttribute("TimeAttributes", HDFAPSProperties.STD_TA_TIMEENDYEAR,
+        addAttribute("TimeAttributes", HDF4APSProperties.STD_TA_TIMEENDYEAR,
                 DATATYPE_INTEGER, true, null);
-        addAttribute("TimeAttributes", HDFAPSProperties.STD_TA_TIMEENDDAY,
+        addAttribute("TimeAttributes", HDF4APSProperties.STD_TA_TIMEENDDAY,
                 DATATYPE_INTEGER, true, null);
-        addAttribute("TimeAttributes", HDFAPSProperties.STD_TA_TIMEENDTIME,
+        addAttribute("TimeAttributes", HDF4APSProperties.STD_TA_TIMEENDTIME,
                 DATATYPE_INTEGER, true, null);
-        addAttribute("TimeAttributes", HDFAPSProperties.STD_TA_TIMEDAYNIGHT,
+        addAttribute("TimeAttributes", HDF4APSProperties.STD_TA_TIMEDAYNIGHT,
                 DATATYPE_STRING, true, null);
 
         addElement("SensorAttributes", "StandardHDFAPSProperties",
                 CHILD_POLICY_EMPTY);
-        addAttribute("SensorAttributes", HDFAPSProperties.STD_SA_SENSOR,
+        addAttribute("SensorAttributes", HDF4APSProperties.STD_SA_SENSOR,
                 DATATYPE_STRING, true, null);
-        addAttribute("SensorAttributes", HDFAPSProperties.STD_SA_SENSORPLATFORM,
+        addAttribute("SensorAttributes", HDF4APSProperties.STD_SA_SENSORPLATFORM,
                 DATATYPE_INTEGER, true, null);
-        addAttribute("SensorAttributes", HDFAPSProperties.STD_SA_SENSORAGENCY,
+        addAttribute("SensorAttributes", HDF4APSProperties.STD_SA_SENSORAGENCY,
                 DATATYPE_INTEGER, true, null);
-        addAttribute("SensorAttributes", HDFAPSProperties.STD_SA_SENSORTYPE,
+        addAttribute("SensorAttributes", HDF4APSProperties.STD_SA_SENSORTYPE,
                 DATATYPE_INTEGER, true, null);
-        addAttribute("SensorAttributes", HDFAPSProperties.STD_SA_SENSORSPECTRUM,
+        addAttribute("SensorAttributes", HDF4APSProperties.STD_SA_SENSORSPECTRUM,
                 DATATYPE_STRING, true, null);
         addAttribute("SensorAttributes",
-                HDFAPSProperties.STD_SA_SENSORNUMBEROFBANDS, DATATYPE_INTEGER,
+                HDF4APSProperties.STD_SA_SENSORNUMBEROFBANDS, DATATYPE_INTEGER,
                 true, null);
-        addAttribute("SensorAttributes", HDFAPSProperties.STD_SA_SENSORBANDUNITS,
+        addAttribute("SensorAttributes", HDF4APSProperties.STD_SA_SENSORBANDUNITS,
                 DATATYPE_INTEGER, true, null);
-        addAttribute("SensorAttributes", HDFAPSProperties.STD_SA_SENSORBANDS,
+        addAttribute("SensorAttributes", HDF4APSProperties.STD_SA_SENSORBANDS,
                 DATATYPE_INTEGER, true, null);
-        addAttribute("SensorAttributes", HDFAPSProperties.STD_SA_SENSORBANDWIDTHS,
+        addAttribute("SensorAttributes", HDF4APSProperties.STD_SA_SENSORBANDWIDTHS,
                 DATATYPE_STRING, true, null);
         addAttribute("SensorAttributes",
-                HDFAPSProperties.STD_SA_SENSORNOMINALALTITUDEINKM,
+                HDF4APSProperties.STD_SA_SENSORNOMINALALTITUDEINKM,
                 DATATYPE_STRING, true, null);
         addAttribute("SensorAttributes",
-                HDFAPSProperties.STD_SA_SENSORSCANWIDTHINKM, DATATYPE_STRING,
-                true, null);
-        addAttribute("SensorAttributes",
-                HDFAPSProperties.STD_SA_SENSORRESOLUTIONINKM, DATATYPE_STRING,
+                HDF4APSProperties.STD_SA_SENSORSCANWIDTHINKM, DATATYPE_STRING,
                 true, null);
         addAttribute("SensorAttributes",
-                HDFAPSProperties.STD_SA_SENSORPLATFORMTYPE, DATATYPE_STRING, true,
+                HDF4APSProperties.STD_SA_SENSORRESOLUTIONINKM, DATATYPE_STRING,
+                true, null);
+        addAttribute("SensorAttributes",
+                HDF4APSProperties.STD_SA_SENSORPLATFORMTYPE, DATATYPE_STRING, true,
                 null);
 
         addElement("FileProductsAttributes",
-                HDFAPSStreamMetadata.nativeMetadataFormatName, CHILD_POLICY_SOME);
+                HDF4APSStreamMetadata.nativeMetadataFormatName, CHILD_POLICY_SOME);
         addElement("InputParameterAttributes", "FileProductsAttributes",
                 CHILD_POLICY_EMPTY);
         addAttribute("InputParameterAttributes",
-                HDFAPSProperties.PFA_IPA_INPUTCALIBRATIONFILE, DATATYPE_STRING,
+                HDF4APSProperties.PFA_IPA_INPUTCALIBRATIONFILE, DATATYPE_STRING,
                 false, null);
         addAttribute("InputParameterAttributes",
-                HDFAPSProperties.PFA_IPA_INPUTPARAMETER, DATATYPE_STRING, false,
+                HDF4APSProperties.PFA_IPA_INPUTPARAMETER, DATATYPE_STRING, false,
                 null);
         addAttribute("InputParameterAttributes",
-                HDFAPSProperties.PFA_IPA_INPUTMASKSINT, DATATYPE_STRING, false,
+                HDF4APSProperties.PFA_IPA_INPUTMASKSINT, DATATYPE_STRING, false,
                 null);
         addAttribute("InputParameterAttributes",
-                HDFAPSProperties.PFA_IPA_INPUTMASKS, DATATYPE_STRING, false, null);
+                HDF4APSProperties.PFA_IPA_INPUTMASKS, DATATYPE_STRING, false, null);
         addAttribute("InputParameterAttributes",
-                HDFAPSProperties.PFA_IPA_PRODLIST, DATATYPE_STRING, false, null);
+                HDF4APSProperties.PFA_IPA_PRODLIST, DATATYPE_STRING, false, null);
         addAttribute("InputParameterAttributes",
-                HDFAPSProperties.PFA_IPA_PROCESSINGVERSION, DATATYPE_STRING,
+                HDF4APSProperties.PFA_IPA_PROCESSINGVERSION, DATATYPE_STRING,
                 false, null);
 
         addElement("NavigationAttributes", "FileProductsAttributes",
                 CHILD_POLICY_EMPTY);
-        addAttribute("NavigationAttributes", HDFAPSProperties.PFA_NA_NAVTYPE,
+        addAttribute("NavigationAttributes", HDF4APSProperties.PFA_NA_NAVTYPE,
                 DATATYPE_STRING, false, null);
         addAttribute("NavigationAttributes",
-                HDFAPSProperties.PFA_NA_MAPPROJECTIONSYSTEM, DATATYPE_STRING,
+                HDF4APSProperties.PFA_NA_MAPPROJECTIONSYSTEM, DATATYPE_STRING,
                 false, null);
         addAttribute("NavigationAttributes",
-                HDFAPSProperties.PFA_NA_MAPPROJECTION, DATATYPE_STRING, false,
+                HDF4APSProperties.PFA_NA_MAPPROJECTION, DATATYPE_STRING, false,
                 null);
         addAttribute("NavigationAttributes",
-                HDFAPSProperties.PFA_NA_MAPPEDUPPERLEFT, DATATYPE_STRING, false,
+                HDF4APSProperties.PFA_NA_MAPPEDUPPERLEFT, DATATYPE_STRING, false,
                 null);
         addAttribute("NavigationAttributes",
-                HDFAPSProperties.PFA_NA_MAPPEDUPPERRIGHT, DATATYPE_STRING, false,
+                HDF4APSProperties.PFA_NA_MAPPEDUPPERRIGHT, DATATYPE_STRING, false,
                 null);
         addAttribute("NavigationAttributes",
-                HDFAPSProperties.PFA_NA_MAPPEDLOWERLEFT, DATATYPE_STRING, false,
+                HDF4APSProperties.PFA_NA_MAPPEDLOWERLEFT, DATATYPE_STRING, false,
                 null);
         addAttribute("NavigationAttributes",
-                HDFAPSProperties.PFA_NA_MAPPEDLOWERRIGHT, DATATYPE_STRING, false,
+                HDF4APSProperties.PFA_NA_MAPPEDLOWERRIGHT, DATATYPE_STRING, false,
                 null);
 
         addElement("InputGeographicalCoverageAttributes",
                 "FileProductsAttributes", CHILD_POLICY_EMPTY);
         addAttribute("InputGeographicalCoverageAttributes",
-                HDFAPSProperties.PFA_IGCA_LOCALEUPPERLEFT, DATATYPE_STRING, false,
+                HDF4APSProperties.PFA_IGCA_LOCALEUPPERLEFT, DATATYPE_STRING, false,
                 null);
         addAttribute("InputGeographicalCoverageAttributes",
-                HDFAPSProperties.PFA_IGCA_LOCALEUPPERRIGHT, DATATYPE_STRING,
+                HDF4APSProperties.PFA_IGCA_LOCALEUPPERRIGHT, DATATYPE_STRING,
                 false, null);
         addAttribute("InputGeographicalCoverageAttributes",
-                HDFAPSProperties.PFA_IGCA_LOCALELOWERLEFT, DATATYPE_STRING, false,
+                HDF4APSProperties.PFA_IGCA_LOCALELOWERLEFT, DATATYPE_STRING, false,
                 null);
         addAttribute("InputGeographicalCoverageAttributes",
-                HDFAPSProperties.PFA_IGCA_LOCALELOWERRIGHT, DATATYPE_STRING,
+                HDF4APSProperties.PFA_IGCA_LOCALELOWERRIGHT, DATATYPE_STRING,
                 false, null);
         addAttribute("InputGeographicalCoverageAttributes",
-                HDFAPSProperties.PFA_IGCA_LOCALENWCORNER, DATATYPE_STRING, false,
+                HDF4APSProperties.PFA_IGCA_LOCALENWCORNER, DATATYPE_STRING, false,
                 null);
         addAttribute("InputGeographicalCoverageAttributes",
-                HDFAPSProperties.PFA_IGCA_LOCALENECORNER, DATATYPE_STRING, false,
+                HDF4APSProperties.PFA_IGCA_LOCALENECORNER, DATATYPE_STRING, false,
                 null);
         addAttribute("InputGeographicalCoverageAttributes",
-                HDFAPSProperties.PFA_IGCA_LOCALESWCORNER, DATATYPE_STRING, false,
+                HDF4APSProperties.PFA_IGCA_LOCALESWCORNER, DATATYPE_STRING, false,
                 null);
         addAttribute("InputGeographicalCoverageAttributes",
-                HDFAPSProperties.PFA_IGCA_LOCALESECORNER, DATATYPE_STRING, false,
+                HDF4APSProperties.PFA_IGCA_LOCALESECORNER, DATATYPE_STRING, false,
                 null);
 
-//        addElement("Projection", HDFAPSStreamMetadata.nativeMetadataFormatName,
+//        addElement("Projection", HDF4APSStreamMetadata.nativeMetadataFormatName,
 //                CHILD_POLICY_EMPTY);
 //        addAttribute("Projection", "Name", DATATYPE_STRING, true, null);
 //        addAttribute("Projection", "FullName", DATATYPE_STRING, true, null);
@@ -212,7 +212,7 @@ public class HDFAPSStreamMetadataFormat extends IIOMetadataFormatImpl {
 //        addAttribute("Projection", "Delta", DATATYPE_FLOAT, true, null);
 //        addAttribute("Projection", "Aspect", DATATYPE_FLOAT, true, null);
 
-//        addElement("Products", HDFAPSStreamMetadata.nativeMetadataFormatName,
+//        addElement("Products", HDF4APSStreamMetadata.nativeMetadataFormatName,
 //                CHILD_POLICY_SEQUENCE);
 //        addElement("Product", "Products", CHILD_POLICY_ALL);
 
