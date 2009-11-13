@@ -41,7 +41,7 @@ import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Before;
 
-public class AVHRRHDFReadTest extends TestCase {
+public class HDF4TeraScanTest extends TestCase {
 
     private static final Logger LOGGER = Logger
             .getLogger("it.geosolutions.imageio.plugins.jhdf.avhrr");
@@ -62,7 +62,7 @@ public class AVHRRHDFReadTest extends TestCase {
     public void testRead() throws IOException {
         File file;
         try {
-            file = TestData.file(this, "2008.0603.1222.n18.hdf4");
+            file = TestData.file(this, "2008.1016.0829.n17.hdf4");
         } catch (FileNotFoundException fnfe) {
             warningMessage();
             return;

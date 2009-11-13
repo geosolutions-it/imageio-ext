@@ -16,7 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.hdf4.terascan;
 
-import it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader;
+import it.geosolutions.imageio.plugins.hdf4.BaseHDF4ImageReader;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -32,12 +32,12 @@ import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
 
 /**
- * Specific Implementation of the <code>HDF4ImageReader</code> needed
+ * Specific Implementation of the <code>BaseHDF4ImageReader</code> needed
  * to work on AVHRR produced HDF
  * 
  * @author Romagnoli Daniele
  */
-public class HDF4TeraScanImageReader extends HDF4ImageReader {
+public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
 
     /** The Products Dataset List contained within the APS File */
     private String[] productList;

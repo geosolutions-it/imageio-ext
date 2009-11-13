@@ -17,7 +17,6 @@
 package it.geosolutions.imageio.plugins.hdf4;
 
 import it.geosolutions.imageio.ndplugin.BaseImageReaderSpi;
-import it.geosolutions.imageio.plugins.hdf4.aps.HDF4APSImageReader;
 import it.geosolutions.imageio.plugins.hdf4.aps.HDF4APSProperties;
 import it.geosolutions.imageio.plugins.hdf4.terascan.HDF4TeraScanProperties;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities;
@@ -51,7 +50,7 @@ public class HDF4ImageReaderSpi extends BaseImageReaderSpi {
 
     static final String version = "1.0";
 
-    static final String readerCN = "it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader";
+    static final String readerCN = "it.geosolutions.imageio.plugins.hdf4.HDF4ImageReaderProxy";
 
     // writerSpiNames
     static final String[] wSN = { null };
@@ -86,7 +85,7 @@ public class HDF4ImageReaderSpi extends BaseImageReaderSpi {
                 suffixes,
                 MIMETypes,
                 readerCN, // readerClassName
-                DIRECT_STANDARD_INPUT_TYPES,
+                STANDARD_INPUT_TYPES,
                 wSN, // writer Spi Names
                 supportsStandardStreamMetadataFormat,
                 nativeStreamMetadataFormatName,
@@ -151,7 +150,7 @@ public class HDF4ImageReaderSpi extends BaseImageReaderSpi {
     }
 
     public ImageReader createReaderInstance(Object input) throws IOException {
-        return new HDF4APSImageReader(this);
+        return new HDF4ImageReaderProxy(this);
     }
 
     public String getDescription(Locale locale) {

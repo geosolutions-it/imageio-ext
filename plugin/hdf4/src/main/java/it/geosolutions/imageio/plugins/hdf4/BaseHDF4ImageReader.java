@@ -61,8 +61,9 @@ import ucar.ma2.Section;
 import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
+import ucar.nc2.iosp.hdf4.H4iosp;
 
-public abstract class HDF4ImageReader extends BaseImageReader {
+public abstract class BaseHDF4ImageReader extends BaseImageReader {
 
 	protected class HDF4DatasetWrapper{
         private Variable variable;
@@ -147,11 +148,17 @@ public abstract class HDF4ImageReader extends BaseImageReader {
 
     private int numGlobalAttributes;
     
+    /* (non-Javadoc)
+	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#getNumGlobalAttributes()
+	 */
     public int getNumGlobalAttributes() {
 		return numGlobalAttributes;
 	}
 
-	public void setNumGlobalAttributes(int numGlobalAttributes) {
+	/* (non-Javadoc)
+	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#setNumGlobalAttributes(int)
+	 */
+	protected void setNumGlobalAttributes(int numGlobalAttributes) {
 		this.numGlobalAttributes = numGlobalAttributes;
 	}
 
@@ -163,6 +170,9 @@ public abstract class HDF4ImageReader extends BaseImageReader {
 		return dataset;
 	}
 
+    /* (non-Javadoc)
+	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#getImageTypes(int)
+	 */
     public Iterator<ImageTypeSpecifier> getImageTypes(int imageIndex) throws IOException {
         initialize();
         final List<ImageTypeSpecifier> l = new ArrayList<ImageTypeSpecifier>(1);
@@ -187,46 +197,68 @@ public abstract class HDF4ImageReader extends BaseImageReader {
      */
     protected abstract void initializeProfile() throws IOException;
 
-    protected HDF4ImageReader(ImageReaderSpi originatingProvider) {
+    protected BaseHDF4ImageReader(ImageReaderSpi originatingProvider) {
         super(originatingProvider);
     }
 
-    public void setInput(Object input, boolean seekForwardOnly,
-            boolean ignoreMetadata) {
-
-        // ////////////////////////////////////////////////////////////////////
-        //
-        // Reset the state of this reader
-        //
-        // Prior to set a new input, I need to do a pre-emptive reset in order
-        // to clear any value-object related to the previous input.
-        // ////////////////////////////////////////////////////////////////////
-
-        // TODO: Add URL & String support.
-        if (dataset != null)
-            reset();
-        try {
-
-            // TODO: Check this
-            // if (input instanceof URI) {
-            // input = ((URI) input).toURL();
-            // }
-        	if (dataset == null) {
-                dataset = NetCDFUtilities.getDataset(input);
-            }
-            super.setInput(input, seekForwardOnly, ignoreMetadata);
-            initialize();
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Not a Valid Input", e);
-        }
+    /* (non-Javadoc)
+	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#setInput(java.lang.Object, boolean, boolean)
+	 */
+    public void setInput(Object input, boolean seekForwardOnly,boolean ignoreMetadata) {
+        throw new UnsupportedOperationException("This super class does not implement this method!");
     }
+    
+//
+//    /* (non-Javadoc)
+//	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#setInput(java.lang.Object, boolean, boolean)
+//	 */
+//    public void setInput(Object input, boolean seekForwardOnly,boolean ignoreMetadata) {
+//
+//        // ////////////////////////////////////////////////////////////////////
+//        //
+//        // Reset the state of this reader
+//        //
+//        // Prior to set a new input, I need to do a pre-emptive reset in order
+//        // to clear any value-object related to the previous input.
+//        // ////////////////////////////////////////////////////////////////////
+//
+//        // TODO: Add URL & String support.
+//        if (dataset != null)
+//            reset();
+//        try {
+//        	//open up a dataset and check that it actually is an hdf4
+//        	if (dataset == null) {
+//                dataset = NetCDFUtilities.getDataset(input);
+//                
+//            }
+//        	// is it open? is it an hdf4?
+//        	if(dataset!=null){
+//        		if(!(dataset.getIosp() instanceof H4iosp))
+//        			throw new IllegalArgumentException("Provided dataset is not an HDF4 file");
+//        	}
+//        	else
+//        		throw new IllegalArgumentException("Provided dataset is not an HDF4 file");
+//        	
+//            super.setInput(input, seekForwardOnly, ignoreMetadata);
+//            
+//            initialize();
+//        } catch (IOException e) {
+//            throw new IllegalArgumentException("Not a Valid Input", e);
+//        }
+//    }
 
+    /* (non-Javadoc)
+	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#setInput(java.lang.Object, boolean)
+	 */
     public void setInput(Object input, boolean seekForwardOnly) {
-        this.setInput(input, seekForwardOnly, true);
+        throw new UnsupportedOperationException("This super class does not implement this method!");
     }
 
+    /* (non-Javadoc)
+	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#setInput(java.lang.Object)
+	 */
     public void setInput(Object input) {
-        this.setInput(input, true, true);
+        throw new UnsupportedOperationException("This super class does not implement this method!");
     }
 
     /**
@@ -240,6 +272,9 @@ public abstract class HDF4ImageReader extends BaseImageReader {
         }
     }
 
+    /* (non-Javadoc)
+	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#dispose()
+	 */
     public void dispose() {
         super.dispose();
         isInitialized = false;
@@ -256,23 +291,38 @@ public abstract class HDF4ImageReader extends BaseImageReader {
         }
     }
 
+    /* (non-Javadoc)
+	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#getStreamMetadata()
+	 */
     public IIOMetadata getStreamMetadata() throws IOException {
         throw new UnsupportedOperationException("Stream Metadata is not implemented for the base class, use corecommonstreammetadata");
     }
 
+    /* (non-Javadoc)
+	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#reset()
+	 */
     public synchronized void reset() {
         super.setInput(null, false, false);
         dispose();
     }
     
+    /* (non-Javadoc)
+	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#getGlobalAttribute(int)
+	 */
     public KeyValuePair getGlobalAttribute(final int attributeIndex) throws IOException {
 		return NetCDFUtilities.getGlobalAttribute(getDataset(), attributeIndex);
 	}
 
+    /* (non-Javadoc)
+	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#getAttributeAsString(int, java.lang.String)
+	 */
     public String getAttributeAsString(final int imageIndex, final String attributeName) {
 	     return getAttributeAsString(imageIndex, attributeName, false);
     }
 
+    /* (non-Javadoc)
+	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#getAttributeAsString(int, java.lang.String, boolean)
+	 */
     public String getAttributeAsString(final int imageIndex, final String attributeName,
             final boolean isUnsigned) {
         String attributeValue = "";
@@ -284,6 +334,9 @@ public abstract class HDF4ImageReader extends BaseImageReader {
         return attributeValue;
     }
     
+    /* (non-Javadoc)
+	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#getAttribute(int, int)
+	 */
     public KeyValuePair getAttribute(final int imageIndex, final int attributeIndex)
     throws IOException {
 		KeyValuePair attributePair = null;
@@ -293,59 +346,33 @@ public abstract class HDF4ImageReader extends BaseImageReader {
 		return attributePair;
 	}
     
-    /**
-     * Returns the width in pixels of the given image within the input source.
-     * 
-     * @param imageIndex
-     *                the index of the image to be queried.
-     * 
-     * @return the width of the image, as an <code>int</code>.
-     */
+    /* (non-Javadoc)
+	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#getWidth(int)
+	 */
     public int getWidth(final int imageIndex) throws IOException {
         initialize();
         return getDatasetWrapper(imageIndex).getWidth();
     }
 
-    /**
-     * Returns the height in pixels of the given image within the input source.
-     * 
-     * @param imageIndex
-     *                the index of the image to be queried.
-     * 
-     * @return the height of the image, as an <code>int</code>.
-     */
+    /* (non-Javadoc)
+	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#getHeight(int)
+	 */
     public int getHeight(final int imageIndex) throws IOException {
         initialize();
         return getDatasetWrapper(imageIndex).getHeight();
     }
 
-    /**
-     * Returns the height of a tile in the given image.
-     * 
-     * @param imageIndex
-     *                the index of the image to be queried.
-     * 
-     * @return the height of a tile.
-     * 
-     * @exception IOException
-     *                    if an error occurs during reading.
-     */
+    /* (non-Javadoc)
+	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#getTileHeight(int)
+	 */
     public int getTileHeight(final int imageIndex) throws IOException {
         initialize();
         return getDatasetWrapper(imageIndex).getTileHeight();
     }
 
-    /**
-     * Returns the width of a tile in the given image.
-     * 
-     * @param imageIndex
-     *                the index of the image to be queried.
-     * 
-     * @return the width of a tile.
-     * 
-     * @exception IOException
-     *                    if an error occurs during reading.
-     */
+    /* (non-Javadoc)
+	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#getTileWidth(int)
+	 */
     public int getTileWidth(final int imageIndex) throws IOException {
         initialize();
         return getDatasetWrapper(imageIndex).getTileWidth();
@@ -460,6 +487,9 @@ public abstract class HDF4ImageReader extends BaseImageReader {
         return image;
     }
     
+    /* (non-Javadoc)
+	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#read(int, javax.imageio.ImageReadParam)
+	 */
     @Override
     public BufferedImage read(final int imageIndex, final ImageReadParam param)
             throws IOException {
@@ -468,6 +498,9 @@ public abstract class HDF4ImageReader extends BaseImageReader {
 
 	/* (non-Javadoc)
 	 * @see javax.imageio.ImageReader#getImageMetadata(int)
+	 */
+	/* (non-Javadoc)
+	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#getImageMetadata(int)
 	 */
 	@Override
 	public IIOMetadata getImageMetadata(int imageIndex) throws IOException {

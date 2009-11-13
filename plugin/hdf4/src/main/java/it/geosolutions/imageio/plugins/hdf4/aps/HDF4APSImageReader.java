@@ -16,7 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.hdf4.aps;
 
-import it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader;
+import it.geosolutions.imageio.plugins.hdf4.BaseHDF4ImageReader;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities;
 
 import java.awt.image.DataBuffer;
@@ -44,7 +44,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  * 
  * @author Daniele Romagnoli
  */
-public class HDF4APSImageReader extends HDF4ImageReader {
+public class HDF4APSImageReader extends BaseHDF4ImageReader {
 	
     /** The Products Dataset List contained within the APS File */
     private String[] productList;
