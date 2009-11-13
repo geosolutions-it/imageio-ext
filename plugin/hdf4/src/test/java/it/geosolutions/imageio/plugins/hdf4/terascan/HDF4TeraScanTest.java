@@ -1,7 +1,8 @@
 /*
- *    JImageIO-extension - OpenSource Java Image translation Library
+ *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
- *    (C) 2007, GeoSolutions
+ *    https://imageio-ext.dev.java.net/
+ *    (C) 2007 - 2009, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -46,17 +47,11 @@ public class HDF4TeraScanTest extends TestCase {
     private static final Logger LOGGER = Logger
             .getLogger("it.geosolutions.imageio.plugins.jhdf.avhrr");
 
-
-
     private void warningMessage() {
         StringBuffer sb = new StringBuffer(
                 "Test file not available. Test are skipped");
         LOGGER.info(sb.toString());
     }
-
-  
-
-
 
     @org.junit.Test
     public void testRead() throws IOException {
@@ -112,8 +107,7 @@ public class HDF4TeraScanTest extends TestCase {
                     xSubSamplingOffset, ySubSamplingOffset);
 
             final ImageLayout l = new ImageLayout();
-            l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(64)
-                    .setTileWidth(64);
+            l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(64).setTileWidth(64);
 
             pbjImageRead = new ParameterBlockJAI("ImageRead");
             pbjImageRead.setParameter("Input", file);
@@ -126,8 +120,7 @@ public class HDF4TeraScanTest extends TestCase {
             
             // Silly equality test
             final BufferedImage buffImage = image.getAsBufferedImage();
-            final ImageReader reader = new HDF4ImageReaderSpi()
-                    .createReaderInstance();
+            final ImageReader reader = new HDF4ImageReaderSpi().createReaderInstance();
             reader.setInput(file);
             final BufferedImage buffImage2 = reader.read(0, irp);
             final int w = buffImage.getWidth();

@@ -234,7 +234,7 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
 
 
 
-	/* (non-Javadoc)
+	/**
 	 * @see javax.imageio.ImageReader#getImageMetadata(int, java.lang.String, java.util.Set)
 	 */
 	@Override
@@ -251,7 +251,7 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
 
 
 
-	/* (non-Javadoc)
+	/**
 	 * @see javax.imageio.ImageReader#getStreamMetadata(java.lang.String, java.util.Set)
 	 */
 	@Override

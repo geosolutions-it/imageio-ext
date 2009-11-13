@@ -87,13 +87,8 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
         private SampleModel sampleModel;
         
         protected HDF4DatasetWrapper(final Variable var) {
-            // This constructor is called after checking h4SdsCollection is not
-            // null
             variable = var;
             numAttributes = variable.getAttributes().size();
-//            final int dimSizes[] = variable.getDimSizes();
-//            final int chunkSizes[] = variable.getChunkSizes();
-
             width = variable.getDimension(1).getLength();
             height = variable.getDimension(0).getLength();
             numBands = variable.getRank()>2?variable.getDimension(2).getLength():1;
@@ -140,8 +135,7 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
         }
 	}
 	
-    protected final static Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.plugins.jhdf");
+    protected final static Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.hdf4");
 
     /** set it to <code>true</code> when initialization has been performed */
     private boolean isInitialized = false;
@@ -201,7 +195,7 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
         super(originatingProvider);
     }
 
-    /* (non-Javadoc)
+    /**
 	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#setInput(java.lang.Object, boolean, boolean)
 	 */
     public void setInput(Object input, boolean seekForwardOnly,boolean ignoreMetadata) {
@@ -247,14 +241,14 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
 //        }
 //    }
 
-    /* (non-Javadoc)
+    /**
 	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#setInput(java.lang.Object, boolean)
 	 */
     public void setInput(Object input, boolean seekForwardOnly) {
         throw new UnsupportedOperationException("This super class does not implement this method!");
     }
 
-    /* (non-Javadoc)
+    /**
 	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#setInput(java.lang.Object)
 	 */
     public void setInput(Object input) {
@@ -272,7 +266,7 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
         }
     }
 
-    /* (non-Javadoc)
+    /**
 	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#dispose()
 	 */
     public void dispose() {
@@ -284,21 +278,20 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
             }
         } catch (IOException e) {
             if (LOGGER.isLoggable(Level.WARNING))
-                LOGGER.warning("Errors closing NetCDF dataset."
-                        + e.getLocalizedMessage());
+                LOGGER.warning("Errors closing NetCDF dataset." + e.getLocalizedMessage());
         } finally {
             dataset = null;
         }
     }
 
-    /* (non-Javadoc)
+    /**
 	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#getStreamMetadata()
 	 */
     public IIOMetadata getStreamMetadata() throws IOException {
         throw new UnsupportedOperationException("Stream Metadata is not implemented for the base class, use corecommonstreammetadata");
     }
 
-    /* (non-Javadoc)
+    /**
 	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#reset()
 	 */
     public synchronized void reset() {
@@ -306,21 +299,21 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
         dispose();
     }
     
-    /* (non-Javadoc)
+    /**
 	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#getGlobalAttribute(int)
 	 */
     public KeyValuePair getGlobalAttribute(final int attributeIndex) throws IOException {
 		return NetCDFUtilities.getGlobalAttribute(getDataset(), attributeIndex);
 	}
 
-    /* (non-Javadoc)
+    /**
 	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#getAttributeAsString(int, java.lang.String)
 	 */
     public String getAttributeAsString(final int imageIndex, final String attributeName) {
 	     return getAttributeAsString(imageIndex, attributeName, false);
     }
 
-    /* (non-Javadoc)
+    /**
 	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#getAttributeAsString(int, java.lang.String, boolean)
 	 */
     public String getAttributeAsString(final int imageIndex, final String attributeName,
@@ -334,7 +327,7 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
         return attributeValue;
     }
     
-    /* (non-Javadoc)
+    /**
 	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#getAttribute(int, int)
 	 */
     public KeyValuePair getAttribute(final int imageIndex, final int attributeIndex)
@@ -346,7 +339,7 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
 		return attributePair;
 	}
     
-    /* (non-Javadoc)
+    /**
 	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#getWidth(int)
 	 */
     public int getWidth(final int imageIndex) throws IOException {
@@ -354,7 +347,7 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
         return getDatasetWrapper(imageIndex).getWidth();
     }
 
-    /* (non-Javadoc)
+    /**
 	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#getHeight(int)
 	 */
     public int getHeight(final int imageIndex) throws IOException {
@@ -362,7 +355,7 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
         return getDatasetWrapper(imageIndex).getHeight();
     }
 
-    /* (non-Javadoc)
+    /**
 	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#getTileHeight(int)
 	 */
     public int getTileHeight(final int imageIndex) throws IOException {
@@ -370,7 +363,7 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
         return getDatasetWrapper(imageIndex).getTileHeight();
     }
 
-    /* (non-Javadoc)
+    /**
 	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#getTileWidth(int)
 	 */
     public int getTileWidth(final int imageIndex) throws IOException {
@@ -496,11 +489,8 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
     	return read2DVariable(imageIndex, param);
     }
 
-	/* (non-Javadoc)
+	/**
 	 * @see javax.imageio.ImageReader#getImageMetadata(int)
-	 */
-	/* (non-Javadoc)
-	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#getImageMetadata(int)
 	 */
 	@Override
 	public IIOMetadata getImageMetadata(int imageIndex) throws IOException {

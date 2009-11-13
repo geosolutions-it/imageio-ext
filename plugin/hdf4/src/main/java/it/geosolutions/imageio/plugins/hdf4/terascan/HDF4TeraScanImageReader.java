@@ -33,7 +33,7 @@ import ucar.nc2.dataset.NetcdfDataset;
 
 /**
  * Specific Implementation of the <code>BaseHDF4ImageReader</code> needed
- * to work on AVHRR produced HDF
+ * to work on Terascan produced HDF
  * 
  * @author Romagnoli Daniele
  */
@@ -48,7 +48,7 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
         super(originatingProvider);
     }
 
-    private Map<Integer, TerascanDatasetWrapper> avhrrDatasetsWrapperMap = null;
+    private Map<Integer, TerascanDatasetWrapper> terascanDatasetsWrapperMap = null;
 
     /**
      * Inner class to represent interesting attributes of a APS Dataset
@@ -81,7 +81,7 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
         int numImages = productList!=null?productList.length:0;
         setNumImages(numImages);
 
-        avhrrDatasetsWrapperMap = new HashMap<Integer, TerascanDatasetWrapper>(
+        terascanDatasetsWrapperMap = new HashMap<Integer, TerascanDatasetWrapper>(
                 numImages);
 
      // Scanning all the datasets
@@ -91,7 +91,7 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
                 // Checking if the actual dataset is a product.
             	if (!checkProducts || name.equals(productList[j])) {
                     // Updating the subDatasetsMap map
-                	avhrrDatasetsWrapperMap.put(j, new TerascanDatasetWrapper(var));
+                	terascanDatasetsWrapperMap.put(j, new TerascanDatasetWrapper(var));
                     break;
                 }
             }
@@ -107,16 +107,16 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
     @Override
     protected HDF4DatasetWrapper getDatasetWrapper(int imageIndex) {
         checkImageIndex(imageIndex);
-        final TerascanDatasetWrapper wrapper = avhrrDatasetsWrapperMap.get(imageIndex);
+        final TerascanDatasetWrapper wrapper = terascanDatasetsWrapperMap.get(imageIndex);
         return wrapper;
     }
 
     public void dispose() {
         super.dispose();
         productList = null;
-        if (avhrrDatasetsWrapperMap!=null)
-        	avhrrDatasetsWrapperMap.clear();
-        avhrrDatasetsWrapperMap = null;
+        if (terascanDatasetsWrapperMap!=null)
+        	terascanDatasetsWrapperMap.clear();
+        terascanDatasetsWrapperMap = null;
         setNumGlobalAttributes(-1);
         streamMetadata = null;
     }
