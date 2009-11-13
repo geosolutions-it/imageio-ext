@@ -24,10 +24,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
 import javax.imageio.ImageReader;
+import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageReaderWriterSpi;
 import javax.imageio.spi.ServiceRegistry;
@@ -46,6 +48,9 @@ import kdu_jni.Kdu_simple_file_source;
  */
 public class JP2KKakaduImageReaderSpi extends ImageReaderSpi {
 
+	static {
+        KakaduUtilities.loadKakadu();
+    }
     protected boolean registered = false;
     
     static final String[] suffixes = { "jp2", "jp2k", "j2k", "j2c" };
@@ -112,7 +117,6 @@ public class JP2KKakaduImageReaderSpi extends ImageReaderSpi {
      * This method checks if the provided input can be decoded from this SPI
      */
     public boolean canDecodeInput(Object input) throws IOException {
-
         boolean isDecodable = true;
         File source = null;
 
@@ -210,7 +214,19 @@ public class JP2KKakaduImageReaderSpi extends ImageReaderSpi {
         }
 
         registered = true;
-
+        if (!KakaduUtilities.isKakaduAvailable()) {
+            final IIORegistry iioRegistry = (IIORegistry) registry;
+            final Class<ImageReaderSpi> spiClass = ImageReaderSpi.class;
+            final Iterator<ImageReaderSpi> iter = iioRegistry.getServiceProviders(spiClass,true);
+            while (iter.hasNext()) {
+                final ImageReaderSpi provider = (ImageReaderSpi) iter.next();
+                if (provider instanceof JP2KKakaduImageReaderSpi) {
+                    registry.deregisterServiceProvider(provider);
+                }
+            }
+            return;
+        }
+        
         final List<ImageReaderWriterSpi> readers = KakaduUtilities.getJDKImageReaderWriterSPI(registry,"jpeg2000", true);
         for (ImageReaderWriterSpi elem:readers) {
         	if (elem instanceof ImageReaderSpi){
