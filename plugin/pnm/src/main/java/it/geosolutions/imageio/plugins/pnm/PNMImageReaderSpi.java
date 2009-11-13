@@ -42,23 +42,52 @@
  * $Date: 2006/03/31 19:43:40 $
  * $State: Exp $
  */
-package com.sun.media.imageioimpl.plugins.pnm;
+/*
+ *    ImageI/O-Ext - OpenSource Java Image translation Library
+ *    http://www.geo-solutions.it/
+ *    https://imageio-ext.dev.java.net/
+ *    (C) 2007 - 2009, GeoSolutions
+ *    All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *     * Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *     * Neither the name of GeoSolutions nor the
+ *       names of its contributors may be used to endorse or promote products
+ *       derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY GeoSolutions ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL GeoSolutions BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+package it.geosolutions.imageio.plugins.pnm;
 
-import java.util.Locale;
-import javax.imageio.spi.ImageReaderSpi;
-import javax.imageio.stream.ImageInputStream;
-import javax.imageio.spi.IIORegistry;
-import javax.imageio.spi.ServiceRegistry;
 import java.io.IOException;
-import javax.imageio.ImageReader;
+import java.util.Locale;
+
 import javax.imageio.IIOException;
+import javax.imageio.ImageReader;
+import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.spi.ServiceRegistry;
+import javax.imageio.stream.ImageInputStream;
 
 import com.sun.media.imageioimpl.common.PackageUtil;
 
 public class PNMImageReaderSpi extends ImageReaderSpi {
 
     private static String [] writerSpiNames =
-        {"com.sun.media.imageioimpl.plugins.pnm.PNMImageWriterSpi"};
+        {"it.geosolutions.imageio.plugins.pnm.PNMImageWriterSpi"};
     private static String[] formatNames = {"pnm", "PNM"};
     private static String[] entensions = {"pbm", "pgm", "ppm"};
     private static String[] mimeType = {"image/x-portable-anymap",
@@ -74,7 +103,7 @@ public class PNMImageReaderSpi extends ImageReaderSpi {
               formatNames,
               entensions,
               mimeType,
-              "com.sun.media.imageioimpl.plugins.pnm.PNMImageReader",
+              "it.geosolutions.imageio.plugins.pnm.PNMImageReader",
               STANDARD_INPUT_TYPE,
               writerSpiNames,
               true,
