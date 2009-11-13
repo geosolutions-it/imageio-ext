@@ -75,7 +75,7 @@ public class CoreCommonIIOStreamMetadata extends IIOMetadata {
         final IIOMetadataNode root = new IIOMetadataNode( nativeMetadataFormatName);
         final IIOMetadataNode dataSetsNode = new IIOMetadataNode("DataSets");
         root.appendChild(dataSetsNode);
-        // we need to take into account that when subdataset are supported we
+        // we need to take into account that when subdatasets are supported we
         // have to remove 1 from the number of datasets we declare
         int length = datasetNames.length;
         if (length > 1)

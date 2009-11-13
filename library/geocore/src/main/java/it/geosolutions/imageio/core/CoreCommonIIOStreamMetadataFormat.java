@@ -46,9 +46,7 @@ public class CoreCommonIIOStreamMetadataFormat extends IIOMetadataFormatImpl {
         // root -> DataSets
         //
         // //
-        addElement("DataSets",
-                CoreCommonIIOStreamMetadata.nativeMetadataFormatName,
-                CHILD_POLICY_REPEAT);
+        addElement("DataSets", CoreCommonIIOStreamMetadata.nativeMetadataFormatName, CHILD_POLICY_REPEAT);
         addAttribute("DataSets", "number", DATATYPE_STRING, true, null);
 
         // //
@@ -61,16 +59,15 @@ public class CoreCommonIIOStreamMetadataFormat extends IIOMetadataFormatImpl {
     }
 
     /**
-     * Returns an instance of the <code>GDALCommonIIOStreamMetadataFormat</code>
+     * Returns an instance of the <code>CoreCommonIIOStreamMetadataFormat</code>
      * class. We build only a single instance and we cache it for future uses.
      * 
-     * @return an instance of the <code>GDALCommonIIOStreamMetadataFormat</code>
+     * @return an instance of the <code>CoreCommonIIOStreamMetadataFormat</code>
      *         class.
      */
     public static synchronized IIOMetadataFormat getInstance() {
-        if (theInstance == null) {
+        if (theInstance == null) 
             theInstance = new CoreCommonIIOStreamMetadataFormat();
-        }
         return theInstance;
     }
 

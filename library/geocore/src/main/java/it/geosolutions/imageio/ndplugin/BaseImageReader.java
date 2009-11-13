@@ -1,7 +1,8 @@
 /*
- *    JImageIO-extension - OpenSource Java Image translation Library
+ *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
- *    (C) 2007, GeoSolutions
+ *    https://imageio-ext.dev.java.net/
+ *    (C) 2007 - 2009, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -20,6 +21,12 @@ import java.io.IOException;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 
+/** 
+ * A base ImageReader class
+ * 
+ * @author Simone Giannecchini, GeoSolutions.
+ * @author Daniele Romagnoli, GeoSolutions.
+ */
 public abstract class BaseImageReader extends ImageReader {
 
     private int numRasters = -1;

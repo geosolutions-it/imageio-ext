@@ -1,7 +1,8 @@
 /*
- *    JImageIO-extension - OpenSource Java Image translation Library
+ *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
- *    (C) 2007, GeoSolutions
+ *    https://imageio-ext.dev.java.net/
+ *    (C) 2007 - 2009, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -30,6 +31,9 @@ import org.w3c.dom.Node;
  * 
  * TODO  @TODO: Add UOM management (Maybe, it is more appropriate to do on the upper
  *        class).
+ *        
+ * @author Simone Giannecchini, GeoSolutions.
+ * @author Daniele Romagnoli, GeoSolutions.
  */
 public abstract class BaseImageMetadata extends CoreCommonImageMetadata {
 

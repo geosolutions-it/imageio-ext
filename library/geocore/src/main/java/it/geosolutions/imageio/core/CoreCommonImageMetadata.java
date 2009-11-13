@@ -457,6 +457,35 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
         return projection;
     }
 
+    protected void setGcps(final List<GCP> gcps) {
+        this.gcps = gcps;
+    }
+
+    /** Returns the grid to world transformation of the image */
+    public double[] getGeoTransformation() {
+        return (double[]) geoTransformation.clone();
+    }
+
+    /** Returns the number of Ground Control Points */
+    public int getGcpNumber() {
+        return gcpNumber;
+    }
+
+    /** Returns the Ground Control Point's projection */
+    public String getGcpProjection() {
+        return gcpProjection;
+    }
+
+    /** Returns the Ground Control Points */
+    public List<? extends GCP> getGCPs() {
+        return Collections.unmodifiableList(gcps);
+    }
+
+    // ////////////////////////////////////////////////////////////////////////
+    //
+    // Bands Properties
+    // 
+    // ////////////////////////////////////////////////////////////////////////
     public Double[] getMaximums() {
         return (Double[]) maximums.clone();
     }
@@ -514,36 +543,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     protected void setNumOverviews(final int[] numOverviews) {
         this.numOverviews = numOverviews.clone();
     }
-
-    protected void setGcps(final List<GCP> gcps) {
-        this.gcps = gcps;
-    }
-
-    /** Returns the grid to world transformation of the image */
-    public double[] getGeoTransformation() {
-        return (double[]) geoTransformation.clone();
-    }
-
-    /** Returns the number of Ground Control Points */
-    public int getGcpNumber() {
-        return gcpNumber;
-    }
-
-    /** Returns the Ground Control Point's projection */
-    public String getGcpProjection() {
-        return gcpProjection;
-    }
-
-    /** Returns the Ground Control Points */
-    public List<? extends GCP> getGCPs() {
-        return Collections.unmodifiableList(gcps);
-    }
-
-    // ////////////////////////////////////////////////////////////////////////
-    //
-    // Bands Properties
-    // 
-    // ////////////////////////////////////////////////////////////////////////
+    
     /**
      * Returns the number of overviews for the specified band
      * 
