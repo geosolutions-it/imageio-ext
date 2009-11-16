@@ -127,9 +127,9 @@ public class HDF4ImageReaderSpi extends BaseImageReaderSpi {
 	                                found = true;
 	                
 	                // TERASCAN
-	            	final int productsNum = HDF4TeraScanProperties.avhrrProducts.getNProducts();
+	            	final int productsNum = HDF4TeraScanProperties.terascanProducts.getNProducts();
 	            	for (int i = 0; i < productsNum; i++) {
-	            		if (dataset.findVariable(HDF4TeraScanProperties.avhrrProducts.get(i).getProductName())!=null){
+	            		if (dataset.findVariable(HDF4TeraScanProperties.terascanProducts.get(i).getProductName())!=null){
 	            			found = true;
 	            			break;
 	            		}

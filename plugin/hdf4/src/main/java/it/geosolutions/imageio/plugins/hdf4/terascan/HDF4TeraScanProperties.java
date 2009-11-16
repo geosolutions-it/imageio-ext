@@ -63,7 +63,7 @@ public class HDF4TeraScanProperties {
 	        for (int i = 0; i < inputProducts; i++) {
 	            final String productName = variables.get(i).getName();
 	            products[i] = productName;
-	            if (HDF4TeraScanProperties.avhrrProducts.get(productName) != null) {
+	            if (HDF4TeraScanProperties.terascanProducts.get(productName) != null) {
 	                accepted[i] = true;
 	                j++;
 	            } else
@@ -82,45 +82,34 @@ public class HDF4TeraScanProperties {
     	return null;
     }
 
-    public final static HDF4TeraScanProperties.TeraScanProducts avhrrProducts = new HDF4TeraScanProperties.TeraScanProducts();
+    public final static HDF4TeraScanProperties.TeraScanProducts terascanProducts = new HDF4TeraScanProperties.TeraScanProducts();
 
     public static class DatasetAttribs {
         public final static String VALID_RANGE = "valid_range";
-
         public final static String LONG_NAME = "long_name";
-
         public final static String FILL_VALUE = "_FillValue";
-
         public final static String SCALE_FACTOR = "scale_factor";
-
         public final static String SCALE_FACTOR_ERR = "scale_factor_err";
-
         public final static String ADD_OFFSET = "add_offset";
-
         public final static String ADD_OFFSET_ERR = "add_offset_err";
-
         public final static String CALIBRATED_NT = "calibrated_nt";
-
         public final static String UNITS = "units";
+        
+        private DatasetAttribs() {
+
+        }
+
     }
 
     public static class ProjAttribs {
         public final static String PROJECT_TO_IMAGE_AFFINE = "proj_to_image_affine";
-
         public final static String PROJECT_ORIGIN_LATITUDE = "proj_origin_latitude";
-
         public final static String PROJECT_ORIGIN_LONGITUDE = "proj_origin_longitude";
-
         public final static String EARTH_FLATTENING = "earth_flattening";
-
         public final static String EQUATORIAL_RADIUS = "equatorial_radius";
-
         public final static String STANDARD_PARALLEL_1 = "std_parallel_1";
-        
         public final static String STANDARD_PARALLEL_2 = "std_parallel_2";
-        
         public final static String DATUM_NAME = "datum_name";
-        
         public final static String PROJECTION_NAME = "projection_name";
 
         private ProjAttribs() {
@@ -130,15 +119,10 @@ public class HDF4TeraScanProperties {
     
     public static class TemporalAttribs {
         public final static String PASS_START_DATE = "pass_start_date";
-
         public final static String PASS_START_TIME = "pass_start_time";
-
         public final static String DATA_START_DATE = "data_start_date";
-
         public final static String DATA_START_TIME = "data_start_time";
-
         public final static String DATA_END_DATE = "data_end_date";
-
         public final static String DATA_END_TIME = "data_end_time";
         
         private TemporalAttribs() {
@@ -147,11 +131,8 @@ public class HDF4TeraScanProperties {
     }
 
     public final static String LOWER_LEFT_LONGITUDE = "lower_left_longitude";
-
     public final static String LOWER_LEFT_LATITUDE = "lower_left_latitude";
-
     public final static String UPPER_RIGHT_LONGITUDE = "upper_right_longitude";
-
     public final static String UPPER_RIGHT_LATITUDE = "upper_right_latitude";
 
 }

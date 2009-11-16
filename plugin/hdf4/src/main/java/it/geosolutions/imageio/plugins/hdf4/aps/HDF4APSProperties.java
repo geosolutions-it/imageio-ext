@@ -77,7 +77,8 @@ public class HDF4APSProperties {
     public final static HDF4APSProperties.APSProducts apsProducts = new HDF4APSProperties.APSProducts();
 
     /**
-     * ------------------------- Standard: File Attributes
+     * ------------------------- 
+     * Standard: File Attributes 
      * -------------------------
      */
 
@@ -117,7 +118,8 @@ public class HDF4APSProperties {
             STD_FA_CREATEPLATFORM, STD_FA_CREATETIME, STD_FA_CREATEUSER };
 
     /**
-     * ------------------------- Standard: Time Attributes
+     * ------------------------- 
+     * Standard: Time Attributes 
      * -------------------------
      */
 
@@ -157,7 +159,8 @@ public class HDF4APSProperties {
             STD_TA_TIMEENDDAY, STD_TA_TIMEENDTIME, STD_TA_TIMEDAYNIGHT };
 
     /**
-     * --------------------------- Standard: Sensor Attributes
+     * --------------------------- 
+     * Standard: Sensor Attributes
      * ---------------------------
      */
 
@@ -209,8 +212,9 @@ public class HDF4APSProperties {
             STD_SA_SENSORPLATFORMTYPE };
 
     /**
-     * ----------------------------------------- Product file: Input Parameters
-     * Attributes -----------------------------------------
+     * ----------------------------------------- 
+     * Product file: Input Parameters Attributes 
+     * -----------------------------------------
      */
 
     /** Name of the calibration file used. SeaWiFS/MOS specific. */
@@ -240,9 +244,9 @@ public class HDF4APSProperties {
             PFA_IPA_PROCESSINGVERSION };
 
     /**
-     * ------------------------------------------------------------------------
-     *                Product file: Navigation Attributes
-     * ------------------------------------------------------------------------
+     * -----------------------------------
+     * Product file: Navigation Attributes
+     * -----------------------------------
      */
 
     /** Navigation type of data. Always set to 'mapped' */
@@ -275,9 +279,9 @@ public class HDF4APSProperties {
             PFA_NA_MAPPEDLOWERLEFT, PFA_NA_MAPPEDLOWERRIGHT };
 
     /**
-     * ------------------------------------------------------------------------
+     * ----------------------------------------------------
      * Product file: Input Geographical Coverage Attributes
-     * ------------------------------------------------------------------------
+     * ----------------------------------------------------
      */
 
     /**
@@ -320,9 +324,9 @@ public class HDF4APSProperties {
             PFA_IGCA_LOCALESWCORNER, PFA_IGCA_LOCALESECORNER };
 
     /**
-     * ------------------------------------------------------------------------
+     * --------------------------
      * Product Dataset Attributes
-     * ------------------------------------------------------------------------
+     * --------------------------
      */
 
     /**
@@ -362,7 +366,7 @@ public class HDF4APSProperties {
     public final static String PDSA_PRODUCTTYPE = "productType";
 
     /**
-     * This is a space delimetered string of additional units available for this
+     * This is a space delimited string of additional units available for this
      * product. For example, an sst product may set this string to "Kelvin
      * Fahrenheit"
      */

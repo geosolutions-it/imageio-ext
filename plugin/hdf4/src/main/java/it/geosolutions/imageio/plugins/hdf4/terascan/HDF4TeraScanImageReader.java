@@ -39,7 +39,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  */
 public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
 
-    /** The Products Dataset List contained within the APS File */
+    /** The Products Dataset List contained within the Terascan File */
     private String[] productList;
 
     private IIOMetadata streamMetadata = null;
@@ -51,7 +51,7 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
     private Map<Integer, TerascanDatasetWrapper> terascanDatasetsWrapperMap = null;
 
     /**
-     * Inner class to represent interesting attributes of a APS Dataset
+     * Inner class to represent interesting attributes of a Terascan Dataset
      * 
      * @author Daniele Romagnoli, GeoSolutions.
      */
@@ -63,7 +63,7 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
     }
 
     /**
-     * Retrieve Avhrr specific information.
+     * Retrieve Terascan specific information.
      * 
      * @throws IOException
      */
@@ -81,8 +81,7 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
         int numImages = productList!=null?productList.length:0;
         setNumImages(numImages);
 
-        terascanDatasetsWrapperMap = new HashMap<Integer, TerascanDatasetWrapper>(
-                numImages);
+        terascanDatasetsWrapperMap = new HashMap<Integer, TerascanDatasetWrapper>(numImages);
 
      // Scanning all the datasets
         for (Variable var : variables) {
@@ -157,7 +156,7 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
     }
 
     protected int getBandNumberFromProduct(String productName) {
-        return HDF4TeraScanProperties.avhrrProducts.get(productName).getNBands();
+        return HDF4TeraScanProperties.terascanProducts.get(productName).getNBands();
     }
 
     /**
@@ -212,7 +211,7 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
         super.reset();
     }
 
-	/* (non-Javadoc)
+	/**
 	 * @see javax.imageio.ImageReader#getImageMetadata(int, java.lang.String, java.util.Set)
 	 */
 	@Override
@@ -227,7 +226,7 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
 		return super.getImageMetadata(imageIndex, formatName, nodeNames);
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see javax.imageio.ImageReader#getStreamMetadata(java.lang.String, java.util.Set)
 	 */
 	@Override

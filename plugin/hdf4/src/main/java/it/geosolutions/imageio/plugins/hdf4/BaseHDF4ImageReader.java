@@ -61,7 +61,6 @@ import ucar.ma2.Section;
 import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
-import ucar.nc2.iosp.hdf4.H4iosp;
 
 public abstract class BaseHDF4ImageReader extends BaseImageReader {
 
@@ -480,7 +479,7 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
         return image;
     }
     
-    /* (non-Javadoc)
+    /**
 	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#read(int, javax.imageio.ImageReadParam)
 	 */
     @Override
