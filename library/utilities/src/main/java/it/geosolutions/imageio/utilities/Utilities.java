@@ -227,7 +227,7 @@ public final class Utilities {
     
     /**
      * Given a pair of xSubsamplingFactor (xSSF) and ySubsamplingFactor (ySFF), 
-     * look for a subsampling factor (SSF) in case xSSF != ySSF and they are not
+     * look for a subsampling factor (SSF) in case xSSF != ySSF or they are not
      * powers of 2.
      * In case xSSF == ySSF == 2^N, the method return 0 (No optimal subsampling factor found).
      * 
