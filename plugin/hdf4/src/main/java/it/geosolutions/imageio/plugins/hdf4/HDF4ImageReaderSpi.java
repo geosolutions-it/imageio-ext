@@ -85,7 +85,7 @@ public class HDF4ImageReaderSpi extends BaseImageReaderSpi {
                 suffixes,
                 MIMETypes,
                 readerCN, // readerClassName
-                STANDARD_INPUT_TYPES,
+                DIRECT_STANDARD_INPUT_TYPES,
                 wSN, // writer Spi Names
                 supportsStandardStreamMetadataFormat,
                 nativeStreamMetadataFormatName,
