@@ -539,6 +539,7 @@ public class GRIB1ImageReader extends BaseImageReader {
 
     public GRIB1ImageReader(ImageReaderSpi originatingProvider) {
         super(originatingProvider);
+        reader = new BaseNetCDFImageReader(originatingProvider);
     }
 
 
