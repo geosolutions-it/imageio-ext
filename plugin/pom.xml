@@ -60,17 +60,13 @@
         <module>swan</module>
         <module>tiff</module>
         <module>matlab</module>
-	      <module>grib1</module>
-	      <module>netcdf</module>
-	      <module>hdf4</module>
+	      <module>netcdf-nd</module>
       </modules>
     </profile> 
     <profile>
       <id>nd</id>
       <modules>
-	      <module>grib1</module>
-	      <module>netcdf</module>
-	      <module>hdf4</module>
+	      <module>netcdf-nd</module>
       </modules>
     </profile> 
     <profile>
