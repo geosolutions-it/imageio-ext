@@ -70,17 +70,18 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
      */
     protected void initializeProfile() throws IOException {
     	boolean checkProducts = true;
-    	final NetcdfDataset dataset = innerReader.getDataset();
+    	final NetcdfDataset dataset = reader.getDataset();
         if (dataset == null) {
             throw new IOException(
                     "Unable to initialize profile due to a null dataset");
         }
         final List<Variable> variables = dataset.getVariables();
         final List<Attribute> attributes = dataset.getGlobalAttributes();
-        innerReader.setNumGlobalAttributes(attributes.size());
+        reader.setNumGlobalAttributes(attributes.size());
         productList = HDF4TeraScanProperties.refineProductList(variables);
         final int numImages = productList != null ? productList.length : 0;
         setNumImages(numImages);
+        reader.setNumImages(numImages);
 
         final Map<Range,TerascanDatasetWrapper> indexMap = new HashMap<Range, TerascanDatasetWrapper>(numImages);
 
@@ -100,7 +101,7 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
         } catch (InvalidRangeException e) {
 	    	throw new IllegalArgumentException( "Error occurred during NetCDF file parsing", e);
 		}
-	    innerReader.setIndexMap(indexMap);
+	    reader.setIndexMap(indexMap);
     }
 
     /**
@@ -111,11 +112,11 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
      */
     @Override
     protected HDF4DatasetWrapper getDatasetWrapper(int imageIndex) {
-    	return (HDF4DatasetWrapper) innerReader.getVariableWrapper(imageIndex);
+    	return (HDF4DatasetWrapper) reader.getVariableWrapper(imageIndex);
     }
 
     BaseNetCDFImageReader getInnerReader() {
-		return innerReader;
+		return reader;
 	}
     
     public void dispose() {

@@ -66,14 +66,14 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
     }
     
     BaseNetCDFImageReader getInnerReader() {
-		return innerReader;
+		return reader;
 	}
 
     /**
      * Initialize main properties for this <code>HDF4APSImageReader</code>
      */
     protected void initializeProfile() throws IOException {
-        final NetcdfDataset dataset = innerReader.getDataset();
+        final NetcdfDataset dataset = reader.getDataset();
         if (dataset == null) {
             throw new IOException(
                     "Unable to initialize profile due to a null dataset");
@@ -81,7 +81,7 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
         final List<Variable> variables = dataset.getVariables();
         final List<Attribute> attributes = dataset.getGlobalAttributes();
         final int numVars = variables.size();
-        innerReader.setNumGlobalAttributes(attributes.size());
+        reader.setNumGlobalAttributes(attributes.size());
 
         // //
         //
@@ -106,6 +106,7 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
             numImages = numVars;
         }
         setNumImages(numImages);
+        reader.setNumImages(numImages);
         final Map<Range,APSDatasetWrapper> indexMap = new HashMap<Range, APSDatasetWrapper>(numImages);
 
         Variable varProjection;
@@ -144,7 +145,7 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
 	    } catch (InvalidRangeException e) {
 	    	throw new IllegalArgumentException( "Error occurred during NetCDF file parsing", e);
 		}
-	    innerReader.setIndexMap(indexMap);
+	    reader.setIndexMap(indexMap);
     }
 
     private static Map<String,String> buildProjectionAttributesMap(final Array data, int datatype) {
@@ -250,6 +251,6 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
 
 	@Override
 	protected HDF4DatasetWrapper getDatasetWrapper(int imageIndex) {
-		return (HDF4DatasetWrapper) innerReader.getVariableWrapper(imageIndex);
+		return (HDF4DatasetWrapper) reader.getVariableWrapper(imageIndex);
 	}
 }

@@ -149,6 +149,7 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
 		}
         reader.setIndexMap(indexMap);
         setNumImages(numImages);
+        reader.setNumImages(numImages);
         int numAttribs = 0;
         final List<Attribute> globalAttributes = dataset.getGlobalAttributes();
         if (globalAttributes != null && !globalAttributes.isEmpty())
@@ -177,7 +178,7 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
      */
     @Override
     public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
-        reader.checkImageIndex(imageIndex);
+        checkImageIndex(imageIndex);
         return new NetCDFImageMetadata(this, imageIndex);
     }
 

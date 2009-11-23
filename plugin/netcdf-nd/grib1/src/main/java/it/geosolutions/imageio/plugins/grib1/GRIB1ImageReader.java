@@ -529,6 +529,7 @@ public class GRIB1ImageReader extends BaseImageReader {
         	throw new IllegalArgumentException( "Error occurred during NetCDF file parsing", e);
 		}
         setNumImages(numImages);
+        reader.setNumImages(numImages);
         reader.setIndexMap(indexMap);
 //        numGlobalAttributes = 0;
 //        final List<Attribute> globalAttributes = dataset.getGlobalAttributes();

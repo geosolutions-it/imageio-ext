@@ -87,7 +87,7 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
         }
 	}
 	
-	final protected BaseNetCDFImageReader innerReader;
+	final protected BaseNetCDFImageReader reader;
 	
 	protected final static Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.hdf4");
 
@@ -100,7 +100,7 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
 	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#getImageTypes(int)
 	 */
     public Iterator<ImageTypeSpecifier> getImageTypes(int imageIndex) throws IOException {
-        return innerReader.getImageTypes(imageIndex);
+        return reader.getImageTypes(imageIndex);
     }
     
     /**
@@ -118,7 +118,7 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
 
     protected BaseHDF4ImageReader(ImageReaderSpi originatingProvider) {
         super(originatingProvider);
-        innerReader = new BaseNetCDFImageReader(originatingProvider);
+        reader = new BaseNetCDFImageReader(originatingProvider);
     }
 
     /**
@@ -137,7 +137,7 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
 	 */
     public void dispose() {
         super.dispose();
-        innerReader.dispose();
+        reader.dispose();
         isInitialized = false;
     }
     
@@ -145,8 +145,8 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
 	public void setInput(Object input, boolean seekForwardOnly,
 			boolean ignoreMetadata) {
 		super.setInput(input, seekForwardOnly, ignoreMetadata);
-		innerReader.setInput(input, seekForwardOnly, ignoreMetadata);
-		final NetcdfDataset dataset = innerReader.getDataset();
+		reader.setInput(input, seekForwardOnly, ignoreMetadata);
+		final NetcdfDataset dataset = reader.getDataset();
 		if(dataset!=null){
     		if(!(dataset.getIosp() instanceof H4iosp))
     			throw new IllegalArgumentException("Provided dataset is not an HDF4 file");
@@ -172,7 +172,7 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
 	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#getGlobalAttribute(int)
 	 */
     protected KeyValuePair getGlobalAttribute(final int attributeIndex) throws IOException {
-		return innerReader.getGlobalAttribute(attributeIndex);
+		return reader.getGlobalAttribute(attributeIndex);
 	}
 
     /**
@@ -186,14 +186,14 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
 	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#getAttributeAsString(int, java.lang.String, boolean)
 	 */
     protected String getAttributeAsString(final int imageIndex, final String attributeName, final boolean isUnsigned) {
-        return innerReader.getAttributeAsString(imageIndex, attributeName, isUnsigned);
+        return reader.getAttributeAsString(imageIndex, attributeName, isUnsigned);
     }
     
     /**
 	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#getAttribute(int, int)
 	 */
     protected KeyValuePair getAttribute(final int imageIndex, final int attributeIndex) throws IOException {
-		return innerReader.getAttribute(imageIndex, attributeIndex);
+		return reader.getAttribute(imageIndex, attributeIndex);
 	}
     
 	@Override
@@ -211,7 +211,7 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
 	 */
     public int getWidth(final int imageIndex) throws IOException {
     	checkImageIndex(imageIndex);
-        return innerReader.getWidth(imageIndex);
+        return reader.getWidth(imageIndex);
     }
 
     /**
@@ -219,7 +219,7 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
 	 */
     public int getHeight(final int imageIndex) throws IOException {
     	checkImageIndex(imageIndex);
-        return innerReader.getHeight(imageIndex);
+        return reader.getHeight(imageIndex);
     }
 
     /**
@@ -227,7 +227,7 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
 	 */
     public int getTileHeight(final int imageIndex) throws IOException {
     	checkImageIndex(imageIndex);
-        return innerReader.getTileHeight(imageIndex);
+        return reader.getTileHeight(imageIndex);
     }
 
     /**
@@ -235,7 +235,7 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
 	 */
     public int getTileWidth(final int imageIndex) throws IOException {
     	checkImageIndex(imageIndex);
-        return innerReader.getTileHeight(imageIndex);
+        return reader.getTileHeight(imageIndex);
     }
     
     protected BufferedImage read2DVariable (final int imageIndex, final ImageReadParam param) throws IOException{

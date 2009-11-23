@@ -73,14 +73,12 @@ public class NetCDFReaderTest {
         int numImages = ncReader.getNumImages(false);
         if (numImages / STEP > LIMIT)
             numImages = LIMIT * STEP;
-        ImageIOUtilities.displayImageIOMetadata(ncReader.getStreamMetadata()
-                .getAsTree(NetCDFStreamMetadata.nativeMetadataFormatName));
+        ImageIOUtilities.displayImageIOMetadata(ncReader.getStreamMetadata().getAsTree(NetCDFStreamMetadata.nativeMetadataFormatName));
         ncReader.dispose();
         for (int i = 0; i < numImages; i += STEP) {
             ncReader.setInput(inputFile);
             final IIOMetadata metadata = ncReader.getImageMetadata(i);
-            ImageIOUtilities
-                    .displayImageIOMetadata(metadata
+            ImageIOUtilities.displayImageIOMetadata(metadata
                             .getAsTree(CoreCommonImageMetadata.nativeMetadataFormatName));
             ImageIOUtilities.displayImageIOMetadata(metadata
                     .getAsTree(NetCDFImageMetadata.nativeMetadataFormatName));
