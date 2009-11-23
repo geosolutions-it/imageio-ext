@@ -17,6 +17,7 @@
 package it.geosolutions.imageio.plugins.hdf4.aps;
 
 import it.geosolutions.imageio.plugins.hdf4.BaseHDF4ImageReader;
+import it.geosolutions.imageio.plugins.netcdf.BaseNetCDFImageReader;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities;
 
 import java.awt.image.DataBuffer;
@@ -34,6 +35,8 @@ import javax.imageio.spi.ImageReaderSpi;
 
 import ucar.ma2.Array;
 import ucar.ma2.ArrayDouble;
+import ucar.ma2.InvalidRangeException;
+import ucar.ma2.Range;
 import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -54,8 +57,6 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
 
     private HDF4APSStreamMetadata streamMetadata;
     
-    private Map<Integer, APSDatasetWrapper> apsDatasetsWrapperMap = null;
-
     Map<String, String> projectionMap = null;
 
     private class APSDatasetWrapper extends HDF4DatasetWrapper{
@@ -63,12 +64,16 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
         	super(var);
 		}
     }
+    
+    BaseNetCDFImageReader getInnerReader() {
+		return innerReader;
+	}
 
     /**
      * Initialize main properties for this <code>HDF4APSImageReader</code>
      */
     protected void initializeProfile() throws IOException {
-        final NetcdfDataset dataset = getDataset();
+        final NetcdfDataset dataset = innerReader.getDataset();
         if (dataset == null) {
             throw new IOException(
                     "Unable to initialize profile due to a null dataset");
@@ -76,7 +81,7 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
         final List<Variable> variables = dataset.getVariables();
         final List<Attribute> attributes = dataset.getGlobalAttributes();
         final int numVars = variables.size();
-        setNumGlobalAttributes(attributes.size());
+        innerReader.setNumGlobalAttributes(attributes.size());
 
         // //
         //
@@ -101,8 +106,7 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
             numImages = numVars;
         }
         setNumImages(numImages);
-        apsDatasetsWrapperMap = new HashMap<Integer, APSDatasetWrapper>(
-                numImages);
+        final Map<Range,APSDatasetWrapper> indexMap = new HashMap<Range, APSDatasetWrapper>(numImages);
 
         Variable varProjection;
         // //
@@ -124,22 +128,24 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
                 // the map
             }
         }
-
-        // Scanning all the datasets
-        for (Variable var : variables) {
-            final String name = var.getName();
-            for (int j = 0; j < numImages; j++) {
-                // Checking if the actual dataset is a product.
-                if (name.equals(productList[j])) {
-                    // Updating the subDatasetsMap map
-                    apsDatasetsWrapperMap.put(j, new APSDatasetWrapper(var));
-                    break;
-                }
-            }
-        }
+	    try{
+	        // Scanning all the datasets
+	        for (Variable var : variables) {
+	            final String name = var.getName();
+	            for (int j = 0; j < numImages; j++) {
+	                // Checking if the actual dataset is a product.
+	                if (name.equals(productList[j])) {
+	                    // Updating the subDatasetsMap map
+	                	indexMap.put(new Range(j,j), new APSDatasetWrapper(var));
+	                    break;
+	                }
+	            }
+	        }
+	    } catch (InvalidRangeException e) {
+	    	throw new IllegalArgumentException( "Error occurred during NetCDF file parsing", e);
+		}
+	    innerReader.setIndexMap(indexMap);
     }
-
-  
 
     private static Map<String,String> buildProjectionAttributesMap(final Array data, int datatype) {
         final Map<String,String> projMap = new LinkedHashMap<String,String>(29);
@@ -185,19 +191,6 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
         super(originatingProvider);
     }
     
-    /**
-     * Returns a {@link APSDatasetWrapper} given a specified imageIndex.
-     * 
-     * @param imageIndex
-     * @return a {@link APSDatasetWrapper}.
-     */
-    @Override
-    protected HDF4DatasetWrapper getDatasetWrapper(final int imageIndex) {
-        checkImageIndex(imageIndex);
-        final APSDatasetWrapper wrapper = apsDatasetsWrapperMap.get(imageIndex);
-        return wrapper;
-    }
-
     protected int getBandNumberFromProduct(String productName) {
         return HDF4APSProperties.apsProducts.get(productName).getNBands();
     }
@@ -205,11 +198,7 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
     public void dispose() {
         super.dispose();
         productList = null;
-        if (apsDatasetsWrapperMap!=null)
-        	apsDatasetsWrapperMap.clear();
-        apsDatasetsWrapperMap = null;
         streamMetadata = null;
-        setNumGlobalAttributes(-1);
     }
 
     String getDatasetName(final int imageIndex) {
@@ -228,12 +217,6 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
         super.reset();
     }
     
-    int getNumAttributes(int imageIndex) {
-        return getDatasetWrapper(imageIndex).getNumAttributes();
-    }
-
-
-
 	/**
 	 * @see javax.imageio.ImageReader#getImageMetadata(int, java.lang.String, java.util.Set)
 	 */
@@ -242,7 +225,7 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
 			Set<String> nodeNames) throws IOException {
 		initialize();
 	    checkImageIndex(imageIndex);
-	    if(formatName.equalsIgnoreCase(HDF4APSImageMetadata.nativeMetadataFormatName))
+	    if (formatName.equalsIgnoreCase(HDF4APSImageMetadata.nativeMetadataFormatName))
 	    	return new HDF4APSImageMetadata(this, imageIndex);
 	    
 	    // fallback on the super type metadata
@@ -263,5 +246,10 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
 	        return streamMetadata;
 		}
 		return super.getStreamMetadata(formatName, nodeNames);
+	}
+
+	@Override
+	protected HDF4DatasetWrapper getDatasetWrapper(int imageIndex) {
+		return (HDF4DatasetWrapper) innerReader.getVariableWrapper(imageIndex);
 	}
 }

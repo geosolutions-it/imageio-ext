@@ -55,10 +55,10 @@ public class NetCDFImageMetadata extends BaseImageMetadata {
         if (imageReader instanceof NetCDFImageReader) {
             // set metadata
             final int imageIndex = getImageIndex();
-            NetCDFImageReader reader = (NetCDFImageReader) imageReader;
+            final NetCDFImageReader reader = (NetCDFImageReader) imageReader;
             setDriverName(driverName);
             setDriverDescription(driverDescription);
-            setDatasetName(reader.getVariableName(imageIndex));
+            setDatasetName(reader.getInnerReader().getVariableName(imageIndex));
             final double scale = reader.getScale(imageIndex);
             if (!Double.isNaN(scale))
                 setScales(new Double[] { Double.valueOf(scale) });
@@ -81,12 +81,11 @@ public class NetCDFImageMetadata extends BaseImageMetadata {
             // overviews are always absent
             setNumOverviews(new int[] { 0 });
 
-            // get other attributes
-            final NetCDFImageReader directReader = (NetCDFImageReader) imageReader;
-            final int numAttributes = directReader.getNumAttributes(imageIndex);
+            final BaseNetCDFImageReader innerReader = reader.getInnerReader();
+            final int numAttributes = innerReader.getNumAttributes(imageIndex);
             this.additionalMetadata = new HashMap<String, String>(numAttributes);
             for (int i = 0; i < numAttributes; i++) {
-                final KeyValuePair attributePair = directReader.getAttribute(imageIndex, i);
+                final KeyValuePair attributePair = innerReader.getAttribute(imageIndex, i);
                 final String attributeName = attributePair.getKey();
                 final String attributeValue = attributePair.getValue();
                 additionalMetadata.put(attributeName, attributeValue);

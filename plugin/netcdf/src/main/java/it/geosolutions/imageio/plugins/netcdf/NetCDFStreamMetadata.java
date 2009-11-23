@@ -52,21 +52,21 @@ public class NetCDFStreamMetadata extends IIOMetadata {
      */
     protected Node createCommonNativeTree() {
         // Create root node
-        final IIOMetadataNode root = new IIOMetadataNode(
-                nativeMetadataFormatName);
+        final IIOMetadataNode root = new IIOMetadataNode(nativeMetadataFormatName);
 
         // ////////////////////////////////////////////////////////////////////
         //
         // GlobalAttributes
         //
         // ////////////////////////////////////////////////////////////////////
-        IIOMetadataNode node = new IIOMetadataNode(GLOBAL_ATTRIBUTES);
+        final IIOMetadataNode node = new IIOMetadataNode(GLOBAL_ATTRIBUTES);
         if (reader instanceof NetCDFImageReader) {
-            NetCDFImageReader directReader = (NetCDFImageReader) reader;
-            final int numAttributes = directReader.getNumGlobalAttributes();
+            final NetCDFImageReader directReader = (NetCDFImageReader) reader;
+            final BaseNetCDFImageReader innerReader = directReader.getInnerReader();
+            final int numAttributes = innerReader.getNumGlobalAttributes();
             try {
                 for (int i = 0; i < numAttributes; i++) {
-                	KeyValuePair keyValuePair = directReader.getGlobalAttribute(i);  
+                	KeyValuePair keyValuePair = innerReader.getGlobalAttribute(i);  
                     String attributeName = keyValuePair.getKey();
                     final String attributeValue = keyValuePair.getValue();
 
@@ -75,13 +75,11 @@ public class NetCDFStreamMetadata extends IIOMetadata {
                     // containing "\\". Therefore we replace that char
                     // //
                     if (attributeName.contains("\\"))
-                        attributeName = Utilities
-                                .adjustAttributeName(attributeName);
+                        attributeName = Utilities.adjustAttributeName(attributeName);
                     node.setAttribute(attributeName, attributeValue);
                 }
             } catch (IOException e) {
-                throw new IllegalArgumentException("Unable to parse attribute",
-                        e);
+                throw new IllegalArgumentException("Unable to parse attribute", e);
             }
 
             root.appendChild(node);
@@ -98,8 +96,7 @@ public class NetCDFStreamMetadata extends IIOMetadata {
     public Node getAsTree(String formatName) {
         if (nativeMetadataFormatName.equalsIgnoreCase(formatName))
             return createCommonNativeTree();
-        throw new IllegalArgumentException(formatName
-                + " is not a supported format name");
+        throw new IllegalArgumentException(formatName + " is not a supported format name");
     }
 
     @Override

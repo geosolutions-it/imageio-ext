@@ -17,7 +17,6 @@
 package it.geosolutions.imageio.plugins.hdf4.terascan;
 
 import it.geosolutions.imageio.core.CoreCommonImageMetadata;
-import it.geosolutions.imageio.plugins.hdf4.HDF4ImageReaderSpi;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
@@ -62,8 +61,7 @@ public class HDF4TeraScanTest extends TestCase {
             warningMessage();
             return;
         }
-        ImageReader reader = new HDF4ImageReaderSpi()
-                .createReaderInstance();
+        ImageReader reader = new HDF4TeraScanImageReaderSpi().createReaderInstance();
         reader.setInput(file);
         final int index = 0;
         if (TestData.isInteractiveTest()) {
@@ -120,7 +118,7 @@ public class HDF4TeraScanTest extends TestCase {
             
             // Silly equality test
             final BufferedImage buffImage = image.getAsBufferedImage();
-            final ImageReader reader = new HDF4ImageReaderSpi().createReaderInstance();
+            final ImageReader reader = new HDF4TeraScanImageReaderSpi().createReaderInstance();
             reader.setInput(file);
             final BufferedImage buffImage2 = reader.read(0, irp);
             final int w = buffImage.getWidth();

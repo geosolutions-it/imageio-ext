@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.hdf4.aps;
 
+import it.geosolutions.imageio.plugins.netcdf.BaseNetCDFImageReader;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.KeyValuePair;
 
 import java.io.IOException;
@@ -112,21 +113,14 @@ class HDF4APSStreamMetadata extends IIOMetadata {
     }
 
     private Map<String,String> stdFileAttribMap = new LinkedHashMap<String,String>(11);
-
     private Map<String,String> stdTimeAttribMap = new LinkedHashMap<String,String>(9);
-
     private Map<String,String> stdSensorAttribMap = new LinkedHashMap<String,String>(13);
-
     private Map<String,String> fileInputParamAttribMap = new LinkedHashMap<String,String>(6);
-
     private Map<String,String> fileNavAttribMap = new LinkedHashMap<String,String>(7);
-
     private Map<String,String> fileInGeoCovAttribMap = new LinkedHashMap<String,String>(8);
-
     private Map<String,String> genericAttribMap = new LinkedHashMap<String,String>(15);
-
     private Map<String,String> projectionMap = null;
-
+    
     private Map<String,ArrayList<Map<String,String>>> productsMap = null;
 
     private String[] prodList = null;
@@ -160,23 +154,23 @@ class HDF4APSStreamMetadata extends IIOMetadata {
         // Attributes Node
         //
         // /////////////////////////////////////////////////////////////
-        IIOMetadataNode attribNode = new IIOMetadataNode("Attributes");
+        final IIOMetadataNode attribNode = new IIOMetadataNode("Attributes");
 
         // /////////////////////////////////////////////////////////////
         // Standard APS Attributes
         // /////////////////////////////////////////////////////////////
-        IIOMetadataNode stdNode = new IIOMetadataNode(STD_NODE);
+        final IIOMetadataNode stdNode = new IIOMetadataNode(STD_NODE);
 
         // File Attributes
-        IIOMetadataNode stdFaNode = buildAttributesNodeFromMap(stdFileAttribMap, STD_FA_NODE);
+        final IIOMetadataNode stdFaNode = buildAttributesNodeFromMap(stdFileAttribMap, STD_FA_NODE);
         stdNode.appendChild(stdFaNode);
 
         // Time Attributes
-        IIOMetadataNode stdTaNode = buildAttributesNodeFromMap(stdTimeAttribMap, STD_TA_NODE);
+        final IIOMetadataNode stdTaNode = buildAttributesNodeFromMap(stdTimeAttribMap, STD_TA_NODE);
         stdNode.appendChild(stdTaNode);
 
         // Sensor Attributes
-        IIOMetadataNode stdSaNode = buildAttributesNodeFromMap(stdSensorAttribMap, STD_SA_NODE);
+        final IIOMetadataNode stdSaNode = buildAttributesNodeFromMap(stdSensorAttribMap, STD_SA_NODE);
         stdNode.appendChild(stdSaNode);
 
         attribNode.appendChild(stdNode);
@@ -184,18 +178,18 @@ class HDF4APSStreamMetadata extends IIOMetadata {
         // ////////////////////////////////////////////////////////////////
         // File Products Attributes
         // ////////////////////////////////////////////////////////////////
-        IIOMetadataNode fpaNode = new IIOMetadataNode(PFA_NODE);
+        final IIOMetadataNode fpaNode = new IIOMetadataNode(PFA_NODE);
 
         // Input Parameter Attributes
-        IIOMetadataNode fpIpaNode = buildAttributesNodeFromMap(fileInputParamAttribMap, PFA_IPA_NODE);
+        final IIOMetadataNode fpIpaNode = buildAttributesNodeFromMap(fileInputParamAttribMap, PFA_IPA_NODE);
         fpaNode.appendChild(fpIpaNode);
 
         // Navigation Attributes
-        IIOMetadataNode fpNaNode = buildAttributesNodeFromMap(fileNavAttribMap, PFA_NA_NODE);
+        final IIOMetadataNode fpNaNode = buildAttributesNodeFromMap(fileNavAttribMap, PFA_NA_NODE);
         fpaNode.appendChild(fpNaNode);
 
         // Input Geographical Coverage Attributes
-        IIOMetadataNode fpIgcaNode = buildAttributesNodeFromMap(fileInGeoCovAttribMap, PFA_IGCA_NODE);
+        final IIOMetadataNode fpIgcaNode = buildAttributesNodeFromMap(fileInGeoCovAttribMap, PFA_IGCA_NODE);
         fpaNode.appendChild(fpIgcaNode);
 
         attribNode.appendChild(fpaNode);
@@ -203,7 +197,7 @@ class HDF4APSStreamMetadata extends IIOMetadata {
         // ////////////////////////////////////////////////////////////////
         // Generic Attributes
         // ////////////////////////////////////////////////////////////////
-        IIOMetadataNode genericNode = buildAttributesNodeFromMap(genericAttribMap, GENERICS_NODE);
+        final IIOMetadataNode genericNode = buildAttributesNodeFromMap(genericAttribMap, GENERICS_NODE);
         attribNode.appendChild(genericNode);
         root.appendChild(attribNode);
 
@@ -256,10 +250,10 @@ class HDF4APSStreamMetadata extends IIOMetadata {
     	throw new UnsupportedOperationException("reset operation is not allowed");
     }
 
-    synchronized void buildMetadata(HDF4APSImageReader directReader) {
+    synchronized void buildMetadata(HDF4APSImageReader reader) {
         try {
-        	
-        	final int numAttributes = directReader.getNumGlobalAttributes();
+            final BaseNetCDFImageReader innerReader = reader.getInnerReader();
+        	final int numAttributes = innerReader.getNumGlobalAttributes();
 
             // number of supported attributes
             final int nStdFileAttribMap = HDF4APSProperties.STD_FA_ATTRIB.length;
@@ -271,7 +265,7 @@ class HDF4APSStreamMetadata extends IIOMetadata {
 
             for (int i = 0; i < numAttributes; i++) {
                 // get Attributes
-                final KeyValuePair keyValuePair = directReader.getGlobalAttribute(i);
+                final KeyValuePair keyValuePair = innerReader.getGlobalAttribute(i);
                 final String attribName = keyValuePair.getKey();
                 final String attribValue = keyValuePair.getValue();
                 // get Attribute Name
@@ -411,7 +405,7 @@ class HDF4APSStreamMetadata extends IIOMetadata {
 //                        projectionMap = buildProjectionAttributesMap(data,
 //                                datatype);
 //                }
-            Map<String,String> originalMap = directReader.projectionMap;
+            Map<String,String> originalMap = reader.projectionMap;
             projectionMap = new LinkedHashMap<String, String>(originalMap.size());
             for (String key : originalMap.keySet()){
             	String value = originalMap.get(key);

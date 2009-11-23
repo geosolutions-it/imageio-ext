@@ -154,7 +154,7 @@ public class GRIB1ImageMetadata extends BaseImageMetadata {
         if (imageReader instanceof GRIB1ImageReader) {
             final int imageIndex = getImageIndex();
             GRIB1ImageReader reader = (GRIB1ImageReader) imageReader;
-            setDatasetName(reader.getName(imageIndex));
+            setDatasetName(reader.getInnerReader().getVariableName(imageIndex));
             setDriverDescription(driverDescription);
             setDriverName(driverName);
         }
@@ -188,7 +188,7 @@ public class GRIB1ImageMetadata extends BaseImageMetadata {
             IIOMetadataNode gdsNode = new IIOMetadataNode(GDS);
             GRIB1ImageReader directReader = (GRIB1ImageReader) imageReader;
             final int imageIndex = getImageIndex();
-            final GribVariableWrapper wrapper = directReader.getGribVariableWrapper(imageIndex);
+            final GribVariableWrapper wrapper = (GribVariableWrapper) directReader.getInnerReader().getVariableWrapper(imageIndex);
             List<KeyValuePair> coordsAttribute = directReader.getCoordinateAttributes();
             for (KeyValuePair pair : coordsAttribute){
             	gdsNode.setAttribute(pair.getKey(),pair.getValue());

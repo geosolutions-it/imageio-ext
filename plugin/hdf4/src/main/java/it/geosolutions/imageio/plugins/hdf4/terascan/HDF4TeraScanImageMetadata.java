@@ -19,6 +19,7 @@ package it.geosolutions.imageio.plugins.hdf4.terascan;
 import it.geosolutions.imageio.core.CoreCommonImageMetadata;
 import it.geosolutions.imageio.ndplugin.BaseImageMetadata;
 import it.geosolutions.imageio.ndplugin.BaseImageReader;
+import it.geosolutions.imageio.plugins.netcdf.BaseNetCDFImageReader;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.KeyValuePair;
 
 import java.io.IOException;
@@ -52,7 +53,8 @@ public class HDF4TeraScanImageMetadata extends BaseImageMetadata {
         super.setMembers(imageReader);
         final int imageIndex = getImageIndex();
         if (imageReader instanceof HDF4TeraScanImageReader) {
-            HDF4TeraScanImageReader reader = (HDF4TeraScanImageReader) imageReader;
+            final HDF4TeraScanImageReader reader = (HDF4TeraScanImageReader) imageReader;
+            final BaseNetCDFImageReader innerReader = reader.getInnerReader();
             setDriverDescription(driverDescription);
             setDriverName(driverName);
             final double scale = reader.getScale(imageIndex);
@@ -83,11 +85,10 @@ public class HDF4TeraScanImageMetadata extends BaseImageMetadata {
             // overviews is always 0
             setNumOverviews(new int[] { 0 });
             
-            HDF4TeraScanImageReader directReader = (HDF4TeraScanImageReader) imageReader;
-            final int numAttributes = directReader.getNumAttributes(imageIndex);
+            final int numAttributes = innerReader.getNumAttributes(imageIndex);
             this.additionalMetadata = new HashMap<String, String>(numAttributes);
             for (int i = 0; i < numAttributes; i++) {
-            	final KeyValuePair attributePair = directReader.getAttribute(imageIndex, i);
+            	final KeyValuePair attributePair = innerReader.getAttribute(imageIndex, i);
                 final String attributeName = attributePair.getKey();
                 final String attributeValue = attributePair.getValue();
                 additionalMetadata.put(attributeName, attributeValue);

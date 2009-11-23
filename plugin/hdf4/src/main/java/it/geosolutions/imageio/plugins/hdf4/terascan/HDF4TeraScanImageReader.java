@@ -17,6 +17,7 @@
 package it.geosolutions.imageio.plugins.hdf4.terascan;
 
 import it.geosolutions.imageio.plugins.hdf4.BaseHDF4ImageReader;
+import it.geosolutions.imageio.plugins.netcdf.BaseNetCDFImageReader;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -27,6 +28,8 @@ import java.util.Set;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
 
+import ucar.ma2.InvalidRangeException;
+import ucar.ma2.Range;
 import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -48,8 +51,6 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
         super(originatingProvider);
     }
 
-    private Map<Integer, TerascanDatasetWrapper> terascanDatasetsWrapperMap = null;
-
     /**
      * Inner class to represent interesting attributes of a Terascan Dataset
      * 
@@ -69,32 +70,37 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
      */
     protected void initializeProfile() throws IOException {
     	boolean checkProducts = true;
-    	final NetcdfDataset dataset = getDataset();
+    	final NetcdfDataset dataset = innerReader.getDataset();
         if (dataset == null) {
             throw new IOException(
                     "Unable to initialize profile due to a null dataset");
         }
         final List<Variable> variables = dataset.getVariables();
         final List<Attribute> attributes = dataset.getGlobalAttributes();
-        setNumGlobalAttributes(attributes.size());
+        innerReader.setNumGlobalAttributes(attributes.size());
         productList = HDF4TeraScanProperties.refineProductList(variables);
-        int numImages = productList!=null?productList.length:0;
+        final int numImages = productList != null ? productList.length : 0;
         setNumImages(numImages);
 
-        terascanDatasetsWrapperMap = new HashMap<Integer, TerascanDatasetWrapper>(numImages);
+        final Map<Range,TerascanDatasetWrapper> indexMap = new HashMap<Range, TerascanDatasetWrapper>(numImages);
 
      // Scanning all the datasets
-        for (Variable var : variables) {
-            final String name = var.getName();
-            for (int j = 0; j < numImages; j++) {
-                // Checking if the actual dataset is a product.
-            	if (!checkProducts || name.equals(productList[j])) {
-                    // Updating the subDatasetsMap map
-                	terascanDatasetsWrapperMap.put(j, new TerascanDatasetWrapper(var));
-                    break;
-                }
-            }
-        }
+        try{
+	        for (Variable var : variables) {
+	            final String name = var.getName();
+	            for (int j = 0; j < numImages; j++) {
+	                // Checking if the actual dataset is a product.
+	            	if (!checkProducts || name.equals(productList[j])) {
+	                    // Updating the subDatasetsMap map
+	            		indexMap.put(new Range(j,j), new TerascanDatasetWrapper(var));
+	                    break;
+	                }
+	            }
+	        }
+        } catch (InvalidRangeException e) {
+	    	throw new IllegalArgumentException( "Error occurred during NetCDF file parsing", e);
+		}
+	    innerReader.setIndexMap(indexMap);
     }
 
     /**
@@ -105,18 +111,16 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
      */
     @Override
     protected HDF4DatasetWrapper getDatasetWrapper(int imageIndex) {
-        checkImageIndex(imageIndex);
-        final TerascanDatasetWrapper wrapper = terascanDatasetsWrapperMap.get(imageIndex);
-        return wrapper;
+    	return (HDF4DatasetWrapper) innerReader.getVariableWrapper(imageIndex);
     }
 
+    BaseNetCDFImageReader getInnerReader() {
+		return innerReader;
+	}
+    
     public void dispose() {
         super.dispose();
         productList = null;
-        if (terascanDatasetsWrapperMap!=null)
-        	terascanDatasetsWrapperMap.clear();
-        terascanDatasetsWrapperMap = null;
-        setNumGlobalAttributes(-1);
         streamMetadata = null;
     }
 
@@ -201,10 +205,6 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
         if (offsetS != null && offsetS.trim().length() > 0)
             offset = Double.parseDouble(offsetS);
         return offset;
-    }
-
-    int getNumAttributes(int imageIndex) {
-        return getDatasetWrapper(imageIndex).getNumAttributes();
     }
 
     public void reset() {

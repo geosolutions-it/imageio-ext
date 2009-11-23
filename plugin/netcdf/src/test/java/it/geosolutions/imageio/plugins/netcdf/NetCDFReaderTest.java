@@ -58,16 +58,16 @@ public class NetCDFReaderTest {
     @org.junit.Test
     public void testRead() throws IOException {
         File inputFile=new File(fileName);
-        try {
-	        inputFile = TestData.file(this, fileName);
+//        try {
+//	        inputFile = TestData.file(this, fileName);
 	        if (!inputFile.exists()) {
 	            warningMessage();
 	            return;
 	        }
-        } catch (FileNotFoundException fnfe) {
-        		warningMessage();
-				return;
-			}
+//        } catch (FileNotFoundException fnfe) {
+//        		warningMessage();
+//				return;
+//			}
         final ImageReader ncReader = new NetCDFImageReaderSpi().createReaderInstance();
         ncReader.setInput(inputFile);
         int numImages = ncReader.getNumImages(false);
@@ -86,8 +86,7 @@ public class NetCDFReaderTest {
                     .getAsTree(NetCDFImageMetadata.nativeMetadataFormatName));
 
             if (TestData.isInteractiveTest()) {
-                ImageIOUtilities.visualize(ncReader.read(i),
-                        ((NetCDFImageReader) ncReader).getVariableName(i),true);
+                ImageIOUtilities.visualize(ncReader.read(i),"",true);
             } else
                 ncReader.read(i);
             ncReader.dispose();

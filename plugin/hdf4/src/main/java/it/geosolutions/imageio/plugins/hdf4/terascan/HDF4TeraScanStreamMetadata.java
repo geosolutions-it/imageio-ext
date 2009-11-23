@@ -18,6 +18,7 @@ package it.geosolutions.imageio.plugins.hdf4.terascan;
 
 import it.geosolutions.imageio.core.CoreCommonImageMetadata;
 import it.geosolutions.imageio.ndplugin.BaseImageReader;
+import it.geosolutions.imageio.plugins.netcdf.BaseNetCDFImageReader;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.KeyValuePair;
 import it.geosolutions.imageio.utilities.Utilities;
 
@@ -35,12 +36,12 @@ class HDF4TeraScanStreamMetadata extends IIOMetadata {
      */
     public static final String nativeMetadataFormatName = "it_geosolutions_imageio_plugins_jhdf_hdf_avhrr_streamMetadata_1.0";
 
-    private BaseImageReader reader;
+    private BaseImageReader imageReader;
 
     public final static String GLOBAL_ATTRIBUTES = "GlobalAttributes";
 
-    public HDF4TeraScanStreamMetadata(final BaseImageReader reader) {
-        this.reader = reader;
+    public HDF4TeraScanStreamMetadata(final BaseImageReader imageReader) {
+        this.imageReader = imageReader;
     }
 
     /**
@@ -60,12 +61,13 @@ class HDF4TeraScanStreamMetadata extends IIOMetadata {
         //
         // ////////////////////////////////////////////////////////////////////
         final IIOMetadataNode node = new IIOMetadataNode(GLOBAL_ATTRIBUTES);
-        if (reader instanceof HDF4TeraScanImageReader) {
-            final HDF4TeraScanImageReader directReader = (HDF4TeraScanImageReader) reader;
-            final int numAttributes = directReader.getNumGlobalAttributes();
+        if (imageReader instanceof HDF4TeraScanImageReader) {
+            final HDF4TeraScanImageReader reader = (HDF4TeraScanImageReader) imageReader;
+            final BaseNetCDFImageReader innerReader = reader.getInnerReader();
+            final int numAttributes = innerReader.getNumGlobalAttributes();
             try {
                 for (int i = 0; i < numAttributes; i++) {
-                	 final KeyValuePair keyValuePair = directReader.getGlobalAttribute(i);
+                	 final KeyValuePair keyValuePair = innerReader.getGlobalAttribute(i);
                      String attribName = keyValuePair.getKey();
                      final String attribValue = keyValuePair.getValue();
                     // //

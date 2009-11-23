@@ -17,8 +17,6 @@
 package it.geosolutions.imageio.plugins.hdf4;
 
 import it.geosolutions.imageio.ndplugin.BaseImageReaderSpi;
-import it.geosolutions.imageio.plugins.hdf4.aps.HDF4APSProperties;
-import it.geosolutions.imageio.plugins.hdf4.terascan.HDF4TeraScanProperties;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 
@@ -38,7 +36,7 @@ import ucar.nc2.iosp.hdf4.H4iosp;
  * 
  * @author Daniele Romagnoli
  */
-public class HDF4ImageReaderSpi extends BaseImageReaderSpi {
+public abstract class HDF4ImageReaderSpi extends BaseImageReaderSpi {
 
     private static final Logger LOGGER = Logger.getLogger(HDF4ImageReaderSpi.class.toString());
 
@@ -50,7 +48,7 @@ public class HDF4ImageReaderSpi extends BaseImageReaderSpi {
 
     static final String version = "1.0";
 
-    static final String readerCN = "it.geosolutions.imageio.plugins.hdf4.HDF4ImageReaderProxy";
+    static final String readerCN = "it.geosolutions.imageio.plugins.hdf4.BaseHDF4ImageReader";
 
     // writerSpiNames
     static final String[] wSN = { null };
@@ -99,10 +97,32 @@ public class HDF4ImageReaderSpi extends BaseImageReaderSpi {
                 extraImageMetadataFormatClassNames);
 
         if (LOGGER.isLoggable(Level.FINE))
-            LOGGER.fine("HDF4APSImageReaderSpi Constructor");
+            LOGGER.fine("HDF4TeraScanImageReaderSpi Constructor");
     }
 
-    public boolean canDecodeInput(Object input) throws IOException {
+    public HDF4ImageReaderSpi(final String readerCN) {
+    	super(vendorName,
+                version,
+                formatNames,
+                suffixes,
+                MIMETypes,
+                readerCN, 
+                DIRECT_STANDARD_INPUT_TYPES,
+                wSN, // writer Spi Names
+                supportsStandardStreamMetadataFormat,
+                nativeStreamMetadataFormatName,
+                nativeStreamMetadataFormatClassName,
+                extraStreamMetadataFormatNames,
+                extraStreamMetadataFormatClassNames,
+                supportsStandardImageMetadataFormat,
+                nativeImageMetadataFormatName,
+                nativeImageMetadataFormatClassName,
+                extraImageMetadataFormatNames,
+                extraImageMetadataFormatClassNames);
+
+	}
+
+	public boolean canDecodeInput(Object input) throws IOException {
         boolean found = false;
         
         if (input instanceof FileImageInputStreamExtImpl) {
@@ -121,19 +141,7 @@ public class HDF4ImageReaderSpi extends BaseImageReaderSpi {
             	
             	// now, check if we can read it
             	try{
-	            	// APS
-	            	final String attrib = NetCDFUtilities.getGlobalAttributeAsString(dataset, HDF4APSProperties.STD_FA_CREATESOFTWARE); 
-	                if (attrib != null && attrib.length()>0 && attrib.startsWith("APS"))
-	                                found = true;
-	                
-	                // TERASCAN
-	            	final int productsNum = HDF4TeraScanProperties.terascanProducts.getNProducts();
-	            	for (int i = 0; i < productsNum; i++) {
-	            		if (dataset.findVariable(HDF4TeraScanProperties.terascanProducts.get(i).getProductName())!=null){
-	            			found = true;
-	            			break;
-	            		}
-	            	}
+	            	found = isValidDataset(dataset);
             	}
             	finally {
             		try{
@@ -149,7 +157,11 @@ public class HDF4ImageReaderSpi extends BaseImageReaderSpi {
         return found;
     }
 
-    public ImageReader createReaderInstance(Object input) throws IOException {
+    protected boolean isValidDataset(final NetcdfDataset dataset) {
+		return false;
+	}
+
+	public ImageReader createReaderInstance(Object input) throws IOException {
         return new HDF4ImageReaderProxy(this);
     }
 

@@ -19,6 +19,7 @@ package it.geosolutions.imageio.plugins.hdf4.aps;
 import it.geosolutions.imageio.core.CoreCommonImageMetadata;
 import it.geosolutions.imageio.ndplugin.BaseImageMetadata;
 import it.geosolutions.imageio.ndplugin.BaseImageReader;
+import it.geosolutions.imageio.plugins.netcdf.BaseNetCDFImageReader;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.KeyValuePair;
 
 import java.io.IOException;
@@ -54,28 +55,29 @@ public class HDF4APSImageMetadata extends BaseImageMetadata {
         super.setMembers(imageReader);
         final int imageIndex = getImageIndex();
         if (imageReader instanceof HDF4APSImageReader) {
-            HDF4APSImageReader reader = (HDF4APSImageReader) imageReader;
+            final HDF4APSImageReader reader = (HDF4APSImageReader) imageReader;
+            final BaseNetCDFImageReader innerReader = reader.getInnerReader();
             setDriverDescription(driverDescription);
             setDriverName(driverName);
-            String scale = reader.getAttributeAsString(imageIndex,HDF4APSProperties.PDSA_SCALINGSLOPE);
+            String scale = innerReader.getAttributeAsString(imageIndex,HDF4APSProperties.PDSA_SCALINGSLOPE);
             if (scale != null && scale.trim().length() > 0) {
                 setScales(new Double[] { Double.parseDouble(scale) });
             }
-            String offset = reader.getAttributeAsString(imageIndex,HDF4APSProperties.PDSA_SCALINGINTERCEPT);
+            String offset = innerReader.getAttributeAsString(imageIndex,HDF4APSProperties.PDSA_SCALINGINTERCEPT);
             if (offset != null && offset.trim().length() > 0) {
                 setOffsets(new Double[] { Double.parseDouble(offset) });
             }
-            String noData = reader.getAttributeAsString(imageIndex,HDF4APSProperties.PDSA_INVALID);
+            String noData = innerReader.getAttributeAsString(imageIndex,HDF4APSProperties.PDSA_INVALID);
             if (noData != null && noData.trim().length() > 0) {
                 setNoDataValues(new Double[] { Double.parseDouble(noData) });
             }
 
             // TODO: Setting valid range as max min is ok?
-            String validRange = reader.getAttributeAsString(imageIndex,HDF4APSProperties.PDSA_VALIDRANGE);
+            String validRange = innerReader.getAttributeAsString(imageIndex,HDF4APSProperties.PDSA_VALIDRANGE);
             
             // ValidRange not found. Try with BrowseRange. Is that ok?
             if (validRange == null || validRange.trim().length() < 1)
-            	validRange = reader.getAttributeAsString(imageIndex, HDF4APSProperties.PDSA_BROWSERANGES);
+            	validRange = innerReader.getAttributeAsString(imageIndex, HDF4APSProperties.PDSA_BROWSERANGES);
             if (validRange != null && validRange.trim().length() > 0) {
                 String values[] = validRange.split(" ");
                 if (values.length == 2) {
@@ -90,11 +92,10 @@ public class HDF4APSImageMetadata extends BaseImageMetadata {
             // overviews is always 0, we can just do decimation on reading
             setNumOverviews(new int[] { 0 });
             
-            final HDF4APSImageReader directReader = (HDF4APSImageReader) imageReader;
-            final int numAttributes = directReader.getNumAttributes(imageIndex);
+            final int numAttributes = innerReader.getNumAttributes(imageIndex);
             this.additionalMetadata = new HashMap<String, String>(numAttributes);
             for (int i = 0; i < numAttributes; i++) {
-            	final KeyValuePair attributePair = directReader.getAttribute(imageIndex, i);
+            	final KeyValuePair attributePair = innerReader.getAttribute(imageIndex, i);
                 final String attributeName = attributePair.getKey();
                 final String attributeValue = attributePair.getValue();
                 additionalMetadata.put(attributeName, attributeValue);

@@ -16,6 +16,8 @@
 package it.geosolutions.imageio.plugins.grib1;
 
 import it.geosolutions.imageio.ndplugin.BaseImageReader;
+import it.geosolutions.imageio.plugins.netcdf.BaseNetCDFImageReader;
+import it.geosolutions.imageio.plugins.netcdf.BaseVariableWrapper;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.CheckType;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.KeyValuePair;
@@ -43,7 +45,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageReadParam;
@@ -80,7 +81,13 @@ import ucar.nc2.dataset.VariableDS;
  */
 public class GRIB1ImageReader extends BaseImageReader {
 	
-    protected final static Logger LOGGER = Logger.getLogger(GRIB1ImageReader.class.toString());
+	private BaseNetCDFImageReader reader;
+	
+    BaseNetCDFImageReader getInnerReader() {
+		return reader;
+	}
+
+	protected final static Logger LOGGER = Logger.getLogger(GRIB1ImageReader.class.toString());
     
 	private Map<String,Variable> boundsMap = new HashMap<String,Variable>();
 	
@@ -88,10 +95,6 @@ public class GRIB1ImageReader extends BaseImageReader {
 	
 	private Variable horizontalGrid;
 	
-//    private int numGlobalAttributes;
-	
-    private NetcdfDataset dataset;
-    
 	private HashMap<Range, GribVariableWrapper> indexMap;
 	
 	static class VerticalLevel{
@@ -198,24 +201,12 @@ public class GRIB1ImageReader extends BaseImageReader {
 	/**
      * A class wrapping a GribRecord and its basic properties and structures
      */
-    class GribVariableWrapper {
+    class GribVariableWrapper extends BaseVariableWrapper{
 
 		private VerticalLevel verticalLevel;
     	
-		private Variable variable;
-		
-		private String name;
-
-        private int width;
-
-        private int height;
-
 		private String boundName;
 		
-        private SampleModel sampleModel;
-
-        private int rank;
-
         private String paramID;
 
 		private List<CoordinateAxis> axes;
@@ -238,25 +229,6 @@ public class GRIB1ImageReader extends BaseImageReader {
 
 		private String parameterName;
 		
-        public Variable getVariable() {
-			return variable;
-		}
-    	
-        public int getRank() {
-			return rank;
-		}
-
-        public String getName() {
-			return name;
-		}
-
-		public String getTimeUnits() {
-			return timeUnits;
-		}
-
-		public String getTimeName() {
-			return timeName;
-		}
         /**
          * Constructor of the {@link GribVariableWrapper} class which allows to
          * wrap a grib record related to the input imageIndex
@@ -267,16 +239,16 @@ public class GRIB1ImageReader extends BaseImageReader {
          *                {@link GribVariableWrapper}
          */
         public GribVariableWrapper(final Variable variable, final Range range) {
-            this.variable = variable;
+            super(variable);
             this.range = range;
-            rank = variable.getRank();
-            width = variable.getDimension(rank - NetCDFUtilities.X_DIMENSION).getLength();
-            height = variable.getDimension(rank - NetCDFUtilities.Y_DIMENSION).getLength();
+            final int rank = variable.getRank();
+			final int width = variable.getDimension(rank - NetCDFUtilities.X_DIMENSION).getLength();
+            final int height = variable.getDimension(rank - NetCDFUtilities.Y_DIMENSION).getLength();
             final List<Dimension> dimensions = variable.getDimensions();
             axes = new LinkedList<CoordinateAxis>();
             for (Dimension dim : dimensions){
             	final String dimName = dim.getName();
-            	final Variable coordinate = dataset.findVariable(dimName);
+            	final Variable coordinate = reader.getDataset().findVariable(dimName);
             	if (coordinate!=null){
             		CoordinateAxis axis = (CoordinateAxis)coordinate;
             		if (!coordSysMap.containsKey(dimName)){
@@ -286,7 +258,7 @@ public class GRIB1ImageReader extends BaseImageReader {
             		final Attribute bounds = coordinate.findAttribute(GRIB1Utilities.BOUNDS);
             		if (bounds!=null){
             			final String boundName = bounds.getStringValue();
-            			final Variable boundVar = dataset.findVariable(boundName);
+            			final Variable boundVar = reader.getDataset().findVariable(boundName);
             			if (boundVar!=null){
             				this.boundName = boundName;
             				if (!boundsMap.containsKey(boundName)){
@@ -298,8 +270,7 @@ public class GRIB1ImageReader extends BaseImageReader {
             }
             
             final int bufferType = NetCDFUtilities.getRawDataType(variable);
-          	name = variable.getName();
-            sampleModel = new BandedSampleModel(bufferType, width, height, 1);
+            setSampleModel(new BandedSampleModel(bufferType, width, height, 1));
             initParam();
             initVerticalLevel();
             Variable temporalAxis = getTemporalAxis();
@@ -311,12 +282,12 @@ public class GRIB1ImageReader extends BaseImageReader {
         }
 
         private void initParam() {
-        	productDefinitionType = NetCDFUtilities.getAttributesAsString(variable, GRIB1Utilities.GRIB_PRODUCT_DEFINITION_TYPE);
-            parameterName = NetCDFUtilities.getAttributesAsString(variable, GRIB1Utilities.GRIB_PARAM_NAME);
-            parameterUnit = NetCDFUtilities.getAttributesAsString(variable, GRIB1Utilities.GRIB_PARAM_UNIT);
-            parameterCenterID = NetCDFUtilities.getAttributesAsNumber(variable, GRIB1Utilities.GRIB_PARAM_CENTER_ID).intValue();
-            parameterNumber = NetCDFUtilities.getAttributesAsNumber(variable, GRIB1Utilities.GRIB_PARAM_NUMBER).intValue();
-            parameterTableVersion = NetCDFUtilities.getAttributesAsNumber(variable, GRIB1Utilities.GRIB_TABLE_ID).intValue();
+        	productDefinitionType = NetCDFUtilities.getAttributesAsString(getVariable(), GRIB1Utilities.GRIB_PRODUCT_DEFINITION_TYPE);
+            parameterName = NetCDFUtilities.getAttributesAsString(getVariable(), GRIB1Utilities.GRIB_PARAM_NAME);
+            parameterUnit = NetCDFUtilities.getAttributesAsString(getVariable(), GRIB1Utilities.GRIB_PARAM_UNIT);
+            parameterCenterID = NetCDFUtilities.getAttributesAsNumber(getVariable(), GRIB1Utilities.GRIB_PARAM_CENTER_ID).intValue();
+            parameterNumber = NetCDFUtilities.getAttributesAsNumber(getVariable(), GRIB1Utilities.GRIB_PARAM_NUMBER).intValue();
+            parameterTableVersion = NetCDFUtilities.getAttributesAsNumber(getVariable(), GRIB1Utilities.GRIB_TABLE_ID).intValue();
 			
 		}
 
@@ -324,7 +295,7 @@ public class GRIB1ImageReader extends BaseImageReader {
          * Setting vertical level 
          */
         private void initVerticalLevel() {
-        	final Number levelNum = NetCDFUtilities.getAttributesAsNumber(variable, GRIB1Utilities.GRIB_LEVEL_TYPE);
+        	final Number levelNum = NetCDFUtilities.getAttributesAsNumber(getVariable(), GRIB1Utilities.GRIB_LEVEL_TYPE);
             int levelType = levelNum != null ? levelNum.intValue() : GRIB1Utilities.UNDEFINED_NUMBER;
             String levelName = GribPDSLevel.getNameShort(levelType);
             String levelUnits = GribPDSLevel.getUnits(levelType);
@@ -351,30 +322,24 @@ public class GRIB1ImageReader extends BaseImageReader {
 			return productDefinitionType;
 		}
 
-		/** Return the width of the wrapped GRIB record */
-        public int getHeight() {
-            return height;
-        }
-
-        /** Return the width of the wrapped GRIB record */
-        public int getWidth() {
-            return width;
-        }
-
-        /** Return the {@code SampleModel} used for the wrapped GRIB record */
-        public SampleModel getSampleModel() {
-            return sampleModel;
-        }
-
         public String getParamID() {
             return paramID;
         }
+        
+    	public String getTimeUnits() {
+			return timeUnits;
+		}
+
+		public String getTimeName() {
+			return timeName;
+		}
+
 
         public String getLevelValues(final int index) {
 			if (!getVerticalLevel().isHasExplicitVerticalAxis())
 				return "";
 			else {
-				final int zIndex = NetCDFUtilities.getZIndex(variable, range, index);
+				final int zIndex = NetCDFUtilities.getZIndex(getVariable(), range, index);
 				if (boundName != null) {
 					Variable bound = boundsMap.get(boundName);
 					if (bound != null) {
@@ -398,7 +363,7 @@ public class GRIB1ImageReader extends BaseImageReader {
 			if (temporalAxis==null)
 				return "";
 			else {
-				final int tIndex = NetCDFUtilities.getTIndex(variable, range, index);
+				final int tIndex = NetCDFUtilities.getTIndex(getVariable(), range, index);
 				//TODO: Check data with temporal bounds
 //				if (boundName != null) {
 //					Variable bound = boundsMap.get(boundName);
@@ -496,40 +461,23 @@ public class GRIB1ImageReader extends BaseImageReader {
 
 	}
 
-    /**
-     * Sets the input source to use within this reader. {@code URI}s,
-     * {@code File}s (also representing a Directory), {@code String}s (also
-     * representing the path of a Directory), {@code URL}s,
-     * {@code ImageInputStream}s are accepted input types.<BR>
-     * Other parameters ({@code seekForwardOnly} and {@code ignoreMetadata})
-     * are actually ignored.
-     * 
-     * @param input
-     *                the {@code Object} to be set as input of this reader.
-     * 
-     * @throws {@link IllegalArgumentException}
-     *                 in case the provided input {@code Object} cannot be
-     *                 properly parsed and used as input for the reader.
-     */
-    public void setInput(Object input, boolean seekForwardOnly,
-            boolean ignoreMetadata) {
-        try {
-            if (dataset != null)
-                reset();
+    @Override
+	public void setInput(Object input, boolean seekForwardOnly,
+			boolean ignoreMetadata) {
+		super.setInput(input, seekForwardOnly, ignoreMetadata);
+		reader.setInput(input, seekForwardOnly, ignoreMetadata);
+		initialize();
+	}
 
-            if (dataset == null) {
-                dataset = NetCDFUtilities.getDataset(input);
-            }
+	@Override
+	public void setInput(Object input, boolean seekForwardOnly) {
+		this.setInput(input, seekForwardOnly, false);
+	}
 
-            super.setInput(input, seekForwardOnly, ignoreMetadata);
-            initialize();
-
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Error occurred during NetCDF file parsing", e);
-        } catch (InvalidRangeException e) {
-            throw new IllegalArgumentException( "Error occurred during NetCDF file parsing", e);
-        }
-    }
+	@Override
+	public void setInput(Object input) {
+		this.setInput(input, false, false);
+	}
 
     /**
      * Initialize main properties for this reader.
@@ -537,9 +485,11 @@ public class GRIB1ImageReader extends BaseImageReader {
      * @throws exception
      *                 {@link InvalidRangeException}
      */
-    private synchronized void initialize() throws InvalidRangeException {
+    private synchronized void initialize(){
         int numImages = 0;
         indexMap = new HashMap<Range, GribVariableWrapper>();
+        final NetcdfDataset dataset = reader.getDataset();
+        try {
         if (dataset != null) {
 
             final List<Variable> variables = dataset.getVariables();
@@ -575,93 +525,21 @@ public class GRIB1ImageReader extends BaseImageReader {
                 }
             }
         }
+        } catch (InvalidRangeException e) {
+        	throw new IllegalArgumentException( "Error occurred during NetCDF file parsing", e);
+		}
         setNumImages(numImages);
+        reader.setIndexMap(indexMap);
 //        numGlobalAttributes = 0;
 //        final List<Attribute> globalAttributes = dataset.getGlobalAttributes();
 //        if (globalAttributes != null && !globalAttributes.isEmpty())
 //            numGlobalAttributes = globalAttributes.size();
     }
 
-    /**
-     * Sets the input source to use within this reader. {@code URI}s,
-     * {@code File}s (also representing a Directory), {@code String}s (also
-     * representing the path of a Directory), {@code URL}s,
-     * {@code ImageInputStream}s are accepted input types.<BR>
-     * The parameter ({@code seekForwardOnly} is actually ignored.
-     * 
-     * @param input
-     *                the {@code Object} to be set as input of this reader.
-     * 
-     * @throws {@link IllegalArgumentException}
-     *                 in case the provided input {@code Object} cannot be
-     *                 properly parsed and used as input for the reader.
-     */
-    public void setInput(Object input, boolean seekForwardOnly) {
-        this.setInput(input);
-    }
-
-    /**
-     * Sets the input source to use within this reader. {@code URI}s,
-     * {@code File}s (also representing a Directory), {@code String}s (also
-     * representing the path of a Directory), {@code URL}s,
-     * {@code ImageInputStream}s are accepted input types.<BR>
-     * 
-     * @param input
-     *                the {@code Object} to be set as input of this reader.
-     * 
-     * @throws {@link IllegalArgumentException}
-     *                 in case the provided input {@code Object} cannot be
-     *                 properly parsed and used as input for the reader.
-     */
-    public void setInput(Object input) {
-        this.setInput(input, true, true);
-    }
-
     public GRIB1ImageReader(ImageReaderSpi originatingProvider) {
         super(originatingProvider);
     }
 
-    /**
-     * Returns an {@code Iterator} containing possible image types to which the
-     * requested image may be decoded, in the form of
-     * {@code ImageTypeSpecifiers}s. At least one legal image type will be
-     * returned.
-     * 
-     * @param imageIndex
-     *                the index of the image to be retrieved.
-     * 
-     * @return an {@code Iterator} containing the image types.
-     */
-    public Iterator<ImageTypeSpecifier> getImageTypes(int imageIndex)
-            throws IOException {
-        final List<ImageTypeSpecifier> l = new java.util.ArrayList<ImageTypeSpecifier>(1);
-        // Getting a proper GribVariableWrapper for the specified index
-        final GribVariableWrapper gw = getGribVariableWrapper(imageIndex);
-        final SampleModel sm = gw.getSampleModel();
-        ImageTypeSpecifier imageType = new ImageTypeSpecifier(GRIB1Utilities.getColorModel(sm.getDataType()), sm);
-        l.add(imageType);
-        return l.iterator();
-    }
-
-    /**
-     * Returns a {@link GribVariableWrapper} instance given a specified
-     * imageIndex.
-     * 
-     * @param imageIndex
-     *                the index of the record for which to retrieve a
-     *                {@link GribVariableWrapper}
-     * @return a {@link GribVariableWrapper}.
-     */
-    GribVariableWrapper getGribVariableWrapper(int imageIndex) {
-        checkImageIndex(imageIndex);
-        GribVariableWrapper wrapper = null;
-        for (Range range : indexMap.keySet()) {
-            if (range.contains(imageIndex) && range.first() <= imageIndex&& imageIndex < range.last()) {
-                wrapper = indexMap.get(range);
-            }
-        }
-        return wrapper;
-    }
 
     /**
      * Returns the width of the specified image.
@@ -672,7 +550,7 @@ public class GRIB1ImageReader extends BaseImageReader {
      * @throws IOException
      */
     public int getWidth(int imageIndex) throws IOException {
-        return getGribVariableWrapper(imageIndex).getWidth();
+    	return reader.getWidth(imageIndex);
     }
 
     /**
@@ -684,7 +562,7 @@ public class GRIB1ImageReader extends BaseImageReader {
      * @throws IOException
      */
     public int getHeight(int imageIndex) throws IOException {
-        return getGribVariableWrapper(imageIndex).getHeight();
+        return reader.getHeight(imageIndex);
     }
 
 
@@ -842,59 +720,13 @@ public class GRIB1ImageReader extends BaseImageReader {
      */
     public void dispose() {
         super.dispose();
-        try {
-            if (dataset != null) {
-                dataset.close();
-            }
-        } catch (IOException e) {
-            if (LOGGER.isLoggable(Level.WARNING))
-                LOGGER.warning("Errors closing NetCDF dataset."
-                        + e.getLocalizedMessage());
-        } finally {
-            dataset = null;
-        }
+        reader.dispose();
         
     }
 
-    /**
-     * Returns {@code true} since this plug-in also supports reading just a
-     * Raster of pixel data
-     */
-    public boolean canReadRaster() {
-        return true;
-    }
-
-    /**
-     * Returns {@code false} since the image is not organized into tiles.
-     */
-    public boolean isImageTiled(int imageIndex) throws IOException {
-        return false;
-    }
-
-    /**
-     * Returns a {@code RenderedImage} object that contains the contents of the
-     * image indexed by {@code imageIndex}.
-     * 
-     * @param imageIndex
-     *                the index of the required image
-     * @param param
-     *                an {@code ImageReadParam} used to customize the reading
-     *                process, or {@code null}
-     * @return the requested image as a {@code RenderedImage}
-     */
-    public RenderedImage readAsRenderedImage(int imageIndex,
-            ImageReadParam param) throws IOException {
-        return read(imageIndex, param);
-    }
-
-    /**
-     * Reset the status of this reader
-     */
-    public void reset() {
-        dispose();
-    }
-
-	public String getName(final int imageIndex) {
-		return getGribVariableWrapper(imageIndex).getName();
+	@Override
+	public Iterator<ImageTypeSpecifier> getImageTypes(int imageIndex)
+			throws IOException {
+		return reader.getImageTypes(imageIndex);
 	}
 }

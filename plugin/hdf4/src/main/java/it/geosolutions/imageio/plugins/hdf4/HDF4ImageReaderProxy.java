@@ -42,7 +42,7 @@ public class HDF4ImageReaderProxy extends BaseHDF4ImageReader{
 	protected HDF4ImageReaderProxy(ImageReaderSpi originatingProvider) {
 		super(originatingProvider);
 		if(!(originatingProvider instanceof HDF4ImageReaderSpi))
-			throw new IllegalArgumentException("The originatingProvider is not of type HDF4ImageReaderSpi but of type "+originatingProvider.getClass().toString());
+			throw new IllegalArgumentException("The originatingProvider is not of type HDF4TeraScanImageReaderSpi but of type "+originatingProvider.getClass().toString());
 	}
 
 	public void dispose() {
@@ -85,10 +85,6 @@ public class HDF4ImageReaderProxy extends BaseHDF4ImageReader{
 	public Iterator<ImageTypeSpecifier> getImageTypes(int imageIndex)
 			throws IOException {
 		return wrappee.getImageTypes(imageIndex);
-	}
-
-	public int getNumGlobalAttributes() {
-		return wrappee.getNumGlobalAttributes();
 	}
 
 	public IIOMetadata getStreamMetadata() throws IOException {
