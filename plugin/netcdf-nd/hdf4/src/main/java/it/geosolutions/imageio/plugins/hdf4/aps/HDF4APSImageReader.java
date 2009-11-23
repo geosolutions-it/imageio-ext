@@ -17,12 +17,14 @@
 package it.geosolutions.imageio.plugins.hdf4.aps;
 
 import it.geosolutions.imageio.plugins.hdf4.BaseHDF4ImageReader;
+import it.geosolutions.imageio.plugins.hdf4.HDF4Utilities;
 import it.geosolutions.imageio.plugins.netcdf.BaseNetCDFImageReader;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities;
 
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -253,4 +255,5 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
 	protected HDF4DatasetWrapper getDatasetWrapper(int imageIndex) {
 		return (HDF4DatasetWrapper) reader.getVariableWrapper(imageIndex);
 	}
+
 }

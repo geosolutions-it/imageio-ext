@@ -24,10 +24,10 @@ class HDF4APSStreamMetadataFormat extends IIOMetadataFormatImpl {
     public HDF4APSStreamMetadataFormat() {
         super(HDF4APSStreamMetadata.nativeMetadataFormatName,
                 IIOMetadataFormatImpl.CHILD_POLICY_ALL);
-        addElement("StandardAPSAttributes",
+        addElement("StandardHDFAPSProperties",
                 HDF4APSStreamMetadata.nativeMetadataFormatName, CHILD_POLICY_ALL);
 
-        addElement("FileAttributes", "StandardAPSAttributes", CHILD_POLICY_EMPTY);
+        addElement("FileAttributes", "StandardHDFAPSProperties", CHILD_POLICY_EMPTY);
         addAttribute("FileAttributes", HDF4APSProperties.STD_FA_FILE, DATATYPE_STRING, false, null);
         addAttribute("FileAttributes", HDF4APSProperties.STD_FA_FILECLASSIFICATION, DATATYPE_STRING, true, null);
         addAttribute("FileAttributes", HDF4APSProperties.STD_FA_FILESTATUS, DATATYPE_STRING, false, null);

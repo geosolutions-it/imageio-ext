@@ -30,11 +30,11 @@ import javax.imageio.metadata.IIOMetadataNode;
 
 import org.w3c.dom.Node;
 
-class HDF4TeraScanStreamMetadata extends IIOMetadata {
+public class HDF4TeraScanStreamMetadata extends IIOMetadata {
     /**
      * The name of the native metadata format for this object.
      */
-    public static final String nativeMetadataFormatName = "it_geosolutions_imageio_plugins_jhdf_hdf_avhrr_streamMetadata_1.0";
+    public static final String nativeMetadataFormatName = "it_geosolutions_imageio_plugins_hdf4_terascan_TeraScanstreamMetadata_1.0";
 
     private BaseImageReader imageReader;
 

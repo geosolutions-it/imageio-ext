@@ -1,0 +1,47 @@
+/*
+ *    ImageI/O-Ext - OpenSource Java Image translation Library
+ *    http://www.geo-solutions.it/
+ *    https://imageio-ext.dev.java.net/
+ *    (C) 2007 - 2009, GeoSolutions
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    either version 3 of the License, or (at your option) any later version.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+package it.geosolutions.imageio.plugins.hdf4;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+public class HDF4Utilities {
+	
+	private final static String TERASCAN_DATETIME_FORMAT = "yyyy/MM/dd HH:mm:ss";
+		
+	private final static String APS_DATETIME_FORMAT = "E M d HH:mm:ss"; 
+	
+	private static Map<String, SimpleDateFormat> DATE_FORMATTER = new HashMap<String,SimpleDateFormat>(2);
+
+	public static Date getDateTime(final String toBeParsed, final String inputFormat){
+		SimpleDateFormat sdf = null;
+		if (!DATE_FORMATTER.containsKey(inputFormat)){
+			sdf = new SimpleDateFormat(inputFormat);
+			DATE_FORMATTER.put(inputFormat , sdf);
+		}
+		else 
+			sdf = DATE_FORMATTER.get(inputFormat);
+		try {
+			return sdf.parse(toBeParsed);
+		} catch (ParseException e) {
+			return null;
+		}
+	}
+}

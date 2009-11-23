@@ -39,6 +39,7 @@ import java.awt.image.Raster;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -363,4 +364,5 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
 	public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
 		throw new UnsupportedOperationException("Change me as soon as possible to use corecommonimagemetadata");
 	}
+	
 }

@@ -37,8 +37,8 @@ import org.w3c.dom.Node;
  * @author Simone Giannecchini, GeoSolutions SAS
  *
  */
-class HDF4APSStreamMetadata extends IIOMetadata {
-    public static final String nativeMetadataFormatName = "it_geosolutions_imageio_plugins_jhdf_aps_APSStreamMetadata_1.0";
+public class HDF4APSStreamMetadata extends IIOMetadata {
+    public static final String nativeMetadataFormatName = "it_geosolutions_imageio_plugins_hdf4_aps_APSStreamMetadata_1.0";
 
     public static final String PFA_NODE = "ProductFilesAttributes";
     
@@ -418,5 +418,4 @@ class HDF4APSStreamMetadata extends IIOMetadata {
             		" to HDF during StreamMetadata setting",e);
         }
     }
-   
 }

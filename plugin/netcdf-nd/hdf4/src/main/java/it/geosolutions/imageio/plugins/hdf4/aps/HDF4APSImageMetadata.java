@@ -37,7 +37,7 @@ import org.w3c.dom.Node;
  */
 public class HDF4APSImageMetadata extends BaseImageMetadata {
 	
-    public static final String nativeMetadataFormatName = "it_geosolutions_imageio_plugins_jhdf_aps_APSImageMetadata_1.0";
+    public static final String nativeMetadataFormatName = "it_geosolutions_imageio_plugins_hdf4_aps_APSImageMetadata_1.0";
 
     private final static String driverName = "HDF4";
 

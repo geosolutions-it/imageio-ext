@@ -30,11 +30,7 @@ import javax.imageio.metadata.IIOMetadataNode;
 import org.w3c.dom.Node;
 
 public class HDF4TeraScanImageMetadata extends BaseImageMetadata {
-    public static final String nativeMetadataFormatName = "it_geosolutions_imageio_plugins_jhdf_avhrr_avhrrImageMetadata_1.0";
-
-    //
-    // public static final String[] metadataFormatNames = {
-    // nativeMetadataFormatName };
+    public static final String nativeMetadataFormatName = "it_geosolutions_imageio_plugins_hdf4_terascan_terascanImageMetadata_1.0";
 
     private final static String driverName = "HDF4";
 
@@ -118,8 +114,7 @@ public class HDF4TeraScanImageMetadata extends BaseImageMetadata {
     private Node createNativeTree() {
         if (this.nativeTree != null)
             return this.nativeTree;
-        nativeTree = new IIOMetadataNode(
-                HDF4TeraScanImageMetadata.nativeMetadataFormatName);
+        nativeTree = new IIOMetadataNode(HDF4TeraScanImageMetadata.nativeMetadataFormatName);
 
         // ////////////////////////////////////////////////////////////////////
         //
