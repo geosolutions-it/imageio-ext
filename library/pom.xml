@@ -41,7 +41,7 @@
     <module>imagereadmt</module>
     <module>jhdf</module>
     <module>jmatio</module>
-    <module>netcdf-support</module>
+    <module>netcdf-core</module>
     <module>jgrib1</module>
   </modules>
 </project>

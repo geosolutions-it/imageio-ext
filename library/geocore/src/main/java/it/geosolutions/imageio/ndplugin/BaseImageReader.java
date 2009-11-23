@@ -35,7 +35,7 @@ public abstract class BaseImageReader extends ImageReader {
         return numRasters;
     }
 
-    protected void setNumImages(final int numImages) {
+    public void setNumImages(final int numImages) {
         if (this.numRasters == -1)
             this.numRasters = numImages;
     }
@@ -59,7 +59,7 @@ public abstract class BaseImageReader extends ImageReader {
      * @throw {@link IndexOutOfBoundsException} in case the provided imageIndex
      *        is not in the range of supported ones.
      */
-    protected void checkImageIndex(final int imageIndex) {
+    public void checkImageIndex(final int imageIndex) {
         if (imageIndex < 0 || imageIndex >= numRasters) {
             throw new IndexOutOfBoundsException(
                     "Invalid imageIndex. It should " + (numRasters > 0 ? ("belong the range [0," + (numRasters - 1)) : "be 0"));

@@ -69,4 +69,5 @@ public abstract class BaseImageReaderSpi extends ImageReaderSpi {
 				extraImageMetadataFormatNames,
 				extraImageMetadataFormatClassNames);
 	}
+
 }
