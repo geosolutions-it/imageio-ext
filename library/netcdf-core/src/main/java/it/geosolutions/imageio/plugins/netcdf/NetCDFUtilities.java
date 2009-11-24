@@ -106,7 +106,7 @@ public class NetCDFUtilities {
     private static final Logger LOGGER = Logger.getLogger(NetCDFUtilities.class.toString());
     
     private NetCDFUtilities() {
-
+    	
     }    
 
     public final static String LOWER_LEFT_LONGITUDE = "lower_left_longitude";
@@ -739,9 +739,8 @@ public class NetCDFUtilities {
 //        	final List<Attribute> globalAttributes = dataset.getGlobalAttributes();
 //            if (globalAttributes != null && !globalAttributes.isEmpty()) {
 //                for (Attribute attrib: globalAttributes){
-                    if (attrib.getName().equals(attributeName)) {
-                        attributeValue = NetCDFUtilities
-                                .getAttributesAsString(attrib);
+                    if (attrib != null && attrib.getName().equals(attributeName)) {
+                        attributeValue = NetCDFUtilities.getAttributesAsString(attrib);
 //                        break;
                     }
 //                }
@@ -755,28 +754,23 @@ public class NetCDFUtilities {
         if (dataset != null) {
         	final List<Attribute> globalAttributes = dataset.getGlobalAttributes();
             if (globalAttributes != null && !globalAttributes.isEmpty()) {
-            	final Attribute attribute = (Attribute) globalAttributes
-                        .get(attributeIndex);
+            	final Attribute attribute = (Attribute) globalAttributes.get(attributeIndex);
                 if (attribute != null) {
-                    attributePair = new KeyValuePair(attribute.getName(),
-                    		NetCDFUtilities.getAttributesAsString(attribute));
+                    attributePair = new KeyValuePair(attribute.getName(), NetCDFUtilities.getAttributesAsString(attribute));
                 }
             }
         }
         return attributePair;
     }
 
-	public static KeyValuePair getAttribute(final Variable var, 
-			final int attributeIndex) {
+	public static KeyValuePair getAttribute(final Variable var, final int attributeIndex) {
 		KeyValuePair attributePair = null;
 		if (var != null){
 			final List<Attribute> attributes = var.getAttributes();
 		    if (attributes != null && !attributes.isEmpty()) {
-		    	final Attribute attribute = (Attribute) attributes
-		                .get(attributeIndex);
+		    	final Attribute attribute = (Attribute) attributes.get(attributeIndex);
 		        if (attribute != null) {
-		            attributePair = new KeyValuePair(attribute.getName(),
-		                    NetCDFUtilities.getAttributesAsString(attribute));
+		            attributePair = new KeyValuePair(attribute.getName(),NetCDFUtilities.getAttributesAsString(attribute));
 		        }
 		    }
 		}

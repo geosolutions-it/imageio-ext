@@ -39,7 +39,6 @@ import java.awt.image.Raster;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -79,12 +78,11 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
             final int numBands = getNumBands();
             final int width = getWidth();
             final int height = getHeight();
-            if ( numBands == 3)
+            if (numBands == 3)
             	setSampleModel(new PixelInterleavedSampleModel(NetCDFUtilities.getRawDataType(var), width,
             			height, numBands, width*numBands, new int[]{0,1,2}));	
             else
-            	setSampleModel(new BandedSampleModel(NetCDFUtilities.getRawDataType(var), width,
-            			height, numBands));	
+            	setSampleModel(new BandedSampleModel(NetCDFUtilities.getRawDataType(var), width, height, numBands));	
         }
 	}
 	
@@ -361,7 +359,11 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
 	 * @see javax.imageio.ImageReader#getImageMetadata(int)
 	 */
 	@Override
-	public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
+	public IIOMetadata getImageMetadata(final int imageIndex) throws IOException {
+		throw new UnsupportedOperationException("Change me as soon as possible to use corecommonimagemetadata");
+	}
+	
+	public IIOMetadata getImageMetadata(final int imageIndex, final String metadataFormat) throws IOException {
 		throw new UnsupportedOperationException("Change me as soon as possible to use corecommonimagemetadata");
 	}
 	

@@ -24,9 +24,9 @@ import java.util.Map;
 
 public class HDF4Utilities {
 	
-	private final static String TERASCAN_DATETIME_FORMAT = "yyyy/MM/dd HH:mm:ss";
+	public final static String TERASCAN_DATETIME_FORMAT = "yyyy/MM/dd HH:mm:ss";
 		
-	private final static String APS_DATETIME_FORMAT = "E M d HH:mm:ss"; 
+	public final static String APS_DATETIME_FORMAT = "E M d HH:mm:ss"; 
 	
 	private static Map<String, SimpleDateFormat> DATE_FORMATTER = new HashMap<String,SimpleDateFormat>(2);
 

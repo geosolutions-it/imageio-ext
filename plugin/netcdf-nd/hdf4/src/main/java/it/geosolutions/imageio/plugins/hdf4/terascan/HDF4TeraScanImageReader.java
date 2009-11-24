@@ -93,7 +93,7 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
 	                // Checking if the actual dataset is a product.
 	            	if (!checkProducts || name.equals(productList[j])) {
 	                    // Updating the subDatasetsMap map
-	            		indexMap.put(new Range(j,j), new TerascanDatasetWrapper(var));
+	            		indexMap.put(new Range(j,j+1), new TerascanDatasetWrapper(var));
 	                    break;
 	                }
 	            }
@@ -241,4 +241,16 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
 		return super.getStreamMetadata(formatName, nodeNames);
 	}
 
+	public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
+    	return getImageMetadata(imageIndex, HDF4TeraScanImageMetadata.nativeMetadataFormatName, null);
+    }
+	
+	public IIOMetadata getImageMetadata(int imageIndex, final String format) throws IOException {
+    	return getImageMetadata(imageIndex, format, null);
+    }
+    
+	public synchronized IIOMetadata getStreamMetadata() throws IOException {
+		return getStreamMetadata(HDF4TeraScanStreamMetadata.nativeMetadataFormatName, null);
+	}
+	
 }

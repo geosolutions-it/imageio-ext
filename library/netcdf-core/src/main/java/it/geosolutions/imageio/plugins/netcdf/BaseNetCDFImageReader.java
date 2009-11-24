@@ -182,7 +182,7 @@ public final class BaseNetCDFImageReader extends BaseImageReader{
         return -1;
     }
 
-    public BaseVariableWrapper getVariableWrapper(int imageIndex){
+    public BaseVariableWrapper getVariableWrapper(final int imageIndex){
     	checkImageIndex(imageIndex);
         BaseVariableWrapper wrapper = null;
         for (Range range : indexMap.keySet()) {
@@ -226,6 +226,7 @@ public final class BaseNetCDFImageReader extends BaseImageReader{
      */
     public void dispose() {
         super.dispose();
+        initMap = false;
         indexMap.clear();
         indexMap = null;
         numGlobalAttributes = -1;

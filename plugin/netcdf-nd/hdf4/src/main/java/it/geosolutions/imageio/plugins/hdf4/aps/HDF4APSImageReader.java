@@ -17,14 +17,12 @@
 package it.geosolutions.imageio.plugins.hdf4.aps;
 
 import it.geosolutions.imageio.plugins.hdf4.BaseHDF4ImageReader;
-import it.geosolutions.imageio.plugins.hdf4.HDF4Utilities;
 import it.geosolutions.imageio.plugins.netcdf.BaseNetCDFImageReader;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities;
 
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -139,7 +137,7 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
 	                // Checking if the actual dataset is a product.
 	                if (name.equals(productList[j])) {
 	                    // Updating the subDatasetsMap map
-	                	indexMap.put(new Range(j,j), new APSDatasetWrapper(var));
+	                	indexMap.put(new Range(j,j+1), new APSDatasetWrapper(var));
 	                    break;
 	                }
 	            }
@@ -224,8 +222,7 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
 	 * @see javax.imageio.ImageReader#getImageMetadata(int, java.lang.String, java.util.Set)
 	 */
 	@Override
-	public IIOMetadata getImageMetadata(int imageIndex, String formatName,
-			Set<String> nodeNames) throws IOException {
+	public IIOMetadata getImageMetadata(int imageIndex, String formatName, Set<String> nodeNames) throws IOException {
 		initialize();
 	    checkImageIndex(imageIndex);
 	    if (formatName.equalsIgnoreCase(HDF4APSImageMetadata.nativeMetadataFormatName))
@@ -235,14 +232,11 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
 		return super.getImageMetadata(imageIndex, formatName, nodeNames);
 	}
 
-
-
 	/**
 	 * @see javax.imageio.ImageReader#getStreamMetadata(java.lang.String, java.util.Set)
 	 */
 	@Override
-	public synchronized IIOMetadata getStreamMetadata(String formatName,
-			Set<String> nodeNames) throws IOException {
+	public synchronized IIOMetadata getStreamMetadata(String formatName, Set<String> nodeNames) throws IOException {
 		if(formatName.equalsIgnoreCase(HDF4APSStreamMetadata.nativeMetadataFormatName)){
 	        if (streamMetadata == null)
 	            streamMetadata = new HDF4APSStreamMetadata(this);
@@ -251,6 +245,18 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
 		return super.getStreamMetadata(formatName, nodeNames);
 	}
 
+    public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
+    	return getImageMetadata(imageIndex, HDF4APSImageMetadata.nativeMetadataFormatName, null);
+    }
+    
+	public IIOMetadata getImageMetadata(int imageIndex, final String format) throws IOException {
+    	return getImageMetadata(imageIndex, format, null);
+    }
+    
+	public synchronized IIOMetadata getStreamMetadata() throws IOException {
+		return getStreamMetadata(HDF4APSStreamMetadata.nativeMetadataFormatName, null);
+	}
+	
 	@Override
 	protected HDF4DatasetWrapper getDatasetWrapper(int imageIndex) {
 		return (HDF4DatasetWrapper) reader.getVariableWrapper(imageIndex);

@@ -22,6 +22,7 @@ import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.EnumSet;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,6 +30,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 
 import ucar.nc2.dataset.NetcdfDataset;
+import ucar.nc2.dataset.NetcdfDataset.Enhance;
 import ucar.nc2.iosp.hdf4.H4iosp;
 
 /**
@@ -37,6 +39,10 @@ import ucar.nc2.iosp.hdf4.H4iosp;
  * @author Daniele Romagnoli
  */
 public abstract class HDF4ImageReaderSpi extends BaseImageReaderSpi {
+
+	static{
+		NetcdfDataset.setDefaultEnhanceMode(EnumSet.of(Enhance.CoordSystems));
+	}
 
     private static final Logger LOGGER = Logger.getLogger(HDF4ImageReaderSpi.class.toString());
 
