@@ -48,8 +48,8 @@ public class GriBTest  {
 		// /////////////////////////////////////////////////////////////////////
 		GribFile gribFile1 = null;
 		
-//		final File test_dir = TestData.file(GriBTest.class, ".");
-		final File test_dir = new File("y:/data/lscv08/METEOAM/NETTUNO_CNMCA_20080930002/");
+		final File test_dir = TestData.file(GriBTest.class, ".");
+//		final File test_dir = new File("y:/data/lscv08/METEOAM/NETTUNO_CNMCA_20080930002/");
 		final File files[] = test_dir.listFiles(new FilenameFilter() {
 
 			public boolean accept(File dir, String name) {
