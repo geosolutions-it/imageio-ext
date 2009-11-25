@@ -1,2 +1,2 @@
-it.geosolutions.imageio.plugins.hdf4.HDF4TeraScanImageReaderSpi
-it.geosolutions.imageio.plugins.hdf4.HDF4APSImageReaderSpi
+it.geosolutions.imageio.plugins.hdf4.terascan.HDF4TeraScanImageReaderSpi
+it.geosolutions.imageio.plugins.hdf4.aps.HDF4APSImageReaderSpi

@@ -94,6 +94,7 @@ public class HDF4TeraScanProperties {
         public final static String ADD_OFFSET_ERR = "add_offset_err";
         public final static String CALIBRATED_NT = "calibrated_nt";
         public final static String UNITS = "units";
+        public final static String UNSIGNED = "_Unsigned";
         
         private DatasetAttribs() {
 

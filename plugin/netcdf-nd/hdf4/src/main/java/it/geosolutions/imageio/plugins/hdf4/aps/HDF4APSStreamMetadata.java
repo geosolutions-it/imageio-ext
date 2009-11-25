@@ -79,6 +79,10 @@ public class HDF4APSStreamMetadata extends IIOMetadata {
 	public static final String PROJECTION_NODE = "Projection";
 
 	public static final String ZONE = "Zone";
+	
+	public static final String MAP_UPPER_RIGHT = "mapUpperRight";
+	
+	public static final String MAP_LOWER_LEFT = "mapLowerLeft";
 
     // TODO: Provides to build a proper structure to get CP_Pixels, CP_Lines,
     // CP_Latitudes, CP_Longitudes information
@@ -146,8 +150,7 @@ public class HDF4APSStreamMetadata extends IIOMetadata {
     }
 
     private synchronized Node getNativeTree() {
-        final IIOMetadataNode root = new IIOMetadataNode(
-                nativeMetadataFormatName);
+        final IIOMetadataNode root = new IIOMetadataNode(nativeMetadataFormatName);
 
         // /////////////////////////////////////////////////////////////
         // 

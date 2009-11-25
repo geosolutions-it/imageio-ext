@@ -79,7 +79,7 @@ public class HDF4APSImageMetadata extends BaseImageMetadata {
             if (validRange == null || validRange.trim().length() < 1)
             	validRange = innerReader.getAttributeAsString(imageIndex, HDF4APSProperties.PDSA_BROWSERANGES);
             if (validRange != null && validRange.trim().length() > 0) {
-                String values[] = validRange.split(" ");
+                String values[] = validRange.split(",");
                 if (values.length == 2) {
                 	if (!values[0].equalsIgnoreCase(values[1])){
 		                setMinimums(new Double[] { Double.parseDouble(values[0]) });

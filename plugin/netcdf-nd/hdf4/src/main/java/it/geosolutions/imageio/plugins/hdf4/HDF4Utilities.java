@@ -20,20 +20,21 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class HDF4Utilities {
 	
 	public final static String TERASCAN_DATETIME_FORMAT = "yyyy/MM/dd HH:mm:ss";
 		
-	public final static String APS_DATETIME_FORMAT = "E M d HH:mm:ss"; 
+	public final static String APS_DATETIME_FORMAT = "EEE MMM dd HH:mm:ss yyyy"; 
 	
 	private static Map<String, SimpleDateFormat> DATE_FORMATTER = new HashMap<String,SimpleDateFormat>(2);
 
 	public static Date getDateTime(final String toBeParsed, final String inputFormat){
 		SimpleDateFormat sdf = null;
 		if (!DATE_FORMATTER.containsKey(inputFormat)){
-			sdf = new SimpleDateFormat(inputFormat);
+			sdf = new SimpleDateFormat(inputFormat,Locale.US);
 			DATE_FORMATTER.put(inputFormat , sdf);
 		}
 		else 

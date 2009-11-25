@@ -133,10 +133,14 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
      */
     double[] getValidRange(final int imageIndex) throws IOException {
         double[] range = new double[] { Double.NaN, Double.NaN };
-        String validRange = getAttributeAsString(imageIndex,
-                HDF4TeraScanProperties.DatasetAttribs.VALID_RANGE);
+        String unsigned = getAttributeAsString(imageIndex, HDF4TeraScanProperties.DatasetAttribs.UNSIGNED);
+        boolean isUnsigned = false;
+        if (unsigned != null && unsigned.trim().length()>0)
+        	isUnsigned = Boolean.parseBoolean(unsigned);
+        	
+        String validRange = getAttributeAsString(imageIndex, HDF4TeraScanProperties.DatasetAttribs.VALID_RANGE, isUnsigned);
         if (validRange != null && validRange.trim().length() > 0) {
-            String validRanges[] = validRange.split(" ");
+            String validRanges[] = validRange.split(",");
             if (validRanges.length == 2) {
                 range = new double[2];
                 range[0] = Double.parseDouble(validRanges[0]);
@@ -171,8 +175,7 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
      */
     String getLongName(final int imageIndex) throws IOException {
         String name = "";
-        String nameS = getAttributeAsString(imageIndex,
-                HDF4TeraScanProperties.DatasetAttribs.LONG_NAME);
+        String nameS = getAttributeAsString(imageIndex, HDF4TeraScanProperties.DatasetAttribs.LONG_NAME);
         if (nameS != null) {
             name = nameS;
         }
@@ -187,8 +190,7 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
      */
     double getScale(final int imageIndex) throws IOException {
         double scale = Double.NaN;
-        String scaleS = getAttributeAsString(imageIndex,
-                HDF4TeraScanProperties.DatasetAttribs.SCALE_FACTOR);
+        String scaleS = getAttributeAsString(imageIndex, HDF4TeraScanProperties.DatasetAttribs.SCALE_FACTOR);
         if (scaleS != null && scaleS.trim().length() > 0)
             scale = Double.parseDouble(scaleS);
         return scale;
@@ -202,7 +204,7 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
      */
     double getOffset(final int imageIndex) throws IOException {
         double offset = Double.NaN;
-        String offsetS = getAttributeAsString(imageIndex,HDF4TeraScanProperties.DatasetAttribs.ADD_OFFSET);
+        String offsetS = getAttributeAsString(imageIndex, HDF4TeraScanProperties.DatasetAttribs.ADD_OFFSET);
         if (offsetS != null && offsetS.trim().length() > 0)
             offset = Double.parseDouble(offsetS);
         return offset;
