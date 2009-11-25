@@ -50,29 +50,28 @@ public class MatIOTest
     //@Test
     public void testBenchmarkDouble() throws Exception
     {
-        final File file = TestData.file(this,"bb.mat");
+        final File file = TestData.temp(this,"bb.mat");
         final String fileName = file.getAbsolutePath();
         final String name = "bigdouble";
-//        final int SIZE = 1000;    
+        final int SIZE = 1000;    
         //System.out.println(14e6);
-//        ByteBuffer.allocateDirect(1000000000);
+        ByteBuffer.allocateDirect(1000000000);
+        
+        MLDouble mlDouble = new MLDouble( name, new int[] {SIZE, SIZE} );
+        
+        for ( int i = 0; i < SIZE*SIZE; i++ )
+        {
+            mlDouble.set((double)i, i);
+        }
         
         
-//        MLDouble mlDouble = new MLDouble( name, new int[] {SIZE, SIZE} );
-//        
-//        for ( int i = 0; i < SIZE*SIZE; i++ )
-//        {
-//            mlDouble.set((double)i, i);
-//        }
-//        
-//        
-//        //write array to file
-//        ArrayList<MLArray> list = new ArrayList<MLArray>();
-//        list.add( mlDouble );
-//        
-//        //write arrays to file
-//        new MatFileWriter( fileName, list );
-//        
+        //write array to file
+        ArrayList<MLArray> list = new ArrayList<MLArray>();
+        list.add( mlDouble );
+        
+        //write arrays to file
+        new MatFileWriter( fileName, list );
+        
         //read array form file
         MatFileReader mfr = new MatFileReader( fileName );
         MLArray mlArrayRetrived = mfr.getMLArray( name );
@@ -81,14 +80,14 @@ public class MatIOTest
 //        System.out.println( mlArrayRetrived.contentToString() );
         
         //test if MLArray objects are equal
-//        assertEquals("Test if value red from file equals value stored", mlDouble, mlArrayRetrived);
+        assertEquals("Test if value red from file equals value stored", mlDouble, mlArrayRetrived);
     }
     
     
     @Test 
     public void testBenchmarkUInt8() throws Exception
     {
-        final File file = new File("bigbyte.mat");
+        final File file = TestData.temp(this, "bigbyte.mat");
         final String fileName = file.getAbsolutePath();
         final String name = "bigbyte";
         final int SIZE = 1024;    
@@ -123,15 +122,17 @@ public class MatIOTest
     public void testCellFromMatlabCreatedFile() throws IOException
     {
         //array name
-        File file =TestData.file(this,"cell.mat");
+    	final File file =TestData.file(this,"cell.mat");
         MatFileReader reader = new MatFileReader( file );
         MLArray mlArray = reader.getMLArray( "cel" );
         
         List<MLArray> towrite =  Arrays.asList( mlArray );
         
-        MatFileWriter  writer = new MatFileWriter( "cellcopy.mat", towrite );
+        final File tempFile = TestData.temp(this,"cellcopy.mat");
+        final String fileName = tempFile.getAbsolutePath();
+        MatFileWriter  writer = new MatFileWriter( tempFile.getAbsolutePath(), towrite );
     
-        reader = new MatFileReader("cellcopy.mat");
+        reader = new MatFileReader(fileName);
         MLArray mlArrayRetrieved = reader.getMLArray( "cel" );
         
         //assertEquals( ((MLCell)mlArray).get(0), ((MLCell)mlArrayRetrieved).get(0));
@@ -209,7 +210,8 @@ public class MatIOTest
         String name = "doublearr";
         String name2 = "name";
         //file name in which array will be storred
-        String fileName = "mlcell.mat";
+        final File file = TestData.temp(this,"mlcell.mat");
+        String fileName = file.getAbsolutePath();
 
         //test column-packed vector
         double[] src = new double[] { 1.3, 2.0, 3.0, 4.0, 5.0, 6.0 };
@@ -254,7 +256,9 @@ public class MatIOTest
         //array name
         String name = "chararr";
         //file name in which array will be storred
-        String fileName = "mlchar.mat";
+        
+        final File file = TestData.temp(this,"mlchar.mat");
+        String fileName = file.getAbsolutePath();
         //temp
         String valueS;
 
@@ -299,7 +303,8 @@ public class MatIOTest
         //array name
         String name = "doublearr";
         //file name in which array will be storred
-        String fileName = "mldouble.mat";
+        final File file = TestData.temp(this,"mldouble.mat");
+        String fileName = file.getAbsolutePath();
 
         //test column-packed vector
         double[] src = new double[] { 1.3, 2.0, 3.0, 4.0, 5.0, 6.0 };
@@ -353,7 +358,8 @@ public class MatIOTest
     {
         //array name
         //file name in which array will be storred
-        String fileName = "mlstruct.mat";
+        final File file = TestData.temp(this,"mlstruct.mat");
+        String fileName = file.getAbsolutePath();
 
         //test column-packed vector
         double[] src = new double[] { 1.3, 2.0, 3.0, 4.0, 5.0, 6.0 };
@@ -425,7 +431,8 @@ public class MatIOTest
         //array name
         String name = "arr";
         //file name in which array will be storred
-        String fileName = "mluint8tst.mat";
+        final File file = TestData.temp(this,"mluint8tst.mat");
+        String fileName = file.getAbsolutePath();
 
         //test column-packed vector
         byte[] src = new byte[] { 1, 2, 3, 4, 5, 6 };
@@ -478,7 +485,8 @@ public class MatIOTest
         //array name
         String name = "sparsearr";
         //file name in which array will be storred
-        String fileName = "mlsparse.mat";
+        final File file = TestData.temp(this,"mlsparse.mat");
+        String fileName = file.getAbsolutePath();
 
         //test 2D array coresponding to test vector
         double[][] referenceReal = new double[][] { { 1.3, 4.0 },
@@ -607,7 +615,7 @@ public class MatIOTest
     public void testStructureFromMatlabCreatedFile() throws IOException
     {
         //array name
-        File file = TestData.file(this,"simplestruct.mat");
+        final File file = TestData.file(this,"simplestruct.mat");
         MatFileReader reader = new MatFileReader( file );
         MLArray mlArray = reader.getMLArray( "structure" );
         
@@ -627,7 +635,8 @@ public class MatIOTest
     @Test 
     public void testWritingManyArraysInFile() throws IOException
     {
-        final String fileName = "multi.mat";
+        final File file = TestData.temp(this,"multi.mat");
+        String fileName = file.getAbsolutePath();
 
         //test column-packed vector
         double[] src = new double[] { 1.3, 2.0, 3.0, 4.0, 5.0, 6.0 };
@@ -668,7 +677,8 @@ public class MatIOTest
     @Test 
     public void testIncrementalWrite() throws IOException
     {
-        final String fileName = "multi.mat";
+        final File file = TestData.temp(this,"multi.mat");
+        String fileName = file.getAbsolutePath();
 
         //test column-packed vector
         double[] src = new double[] { 1.3, 2.0, 3.0, 4.0, 5.0, 6.0 };
@@ -997,12 +1007,12 @@ public class MatIOTest
     @Test
     public void testBigSparseFile() throws IOException
     {
-        final File file = TestData.file(this,"bigsparse.mat");
-        //read array form file
-        MatFileReader mfr = new MatFileReader();
-        //reader crashes on reading this file
-        //bug caused by sparse array allocation
-        mfr.read( file, MatFileReader.DIRECT_BYTE_BUFFER );
+//        final File file = TestData.file(this,"bigsparse.mat");
+//        //read array form file
+//        MatFileReader mfr = new MatFileReader();
+//        //reader crashes on reading this file
+//        //bug caused by sparse array allocation
+//        mfr.read( file, MatFileReader.DIRECT_BYTE_BUFFER );
         
     }    
     /**
@@ -1015,7 +1025,6 @@ public class MatIOTest
         final File file = TestData.temp(this,"singletmp.mat");
         final File file2 = TestData.file(this,"single.mat");
         String fileName = file.getAbsolutePath();
-        String fileName2 = file2.getAbsolutePath();
         
         Float[] expected = new Float[] { 1.1f, 2.2f, 3.3f };
         String  name = "arr";
