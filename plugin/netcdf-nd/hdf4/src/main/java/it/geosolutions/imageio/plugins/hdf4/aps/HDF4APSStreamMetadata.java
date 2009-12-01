@@ -126,11 +126,8 @@ public class HDF4APSStreamMetadata extends IIOMetadata {
     private Map<String,String> projectionMap = null;
     
     private Map<String,ArrayList<Map<String,String>>> productsMap = null;
-
     private String[] prodList = null;
-
     private int prodListNum;
-
     private String projectionDatasetName;
 
     public HDF4APSStreamMetadata() {

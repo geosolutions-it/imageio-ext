@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class HDF4Utilities {
 	
@@ -35,6 +36,7 @@ public class HDF4Utilities {
 		SimpleDateFormat sdf = null;
 		if (!DATE_FORMATTER.containsKey(inputFormat)){
 			sdf = new SimpleDateFormat(inputFormat,Locale.US);
+			sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
 			DATE_FORMATTER.put(inputFormat , sdf);
 		}
 		else 
