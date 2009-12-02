@@ -70,35 +70,20 @@ public class SASTileMetadata extends IIOMetadata {
     }
 
     public static final String SAS_PIXELS = "pixels";
-
     public static final String SAS_LATITUDE = "latitude";
-
     public static final String SAS_LONGITUDE = "longitude";
-
     public static final String SAS_ORIENTATION = "orientation";
-
     public static final String SAS_PIXEL_DIMS = "pixel_dims";
-
     public static final String SAS_CHANNEL = "channel";
-
     public static final String SAS_TILE_RAW = "sas_tile_raw";
-
     public static final String SAS_TILE_LOG = "sas_tile_log";
-
     public static final String SAS_MU = "mu";
-
     public static final String SAS_PINGS = "pings";
-
     public static final String SAS_TILE_RANGES = "tile_ranges";
-
     public static final String SAS_AV_VELOCITY = "av_velocity";
-
     public static final String SAS_AV_ALTITUDE = "av_altitude";
-
     public static final String SAS_X = "x";
-
     public static final String SAS_Y = "y";
-
     public static final String SAS_THETA = "theta";
 
     public enum Channel {
@@ -166,6 +151,7 @@ public class SASTileMetadata extends IIOMetadata {
 //        final int pixelsD[] = new int[2];
         int pixels[] = null;
         final int pixelType = MatFileImageReader.getElementType(matReader, SAS_PIXELS);
+        
         if (pixelType == MLArray.mxDOUBLE_CLASS){
         	final double pixelsD[] = new double[2];
         	MatFileImageReader.getDoubles(matReader, SAS_PIXELS, pixelsD);
@@ -175,9 +161,7 @@ public class SASTileMetadata extends IIOMetadata {
         } else if (pixelType == MLArray.mxINT32_CLASS){
         	final int pixelsI[] = new int[2];
         	MatFileImageReader.getIntegers(matReader, SAS_PIXELS, pixelsI);	
-        	pixels = new int[] {
-                    Double.isNaN(pixelsI[0]) ? Integer.MIN_VALUE : pixelsI[0],
-                    Double.isNaN(pixelsI[1]) ? Integer.MIN_VALUE : pixelsI[1] };
+        	pixels = pixelsI;
         }
         
         MatFileImageReader.getDoubles(matReader, SAS_PIXEL_DIMS, pixelDims);
