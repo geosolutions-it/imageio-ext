@@ -26,6 +26,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferDouble;
+import java.awt.image.DataBufferFloat;
 import java.awt.image.PixelInterleavedSampleModel;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
@@ -33,6 +34,7 @@ import java.awt.image.renderable.ParameterBlock;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
+import java.nio.FloatBuffer;
 import java.util.Iterator;
 import java.util.List;
 
@@ -49,6 +51,7 @@ import javax.media.jai.operator.TransposeDescriptor;
 import com.jmatio.io.MatFileFilter;
 import com.jmatio.io.MatFileReader;
 import com.jmatio.types.MLArray;
+import com.jmatio.types.MLDouble;
 import com.jmatio.types.MLNumericArray;
 
 public class SASTileImageReader extends MatFileImageReader {
@@ -82,8 +85,7 @@ public class SASTileImageReader extends MatFileImageReader {
 
             try {
 
-                matReader = new MatFileReader(new String(fileName), filter,
-                        true);
+                matReader = new MatFileReader(new String(fileName), filter, true);
 
                 sasTile = new SASTileMetadata(matReader);
 
@@ -224,23 +226,44 @@ public class SASTileImageReader extends MatFileImageReader {
                 .getRealByteBuffer();
         final ByteBuffer imaginary = ((MLNumericArray<Number>) mlArrayRetrived)
                 .getImaginaryByteBuffer();
+        
+        final boolean isDouble = (mlArrayRetrived instanceof MLDouble)? true : false;
 
         final int imageSize = width * height;
-        final double[] dstReal = new double[imageSize];
         
-        //TODO: Possible performance improvement when leveraging on subsampling and source region
-        // could be working on getting samples separately instead of getting all the buffer.
-        final DoubleBuffer buffReal = real.asDoubleBuffer();
-        buffReal.get(dstReal);
-        final DataBuffer imgBufferReal = new DataBufferDouble(dstReal,
-                imageSize);
-
-        final double[] dstImaginary = new double[imageSize];
-        final DoubleBuffer buffImaginary = imaginary.asDoubleBuffer();
-        buffImaginary.get(dstImaginary);
-
-        final DataBuffer imgBufferImaginary = new DataBufferDouble(
-                dstImaginary, imageSize);
+        final DataBuffer imgBufferReal;
+        final DataBuffer imgBufferImaginary;
+        
+        if (isDouble){
+	        final double[] dstReal = new double[imageSize];
+	        
+	        //TODO: Possible performance improvement when leveraging on subsampling and source region
+	        // could be working on getting samples separately instead of getting all the buffer.
+	        final DoubleBuffer buffReal = real.asDoubleBuffer();
+	        buffReal.get(dstReal);
+	        imgBufferReal = new DataBufferDouble(dstReal,
+	                imageSize);
+	
+	        final double[] dstImaginary = new double[imageSize];
+	        final DoubleBuffer buffImaginary = imaginary.asDoubleBuffer();
+	        buffImaginary.get(dstImaginary);
+	
+	        imgBufferImaginary = new DataBufferDouble(dstImaginary, imageSize);
+        } else {
+        	final float[] dstReal = new float[imageSize];
+	        
+	        //TODO: Possible performance improvement when leveraging on subsampling and source region
+	        // could be working on getting samples separately instead of getting all the buffer.
+	        final FloatBuffer buffReal = real.asFloatBuffer();
+	        buffReal.get(dstReal);
+	        imgBufferReal = new DataBufferFloat(dstReal, imageSize);
+	
+	        final float[] dstImaginary = new float[imageSize];
+	        final FloatBuffer buffImaginary = imaginary.asFloatBuffer();
+	        buffImaginary.get(dstImaginary);
+	
+	        imgBufferImaginary = new DataBufferFloat(dstImaginary, imageSize);
+        }
         
         // //
         //
@@ -253,7 +276,7 @@ public class SASTileImageReader extends MatFileImageReader {
         final int smWidth = height;
         final int smHeight = width;
         final PixelInterleavedSampleModel sampleModel = new PixelInterleavedSampleModel(
-                    DataBuffer.TYPE_DOUBLE, smWidth, smHeight, 1, smWidth,
+                    isDouble?DataBuffer.TYPE_DOUBLE:DataBuffer.TYPE_FLOAT, smWidth, smHeight, 1, smWidth,
                     new int[] { 0 });
         
         final ColorModel cm = buildColorModel(sampleModel);

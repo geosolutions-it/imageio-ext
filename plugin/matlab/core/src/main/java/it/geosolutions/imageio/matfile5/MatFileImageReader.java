@@ -28,9 +28,7 @@ import java.awt.image.DataBuffer;
 import java.awt.image.SampleModel;
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,6 +44,7 @@ import com.jmatio.io.MatFileReader;
 import com.jmatio.types.MLArray;
 import com.jmatio.types.MLChar;
 import com.jmatio.types.MLDouble;
+import com.jmatio.types.MLInt32;
 import com.sun.media.imageioimpl.common.ImageUtil;
 
 /**
@@ -252,6 +251,17 @@ public abstract class MatFileImageReader extends ImageReader {
         }
         return value;
     }
+    
+    public static int getElementType (final MatFileReader reader, final String element){
+    	if (reader != null){
+    		MLArray array = reader.getMLArray(element);
+    		if (array instanceof MLDouble)
+    			return MLArray.mxDOUBLE_CLASS;
+    		if (array instanceof MLInt32)
+    			return MLArray.mxINT32_CLASS;
+    	}
+		return MLArray.mxUNKNOWN_CLASS;
+    }
 
     public static double[] getDoubles(final MatFileReader reader, final String element, double[] values) {
         MLArray array = reader.getMLArray(element);
@@ -278,8 +288,36 @@ public abstract class MatFileImageReader extends ImageReader {
             }
         }
         return values;
+    }
+    
+    public static int[] getIntegers(final MatFileReader reader, final String element, int[] values) {
+        MLArray array = reader.getMLArray(element);
+        final MLInt32 iArray = array != null ? (MLInt32) array : null;
+        if (iArray != null) {
+            final int nDims;
+            if (values == null) {
+                nDims = iArray.getM();
+                values = new int[nDims];
+            } else
+                nDims = values.length;
+
+            for (int i = 0; i < nDims; i++) {
+                values[i] = iArray.get(i).intValue();
+            }
+
+        } else {
+            if (values == null) {
+                values = new int[] { Integer.MAX_VALUE, Integer.MIN_VALUE};
+            } else {
+                for (int i = 0; i < values.length; i++) {
+                    values[i] = Integer.MAX_VALUE;
+                }
+            }
+        }
+        return values;
 
     }
+
 
     public static double getDouble(final MatFileReader reader, final String element){
         return getDouble(reader, element,0);

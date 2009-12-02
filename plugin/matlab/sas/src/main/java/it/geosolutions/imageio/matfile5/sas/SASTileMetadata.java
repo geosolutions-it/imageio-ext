@@ -161,13 +161,26 @@ public class SASTileMetadata extends IIOMetadata {
         latitude = MatFileImageReader.getDouble(matReader, SAS_LATITUDE);
         longitude = MatFileImageReader.getDouble(matReader, SAS_LONGITUDE);
         orientation = MatFileImageReader.getDouble(matReader, SAS_ORIENTATION);
+        
         final double pixelDims[] = new double[2];
-        final double pixelsD[] = new double[2];
+//        final int pixelsD[] = new int[2];
+        int pixels[] = null;
+        final int pixelType = MatFileImageReader.getElementType(matReader, SAS_PIXELS);
+        if (pixelType == MLArray.mxDOUBLE_CLASS){
+        	final double pixelsD[] = new double[2];
+        	MatFileImageReader.getDoubles(matReader, SAS_PIXELS, pixelsD);
+        	pixels = new int[] {
+                    Double.isNaN(pixelsD[0]) ? Integer.MIN_VALUE : (int) pixelsD[0],
+                    Double.isNaN(pixelsD[1]) ? Integer.MIN_VALUE : (int) pixelsD[1] };
+        } else if (pixelType == MLArray.mxINT32_CLASS){
+        	final int pixelsI[] = new int[2];
+        	MatFileImageReader.getIntegers(matReader, SAS_PIXELS, pixelsI);	
+        	pixels = new int[] {
+                    Double.isNaN(pixelsI[0]) ? Integer.MIN_VALUE : pixelsI[0],
+                    Double.isNaN(pixelsI[1]) ? Integer.MIN_VALUE : pixelsI[1] };
+        }
+        
         MatFileImageReader.getDoubles(matReader, SAS_PIXEL_DIMS, pixelDims);
-        MatFileImageReader.getDoubles(matReader, SAS_PIXELS, pixelsD);
-        final int pixels[] = new int[] {
-                Double.isNaN(pixelsD[0]) ? Integer.MIN_VALUE : (int) pixelsD[0],
-                Double.isNaN(pixelsD[1]) ? Integer.MIN_VALUE : (int) pixelsD[1] };
 
         String channel = MatFileImageReader.getString(matReader, SAS_CHANNEL);
 
