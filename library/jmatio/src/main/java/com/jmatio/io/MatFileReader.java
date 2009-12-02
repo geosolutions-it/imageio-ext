@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.RandomAccessFile;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
@@ -29,6 +28,7 @@ import com.jmatio.types.MLCell;
 import com.jmatio.types.MLChar;
 import com.jmatio.types.MLDouble;
 import com.jmatio.types.MLEmptyArray;
+import com.jmatio.types.MLInt32;
 import com.jmatio.types.MLInt64;
 import com.jmatio.types.MLInt8;
 import com.jmatio.types.MLNumericArray;
@@ -815,6 +815,19 @@ public class MatFileReader {
             break;
         case MLArray.mxINT64_CLASS:
             mlArray = new MLInt64(name, dims, type, attributes);
+            // read real
+            tag = new ISMatTag(buf);
+            tag.readToByteBuffer(((MLNumericArray<?>) mlArray)
+                    .getRealByteBuffer(), (MLNumericArray<?>) mlArray);
+            // read complex
+            if (mlArray.isComplex()) {
+                tag = new ISMatTag(buf);
+                tag.readToByteBuffer(((MLNumericArray<?>) mlArray)
+                        .getImaginaryByteBuffer(), (MLNumericArray<?>) mlArray);
+            }
+            break;
+        case MLArray.mxINT32_CLASS:
+            mlArray = new MLInt32(name, dims, type, attributes);
             // read real
             tag = new ISMatTag(buf);
             tag.readToByteBuffer(((MLNumericArray<?>) mlArray)
