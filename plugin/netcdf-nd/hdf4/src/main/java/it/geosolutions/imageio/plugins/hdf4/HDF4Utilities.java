@@ -19,9 +19,7 @@ package it.geosolutions.imageio.plugins.hdf4;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.TimeZone;
 
 public class HDF4Utilities {
@@ -30,17 +28,11 @@ public class HDF4Utilities {
 		
 	public final static String APS_DATETIME_FORMAT = "EEE MMM dd HH:mm:ss yyyy"; 
 	
-	private static Map<String, SimpleDateFormat> DATE_FORMATTER = new HashMap<String,SimpleDateFormat>(2);
+//	private static Map<String, SimpleDateFormat> DATE_FORMATTER = new HashMap<String,SimpleDateFormat>(2);
 
 	public static Date getDateTime(final String toBeParsed, final String inputFormat){
-		SimpleDateFormat sdf = null;
-		if (!DATE_FORMATTER.containsKey(inputFormat)){
-			sdf = new SimpleDateFormat(inputFormat,Locale.US);
-			sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-			DATE_FORMATTER.put(inputFormat , sdf);
-		}
-		else 
-			sdf = DATE_FORMATTER.get(inputFormat);
+		final SimpleDateFormat sdf = new SimpleDateFormat(inputFormat,Locale.US);
+		sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
 		try {
 			return sdf.parse(toBeParsed);
 		} catch (ParseException e) {
