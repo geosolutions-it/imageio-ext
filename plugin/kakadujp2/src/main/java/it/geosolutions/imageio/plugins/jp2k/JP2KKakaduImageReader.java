@@ -1206,7 +1206,7 @@ public class JP2KKakaduImageReader extends ImageReader {
         if (chBox != null) {
             final short[] channels = chBox.getChannel();
             final short[] associations = chBox.getAssociation();
-            final short[] cType = chBox.getTypes();
+            final int[] cType = chBox.getTypes();
             boolean hasAlpha = false;
             final int alphaChannel = numComp - 1;
 
@@ -1233,8 +1233,13 @@ public class JP2KKakaduImageReader extends ImageReader {
             }
 
             ColorSpace cs = null;
-
-            if (profile != null)
+            
+            //RGBN Workaround
+        	if (associations.length == 4 && associations[0]==1 && associations[1]==2 && associations[2]==3){
+        		cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
+        		hasAlpha = true;
+        	}
+        	else if (profile != null)
                 cs = new ICC_ColorSpace(profile);
             else if (colorSpaceType == ColorSpecificationBox.ECS_sRGB)
                 cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
@@ -1242,9 +1247,8 @@ public class JP2KKakaduImageReader extends ImageReader {
                 cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
             else if (colorSpaceType == ColorSpecificationBox.ECS_YCC)
                 cs = ColorSpace.getInstance(ColorSpace.CS_PYCC);
-            else
-                LOGGER
-                        .warning("JP2 type only handle sRGB, GRAY and YCC Profiles");
+            else	
+                LOGGER.warning("JP2 type only handle sRGB, GRAY and YCC Profiles");
 
             // TODO: Check these settings
             int[] bits = new int[numComp];
