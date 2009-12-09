@@ -132,6 +132,8 @@ public class NetCDFUtilities {
     public final static String ZETA = "z";
     
 	private static final String BOUNDS = "bounds";
+
+	private static final String BNDS = "bnds";
     
     public final static String HEIGHT = "height";
 
@@ -518,7 +520,9 @@ public class NetCDFUtilities {
                     || name.equalsIgnoreCase(ZETA)
                     || name.equalsIgnoreCase(HEIGHT)
                     || name.toLowerCase().contains(COORDSYS.toLowerCase())
-                    || name.endsWith(BOUNDS))
+                    || name.endsWith(BOUNDS)
+                    || name.endsWith(BNDS)
+                    )
                 
                 return false;
             else
@@ -637,6 +641,7 @@ public class NetCDFUtilities {
         boolean namedMonth = false; // Months are numbers in the ISO pattern.
         boolean addT = false;
         boolean appendZ = false; 
+        int dateLength = 0;
         if (prototype != null) {
             /*
              * Performs a quick check on the prototype content. If the prototype
@@ -656,6 +661,7 @@ public class NetCDFUtilities {
                 }
                 if (Character.isDigit(c)) {
                     digitCount++;
+                    dateLength++;
                     continue; // Digits are legal in all cases.
                 }
                 if (field == 2 && Character.isLetter(c)) {
@@ -664,6 +670,7 @@ public class NetCDFUtilities {
                 }
                 if (field == 1) {
                     dateSeparator = c;
+                    dateLength++;
                 }
                 if (c=='T')
                 	addT = true;
@@ -676,16 +683,22 @@ public class NetCDFUtilities {
                 yearLast = true;
             }
         }
-        String pattern;
+        String pattern = null;
         if (yearLast) {
             pattern = namedMonth ? "dd-MMM-yyyy" : "dd-MM-yyyy";
         } else {
             pattern = namedMonth ? "yyyy-MMM-dd" : "yyyy-MM-dd";
+            if (dateLength < 10) {
+                // case of truncated date
+                pattern = pattern.substring(0, dateLength);
+            }
         }
         pattern = pattern.replace('-', dateSeparator);
-        pattern += addT? "'T'":" ";
-        pattern += prototype != null && prototype.lastIndexOf(":") >= 16 ? "HH:mm:ss"
-                : "HH:mm";
+        int lastColon = prototype.lastIndexOf(":"); //$NON-NLS-1$
+        if (lastColon != -1) {
+            pattern += addT ? "'T'" : " ";
+            pattern += prototype != null && lastColon >= 16 ? "HH:mm:ss" : "HH:mm";
+        }
         //TODO: Improve me:
         //Handle timeZone
         pattern += appendZ?"'Z'":"";
