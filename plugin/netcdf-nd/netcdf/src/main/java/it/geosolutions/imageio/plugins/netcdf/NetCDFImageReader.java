@@ -116,34 +116,36 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
         final NetcdfDataset dataset = reader.getDataset();
         
         try {
-        if (dataset != null) {
-            checkType = NetCDFUtilities.getCheckType(dataset);
-
-            final List<Variable> variables = dataset.getVariables();
-            if (variables != null) {
-                for (final Variable variable : variables) {
-                    if (variable != null && variable instanceof VariableDS) {
-                        if (!NetCDFUtilities.isVariableAccepted(variable,checkType))
-                            continue;
-                        int[] shape = variable.getShape();
-                        switch (shape.length) {
-                        case 2:
-                        	indexMap.put(new Range(numImages, numImages + 1),new NetCDFVariableWrapper(variable));
-                            numImages++;
-                            break;
-                        case 3:
-                            indexMap.put(new Range(numImages, numImages+ shape[0]), new NetCDFVariableWrapper(variable));
-                            numImages += shape[0];
-                            break;
-                        case 4:
-                            indexMap.put(new Range(numImages, numImages+ shape[0] * shape[1]),new NetCDFVariableWrapper(variable));
-                            numImages += shape[0] * shape[1];
-                            break;
-                        }
-                    }
-                }
-            }
-        }
+	        if (dataset != null) {
+	            checkType = NetCDFUtilities.getCheckType(dataset);
+	
+	            final List<Variable> variables = dataset.getVariables();
+	            if (variables != null) {
+	                for (final Variable variable : variables) {
+	                    if (variable != null && variable instanceof VariableDS) {
+	                        if (!NetCDFUtilities.isVariableAccepted(variable,checkType))
+	                            continue;
+	                        int[] shape = variable.getShape();
+	                        switch (shape.length) {
+	                        case 2:
+	                        	indexMap.put(new Range(numImages, numImages + 1),new NetCDFVariableWrapper(variable));
+	                            numImages++;
+	                            break;
+	                        case 3:
+	                            indexMap.put(new Range(numImages, numImages+ shape[0]), new NetCDFVariableWrapper(variable));
+	                            numImages += shape[0];
+	                            break;
+	                        case 4:
+	                            indexMap.put(new Range(numImages, numImages+ shape[0] * shape[1]),new NetCDFVariableWrapper(variable));
+	                            numImages += shape[0] * shape[1];
+	                            break;
+	                        }
+	                    }
+	                }
+	            }
+	        }
+	        else 
+	        	throw new IllegalArgumentException( "Not a valid dataset has been found");
         } catch (InvalidRangeException e) {
         	 throw new IllegalArgumentException( "Error occurred during NetCDF file parsing", e);
 		}
