@@ -14,9 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package it.geosolutions.imageio.plugins.arcgrid.raster;
-
-import it.geosolutions.io.output.FastByteArrayWrapper;
+package it.geosolutions.imageio.utilities;
 
 import java.io.IOException;
 
@@ -32,21 +30,18 @@ import java.io.IOException;
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
-final class NumberToByteArray {
+public final class NumberToByteArray {
 	// Hardcode some byte arrays to make them quickly available
 	public static final byte[] INFINITY = { 73, 110, 102, 105, 110, 105, 116,
 			121 };
 
 	public static final byte[] NaN = { 78, 97, 78 };
 
-	public static final byte[] NEGATIVE_INFINITY = { 45, 73, 110, 102, 105,
-			110, 105, 116, 121 };
+	public static final byte[] NEGATIVE_INFINITY = { 45, 73, 110, 102, 105,110, 105, 116, 121 };
 
-	public static final byte[] MIN_VALUE = { 45, 50, 49, 52, 55, 52, 56, 51,
-			54, 52, 56 };
+	public static final byte[] MIN_VALUE = { 45, 50, 49, 52, 55, 52, 56, 51,54, 52, 56 };
 
-	public static final byte[] POSITIVE_INFINITY = { 73, 110, 102, 105, 110,
-			105, 116, 121 };
+	public static final byte[] POSITIVE_INFINITY = { 73, 110, 102, 105, 110,105, 116, 121 };
 
 	public static final byte[] DOUBLE_ZERO = { 48, 46, 48 };
 
@@ -84,14 +79,10 @@ final class NumberToByteArray {
 			{ 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48 },
 			{ 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48 },
 			{ 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48 },
-			{ 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48,
-					48 },
-			{ 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48,
-					48, 48 },
-			{ 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48,
-					48, 48, 48 },
-			{ 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48,
-					48, 48, 48, 48 }, };
+			{ 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48 },
+			{ 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48 },
+			{ 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48 },
+			{ 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48 }, };
 
 	/** byte representation of each digit, starting from "0" to "Z" */
 	private static final byte[] byteForDigit = { 48, 49, 50, 51, 52, 53, 54,
@@ -295,7 +286,7 @@ final class NumberToByteArray {
 			ba.write(NEGATIVE_INFINITY);
 		else if (d == Double.POSITIVE_INFINITY)
 			ba.write(POSITIVE_INFINITY);
-		else if (d != d)
+		else if (Double.isNaN(d))
 			ba.write(NaN);
 		else if (d == 0.0) {
 			if ((Double.doubleToLongBits(d) & DoubleSignMask) != 0)

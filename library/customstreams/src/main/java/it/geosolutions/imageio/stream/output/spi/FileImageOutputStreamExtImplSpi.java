@@ -50,7 +50,7 @@ public class FileImageOutputStreamExtImplSpi extends ImageOutputStreamSpi {
 
     private static final String version = "1.0";
 
-    private static final Class outputClass = File.class;
+    private static final Class<?> outputClass = File.class;
 
     public FileImageOutputStreamExtImplSpi() {
         super(vendorName, version, outputClass);
@@ -70,12 +70,12 @@ public class FileImageOutputStreamExtImplSpi extends ImageOutputStreamSpi {
      *                a Class object indicating the registry category under
      *                which this object has been registered.
      */
-    public void onRegistration(ServiceRegistry registry, Class category) {
+    @SuppressWarnings("unchecked")
+	public void onRegistration(ServiceRegistry registry, Class category) {
         super.onRegistration(registry, category);
         Object other;
-        Class targetClass = ImageOutputStreamSpi.class;
-        for (Iterator i = registry.getServiceProviders(targetClass, true); i
-                .hasNext();) {
+        final Class targetClass = ImageOutputStreamSpi.class;
+        for (Iterator i = registry.getServiceProviders(targetClass, true); i.hasNext();) {
             other = i.next();
 
             if (other instanceof FileImageOutputStreamSpi)

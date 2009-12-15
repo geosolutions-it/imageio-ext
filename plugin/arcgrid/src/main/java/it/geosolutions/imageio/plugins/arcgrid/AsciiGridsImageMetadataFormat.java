@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.arcgrid;
 
+import it.geosolutions.imageio.plugins.arcgrid.AsciiGridsImageMetadata.RasterSpaceType;
+
 import java.util.Arrays;
 
 import javax.imageio.ImageTypeSpecifier;
@@ -50,8 +52,7 @@ public final class AsciiGridsImageMetadataFormat extends IIOMetadataFormatImpl {
 		addAttribute("GridDescriptor", "nRows", DATATYPE_INTEGER, true, null);
 
 		addAttribute("GridDescriptor", "rasterSpaceType", DATATYPE_STRING,
-				true, null, Arrays
-						.asList(AsciiGridsImageMetadata.rasterSpaceTypes));
+				true, null, Arrays.asList(RasterSpaceType.PixelIsArea.toString(),RasterSpaceType.PixelIsPoint.toString()	));
 		addAttribute("GridDescriptor", "noDataValue", DATATYPE_DOUBLE, false,
 				null);
 

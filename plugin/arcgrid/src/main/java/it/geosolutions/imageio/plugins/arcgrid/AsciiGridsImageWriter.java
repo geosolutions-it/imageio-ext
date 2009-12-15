@@ -17,8 +17,6 @@
 package it.geosolutions.imageio.plugins.arcgrid;
 
 import it.geosolutions.imageio.plugins.arcgrid.raster.AsciiGridRaster;
-import it.geosolutions.imageio.plugins.arcgrid.raster.EsriAsciiGridRaster;
-import it.geosolutions.imageio.plugins.arcgrid.raster.GrassAsciiGridRaster;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -46,8 +44,8 @@ import org.w3c.dom.Node;
  * @author Simone Giannecchini, GeoSolutions.
  */
 public final class AsciiGridsImageWriter extends ImageWriter {
-	private static final Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.plugins.arcgrid");
+	
+	private static final Logger LOGGER = Logger.getLogger(AsciiGridsImageWriter.class.toString());
 
 	/** <code>true</code> if there are some listeners attached to this writer */
 	private boolean hasListeners;
@@ -66,8 +64,8 @@ public final class AsciiGridsImageWriter extends ImageWriter {
 	/** The input source RenderedImage */
 	private PlanarImage inputRenderedImage;
 
-	/** <code>true</code> if the related file is GRASS */
-	private boolean GRASS = false;
+	/** Tells me  if the related file is GRASS or ESRI*/
+	private AsciiGridRaster.AsciiGridRasterType rasterType;
 
 	/** The number of columns of the raster */
 	private int nColumns;
@@ -203,8 +201,10 @@ public final class AsciiGridsImageWriter extends ImageWriter {
 		//
 		// //
 		final Node formatDescriptorNode = root.getFirstChild();
-		GRASS = (Boolean.valueOf(formatDescriptorNode.getAttributes()
-				.getNamedItem("GRASS").getNodeValue())).booleanValue();
+		if(Boolean.valueOf(formatDescriptorNode.getAttributes().getNamedItem("GRASS").getNodeValue()).booleanValue()) 
+					rasterType = AsciiGridRaster.AsciiGridRasterType.GRASS;
+		else
+					rasterType = AsciiGridRaster.AsciiGridRasterType.ESRI;
 
 		// //
 		//
@@ -220,7 +220,7 @@ public final class AsciiGridsImageWriter extends ImageWriter {
 				.getNamedItem("rasterSpaceType").getNodeValue();
 		noDataValueString = null;// remember the no data value can be
 		// optional
-		if (!GRASS) {
+		if (rasterType.equals(AsciiGridRaster.AsciiGridRasterType.GRASS)) {
 			Node dummyNode = gridDescriptorNode.getAttributes().getNamedItem(
 					"noDataValue");
 
@@ -258,7 +258,7 @@ public final class AsciiGridsImageWriter extends ImageWriter {
 		final int actualHeight = this.inputRenderedImage.getHeight();
 		cellsizeX *= nColumns / actualWidth;
 		cellsizeY *= nRows / actualHeight;
-		if (!GRASS) {
+		if (rasterType.equals(AsciiGridRaster.AsciiGridRasterType.GRASS)){
 			// If ArcGrid (No GRASS) check to have square cell Size
 			if (resolutionCheck(cellsizeX, cellsizeX, EPS))
 				throw new IOException(
@@ -305,10 +305,8 @@ public final class AsciiGridsImageWriter extends ImageWriter {
 	 * @throws IOException
 	 */
 	private void writeHeader() throws IOException {
-		if (GRASS)
-			rasterWriter = new GrassAsciiGridRaster(imageOutputStream, this);
-		else
-			rasterWriter = new EsriAsciiGridRaster(imageOutputStream, this);
+		rasterWriter = rasterType.createAsciiGridRaster(imageOutputStream, this);
+		
 
 		rasterWriter.writeHeader(Integer.toString(nColumns), Integer
 				.toString(nRows), Double.toString(xll), Double.toString(yll),

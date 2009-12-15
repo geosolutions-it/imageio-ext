@@ -17,8 +17,7 @@
 package it.geosolutions.imageio.plugins.arcgrid;
 
 import it.geosolutions.imageio.plugins.arcgrid.raster.AsciiGridRaster;
-import it.geosolutions.imageio.plugins.arcgrid.raster.EsriAsciiGridRaster;
-import it.geosolutions.imageio.plugins.arcgrid.raster.GrassAsciiGridRaster;
+import it.geosolutions.imageio.plugins.arcgrid.raster.AsciiGridRaster.AsciiGridRasterType;
 
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
@@ -35,6 +34,24 @@ import org.w3c.dom.Node;
  * @author Simone Giannecchini, GeoSolutions. 
  */
 public final class AsciiGridsImageMetadata extends IIOMetadata {
+	/**
+	 * Two available values to define raster space as defined in GeoTiff
+	 * specifications. <BR>
+	 * 
+	 * @see <a
+	 *      href="http://www.remotesensing.org/geotiff/spec/geotiff2.5.html#2.5.2.2">GeoTiff
+	 *      specifications: RasterSpace</a>
+	 */
+	public enum RasterSpaceType{
+		PixelIsPoint,
+		PixelIsArea,
+		Undefined;
+		
+		public RasterSpaceType getDefault(){
+			return PixelIsArea;
+		}
+	}
+	
 
 	/** the native metadata format name */
 	public static final String nativeMetadataFormatName = "it.geosolutions.imageio.plugins.arcgrid.AsciiGridsImageMetadata_1.0";
@@ -45,19 +62,6 @@ public final class AsciiGridsImageMetadata extends IIOMetadata {
 	 */
 	public static final String[] metadataFormatNames = { nativeMetadataFormatName };
 
-	/**
-	 * Two available values to define raster space as defined in GeoTiff
-	 * specifications. <BR>
-	 * 
-	 * @see <a
-	 *      href="http://www.remotesensing.org/geotiff/spec/geotiff2.5.html#2.5.2.2">GeoTiff
-	 *      specifications: RasterSpace</a>
-	 */
-	final public static String[] rasterSpaceTypes = { "pixelIsPoint",
-			"pixelIsArea" };
-
-	/** <code>true</code> if the related file is GRASS */
-	private boolean GRASS;
 
 	/** the value used to represent noData for an element of the raster */
 	private double noData = Double.NaN;
@@ -84,7 +88,7 @@ public final class AsciiGridsImageMetadata extends IIOMetadata {
 	 * the rasterSpace Type which is one of the values contained in
 	 * <code>rasterSpaceTypes</code> array
 	 */
-	private String rasterSpaceType = null;
+	private RasterSpaceType rasterSpaceType = null;
 
 	/**
 	 * A constructor which uses an input {@link AsciiGridRaster} to initialize
@@ -134,15 +138,13 @@ public final class AsciiGridsImageMetadata extends IIOMetadata {
 	 *            the value associated to noData grid values
 	 */
 	public AsciiGridsImageMetadata(int cols, int rows, double cellsizeX,
-			double cellsizeY, double xll, double yll, boolean isCorner,
-			boolean grass, double inNoData) {
+			double cellsizeY, double xll, double yll, boolean isCorner,double inNoData) {
 		this();
-		GRASS = grass;
 		nCols = cols;
 		nRows = rows;
 		lowerLeftX = xll;
 		lowerLeftY = yll;
-		rasterSpaceType = !isCorner ? rasterSpaceTypes[0] : rasterSpaceTypes[1];
+		rasterSpaceType = !isCorner ? RasterSpaceType.PixelIsArea:  RasterSpaceType.PixelIsPoint;
 		cellSizeX = cellsizeX;
 		cellSizeY = cellsizeY;
 		noData = inNoData;
@@ -194,8 +196,7 @@ public final class AsciiGridsImageMetadata extends IIOMetadata {
 	public void reset() {
 		cellSizeX = cellSizeY = lowerLeftX = lowerLeftY = -1;
 		nCols = nRows = -1;
-		GRASS = false;
-		rasterSpaceType = "";
+		rasterSpaceType = RasterSpaceType.Undefined;
 	}
 
 	/**
@@ -228,11 +229,7 @@ public final class AsciiGridsImageMetadata extends IIOMetadata {
 		if (inputRaster != null) {
 			nRows = inputRaster.getNRows();
 			nCols = inputRaster.getNCols();
-			GRASS = (inputRaster instanceof GrassAsciiGridRaster) ? true
-					: false;
-
-			if (!GRASS)
-				noData = ((EsriAsciiGridRaster) inputRaster).getNoData();
+			noData = inputRaster.getNoData();
 
 			cellSizeX = inputRaster.getCellSizeX();// /
 			// inputRaster.getSourceXSubsampling();
@@ -240,9 +237,9 @@ public final class AsciiGridsImageMetadata extends IIOMetadata {
 			// inputRaster.getSourceYSubsampling();
 
 			if (inputRaster.isCorner()) {
-				rasterSpaceType = rasterSpaceTypes[1];
+				rasterSpaceType = RasterSpaceType.PixelIsArea;
 			} else
-				rasterSpaceType = rasterSpaceTypes[0];
+				rasterSpaceType = RasterSpaceType.PixelIsPoint;
 
 			lowerLeftX = inputRaster.getXllCellCoordinate();
 			lowerLeftY = inputRaster.getYllCellCoordinate();
@@ -291,7 +288,7 @@ public final class AsciiGridsImageMetadata extends IIOMetadata {
 		// Setting Format Properties
 		// //
 		IIOMetadataNode node = new IIOMetadataNode("formatDescriptor");
-		node.setAttribute("GRASS", Boolean.toString(GRASS));
+		node.setAttribute("GRASS", Boolean.toString(rasterSpaceType.equals(AsciiGridRasterType.GRASS)));
 		root.appendChild(node);
 
 		// //
@@ -300,9 +297,9 @@ public final class AsciiGridsImageMetadata extends IIOMetadata {
 		node = new IIOMetadataNode("gridDescriptor");
 		node.setAttribute("nColumns", Integer.toString(nCols));
 		node.setAttribute("nRows", Integer.toString(nRows));
-		node.setAttribute("rasterSpaceType", rasterSpaceType);
+		node.setAttribute("rasterSpaceType", rasterSpaceType.toString());
 
-		if (!GRASS) 
+		if (!rasterSpaceType.equals(AsciiGridRasterType.GRASS)) 
 			node.setAttribute("noDataValue", Double.toString(noData));
 
 		root.appendChild(node);

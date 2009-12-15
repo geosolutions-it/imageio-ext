@@ -59,8 +59,8 @@ import java.io.OutputStream;
  * but it will realign again as soon as possible.
  * 
  * @since 4.4
+ * @author Simone Giannecchini, GeoSolutions SAS
  */
-
 public class FastBufferedOutputStream extends OutputStream {
 
     /** The default size of the internal buffer in bytes (8Ki). */

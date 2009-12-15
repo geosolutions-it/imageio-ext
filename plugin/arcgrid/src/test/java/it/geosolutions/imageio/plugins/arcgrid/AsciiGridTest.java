@@ -34,9 +34,8 @@ import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Assert;
+import org.junit.Before;
 
 import com.sun.media.jai.operator.ImageWriteDescriptor;
 
@@ -44,16 +43,13 @@ import com.sun.media.jai.operator.ImageWriteDescriptor;
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
-public class AsciiGridTest extends TestCase {
-    public AsciiGridTest(String name) {
-        super(name);
-    }
+public class AsciiGridTest  extends Assert{
 
     private final static Logger LOGGER = Logger
             .getLogger("it.geosolutions.imageio.plugins.arcgrid");
 
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         File file = TestData.file(this, "arcgrid.zip");
         assertTrue(file.exists());
 
@@ -62,29 +58,12 @@ public class AsciiGridTest extends TestCase {
 
     }
 
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
-
-        // Read a file using subSampling and sourceRegion settings
-        suite.addTest(new AsciiGridTest("testReadRegion"));
-
-        // Read a GRASS, compressed (GZ) file
-        suite.addTest(new AsciiGridTest("testReadGrassGZ"));
-
-        // Read an ArcGrid file and write it back to another file
-        suite.addTest(new AsciiGridTest("testReadWrite"));
-
-        return suite;
-    }
-
-    public static void main(java.lang.String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
 
     /**
      * Read an ArcGrid file and write it back to another file
      */
-    public void testReadWrite() throws FileNotFoundException, IOException {
+    @org.junit.Test
+    public void readWrite() throws FileNotFoundException, IOException {
         String title = new String("Simple JAI ImageRead operation test");
         LOGGER.info("\n\n " + title + " \n");
         File inputFile = TestData.file(this, "095b_dem_90m.asc");
@@ -143,7 +122,8 @@ public class AsciiGridTest extends TestCase {
     /**
      * Read a GRASS, compressed (GZ) file
      */
-    public void testReadGrassGZ() throws FileNotFoundException, IOException {
+    @org.junit.Test
+    public void readGrassGZ() throws FileNotFoundException, IOException {
         // This test may require 20 seconds to be executed. Therefore it will
         // be run only when extensive tests are requested.
         if (TestData.isExtensiveTest()) {
@@ -166,7 +146,8 @@ public class AsciiGridTest extends TestCase {
     /**
      * Read a file using subSampling and sourceRegion settings
      */
-    public void testReadRegion() throws FileNotFoundException, IOException {
+    @org.junit.Test
+    public void readRegion() throws FileNotFoundException, IOException {
         String title = new String(
                 "JAI ImageRead using subSampling and sourceRegion ");
         LOGGER.info("\n\n " + title + " \n");
@@ -191,7 +172,10 @@ public class AsciiGridTest extends TestCase {
         if (TestData.isInteractiveTest())
             ImageIOUtilities.visualize(image, title, true);
         else
-            assertNotNull(image.getTiles());
+        {
+        	assertNotNull(image.getTiles());
+        	image.dispose();
+        }
     }
 
     /**
