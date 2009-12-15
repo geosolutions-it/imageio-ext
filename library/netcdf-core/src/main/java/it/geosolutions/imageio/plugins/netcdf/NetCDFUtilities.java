@@ -40,6 +40,7 @@ import java.util.logging.Logger;
 import ucar.ma2.DataType;
 import ucar.ma2.Range;
 import ucar.nc2.Attribute;
+import ucar.nc2.Dimension;
 import ucar.nc2.Variable;
 import ucar.nc2.VariableIF;
 import ucar.nc2.constants.AxisType;
@@ -172,7 +173,7 @@ public class NetCDFUtilities {
 //    }
 
     public static enum CheckType {
-        /*OAG, PE_MODEL,*/ NONE, UNSET
+        /*OAG, PE_MODEL,*/ NONE, UNSET, NOSCALARS
     }
 
     /**
@@ -495,13 +496,23 @@ public class NetCDFUtilities {
      * unuseful for our purposes. The method returns {@code true} if the
      * specified variable is accepted.
      */
-    public static boolean isVariableAccepted(final Variable var,
-            final CheckType checkType) {
+    public static boolean isVariableAccepted( final Variable var, final CheckType checkType ) {
         if (var instanceof CoordinateAxis1D) {
             return false;
+        } else if (checkType == CheckType.NOSCALARS) {
+            List<Dimension> dimensions = var.getDimensions();
+            if (dimensions.size()<2) {
+                return false;
+            }
+            DataType dataType = var.getDataType();
+            if (dataType == DataType.CHAR) {
+                return false;
+            }
+            return isVariableAccepted(var.getName(), CheckType.NONE);
         } else
             return isVariableAccepted(var.getName(), checkType);
     }
+
 
     /**
      * NetCDF files may contains a wide set of variables. Some of them are
@@ -583,13 +594,17 @@ public class NetCDFUtilities {
                 throw new IllegalArgumentException( "Error occurred during NetCDF file reading: The input file is a Directory.");
         } else if (input instanceof URL) {
             final URL tempURL = (URL) input;
-            if (tempURL.getProtocol().equalsIgnoreCase("file")) {
+            String protocol = tempURL.getProtocol();
+            if (protocol.equalsIgnoreCase("file")) {
                 File file = Utilities.urlToFile(tempURL);
                 if (!file.isDirectory())
                     dataset = NetcdfDataset.openDataset(file.getPath());
                 else
                     throw new IllegalArgumentException( "Error occurred during NetCDF file reading: The input file is a Directory.");
+            } else if (protocol.equalsIgnoreCase("http") || protocol.equalsIgnoreCase("dods")) {
+                dataset = NetcdfDataset.openDataset(tempURL.toExternalForm());
             }
+
         }
 
         else if (input instanceof FileImageInputStreamExt) {

@@ -18,6 +18,7 @@ package it.geosolutions.imageio.plugins.netcdf;
 
 import it.geosolutions.imageio.ndplugin.BaseImageReader;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.KeyValuePair;
+import it.geosolutions.imageio.stream.input.URIImageInputStream;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 
 import java.awt.image.BufferedImage;
@@ -109,7 +110,12 @@ public final class BaseNetCDFImageReader extends BaseImageReader{
         try {
             if (dataset != null)
                 reset();
-
+            
+            if (input instanceof URIImageInputStream) {
+                URIImageInputStream uriInStream = (URIImageInputStream) input;
+                dataset = NetcdfDataset.openDataset(uriInStream.getUri().getPath());
+            }
+            
             if (dataset == null) {
                 dataset = NetCDFUtilities.getDataset(input);
             }

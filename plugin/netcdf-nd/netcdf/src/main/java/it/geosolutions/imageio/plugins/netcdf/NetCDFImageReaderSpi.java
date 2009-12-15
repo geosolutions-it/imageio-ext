@@ -18,6 +18,7 @@ package it.geosolutions.imageio.plugins.netcdf;
 
 import it.geosolutions.imageio.ndplugin.BaseImageReaderSpi;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
+import it.geosolutions.imageio.stream.input.URIImageInputStream;
 
 import java.io.File;
 import java.io.IOException;
@@ -126,6 +127,17 @@ public class NetCDFImageReaderSpi extends BaseImageReaderSpi {
 
         if (source instanceof File) {
             input = (File) source;
+        }
+        if (source instanceof URIImageInputStream) {
+            URIImageInputStream uriInStream = (URIImageInputStream) source;
+            try {
+                // TODO perhaps it would be better to not make an online check. Might be slowing down.
+                NetcdfDataset openDataset = NetcdfDataset.openDataset(uriInStream.getUri().toString());
+                openDataset.close();
+                return true;
+            } catch (IOException e) {
+                return false;
+            }
         }
         if (input != null) {
             NetcdfFile file = null;
