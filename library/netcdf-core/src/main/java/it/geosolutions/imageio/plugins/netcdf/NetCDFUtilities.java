@@ -738,7 +738,7 @@ public class NetCDFUtilities {
     public static CheckType getCheckType(NetcdfDataset dataset) {
         CheckType ct = CheckType.UNSET;
         if (dataset != null) {
-            ct = CheckType.NONE;
+            ct = CheckType.NOSCALARS;
 //            Attribute attribute = dataset.findGlobalAttribute("type");
 //            if (attribute != null) {
 //                String value = attribute.getStringValue();
