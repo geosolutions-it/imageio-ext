@@ -44,9 +44,9 @@ public class NetCDFReaderTest {
     }
 
 //    private final static String filePath = "C:\\Work\\data\\rixen\\lsvc08\\SHOM";
-    private final static String filePath = "y:/data/netcdf/decoded";
+    private final static String filePath = "d:/data/netcdf/";
     private final static String subPath = "/";
-        private final static String name = "ext-mercatorPsy2v3R1v_med_mean_20080925_R20080924.nc";
+        private final static String name = "precip.CRU.DMI.ECC.nc";
             
     private final static String fileName = filePath+subPath+name;
 //    final static String fileName = "ext-mercatorPsy2v3R1v_med_mean_20080903_R20080903.nc";
@@ -58,16 +58,16 @@ public class NetCDFReaderTest {
     @org.junit.Test
     public void testRead() throws IOException {
         File inputFile=new File(fileName);
-//        try {
-//	        inputFile = TestData.file(this, fileName);
+        try {
+	        inputFile = TestData.file(this, fileName);
 	        if (!inputFile.exists()) {
 	            warningMessage();
 	            return;
 	        }
-//        } catch (FileNotFoundException fnfe) {
-//        		warningMessage();
-//				return;
-//			}
+        } catch (FileNotFoundException fnfe) {
+        		warningMessage();
+				return;
+			}
         final ImageReader ncReader = new NetCDFImageReaderSpi().createReaderInstance();
         ncReader.setInput(inputFile);
         int numImages = ncReader.getNumImages(false);
