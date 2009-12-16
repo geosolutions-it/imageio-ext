@@ -74,8 +74,6 @@ public class HDF4TeraScanTest extends TestCase {
                 .getAsTree(CoreCommonImageMetadata.nativeMetadataFormatName));
         ImageIOUtilities.displayImageIOMetadata(metadata
                 .getAsTree(HDF4TeraScanImageMetadata.nativeMetadataFormatName));
-        reader.reset();
-        reader.setInput(file);
         reader.dispose();
     }
 
