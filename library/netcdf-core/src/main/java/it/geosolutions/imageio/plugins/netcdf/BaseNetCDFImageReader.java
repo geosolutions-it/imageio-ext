@@ -20,11 +20,14 @@ import it.geosolutions.imageio.ndplugin.BaseImageReader;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.KeyValuePair;
 import it.geosolutions.imageio.stream.input.URIImageInputStream;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
+import it.geosolutions.imageio.utilities.Utilities;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -113,7 +116,14 @@ public final class BaseNetCDFImageReader extends BaseImageReader{
             
             if (input instanceof URIImageInputStream) {
                 URIImageInputStream uriInStream = (URIImageInputStream) input;
-                dataset = NetcdfDataset.openDataset(uriInStream.getUri().getPath());
+                dataset = NetcdfDataset.openDataset(uriInStream.getUri().toString());
+            }
+            if (input instanceof URL) {
+                final URL tempURL = (URL) input;
+                String protocol = tempURL.getProtocol();
+                if (protocol.equalsIgnoreCase("http") || protocol.equalsIgnoreCase("dods")) {
+                    dataset = NetcdfDataset.openDataset(tempURL.toExternalForm());
+                }
             }
             
             if (dataset == null) {

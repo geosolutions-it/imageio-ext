@@ -17,6 +17,7 @@
 package it.geosolutions.imageio.plugins.netcdf;
 
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
+import it.geosolutions.imageio.stream.input.URIImageInputStream;
 import it.geosolutions.imageio.utilities.Utilities;
 
 import java.awt.image.DataBuffer;
@@ -605,6 +606,9 @@ public class NetCDFUtilities {
                 dataset = NetcdfDataset.openDataset(tempURL.toExternalForm());
             }
 
+        } else if (input instanceof URIImageInputStream) {
+            final URIImageInputStream uriInStream = (URIImageInputStream) input;
+            dataset = NetcdfDataset.openDataset(uriInStream.getUri().toString());
         }
 
         else if (input instanceof FileImageInputStreamExt) {
