@@ -17,8 +17,7 @@
 package it.geosolutions.imageio.plugins.arcgrid;
 
 import it.geosolutions.imageio.plugins.arcgrid.raster.AsciiGridRaster;
-import it.geosolutions.imageio.plugins.arcgrid.raster.EsriAsciiGridRaster;
-import it.geosolutions.imageio.plugins.arcgrid.raster.GrassAsciiGridRaster;
+import it.geosolutions.imageio.plugins.arcgrid.raster.AsciiGridRaster.AsciiGridRasterType;
 import it.geosolutions.imageio.plugins.arcgrid.spi.AsciiGridsImageReaderSpi;
 import it.geosolutions.imageio.utilities.Utilities;
 
@@ -68,9 +67,6 @@ public final class AsciiGridsImageReader extends ImageReader {
 
 	/** Defaul tile size. */
 	private static final int DEFAULT_TILE_SIZE = 1048576 / 2; // 1 MByte
-
-	/** <code>true</code> if the related file is GRASS */
-	private boolean GRASS = false;
 
 	/** Image Dimensions */
 	private int width = -1;
@@ -276,13 +272,13 @@ public final class AsciiGridsImageReader extends ImageReader {
 		try {
 
 			// Header Parsing to check if it is an EsriAsciiGridRaster
-			rasterReader = new EsriAsciiGridRaster(imageInputStream, this);
+			rasterReader = AsciiGridRasterType.ESRI.createAsciiGridRaster(imageInputStream, this);
 			rasterReader.parseHeader();
 		} catch (IOException e) {
 			try {
 
 				// Header Parsing to know if it is a GrassAsciiGridRaster
-				rasterReader = new GrassAsciiGridRaster(imageInputStream, this);
+				rasterReader = AsciiGridRasterType.GRASS.createAsciiGridRaster(imageInputStream, this);
 				rasterReader.parseHeader();
 			} catch (IOException e1) {
 				// Input cannot be decoded
@@ -313,12 +309,10 @@ public final class AsciiGridsImageReader extends ImageReader {
 	 */
 	private void initializeReader() {
 
-		GRASS = rasterReader instanceof GrassAsciiGridRaster;
-
 		if (LOGGER.isLoggable(Level.FINE)) {
 			LOGGER.info("Data Initializing");
 			LOGGER.info("\tImageInputStream: \t" + imageInputStream.toString());
-			LOGGER.info("\tGrass:\t\t\t " + GRASS);
+			LOGGER.info("\tRasterType:\t\t\t " + rasterReader.getRasterType().toString());
 		}
 
 		// Image dimensions initialization
@@ -444,9 +438,9 @@ public final class AsciiGridsImageReader extends ImageReader {
 	 *         <code>ImageTypeSpecifier</code> suggesting to use a 32 bit
 	 *         grayscale image.
 	 */
-	public synchronized Iterator getImageTypes(final int imageIndex) throws IOException {
+	public synchronized Iterator<ImageTypeSpecifier> getImageTypes(final int imageIndex) throws IOException {
 		checkImageIndex(imageIndex);
-		final List l = new java.util.ArrayList();
+		final List<ImageTypeSpecifier> l = new java.util.ArrayList<ImageTypeSpecifier>();
 
 		if (imageType == null)
 			imageType = new ImageTypeSpecifier(cm, sm);
@@ -846,7 +840,6 @@ public final class AsciiGridsImageReader extends ImageReader {
 		isTiled = false;
 		imageType = null;
 		imageSize = -1;
-		GRASS = false;
 		metadata = null;
 	}
 

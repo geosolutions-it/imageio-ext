@@ -99,16 +99,9 @@ public final class AsciiGridsImageWriterSpi extends ImageWriterSpi {
 	 * @see javax.imageio.spi.ImageWriterSpi#canEncodeImage(javax.imageio.ImageTypeSpecifier)
 	 */
 	public boolean canEncodeImage(ImageTypeSpecifier its) {
-		// int dataType = its.getSampleModel().getDataType();
 
-		// if (dataType != DataBuffer.TYPE_FLOAT) {
-		// return false;
-		// }
-		//
-		// int bands = its.getNumBands();
-		//
-		// return bands == 1;
-		return true;
+		 int bands = its.getNumBands();
+		 return bands == 1;
 	}
 
 	/**

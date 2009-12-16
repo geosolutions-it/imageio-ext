@@ -17,15 +17,12 @@
 package it.geosolutions.imageio.plugins.arcgrid.spi;
 import it.geosolutions.imageio.plugins.arcgrid.AsciiGridsImageReader;
 import it.geosolutions.imageio.plugins.arcgrid.raster.AsciiGridRaster;
-import it.geosolutions.imageio.plugins.arcgrid.raster.EsriAsciiGridRaster;
-import it.geosolutions.imageio.plugins.arcgrid.raster.GrassAsciiGridRaster;
 import it.geosolutions.imageio.utilities.Utilities;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -216,13 +213,13 @@ public final class AsciiGridsImageReaderSpi extends ImageReaderSpi {
 		try {
 
 			// Header Parsing to check if it is an EsriAsciiGridRaster
-			asciiRaster = new EsriAsciiGridRaster(spiImageInputStream);
+			asciiRaster = AsciiGridRaster.AsciiGridRasterType.ESRI.createAsciiGridRaster(spiImageInputStream);
 			asciiRaster.parseHeader();
 		} catch (IOException e) {
 			try {
 
 				// Header Parsing to know if it is a GrassAsciiGridRaster
-				asciiRaster = new GrassAsciiGridRaster(spiImageInputStream);
+				asciiRaster =  AsciiGridRaster.AsciiGridRasterType.GRASS.createAsciiGridRaster(spiImageInputStream);
 				asciiRaster.parseHeader();
 			} catch (IOException e2) {
 				// Input cannot be decoded

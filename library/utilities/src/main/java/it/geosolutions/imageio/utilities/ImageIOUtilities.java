@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Level;
 
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
@@ -46,7 +45,6 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import com.sun.media.imageioimpl.common.ImageUtil;
-import com.sun.media.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
 import com.sun.media.jai.codecimpl.util.RasterFactory;
 
 /**

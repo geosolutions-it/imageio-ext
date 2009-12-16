@@ -14,12 +14,9 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package it.geosolutions.imageio.plugins.arcgrid.raster;
+package it.geosolutions.imageio.utilities;
 
 import java.lang.ref.SoftReference;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * This class is responsible for converting a sequence of chars into a a double
@@ -97,29 +94,29 @@ import java.util.List;
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
-final class StringToDouble {
-	/**
-	 * Default number of {@link StringToDouble} object to keep in the pool.
-	 * 
-	 * <p>
-	 * I use this value also when enlarging the pool.
-	 */
-	private static final int CONVERTER_NUM = 50;
-
-	/**
-	 * Static pool of double converters.
-	 */
-	static List pool;
-
-	static {
-		pool = Collections.synchronizedList(new ArrayList(CONVERTER_NUM));
-		enlargePool(CONVERTER_NUM);
-	}
-
-	private static void enlargePool(final int num) {
-		for (int i = 0; i < num; i++)
-			pool.add(new SoftReference(new StringToDouble()));
-	}
+public final class StringToDouble {
+//	/**
+//	 * Default number of {@link StringToDouble} object to keep in the pool.
+//	 * 
+//	 * <p>
+//	 * I use this value also when enlarging the pool.
+//	 */
+//	private static final int CONVERTER_NUM = 50;
+//
+//	/**
+//	 * Static pool of double converters.
+//	 */
+//	static List pool;
+//
+//	static {
+//		pool = Collections.synchronizedList(new ArrayList(CONVERTER_NUM));
+//		enlargePool(CONVERTER_NUM);
+//	}
+//
+//	private static void enlargePool(final int num) {
+//		for (int i = 0; i < num; i++)
+//			pool.add(new SoftReference(new StringToDouble()));
+//	}
 
 	// variables for arithmetic operations
 	private double value = 0.0;
@@ -128,7 +125,7 @@ final class StringToDouble {
 
 	private boolean eof = false;
 
-	private final StringBuilder builder = new StringBuilder(30);
+	private final StringBuilder builder = new StringBuilder();
 
 	/**
 	 * Constructor.
@@ -174,7 +171,7 @@ final class StringToDouble {
 	 * @return true if there is a value to get, false otherwise.
 	 * @see {@link StringToDouble#isEof()}
 	 */
-	boolean pushChar(final int newChar) {
+	public boolean pushChar(final int newChar) {
 		boolean retVal = false;
 		// check if we read a white space or similar
 		if ((newChar != 32) && (newChar != 10) && (newChar != 13)
@@ -270,7 +267,7 @@ final class StringToDouble {
 	 * 
 	 * @return the computed value;
 	 */
-	double compute() {
+	public double compute() {
 		if (!Double.isNaN(value)) {
 			value = Double.parseDouble(builder.toString());
 			builder.setLength(0);
@@ -290,24 +287,24 @@ final class StringToDouble {
 	 * Retrieves a poole {@link StringToDouble} object.
 	 * 
 	 */
-	static StringToDouble acquire() {
-		synchronized (pool) {
-			SoftReference r;
-			Object o;
-			while (pool.size() > 0) {
-				r = (SoftReference) pool.remove(0);
-				o = r.get();
-				if (o != null) {
-					StringToDouble stf = (StringToDouble) o;
-					stf.reset();
-					return stf;
-				}
-
-			}
-			// we did not find any
-			enlargePool(CONVERTER_NUM - 1);
+	public static StringToDouble acquire() {
+//		synchronized (pool) {
+//			SoftReference r;
+//			Object o;
+//			while (pool.size() > 0) {
+//				r = (SoftReference) pool.remove(0);
+//				o = r.get();
+//				if (o != null) {
+//					StringToDouble stf = (StringToDouble) o;
+//					stf.reset();
+//					return stf;
+//				}
+//
+//			}
+//			// we did not find any
+//			enlargePool(CONVERTER_NUM - 1);
 			return new StringToDouble();
-		}
+//		}
 	}
 
 	/**
@@ -315,9 +312,11 @@ final class StringToDouble {
 	 * 
 	 * @param c
 	 */
-	static void release(StringToDouble c) {
-		synchronized (pool) {
-			pool.add(new SoftReference(c));
-		}
+	public static void release(StringToDouble c) {
+		c.builder.setLength(0);
+		c.builder.trimToSize();
+//		synchronized (pool) {
+//			pool.add(new SoftReference(c));
+//		}
 	}
 }

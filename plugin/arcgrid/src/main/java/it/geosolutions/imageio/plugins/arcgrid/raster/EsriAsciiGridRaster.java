@@ -18,6 +18,7 @@ package it.geosolutions.imageio.plugins.arcgrid.raster;
 
 import it.geosolutions.imageio.plugins.arcgrid.AsciiGridsImageReader;
 import it.geosolutions.imageio.plugins.arcgrid.AsciiGridsImageWriter;
+import it.geosolutions.imageio.utilities.StringToDouble;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -31,7 +32,7 @@ import javax.imageio.stream.ImageOutputStream;
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
-public final class EsriAsciiGridRaster extends AsciiGridRaster {
+final class EsriAsciiGridRaster extends AsciiGridRaster {
 
 	public static final String NO_DATA_MARKER = "-9999";
 
@@ -373,5 +374,10 @@ public final class EsriAsciiGridRaster extends AsciiGridRaster {
 					: NO_DATA_MARKER;
 		}
 		return noDataMarker;
+	}
+
+	@Override
+	public AsciiGridRasterType getRasterType() {
+		return AsciiGridRasterType.ESRI;
 	}
 }

@@ -18,6 +18,7 @@ package it.geosolutions.imageio.plugins.arcgrid.raster;
 
 import it.geosolutions.imageio.plugins.arcgrid.AsciiGridsImageReader;
 import it.geosolutions.imageio.plugins.arcgrid.AsciiGridsImageWriter;
+import it.geosolutions.imageio.utilities.StringToDouble;
 
 import java.awt.Rectangle;
 import java.awt.image.WritableRaster;
@@ -43,8 +44,95 @@ import javax.media.jai.iterator.RectIter;
  */
 public abstract class AsciiGridRaster {
 
-	protected final static Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.plugins.arcgrid.raster");
+	protected final static Logger LOGGER = Logger.getLogger(AsciiGridRaster.class.toString());
+	
+
+	public static enum AsciiGridRasterType{
+		UNDEFINED {
+			@Override
+			public AsciiGridRaster createAsciiGridRaster(
+					ImageInputStream inStream) {
+				throw new UnsupportedOperationException("Operation not supported by the UNDEFINED raster type");
+			}
+
+			@Override
+			public AsciiGridRaster createAsciiGridRaster(
+					ImageOutputStream oStream, AsciiGridsImageWriter writer) {
+				throw new UnsupportedOperationException("Operation not supported by the UNDEFINED raster type");
+			}
+
+			@Override
+			public AsciiGridRaster createAsciiGridRaster(
+					ImageOutputStream oStream) {
+				throw new UnsupportedOperationException("Operation not supported by the UNDEFINED raster type");
+			}
+
+			@Override
+			public AsciiGridRaster createAsciiGridRaster(
+					ImageInputStream inStream, AsciiGridsImageReader reader) {
+				throw new UnsupportedOperationException("Operation not supported by the UNDEFINED raster type");
+			}
+		},
+		ESRI {
+			@Override
+			public EsriAsciiGridRaster createAsciiGridRaster(
+				final ImageInputStream inStream) {
+				return new EsriAsciiGridRaster(inStream);
+			}
+
+			@Override
+			public EsriAsciiGridRaster createAsciiGridRaster(
+					ImageOutputStream oStream, AsciiGridsImageWriter writer) {
+				return new EsriAsciiGridRaster(oStream, writer);
+			}
+
+			@Override
+			public EsriAsciiGridRaster createAsciiGridRaster(
+					ImageOutputStream oStream) {
+				return new EsriAsciiGridRaster(oStream);
+			}
+
+			@Override
+			public EsriAsciiGridRaster createAsciiGridRaster(
+					ImageInputStream inStream, AsciiGridsImageReader reader) {
+				return new EsriAsciiGridRaster(inStream,reader);
+			}
+		},
+		GRASS {
+			@Override
+			public GrassAsciiGridRaster createAsciiGridRaster(
+					ImageInputStream inStream) {
+				return new GrassAsciiGridRaster(inStream);
+			}
+
+			@Override
+			public GrassAsciiGridRaster createAsciiGridRaster(
+					ImageOutputStream oStream, AsciiGridsImageWriter writer) {
+				return new GrassAsciiGridRaster(oStream,writer);
+			}
+
+			@Override
+			public GrassAsciiGridRaster createAsciiGridRaster(
+					ImageOutputStream oStream) {
+				return new GrassAsciiGridRaster(oStream);
+			}
+
+			@Override
+			public GrassAsciiGridRaster createAsciiGridRaster(
+					ImageInputStream inStream, AsciiGridsImageReader reader) {
+				return new GrassAsciiGridRaster(inStream,reader);
+			}
+		};
+		
+		public abstract AsciiGridRaster createAsciiGridRaster(ImageInputStream inStream);
+		public abstract AsciiGridRaster createAsciiGridRaster(ImageOutputStream oStream, AsciiGridsImageWriter writer);
+		public abstract AsciiGridRaster createAsciiGridRaster(ImageOutputStream oStream);
+		public abstract AsciiGridRaster createAsciiGridRaster(ImageInputStream inStream, AsciiGridsImageReader reader);
+		public static AsciiGridRasterType getDefaultRasterType() {
+			return UNDEFINED;
+		}
+	}
+
 
 	/** The OS-dependent line separator */
 	public static final String newline = System.getProperty("line.separator");
@@ -124,7 +212,7 @@ public abstract class AsciiGridRaster {
 	 * of spaces' to 'positions in the stream'. Thus, this search operation is
 	 * accelerated.
 	 */
-	protected TreeMap tileMarker = new TreeMap();
+	protected TreeMap<Long,Long> tileMarker = new TreeMap<Long,Long>();
 
 	/** the width of a tile */
 	protected int tileWidth = -1;
@@ -191,7 +279,8 @@ public abstract class AsciiGridRaster {
 	 * @param writer
 	 *            {@link AsciiGridsImageWriter} used to read the raster.
 	 */
-	protected AsciiGridRaster(ImageOutputStream ios,
+	protected AsciiGridRaster(
+			ImageOutputStream ios,
 			AsciiGridsImageWriter writer) {
 		this(ios);
 		this.writer = writer;
@@ -283,6 +372,9 @@ public abstract class AsciiGridRaster {
 	final public int getNRows() {
 		return nRows;
 	}
+	
+	/** Retrieves the type of raster we are serving, GRASS or ESRI.*/
+	abstract public AsciiGridRasterType getRasterType();
 
 	/**
 	 * Number of columns.
@@ -528,10 +620,9 @@ public abstract class AsciiGridRaster {
 		dstHeight = ((dstHeight - 1) / ySubsamplingFactor) + 1;
 
 		// Number of spaces to count before I find useful data
-		final int samplesToThrowAwayBeforeFirstValidSample = (nCols * srcRegionYOffset);
+		final long samplesToThrowAwayBeforeFirstValidSample = (nCols * srcRegionYOffset);
 
-		final TileFactory factory = (TileFactory) JAI.getDefaultInstance()
-				.getRenderingHint(JAI.KEY_TILE_FACTORY);
+		final TileFactory factory = (TileFactory) JAI.getDefaultInstance().getRenderingHint(JAI.KEY_TILE_FACTORY);
 		if (factory != null)
 			raster = factory.createTile(RasterFactory.createBandedSampleModel(
 					java.awt.image.DataBuffer.TYPE_DOUBLE, dstWidth, dstHeight,
@@ -543,7 +634,7 @@ public abstract class AsciiGridRaster {
 
 		int ch = -1;
 		int prevCh = -1;
-		int samplesCounted = 0;
+		long samplesCounted = 0;
 		long streamPosition = 0;
 		// /////////////////////////////////////////////////////////////////////
 		//
@@ -569,12 +660,12 @@ public abstract class AsciiGridRaster {
 		imageIS.seek(dataStartAt);
 		if (samplesToThrowAwayBeforeFirstValidSample > 0) {
 			synchronized (tileTreeMutex) {
-				Long markedPos = (Long) tileMarker.get(new Long(samplesToThrowAwayBeforeFirstValidSample));
+				Long markedPos = tileMarker.get(samplesToThrowAwayBeforeFirstValidSample);
 
 				// Case 1: Exact key
 				if (markedPos != null) {
 
-					imageIS.seek(markedPos.longValue());
+					imageIS.seek(markedPos);
 					samplesCounted = samplesToThrowAwayBeforeFirstValidSample;
 
 					// I have found a stream Position associated to the number
@@ -583,11 +674,11 @@ public abstract class AsciiGridRaster {
 
 				} else {
 					// Case 2: Nearest(Lower) Key
-					SortedMap sm = tileMarker.headMap(new Long(samplesToThrowAwayBeforeFirstValidSample));
+					final SortedMap<Long,Long> sm = tileMarker.headMap(Long.valueOf(samplesToThrowAwayBeforeFirstValidSample));
 
 					if (!sm.entrySet().isEmpty()) {
 						// searching the nearest key (belower)
-						final Long key = (Long) sm.lastKey();
+						final long key = sm.lastKey();
 
 						// returning the stream position
 						markedPos = (Long) tileMarker.get(key);
@@ -599,7 +690,7 @@ public abstract class AsciiGridRaster {
 							// remaining number of spaces.
 
 							imageIS.seek(markedPos.longValue());
-							samplesCounted = key.intValue();
+							samplesCounted = (int) key;
 						}
 					} else {
 						// positioning on the first data byte
@@ -665,8 +756,8 @@ public abstract class AsciiGridRaster {
 						// useful to annotate stream positions in the
 						// tileMarker
 						if ((samplesCounted % (tileH * tileW)) == 0) {
-							key = new Long(samplesCounted);
-							val = new Long(streamPosition);
+							key = Long.valueOf(samplesCounted);
+							val = Long.valueOf(streamPosition);
 							synchronized (tileTreeMutex) {
 								if (!tileMarker.containsKey(key)) {
 									tileMarker.put(key, val);
@@ -726,9 +817,9 @@ public abstract class AsciiGridRaster {
 		// //
 		// variables for raster setting
 		// //
-		int rasterX = 0;
-		int rasterY = 0;
-		int tempCol = 0, tempRow = 0;
+		long rasterX = 0;
+		long rasterY = 0;
+		long tempCol = 0, tempRow = 0;
 
 		final double noDataValue = getNoData();
 		final StringToDouble doubleConverter = StringToDouble.acquire();
@@ -776,7 +867,7 @@ public abstract class AsciiGridRaster {
 					// //
 					rasterY = (tempRow) / ySubsamplingFactor;
 					rasterX = (tempCol - srcRegionXOffset) / xSubsamplingFactor;
-					raster.setSample(rasterX, rasterY, 0, value);
+					raster.setSample((int)rasterX, (int)rasterY, 0, value);
 				}
 			}
 			// sample found
@@ -808,7 +899,7 @@ public abstract class AsciiGridRaster {
 			// I can use this information to skip useless space searches
 			// operations when I load Tiles not located at the beginning of the
 			// stream
-			tileMarker.put(new Long(samplesToLoad
+			tileMarker.put(Long.valueOf(samplesToLoad
 					+ samplesToThrowAwayBeforeFirstValidSample), new Long(
 					imageIS.getStreamPosition()));
 		}
