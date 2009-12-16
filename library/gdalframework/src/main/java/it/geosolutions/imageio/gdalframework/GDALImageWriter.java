@@ -1474,7 +1474,7 @@ public abstract class GDALImageWriter extends ImageWriter {
                 dataType, xSubsamplingFactor, ySubsamplingFactor);
     }
 
-    public IIOMetadata getDefaultImageMetadata(ImageTypeSpecifier imageType,ImageWriteParam param) {
+    public IIOMetadata getDefaultImageMetadata(ImageTypeSpecifier imageType, ImageWriteParam param) {
     	
         final GDALWritableCommonIIOImageMetadata imageMetadata = new GDALWritableCommonIIOImageMetadata();
         SampleModel sm = imageType.getSampleModel();
