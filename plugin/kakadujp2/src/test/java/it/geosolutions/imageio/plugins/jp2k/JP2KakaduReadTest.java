@@ -19,14 +19,13 @@ import it.geosolutions.imageio.imageioimpl.imagereadmt.ImageReadDescriptorMT;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
-import java.awt.RenderingHints;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.image.RenderedImage;
 import java.awt.image.renderable.ParameterBlock;
 import java.io.File;
 import java.io.IOException;
 
-import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.FileImageOutputStream;
 import javax.media.jai.Histogram;
@@ -54,7 +53,6 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
         super(name);
 
     }
-    
 
     public void testJaiReadFromFile() throws IOException {
         if (!runTests)
@@ -62,8 +60,7 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
         final File file = TestData.file(this, "CB_TM432.jp2");
         ImageReadDescriptorMT.register(JAI.getDefaultInstance());
 
-        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
-                "ImageRead");
+        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
         ImageLayout l = new ImageLayout();
         l.setTileHeight(256);
         l.setTileWidth(256);
@@ -144,11 +141,10 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
         if (!runTests)
             return;
         final File file = TestData.file(this, "CB_TM432.jp2");
-        JP2KKakaduImageReader reader = new JP2KKakaduImageReader(
-                new JP2KKakaduImageReaderSpi());
+        JP2KKakaduImageReader reader = new JP2KKakaduImageReader(new JP2KKakaduImageReaderSpi());
 
         reader.setInput(file);
-        RenderedImage image = reader.read(0);
+        RenderedImage image = reader.read(0,null);
         if (TestData.isInteractiveTest())
             ImageIOUtilities.visualize(image, "testManualRead");
         else
