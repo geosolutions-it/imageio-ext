@@ -83,7 +83,7 @@ public class JpegJMagickImageReader extends ImageReader {
 			CloneableImageReadParam {
 
 		public String toString() {
-			final StringBuffer buff = new StringBuffer();
+			final StringBuilder buff = new StringBuilder();
 			buff.append("JpegJMagickImageReaderReadParam={").append("\n");
 			if (this.getSourceRegion() != null)
 				buff
@@ -226,7 +226,7 @@ public class JpegJMagickImageReader extends ImageReader {
 		}
 
 		public String toString() {
-			final StringBuffer buff = new StringBuffer();
+			final StringBuilder buff = new StringBuilder();
 			buff.append("MagickImageAdapter={").append("\n");
 			if (this.layout != null)
 				buff.append("ImageLayout " + this.layout.toString()).append(
@@ -241,7 +241,7 @@ public class JpegJMagickImageReader extends ImageReader {
 		 * @return
 		 * @throws MagickException
 		 */
-		public static WritableRaster jMagickToWritableRaster(
+		public static WritableRaster JMagickToWritableRaster(
 				MagickImage magickImage) throws IOException {
 			try {
 
@@ -278,7 +278,7 @@ public class JpegJMagickImageReader extends ImageReader {
 				MagickImage magickImage) throws IOException {
 
 			final WritableRaster raster = MagickImageAdapter
-					.jMagickToWritableRaster(magickImage);
+					.JMagickToWritableRaster(magickImage);
 			ColorModel cm = new ComponentColorModel(ColorSpace
 					.getInstance(ColorSpace.CS_LINEAR_RGB), false, false,
 					Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
@@ -322,8 +322,7 @@ public class JpegJMagickImageReader extends ImageReader {
 	 * List of the {@link ImageLayout}s of the various images contained in
 	 * {@link #sourceFile}.
 	 */
-	private final List/* <ImageLayout> */imagesLayouts = Collections
-			.synchronizedList(new ArrayList/* <ImageLayout> */(10));
+	private final List<MagickImageAdapter> imagesLayouts =Collections.synchronizedList(new ArrayList<MagickImageAdapter>());
 
 	/**
 	 * Returns the height in pixels of the given image within the input source.
@@ -335,8 +334,7 @@ public class JpegJMagickImageReader extends ImageReader {
 	public int getHeight(int imageIndex) throws IOException {
 		synchronized (imagesLayouts) {
 			checkImageIndex(imageIndex);
-			return ((MagickImageAdapter) imagesLayouts.get(imageIndex))
-					.getLayout().getHeight(null);
+			return imagesLayouts.get(imageIndex).getLayout().getHeight(null);
 		}
 	}
 
@@ -350,19 +348,16 @@ public class JpegJMagickImageReader extends ImageReader {
 	public int getWidth(int imageIndex) throws IOException {
 		synchronized (imagesLayouts) {
 			checkImageIndex(imageIndex);
-			return ((MagickImageAdapter) imagesLayouts.get(imageIndex))
-					.getLayout().getWidth(null);
+			return  imagesLayouts.get(imageIndex).getLayout().getWidth(null);
 		}
 	}
 
-	public Iterator getImageTypes(int imageIndex) throws IOException {
+	public Iterator<ImageTypeSpecifier> getImageTypes(int imageIndex) throws IOException {
 		synchronized (imagesLayouts) {
 			checkImageIndex(imageIndex);
-			final ImageLayout layout = ((MagickImageAdapter) imagesLayouts
-					.get(imageIndex)).getLayout();
+			final ImageLayout layout = (imagesLayouts.get(imageIndex)).getLayout();
 			return Collections.singletonList(
-					new ImageTypeSpecifier(layout.getColorModel(null), layout
-							.getSampleModel(null))).iterator();
+					new ImageTypeSpecifier(layout.getColorModel(null), layout.getSampleModel(null))).iterator();
 		}
 
 	}
@@ -417,8 +412,7 @@ public class JpegJMagickImageReader extends ImageReader {
 			// width and height for this imageMagick
 			int width = 0;
 			int height = 0;
-			final MagickImageAdapter im = ((MagickImageAdapter) imagesLayouts
-					.get(imageIndex));
+			final MagickImageAdapter im = ((MagickImageAdapter) imagesLayouts.get(imageIndex));
 			if (LOGGER.isLoggable(Level.FINE))
 				LOGGER.fine("Selected imageMagick adapter " + im.toString());
 			final ImageLayout layout = im.getLayout();
@@ -529,8 +523,7 @@ public class JpegJMagickImageReader extends ImageReader {
 			// BufferedImage creation
 			//
 			// ////////////////////////////////////////////////////////////////
-			return MagickImageAdapter.magickImageToBufferedImage(im, srcRegion,
-					dstWidth, dstHeight);
+			return MagickImageAdapter.magickImageToBufferedImage(im, srcRegion,dstWidth, dstHeight);
 		}
 	}
 
@@ -565,23 +558,7 @@ public class JpegJMagickImageReader extends ImageReader {
 	 */
 	public void setInput(Object input, boolean seekForwardOnly,
 			boolean ignoreMetadata) {
-		if (LOGGER.isLoggable(Level.FINE))
-			LOGGER.fine("setInput on object " + input.toString()
-					+ " with params  seekForwardOnly=" + seekForwardOnly
-					+ " and ignoreMetadata=" + ignoreMetadata);
-		if (input instanceof File) {
-			sourceFile = (File) input;
-		} else if (input instanceof FileImageInputStreamExt) {
-			FileImageInputStreamExt imageIn = (FileImageInputStreamExt) input;
-			sourceFile = imageIn.getFile();
-			try {
-				imageIn.close();
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
-		} else
-			throw new IllegalArgumentException(
-					"The input type provided is not supported");
+		setInput(input);
 		super.setInput(sourceFile, seekForwardOnly, ignoreMetadata);
 	}
 
@@ -590,22 +567,7 @@ public class JpegJMagickImageReader extends ImageReader {
 	 * a <code>File</code> or a <code>FileImageInputStreamExt</code>
 	 */
 	public void setInput(Object input, boolean seekForwardOnly) {
-		if (LOGGER.isLoggable(Level.FINE))
-			LOGGER.fine("setInput on object " + input.toString()
-					+ " with param seekForwardOnly" + seekForwardOnly);
-		if (input instanceof File) {
-			sourceFile = (File) input;
-		} else if (input instanceof FileImageInputStreamExt) {
-			FileImageInputStreamExt imageIn = (FileImageInputStreamExt) input;
-			sourceFile = imageIn.getFile();
-			try {
-				imageIn.close();
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
-		} else
-			throw new IllegalArgumentException(
-					"The input type provided is not supported");
+		setInput(input);
 		super.setInput(sourceFile, seekForwardOnly);
 	}
 
@@ -621,15 +583,9 @@ public class JpegJMagickImageReader extends ImageReader {
 		} else if (input instanceof FileImageInputStreamExt) {
 			FileImageInputStreamExt imageIn = (FileImageInputStreamExt) input;
 			sourceFile = imageIn.getFile();
-			try {
-				imageIn.close();
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
 		} else
-			throw new IllegalArgumentException(
-					"The input type provided is not supported");
-		super.setInput(input);
+			throw new IllegalArgumentException("The input type provided is not supported");
+		
 	}
 
 	/**
@@ -639,7 +595,7 @@ public class JpegJMagickImageReader extends ImageReader {
 		if (LOGGER.isLoggable(Level.FINE))
 			LOGGER.fine("Disposing JpegJMagickImageReader");
 		synchronized (imagesLayouts) {
-			final Iterator it = imagesLayouts.iterator();
+			final Iterator<MagickImageAdapter> it = imagesLayouts.iterator();
 			while (it.hasNext()) {
 				final MagickImageAdapter img = (MagickImageAdapter) it.next();
 				img.dispose();

@@ -36,6 +36,8 @@ import javax.media.jai.RenderedOp;
 import javax.media.jai.widget.ScrollingImagePanel;
 import javax.swing.JFrame;
 
+import org.junit.Assert;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -45,11 +47,7 @@ import junit.framework.TestSuite;
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
-public class JPEGReadTest extends AbstractJPEGTestCase {
-
-	public JPEGReadTest(String name) {
-		super(name);
-	}
+public class JPEGReadTest extends Assert {
 
 	/**
 	 * Simple test read
@@ -57,7 +55,7 @@ public class JPEGReadTest extends AbstractJPEGTestCase {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	public void testJAIRead() throws FileNotFoundException, IOException {
+	public void multithreadedJAIRead() throws FileNotFoundException, IOException {
 
 		// register the image read mt operation
 		ImageReadDescriptorMT.register(JAI.getDefaultInstance());
@@ -89,8 +87,7 @@ public class JPEGReadTest extends AbstractJPEGTestCase {
 		// set the layout so that we shrink the amount of memory needed to load
 		// this image
 		final ImageLayout l = new ImageLayout();
-		l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512)
-				.setTileWidth(512);
+		l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512).setTileWidth(512);
 
 		RenderedOp image = JAI.create("ImageReadMT", pbjImageRead,
 				new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
@@ -116,10 +113,9 @@ public class JPEGReadTest extends AbstractJPEGTestCase {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	public void testRead() throws FileNotFoundException, IOException {
+	@org.junit.Test
+	public void ImageIORead() throws FileNotFoundException, IOException {
 
-		// register the image read mt operation
-		ImageReadDescriptorMT.register(JAI.getDefaultInstance());
 
 		// get the file we are going to read
 		final String fileName = "001140.jpg";
@@ -143,7 +139,7 @@ public class JPEGReadTest extends AbstractJPEGTestCase {
 		reader.setInput(ImageIO.createImageInputStream(file));
 		BufferedImage image = reader.read(0, irp);
 
-		if (TestData.isInteractiveTest()) {
+		if (true) {
 			final JFrame jf = new JFrame();
 			jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			jf.getContentPane().add(new ScrollingImagePanel(image, 1024, 768));
@@ -151,27 +147,11 @@ public class JPEGReadTest extends AbstractJPEGTestCase {
 			jf.show();
 		} else {
 			assertNotNull(image);
-			// remember that if we do not explictly provide an Imagereader to
-			// the ImageReadMT operation it consistently dispose the one it
-			// creates once we dispose the ImageReadOpImage
+			// flush resources
 			image.flush();
+			image=null;
 		}
 	}
-	
-	public static Test suite() {
-		TestSuite suite = new TestSuite();
 
-		// Test reading of a simple image
-		suite.addTest(new JPEGReadTest("testRead"));
-		
-		// Test reading of a simple image
-		suite.addTest(new JPEGReadTest("testJAIRead"));
-
-		return suite;
-	}
-
-	public static void main(java.lang.String[] args) {
-		junit.textui.TestRunner.run(suite());
-	}
 
 }
