@@ -307,8 +307,17 @@ public final class GDALUtilities {
         final Dataset ds = acquireDataSet(dataSetName, gdalconst.GA_ReadOnly);
         final List gdalImageMetadata;
         if (ds != null) {
-            gdalImageMetadata = ds.GetMetadata_List("");
-            closeDataSet(ds);
+        	try {
+        		gdalImageMetadata = ds.GetMetadata_List("");
+        	} finally {
+        		try{
+                    // Closing the dataset
+        			closeDataSet(ds);
+        		}catch (Throwable e) {
+					if(LOGGER.isLoggable(Level.FINEST))
+						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
+				}
+        	}
         } else
             gdalImageMetadata = null;
         return gdalImageMetadata;
@@ -371,27 +380,39 @@ public final class GDALUtilities {
             if (driversWritingCapabilities.containsKey(driverName))
                 return (driversWritingCapabilities.get(driverName));
             final Driver driver = gdal.GetDriverByName(driverName);
-            if (driver == null)
-                throw new IllegalArgumentException(
-                        "A Driver with the specified name is unavailable. "
-                                + "Check the specified name or be sure this "
-                                + "Driver is supported");
-            // parse metadata
-            final Map metadata = driver.GetMetadata_Dict("");
-            final String create = (String) metadata.get("DCAP_CREATE");
-            final String createCopy = (String) metadata.get("DCAP_CREATECOPY");
-            final boolean createSupported = create != null&& create.equalsIgnoreCase("yes");
-            final boolean createCopySupported = createCopy != null&& createCopy.equalsIgnoreCase("yes");
-            DriverCreateCapabilities retVal;
-            if (createSupported) {
-                driversWritingCapabilities.put(driverName, GDALUtilities.DriverCreateCapabilities.CREATE);
-                return GDALUtilities.DriverCreateCapabilities.CREATE;
-            } else if (createCopySupported) {
-                driversWritingCapabilities.put(driverName, GDALUtilities.DriverCreateCapabilities.CREATE_COPY);
-                return GDALUtilities.DriverCreateCapabilities.CREATE_COPY;
-            } else {
-                driversWritingCapabilities.put(driverName, GDALUtilities.DriverCreateCapabilities.READ_ONLY);
-                return GDALUtilities.DriverCreateCapabilities.READ_ONLY;
+            try {
+	            if (driver == null)
+	                throw new IllegalArgumentException(
+	                        "A Driver with the specified name is unavailable. "
+	                                + "Check the specified name or be sure this "
+	                                + "Driver is supported");
+	            // parse metadata
+	            final Map metadata = driver.GetMetadata_Dict("");
+	            final String create = (String) metadata.get("DCAP_CREATE");
+	            final String createCopy = (String) metadata.get("DCAP_CREATECOPY");
+	            final boolean createSupported = create != null&& create.equalsIgnoreCase("yes");
+	            final boolean createCopySupported = createCopy != null&& createCopy.equalsIgnoreCase("yes");
+	            DriverCreateCapabilities retVal;
+	            if (createSupported) {
+	                driversWritingCapabilities.put(driverName, GDALUtilities.DriverCreateCapabilities.CREATE);
+	                return GDALUtilities.DriverCreateCapabilities.CREATE;
+	            } else if (createCopySupported) {
+	                driversWritingCapabilities.put(driverName, GDALUtilities.DriverCreateCapabilities.CREATE_COPY);
+	                return GDALUtilities.DriverCreateCapabilities.CREATE_COPY;
+	            } else {
+	                driversWritingCapabilities.put(driverName, GDALUtilities.DriverCreateCapabilities.READ_ONLY);
+	                return GDALUtilities.DriverCreateCapabilities.READ_ONLY;
+	            }
+            } finally {
+            	if (driver != null){
+    	    		try{
+                        // Closing the driver
+    	    			driver.delete();
+            		}catch (Throwable e) {
+    					if(LOGGER.isLoggable(Level.FINEST))
+    						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
+    				}
+    	    	}
             }
         }
     }

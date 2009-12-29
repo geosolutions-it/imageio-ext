@@ -41,6 +41,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.IIOImage;
@@ -291,101 +292,133 @@ public abstract class GDALImageWriter extends ImageWriter {
         // allows to create a new File from an existing Dataset.
         //
         // /////////////////////////////////////////////////////////////////////
-        Dataset writeDataset;
-
-        // TODO: send some warning when setting georeferencing or size
-        // properties, if cropping or sourceregion has been defined.
-
-        if (writingCapabilities == GDALUtilities.DriverCreateCapabilities.CREATE) {
-            // /////////////////////////////////////////////////////////////////
-            //
-            // Create is supported
-            // -------------------
-            //
-            // /////////////////////////////////////////////////////////////////
-
-            // Retrieving the file name.
-            final String fileName = outputFile.getAbsolutePath();
-
-            // //
-            //
-            // Dataset creation
-            //
-            // //
-            final Driver driver = gdal.GetDriverByName(driverName);
-            writeDataset = driver.Create(fileName, destinationWidth,
-                    destinationHeight, nBands, dataType, myOptions);
-
-            // //
-            //
-            // Data Writing
-            //
-            // //
-            writeDataset = writeData(writeDataset, inputRenderedImage,
-                    imageBounds, nBands, dataType, xSubsamplingFactor,
-                    ySubsamplingFactor);
-
-            // //
-            //
-            // Metadata Setting
-            //
-            // //
-            if (imageMetadata != null) {
-                setMetadata(writeDataset, imageMetadata);
-            }
-        } else {
-
-            // ////////////////////////////////////////////////////////////////
-            //
-            // Only CreateCopy is supported
-            // ----------------------------------------------------------------
-            //
-            // First of all, it is worth to point out that CreateCopy method
-            // allows to create a File from an existing Dataset.
-            // ////////////////////////////////////////////////////////////////
-
-            final Driver driver = gdal.GetDriverByName(driverName);
-            // //
-            //
-            // Temporary Dataset creation from the originating image
-            //
-            // //
-            final File tempFile = File.createTempFile("datasetTemp", ".ds",
-                    null);
-            final Dataset tempDataset = createDatasetFromImage(
-                    inputRenderedImage, tempFile.getAbsolutePath(),
-                    imageBounds, nBands, dataType, destinationWidth,
-                    destinationHeight, xSubsamplingFactor, ySubsamplingFactor);
-            tempDataset.FlushCache();
-
-            // //
-            //
-            // Metadata Setting on the temporary dataset since setting metadata
-            // with createCopy is not supported
-            //
-            // //
-            if (imageMetadata != null) {
-                setMetadata(tempDataset, imageMetadata);
-            }
-
-            // //
-            //
-            // Copy back the temporary dataset to the requested dataset
-            //
-            // //
-            writeDataset = driver.CreateCopy(outputFile.getPath(), tempDataset,
-                    0, myOptions);
-            GDALUtilities.closeDataSet(tempDataset);
-            tempFile.delete();
+        Dataset writeDataset = null;
+        Driver driver = null;
+        try{
+	        // TODO: send some warning when setting georeferencing or size
+	        // properties, if cropping or sourceregion has been defined.
+	
+	        if (writingCapabilities == GDALUtilities.DriverCreateCapabilities.CREATE) {
+	            // /////////////////////////////////////////////////////////////////
+	            //
+	            // Create is supported
+	            // -------------------
+	            //
+	            // /////////////////////////////////////////////////////////////////
+	
+	            // Retrieving the file name.
+	            final String fileName = outputFile.getAbsolutePath();
+	
+	            // //
+	            //
+	            // Dataset creation
+	            //
+	            // //
+	            driver = gdal.GetDriverByName(driverName);
+	            writeDataset = driver.Create(fileName, destinationWidth,
+	                    destinationHeight, nBands, dataType, myOptions);
+	
+	            // //
+	            //
+	            // Data Writing
+	            //
+	            // //
+	            writeDataset = writeData(writeDataset, inputRenderedImage,
+	                    imageBounds, nBands, dataType, xSubsamplingFactor,
+	                    ySubsamplingFactor);
+	
+	            // //
+	            //
+	            // Metadata Setting
+	            //
+	            // //
+	            if (imageMetadata != null) {
+	                setMetadata(writeDataset, imageMetadata);
+	            }
+	        } else {
+	
+	            // ////////////////////////////////////////////////////////////////
+	            //
+	            // Only CreateCopy is supported
+	            // ----------------------------------------------------------------
+	            //
+	            // First of all, it is worth to point out that CreateCopy method
+	            // allows to create a File from an existing Dataset.
+	            // ////////////////////////////////////////////////////////////////
+	
+	            driver = gdal.GetDriverByName(driverName);
+	            // //
+	            //
+	            // Temporary Dataset creation from the originating image
+	            //
+	            // //
+	            final File tempFile = File.createTempFile("datasetTemp", ".ds", null);
+	            Dataset tempDataset = null; 
+		        try{
+		        	tempDataset = createDatasetFromImage(
+		                    inputRenderedImage, tempFile.getAbsolutePath(),
+		                    imageBounds, nBands, dataType, destinationWidth,
+		                    destinationHeight, xSubsamplingFactor, ySubsamplingFactor);
+		            tempDataset.FlushCache();
+		
+		            // //
+		            //
+		            // Metadata Setting on the temporary dataset since setting metadata
+		            // with createCopy is not supported
+		            //
+		            // //
+		            if (imageMetadata != null) {
+		                setMetadata(tempDataset, imageMetadata);
+		            }
+		
+		            // //
+		            //
+		            // Copy back the temporary dataset to the requested dataset
+		            //
+		            // //
+		            writeDataset = driver.CreateCopy(outputFile.getPath(), tempDataset,
+		                    0, myOptions);
+		        } finally {
+		        	if (tempDataset != null){
+		        		try{
+		                    // Closing the dataset
+		        			GDALUtilities.closeDataSet(tempDataset);
+		        		}catch (Throwable e) {
+							if(LOGGER.isLoggable(Level.FINEST))
+								LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
+						}
+		        	}
+		        }
+	            tempFile.delete();
+	        }
+	
+	        // //
+	        //
+	        // Flushing and closing dataset
+	        //
+	        // //
+	        writeDataset.FlushCache();
+        } finally{
+        	if (writeDataset != null){
+        		try{
+                    // Closing the dataset
+        			GDALUtilities.closeDataSet(writeDataset);
+        		}catch (Throwable e) {
+					if(LOGGER.isLoggable(Level.FINEST))
+						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
+				}
+        	}
+        	
+        	if (driver != null){
+	    		try{
+                    // Closing the driver
+	    			driver.delete();
+        		}catch (Throwable e) {
+					if(LOGGER.isLoggable(Level.FINEST))
+						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
+				}
+	    	}
         }
-
-        // //
-        //
-        // Flushing and closing dataset
-        //
-        // //
-        writeDataset.FlushCache();
-        GDALUtilities.closeDataSet(writeDataset);
     }
 
     /**
