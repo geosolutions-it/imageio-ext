@@ -587,6 +587,11 @@ public final class GDALUtilities {
         try {
             System.loadLibrary("gdaljni");
             gdal.AllRegister();
+            final String versionInfo = gdal.VersionInfo("RELEASE_NAME");
+            if (versionInfo!=null && versionInfo.trim().length()>0){
+            	if (LOGGER.isLoggable(Level.INFO))
+            		LOGGER.info("GDAL Native Library loaded (version: " + versionInfo + ")");
+            }
 
             // //
             //
