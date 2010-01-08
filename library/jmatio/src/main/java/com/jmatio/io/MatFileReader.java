@@ -480,17 +480,6 @@ public class MatFileReader {
         return matFileHeader;
     }
 
-    /**
-     * Returns list of <code>MLArray</code> objects that were inside MAT-file
-     * 
-     * @return - a <code>ArrayList</code>
-     * @deprecated use <code>getContent</code> which returns a Map to provide
-     *             easier access to <code>MLArray</code>s contained in
-     *             MAT-file
-     */
-    public ArrayList<MLArray> getData() {
-        return new ArrayList<MLArray>(data.values());
-    }
 
     /**
      * Returns the value to which the red file maps the specified array name.

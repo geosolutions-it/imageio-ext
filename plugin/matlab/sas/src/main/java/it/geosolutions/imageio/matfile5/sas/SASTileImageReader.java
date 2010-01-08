@@ -19,9 +19,10 @@ package it.geosolutions.imageio.matfile5.sas;
 import it.geosolutions.imageio.matfile5.MatFileImageReader;
 import it.geosolutions.imageio.matfile5.sas.SASTileMetadata.Channel;
 
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
@@ -30,7 +31,6 @@ import java.awt.image.DataBufferFloat;
 import java.awt.image.PixelInterleavedSampleModel;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
-import java.awt.image.renderable.ParameterBlock;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
@@ -43,10 +43,6 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
-import javax.media.jai.ParameterBlockJAI;
-import javax.media.jai.PlanarImage;
-import javax.media.jai.RenderedOp;
-import javax.media.jai.operator.TransposeDescriptor;
 
 import com.jmatio.io.MatFileFilter;
 import com.jmatio.io.MatFileReader;
@@ -77,21 +73,22 @@ public class SASTileImageReader extends MatFileImageReader {
     protected synchronized void initialize() {
         if (!isInitialized) {
             final Object datainput = super.getInput();
-            final String fileName = getDatasetSource(datainput)
-                    .getAbsolutePath();
+            final String fileName = getDatasetSource(datainput).getAbsolutePath();
 
             final MatFileFilter filter = new MatFileFilter();
             initFilter(filter, SASTileMetadata.getFilterElements());
 
             try {
 
-                matReader = new MatFileReader(new String(fileName), filter, true);
-
-                sasTile = new SASTileMetadata(matReader);
+                matReader = new MatFileReader(fileName, filter, true);
+                
 
             } catch (IOException e) {
                 throw new RuntimeException("Unable to Initialize the reader", e);
             }
+            
+            
+            sasTile = new SASTileMetadata(matReader);
 
         }
         isInitialized = true;
@@ -222,48 +219,11 @@ public class SASTileImageReader extends MatFileImageReader {
         final MLArray mlArrayRetrived = sasTile.isLogScale() ? matReader
                 .getMLArray(SASTileMetadata.SAS_TILE_LOG) : matReader
                 .getMLArray(SASTileMetadata.SAS_TILE_RAW);
-        final ByteBuffer real = ((MLNumericArray<Number>) mlArrayRetrived)
-                .getRealByteBuffer();
-        final ByteBuffer imaginary = ((MLNumericArray<Number>) mlArrayRetrived)
-                .getImaginaryByteBuffer();
+        final ByteBuffer real = ((MLNumericArray<Number>) mlArrayRetrived).getRealByteBuffer();
+        final ByteBuffer imaginary = ((MLNumericArray<Number>) mlArrayRetrived).getImaginaryByteBuffer();
         
         final boolean isDouble = (mlArrayRetrived instanceof MLDouble)? true : false;
-
         final int imageSize = width * height;
-        
-        final DataBuffer imgBufferReal;
-        final DataBuffer imgBufferImaginary;
-        
-        if (isDouble){
-	        final double[] dstReal = new double[imageSize];
-	        
-	        //TODO: Possible performance improvement when leveraging on subsampling and source region
-	        // could be working on getting samples separately instead of getting all the buffer.
-	        final DoubleBuffer buffReal = real.asDoubleBuffer();
-	        buffReal.get(dstReal);
-	        imgBufferReal = new DataBufferDouble(dstReal,
-	                imageSize);
-	
-	        final double[] dstImaginary = new double[imageSize];
-	        final DoubleBuffer buffImaginary = imaginary.asDoubleBuffer();
-	        buffImaginary.get(dstImaginary);
-	
-	        imgBufferImaginary = new DataBufferDouble(dstImaginary, imageSize);
-        } else {
-        	final float[] dstReal = new float[imageSize];
-	        
-	        //TODO: Possible performance improvement when leveraging on subsampling and source region
-	        // could be working on getting samples separately instead of getting all the buffer.
-	        final FloatBuffer buffReal = real.asFloatBuffer();
-	        buffReal.get(dstReal);
-	        imgBufferReal = new DataBufferFloat(dstReal, imageSize);
-	
-	        final float[] dstImaginary = new float[imageSize];
-	        final FloatBuffer buffImaginary = imaginary.asFloatBuffer();
-	        buffImaginary.get(dstImaginary);
-	
-	        imgBufferImaginary = new DataBufferFloat(dstImaginary, imageSize);
-        }
         
         // //
         //
@@ -275,30 +235,42 @@ public class SASTileImageReader extends MatFileImageReader {
         // //
         final int smWidth = height;
         final int smHeight = width;
-        final PixelInterleavedSampleModel sampleModel = new PixelInterleavedSampleModel(
-                    isDouble?DataBuffer.TYPE_DOUBLE:DataBuffer.TYPE_FLOAT, smWidth, smHeight, 1, smWidth,
-                    new int[] { 0 });
-        
+        final PixelInterleavedSampleModel sampleModel = 
+        	new PixelInterleavedSampleModel(isDouble?DataBuffer.TYPE_DOUBLE:DataBuffer.TYPE_FLOAT, smWidth, smHeight, 2, smWidth,new int[] { 0,1 });
         final ColorModel cm = buildColorModel(sampleModel);
-        final BufferedImage realBandOriginal = new BufferedImage(cm, Raster
-                .createWritableRaster(sampleModel, imgBufferReal, null), false,
-                null);
-        final BufferedImage imaginaryBandOriginal = new BufferedImage(cm, Raster
-                .createWritableRaster(sampleModel, imgBufferImaginary, null),
-                false, null);
+        final WritableRaster originalRasterData;
+        if (isDouble){
+	        final double[][] dataArray = new double[2][imageSize];
 
-        ImageLayout layout = new ImageLayout();
-        layout.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(2048)
-                .setTileWidth(2048);
-        RenderingHints rHints = null; 
-        rHints = new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout);
+	        final DoubleBuffer buffReal = real.asDoubleBuffer();
+	        buffReal.get(dataArray[0]);
+	
+	        final DoubleBuffer buffImaginary = imaginary.asDoubleBuffer();
+	        buffImaginary.get(dataArray[1]);
+	        
+	        final DataBufferDouble dbb= new DataBufferDouble(dataArray, imageSize);
+	        originalRasterData= Raster.createWritableRaster(sampleModel,dbb, null);
+	
+        } else {
+        	final float[][] dataArray = new float[2][imageSize];
+	        
+	        final FloatBuffer buffReal = real.asFloatBuffer();
+	        buffReal.get(dataArray[0]);
+	
+	        final FloatBuffer buffImaginary = imaginary.asFloatBuffer();
+	        buffImaginary.get(dataArray[1]);
+	
+	        final DataBufferFloat dbb= new DataBufferFloat(dataArray, imageSize);
+	        originalRasterData= Raster.createWritableRaster(sampleModel,dbb, null);
+        }
+        BufferedImage data = new BufferedImage(cm, originalRasterData, false,null);
         
-        //TODO: Improve these operations.
-        PlanarImage realBand=null;
-        PlanarImage imaginaryBand=null;
+     
 
-        boolean doCrop = false;
-        boolean doSubSampling = false;
+        
+        //
+        // CROP
+        //
         if (srcRegion != null) {
             
             //Transpose haven't been executed yet.
@@ -308,172 +280,54 @@ public class SASTileImageReader extends MatFileImageReader {
             final int y = roi.x;
             final int w = roi.height;
             final int h = roi.width;
-            
-            final ParameterBlockJAI pbCropReal = new ParameterBlockJAI("Crop");
-            pbCropReal.addSource(realBandOriginal);
-            pbCropReal.setParameter("x", Float.valueOf(x));
-            pbCropReal.setParameter("y", Float.valueOf(y));
-            pbCropReal.setParameter("width", Float.valueOf(w));
-            pbCropReal.setParameter("height", Float.valueOf(h));
-            
-            RenderedOp cropReal = JAI.create("Crop", pbCropReal,
-                   rHints);
-            realBand = cropReal;
+            data=data.getSubimage(x, y, w, h);
 
-            final ParameterBlockJAI pbCropImaginary = new ParameterBlockJAI(
-                    "Crop");
-            pbCropImaginary.addSource(imaginaryBandOriginal);
-            pbCropImaginary.setParameter("x", Float.valueOf(x));
-            pbCropImaginary.setParameter("y", Float.valueOf(y));
-            pbCropImaginary.setParameter("width", Float.valueOf(w));
-            pbCropImaginary.setParameter("height", Float.valueOf(h));
-            RenderedOp cropImaginary = JAI.create("Crop", pbCropImaginary,
-                    rHints);
-            imaginaryBand = cropImaginary;
-            doCrop=true;
+            
         } 
+        
+        
+        final AffineTransform transform= AffineTransform.getRotateInstance(0);// identity
+        // geometric scale to subsample
+        if (xSubsamplingFactor != 1 || ySubsamplingFactor != 1) 
+        	transform.preConcatenate(AffineTransform.getScaleInstance(xSubsamplingFactor, ySubsamplingFactor));
+   
 
-        if (xSubsamplingFactor != 1 || ySubsamplingFactor != 1) {
-            if (!doCrop){
-            realBand = PlanarImage.wrapRenderedImage(realBandOriginal);
-            imaginaryBand = PlanarImage.wrapRenderedImage(imaginaryBandOriginal);
-            }
-            
-            // Translating the child element to the proper location.
-            final Raster translatedRasterReal = realBand.getData()
-                    .createTranslatedChild(0, 0);
-
-            // ////////////////////////////////////////////////////////////////////
-            //
-            // -------------------------------------------------------------------
-            // Raster Creation >>> Step 3: Performing optional subSampling
-            // -------------------------------------------------------------------
-            //
-            // ////////////////////////////////////////////////////////////////////
-            final int dstW = dstHeight;
-            final int dstH = dstWidth;
-            
-            final WritableRaster destRasterReal = Raster.createWritableRaster(
-                    translatedRasterReal.getSampleModel()
-                            .createCompatibleSampleModel(dstW, dstH),
-                    new Point(0, 0));
-
-            final int origRasterWidth = translatedRasterReal.getWidth();
-            final int origRasterHeight = translatedRasterReal.getHeight();
-            float data[] = null;
-            for (int i = 0; i < origRasterHeight; i += ySubsamplingFactor)
-                for (int j = 0; j < origRasterWidth; j += xSubsamplingFactor) {
-                    data = translatedRasterReal.getPixel(j, i, data);
-                    destRasterReal.setPixel(j / xSubsamplingFactor, i
-                            / ySubsamplingFactor, data);
-                }
-            realBand = PlanarImage.wrapRenderedImage(new BufferedImage(cm,
-                    destRasterReal, false, null));
-
-            final Raster translatedRasterImaginary = imaginaryBand.getData()
-                    .createTranslatedChild(0, 0);
-
-            final WritableRaster destRasterImaginary = Raster.createWritableRaster(
-                    translatedRasterImaginary.getSampleModel()
-                            .createCompatibleSampleModel(dstW, dstH), new Point(0, 0));
-
-            data = null;
-            for (int i = 0; i < origRasterHeight; i += ySubsamplingFactor)
-                for (int j = 0; j < origRasterWidth; j += xSubsamplingFactor) {
-                    data = translatedRasterImaginary.getPixel(j, i, data);
-                    destRasterImaginary.setPixel(j / xSubsamplingFactor, i
-                            / ySubsamplingFactor, data);
-                }
-            imaginaryBand = PlanarImage.wrapRenderedImage(new BufferedImage(cm,
-                    destRasterImaginary, false, null));
-            doSubSampling=true;
-        }
-
-        // //
-        //
-        // Merging real and imaginary bands together for future
-        // Magnitude computation.
-        //
-        // //
-        final ParameterBlockJAI pbMerge = new ParameterBlockJAI("BandMerge");
-        if (doSubSampling || doCrop){
-            pbMerge.addSource(realBand);
-            pbMerge.addSource(imaginaryBand);
-        }
-        else{
-            pbMerge.addSource(realBandOriginal);
-            pbMerge.addSource(imaginaryBandOriginal);
-        }
-        RenderedOp banded = JAI.create("BandMerge", pbMerge,rHints);
-
-        // //
-        //
-        // Computing the magnitude of the stored complex values.
-        //
-        // //
-        final ParameterBlockJAI pbMagnitude = new ParameterBlockJAI("Magnitude");
-        pbMagnitude.addSource(banded);
-        RenderedOp magnitude = JAI.create("Magnitude", pbMagnitude);
 
         // //
         //
         // Transposing the Matlab data matrix
         //
         // //
-        RenderedOp beforeLogarithm = magnitude;
-        
-          if (channel == Channel.STARBOARD){
-              final ParameterBlockJAI pbTranspose = new ParameterBlockJAI("Transpose");
-              pbTranspose.addSource(magnitude);
-              pbTranspose.setParameter("type", TransposeDescriptor.FLIP_DIAGONAL);
-              beforeLogarithm = JAI.create("Transpose", pbTranspose);
-              
-              final ParameterBlockJAI pbFlippedH = new ParameterBlockJAI("Transpose");
-              pbFlippedH.addSource(beforeLogarithm);
-              pbFlippedH.setParameter("type", TransposeDescriptor.FLIP_VERTICAL);
-              beforeLogarithm = JAI.create("Transpose", pbFlippedH);
-          }
-          else {
-              final ParameterBlockJAI pbTranspose = new ParameterBlockJAI("Transpose");
-              pbTranspose.addSource(magnitude);
-              pbTranspose.setParameter("type", TransposeDescriptor.FLIP_ANTIDIAGONAL);
-              beforeLogarithm = JAI.create("Transpose", pbTranspose);
-          }
-    
-          if(COMPUTE_LOGARITHM){
-            // //
-            //
-            // Computing the Natural Logarithm.
-            //
-            // //
-            final ParameterBlockJAI pbLog = new ParameterBlockJAI("Log");
-            pbLog.addSource(beforeLogarithm);
-            RenderedOp logarithm = JAI.create("Log", pbLog);
-    
-            // //
-            //
-            // Applying a rescale to handle Decimal Logarithm.
-            //
-            // //
-            final ParameterBlock pbRescale = new ParameterBlock();
-            
-            // Using logarithmic properties 
-            final double scaleFactor = 20 / Math.log(10);
-    
-            final double[] scaleF = new double[] { scaleFactor };
-            final double[] offsetF = new double[] { 0 };
-    
-            pbRescale.add(scaleF);
-            pbRescale.add(offsetF);
-            pbRescale.addSource(logarithm);
-    
-            RenderedOp rescale = JAI.create("Rescale", pbRescale);
-    
-            return rescale.getAsBufferedImage();
-          }
-          else
-              return beforeLogarithm.getAsBufferedImage();
-        }
+        final AffineTransform tranposeTransform= AffineTransform.getRotateInstance(0);// identity
+		if (channel == Channel.STARBOARD){
+			
+			// TransposeDescriptor.FLIP_DIAGONAL
+			tranposeTransform.preConcatenate(new AffineTransform(0, 1, 0, 1, 0, 0));
+			
+			
+			// TransposeDescriptor.FLIP_VERTICAL
+			tranposeTransform.preConcatenate(AffineTransform.getScaleInstance(1,-1));
+		}
+		else {
+			// TransposeDescriptor.FLIP_ANTIDIAGONAL
+			tranposeTransform.preConcatenate(AffineTransform.getScaleInstance(-1,-1));
+		}
+		// preconcatenate transposition
+		transform.preConcatenate(tranposeTransform);
+		
+		
+		//
+		// apply the geometric transform
+		//
+		data= new AffineTransformOp(transform, AffineTransformOp.TYPE_NEAREST_NEIGHBOR).filter(data,null);
+		
+		// //
+		//
+		// Computing the magnitude of the stored complex values.
+		//
+		// //
+		return new SASBufferedImageOp(COMPUTE_LOGARITHM, null).filter(data,null);
+    }
 
     @Override
     public Iterator<ImageTypeSpecifier> getImageTypes(int imageIndex)
@@ -481,9 +335,7 @@ public class SASTileImageReader extends MatFileImageReader {
         initialize();
         final int width = sasTile.getXPixels();
         final int height = sasTile.getYPixels();
-        final PixelInterleavedSampleModel sampleModel = new PixelInterleavedSampleModel(
-                DataBuffer.TYPE_DOUBLE, width, height, 1, width,
-                new int[] { 0 });
+        final PixelInterleavedSampleModel sampleModel = new PixelInterleavedSampleModel(DataBuffer.TYPE_DOUBLE, width, height, 1, width,new int[] { 0 });
 
         final ColorModel cm = buildColorModel(sampleModel);
         final List<ImageTypeSpecifier> l = new java.util.ArrayList<ImageTypeSpecifier>(1);

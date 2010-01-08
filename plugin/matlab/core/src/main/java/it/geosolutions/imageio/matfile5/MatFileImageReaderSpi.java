@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Locale;
@@ -111,7 +110,7 @@ public abstract class MatFileImageReaderSpi extends ImageReaderSpi {
 
     public MatFileImageReaderSpi(String vendorName, String version,
 			String[] formatNames, String[] suffixes, String[] types,
-			String readerCN, Class[] classes, String[] wsn,
+			String readerCN, Class<?>[] classes, String[] wsn,
 			boolean supportsStandardStreamMetadataFormat,
 			String nativeStreamMetadataFormatName,
 			String nativeStreamMetadataFormatClassName,

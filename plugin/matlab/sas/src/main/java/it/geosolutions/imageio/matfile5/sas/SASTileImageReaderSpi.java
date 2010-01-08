@@ -21,7 +21,6 @@ import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Logger;
 
 import javax.imageio.ImageReader;
 
@@ -63,9 +62,6 @@ public class SASTileImageReaderSpi extends MatFileImageReaderSpi {
     static final String[] extraImageMetadataFormatNames = { null };
 
     static final String[] extraImageMetadataFormatClassNames = { null };
-
-    private static final Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.matfile5.sas");
 	
     public SASTileImageReaderSpi() {
     	super(

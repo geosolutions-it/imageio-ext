@@ -68,6 +68,25 @@ public class SASTileMetadata extends IIOMetadata {
     public static Set<String> getFilterElements() {
         return new HashSet<String>(filterElements);
     }
+    
+    /**
+     * This method tries to guess if this matfile contains sas specific metadata or not.
+     * 
+     * @param matReader the {@link MatFileReader} that we need to use for guessing
+     * @return <code>true</code> if this is a SAS matfile or <code>false</code> otherwise.
+     */
+    public static boolean isSASFile(final MatFileReader matReader) {
+        MLArray sasTileData = matReader.getMLArray(SAS_TILE_RAW);
+        if (sasTileData != null) {
+            return true;
+        } else {
+           
+            sasTileData = matReader.getMLArray(SAS_TILE_LOG);
+        }
+        if (sasTileData == null)
+            return false;
+        return true;
+    }
 
     public static final String SAS_PIXELS = "pixels";
     public static final String SAS_LATITUDE = "latitude";
@@ -130,7 +149,7 @@ public class SASTileMetadata extends IIOMetadata {
 //
 //    private MLDouble mu;
 
-    public SASTileMetadata(MatFileReader matReader) {
+    public SASTileMetadata(final MatFileReader matReader) {
 
         MLArray sasTileData = matReader.getMLArray(SAS_TILE_RAW);
         if (sasTileData != null) {
@@ -276,29 +295,6 @@ public class SASTileMetadata extends IIOMetadata {
 
     }
 
-//    public double[][] getPings() {
-//        return pings != null ? pings.getArray() : null;
-//    }
-//
-//    public double[][] getX() {
-//        return x != null ? x.getArray() : null;
-//    }
-//
-//    public double[][] getY() {
-//        return y != null ? y.getArray() : null;
-//    }
-//
-//    public double[][] getTheta() {
-//        return theta != null ? theta.getArray() : null;
-//    }
-//
-//    public double[][] getMu() {
-//        return mu != null ? mu.getArray() : null;
-//    }
-//
-//    public double[][] getTileRanges() {
-//        return tileRanges != null ? tileRanges.getArray() : null;
-//    }
     
     //TODO: Refactor and implement this.
     public String getMetadataAsXML(){
