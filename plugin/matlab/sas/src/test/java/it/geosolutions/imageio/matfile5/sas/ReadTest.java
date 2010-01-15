@@ -16,42 +16,34 @@
  */
 package it.geosolutions.imageio.matfile5.sas;
 
-import it.geosolutions.imageio.matfile5.sas.SASTileImageReaderSpi;
-import it.geosolutions.imageio.utilities.ImageIOUtilities;
+import it.geosolutions.resources.TestData;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageReader;
-import javax.media.jai.JAI;
+
+import org.junit.Test;
 
 public class ReadTest {
-    public static void main(String[] args) throws FileNotFoundException,
-            IOException {
-
-        long startTime = System.currentTimeMillis();
-        final int nLoop = 3;
-        System.gc();
-        JAI.getDefaultInstance().getTileCache().setMemoryCapacity(512*1024*1024);
-        for (int i=0;i<nLoop;i++){
-    //         final String fileName = "E:/Work/data/baralli/copia.mat";
-            final String fileName = "h:\\mat\\utest.mat";
-            
-            ImageReader reader = new SASTileImageReaderSpi().createReaderInstance();
-            reader.setInput(new File(fileName));
-            reader.getWidth(0);
-            BufferedImage bi = reader.read(0);
-            reader.dispose();
-            reader=null;
-            System.out.println("loop: " +i);
-        }
-        long endTime = System.currentTimeMillis();
-        System.out.println("TIME: "+ (endTime-startTime)/nLoop);
-        
-        
-        
-    }
-
+	
+    private static final Logger LOGGER = Logger.getLogger(ReadTest.class.toString());
+	
+	@Test
+	public void testSAS() throws IOException {
+		File file;
+		try {
+			file = TestData.file(this,"sas_sample.mat");
+		} catch (IOException e) {
+			LOGGER.info("Unable to run test due to " + e.getLocalizedMessage());
+			return;
+		}
+		ImageReader reader = new SASTileImageReaderSpi().createReaderInstance();
+        reader.setInput(file);
+        reader.getWidth(0);
+        reader.read(0);
+        reader.dispose();
+        reader=null;
+	}
 }

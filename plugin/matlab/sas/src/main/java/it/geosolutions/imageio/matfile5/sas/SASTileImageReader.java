@@ -20,7 +20,6 @@ import it.geosolutions.imageio.matfile5.MatFileImageReader;
 import it.geosolutions.imageio.matfile5.sas.SASTileMetadata.Channel;
 
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -41,8 +40,6 @@ import java.util.List;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
-import javax.media.jai.ImageLayout;
-import javax.media.jai.JAI;
 
 import com.jmatio.io.MatFileFilter;
 import com.jmatio.io.MatFileReader;
@@ -236,7 +233,7 @@ public class SASTileImageReader extends MatFileImageReader {
         final int smWidth = height;
         final int smHeight = width;
         final PixelInterleavedSampleModel sampleModel = 
-        	new PixelInterleavedSampleModel(isDouble?DataBuffer.TYPE_DOUBLE:DataBuffer.TYPE_FLOAT, smWidth, smHeight, 2, smWidth,new int[] { 0,1 });
+        	new PixelInterleavedSampleModel(isDouble?DataBuffer.TYPE_DOUBLE:DataBuffer.TYPE_FLOAT, smWidth, smHeight, 2, smWidth*2,new int[] { 0,1 });
         final ColorModel cm = buildColorModel(sampleModel);
         final WritableRaster originalRasterData;
         if (isDouble){
@@ -265,9 +262,6 @@ public class SASTileImageReader extends MatFileImageReader {
         }
         BufferedImage data = new BufferedImage(cm, originalRasterData, false,null);
         
-     
-
-        
         //
         // CROP
         //
@@ -281,8 +275,6 @@ public class SASTileImageReader extends MatFileImageReader {
             final int w = roi.height;
             final int h = roi.width;
             data=data.getSubimage(x, y, w, h);
-
-            
         } 
         
         
@@ -290,30 +282,28 @@ public class SASTileImageReader extends MatFileImageReader {
         // geometric scale to subsample
         if (xSubsamplingFactor != 1 || ySubsamplingFactor != 1) 
         	transform.preConcatenate(AffineTransform.getScaleInstance(xSubsamplingFactor, ySubsamplingFactor));
-   
-
 
         // //
         //
         // Transposing the Matlab data matrix
         //
         // //
-        final AffineTransform tranposeTransform= AffineTransform.getRotateInstance(0);// identity
+        final AffineTransform transposeTransform= AffineTransform.getRotateInstance(0);// identity
 		if (channel == Channel.STARBOARD){
 			
 			// TransposeDescriptor.FLIP_DIAGONAL
-			tranposeTransform.preConcatenate(new AffineTransform(0, 1, 0, 1, 0, 0));
+			transposeTransform.preConcatenate(new AffineTransform(0, 1, 0, 1, 0, 0));
 			
 			
 			// TransposeDescriptor.FLIP_VERTICAL
-			tranposeTransform.preConcatenate(AffineTransform.getScaleInstance(1,-1));
+			transposeTransform.preConcatenate(AffineTransform.getScaleInstance(1,-1));
 		}
 		else {
 			// TransposeDescriptor.FLIP_ANTIDIAGONAL
-			tranposeTransform.preConcatenate(AffineTransform.getScaleInstance(-1,-1));
+			transposeTransform.preConcatenate(AffineTransform.getScaleInstance(-1,-1));
 		}
 		// preconcatenate transposition
-		transform.preConcatenate(tranposeTransform);
+		transform.preConcatenate(transposeTransform);
 		
 		
 		//
