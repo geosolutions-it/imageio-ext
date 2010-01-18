@@ -39,6 +39,7 @@ import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 
 import org.gdal.gdal.Band;
+import org.gdal.gdal.ColorTable;
 import org.gdal.gdal.Dataset;
 import org.gdal.gdal.Driver;
 import org.gdal.gdal.gdal;
@@ -396,11 +397,22 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
 	        //
 	        // //
 	        if (colorInterpretations[0] == gdalconstConstants.GCI_PaletteIndex) {
-	            IndexColorModel icm = pBand.GetRasterColorTable()
-	                    .getIndexColorModel(gdal.GetDataTypeSize(buf_type));
-	
-	            // TODO: fix the SWIG wrapper to avoid alpha setting when undefined
-	            setColorModel(icm);
+	        	ColorTable ct = null;
+	        	try {
+	            	ct = rband.GetRasterColorTable();
+		            IndexColorModel icm = ct.getIndexColorModel(gdal.GetDataTypeSize(buf_type));
+		            setColorModel(icm);
+	            } finally {
+	            	if (ct != null){
+	            		try{
+	                        // Closing the band
+	            			ct.delete();
+	            		}catch (Throwable e) {
+	    					if(LOGGER.isLoggable(Level.FINEST))
+	    						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
+	    				}
+	            	}
+	            }
 	        } else
 	            setColorModel(GDALUtilities.buildColorModel(getSampleModel()));
 	
