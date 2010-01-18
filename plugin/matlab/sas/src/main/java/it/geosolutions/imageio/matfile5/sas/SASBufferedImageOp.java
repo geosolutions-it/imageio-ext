@@ -57,10 +57,8 @@ class SASBufferedImageOp implements BufferedImageOp, RasterOp {
 	    // Required sanity checks
 	    if (src.getSampleModel().getNumBands() != 2)
 	      throw new IllegalArgumentException();
-	   
 	    // create destination image if needed
-	    if (dst == null) 
-	    {
+	    if (dst == null) {
 	    	final PixelInterleavedSampleModel sampleModel = 
 	    		new PixelInterleavedSampleModel(
 	    				DataBuffer.TYPE_DOUBLE, 
@@ -78,8 +76,7 @@ class SASBufferedImageOp implements BufferedImageOp, RasterOp {
                     Transparency.OPAQUE); // transparency
             final WritableRaster raster = Raster.createWritableRaster(sampleModel,null);
             dst = new BufferedImage(colorModel,raster,false,null);
-	    }
-	    else if (dst.getSampleModel().getNumBands() != 1)
+	    } else if (dst.getSampleModel().getNumBands() != 1)
 			      throw new IllegalArgumentException();
 
 	    WritableRaster wsrc = src.getRaster();

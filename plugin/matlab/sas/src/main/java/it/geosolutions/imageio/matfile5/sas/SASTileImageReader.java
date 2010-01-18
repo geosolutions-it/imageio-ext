@@ -18,6 +18,7 @@ package it.geosolutions.imageio.matfile5.sas;
 
 import it.geosolutions.imageio.matfile5.MatFileImageReader;
 import it.geosolutions.imageio.matfile5.sas.SASTileMetadata.Channel;
+import it.geosolutions.imageio.utilities.Utilities;
 
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
@@ -54,13 +55,23 @@ public class SASTileImageReader extends MatFileImageReader {
     }
 
     private final static boolean COMPUTE_LOGARITHM;
+    
+    private final static boolean DISABLE_MEDIALIB_LOG;
 
     static{
         final String cl = System.getenv("SAS_COMPUTE_LOG");
+        final String disableMediaLog = System.getenv("DISABLE_MEDIALIB_LOG");
         if (cl!=null && cl.trim().length()>0)
         	COMPUTE_LOGARITHM = Boolean.parseBoolean(cl);
         else 
-        	COMPUTE_LOGARITHM = true;
+            COMPUTE_LOGARITHM = true;
+        if (disableMediaLog!=null && disableMediaLog.trim().length()>0)
+            DISABLE_MEDIALIB_LOG = Boolean.parseBoolean(disableMediaLog);
+        else 
+            DISABLE_MEDIALIB_LOG = false;
+        if (DISABLE_MEDIALIB_LOG){
+            Utilities.setNativeAccelerationAllowed("Log",false);
+        }
     }
     
     private boolean isInitialized = false;
@@ -79,13 +90,11 @@ public class SASTileImageReader extends MatFileImageReader {
 
                 matReader = new MatFileReader(fileName, filter, true);
                 
+                sasTile = new SASTileMetadata(matReader);
 
             } catch (IOException e) {
                 throw new RuntimeException("Unable to Initialize the reader", e);
             }
-            
-            
-            sasTile = new SASTileMetadata(matReader);
 
         }
         isInitialized = true;
@@ -232,8 +241,8 @@ public class SASTileImageReader extends MatFileImageReader {
         // //
         final int smWidth = height;
         final int smHeight = width;
-        final PixelInterleavedSampleModel sampleModel = 
-        	new PixelInterleavedSampleModel(isDouble?DataBuffer.TYPE_DOUBLE:DataBuffer.TYPE_FLOAT, smWidth, smHeight, 2, smWidth*2,new int[] { 0,1 });
+        final PixelInterleavedSampleModel sampleModel = new PixelInterleavedSampleModel(isDouble?DataBuffer.TYPE_DOUBLE:DataBuffer.TYPE_FLOAT, smWidth, smHeight, 2, smWidth*2, new int[] { 0,1 });
+
         final ColorModel cm = buildColorModel(sampleModel);
         final WritableRaster originalRasterData;
         if (isDouble){
@@ -278,7 +287,7 @@ public class SASTileImageReader extends MatFileImageReader {
         } 
         
         
-        final AffineTransform transform= AffineTransform.getRotateInstance(0);// identity
+        final AffineTransform transform = AffineTransform.getRotateInstance(0);// identity
         // geometric scale to subsample
         if (xSubsamplingFactor != 1 || ySubsamplingFactor != 1) 
         	transform.preConcatenate(AffineTransform.getScaleInstance(xSubsamplingFactor, ySubsamplingFactor));
