@@ -22,7 +22,7 @@ import it.geosolutions.imageio.utilities.Utilities;
 
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
+import java.awt.image.BandedSampleModel;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
@@ -62,7 +62,7 @@ public class SASTileImageReader extends MatFileImageReader {
         final String cl = System.getenv("SAS_COMPUTE_LOG");
         final String disableMediaLog = System.getenv("DISABLE_MEDIALIB_LOG");
         if (cl!=null && cl.trim().length()>0)
-        	COMPUTE_LOGARITHM = Boolean.parseBoolean(cl);
+            COMPUTE_LOGARITHM = Boolean.parseBoolean(cl);
         else 
             COMPUTE_LOGARITHM = true;
         if (disableMediaLog!=null && disableMediaLog.trim().length()>0)
@@ -153,7 +153,9 @@ public class SASTileImageReader extends MatFileImageReader {
         int srcRegionYOffset = -1;
         int xSubsamplingFactor = -1;
         int ySubsamplingFactor = -1;
-
+        int xSubsamplingOffset = 0;
+        int ySubsamplingOffset = 0;
+        
         // //
         //
         // Retrieving Information about Source Region and doing
@@ -210,17 +212,18 @@ public class SASTileImageReader extends MatFileImageReader {
         // SubSampling variables initialization
         xSubsamplingFactor = param.getSourceXSubsampling();
         ySubsamplingFactor = param.getSourceYSubsampling();
-        dstWidth = ((dstWidth - 1) / xSubsamplingFactor) + 1;
-        dstHeight = ((dstHeight - 1) / ySubsamplingFactor) + 1;
+        xSubsamplingOffset = param.getSubsamplingXOffset();
+        ySubsamplingOffset = param.getSubsamplingYOffset();
+        
+        dstWidth = ((dstWidth - 1 - xSubsamplingOffset) / xSubsamplingFactor) + 1;
+        dstHeight = ((dstHeight - 1 - ySubsamplingOffset) / ySubsamplingFactor) + 1;
 
         // ////////////////////////////////////////////////////////////////////
         //
         // Reading data
         //
         // ////////////////////////////////////////////////////////////////////
-        final Rectangle roi = new Rectangle(
-                srcRegionXOffset, srcRegionYOffset, srcRegionWidth,
-                srcRegionHeight);
+        final Rectangle roi = new Rectangle(srcRegionXOffset, srcRegionYOffset, srcRegionWidth, srcRegionHeight);
 
         final MLArray mlArrayRetrived = sasTile.isLogScale() ? matReader
                 .getMLArray(SASTileMetadata.SAS_TILE_LOG) : matReader
@@ -241,12 +244,12 @@ public class SASTileImageReader extends MatFileImageReader {
         // //
         final int smWidth = height;
         final int smHeight = width;
-        final PixelInterleavedSampleModel sampleModel = new PixelInterleavedSampleModel(isDouble?DataBuffer.TYPE_DOUBLE:DataBuffer.TYPE_FLOAT, smWidth, smHeight, 2, smWidth*2, new int[] { 0,1 });
-
+        final BandedSampleModel sampleModel = new BandedSampleModel(isDouble?DataBuffer.TYPE_DOUBLE:DataBuffer.TYPE_FLOAT, smWidth, smHeight, 2);
+        
         final ColorModel cm = buildColorModel(sampleModel);
         final WritableRaster originalRasterData;
         if (isDouble){
-	        final double[][] dataArray = new double[2][imageSize];
+	        final double[][]dataArray = new double[2][imageSize];
 
 	        final DoubleBuffer buffReal = real.asDoubleBuffer();
 	        buffReal.get(dataArray[0]);
@@ -254,23 +257,24 @@ public class SASTileImageReader extends MatFileImageReader {
 	        final DoubleBuffer buffImaginary = imaginary.asDoubleBuffer();
 	        buffImaginary.get(dataArray[1]);
 	        
-	        final DataBufferDouble dbb= new DataBufferDouble(dataArray, imageSize);
-	        originalRasterData= Raster.createWritableRaster(sampleModel,dbb, null);
+	        final DataBufferDouble dbb = new DataBufferDouble(dataArray, imageSize);
+	        originalRasterData = Raster.createWritableRaster(sampleModel,dbb, null);
 	
         } else {
-        	final float[][] dataArray = new float[2][imageSize];
-	        
-	        final FloatBuffer buffReal = real.asFloatBuffer();
-	        buffReal.get(dataArray[0]);
-	
-	        final FloatBuffer buffImaginary = imaginary.asFloatBuffer();
-	        buffImaginary.get(dataArray[1]);
-	
-	        final DataBufferFloat dbb= new DataBufferFloat(dataArray, imageSize);
-	        originalRasterData= Raster.createWritableRaster(sampleModel,dbb, null);
+            	final float[][] dataArray = new float[2][imageSize];
+    	        
+    	        final FloatBuffer buffReal = real.asFloatBuffer();
+    	        buffReal.get(dataArray[0]);
+    	
+    	        final FloatBuffer buffImaginary = imaginary.asFloatBuffer();
+    	        buffImaginary.get(dataArray[1]);
+    	
+    	        final DataBufferFloat dbb = new DataBufferFloat(dataArray, imageSize);
+    	        originalRasterData = Raster.createWritableRaster(sampleModel,dbb, null);
         }
         BufferedImage data = new BufferedImage(cm, originalRasterData, false,null);
-        
+        int tx = smWidth;
+        int ty = smHeight;
         //
         // CROP
         //
@@ -283,59 +287,65 @@ public class SASTileImageReader extends MatFileImageReader {
             final int y = roi.x;
             final int w = roi.height;
             final int h = roi.width;
-            data=data.getSubimage(x, y, w, h);
+            data = data.getSubimage(x, y, w, h);
+            tx = w;
+            ty = h;
         } 
-        
         
         final AffineTransform transform = AffineTransform.getRotateInstance(0);// identity
         // geometric scale to subsample
-        if (xSubsamplingFactor != 1 || ySubsamplingFactor != 1) 
-        	transform.preConcatenate(AffineTransform.getScaleInstance(xSubsamplingFactor, ySubsamplingFactor));
+//        if (xSubsamplingFactor != 1 || ySubsamplingFactor != 1) 
+//        	transform.preConcatenate(AffineTransform.getScaleInstance(xSubsamplingFactor, ySubsamplingFactor));
 
         // //
         //
         // Transposing the Matlab data matrix
         //
         // //
-        final AffineTransform transposeTransform= AffineTransform.getRotateInstance(0);// identity
-		if (channel == Channel.STARBOARD){
-			
-			// TransposeDescriptor.FLIP_DIAGONAL
-			transposeTransform.preConcatenate(new AffineTransform(0, 1, 0, 1, 0, 0));
-			
-			
-			// TransposeDescriptor.FLIP_VERTICAL
-			transposeTransform.preConcatenate(AffineTransform.getScaleInstance(1,-1));
-		}
-		else {
-			// TransposeDescriptor.FLIP_ANTIDIAGONAL
-			transposeTransform.preConcatenate(AffineTransform.getScaleInstance(-1,-1));
-		}
-		// preconcatenate transposition
-		transform.preConcatenate(transposeTransform);
+        AffineTransform transposeTransform = AffineTransform.getRotateInstance(0);
+        
+        if (channel == Channel.STARBOARD){
+            // TransposeDescriptor.FLIP_DIAGONAL
+            // TransposeDescriptor.FLIP_VERTICAL
+
+//              transposeTransform.concatenate(AffineTransform.getRotateInstance(Math.PI*1.5d));
+//		transposeTransform.concatenate(AffineTransform.getTranslateInstance(-smWidth,0));
+//              transposeTransform.concatenate(AffineTransform.getScaleInstance(1,-1));
+            transposeTransform = new AffineTransform(0.0, -1.0, 1.0, 0.0, 0 , tx);
+        } else {
+            // TransposeDescriptor.FLIP_ANTIDIAGONAL
+              transposeTransform.concatenate(AffineTransform.getRotateInstance(Math.PI*1.5d));
+              transposeTransform.concatenate(AffineTransform.getTranslateInstance(-smWidth,0));
+              transposeTransform.concatenate(AffineTransform.getScaleInstance(1,-1));
+              transposeTransform.concatenate(AffineTransform.getTranslateInstance(0,-smHeight));
+//            transposeTransform = new AffineTransform(0.0, -1.0, -1.0, 0.0, ty, tx);
+//		       
+        }
+	// preconcatenate transposition
+	transform.preConcatenate(transposeTransform);
 		
+	//
+        // apply the geometric transform
+	//
+	SASAffineTransformOp transformOp = new SASAffineTransformOp(transform, null);
+	BufferedImage dst = transformOp.filter(data, null);
 		
-		//
-		// apply the geometric transform
-		//
-		data= new AffineTransformOp(transform, AffineTransformOp.TYPE_NEAREST_NEIGHBOR).filter(data,null);
-		
-		// //
-		//
-		// Computing the magnitude of the stored complex values.
-		//
-		// //
-		return new SASBufferedImageOp(COMPUTE_LOGARITHM, null).filter(data,null);
+	// //
+	//
+	// Computing the magnitude of the stored complex values.
+	//
+	// //
+	return new SASBufferedImageOp(COMPUTE_LOGARITHM, null).filter(dst,null);
     }
 
     @Override
-    public Iterator<ImageTypeSpecifier> getImageTypes(int imageIndex)
-            throws IOException {
+    public Iterator<ImageTypeSpecifier> getImageTypes(int imageIndex) throws IOException {
         initialize();
         final int width = sasTile.getXPixels();
         final int height = sasTile.getYPixels();
-        final PixelInterleavedSampleModel sampleModel = new PixelInterleavedSampleModel(DataBuffer.TYPE_DOUBLE, width, height, 1, width,new int[] { 0 });
 
+        //TODO: Handle datatype
+        final BandedSampleModel sampleModel = new BandedSampleModel(DataBuffer.TYPE_DOUBLE, width, height, 1);
         final ColorModel cm = buildColorModel(sampleModel);
         final List<ImageTypeSpecifier> l = new java.util.ArrayList<ImageTypeSpecifier>(1);
         ImageTypeSpecifier imageType = new ImageTypeSpecifier(cm,sampleModel);

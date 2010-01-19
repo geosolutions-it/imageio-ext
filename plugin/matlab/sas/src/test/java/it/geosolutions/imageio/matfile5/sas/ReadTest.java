@@ -18,32 +18,42 @@ package it.geosolutions.imageio.matfile5.sas;
 
 import it.geosolutions.resources.TestData;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 
 import org.junit.Test;
 
 public class ReadTest {
-	
+
     private static final Logger LOGGER = Logger.getLogger(ReadTest.class.toString());
-	
-	@Test
-	public void testSAS() throws IOException {
-		File file;
-		try {
-			file = TestData.file(this,"sas_sample.mat");
-		} catch (IOException e) {
-			LOGGER.info("Unable to run test due to " + e.getLocalizedMessage());
-			return;
-		}
-		ImageReader reader = new SASTileImageReaderSpi().createReaderInstance();
+
+    @Test
+    public void testAffine() throws IOException {
+
+        File file;
+        try {
+            // file = new File("D:/MUSCLE_CAT2_091011_2_1_p_2_156_40_150.mat");
+            file = TestData.file(this, "sas_sample.mat");
+        } catch (IOException e) {
+            LOGGER.info("Unable to run test due to " + e.getLocalizedMessage());
+            return;
+        }
+        Long timeStart = System.currentTimeMillis();
+        ImageReader reader = new SASTileImageReaderSpi().createReaderInstance();
         reader.setInput(file);
-        reader.getWidth(0);
-        reader.read(0);
+        ImageReadParam param = new ImageReadParam();
+        // param.setSourceSubsampling(2,2,0,0);
+        // param.setSourceRegion(new Rectangle(0,0,500,800));
+        BufferedImage bi = reader.read(0, param);
+        Long timeEnd = System.currentTimeMillis();
+        System.out.println((timeEnd - timeStart) / 1000);
+        // ImageIOUtilities.visualize(bi, "prova", true);
         reader.dispose();
-        reader=null;
-	}
+        reader = null;
+    }
 }
