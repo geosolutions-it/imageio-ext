@@ -2,27 +2,22 @@ package it.geosolutions.imageio.matfile5.sas;
 
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.Transparency;
-import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.PixelInterleavedSampleModel;
 import java.awt.image.Raster;
 import java.awt.image.RasterFormatException;
 import java.awt.image.RasterOp;
 import java.awt.image.WritableRaster;
 
-import javax.media.jai.RasterFactory;
-
 class SASAffineTransformOp implements BufferedImageOp, RasterOp {
 
     AffineTransform xform;
+    AffineTransform inv_xform;
     private RenderingHints hints = null;
     
     
@@ -30,6 +25,11 @@ class SASAffineTransformOp implements BufferedImageOp, RasterOp {
             final RenderingHints hints) {
         this.hints = hints;
         this.xform = (AffineTransform)xform.clone();
+        try {
+            inv_xform = xform.createInverse();
+        } catch (NoninvertibleTransformException e) {
+            
+        }
     }
     
     
@@ -44,17 +44,44 @@ class SASAffineTransformOp implements BufferedImageOp, RasterOp {
           return dst;
     }
     
-    public Point2D mapSourcePoint(Point2D sourcePt) {
+    public Point2D mapSourcePoint(Point2D sourcePt, Point2D destPt) {
         if (sourcePt == null) {
             throw new IllegalArgumentException();
         }
 
         sourcePt.setLocation(sourcePt.getX() + 0.5, sourcePt.getY() + 0.5);
 
-        Point2D dpt = xform.transform(sourcePt, null);
+        Point2D dpt = xform.transform(sourcePt, destPt);
         dpt.setLocation(dpt.getX() - 0.5, dpt.getY() - 0.5);
 
         return dpt;
+    }
+    
+    /**
+     * Computes the source point corresponding to the supplied point.
+     *
+     * @param destPt the position in destination image coordinates
+     * to map to source image coordinates.
+     *
+     * @return a <code>Point2D</code> of the same class as
+     * <code>destPt</code>.
+     *
+     * @throws IllegalArgumentException if <code>destPt</code> is
+     * <code>null</code>.
+     *
+     * @since JAI 1.1.2
+     */
+    public Point2D mapDestPoint(Point2D destPt, Point2D srcPt) {
+        if (destPt == null) {
+            throw new IllegalArgumentException();
+        }
+
+        destPt.setLocation(destPt.getX() + 0.5, destPt.getY() + 0.5);
+
+        Point2D sourcePt = inv_xform.transform(destPt, srcPt);
+        sourcePt.setLocation(sourcePt.getX() - 0.5, sourcePt.getY() - 0.5);
+
+        return sourcePt;
     }
 
     
@@ -171,21 +198,58 @@ class SASAffineTransformOp implements BufferedImageOp, RasterOp {
 
         // Required sanity checks
         if (src.getNumBands() != 2)
-          throw new IllegalArgumentException();
+            throw new IllegalArgumentException();
         if (dst.getNumBands() != 2)
-                  throw new IllegalArgumentException();
+            throw new IllegalArgumentException();
         
+        final int minX = src.getMinX();
+        final int minY = src.getMinY();
         final int width = src.getWidth();
         final int height = src.getHeight();
+        final int maxX = minX + width;
+        final int maxY = minY + height;
+        final int minXD = dst.getMinX();
+        final int minYD = dst.getMinY();
+        final int widthD = dst.getWidth();
+        final int heightD = dst.getHeight();
+        final int maxXD = minXD + widthD;
+        final int maxYD = minYD + heightD;
+        
         final double[] pixel = new double[2];
-        for (int i=0;i<height;i++){
-            for (int j=0;j<width;j++){
-                src.getDataElements(j, i, pixel);
-                Point2D destPt = mapSourcePoint(new Point2D.Float(j, i));
-                dst.setDataElements((int)destPt.getX(), (int)destPt.getY(), pixel);
+        Point2D srcPt = new Point2D.Float(0, 0);
+        Point2D destPt = new Point2D.Float(0, 0);
+//        for (int i=minY;i<maxY;i++){
+//            for (int j=minX;j<maxX;j++){
+//                src.getDataElements(j, i, pixel);
+//                srcPt.setLocation(j, i);
+//                destPt = mapSourcePoint(srcPt, destPt);
+//                final int nearestX = findNearest(destPt.getX(), minXD, maxXD);
+//                final int nearestY = findNearest(destPt.getY(), minYD, maxYD);
+//                dst.setDataElements(nearestX, nearestY, pixel);
+//            }
+//        }
+        for (int i=minYD;i<maxYD;i++){
+            for (int j=minXD;j<maxXD;j++){
+                destPt.setLocation(j,i);
+
+                srcPt = mapDestPoint(destPt,srcPt);
+                final int nearestX = findNearest(srcPt.getX(), minX, maxX);
+                final int nearestY = findNearest(srcPt.getY(), minY, maxY);
+                src.getDataElements(nearestX, nearestY, pixel);
+                dst.setDataElements(j, i, pixel);
             }
         }
         return dst;
+    }
+
+
+    private int findNearest(double a, int minA, int maxA) {
+        int nearestA = (int) Math.round(a);
+        if (nearestA < minA)
+            nearestA = minA;
+        else if (nearestA > maxA)
+            nearestA = maxA;
+        return nearestA;
     }
 
 }

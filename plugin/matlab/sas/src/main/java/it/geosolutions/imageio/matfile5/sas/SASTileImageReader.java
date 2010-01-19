@@ -28,7 +28,6 @@ import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferDouble;
 import java.awt.image.DataBufferFloat;
-import java.awt.image.PixelInterleavedSampleModel;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
@@ -294,8 +293,11 @@ public class SASTileImageReader extends MatFileImageReader {
         
         final AffineTransform transform = AffineTransform.getRotateInstance(0);// identity
         // geometric scale to subsample
-//        if (xSubsamplingFactor != 1 || ySubsamplingFactor != 1) 
+        if (xSubsamplingFactor != 1 || ySubsamplingFactor != 1) {
 //        	transform.preConcatenate(AffineTransform.getScaleInstance(xSubsamplingFactor, ySubsamplingFactor));
+//            tx = ((srcRegionHeight - ySubsamplingOffset) + ySubsamplingFactor-1)/ySubsamplingFactor;
+//            ty = ((srcRegionWidth - xSubsamplingOffset) + xSubsamplingFactor -1)/xSubsamplingFactor;
+        }
 
         // //
         //
@@ -307,19 +309,21 @@ public class SASTileImageReader extends MatFileImageReader {
         if (channel == Channel.STARBOARD){
             // TransposeDescriptor.FLIP_DIAGONAL
             // TransposeDescriptor.FLIP_VERTICAL
-
-//              transposeTransform.concatenate(AffineTransform.getRotateInstance(Math.PI*1.5d));
-//		transposeTransform.concatenate(AffineTransform.getTranslateInstance(-smWidth,0));
-//              transposeTransform.concatenate(AffineTransform.getScaleInstance(1,-1));
-            transposeTransform = new AffineTransform(0.0, -1.0, 1.0, 0.0, 0 , tx);
+              transposeTransform.concatenate(AffineTransform.getRotateInstance(Math.PI*1.5d));
+              transposeTransform.concatenate(AffineTransform.getTranslateInstance(-tx,0));
+              transposeTransform.concatenate(AffineTransform.getScaleInstance(1,-1));
+              
+              // The result will be the following affineTransform         
+              // transposeTransform = new AffineTransform(0.0, -1.0, 1.0, 0.0, 0 , tx);
         } else {
             // TransposeDescriptor.FLIP_ANTIDIAGONAL
-              transposeTransform.concatenate(AffineTransform.getRotateInstance(Math.PI*1.5d));
-              transposeTransform.concatenate(AffineTransform.getTranslateInstance(-smWidth,0));
-              transposeTransform.concatenate(AffineTransform.getScaleInstance(1,-1));
-              transposeTransform.concatenate(AffineTransform.getTranslateInstance(0,-smHeight));
-//            transposeTransform = new AffineTransform(0.0, -1.0, -1.0, 0.0, ty, tx);
-//		       
+            transposeTransform.concatenate(AffineTransform.getRotateInstance(Math.PI*1.5d));
+            transposeTransform.concatenate(AffineTransform.getTranslateInstance(-tx,0));
+            transposeTransform.concatenate(AffineTransform.getScaleInstance(1,-1));
+            transposeTransform.concatenate(AffineTransform.getTranslateInstance(0,-ty));
+              
+              // The result will be the following affineTransform              
+              // transposeTransform = new AffineTransform(0.0, -1.0, -1.0, 0.0, ty, tx);
         }
 	// preconcatenate transposition
 	transform.preConcatenate(transposeTransform);
@@ -344,7 +348,7 @@ public class SASTileImageReader extends MatFileImageReader {
         final int width = sasTile.getXPixels();
         final int height = sasTile.getYPixels();
 
-        //TODO: Handle datatype
+        //TODO: Handle proper datatype
         final BandedSampleModel sampleModel = new BandedSampleModel(DataBuffer.TYPE_DOUBLE, width, height, 1);
         final ColorModel cm = buildColorModel(sampleModel);
         final List<ImageTypeSpecifier> l = new java.util.ArrayList<ImageTypeSpecifier>(1);

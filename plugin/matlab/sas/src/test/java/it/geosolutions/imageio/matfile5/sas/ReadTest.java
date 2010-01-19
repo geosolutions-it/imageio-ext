@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageio.matfile5.sas;
 
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
 import java.awt.image.BufferedImage;
@@ -47,12 +48,12 @@ public class ReadTest {
         ImageReader reader = new SASTileImageReaderSpi().createReaderInstance();
         reader.setInput(file);
         ImageReadParam param = new ImageReadParam();
-        // param.setSourceSubsampling(2,2,0,0);
+         param.setSourceSubsampling(2,2,0,0);
         // param.setSourceRegion(new Rectangle(0,0,500,800));
         BufferedImage bi = reader.read(0, param);
         Long timeEnd = System.currentTimeMillis();
         System.out.println((timeEnd - timeStart) / 1000);
-        // ImageIOUtilities.visualize(bi, "prova", true);
+         ImageIOUtilities.visualize(bi, "prova", true);
         reader.dispose();
         reader = null;
     }
