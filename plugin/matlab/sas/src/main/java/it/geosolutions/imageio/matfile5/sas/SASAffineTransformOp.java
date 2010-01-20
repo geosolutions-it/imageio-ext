@@ -9,6 +9,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ColorModel;
+import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RasterFormatException;
 import java.awt.image.RasterOp;
@@ -215,7 +216,16 @@ class SASAffineTransformOp implements BufferedImageOp, RasterOp {
         final int maxXD = minXD + widthD;
         final int maxYD = minYD + heightD;
         
-        final double[] pixel = new double[2];
+        Object pixel = null;
+        final int dataType = src.getSampleModel().getDataType();
+        if (dataType == DataBuffer.TYPE_DOUBLE)
+        	pixel = new double[2];
+        else if (dataType == DataBuffer.TYPE_FLOAT)
+        	pixel = new float[2];
+        else if (dataType == DataBuffer.TYPE_INT)
+        	pixel = new int[2];
+        else
+        	throw new IllegalArgumentException("Unsupported datatype");
         Point2D srcPt = new Point2D.Float(0, 0);
         Point2D destPt = new Point2D.Float(0, 0);
 //        for (int i=minY;i<maxY;i++){

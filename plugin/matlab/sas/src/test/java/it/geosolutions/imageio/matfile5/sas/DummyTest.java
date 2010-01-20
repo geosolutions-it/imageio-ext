@@ -1,68 +1,39 @@
 package it.geosolutions.imageio.matfile5.sas;
 
-import it.geosolutions.imageio.utilities.ImageIOUtilities;
-
-import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
+import java.awt.image.BandedSampleModel;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferByte;
-import java.awt.image.DataBufferFloat;
-import java.awt.image.PixelInterleavedSampleModel;
+import java.awt.image.DataBufferDouble;
 import java.awt.image.Raster;
-import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
 
-import org.junit.Ignore;
+import org.junit.Test;
 
 import com.sun.imageio.plugins.common.ImageUtil;
 
 public class DummyTest {
 
-	@Ignore
-	public void testMe() throws IOException {
-		byte data [] = new byte[7500];
-		for (int i=0;i<2500;i++)
-			data[i]=(byte)i;
-		
-		SampleModel sm = new PixelInterleavedSampleModel(DataBuffer.TYPE_BYTE, 50, 50,3,150,new int[]{0,1,2});
-		
-		ColorModel cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), false, false,
-		        ComponentColorModel.OPAQUE,DataBuffer.TYPE_BYTE);
-		WritableRaster raster = Raster.createWritableRaster(sm,new DataBufferByte(data, 7500), null); 
-		BufferedImage bi = new BufferedImage(cm, raster, false, null);
-		ImageIOUtilities.visualize(bi);
-		final AffineTransform transform= AffineTransform.getRotateInstance(0);// identity
-
-        final AffineTransform transposeTransform= AffineTransform.getRotateInstance(0);// identity
-        transposeTransform.preConcatenate(AffineTransform.getScaleInstance(1,1));
-		transform.preConcatenate(transposeTransform);
-		
-	BufferedImage bi3 = new AffineTransformOp(transform, AffineTransformOp.TYPE_NEAREST_NEIGHBOR).filter(bi,null);
-	ImageIOUtilities.visualize(bi3);		
-		
-		
-	}
-	
-    public static void main(String[] args) throws IOException {
-        float data [] = new float[5000];
-        for (int i=0;i<5000;i++)
-            if (i%100 == 1)
-                data[i]=80;
-            else if (i<500)
-                data[i]=0;
-            else if (i>=500 && i<2500)
-                data[i]=20000;
-            else
-                data[i]=120000;
+	@Test
+    public void testAffine() throws IOException {
+        final double data [][] = new double[2][2500];
+        for (int j=0;j<2;j++)
+        	for (int i=0;i<2500;i++)
+	            if (i%100 == 1)
+	                data[j][i]=80;
+	            else if (i<500)
+	                data[j][i]=0;
+	            else if (i>=500 && i<1500)
+	                data[j][i]=20000;
+	            else
+	                data[j][i]=120000;
             
-        SampleModel sm = new PixelInterleavedSampleModel(DataBuffer.TYPE_FLOAT, 125, 20,1,250,new int[]{0,1});
-        ColorModel cm = ImageUtil.createColorModel(sm);
-        WritableRaster raster = Raster.createWritableRaster(sm,new DataBufferFloat(data, 5000), null); 
+        final BandedSampleModel sampleModel = new BandedSampleModel(DataBuffer.TYPE_DOUBLE, 125, 20, 2);
+        ColorModel cm = ImageUtil.createColorModel(sampleModel);
+        final DataBufferDouble dbb = new DataBufferDouble(data, 2500);
+        WritableRaster raster = Raster.createWritableRaster(sampleModel, dbb, null); 
         BufferedImage bi = new BufferedImage(cm, raster, false, null);
 
         final AffineTransform transform= AffineTransform.getRotateInstance(0);// identity
