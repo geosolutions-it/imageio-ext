@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.matfile5.sas;
 
+import it.geosolutions.imageio.utilities.Utilities;
+
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
@@ -62,10 +64,9 @@ class SASAffineTransformOp implements BufferedImageOp, RasterOp {
     }
     
     public Point2D mapSourcePoint(Point2D sourcePt, Point2D destPt) {
-        if (sourcePt == null) {
-            throw new IllegalArgumentException();
-        }
-
+        Utilities.checkNotNull(sourcePt, "The provided source point is null");
+        Utilities.checkNotNull(destPt, "The provided destination point is null");
+        
         sourcePt.setLocation(sourcePt.getX() + 0.5, sourcePt.getY() + 0.5);
         Point2D dpt = xform.transform(sourcePt, destPt);
         sourcePt.setLocation(sourcePt.getX() - 0.5, sourcePt.getY() - 0.5);
@@ -88,18 +89,17 @@ class SASAffineTransformOp implements BufferedImageOp, RasterOp {
      *
      * @since JAI 1.1.2
      */
-    public Point2D mapDestPoint(Point2D destPt, Point2D srcPt) {
-        if (destPt == null) {
-            throw new IllegalArgumentException();
-        }
+    public Point2D mapDestPoint(Point2D destPt, Point2D sourcePt) {
+    	Utilities.checkNotNull(sourcePt, "The provided source point is null");
+        Utilities.checkNotNull(destPt, "The provided destination point is null");
 
         destPt.setLocation(destPt.getX() + 0.5, destPt.getY() + 0.5);
 
-        Point2D sourcePt = inv_xform.transform(destPt, srcPt);
+        Point2D spt = inv_xform.transform(destPt, sourcePt);
         destPt.setLocation(destPt.getX() - 0.5, destPt.getY() - 0.5);
-        sourcePt.setLocation(sourcePt.getX() - 0.5, sourcePt.getY() - 0.5);
+        spt.setLocation(spt.getX() - 0.5, spt.getY() - 0.5);
 
-        return sourcePt;
+        return spt;
     }
 
     

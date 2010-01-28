@@ -82,15 +82,16 @@ public class MLInt64 extends MLNumericArray<Long>
      * 
      * @return - 2D real array
      */
-    public long[][] getArray()
-    {
-        long[][] result = new long[getM()][];
+    public long[][] getArray(){
+    	final int M = getM();
+    	final int N = getN();
+        long[][] result = new long[M][];
         
-        for ( int m = 0; m < getM(); m++ )
+        for ( int m = 0; m < M; m++ )
         {
-           result[m] = new long[ getN() ];
+           result[m] = new long[N];
 
-           for ( int n = 0; n < getN(); n++ )
+           for ( int n = 0; n < N; n++ )
            {               
                result[m][n] = getReal(m,n);
            }

@@ -388,4 +388,10 @@ public final class Utilities {
     public static void setNativeAccelerationAllowed(final String operation, final boolean allowed) {
         setNativeAccelerationAllowed(operation, allowed, JAI.getDefaultInstance());
     }
+    
+    public final static void checkNotNull (final Object checkMe, final String message){
+    	if (checkMe == null){
+    		throw new IllegalArgumentException(message != null ? message : "The provided object was NULL");
+    	}
+    }
 }

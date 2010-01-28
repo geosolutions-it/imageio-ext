@@ -36,6 +36,7 @@ import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.imageio.ImageReadParam;
@@ -94,10 +95,9 @@ public class SASTileImageReader extends MatFileImageReader {
             try {
 
                 matReader = new MatFileReader(fileName, filter, true);
-                
                 sasTile = new SASTileMetadata(matReader);
-                setArrayName(sasTile.isLogScale() ? SASTileMetadata.SAS_TILE_LOG :SASTileMetadata.SAS_TILE_RAW);
-
+                dataArrays = new LinkedList<String>();
+                dataArrays.add(sasTile.isLogScale() ? SASTileMetadata.SAS_TILE_LOG :SASTileMetadata.SAS_TILE_RAW);
             } catch (IOException e) {
                 throw new RuntimeException("Unable to Initialize the reader", e);
             }
@@ -139,8 +139,7 @@ public class SASTileImageReader extends MatFileImageReader {
     }
 
     @Override
-    public BufferedImage read(int imageIndex, ImageReadParam param)
-            throws IOException {
+    public BufferedImage read(int imageIndex, ImageReadParam param) throws IOException {
         initialize();
 
         final int width = getWidth(imageIndex);
@@ -229,7 +228,7 @@ public class SASTileImageReader extends MatFileImageReader {
         // ////////////////////////////////////////////////////////////////////
         final Rectangle roi = new Rectangle(srcRegionXOffset, srcRegionYOffset, srcRegionWidth, srcRegionHeight);
 
-        final MLArray mlArrayRetrived = matReader.getMLArray(getArrayName());
+        final MLArray mlArrayRetrived = matReader.getMLArray(dataArrays.get(imageIndex));
         final ByteBuffer real = ((MLNumericArray<Number>) mlArrayRetrived).getRealByteBuffer();
         final ByteBuffer imaginary = ((MLNumericArray<Number>) mlArrayRetrived).getImaginaryByteBuffer();
         

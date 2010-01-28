@@ -19,13 +19,11 @@ package it.geosolutions.imageio.matfile5.sas;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 
 import java.awt.RenderingHints;
-import java.awt.color.ColorSpace;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
 import java.awt.image.PixelInterleavedSampleModel;
 import java.awt.image.Raster;
 import java.awt.image.RasterOp;
@@ -51,7 +49,7 @@ class SASBufferedImageOp implements BufferedImageOp, RasterOp {
 	    this.hints = hints;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see java.awt.image.BufferedImageOp#createCompatibleDestImage(java.awt.image.BufferedImage, java.awt.image.ColorModel)
 	 */
 	public BufferedImage createCompatibleDestImage(BufferedImage src,
@@ -61,7 +59,7 @@ class SASBufferedImageOp implements BufferedImageOp, RasterOp {
 	    return new BufferedImage(dstCM, wr, src.isAlphaPremultiplied(), null);
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see java.awt.image.BufferedImageOp#filter(java.awt.image.BufferedImage, java.awt.image.BufferedImage)
 	 */
 	public BufferedImage filter(BufferedImage src, BufferedImage dst) {
@@ -90,14 +88,14 @@ class SASBufferedImageOp implements BufferedImageOp, RasterOp {
 	    return dst;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see java.awt.image.BufferedImageOp#getBounds2D(java.awt.image.BufferedImage)
 	 */
 	public Rectangle2D getBounds2D(BufferedImage src) {
 		return src.getData().getBounds();
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see java.awt.image.BufferedImageOp#getPoint2D(java.awt.geom.Point2D, java.awt.geom.Point2D)
 	 */
 	public Point2D getPoint2D(Point2D src, Point2D dst) {
@@ -108,21 +106,21 @@ class SASBufferedImageOp implements BufferedImageOp, RasterOp {
 	    return dst;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see java.awt.image.BufferedImageOp#getRenderingHints()
 	 */
 	public RenderingHints getRenderingHints() {
 		return hints;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see java.awt.image.RasterOp#createCompatibleDestRaster(java.awt.image.Raster)
 	 */
 	public WritableRaster createCompatibleDestRaster(Raster src) {		
 		return src.createCompatibleWritableRaster();
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see java.awt.image.RasterOp#filter(java.awt.image.Raster, java.awt.image.WritableRaster)
 	 */
 	public WritableRaster filter(Raster src, WritableRaster dest) {

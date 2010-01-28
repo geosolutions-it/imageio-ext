@@ -151,7 +151,9 @@ public class MatIOTest
         String name = "doublearr";
         String name2 = "dummy";
         //file name in which array will be storred
-        String fileName = "filter.mat";
+        final File fileW = TestData.temp(this,"filter.mat");
+        fileW.deleteOnExit();
+        String fileName = fileW.getAbsolutePath();
 
         double[] src = new double[] { 1.3, 2.0, 3.0, 4.0, 5.0, 6.0 };
         MLDouble mlDouble = new MLDouble( name, src, 3 );
@@ -597,14 +599,18 @@ public class MatIOTest
     {
         //array name
         final File file = TestData.file(this,"sparse.mat");
+        final File fileW = TestData.temp(this,"simplestructcopy.mat");
+        fileW.deleteOnExit();
+        final String fileName = fileW.getAbsolutePath();
+        
         MatFileReader reader = new MatFileReader( file );
         MLArray mlArray = reader.getMLArray( "spa" );
         
         List<MLArray> towrite =  Arrays.asList( mlArray );
         
-        new MatFileWriter( "sparsecopy.mat", towrite );
+        new MatFileWriter( fileName, towrite );
     
-        reader = new MatFileReader("sparsecopy.mat");
+        reader = new MatFileReader(fileName);
         MLArray mlArrayRetrieved = reader.getMLArray( "spa" );
         
         assertEquals(mlArray, mlArrayRetrieved);
@@ -616,15 +622,19 @@ public class MatIOTest
     {
         //array name
         final File file = TestData.file(this,"simplestruct.mat");
+        final File fileW = TestData.temp(this,"simplestructcopy.mat");
+        fileW.deleteOnExit();
+        final String fileName = fileW.getAbsolutePath();
         MatFileReader reader = new MatFileReader( file );
         MLArray mlArray = reader.getMLArray( "structure" );
         
         List<MLArray> towrite =  Arrays.asList( mlArray );
         
-        new MatFileWriter( "simplestructcopy.mat", towrite );
+        new MatFileWriter( fileName, towrite );
     
-        reader = new MatFileReader("simplestructcopy.mat");
+        reader = new MatFileReader(fileName);
         MLArray mlArrayRetrieved = reader.getMLArray( "structure" );
+        
     }
     
     /**
@@ -742,6 +752,8 @@ public class MatIOTest
     public void testUInt8() throws Exception
     {
         final File file = TestData.file(this,"uint8.mat");
+        final File fileW = TestData.temp(this,"uint8out.mat");
+        fileW.deleteOnExit();
         String fileName = file.getAbsolutePath();
         String arrName = "arr";
         MatFileReader mfr;
@@ -760,7 +772,7 @@ public class MatIOTest
         src = mfr.getMLArray( arrName );
         
         //write
-        fileName = "uint8out.mat";
+        fileName = fileW.getAbsolutePath();
         ArrayList<MLArray> towrite = new ArrayList<MLArray>();
         towrite.add( mfr.getMLArray( arrName ) ); 
         new MatFileWriter(fileName, towrite );
@@ -785,6 +797,8 @@ public class MatIOTest
     public void testInt8() throws Exception
     {
         final File file = TestData.file(this,"int8.mat");
+        final File fileW = TestData.temp(this,"int8out.mat");
+        fileW.deleteOnExit();
         String fileName = file.getAbsolutePath();
         String arrName = "arr";
         MatFileReader mfr;
@@ -804,7 +818,7 @@ public class MatIOTest
         src = mfr.getMLArray( "arr" );
         
         //write
-        fileName = "int8out.mat";
+        fileName = fileW.getAbsolutePath();
         ArrayList<MLArray> towrite = new ArrayList<MLArray>();
         towrite.add( mfr.getMLArray( arrName ) ); 
         new MatFileWriter(fileName, towrite );
@@ -833,6 +847,10 @@ public class MatIOTest
     {
         final File file = TestData.file(this,"int64.mat");
         String fileName = file.getAbsolutePath();
+        
+        final File fileW = TestData.temp(this,"int64out.mat");
+        fileW.deleteOnExit();
+        
         String arrName = "arr";
         MatFileReader mfr;
         MLArray src;
@@ -853,8 +871,8 @@ public class MatIOTest
         
         src = mfr.getMLArray( "arr" );
         
+        fileName = fileW.getAbsolutePath();
         //write
-        fileName = "int64out.mat";
         ArrayList<MLArray> towrite = new ArrayList<MLArray>();
         towrite.add( mfr.getMLArray( arrName ) ); 
         new MatFileWriter(fileName, towrite );
@@ -879,6 +897,8 @@ public class MatIOTest
     public void testUInt64() throws Exception
     {
         final File file = TestData.file(this,"uint64.mat");
+        final File fileW = TestData.temp(this,"uint64out.mat");
+        fileW.deleteOnExit();
         String fileName = file.getAbsolutePath();
         String arrName = "arr";
         MatFileReader mfr;
@@ -902,7 +922,7 @@ public class MatIOTest
         src = mfr.getMLArray( "arr" );
         
         //write
-        fileName = "uint64out.mat";
+        fileName = fileW.getAbsolutePath();
         ArrayList<MLArray> towrite = new ArrayList<MLArray>();
         towrite.add( mfr.getMLArray( arrName ) ); 
         new MatFileWriter(fileName, towrite );

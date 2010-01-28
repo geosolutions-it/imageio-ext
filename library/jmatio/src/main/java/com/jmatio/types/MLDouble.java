@@ -84,14 +84,12 @@ public class MLDouble extends MLNumericArray<Double>
      */
     public double[][] getArray()
     {
-        double[][] result = new double[getM()][];
-        
-        for ( int m = 0; m < getM(); m++ )
-        {
-           result[m] = new double[ getN() ];
-
-           for ( int n = 0; n < getN(); n++ )
-           {               
+    	final int M = getM();
+    	final int N = getN();
+        double[][] result = new double[M][];
+        for ( int m = 0; m < M; m++ ){
+           result[m] = new double[N];
+           for ( int n = 0; n < N; n++ ){               
                result[m][n] = getReal(m,n);
            }
         }

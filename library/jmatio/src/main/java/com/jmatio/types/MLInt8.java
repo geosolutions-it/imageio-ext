@@ -79,14 +79,13 @@ public class MLInt8 extends MLNumericArray<Byte>
      */
     public byte[][] getArray()
     {
-        byte[][] result = new byte[getM()][];
+    	final int M = getM();
+    	final int N = getN();
+        byte[][] result = new byte[M][];
         
-        for ( int m = 0; m < getM(); m++ )
-        {
-           result[m] = new byte[ getN() ];
-
-           for ( int n = 0; n < getN(); n++ )
-           {               
+        for ( int m = 0; m < M; m++ ){
+           result[m] = new byte[N];
+           for ( int n = 0; n < N; n++ ){               
                result[m][n] = getReal(m,n);
            }
         }

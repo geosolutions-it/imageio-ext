@@ -24,6 +24,8 @@ import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -63,16 +65,12 @@ public abstract class MatFileImageReader extends ImageReader {
 
     protected MatFileReader matReader = null;
     
-    private String arrayName = null;
-
-    public String getArrayName() {
-		return arrayName;
-	}
-
-	public void setArrayName(String arrayName) {
-		this.arrayName = arrayName;
-	}
-
+    /** Contains the name of the underlying data arrays 
+     * The implementation uses a LinkedList in order to associate
+     * imageIndexes to arrays name 
+     */
+    protected List<String> dataArrays = new LinkedList<String>();
+    
 	/**
      * Constructs a <code>MatFileImageReader</code> using a
      * {@link MatFileImageReaderSpi}.
@@ -86,7 +84,7 @@ public abstract class MatFileImageReader extends ImageReader {
     }
     
     protected abstract void initialize();
-
+    
     /**
      * Tries to retrieve the data Source for the ImageReader's input.
      */
@@ -194,11 +192,9 @@ public abstract class MatFileImageReader extends ImageReader {
         if (isInputDecodable)
             super.setInput(imageInputStream, seekForwardOnly, ignoreMetadata);
         else {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             if (imageInputStream == null)
-                sb.append(
-                        "Unable to create a valid ImageInputStream "
-                                + "for the provided input:").append("\n")
+                sb.append("Unable to create a valid ImageInputStream for the provided input:").append("\n")
                         .append(input.toString());
             else
                 sb.append("The provided input is not supported by this reader");
@@ -218,8 +214,12 @@ public abstract class MatFileImageReader extends ImageReader {
 
             }
         imageInputStream = null;
-        if (matReader!=null)
+        if (matReader != null)
             matReader.dispose();
+        if (dataArrays != null){
+        	dataArrays.clear();
+        	dataArrays = null;
+        }
         matReader = null;
     }
 
@@ -243,18 +243,7 @@ public abstract class MatFileImageReader extends ImageReader {
         return null;
     }
 
-    public static String getString(final MatFileReader reader, final String element) {
-        String value = "";
-        if (element != null) {
-            MLArray array = reader.getMLArray(element);
-            final MLChar text = array != null ? (MLChar) array : null;
-            if (text != null)
-                value = text.getString(0);
-        }
-        return value;
-    }
-    
-    protected void initFilter(MatFileFilter filter, Set<String> filterElements) {
+    protected static void initFilter(MatFileFilter filter, Set<String> filterElements) {
         if (filterElements != null && !filterElements.isEmpty()) {
             for (String element : filterElements) {
                 filter.addArrayName(element);
@@ -289,6 +278,5 @@ public abstract class MatFileImageReader extends ImageReader {
         transform.preConcatenate(transposeTransform);
         return transform;
     }
-    
     
 }

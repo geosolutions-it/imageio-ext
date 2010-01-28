@@ -18,6 +18,7 @@ package it.geosolutions.imageio.matfile5.sas;
 
 import it.geosolutions.imageio.matfile5.MatFileImageReader;
 import it.geosolutions.imageio.matfile5.Utils;
+import it.geosolutions.imageio.utilities.Utilities;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -154,7 +155,7 @@ public class SASTileMetadata extends IIOMetadata {
 //    private MLDouble mu;
 
     public SASTileMetadata(final MatFileReader matReader) {
-
+    	Utilities.checkNotNull(matReader, "The provided MatFileReader was null");
         MLArray sasTileData = matReader.getMLArray(SAS_TILE_RAW);
         if (sasTileData != null) {
             logScale = false;
@@ -162,10 +163,7 @@ public class SASTileMetadata extends IIOMetadata {
             logScale = true;
             sasTileData = matReader.getMLArray(SAS_TILE_LOG);
         }
-        if (sasTileData == null)
-            throw new IllegalArgumentException(
-                    "The provided input doesn't contain any valid SAS tile data");
-       
+        Utilities.checkNotNull(sasTileData, "The provided input doesn't contain any valid SAS tile data");
         dataType = Utils.getDatatype(sasTileData);
         latitude = getDouble(matReader, SAS_LATITUDE);
         longitude = getDouble(matReader, SAS_LONGITUDE);
@@ -190,7 +188,7 @@ public class SASTileMetadata extends IIOMetadata {
         
         getDoubles(matReader, SAS_PIXEL_DIMS, pixelDims);
 
-        String channel = MatFileImageReader.getString(matReader, SAS_CHANNEL);
+        String channel = Utils.getString(matReader, SAS_CHANNEL);
 
 //        mu = (MLDouble) matReader.getMLArray(SAS_MU);
 //        x = (MLDouble) matReader.getMLArray(SAS_X);
@@ -386,6 +384,7 @@ public class SASTileMetadata extends IIOMetadata {
     }
     
     static int getElementType (final MatFileReader reader, final String element){
+    	Utilities.checkNotNull(reader, "The provided MatFileReader is null");
         if (reader != null){
             final MLArray array = reader.getMLArray(element);
             return Utils.getMatDatatype(array);   
