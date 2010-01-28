@@ -242,6 +242,15 @@ public class SASTileImageReader extends MatFileImageReader {
         // Therefore I'm getting a transposed image. I will transpose it afterwards.
         // Note that I'm building a Sample Model with height and width swapped.
         //
+        // Numerical Example: The Matlab Matrix is 3X3 as: 
+        //
+        // 1, 2, 3
+        // 4, 5, 6
+        // 7, 8, 9
+        //
+        // The DataBuffer will contains data as:
+        // 1, 4, 7, 2, 5, 8, 3, 6, 9
+        //
         // //
         final int smWidth = height;
         final int smHeight = width;
@@ -290,7 +299,12 @@ public class SASTileImageReader extends MatFileImageReader {
             data = data.getSubimage(x, y, w, h);
         } 
         
-        AffineTransform transform = getAffineTransform(param);	
+        //Tuneup the image read param to use the adjusted one
+        final ImageReadParam tunedParam = getDefaultReadParam();
+        tunedParam.setSourceSubsampling(xSubsamplingFactor, ySubsamplingFactor, xSubsamplingOffset, ySubsamplingOffset);
+        tunedParam.setSourceRegion(roi);
+        
+        AffineTransform transform = getAffineTransform(tunedParam);	
 			
         //
     	// apply the geometric transform
@@ -314,9 +328,16 @@ public class SASTileImageReader extends MatFileImageReader {
         AffineTransform transform = super.getAffineTransform(param);
         int xSubsamplingFactor = 1;
         int ySubsamplingFactor = 1;
+        int height = getHeight(0);
+        int width = getWidth(0);
         if (param!=null){
             xSubsamplingFactor = param.getSourceXSubsampling();
             ySubsamplingFactor = param.getSourceYSubsampling();
+            final Rectangle sourceRegion=param.getSourceRegion();
+            if (sourceRegion!=null){
+            	width = sourceRegion.width;
+            	height = sourceRegion.height;
+            }
         }
 //    	final AffineTransform transform = AffineTransform.getRotateInstance(0);// identity
 //
@@ -342,17 +363,24 @@ public class SASTileImageReader extends MatFileImageReader {
 //              // The result will be the following affineTransform         
 //              transposeTransform = new AffineTransform(0.0, -1.0, 1.0, 0.0, 0 , tx);
 
-                transform.preConcatenate(AffineTransform.getScaleInstance(1,-1));
-        	double ty = getHeight(0);
+        	//Vertical Flip
+            transform.preConcatenate(AffineTransform.getScaleInstance(1,-1));
+        	
+            //Translate before Flipping (uses subsampling and source region)  
+            double ty = height;
         	if (ySubsamplingFactor!=1)
-        	    ty/=(float)ySubsamplingFactor;
+        	    ty/=ySubsamplingFactor;
         	transform.preConcatenate(AffineTransform.getTranslateInstance(0,ty));
          } else {
+        	 
+        	//Vertical+Horizontal Flip 
         	transform.preConcatenate(AffineTransform.getScaleInstance(-1,-1));
-        	double ty = getHeight(0);
+        	
+        	//Translate before Flipping (uses subsampling and source region)  
+        	double ty = height;
         	if (ySubsamplingFactor!=1)
         	    ty /= ySubsamplingFactor;
-        	double tx = getWidth(0);
+        	double tx = width;
         	if (xSubsamplingFactor!=1)
         	    tx /= xSubsamplingFactor;
         	transform.preConcatenate(AffineTransform.getTranslateInstance(tx,ty));

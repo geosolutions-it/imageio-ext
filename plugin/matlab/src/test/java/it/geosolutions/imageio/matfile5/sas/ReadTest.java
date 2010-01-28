@@ -28,6 +28,8 @@ import java.util.logging.Logger;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 
+import junit.framework.Assert;
+
 import org.junit.Test;
 
 public class ReadTest {
@@ -38,11 +40,15 @@ public class ReadTest {
 //            "/home/geosolutions/work/16-10-2009/input/20091015/MUSCLE_CAT2_20091015_2/Leg00001/stbd/MUSCLE_CAT2_091015_2_1_p_2_253_30_90.mat",
 //            "/home/geosolutions/work/16-10-2009/input/20091015/MUSCLE_CAT2_20091015_2/Leg00001/stbd/MUSCLE_CAT2_091015_2_1_s_2_253_30_90.mat"
 //    };
-    
+//    private static String REAL_FILES[] = new String[]{
+//    		"V:/data/sas/input/090316/MUSCLE_COL2_090316_7/Leg002/port/MUSCLE_COL2_090316_7_2_p_6044_6214_40_150.mat",
+//    		"V:/data/sas/new zones/matlab/stbd/MUSCLE_CAT2_091010_1_10_s_3850_4963_30_90.mat"
+//    };
     private String REAL_FILES[] = null;
     
     @Test
     public void testSASData() throws IOException {
+//  public static void main(String[] args) throws IOException {
 
         final boolean useRealData;
     	if (REAL_FILES == null){
@@ -57,7 +63,7 @@ public class ReadTest {
 	            if (useRealData)
 	                file = new File(REAL_FILES[i]);
 	            else
-	                file = TestData.file(new ReadTest(), REAL_FILES[i]);
+	                file = TestData.file(this, REAL_FILES[i]);
 	        } catch (IOException e) {
 	            LOGGER.info("Unable to run test due to " + e.getLocalizedMessage());
 	            return;
@@ -65,9 +71,11 @@ public class ReadTest {
 	        ImageReader reader = new SASTileImageReaderSpi().createReaderInstance();
 	        reader.setInput(file);
 	        final ImageReadParam param = new ImageReadParam();
-	        param.setSourceSubsampling(8,16,0,0);
-	        param.setSourceRegion(new Rectangle(20,20,50,70));
+	        param.setSourceSubsampling(3,5,0,0);
+	        param.setSourceRegion(new Rectangle(20,20,30,75));
 	        final BufferedImage bi = reader.read(0, param);
+	        Assert.assertEquals(10, bi.getWidth());
+	        Assert.assertEquals(15, bi.getHeight());
 	        if (TestData.isInteractiveTest())
 	            ImageIOUtilities.visualize(bi, file.getName(), true);
 	        reader.dispose();
