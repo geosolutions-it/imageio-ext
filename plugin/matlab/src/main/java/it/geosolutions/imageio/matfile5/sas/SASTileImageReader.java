@@ -18,6 +18,7 @@ package it.geosolutions.imageio.matfile5.sas;
 
 import it.geosolutions.imageio.matfile5.MatFileImageReader;
 import it.geosolutions.imageio.matfile5.sas.SASTileMetadata.Channel;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.imageio.utilities.Utilities;
 
 import java.awt.Rectangle;
@@ -47,6 +48,11 @@ import com.jmatio.types.MLArray;
 import com.jmatio.types.MLDouble;
 import com.jmatio.types.MLNumericArray;
 
+/**
+ * 
+ * @author Daniele Romagnoli, GeoSolutions SAS
+ *
+ */
 public class SASTileImageReader extends MatFileImageReader {
 
     public SASTileImageReader(SASTileImageReaderSpi originatingProvider) {
@@ -90,6 +96,7 @@ public class SASTileImageReader extends MatFileImageReader {
                 matReader = new MatFileReader(fileName, filter, true);
                 
                 sasTile = new SASTileMetadata(matReader);
+                setArrayName(sasTile.isLogScale() ? SASTileMetadata.SAS_TILE_LOG :SASTileMetadata.SAS_TILE_RAW);
 
             } catch (IOException e) {
                 throw new RuntimeException("Unable to Initialize the reader", e);
@@ -136,11 +143,9 @@ public class SASTileImageReader extends MatFileImageReader {
             throws IOException {
         initialize();
 
-        final int width = sasTile.getXPixels();
-        final int height = sasTile.getYPixels();
+        final int width = getWidth(imageIndex);
+        final int height = getHeight(imageIndex);
         
-        Channel channel = sasTile.getChannel();
-
         if (param == null)
             param = getDefaultReadParam();
 
@@ -224,9 +229,7 @@ public class SASTileImageReader extends MatFileImageReader {
         // ////////////////////////////////////////////////////////////////////
         final Rectangle roi = new Rectangle(srcRegionXOffset, srcRegionYOffset, srcRegionWidth, srcRegionHeight);
 
-        final MLArray mlArrayRetrived = sasTile.isLogScale() ? matReader
-                .getMLArray(SASTileMetadata.SAS_TILE_LOG) : matReader
-                .getMLArray(SASTileMetadata.SAS_TILE_RAW);
+        final MLArray mlArrayRetrived = matReader.getMLArray(getArrayName());
         final ByteBuffer real = ((MLNumericArray<Number>) mlArrayRetrived).getRealByteBuffer();
         final ByteBuffer imaginary = ((MLNumericArray<Number>) mlArrayRetrived).getImaginaryByteBuffer();
         
@@ -245,7 +248,7 @@ public class SASTileImageReader extends MatFileImageReader {
         final int smHeight = width;
         final BandedSampleModel sampleModel = new BandedSampleModel(isDouble?DataBuffer.TYPE_DOUBLE:DataBuffer.TYPE_FLOAT, smWidth, smHeight, 2);
         
-        final ColorModel cm = buildColorModel(sampleModel);
+        final ColorModel cm = ImageIOUtilities.buildColorModel(sampleModel);
         final WritableRaster originalRasterData;
         if (isDouble){
 	        final double[][]dataArray = new double[2][imageSize];
@@ -272,8 +275,7 @@ public class SASTileImageReader extends MatFileImageReader {
     	        originalRasterData = Raster.createWritableRaster(sampleModel,dbb, null);
         }
         BufferedImage data = new BufferedImage(cm, originalRasterData, false,null);
-        int tx = smWidth;
-        int ty = smHeight;
+
         //
         // CROP
         //
@@ -287,59 +289,85 @@ public class SASTileImageReader extends MatFileImageReader {
             final int w = roi.height;
             final int h = roi.width;
             data = data.getSubimage(x, y, w, h);
-            tx = w;
-            ty = h;
         } 
         
-        final AffineTransform transform = AffineTransform.getRotateInstance(0);// identity
-        // geometric scale to subsample
-        if (xSubsamplingFactor != 1 || ySubsamplingFactor != 1) {
-//        	transform.preConcatenate(AffineTransform.getScaleInstance(xSubsamplingFactor, ySubsamplingFactor));
-//            tx = ((srcRegionHeight - ySubsamplingOffset) + ySubsamplingFactor-1)/ySubsamplingFactor;
-//            ty = ((srcRegionWidth - xSubsamplingOffset) + xSubsamplingFactor -1)/xSubsamplingFactor;
-        }
+        AffineTransform transform = getAffineTransform(param);	
+			
+        //
+    	// apply the geometric transform
+    	//
+    	SASAffineTransformOp transformOp = new SASAffineTransformOp(transform, null);
+    	BufferedImage dst = null;
+    	dst = transformOp.filter(data, dst);
+    			
+    	// //
+    	//
+    	// Computing the magnitude of the stored complex values.
+    	//
+    	// //
+    	return new SASBufferedImageOp(COMPUTE_LOGARITHM, null).filter(dst,null);
+	
+    }
 
-        // //
-        //
-        // Transposing the Matlab data matrix
-        //
-        // //
-        AffineTransform transposeTransform = AffineTransform.getRotateInstance(0);
-        
-        if (channel == Channel.STARBOARD){
-            // TransposeDescriptor.FLIP_DIAGONAL
-            // TransposeDescriptor.FLIP_VERTICAL
-              transposeTransform.concatenate(AffineTransform.getRotateInstance(Math.PI*1.5d));
-              transposeTransform.concatenate(AffineTransform.getTranslateInstance(-tx,0));
-              transposeTransform.concatenate(AffineTransform.getScaleInstance(1,-1));
-              
-              // The result will be the following affineTransform         
-              // transposeTransform = new AffineTransform(0.0, -1.0, 1.0, 0.0, 0 , tx);
-        } else {
-            // TransposeDescriptor.FLIP_ANTIDIAGONAL
-            transposeTransform.concatenate(AffineTransform.getRotateInstance(Math.PI*1.5d));
-            transposeTransform.concatenate(AffineTransform.getTranslateInstance(-tx,0));
-            transposeTransform.concatenate(AffineTransform.getScaleInstance(1,-1));
-            transposeTransform.concatenate(AffineTransform.getTranslateInstance(0,-ty));
-              
-              // The result will be the following affineTransform              
-              // transposeTransform = new AffineTransform(0.0, -1.0, -1.0, 0.0, ty, tx);
+    @Override
+    protected AffineTransform getAffineTransform(ImageReadParam param) throws IOException {
+    	
+        AffineTransform transform = super.getAffineTransform(param);
+        int xSubsamplingFactor = 1;
+        int ySubsamplingFactor = 1;
+        if (param!=null){
+            xSubsamplingFactor = param.getSourceXSubsampling();
+            ySubsamplingFactor = param.getSourceYSubsampling();
         }
-	// preconcatenate transposition
-	transform.preConcatenate(transposeTransform);
-		
-	//
-        // apply the geometric transform
-	//
-	SASAffineTransformOp transformOp = new SASAffineTransformOp(transform, null);
-	BufferedImage dst = transformOp.filter(data, null);
-		
-	// //
-	//
-	// Computing the magnitude of the stored complex values.
-	//
-	// //
-	return new SASBufferedImageOp(COMPUTE_LOGARITHM, null).filter(dst,null);
+//    	final AffineTransform transform = AffineTransform.getRotateInstance(0);// identity
+//
+//      // //
+//      //
+//      // Transposing the Matlab data matrix
+//      //
+//      // //
+        Channel channel = sasTile.getChannel();
+        if (channel == Channel.STARBOARD){
+//              // TransposeDescriptor.FLIP_DIAGONAL
+//              // TransposeDescriptor.FLIP_VERTICAL
+//              transposeTransform.concatenate(AffineTransform.getRotateInstance(Math.PI*1.5d));
+//              transposeTransform.concatenate(AffineTransform.getTranslateInstance(-tx,0));
+//              if (param!=null){
+//        	     final int xSubsamplingFactor = param.getSourceXSubsampling();
+//        	     final int ySubsamplingFactor = param.getSourceYSubsampling();
+//        	     if (xSubsamplingFactor != 1 || ySubsamplingFactor != 1) {
+//        	             transform.concatenate(AffineTransform.getScaleInstance(1.0d/xSubsamplingFactor*1.0d, 1.0d/ySubsamplingFactor*1.0d));
+//                   }	 
+//        	}
+//          
+//              // The result will be the following affineTransform         
+//              transposeTransform = new AffineTransform(0.0, -1.0, 1.0, 0.0, 0 , tx);
+
+                transform.preConcatenate(AffineTransform.getScaleInstance(1,-1));
+        	double ty = getHeight(0);
+        	if (ySubsamplingFactor!=1)
+        	    ty/=(float)ySubsamplingFactor;
+        	transform.preConcatenate(AffineTransform.getTranslateInstance(0,ty));
+         } else {
+        	transform.preConcatenate(AffineTransform.getScaleInstance(-1,-1));
+        	double ty = getHeight(0);
+        	if (ySubsamplingFactor!=1)
+        	    ty /= ySubsamplingFactor;
+        	double tx = getWidth(0);
+        	if (xSubsamplingFactor!=1)
+        	    tx /= xSubsamplingFactor;
+        	transform.preConcatenate(AffineTransform.getTranslateInstance(tx,ty));
+        	 
+//              // TransposeDescriptor.FLIP_ANTIDIAGONAL
+//              transposeTransform.preConcatenate(AffineTransform.getRotateInstance(Math.PI*1.5d));
+//              transposeTransform.concatenate(AffineTransform.getTranslateInstance(-tx,0));
+//              transposeTransform.concatenate(AffineTransform.getScaleInstance(1,-1));
+//              transposeTransform.concatenate(AffineTransform.getTranslateInstance(0,-ty));
+//               
+//              // The result will be the following affineTransform              
+//              transposeTransform = new AffineTransform(0.0, -1.0, -1.0, 0.0, ty, tx);
+        }
+        return transform;
     }
 
     @Override
@@ -347,10 +375,9 @@ public class SASTileImageReader extends MatFileImageReader {
         initialize();
         final int width = sasTile.getXPixels();
         final int height = sasTile.getYPixels();
-
-        //TODO: Handle proper datatype
-        final BandedSampleModel sampleModel = new BandedSampleModel(DataBuffer.TYPE_DOUBLE, width, height, 1);
-        final ColorModel cm = buildColorModel(sampleModel);
+        final int dataType = sasTile.getDataType();
+        final BandedSampleModel sampleModel = new BandedSampleModel(dataType, width, height, 1);
+        final ColorModel cm = ImageIOUtilities.buildColorModel(sampleModel);
         final List<ImageTypeSpecifier> l = new java.util.ArrayList<ImageTypeSpecifier>(1);
         ImageTypeSpecifier imageType = new ImageTypeSpecifier(cm,sampleModel);
         l.add(imageType);

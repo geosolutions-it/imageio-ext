@@ -1,5 +1,18 @@
-/**
- * 
+/*
+ *    ImageI/O-Ext - OpenSource Java Image translation Library
+ *    http://www.geo-solutions.it/
+ *    https://imageio-ext.dev.java.net/
+ *    (C) 2007 - 2009, GeoSolutions
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    either version 3 of the License, or (at your option) any later version.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 package it.geosolutions.imageio.matfile5.sas;
 
@@ -60,22 +73,16 @@ class SASBufferedImageOp implements BufferedImageOp, RasterOp {
 	    // create destination image if needed
 	    if (dst == null) {
 	    	final PixelInterleavedSampleModel sampleModel = 
-	    		new PixelInterleavedSampleModel(
-	    				DataBuffer.TYPE_DOUBLE, 
-	    				src.getWidth(), 
-	    				src.getHeight(), 
-	    				1, 
-	    				src.getWidth(),
-	    				new int[] { 0 }
-	    		);
+	    		new PixelInterleavedSampleModel(src.getSampleModel().getDataType(), 
+	    				src.getWidth(), src.getHeight(), 1, src.getWidth(), new int[] { 0 });
 	    	final ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
-            final ComponentColorModel colorModel = RasterFactory.createComponentColorModel(DataBuffer.TYPE_DOUBLE, // dataType
-                    cs, // color space
-                    false, // has alpha
-                    false, // is alphaPremultiplied
-                    Transparency.OPAQUE); // transparency
-            final WritableRaster raster = Raster.createWritableRaster(sampleModel,null);
-            dst = new BufferedImage(colorModel,raster,false,null);
+                final ComponentColorModel colorModel = RasterFactory.createComponentColorModel(DataBuffer.TYPE_DOUBLE, // dataType
+                        cs, // color space
+                        false, // has alpha
+                        false, // is alphaPremultiplied
+                        Transparency.OPAQUE); // transparency
+                final WritableRaster raster = Raster.createWritableRaster(sampleModel,null);
+                dst = new BufferedImage(colorModel,raster,false,null);
 	    } else if (dst.getSampleModel().getNumBands() != 1)
 			      throw new IllegalArgumentException();
 
@@ -83,7 +90,6 @@ class SASBufferedImageOp implements BufferedImageOp, RasterOp {
 	    WritableRaster wdst = dst.getRaster();
 	    filter(wsrc, wdst);
 	    return dst;
-
 	}
 
 	/* (non-Javadoc)
@@ -130,8 +136,6 @@ class SASBufferedImageOp implements BufferedImageOp, RasterOp {
 	    if (dest.getNumBands() != 1)
 		      throw new IllegalArgumentException();
 
-
-	    
 	    double[] pixel = new double[2];
 	    
 	    final int minx=src.getMinX();

@@ -20,12 +20,7 @@ import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 import it.geosolutions.imageio.utilities.Utilities;
 
-import java.awt.Transparency;
-import java.awt.color.ColorSpace;
-import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.SampleModel;
+import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -34,18 +29,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
-import javax.media.jai.RasterFactory;
 
 import com.jmatio.io.MatFileFilter;
 import com.jmatio.io.MatFileReader;
 import com.jmatio.types.MLArray;
 import com.jmatio.types.MLChar;
-import com.jmatio.types.MLDouble;
-import com.jmatio.types.MLInt32;
-import com.sun.media.imageioimpl.common.ImageUtil;
 
 /**
  * Main abstract class defining a reader to access Matlab 5 files.
@@ -70,8 +62,18 @@ public abstract class MatFileImageReader extends ImageReader {
     private File dataSource = null;
 
     protected MatFileReader matReader = null;
+    
+    private String arrayName = null;
 
-    /**
+    public String getArrayName() {
+		return arrayName;
+	}
+
+	public void setArrayName(String arrayName) {
+		this.arrayName = arrayName;
+	}
+
+	/**
      * Constructs a <code>MatFileImageReader</code> using a
      * {@link MatFileImageReaderSpi}.
      * 
@@ -252,88 +254,6 @@ public abstract class MatFileImageReader extends ImageReader {
         return value;
     }
     
-    public static int getElementType (final MatFileReader reader, final String element){
-    	if (reader != null){
-    		MLArray array = reader.getMLArray(element);
-    		if (array instanceof MLDouble)
-    			return MLArray.mxDOUBLE_CLASS;
-    		if (array instanceof MLInt32)
-    			return MLArray.mxINT32_CLASS;
-    	}
-		return MLArray.mxUNKNOWN_CLASS;
-    }
-
-    public static double[] getDoubles(final MatFileReader reader, final String element, double[] values) {
-        MLArray array = reader.getMLArray(element);
-        final MLDouble dArray = array != null ? (MLDouble) array : null;
-        if (dArray != null) {
-            final int nDims;
-            if (values == null) {
-                nDims = dArray.getM();
-                values = new double[nDims];
-            } else
-                nDims = values.length;
-
-            for (int i = 0; i < nDims; i++) {
-                values[i] = dArray.get(i).doubleValue();
-            }
-
-        } else {
-            if (values == null) {
-                values = new double[] { Double.NaN, Double.NaN };
-            } else {
-                for (int i = 0; i < values.length; i++) {
-                    values[i] = Double.NaN;
-                }
-            }
-        }
-        return values;
-    }
-    
-    public static int[] getIntegers(final MatFileReader reader, final String element, int[] values) {
-        MLArray array = reader.getMLArray(element);
-        final MLInt32 iArray = array != null ? (MLInt32) array : null;
-        if (iArray != null) {
-            final int nDims;
-            if (values == null) {
-                nDims = iArray.getM();
-                values = new int[nDims];
-            } else
-                nDims = values.length;
-
-            for (int i = 0; i < nDims; i++) {
-                values[i] = iArray.get(i).intValue();
-            }
-
-        } else {
-            if (values == null) {
-                values = new int[] { Integer.MAX_VALUE, Integer.MIN_VALUE};
-            } else {
-                for (int i = 0; i < values.length; i++) {
-                    values[i] = Integer.MAX_VALUE;
-                }
-            }
-        }
-        return values;
-
-    }
-
-
-    public static double getDouble(final MatFileReader reader, final String element){
-        return getDouble(reader, element,0);
-    }
-    
-    public static double getDouble(final MatFileReader reader, final String element, final int index) {
-        double value = Double.NaN;
-        if (element != null && reader!=null) {
-            MLArray array = reader.getMLArray(element);
-            final MLDouble arrayD = array != null ? (MLDouble) array : null;
-            if (arrayD != null)
-                value = arrayD.get(index).doubleValue();
-        }
-        return value;
-    }
-
     protected void initFilter(MatFileFilter filter, Set<String> filterElements) {
         if (filterElements != null && !filterElements.isEmpty()) {
             for (String element : filterElements) {
@@ -342,43 +262,33 @@ public abstract class MatFileImageReader extends ImageReader {
         }
     }
     
-    public static ColorModel buildColorModel(final SampleModel sampleModel) {
-        ColorSpace cs = null;
-        ColorModel colorModel = null;
-        final int buffer_type = sampleModel.getDataType();
-        final int numBands = sampleModel.getNumBands();
-        if (numBands > 1) {
-            // /////////////////////////////////////////////////////////////////
-            //
-            // Number of Bands > 1.
-            // ImageUtil.createColorModel provides to Creates a
-            // ColorModel that may be used with the specified
-            // SampleModel
-            //
-            // /////////////////////////////////////////////////////////////////
-            colorModel = ImageUtil.createColorModel(sampleModel);
-        } else if ((buffer_type == DataBuffer.TYPE_BYTE)
-                || (buffer_type == DataBuffer.TYPE_USHORT)
-                || (buffer_type == DataBuffer.TYPE_INT)
-                || (buffer_type == DataBuffer.TYPE_FLOAT)
-                || (buffer_type == DataBuffer.TYPE_DOUBLE)) {
-
-            // Just one band. Using the built-in Gray Scale Color Space
-            cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
-            colorModel = RasterFactory.createComponentColorModel(buffer_type, // dataType
-                    cs, // color space
-                    false, // has alpha
-                    false, // is alphaPremultiplied
-                    Transparency.OPAQUE); // transparency
-        } else {
-            if (buffer_type == DataBuffer.TYPE_SHORT) {
-                // Just one band. Using the built-in Gray Scale Color
-                // Space
-                cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
-                colorModel = new ComponentColorModel(cs, false, false,
-                        Transparency.OPAQUE, DataBuffer.TYPE_SHORT);
-            }
-        }
-        return colorModel;
+    /**
+     * Main implementation transposing the read matrix 
+     * @param param
+     * @return
+     * @throws IOException 
+     */
+    protected AffineTransform getAffineTransform(final ImageReadParam param) throws IOException{
+    	final AffineTransform transform = AffineTransform.getRotateInstance(0);// identity
+    	if (param!=null){
+    	   final int xSubsamplingFactor = param.getSourceXSubsampling();
+    	   final int ySubsamplingFactor = param.getSourceYSubsampling();
+    	   if (xSubsamplingFactor != 1 || ySubsamplingFactor != 1) {
+            	transform.preConcatenate(AffineTransform.getScaleInstance(1.0d/ySubsamplingFactor, 1.0d/xSubsamplingFactor));
+           }
+    	}
+        
+        // //
+        //
+        // Transposing the Matlab data matrix
+        //
+        // //
+        AffineTransform transposeTransform = AffineTransform.getRotateInstance(0);
+        transposeTransform.preConcatenate(AffineTransform.getScaleInstance(1,-1));
+        transposeTransform.preConcatenate(AffineTransform.getRotateInstance(Math.PI*0.5d));
+        transform.preConcatenate(transposeTransform);
+        return transform;
     }
+    
+    
 }

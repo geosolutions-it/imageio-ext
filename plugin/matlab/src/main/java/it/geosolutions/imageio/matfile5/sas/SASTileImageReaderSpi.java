@@ -24,9 +24,14 @@ import java.io.IOException;
 
 import javax.imageio.ImageReader;
 
+/**
+ * 
+ * @author Daniele Romagnoli, GeoSolutions SAS
+ *
+ */
 public class SASTileImageReaderSpi extends MatFileImageReaderSpi {
 
-	static final String[] suffixes = { "mat" };
+    static final String[] suffixes = { "mat" };
 
     static final String[] formatNames = { "Mat", "Mat5" }; // TODO: Improve this
 

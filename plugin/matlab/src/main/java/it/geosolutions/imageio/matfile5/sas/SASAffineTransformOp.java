@@ -1,3 +1,19 @@
+/*
+ *    ImageI/O-Ext - OpenSource Java Image translation Library
+ *    http://www.geo-solutions.it/
+ *    https://imageio-ext.dev.java.net/
+ *    (C) 2007 - 2009, GeoSolutions
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    either version 3 of the License, or (at your option) any later version.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 package it.geosolutions.imageio.matfile5.sas;
 
 import java.awt.Rectangle;
@@ -51,8 +67,8 @@ class SASAffineTransformOp implements BufferedImageOp, RasterOp {
         }
 
         sourcePt.setLocation(sourcePt.getX() + 0.5, sourcePt.getY() + 0.5);
-
         Point2D dpt = xform.transform(sourcePt, destPt);
+        sourcePt.setLocation(sourcePt.getX() - 0.5, sourcePt.getY() - 0.5);
         dpt.setLocation(dpt.getX() - 0.5, dpt.getY() - 0.5);
 
         return dpt;
@@ -80,11 +96,53 @@ class SASAffineTransformOp implements BufferedImageOp, RasterOp {
         destPt.setLocation(destPt.getX() + 0.5, destPt.getY() + 0.5);
 
         Point2D sourcePt = inv_xform.transform(destPt, srcPt);
+        destPt.setLocation(destPt.getX() - 0.5, destPt.getY() - 0.5);
         sourcePt.setLocation(sourcePt.getX() - 0.5, sourcePt.getY() - 0.5);
 
         return sourcePt;
     }
 
+    
+    public BufferedImage createCompatibleDestImage (BufferedImage src,
+            ColorModel destCM, final Rectangle dstRegion) {
+    	BufferedImage image;
+        Rectangle r = getBounds2D(src).getBounds();
+
+        // If r.x (or r.y) is < 0, then we want to only create an image 
+        // that is in the positive range.
+        // If r.x (or r.y) is > 0, then we need to create an image that
+        // includes the translation.
+        int w = r.x + r.width;
+        int h = r.y + r.height;
+        if (w <= 0) {
+            throw new RasterFormatException("Transformed width ("+w+
+                                            ") is less than or equal to 0.");
+        }
+        if (h <= 0) {
+            throw new RasterFormatException("Transformed height ("+h+
+                                            ") is less than or equal to 0.");
+        }
+
+        if (dstRegion != null){
+        	w = dstRegion.width;
+        	h = dstRegion.height;
+        }
+
+        if (destCM == null) {
+            ColorModel cm = src.getColorModel();
+                image = new BufferedImage(cm,
+                          src.getRaster().createCompatibleWritableRaster(w,h),
+                          cm.isAlphaPremultiplied(), null);
+            
+        }
+        else {
+            image = new BufferedImage(destCM,
+                                    destCM.createCompatibleWritableRaster(w,h),
+                                    destCM.isAlphaPremultiplied(), null);
+        }
+
+        return image;
+    }
     
     /**
      * Creates a zeroed destination image with the correct size and number of
@@ -104,39 +162,7 @@ class SASAffineTransformOp implements BufferedImageOp, RasterOp {
      */
     public BufferedImage createCompatibleDestImage (BufferedImage src,
                                                     ColorModel destCM) {
-        BufferedImage image;
-        Rectangle r = getBounds2D(src).getBounds();
-
-        // If r.x (or r.y) is < 0, then we want to only create an image 
-        // that is in the positive range.
-        // If r.x (or r.y) is > 0, then we need to create an image that
-        // includes the translation.
-        int w = r.x + r.width;
-        int h = r.y + r.height;
-        if (w <= 0) {
-            throw new RasterFormatException("Transformed width ("+w+
-                                            ") is less than or equal to 0.");
-        }
-        if (h <= 0) {
-            throw new RasterFormatException("Transformed height ("+h+
-                                            ") is less than or equal to 0.");
-        }
-        
-        if (destCM == null) {
-            ColorModel cm = src.getColorModel();
-            
-                image = new BufferedImage(cm,
-                          src.getRaster().createCompatibleWritableRaster(w,h),
-                          cm.isAlphaPremultiplied(), null);
-            
-        }
-        else {
-            image = new BufferedImage(destCM,
-                                    destCM.createCompatibleWritableRaster(w,h),
-                                    destCM.isAlphaPremultiplied(), null);
-        }
-
-        return image;
+        return createCompatibleDestImage(src, destCM, null);
     }
     
     public Rectangle2D getBounds2D (BufferedImage src) {
@@ -207,14 +233,14 @@ class SASAffineTransformOp implements BufferedImageOp, RasterOp {
         final int minY = src.getMinY();
         final int width = src.getWidth();
         final int height = src.getHeight();
-        final int maxX = minX + width;
-        final int maxY = minY + height;
+        final int maxX = minX + width -1;
+        final int maxY = minY + height -1;
         final int minXD = dst.getMinX();
         final int minYD = dst.getMinY();
         final int widthD = dst.getWidth();
         final int heightD = dst.getHeight();
-        final int maxXD = minXD + widthD;
-        final int maxYD = minYD + heightD;
+        final int maxXD = minXD + widthD -1;
+        final int maxYD = minYD + heightD -1;
         
         Object pixel = null;
         final int dataType = src.getSampleModel().getDataType();
@@ -228,8 +254,8 @@ class SASAffineTransformOp implements BufferedImageOp, RasterOp {
         	throw new IllegalArgumentException("Unsupported datatype");
         Point2D srcPt = new Point2D.Float(0, 0);
         Point2D destPt = new Point2D.Float(0, 0);
-//        for (int i=minY;i<maxY;i++){
-//            for (int j=minX;j<maxX;j++){
+//        for (int i=minY;i<=maxY;i++){
+//            for (int j=minX;j<=maxX;j++){
 //                src.getDataElements(j, i, pixel);
 //                srcPt.setLocation(j, i);
 //                destPt = mapSourcePoint(srcPt, destPt);
@@ -238,8 +264,8 @@ class SASAffineTransformOp implements BufferedImageOp, RasterOp {
 //                dst.setDataElements(nearestX, nearestY, pixel);
 //            }
 //        }
-        for (int i=minYD;i<maxYD;i++){
-            for (int j=minXD;j<maxXD;j++){
+        for (int i=minYD;i<=maxYD;i++){
+            for (int j=minXD;j<=maxXD;j++){
                 destPt.setLocation(j,i);
 
                 srcPt = mapDestPoint(destPt,srcPt);

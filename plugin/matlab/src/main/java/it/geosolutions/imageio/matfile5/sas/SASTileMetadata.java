@@ -17,6 +17,7 @@
 package it.geosolutions.imageio.matfile5.sas;
 
 import it.geosolutions.imageio.matfile5.MatFileImageReader;
+import it.geosolutions.imageio.matfile5.Utils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -28,10 +29,12 @@ import org.w3c.dom.Node;
 
 import com.jmatio.io.MatFileReader;
 import com.jmatio.types.MLArray;
+import com.jmatio.types.MLDouble;
+import com.jmatio.types.MLInt32;
 
 /**
  * 
- * @author Daniele
+ * @author Daniele Romagnoli, GeoSolutions SAS
  *
  */
 public class SASTileMetadata extends IIOMetadata {
@@ -80,7 +83,6 @@ public class SASTileMetadata extends IIOMetadata {
         if (sasTileData != null) {
             return true;
         } else {
-           
             sasTileData = matReader.getMLArray(SAS_TILE_LOG);
         }
         if (sasTileData == null)
@@ -134,6 +136,8 @@ public class SASTileMetadata extends IIOMetadata {
     private double yPixelDim;
 
     private boolean logScale;
+    
+    private int dataType;
 
     private Channel channel;
 
@@ -161,29 +165,30 @@ public class SASTileMetadata extends IIOMetadata {
         if (sasTileData == null)
             throw new IllegalArgumentException(
                     "The provided input doesn't contain any valid SAS tile data");
-
-        latitude = MatFileImageReader.getDouble(matReader, SAS_LATITUDE);
-        longitude = MatFileImageReader.getDouble(matReader, SAS_LONGITUDE);
-        orientation = MatFileImageReader.getDouble(matReader, SAS_ORIENTATION);
+       
+        dataType = Utils.getDatatype(sasTileData);
+        latitude = getDouble(matReader, SAS_LATITUDE);
+        longitude = getDouble(matReader, SAS_LONGITUDE);
+        orientation = getDouble(matReader, SAS_ORIENTATION);
         
         final double pixelDims[] = new double[2];
 //        final int pixelsD[] = new int[2];
         int pixels[] = null;
-        final int pixelType = MatFileImageReader.getElementType(matReader, SAS_PIXELS);
+        final int pixelType = getElementType(matReader, SAS_PIXELS);
         
         if (pixelType == MLArray.mxDOUBLE_CLASS){
         	final double pixelsD[] = new double[2];
-        	MatFileImageReader.getDoubles(matReader, SAS_PIXELS, pixelsD);
+        	getDoubles(matReader, SAS_PIXELS, pixelsD);
         	pixels = new int[] {
                     Double.isNaN(pixelsD[0]) ? Integer.MIN_VALUE : (int) pixelsD[0],
                     Double.isNaN(pixelsD[1]) ? Integer.MIN_VALUE : (int) pixelsD[1] };
         } else if (pixelType == MLArray.mxINT32_CLASS){
         	final int pixelsI[] = new int[2];
-        	MatFileImageReader.getIntegers(matReader, SAS_PIXELS, pixelsI);	
+        	getIntegers(matReader, SAS_PIXELS, pixelsI);	
         	pixels = pixelsI;
         }
         
-        MatFileImageReader.getDoubles(matReader, SAS_PIXEL_DIMS, pixelDims);
+        getDoubles(matReader, SAS_PIXEL_DIMS, pixelDims);
 
         String channel = MatFileImageReader.getString(matReader, SAS_CHANNEL);
 
@@ -201,6 +206,14 @@ public class SASTileMetadata extends IIOMetadata {
         this.xPixelDim = pixelDims[0];
         this.yPixelDim = pixelDims[1];
 
+    }
+
+    public int getDataType() {
+        return dataType;
+    }
+
+    public void setDataType(int dataType) {
+        this.dataType = dataType;
     }
 
     public int getXPixels() {
@@ -299,6 +312,85 @@ public class SASTileMetadata extends IIOMetadata {
     //TODO: Refactor and implement this.
     public String getMetadataAsXML(){
         return null;
+    }
+    
+    static double[] getDoubles(final MatFileReader reader, final String element, double[] values) {
+        MLArray array = reader.getMLArray(element);
+        final MLDouble dArray = array != null ? (MLDouble) array : null;
+        if (dArray != null) {
+            final int nDims;
+            if (values == null) {
+                nDims = dArray.getM();
+                values = new double[nDims];
+            } else
+                nDims = values.length;
+
+            for (int i = 0; i < nDims; i++) {
+                values[i] = dArray.get(i).doubleValue();
+            }
+
+        } else {
+            if (values == null) {
+                values = new double[] { Double.NaN, Double.NaN };
+            } else {
+                for (int i = 0; i < values.length; i++) {
+                    values[i] = Double.NaN;
+                }
+            }
+        }
+        return values;
+    }
+    
+    static int[] getIntegers(final MatFileReader reader, final String element, int[] values) {
+        MLArray array = reader.getMLArray(element);
+        final MLInt32 iArray = array != null ? (MLInt32) array : null;
+        if (iArray != null) {
+            final int nDims;
+            if (values == null) {
+                nDims = iArray.getM();
+                values = new int[nDims];
+            } else
+                nDims = values.length;
+
+            for (int i = 0; i < nDims; i++) {
+                values[i] = iArray.get(i).intValue();
+            }
+
+        } else {
+            if (values == null) {
+                values = new int[] { Integer.MAX_VALUE, Integer.MIN_VALUE};
+            } else {
+                for (int i = 0; i < values.length; i++) {
+                    values[i] = Integer.MAX_VALUE;
+                }
+            }
+        }
+        return values;
+
+    }
+
+
+    static double getDouble(final MatFileReader reader, final String element){
+        return getDouble(reader, element,0);
+    }
+    
+    static double getDouble(final MatFileReader reader, final String element, final int index) {
+        double value = Double.NaN;
+        if (element != null && reader!=null) {
+            MLArray array = reader.getMLArray(element);
+            final MLDouble arrayD = array != null ? (MLDouble) array : null;
+            if (arrayD != null)
+                value = arrayD.get(index).doubleValue();
+        }
+        return value;
+    }
+    
+    static int getElementType (final MatFileReader reader, final String element){
+        if (reader != null){
+            final MLArray array = reader.getMLArray(element);
+            return Utils.getMatDatatype(array);   
+        }
+        return MLArray.mxUNKNOWN_CLASS;
     }
 
 }

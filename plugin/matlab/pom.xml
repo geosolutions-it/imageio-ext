@@ -10,8 +10,8 @@
     <version>1.1-SNAPSHOT</version>
   </parent>
   <groupId>it.geosolutions.imageio-ext</groupId>
-  <artifactId>imageio-ext-matlab-plugin</artifactId>
-  <packaging>pom</packaging>
+  <artifactId>imageio-ext-matlab5</artifactId>
+  <packaging>jar</packaging>
   <version>1.1-SNAPSHOT</version>
   <name>GeoSolutions Image I/O-Extensions MATLAB plugins</name>
   <description>
@@ -29,10 +29,10 @@
   <!-- ===================================================================== -->
    <dependencies>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
+    	<groupId>junit</groupId>
+    	<artifactId>junit</artifactId>
+    	<version>4.1</version>
+    	<scope>test</scope>
     </dependency>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
@@ -50,11 +50,4 @@
       <version>${project.version}</version>
     </dependency>
   </dependencies>
-  <!-- =========================================================== -->
-  <!--     Modules for the build in approximate dependency order   -->
-  <!-- =========================================================== -->
-  <modules>
-    <module>core</module>
-    <module>sas</module>
-  </modules>
 </project>
