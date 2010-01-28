@@ -19,6 +19,7 @@ package it.geosolutions.imageio.plugins.ecw;
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.GDALUtilities;
 import it.geosolutions.imageio.gdalframework.Viewer;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
 import java.awt.Rectangle;
@@ -100,7 +101,7 @@ public class ECWTest extends AbstractGDALTest {
         final RenderedImage image = mReader.readAsRenderedImage(imageIndex,
                 param);
         if (TestData.isInteractiveTest())
-        	Viewer.visualizeAllInformation(image, fileName);
+        	ImageIOUtilities.visualize(image, fileName);
         Assert.assertEquals(400, image.getWidth());
         Assert.assertEquals(200, image.getHeight());
         mReader.dispose();

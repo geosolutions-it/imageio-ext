@@ -27,6 +27,8 @@ import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import javax.imageio.ImageReadParam;
@@ -40,6 +42,7 @@ import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.sun.media.jai.operator.ImageWriteDescriptor;
@@ -50,6 +53,16 @@ import com.sun.media.jai.operator.ImageWriteDescriptor;
  */
 public class GeoTiffTest extends AbstractGDALTest {
 
+	@Before
+	public void setUp() throws Exception {
+		super.setUp();
+		File file = TestData.file(this, "test-data.zip");
+	    Assert.assertTrue(file.exists());
+
+	        // unzip it
+	    TestData.unzipFile(this, "test-data.zip");
+	}
+	
     public GeoTiffTest() {
         super();
     }
@@ -68,7 +81,7 @@ public class GeoTiffTest extends AbstractGDALTest {
         final ImageReadParam irp = new ImageReadParam();
 
         // Reading a simple GrayScale image
-        String fileName = "utm.tif";
+        String fileName = "utmByte.tif";
         final File inputFile = TestData.file(this, fileName);
         irp.setSourceSubsampling(2, 2, 0, 0);
         ImageReader reader = new GeoTiffImageReaderSpi().createReaderInstance();
@@ -76,8 +89,8 @@ public class GeoTiffTest extends AbstractGDALTest {
         final RenderedImage image = reader.readAsRenderedImage(0, irp);
         if (TestData.isInteractiveTest())
             Viewer.visualizeAllInformation(image, fileName);
-        Assert.assertEquals(256, image.getWidth());
-        Assert.assertEquals(256, image.getHeight());
+        Assert.assertEquals(128, image.getWidth());
+        Assert.assertEquals(128, image.getHeight());
         reader.dispose();
     }
 
@@ -93,7 +106,7 @@ public class GeoTiffTest extends AbstractGDALTest {
             return;
         }
         final ParameterBlockJAI pbjImageRead;
-        String fileName = "utm.tif";
+        String fileName = "utmByte.tif";
         final File file = TestData.file(this, fileName);
 
         pbjImageRead = new ParameterBlockJAI("ImageRead");
@@ -119,7 +132,7 @@ public class GeoTiffTest extends AbstractGDALTest {
         }
         final File outputFile = TestData.temp(this, "writetest.tif", false);
         outputFile.deleteOnExit();
-        final File inputFile = TestData.file(this, "utm.tif");
+        final File inputFile = TestData.file(this, "utmByte.tif");
 
         ImageReadParam rparam = new ImageReadParam();
         rparam.setSourceRegion(new Rectangle(1, 1, 300, 500));
@@ -229,5 +242,39 @@ public class GeoTiffTest extends AbstractGDALTest {
             Viewer.visualizeAllInformation(image2,"Paletted image read back after writing");
         else
         	Assert.assertNotNull(image2.getTiles());
+    }
+    
+    @Test
+    public void testDataTypes() throws IOException, FileNotFoundException {
+        if (!isGDALAvailable) {
+            return;
+        }
+        final List<String> fileList = new ArrayList<String>(4);
+        fileList.add("paletted.tif");
+        fileList.add("utmByte.tif");
+        fileList.add("utmInt16.tif");
+        fileList.add("utmInt32.tif");
+        fileList.add("utmFloat32.tif");
+        fileList.add("utmFloat64.tif");
+        
+        for (String fileName: fileList){
+	        final ImageReadParam irp = new ImageReadParam();
+	        final File inputFile = TestData.file(this, fileName);
+	        irp.setSourceSubsampling(1, 1, 0, 0);
+	        ImageReader reader = new GeoTiffImageReaderSpi().createReaderInstance();
+	        reader.setInput(inputFile);
+	        final RenderedImage image = reader.readAsRenderedImage(0, irp);
+	        if (TestData.isInteractiveTest())
+	        	Viewer.visualizeAllInformation(image, fileName);
+	        if(!fileName.contains("paletted")){
+	        	Assert.assertEquals(256, image.getHeight());
+	        	Assert.assertEquals(256, image.getWidth());
+	        } else {
+	        	Assert.assertEquals(128, image.getHeight());
+	        	Assert.assertEquals(128, image.getWidth());
+	        }
+	        
+	        reader.dispose();
+        }
     }
 }
