@@ -667,8 +667,7 @@ public class GRIB1ImageReader extends BaseImageReader {
          */
         SampleModel sampleModel = wrapper.getSampleModel()
                 .createCompatibleSampleModel(destWidth, destHeight);
-        ColorModel colorModel = ImageIOUtilities
-                .getCompatibleColorModel(sampleModel);
+        ColorModel colorModel = ImageIOUtilities.createColorModel(sampleModel);
 
         /*
          * Reads the requested sub-region only.

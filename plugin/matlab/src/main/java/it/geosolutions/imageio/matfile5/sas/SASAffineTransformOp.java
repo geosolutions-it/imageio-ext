@@ -278,7 +278,6 @@ class SASAffineTransformOp implements BufferedImageOp, RasterOp {
         return dst;
     }
 
-
     private int findNearest(double a, int minA, int maxA) {
         int nearestA = (int) Math.round(a);
         if (nearestA < minA)

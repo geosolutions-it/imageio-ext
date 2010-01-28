@@ -248,7 +248,7 @@ public class SASTileImageReader extends MatFileImageReader {
         final int smHeight = width;
         final BandedSampleModel sampleModel = new BandedSampleModel(isDouble?DataBuffer.TYPE_DOUBLE:DataBuffer.TYPE_FLOAT, smWidth, smHeight, 2);
         
-        final ColorModel cm = ImageIOUtilities.buildColorModel(sampleModel);
+        final ColorModel cm = ImageIOUtilities.createColorModel(sampleModel);
         final WritableRaster originalRasterData;
         if (isDouble){
 	        final double[][]dataArray = new double[2][imageSize];
@@ -377,7 +377,7 @@ public class SASTileImageReader extends MatFileImageReader {
         final int height = sasTile.getYPixels();
         final int dataType = sasTile.getDataType();
         final BandedSampleModel sampleModel = new BandedSampleModel(dataType, width, height, 1);
-        final ColorModel cm = ImageIOUtilities.buildColorModel(sampleModel);
+        final ColorModel cm = ImageIOUtilities.createColorModel(sampleModel);
         final List<ImageTypeSpecifier> l = new java.util.ArrayList<ImageTypeSpecifier>(1);
         ImageTypeSpecifier imageType = new ImageTypeSpecifier(cm,sampleModel);
         l.add(imageType);

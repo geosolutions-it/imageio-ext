@@ -315,7 +315,7 @@ public abstract class BaseHDF4ImageReader extends BaseImageReader {
          * Setting SampleModel and ColorModel.
          */
         final SampleModel sampleModel = wrapper.getSampleModel().createCompatibleSampleModel(destWidth, destHeight);
-        final ColorModel colorModel = ImageIOUtilities.getCompatibleColorModel(sampleModel);
+        final ColorModel colorModel = ImageIOUtilities.createColorModel(sampleModel);
 
         /*
          * Reads the requested sub-region only.

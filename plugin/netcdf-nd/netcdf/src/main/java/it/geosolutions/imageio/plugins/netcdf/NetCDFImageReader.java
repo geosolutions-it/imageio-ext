@@ -289,7 +289,7 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
          * Setting SampleModel and ColorModel.
          */
         final SampleModel sampleModel = wrapper.getSampleModel().createCompatibleSampleModel(destWidth, destHeight);
-        final ColorModel colorModel = ImageIOUtilities.getCompatibleColorModel(sampleModel);
+        final ColorModel colorModel = ImageIOUtilities.createColorModel(sampleModel);
 
         final WritableRaster raster = Raster.createWritableRaster(sampleModel,
                 new Point(0, 0));

@@ -16,8 +16,9 @@
  */
 package it.geosolutions.imageio.matfile5.sas;
 
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
+
 import java.awt.RenderingHints;
-import java.awt.Transparency;
 import java.awt.color.ColorSpace;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -25,13 +26,10 @@ import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
-import java.awt.image.DataBuffer;
 import java.awt.image.PixelInterleavedSampleModel;
 import java.awt.image.Raster;
 import java.awt.image.RasterOp;
 import java.awt.image.WritableRaster;
-
-import javax.media.jai.RasterFactory;
 
 /**
  * Custom {@link BufferedImageOp} that we use on SAS tiles to perform most of the operations we need in place!
@@ -75,14 +73,14 @@ class SASBufferedImageOp implements BufferedImageOp, RasterOp {
 	    	final PixelInterleavedSampleModel sampleModel = 
 	    		new PixelInterleavedSampleModel(src.getSampleModel().getDataType(), 
 	    				src.getWidth(), src.getHeight(), 1, src.getWidth(), new int[] { 0 });
-	    	final ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
-                final ComponentColorModel colorModel = RasterFactory.createComponentColorModel(DataBuffer.TYPE_DOUBLE, // dataType
-                        cs, // color space
-                        false, // has alpha
-                        false, // is alphaPremultiplied
-                        Transparency.OPAQUE); // transparency
-                final WritableRaster raster = Raster.createWritableRaster(sampleModel,null);
-                dst = new BufferedImage(colorModel,raster,false,null);
+	    	final ColorModel colorModel = ImageIOUtilities.createColorModel(sampleModel);
+//            final ComponentColorModel colorModel = RasterFactory.createComponentColorModel(DataBuffer.TYPE_DOUBLE, // dataType
+//                    cs, // color space
+//                    false, // has alpha
+//                    false, // is alphaPremultiplied
+//                    Transparency.OPAQUE); // transparency
+            final WritableRaster raster = Raster.createWritableRaster(sampleModel,null);
+            dst = new BufferedImage(colorModel,raster,false,null);
 	    } else if (dst.getSampleModel().getNumBands() != 1)
 			      throw new IllegalArgumentException();
 
