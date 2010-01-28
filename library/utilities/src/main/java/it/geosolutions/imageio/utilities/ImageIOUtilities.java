@@ -20,15 +20,19 @@ import java.awt.Transparency;
 import java.awt.color.ColorSpace;
 import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
+import java.awt.image.ComponentSampleModel;
 import java.awt.image.DataBuffer;
+import java.awt.image.DirectColorModel;
+import java.awt.image.IndexColorModel;
+import java.awt.image.MultiPixelPackedSampleModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
+import java.awt.image.SinglePixelPackedSampleModel;
 import java.awt.image.renderable.ParameterBlock;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Level;
 
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
@@ -45,14 +49,18 @@ import javax.swing.SwingUtilities;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
+import com.sun.imageio.plugins.common.BogusColorSpace;
 import com.sun.media.imageioimpl.common.ImageUtil;
-import com.sun.media.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
 import com.sun.media.jai.codecimpl.util.RasterFactory;
 
 /**
  * Simple class containing commonly used utility methods.
  */
 public class ImageIOUtilities {
+    
+    private ImageIOUtilities() {
+
+    }
 
     private static final int DEFAULT_ROI = -999;
 
@@ -103,10 +111,158 @@ public class ImageIOUtilities {
         return cm;
     }
 
-    private ImageIOUtilities() {
+    /**
+     * Creates a <code>ColorModel</code> that may be used with the
+     * specified <code>SampleModel</code>.  If a suitable
+     * <code>ColorModel</code> cannot be found, this method returns
+     * <code>null</code>.
+     *
+     * <p> Suitable <code>ColorModel</code>s are guaranteed to exist
+     * for all instances of <code>ComponentSampleModel</code>.
+     * For 1- and 3- banded <code>SampleModel</code>s, the returned
+     * <code>ColorModel</code> will be opaque.  For 2- and 4-banded
+     * <code>SampleModel</code>s, the output will use alpha transparency
+     * which is not premultiplied.  1- and 2-banded data will use a
+     * grayscale <code>ColorSpace</code>, and 3- and 4-banded data a sRGB
+     * <code>ColorSpace</code>. Data with 5 or more bands will have a
+     * <code>BogusColorSpace</code>.</p>
+     *
+     * <p>An instance of <code>DirectColorModel</code> will be created for
+     * instances of <code>SinglePixelPackedSampleModel</code> with no more
+     * than 4 bands.</p>
+     *
+     * <p>An instance of <code>IndexColorModel</code> will be created for
+     * instances of <code>MultiPixelPackedSampleModel</code>. The colormap
+     * will be a grayscale ramp with <code>1&nbsp;<<&nbsp;numberOfBits</code>
+     * entries ranging from zero to at most 255.</p>
+     *
+     * @return An instance of <code>ColorModel</code> that is suitable for
+     *         the supplied <code>SampleModel</code>, or <code>null</code>.
+     *
+     * @throws IllegalArgumentException  If <code>sampleModel</code> is
+     *         <code>null</code>.
+     */
+     public static final ColorModel createColorModel(SampleModel sampleModel) {
+         // Check the parameter.
+         if (sampleModel == null) {
+                 throw new IllegalArgumentException("sampleModel == null!");
+         }
+     
+         // Get the data type.
+         int dataType = sampleModel.getDataType();
+         // Check the data type
+         switch (dataType) {
+                 case DataBuffer.TYPE_BYTE:
+                 case DataBuffer.TYPE_USHORT:
+                 case DataBuffer.TYPE_SHORT:
+                 case DataBuffer.TYPE_INT:
+                 case DataBuffer.TYPE_FLOAT:
+             case DataBuffer.TYPE_DOUBLE:
+                         break;
+             default:
+             // Return null for other types.
+             return null;
+         }
+     
+         // The return variable.
+         ColorModel colorModel = null;
+     
+         // Get the sample size.
+         int[] sampleSize = sampleModel.getSampleSize();
+     
+         // Create a Component ColorModel.
+         if (sampleModel instanceof  ComponentSampleModel) {
+                 // Get the number of bands.
+             int numBands = sampleModel.getNumBands();
+     
+             // Determine the color space.
+             ColorSpace colorSpace = null;
+             if (numBands <= 2) {
+                 colorSpace = ColorSpace.getInstance(ColorSpace.CS_GRAY);
+             } else if (numBands <= 4) {
+                 colorSpace = ColorSpace.getInstance(ColorSpace.CS_sRGB);
+             } else {
+                 colorSpace = new BogusColorSpace(numBands);
+             }
+     
+             boolean hasAlpha = (numBands == 2) || (numBands == 4);
+             boolean isAlphaPremultiplied = false;
+             int transparency = hasAlpha ? Transparency.TRANSLUCENT : Transparency.OPAQUE;
+             colorModel = new ComponentColorModel(colorSpace, sampleSize, hasAlpha, isAlphaPremultiplied,
+                                transparency, dataType);
+         } else if (sampleModel.getNumBands() <= 4 && sampleModel instanceof SinglePixelPackedSampleModel) {
+                 SinglePixelPackedSampleModel sppsm = (SinglePixelPackedSampleModel) sampleModel;
+             int[] bitMasks = sppsm.getBitMasks();
+             int rmask = 0;
+             int gmask = 0;
+             int bmask = 0;
+             int amask = 0;
+  
+             int numBands = bitMasks.length;
+             if (numBands <= 2) {
+                 rmask = gmask = bmask = bitMasks[0];
+                 if (numBands == 2) {
+                         amask = bitMasks[1];
+                 }
+             } else {
+                 rmask = bitMasks[0];
+                 gmask = bitMasks[1];
+                 bmask = bitMasks[2];
+                 if (numBands == 4) {
+                         amask = bitMasks[3];
+                 }
+             }
+     
+             int bits = 0;
+             for (int i = 0; i < sampleSize.length; i++) {
+                 bits += sampleSize[i];
+             }
 
+             return new DirectColorModel(bits, rmask, gmask, bmask, amask);
+  
+         } else if (sampleModel instanceof  MultiPixelPackedSampleModel) {
+                 // Load the colormap with a ramp.
+             int bitsPerSample = sampleSize[0];
+             int numEntries = 1 << bitsPerSample;
+             byte[] map = new byte[numEntries];
+             for (int i = 0; i < numEntries; i++) {
+                 map[i] = (byte) (i * 255 / (numEntries - 1));
+             }
+                 colorModel = new IndexColorModel(bitsPerSample, numEntries, map, map, map);
+         }
+                     
+         return colorModel;
+     }
+     
+     public static ColorModel buildColorModel(final SampleModel sampleModel) {
+         ColorSpace cs = null;
+         ColorModel colorModel = null;
+         final int buffer_type = sampleModel.getDataType();
+         final int numBands = sampleModel.getNumBands();
+         if (numBands > 1) {
+             // /////////////////////////////////////////////////////////////////
+             //
+             // Number of Bands > 1.
+             // ImageUtil.createColorModel provides to Creates a
+             // ColorModel that may be used with the specified
+             // SampleModel
+             //
+             // /////////////////////////////////////////////////////////////////
+             colorModel = createColorModel(sampleModel);
+         } else if ((buffer_type == DataBuffer.TYPE_BYTE)
+                 || (buffer_type == DataBuffer.TYPE_USHORT)
+                 || (buffer_type == DataBuffer.TYPE_SHORT)
+                 || (buffer_type == DataBuffer.TYPE_INT)
+                 || (buffer_type == DataBuffer.TYPE_FLOAT)
+                 || (buffer_type == DataBuffer.TYPE_DOUBLE)) {
+
+             // Just one band. Using the built-in Gray Scale Color Space
+             cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
+             colorModel = new ComponentColorModel(cs, false, false, Transparency.OPAQUE, buffer_type);
+         } 
+         return colorModel;
     }
-
+    
     /**
      * Given a root node, print the values/attributes tree using the System Out
      * 

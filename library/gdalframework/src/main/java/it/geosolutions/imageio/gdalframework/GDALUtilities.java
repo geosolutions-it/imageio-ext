@@ -604,9 +604,10 @@ public final class GDALUtilities {
                 gdal.PushErrorHandler("CPLQuietErrorHandler");
             GDALUtilities.available = true;
         } catch (UnsatisfiedLinkError e) {
-            if (LOGGER.isLoggable(Level.WARNING))
-                LOGGER.warning(new StringBuffer("Native library load failed.")
-                        .append(e.toString()).toString());
+            if (LOGGER.isLoggable(Level.WARNING)){
+                StringBuilder sb = new StringBuilder("Failed to load the GDAL native libs. This is not a problem unless you need to use the GDAL plugins which won't be enabled.").append(e.toString());
+                LOGGER.warning(sb.toString());
+            }
             GDALUtilities.available = false;
         }
     }
