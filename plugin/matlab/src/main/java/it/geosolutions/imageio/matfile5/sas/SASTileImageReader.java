@@ -319,54 +319,38 @@ public class SASTileImageReader extends MatFileImageReader {
     	//
     	// //
     	return new SASBufferedImageOp(COMPUTE_LOGARITHM, null).filter(dst,null);
-	
     }
 
     @Override
-    protected AffineTransform getAffineTransform(ImageReadParam param) throws IOException {
+    protected AffineTransform getPreTransform(ImageReadParam param) throws IOException {
+    	 int xSubsamplingFactor = 1;
+         int ySubsamplingFactor = 1;
+         int height = getHeight(0);
+         int width = getWidth(0);
+         if (param!=null){
+             xSubsamplingFactor = param.getSourceXSubsampling();
+             ySubsamplingFactor = param.getSourceYSubsampling();
+             final Rectangle sourceRegion=param.getSourceRegion();
+             if (sourceRegion!=null){
+             	width = sourceRegion.width;
+             	height = sourceRegion.height;
+             }
+         }
     	
-        AffineTransform transform = super.getAffineTransform(param);
-        int xSubsamplingFactor = 1;
-        int ySubsamplingFactor = 1;
-        int height = getHeight(0);
-        int width = getWidth(0);
-        if (param!=null){
-            xSubsamplingFactor = param.getSourceXSubsampling();
-            ySubsamplingFactor = param.getSourceYSubsampling();
-            final Rectangle sourceRegion=param.getSourceRegion();
-            if (sourceRegion!=null){
-            	width = sourceRegion.width;
-            	height = sourceRegion.height;
-            }
-        }
-//    	final AffineTransform transform = AffineTransform.getRotateInstance(0);// identity
-//
-//      // //
-//      //
-//      // Transposing the Matlab data matrix
-//      //
-//      // //
+    	final AffineTransform transform = AffineTransform.getRotateInstance(0);// identity
+
+        // //
+        //
+        // Tuning the Affine Transform 
+        //
+        // //
         Channel channel = sasTile.getChannel();
         if (channel == Channel.STARBOARD){
-//              // TransposeDescriptor.FLIP_DIAGONAL
-//              // TransposeDescriptor.FLIP_VERTICAL
-//              transposeTransform.concatenate(AffineTransform.getRotateInstance(Math.PI*1.5d));
-//              transposeTransform.concatenate(AffineTransform.getTranslateInstance(-tx,0));
-//              if (param!=null){
-//        	     final int xSubsamplingFactor = param.getSourceXSubsampling();
-//        	     final int ySubsamplingFactor = param.getSourceYSubsampling();
-//        	     if (xSubsamplingFactor != 1 || ySubsamplingFactor != 1) {
-//        	             transform.concatenate(AffineTransform.getScaleInstance(1.0d/xSubsamplingFactor*1.0d, 1.0d/ySubsamplingFactor*1.0d));
-//                   }	 
-//        	}
-//          
-//              // The result will be the following affineTransform         
-//              transposeTransform = new AffineTransform(0.0, -1.0, 1.0, 0.0, 0 , tx);
 
         	//Vertical Flip
             transform.preConcatenate(AffineTransform.getScaleInstance(1,-1));
         	
-            //Translate before Flipping (uses subsampling and source region)  
+            //Do Translate before Flipping (uses subsampling and source region)  
             double ty = height;
         	if (ySubsamplingFactor!=1)
         	    ty/=ySubsamplingFactor;
@@ -376,7 +360,7 @@ public class SASTileImageReader extends MatFileImageReader {
         	//Vertical+Horizontal Flip 
         	transform.preConcatenate(AffineTransform.getScaleInstance(-1,-1));
         	
-        	//Translate before Flipping (uses subsampling and source region)  
+        	//Do Translate before Flipping (uses subsampling and source region)  
         	double ty = height;
         	if (ySubsamplingFactor!=1)
         	    ty /= ySubsamplingFactor;
@@ -385,14 +369,6 @@ public class SASTileImageReader extends MatFileImageReader {
         	    tx /= xSubsamplingFactor;
         	transform.preConcatenate(AffineTransform.getTranslateInstance(tx,ty));
         	 
-//              // TransposeDescriptor.FLIP_ANTIDIAGONAL
-//              transposeTransform.preConcatenate(AffineTransform.getRotateInstance(Math.PI*1.5d));
-//              transposeTransform.concatenate(AffineTransform.getTranslateInstance(-tx,0));
-//              transposeTransform.concatenate(AffineTransform.getScaleInstance(1,-1));
-//              transposeTransform.concatenate(AffineTransform.getTranslateInstance(0,-ty));
-//               
-//              // The result will be the following affineTransform              
-//              transposeTransform = new AffineTransform(0.0, -1.0, -1.0, 0.0, ty, tx);
         }
         return transform;
     }

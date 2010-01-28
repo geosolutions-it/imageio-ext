@@ -64,6 +64,7 @@ public class ReadTest {
 	                file = new File(REAL_FILES[i]);
 	            else
 	                file = TestData.file(this, REAL_FILES[i]);
+//	            	file = TestData.file(new ReadTest(), REAL_FILES[i]);
 	        } catch (IOException e) {
 	            LOGGER.info("Unable to run test due to " + e.getLocalizedMessage());
 	            return;
@@ -74,6 +75,7 @@ public class ReadTest {
 	        param.setSourceSubsampling(3,5,0,0);
 	        param.setSourceRegion(new Rectangle(20,20,30,75));
 	        final BufferedImage bi = reader.read(0, param);
+//	        System.out.println(bi.getWidth() +";"+bi.getHeight());
 	        Assert.assertEquals(10, bi.getWidth());
 	        Assert.assertEquals(15, bi.getHeight());
 	        if (TestData.isInteractiveTest())

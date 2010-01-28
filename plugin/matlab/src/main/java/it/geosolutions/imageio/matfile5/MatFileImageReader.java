@@ -252,13 +252,54 @@ public abstract class MatFileImageReader extends ImageReader {
     }
     
     /**
-     * Main implementation transposing the read matrix 
-     * @param param
+     * Get an AffineTransform to filter the matrix 
+     * @param param an ImageReadParam used to compute scales and translates by checking the
+     * 			subsampling as well as the source region. 
+     * 
      * @return
      * @throws IOException 
      */
     protected AffineTransform getAffineTransform(final ImageReadParam param) throws IOException{
-    	final AffineTransform transform = AffineTransform.getRotateInstance(0);// identity
+    	
+    	//Compute standard transpose
+    	AffineTransform transposed = getTransposed(param);
+    	
+    	//preconcatenate additional transformation, depending on the data interpretation
+    	transposed.preConcatenate(getPreTransform(param));
+    	return transposed;
+    }
+
+    /**
+     * The Standard implementation returns a simple Identity.
+     * Special Implementations may add additional transformation to be preconcatenated  
+     * @param param
+     * @return
+     * @throws IOException
+     */
+	protected AffineTransform getPreTransform(final ImageReadParam param) throws IOException {
+		return AffineTransform.getRotateInstance(0.0);//identity
+	}
+
+	/**
+     *   Note that the underlying matrix fills a buffer where samples are sorted as:
+     *   First row, first column, second row, first column, third row, first column...
+     *   Therefore I'm getting a transposed image. I will transpose it 
+     *   
+     *   Numerical Example: The Matlab Matrix is 3X3 as: 
+     *   
+     *    1, 2, 3
+     *    4, 5, 6
+     *    7, 8, 9
+     *   
+     *    The DataBuffer will contains data as:
+     *    1, 4, 7, 2, 5, 8, 3, 6, 9
+     *   
+     *
+	 * @param param
+	 * @return
+	 */
+	private AffineTransform getTransposed(ImageReadParam param) {
+		final AffineTransform transform = AffineTransform.getRotateInstance(0);// identity
     	if (param!=null){
     	   final int xSubsamplingFactor = param.getSourceXSubsampling();
     	   final int ySubsamplingFactor = param.getSourceYSubsampling();
@@ -277,6 +318,6 @@ public abstract class MatFileImageReader extends ImageReader {
         transposeTransform.preConcatenate(AffineTransform.getRotateInstance(Math.PI*0.5d));
         transform.preConcatenate(transposeTransform);
         return transform;
-    }
+	}
     
 }
