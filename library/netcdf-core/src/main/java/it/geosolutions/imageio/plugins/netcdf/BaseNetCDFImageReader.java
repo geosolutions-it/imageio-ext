@@ -216,8 +216,7 @@ public final class BaseNetCDFImageReader extends BaseImageReader{
         if (wrapper != null) {
         	final SampleModel sampleModel = wrapper.getSampleModel();
         	final ImageTypeSpecifier imageType = new ImageTypeSpecifier(
-                    ImageIOUtilities.getCompatibleColorModel(sampleModel),
-                    sampleModel);
+        	ImageIOUtilities.createColorModel(sampleModel), sampleModel);
             l.add(imageType);
         }
         return l.iterator();

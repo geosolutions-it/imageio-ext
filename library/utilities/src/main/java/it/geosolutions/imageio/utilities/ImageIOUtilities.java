@@ -50,8 +50,6 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import com.sun.imageio.plugins.common.BogusColorSpace;
-import com.sun.media.imageioimpl.common.ImageUtil;
-import com.sun.media.jai.codecimpl.util.RasterFactory;
 
 /**
  * Simple class containing commonly used utility methods.
@@ -63,53 +61,6 @@ public class ImageIOUtilities {
     }
 
     private static final int DEFAULT_ROI = -999;
-
-    /**
-     * Utility method returning a proper <code>ColorModel</code> given an
-     * input <code>SampleModel</code>
-     * 
-     * @param sm
-     *                The <code>SampleModel</code> for which we need to create
-     *                a compatible <code>ColorModel</code>.
-     * 
-     * @return the created <code>ColorModel</code>
-     */
-    public static ColorModel getCompatibleColorModel(final SampleModel sm) {
-        final int nBands = sm.getNumBands();
-        final int bufferType = sm.getDataType();
-        ColorModel cm = null;
-        ColorSpace cs = null;
-        if (nBands > 1) {
-            // Number of Bands > 1.
-            // ImageUtil.createColorModel provides to Creates a
-            // ColorModel that may be used with the specified
-            // SampleModel
-            cm = ImageUtil.createColorModel(sm);
-
-        } else if ((bufferType == DataBuffer.TYPE_BYTE)
-                || (bufferType == DataBuffer.TYPE_USHORT)
-                || (bufferType == DataBuffer.TYPE_INT)
-                || (bufferType == DataBuffer.TYPE_FLOAT)
-                || (bufferType == DataBuffer.TYPE_DOUBLE)) {
-
-            // Just one band. Using the built-in Gray Scale Color Space
-            cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
-            cm = RasterFactory.createComponentColorModel(bufferType, // dataType
-                    cs, // color space
-                    false, // has alpha
-                    false, // is alphaPremultiplied
-                    Transparency.OPAQUE); // transparency
-        } else {
-            if (bufferType == DataBuffer.TYPE_SHORT) {
-                // Just one band. Using the built-in Gray Scale Color
-                // Space
-                cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
-                cm = new ComponentColorModel(cs, false, false,
-                        Transparency.OPAQUE, DataBuffer.TYPE_SHORT);
-            }
-        }
-        return cm;
-    }
 
     /**
      * Creates a <code>ColorModel</code> that may be used with the
@@ -152,16 +103,16 @@ public class ImageIOUtilities {
          int dataType = sampleModel.getDataType();
          // Check the data type
          switch (dataType) {
-                 case DataBuffer.TYPE_BYTE:
-                 case DataBuffer.TYPE_USHORT:
-                 case DataBuffer.TYPE_SHORT:
-                 case DataBuffer.TYPE_INT:
-                 case DataBuffer.TYPE_FLOAT:
-             case DataBuffer.TYPE_DOUBLE:
-                         break;
-             default:
+            case DataBuffer.TYPE_BYTE:
+            case DataBuffer.TYPE_USHORT:
+            case DataBuffer.TYPE_SHORT:
+            case DataBuffer.TYPE_INT:
+            case DataBuffer.TYPE_FLOAT:
+            case DataBuffer.TYPE_DOUBLE:
+            	break;
+            default:
              // Return null for other types.
-             return null;
+            return null;
          }
      
          // The return variable.
@@ -233,35 +184,6 @@ public class ImageIOUtilities {
                      
          return colorModel;
      }
-     
-     public static ColorModel buildColorModel(final SampleModel sampleModel) {
-         ColorSpace cs = null;
-         ColorModel colorModel = null;
-         final int buffer_type = sampleModel.getDataType();
-         final int numBands = sampleModel.getNumBands();
-         if (numBands > 1) {
-             // /////////////////////////////////////////////////////////////////
-             //
-             // Number of Bands > 1.
-             // ImageUtil.createColorModel provides to Creates a
-             // ColorModel that may be used with the specified
-             // SampleModel
-             //
-             // /////////////////////////////////////////////////////////////////
-             colorModel = createColorModel(sampleModel);
-         } else if ((buffer_type == DataBuffer.TYPE_BYTE)
-                 || (buffer_type == DataBuffer.TYPE_USHORT)
-                 || (buffer_type == DataBuffer.TYPE_SHORT)
-                 || (buffer_type == DataBuffer.TYPE_INT)
-                 || (buffer_type == DataBuffer.TYPE_FLOAT)
-                 || (buffer_type == DataBuffer.TYPE_DOUBLE)) {
-
-             // Just one band. Using the built-in Gray Scale Color Space
-             cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
-             colorModel = new ComponentColorModel(cs, false, false, Transparency.OPAQUE, buffer_type);
-         } 
-         return colorModel;
-    }
     
     /**
      * Given a root node, print the values/attributes tree using the System Out

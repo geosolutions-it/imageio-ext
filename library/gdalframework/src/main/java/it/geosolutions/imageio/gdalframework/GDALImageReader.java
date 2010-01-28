@@ -447,12 +447,12 @@ public abstract class GDALImageReader extends ImageReader {
 	                	 for (int i = 0; i < nBands; i++)
 	                         bandsMap[i] = i + 1;
 	                }
-	                    returnVal = dataset.ReadRaster(srcRegionXOffset,
-	                            srcRegionYOffset, srcRegionWidth, srcRegionHeight,
-	                            dstWidth, dstHeight, bufferType, dataBuffer, bandsMap,
-	                            nBands * typeSizeInBytes, dstWidth * nBands
-	                                    * typeSizeInBytes, typeSizeInBytes);
-	                byteBands[k] = dataBuffer;
+                    returnVal = dataset.ReadRaster(srcRegionXOffset,
+                            srcRegionYOffset, srcRegionWidth, srcRegionHeight,
+                            dstWidth, dstHeight, bufferType, dataBuffer, bandsMap,
+                            nBands * typeSizeInBytes, dstWidth * nBands
+                                    * typeSizeInBytes, typeSizeInBytes);
+                    byteBands[k] = dataBuffer;
 	            } else {
 	                // I need to read 1 band at a time.
 	            	Band rBand = null;

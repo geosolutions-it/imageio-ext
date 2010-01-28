@@ -605,7 +605,7 @@ public final class GDALUtilities {
             GDALUtilities.available = true;
         } catch (UnsatisfiedLinkError e) {
             if (LOGGER.isLoggable(Level.WARNING)){
-                StringBuilder sb = new StringBuilder("Failed to load the GDAL native libs. This is not a problem unless you need to use the GDAL plugins which won't be enabled.").append(e.toString());
+                StringBuilder sb = new StringBuilder("Failed to load the GDAL native libs. This is not a problem unless you need to use the GDAL plugins: they won't be enabled.").append(e.toString());
                 LOGGER.warning(sb.toString());
             }
             GDALUtilities.available = false;

@@ -331,7 +331,7 @@ public abstract class MLNumericArray<T extends Number> extends MLArray
     @Override
     public boolean equals(Object o)
     {
-        if ( o instanceof  MLNumericArray )
+        if ( o instanceof  MLNumericArray<?> )
         {
             boolean result = directByteBufferEquals(real, ((MLNumericArray<?>)o).real )
                                    && Arrays.equals( dims, ((MLNumericArray<?>)o).dims );
