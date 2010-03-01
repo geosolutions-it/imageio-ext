@@ -42,6 +42,7 @@ import ucar.ma2.DataType;
 import ucar.ma2.Range;
 import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
+import ucar.nc2.Group;
 import ucar.nc2.Variable;
 import ucar.nc2.VariableIF;
 import ucar.nc2.constants.AxisType;
@@ -174,7 +175,7 @@ public class NetCDFUtilities {
 //    }
 
     public static enum CheckType {
-        /*OAG, PE_MODEL,*/ NONE, UNSET, NOSCALARS
+        /*OAG, PE_MODEL,*/ NONE, UNSET, NOSCALARS, ONLYGEOGRIDS
     }
 
     /**
@@ -510,6 +511,34 @@ public class NetCDFUtilities {
                 return false;
             }
             return isVariableAccepted(var.getName(), CheckType.NONE);
+        } else if (checkType == CheckType.ONLYGEOGRIDS) {
+            List<Dimension> dimensions = var.getDimensions();
+            if (dimensions.size()<2) {
+                return false;
+            }
+            for( Dimension dimension : dimensions ) {
+                String dimName = dimension.getName();
+                // check the dimension to be defined
+                Group group = dimension.getGroup();
+                Variable dimVariable = group.findVariable(dimName);
+                if (dimVariable == null) {
+                    return false;
+                }
+                if (dimVariable instanceof CoordinateAxis1D) {
+                    CoordinateAxis1D axis = (CoordinateAxis1D) dimVariable;
+                    AxisType axisType = axis.getAxisType();
+                    if (axisType == null) {
+                        return false;
+                    }
+                }
+            }
+            
+            
+            DataType dataType = var.getDataType();
+            if (dataType == DataType.CHAR) {
+                return false;
+            }
+            return isVariableAccepted(var.getName(), CheckType.NONE);
         } else
             return isVariableAccepted(var.getName(), checkType);
     }
@@ -742,7 +771,7 @@ public class NetCDFUtilities {
     public static CheckType getCheckType(NetcdfDataset dataset) {
         CheckType ct = CheckType.UNSET;
         if (dataset != null) {
-            ct = CheckType.NOSCALARS;
+            ct = CheckType.ONLYGEOGRIDS;
 //            Attribute attribute = dataset.findGlobalAttribute("type");
 //            if (attribute != null) {
 //                String value = attribute.getStringValue();
