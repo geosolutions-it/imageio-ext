@@ -47,16 +47,14 @@ public class MatIOTest
         return new JUnit4TestAdapter( MatIOTest.class );
     }
     
-    //@Test
+    @Test
     public void testBenchmarkDouble() throws Exception
     {
-        final File file = TestData.temp(this,"bb.mat");
+        final File file = TestData.temp(this,"bigdouble.mat");
         final String fileName = file.getAbsolutePath();
         final String name = "bigdouble";
         final int SIZE = 1000;    
         //System.out.println(14e6);
-        ByteBuffer.allocateDirect(1000000000);
-        
         MLDouble mlDouble = new MLDouble( name, new int[] {SIZE, SIZE} );
         
         for ( int i = 0; i < SIZE*SIZE; i++ )

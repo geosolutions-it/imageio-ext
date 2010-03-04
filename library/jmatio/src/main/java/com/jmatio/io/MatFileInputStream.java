@@ -16,6 +16,10 @@ class MatFileInputStream
     private int type;
     private ByteBuffer buf;
     
+    enum DataType {
+    	BYTE, INTEGER, LONG, FLOAT, DOUBLE, UNSUPPORTED
+    }
+    
     /**
      * Attach MAT-file input stream to <code>InputStream</code>
      * 
@@ -192,41 +196,49 @@ class MatFileInputStream
             //because Matlab writes data not respectively to the declared
             //matrix type, the reading is not straight forward (as above)
             Class<?> clazz = storage.getStorageClazz();
+            final DataType dataType = getDataType(clazz); 
             while ( dest.remaining() > 0 )
             {
-                if ( clazz.equals( Double.class) )
-                {
+            	switch (dataType){
+            	case DOUBLE:
                     dest.putDouble( readDouble() );
                     continue;
-                }
-                if ( clazz.equals( Byte.class) )
-                {
+            	case BYTE:                
                     dest.put( readByte() );
                     continue;
-                }
-                if ( clazz.equals( Integer.class) )
-                {
+                case INTEGER:
                     dest.putInt( readInt() );
                     continue;
-                }
-                if ( clazz.equals( Long.class) )
-                {
+                case LONG:
                     dest.putLong( readLong() );
                     continue;
-                }
-                if ( clazz.equals( Float.class) )
-                {
+                case FLOAT:
                     dest.putFloat( readFloat() );
                     continue;
-                }
-                throw new RuntimeException("Not supported buffer reader for " + clazz );
+                case UNSUPPORTED:
+                	throw new RuntimeException("Not supported buffer reader for " + clazz );
+            	}
             }
         }
         dest.rewind();
         return dest;
     }
 
-    private float readFloat()
+    private final static DataType getDataType(Class<?> clazz) {
+    	if ( clazz.equals( Byte.class) )
+    		return DataType.BYTE;
+    	if ( clazz.equals( Integer.class) )
+    		return DataType.INTEGER;
+    	if ( clazz.equals( Long.class) )
+   		 	return DataType.LONG;
+    	if ( clazz.equals( Float.class) )
+    		return DataType.FLOAT;
+    	if ( clazz.equals( Double.class) )
+   		 	return DataType.DOUBLE;
+		return DataType.UNSUPPORTED;
+	}
+
+	private float readFloat()
     {
         switch ( type )
         {
@@ -277,6 +289,4 @@ class MatFileInputStream
                 throw new IllegalArgumentException("Unknown data type: " + type);
         }
     }
-    
-
 }
