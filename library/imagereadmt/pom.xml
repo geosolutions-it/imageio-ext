@@ -17,4 +17,11 @@
     </connection>
     <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/library/imagereadmt</url>
   </scm>
+  <dependencies>
+   <dependency>
+      <groupId>it.geosolutions.imageio-ext</groupId>
+      <artifactId>imageio-ext-utilities</artifactId>
+      <version>${project.version}</version>
+    </dependency>  
+  </dependencies>
 </project>

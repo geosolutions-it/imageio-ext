@@ -16,7 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.jp2k;
 
-import it.geosolutions.imageio.imageioimpl.imagereadmt.CloneableImageReadParam;
+import it.geosolutions.imageio.imageioimpl.EnhancedImageReadParam;
 
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageTypeSpecifier;
@@ -28,7 +28,7 @@ import javax.imageio.ImageTypeSpecifier;
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
  */
-public class JP2KKakaduImageReadParam extends CloneableImageReadParam {
+public class JP2KKakaduImageReadParam extends EnhancedImageReadParam {
 
     public Object clone() throws CloneNotSupportedException {
         final JP2KKakaduImageReadParam retVal = new JP2KKakaduImageReadParam();

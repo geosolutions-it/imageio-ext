@@ -50,6 +50,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import com.sun.imageio.plugins.common.BogusColorSpace;
+import com.sun.media.jai.codecimpl.util.RasterFactory;
 
 /**
  * Simple class containing commonly used utility methods.
@@ -139,8 +140,10 @@ public class ImageIOUtilities {
              boolean hasAlpha = (numBands == 2) || (numBands == 4);
              boolean isAlphaPremultiplied = false;
              int transparency = hasAlpha ? Transparency.TRANSLUCENT : Transparency.OPAQUE;
-             colorModel = new ComponentColorModel(colorSpace, sampleSize, hasAlpha, isAlphaPremultiplied,
-                                transparency, dataType);
+             if (dataType == DataBuffer.TYPE_SHORT)
+            	 colorModel = new ComponentColorModel(colorSpace, sampleSize, hasAlpha, isAlphaPremultiplied, transparency, dataType);
+             else
+            	 colorModel = RasterFactory.createComponentColorModel(dataType, colorSpace, hasAlpha,isAlphaPremultiplied, transparency);
          } else if (sampleModel.getNumBands() <= 4 && sampleModel instanceof SinglePixelPackedSampleModel) {
                  SinglePixelPackedSampleModel sppsm = (SinglePixelPackedSampleModel) sampleModel;
              int[] bitMasks = sppsm.getBitMasks();

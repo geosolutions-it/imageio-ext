@@ -73,6 +73,8 @@
  */
 package it.geosolutions.imageio.imageioimpl.imagereadmt;
 
+import it.geosolutions.imageio.imageioimpl.EnhancedImageReadParam;
+
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -109,7 +111,7 @@ final class ImageReadOpImageMT extends OpImage {
 	/**
 	 * The <code>ImageReadParam</code> used in reading the image.
 	 */
-	private CloneableImageReadParam param;
+	private EnhancedImageReadParam param;
 
 	/**
 	 * The <code>ImageReader</code> used to read the image.
@@ -412,11 +414,10 @@ final class ImageReadOpImageMT extends OpImage {
 		// Revise parameter 'param' as needed.
 		if (param == null) {
 			// Get the ImageReadParam from the ImageReader.
-			this.param = (CloneableImageReadParam) reader.getDefaultReadParam();
-		} else if (param instanceof CloneableImageReadParam) {
+			this.param = (EnhancedImageReadParam) reader.getDefaultReadParam();
+		} else if (param instanceof EnhancedImageReadParam) {
 			try {
-				this.param = (CloneableImageReadParam) ((CloneableImageReadParam) param)
-						.clone();
+				this.param = (EnhancedImageReadParam) ((EnhancedImageReadParam) param).clone();
 			} catch (CloneNotSupportedException e) {
 				final IOException ioe = new IOException();
 				ioe.initCause(e);

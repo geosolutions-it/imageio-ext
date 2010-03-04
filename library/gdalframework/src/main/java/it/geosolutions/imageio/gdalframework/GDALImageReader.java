@@ -18,6 +18,7 @@ package it.geosolutions.imageio.gdalframework;
 
 import it.geosolutions.imageio.core.CoreCommonIIOStreamMetadata;
 import it.geosolutions.imageio.core.GCP;
+import it.geosolutions.imageio.imageioimpl.EnhancedImageReadParam;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 import it.geosolutions.imageio.stream.input.URIImageInputStream;
 import it.geosolutions.imageio.utilities.Utilities;
@@ -996,6 +997,16 @@ public abstract class GDALImageReader extends ImageReader {
         Rectangle srcRegion = new Rectangle(0, 0, 0, 0);
         Rectangle destRegion = new Rectangle(0, 0, 0, 0);
         computeRegions(imageReadParam, width, height, bi, srcRegion, destRegion);
+        if (imageReadParam != null){
+        	if (imageReadParam instanceof EnhancedImageReadParam){
+        		final EnhancedImageReadParam eparam = (EnhancedImageReadParam) imageReadParam;
+        		final Rectangle dstRegion = eparam.getDestinationRegion();
+        		if (dstRegion != null){
+        			destRegion.height = dstRegion.height;
+        			destRegion.width = dstRegion.width;
+        		}
+        	}
+        }
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("Source Region = " + srcRegion.toString());
             LOGGER.fine("Destination Region = " + destRegion.toString());

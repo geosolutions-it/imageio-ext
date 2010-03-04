@@ -91,7 +91,7 @@ final class I18N extends I18NImpl {
     static {
         try {
             clazz = Class
-                    .forName("it.geosolutions.imageio.imageioimpl.imagereadmt.CloneableImageReadParam");
+                    .forName("it.geosolutions.imageio.imageioimpl.imagereadmt.ImageIOCollectionImageMT");
             assert clazz != null;
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e); // Chain the exception.

@@ -73,6 +73,8 @@
  */
 package it.geosolutions.imageio.imageioimpl.imagereadmt;
 
+import it.geosolutions.imageio.imageioimpl.EnhancedImageReadParam;
+
 import java.awt.RenderingHints;
 import java.awt.image.renderable.ContextualRenderedImageFactory;
 import java.awt.image.renderable.ParameterBlock;
@@ -656,7 +658,7 @@ public class ImageReadDescriptorMT extends OperationDescriptorImpl {
 	java.lang.Boolean.class,            // VerifyInput
         java.util.EventListener[].class,    // Listeners
         java.util.Locale.class,             // Locale
-        it.geosolutions.imageio.imageioimpl.imagereadmt.CloneableImageReadParam.class, // ReadParam
+        it.geosolutions.imageio.imageioimpl.EnhancedImageReadParam.class, // ReadParam
 	javax.imageio.ImageReader.class     // Reader
     };
 
@@ -750,7 +752,7 @@ public class ImageReadDescriptorMT extends OperationDescriptorImpl {
                                     Boolean verifyInput,
                                     EventListener[] listeners,
                                     Locale locale,
-                                    CloneableImageReadParam readParam,
+                                    EnhancedImageReadParam readParam,
                                     ImageReader reader,
                                     RenderingHints hints) {
 
