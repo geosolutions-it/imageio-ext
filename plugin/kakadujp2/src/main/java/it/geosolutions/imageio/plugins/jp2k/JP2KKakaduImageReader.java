@@ -235,8 +235,7 @@ public class JP2KKakaduImageReader extends ImageReader {
             }
         }
 
-        final ImageTypeSpecifier imageType = new ImageTypeSpecifier(codestreamP
-                .getColorModel(), codestreamP.getSampleModel());
+        final ImageTypeSpecifier imageType = new ImageTypeSpecifier(codestreamP.getColorModel(), codestreamP.getSampleModel());
         l.add(imageType);
         return l.iterator();
     }
@@ -267,8 +266,7 @@ public class JP2KKakaduImageReader extends ImageReader {
         // ///////////////////////////////////////////////////////////
         JP2KCodestreamProperties codestreamP = multipleCodestreams
                 .get(imageIndex);
-        final int maxAvailableQualityLayers = codestreamP
-                .getMaxAvailableQualityLayers();
+        final int maxAvailableQualityLayers = codestreamP.getMaxAvailableQualityLayers();
         final int[] componentIndexes = codestreamP.getComponentIndexes();
         final int nComponents = codestreamP.getNumComponents();
         final int maxBitDepth = codestreamP.getMaxBitDepth();
@@ -370,8 +368,6 @@ public class JP2KKakaduImageReader extends ImageReader {
 
         // Setting the destination Buffer Size which will contains the samples
         // coming from stripe_decompressor
-        final int destBufferSize = (requiredRegion.height * requiredRegion.width)
-                * nComponents;
 
         BufferedImage bi = null;
 
@@ -408,19 +404,51 @@ public class JP2KKakaduImageReader extends ImageReader {
             // Set parameters for stripe decompression
             // ////////////////////////////////////////////////////////////////
             final Kdu_dims dims = new Kdu_dims();
-//            codestream.Set_persistent();
-            
             codestream.Apply_input_restrictions(0, nComponents, nDiscardLevels, qualityLayers, null, Kdu_global.KDU_WANT_OUTPUT_COMPONENTS);
-            codestream.Get_dims(0, dims);
+            
+            if (LOGGER.isLoggable(Level.FINE)){
+            	final Kdu_dims original_dims = new Kdu_dims();
+            	codestream.Get_dims(-1, original_dims);
+            	StringBuilder sb = new StringBuilder("Original Hi-Res Image Region is: x=").append(original_dims.Access_pos().Get_x())
+            	.append("  y=").append(original_dims.Access_pos().Get_y())
+            	.append("  w=").append(original_dims.Access_size().Get_x()).append("  h=")
+            	.append(original_dims.Access_size().Get_y());
+            	LOGGER.fine(sb.toString());
+            }
             
             final Kdu_dims dimsROI = new Kdu_dims();
-            dims.Access_pos().Set_x(dims.Access_pos().Get_x() + requiredRegion.x);
-            dims.Access_pos().Set_y(dims.Access_pos().Get_y() + requiredRegion.y);
-            dims.Access_size().Set_x(requiredRegion.width);
-            dims.Access_size().Set_y(requiredRegion.height);
+            codestream.Get_dims(0, dims);
+            
+            
+            if (LOGGER.isLoggable(Level.FINE)){
+            	final int mappedX = dims.Access_pos().Get_x();
+                final int mappedY = dims.Access_pos().Get_y();
+                final int mappedWidth = dims.Access_size().Get_x();
+                final int mappedHeight = dims.Access_size().Get_y();
+            	StringBuilder sb = new StringBuilder("Mapped Region is: x=").append(mappedX).append("  y=").append(mappedY)
+            	.append("  w=").append(mappedWidth).append("  h=").append(mappedHeight);
+            	LOGGER.fine(sb.toString());
+            }
+            
+            // Checks on the required region and mapped region, in compliance with
+            // Formula 11.1 of Taubman's JPEG2000 compression book.
+            checkBounds(dims, requiredRegion);
+          
+            final int destBufferSize = (requiredRegion.height * requiredRegion.width) * nComponents;
+            setDimsForCrop(dims,requiredRegion);
 
             // Getting a region of interest.
             codestream.Map_region(0, dims, dimsROI);
+            if (LOGGER.isLoggable(Level.FINE)){
+            	 final int mappedROIWidth = dimsROI.Access_size().Get_x();
+                 final int mappedROIHeight = dimsROI.Access_size().Get_y();
+                 final int mappedROIX= dimsROI.Access_pos().Get_x();
+                 final int mappedROIY = dimsROI.Access_pos().Get_y();
+            	StringBuilder sb = new StringBuilder("ROI Region is: x=").append(mappedROIX).append("  y=").append(mappedROIY)
+            	.append("  w=").append(mappedROIWidth).append("  h=").append(mappedROIHeight);
+            	LOGGER.fine(sb.toString());
+            }
+            
             codestream.Apply_input_restrictions(nComponents, componentIndexes,
                     nDiscardLevels, qualityLayers, dimsROI,
                     Kdu_global.KDU_WANT_OUTPUT_COMPONENTS);
@@ -566,8 +594,46 @@ public class JP2KKakaduImageReader extends ImageReader {
             return KakaduUtilities.subsampleImage(codestreamP.getColorModel(), bi, destinationRegion.width, destinationRegion.height,interpolationType);
         return bi;
     }
+    
+    /**
+     * Checks on the required region and mapped region, in compliance with
+     * Formula 11.1 of Taubman's JPEG2000 compression book.
+     *  
+     * @param dims 
+     * 			dimensions of the image region in the actual resolution level
+     * @param requiredRegion 
+     * 			The required region
+     * @throws KduException
+     */
+    private void checkBounds(final Kdu_dims dims, final Rectangle requiredRegion) throws KduException {
+        if (dims == null)
+            throw new IllegalArgumentException("Provided Kdu_dims object is null");
+        if (requiredRegion == null)
+        	throw new IllegalArgumentException("Provided region is null");
+        final int mappedWidth = dims.Access_size().Get_x();
+        final int mappedHeight = dims.Access_size().Get_y();
+        if (requiredRegion.y + requiredRegion.height > mappedHeight)
+            requiredRegion.height--;
+        if (requiredRegion.x + requiredRegion.width > mappedWidth)
+            requiredRegion.width --;
+	}
 
     /**
+     * Set a Kdu_dims object to crop the required region. 
+     */
+	private void setDimsForCrop(final Kdu_dims dims, final Rectangle requiredRegion) throws KduException {
+    	if (dims == null)
+    		throw new IllegalArgumentException("Provided Kdu_dims object is null");
+    	if (requiredRegion == null)
+    		throw new IllegalArgumentException("Provided region is null");
+        dims.Access_pos().Set_x(dims.Access_pos().Get_x() + requiredRegion.x);
+        dims.Access_pos().Set_y(dims.Access_pos().Get_y() + requiredRegion.y);
+        dims.Access_size().Set_x(requiredRegion.width);
+        dims.Access_size().Set_y(requiredRegion.height);
+		
+	}
+
+	/**
      * Parses the input <code>ImageReadParam</code> and provides to setup a
      * proper sourceRegion and a proper destinationRegion. After the call of
      * this method, the input parameters <code>sourceRegion</code> and
@@ -624,16 +690,17 @@ public class JP2KKakaduImageReader extends ImageReader {
                 sourceRegion.y = 0;
 
             // initializing destination image properties
-            destinationRegion.width = sourceRegion.width;
             destinationRegion.x = sourceRegion.x;
             if ((sourceRegion.x + sourceRegion.width) > width) {
                 sourceRegion.width = width - sourceRegion.x;
             }
-            destinationRegion.height = sourceRegion.height;
+            destinationRegion.width = sourceRegion.width;
+            
             destinationRegion.y = sourceRegion.y;
             if ((sourceRegion.y + sourceRegion.height) > height) {
                 sourceRegion.height = height - sourceRegion.y;
             }
+            destinationRegion.height = sourceRegion.height;
 
         } else {
 
@@ -1206,7 +1273,7 @@ public class JP2KKakaduImageReader extends ImageReader {
         if (chBox != null) {
             final short[] channels = chBox.getChannel();
             final short[] associations = chBox.getAssociation();
-            final short[] cType = chBox.getTypes();
+            final int[] cType = chBox.getTypes();
             boolean hasAlpha = false;
             final int alphaChannel = numComp - 1;
 
@@ -1233,8 +1300,13 @@ public class JP2KKakaduImageReader extends ImageReader {
             }
 
             ColorSpace cs = null;
-
-            if (profile != null)
+            
+            //RGBN Workaround
+        	if (associations.length == 4/* && associations[0]==1 && associations[1]==2 && associations[2]==3*/){
+        		cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
+        		hasAlpha = true;
+        	}
+        	else if (profile != null)
                 cs = new ICC_ColorSpace(profile);
             else if (colorSpaceType == ColorSpecificationBox.ECS_sRGB)
                 cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
@@ -1242,9 +1314,8 @@ public class JP2KKakaduImageReader extends ImageReader {
                 cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
             else if (colorSpaceType == ColorSpecificationBox.ECS_YCC)
                 cs = ColorSpace.getInstance(ColorSpace.CS_PYCC);
-            else
-                LOGGER
-                        .warning("JP2 type only handle sRGB, GRAY and YCC Profiles");
+            else	
+                LOGGER.warning("JP2 type only handle sRGB, GRAY and YCC Profiles");
 
             // TODO: Check these settings
             int[] bits = new int[numComp];
@@ -1380,77 +1451,6 @@ public class JP2KKakaduImageReader extends ImageReader {
         return null;
 
     }
-
-    // /**
-    // * Returns an <code>IIOMetadata</code> object containing GeoTIFF metadata
-    // * retrieved from the GeoJP2 box (if available).
-    // *
-    // * @return an <code>IIOMetadata</code> object containing GeoTIFF metadata
-    // * retrieved from the GeoJP2 box (if available).
-    // */
-    // public synchronized IIOMetadata getGeoJP2Metadata() {
-    // if (geoJp2Metadata != null)
-    // return geoJp2Metadata;
-    // // ////////////////////////////////////////////////////////////////////
-    // //
-    // // Get the GeoJP2 Box
-    // //
-    // // ////////////////////////////////////////////////////////////////////
-    // JP2KBox geoJp2Box = getJp2Box(UUIDBox.NAME);
-    // IIOMetadata metadata = null;
-    // if (geoJp2Box != null) {
-    // try {
-    //
-    // // //
-    // //
-    // // Read box Data
-    // //
-    // // //
-    // final byte[] buffer = geoJp2Box.getContent();
-    //
-    // // //
-    // //
-    // // Write GeoJP2 Box data to a temp file
-    // //
-    // // //
-    // final File geotiffTempFile = File.createTempFile("GeoJP2",
-    // "geotmp.tiff");
-    // FileOutputStream fos = new FileOutputStream(geotiffTempFile);
-    // final int bufferLength = buffer.length;
-    //
-    // // The first 16 bytes contains the UUID for the GeoTIFF Box
-    // // 0xb1, 0x4b, 0xf8, 0xbd, 0x08, 0x3d, 0x4b, 0x43, 0xa5, 0xae,
-    // // 0x8c, 0xd7,0xd5, 0xa6, 0xce, 0x03
-    // fos.write(buffer, 16, bufferLength - 16);
-    // fos.flush();
-    // fos.close();
-    //
-    // // //
-    // //
-    // // Read Back GeoTiff with a TIFFImageReader
-    // // TODO: provide proper metadata parsing and change the datatype
-    // // returned by this method
-    // //
-    // // //
-    // final TIFFImageReader reader = new TIFFImageReader(new
-    // TIFFImageReaderSpi());
-    // reader.setInput(new FileImageInputStream(geotiffTempFile));
-    // metadata = reader.getImageMetadata(0);
-    // reader.dispose();
-    //
-    // } catch (FileNotFoundException e) {
-    // throw new RuntimeException(
-    // "Error caused by a Kakadu exception during GeoJP2 Box retrieval! ",
-    // e);
-    // } catch (IOException e) {
-    // throw new RuntimeException(
-    // "Error caused by a Kakadu exception during GeoJP2 Box retrieval! ",
-    // e);
-    // }
-    // }
-    // geoJp2Metadata = metadata;
-    // return geoJp2Metadata;
-    // }
 
     /**
      * Returns a proper {@link JP2KBox} subclass instance given a specified box
