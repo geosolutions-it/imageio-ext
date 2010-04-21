@@ -68,7 +68,7 @@ public class JP2KKakaduImageWriteParam extends ImageWriteParam {
     /**
      * The default number of decomposition levels.
      */
-    final static int DEFAULT_C_LEVELS = 7;
+    final static int DEFAULT_C_LEVELS = 5;
 
     /**
      * Sets <code>writeCodeStreamOnly</code>.

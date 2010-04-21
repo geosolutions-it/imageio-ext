@@ -350,6 +350,8 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                 bytesOverHead += lutSize * numColorComponents + 4; // pclr LUT
                 bytesOverHead += 20; // cmap
             }
+        } else if (quality == 1) {
+            cycc = false;
         } else {
             cycc = true;
         }
@@ -361,15 +363,13 @@ public class JP2KKakaduImageWriter extends ImageWriter {
         // //
         final int xSubsamplingFactor = param.getSourceXSubsampling();
         final int ySubsamplingFactor = param.getSourceYSubsampling();
-        final Rectangle originalBounds = new Rectangle(sourceMinX, sourceMinY,
-                sourceWidth, sourceHeight);
+        final Rectangle originalBounds = new Rectangle(sourceMinX, sourceMinY, sourceWidth, sourceHeight);
         final Rectangle imageBounds = (Rectangle) originalBounds.clone();
         final Dimension destSize = new Dimension();
         KakaduUtilities.computeRegions(imageBounds, destSize, param);
 
         boolean resampleInputImage = false;
-        if (xSubsamplingFactor != 1 || ySubsamplingFactor != 1
-                || !imageBounds.equals(originalBounds)) {
+        if (xSubsamplingFactor != 1 || ySubsamplingFactor != 1 || !imageBounds.equals(originalBounds)) {
             resampleInputImage = true;
         }
 
@@ -885,10 +885,11 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             final boolean writeCodeStreamOnly, final int dataType, final Jp2_target target)
             throws KduException {
         Siz_params params = codeStream.Access_siz();
-        if (quality == 1 || cm instanceof IndexColorModel)
+        if (quality == 1 || cm instanceof IndexColorModel) {
             params.Parse_string("Creversible=yes");
-        else
+        } else {
             params.Parse_string("Creversible=no");
+        }
 
         StringBuilder sb = new StringBuilder();
         sb.append("Cycc=").append((cycc ? "yes" : "no"));
@@ -966,8 +967,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
 
         if (quality < 1) {
             // Using lossy compression: setting a quality layers size limit
-            cumulativeQualityLayerSizes = computeQualityLayers(qualityLayers,
-                    qualityLayersSize);
+            cumulativeQualityLayerSizes = computeQualityLayers(qualityLayers, qualityLayersSize);
         } else {
             cumulativeQualityLayerSizes = null;
         }
@@ -980,16 +980,15 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             // In case the computed stripeHeight is near to the
             // destination height, I will avoid multiple calls by
             // doing a single push.
-            double ratio = (double) maxStripeHeight
-                    / (double) destinationHeight;
+            double ratio = (double) maxStripeHeight / (double) destinationHeight;
             if (ratio > SINGLE_PUSH_THRESHOLD_RATIO)
                 maxStripeHeight = destinationHeight;
         }
 
         int minStripeHeight = MIN_BUFFER_SIZE / (rowSize);
-        if (minStripeHeight < 1)
+        if (minStripeHeight < 1) {
             minStripeHeight = 1;
-        else if (minStripeHeight > destinationHeight) {
+        } else if (minStripeHeight > destinationHeight) {
             minStripeHeight = destinationHeight;
         }
 
@@ -1017,8 +1016,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                 cumulativeQualityLayerSizes, null, 0, false, false,
                 addCommentMarker, 0, nComponents, false);
         final boolean useRecommendations = compressor
-                .Get_recommended_stripe_heights(minStripeHeight, 1024,
-                        stripeHeights, null);
+                .Get_recommended_stripe_heights(minStripeHeight, 1024, stripeHeights, null);
         if (!useRecommendations) {
             // Setting the stripeHeight to the max affordable stripe height
             for (int i = 0; i < nComponents; i++)
@@ -1058,14 +1056,12 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                 multipliers[i] = multi;
             }
 
-            double qualityStep = Math.floor((double) qualityLayersSize)
-                    / ((double) totals);
+            double qualityStep = Math.floor((double) qualityLayersSize) / ((double) totals);
 
             // Setting the cumulative layers sizes.
             for (int i = 0; i < qualityLayers; i++) {
                 long step = i != 0 ? qualityLayerSizes[i - 1] : 0;
-                qualityLayerSizes[i] = (long) Math.floor(qualityStep
-                        * multipliers[i]);
+                qualityLayerSizes[i] = (long) Math.floor(qualityStep * multipliers[i]);
                 cumulativeQualityLayerSizes[i] = qualityLayerSizes[i] + step;
             }
         } else {
