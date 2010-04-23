@@ -19,6 +19,7 @@
  */
 package it.geosolutions.imageio.plugins.jp2k;
 
+import it.geosolutions.imageio.plugins.jp2k.box.UUIDBox;
 import it.geosolutions.imageio.stream.output.FileImageOutputStreamExt;
 import it.geosolutions.imageio.utilities.Utilities;
 import it.geosolutions.util.KakaduUtilities;
@@ -56,6 +57,7 @@ import kdu_jni.Jp2_channels;
 import kdu_jni.Jp2_colour;
 import kdu_jni.Jp2_dimensions;
 import kdu_jni.Jp2_family_tgt;
+import kdu_jni.Jp2_output_box;
 import kdu_jni.Jp2_palette;
 import kdu_jni.Jp2_target;
 import kdu_jni.KduException;
@@ -70,6 +72,9 @@ import kdu_jni.Siz_params;
  * @author Simone Giannecchini, GeoSolutions
  */
 public class JP2KKakaduImageWriter extends ImageWriter {
+    
+    private final static short[] GEOJP2_UUID = new short[] { 0xb1, 0x4b, 0xf8, 0xbd, 0x08, 
+        0x3d, 0x4b, 0x43, 0xa5, 0xae, 0x8c, 0xd7, 0xd5, 0xa6, 0xce, 0x03 };
 
     private final static int POWERS_2[] = new int[] { 1, 2, 4, 8, 16, 32, 64,
             128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072,
@@ -267,12 +272,14 @@ public class JP2KKakaduImageWriter extends ImageWriter {
         int qualityLayers = 1;
         int cLevels;
         final boolean cycc;
+        byte[] geoJp2 = null;
 
         if (param == null)
             param = getDefaultWriteParam();
         if (param instanceof JP2KKakaduImageWriteParam) {
             jp2Kparam = (JP2KKakaduImageWriteParam) param;
             writeCodeStreamOnly = jp2Kparam.isWriteCodeStreamOnly();
+            geoJp2 = jp2Kparam.getGeoJp2();
             double q = jp2Kparam.getQuality();
             if (q < 0.01) {
                 q = 0.01;
@@ -437,7 +444,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                 codeStream.Create(params, target, null);
 
             if (!initializeCodestream(codeStream, cycc, cLevels, quality,
-                    qualityLayers, cm, writeCodeStreamOnly, dataType, target))
+                    qualityLayers, cm, writeCodeStreamOnly, dataType, target, geoJp2))
                 throw new IOException(
                         "Unable to initialize the codestream due to a missing Jp2_target object");
 
@@ -882,7 +889,8 @@ public class JP2KKakaduImageWriter extends ImageWriter {
     private boolean initializeCodestream(final Kdu_codestream codeStream,
             final boolean cycc, final int cLevels, final double quality,
             final int qualityLayers, final ColorModel cm,
-            final boolean writeCodeStreamOnly, final int dataType, final Jp2_target target)
+            final boolean writeCodeStreamOnly, final int dataType, 
+            final Jp2_target target, final byte[] geoJp2)
             throws KduException {
         Siz_params params = codeStream.Access_siz();
         if (quality == 1 || cm instanceof IndexColorModel) {
@@ -911,6 +919,22 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             if (target == null)
                 return false;
             initializeHeader(target, params, cm);
+            
+            if (geoJp2 != null && geoJp2.length > 0){
+                //Add geoJP2 box here.
+                //This is a quick solution.
+                //The ideal would be to leverage on metadata or on top of a better
+                //set of entities/helpers 
+                target.Open_next(UUIDBox.BOX_TYPE);
+                
+                byte[] outByte = new byte[GEOJP2_UUID.length];
+                for (int i = 0; i<GEOJP2_UUID.length; i++){
+                    outByte[i] = (byte) GEOJP2_UUID[i];
+                }
+                target.Write(outByte, GEOJP2_UUID.length);
+                target.Write(geoJp2, geoJp2.length);
+                target.Close();
+            }
             target.Open_codestream();
 
         }
