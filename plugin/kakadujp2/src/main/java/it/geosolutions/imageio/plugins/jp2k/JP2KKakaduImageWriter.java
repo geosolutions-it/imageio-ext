@@ -37,7 +37,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -57,7 +56,6 @@ import kdu_jni.Jp2_channels;
 import kdu_jni.Jp2_colour;
 import kdu_jni.Jp2_dimensions;
 import kdu_jni.Jp2_family_tgt;
-import kdu_jni.Jp2_output_box;
 import kdu_jni.Jp2_palette;
 import kdu_jni.Jp2_target;
 import kdu_jni.KduException;
@@ -404,8 +402,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                 outputTarget = new Kdu_simple_file_target();
                 ((Kdu_simple_file_target) outputTarget).Open(fileName);
                 final int extensionIndex = fileName.lastIndexOf(".");
-                final String suffix = fileName.substring(extensionIndex,
-                        fileName.length());
+                final String suffix = fileName.substring(extensionIndex, fileName.length());
                 if (suffix.equalsIgnoreCase(".jp2")
                         && LOGGER.isLoggable(Level.FINE))
                     LOGGER.fine("When writing codestreams, the \".j2c\" file suffix is suggested instead of \".jp2\"");
@@ -424,8 +421,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             if (bytesOverHead >= imageSize)
                 bytesOverHead = 0;
 
-            final long qualityLayersSize = (long) ((imageSize - (refineBytes ? bytesOverHead
-                    : 0)) * quality * bits * 0.125);
+            final long qualityLayersSize = (long) ((imageSize - (refineBytes ? bytesOverHead : 0)) * quality * bits * 0.125);
 
             // //
             //
@@ -445,8 +441,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
 
             if (!initializeCodestream(codeStream, cycc, cLevels, quality,
                     qualityLayers, cm, writeCodeStreamOnly, dataType, target, geoJp2))
-                throw new IOException(
-                        "Unable to initialize the codestream due to a missing Jp2_target object");
+                throw new IOException("Unable to initialize the codestream due to a missing Jp2_target object");
 
             // //
             //
@@ -484,7 +479,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                     destinationHeight, destinationWidth, nComponents,
                     stripeHeights, sampleGaps, rowGaps, sampleOffsets,
                     precisions, numberOfBits);
-
+            
             // ////////////////////////////////////////////////////////////////
             //
             // Pushing Stripes
