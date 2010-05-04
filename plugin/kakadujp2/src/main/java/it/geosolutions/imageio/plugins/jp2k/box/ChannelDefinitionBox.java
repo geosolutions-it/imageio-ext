@@ -94,7 +94,7 @@ public class ChannelDefinitionBox extends BaseJP2KBox {
     /**
      * @uml.property name="types"
      */
-    private short[] types;
+    private int[] types;
 
     private short[] associations;
 
@@ -114,7 +114,7 @@ public class ChannelDefinitionBox extends BaseJP2KBox {
      * components and isPremultiplied.
      */
     public static void fillBasedOnBands(int numComps, boolean isPremultiplied,
-            short[] c, short[] t, short[] a) {
+            short[] c, int[] t, short[] a) {
         int num = numComps * (isPremultiplied ? 3 : 2);
         if (isPremultiplied) {
             for (int i = numComps * 2; i < num; i++) {
@@ -146,7 +146,7 @@ public class ChannelDefinitionBox extends BaseJP2KBox {
         short length = (short) (colorModel.getComponentSize().length - 1);
         num = (short) (length * (colorModel.isAlphaPremultiplied() ? 3 : 2));
         channels = new short[num];
-        types = new short[num];
+        types = new int[num];
         associations = new short[num];
 
         // fills the arrays.
@@ -166,7 +166,7 @@ public class ChannelDefinitionBox extends BaseJP2KBox {
      * Constructs a <code>ChannelDefinitionBox</code> based on the provided
      * channel definitions.
      */
-    public ChannelDefinitionBox(short[] channel, short[] types,
+    public ChannelDefinitionBox(short[] channel, int[] types,
             short[] associations) {
         super(10 + channel.length * 6, BOX_TYPE, null);
         this.num = (short) channel.length;
@@ -194,7 +194,7 @@ public class ChannelDefinitionBox extends BaseJP2KBox {
 
             if ("Definitions".equals(name)) {
                 channels = new short[num];
-                types = new short[num];
+                types = new int[num];
                 associations = new short[num];
 
                 NodeList children1 = child.getChildNodes();
@@ -224,12 +224,12 @@ public class ChannelDefinitionBox extends BaseJP2KBox {
     protected void parse(byte[] data) {
         num = (short) ((data[0] << 8) | data[1]);
         channels = new short[num];
-        types = new short[num];
+        types = new int[num];
         associations = new short[num];
 
         for (int i = 0, j = 2; i < num; i++) {
             channels[i] = (short) (((data[j++] & 0xFF) << 8) + (data[j++] & 0xFF));
-            types[i] = (short) (((data[j++] & 0xFF) << 8) + (data[j++] & 0xFF));
+            types[i] = (int) (((data[j++] & 0xFF) << 8) + (data[j++] & 0xFF));
             associations[i] = (short) (((data[j++] & 0xFF) << 8) + (data[j++] & 0xFF));
         }
     }
@@ -243,7 +243,7 @@ public class ChannelDefinitionBox extends BaseJP2KBox {
 	 * Returns the channel types.
 	 * @uml.property  name="types"
 	 */
-    public short[] getTypes() {
+    public int[] getTypes() {
         return types;
     }
 
@@ -280,7 +280,7 @@ public class ChannelDefinitionBox extends BaseJP2KBox {
             child.appendChild(child1);
 
             child1 = new IIOMetadataNode("ChannelType");
-            child1.setUserObject(new Short(types[i]));
+            child1.setUserObject(new Integer(types[i]));
             child1.setNodeValue("" + types[i]);
             child.appendChild(child1);
 

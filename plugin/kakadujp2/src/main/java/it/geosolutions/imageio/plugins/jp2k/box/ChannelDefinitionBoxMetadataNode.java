@@ -27,7 +27,6 @@ import javax.imageio.metadata.IIOMetadataNode;
  * @author Simone Giannecchini, GeoSolutions
  * @author Daniele Romagnoli, GeoSolutions
  */
-@SuppressWarnings("serial")
 public class ChannelDefinitionBoxMetadataNode extends BaseJP2KBoxMetadataNode {
 
     private short numChannels;
@@ -45,7 +44,7 @@ public class ChannelDefinitionBoxMetadataNode extends BaseJP2KBoxMetadataNode {
         numChannels = box.getNum();
         final short[] channel = box.getChannel();
         final short[] assoc = box.getAssociation();
-        final short[] type = box.getTypes();
+        final int[] type = box.getTypes();
         IIOMetadataNode child = new IIOMetadataNode("NumberOfChannelDefinition");
         child.setUserObject(new Short(numChannels));
         numberOfChannelDefinitions = Short.toString(numChannels);
@@ -66,8 +65,8 @@ public class ChannelDefinitionBoxMetadataNode extends BaseJP2KBoxMetadataNode {
             child.appendChild(child1);
 
             child1 = new IIOMetadataNode("ChannelType");
-            child1.setUserObject(new Short(type[i]));
-            types[i] = Short.toString(type[i]);
+            child1.setUserObject(new Integer(type[i]));
+            types[i] = Integer.toString(type[i]);
             child1.setNodeValue(types[i]);
             child.appendChild(child1);
 
@@ -81,22 +80,19 @@ public class ChannelDefinitionBoxMetadataNode extends BaseJP2KBoxMetadataNode {
 
     public String getChannel(final int index) {
         if (index > numChannels - 1)
-            throw new IllegalArgumentException(
-                    "Number of channel descriptions is " + numChannels);
+            throw new IllegalArgumentException("Number of channel descriptions is " + numChannels);
         return channels[index];
     }
 
     public String getType(final int index) {
         if (index > numChannels - 1)
-            throw new IllegalArgumentException(
-                    "Number of channel descriptions is " + numChannels);
+            throw new IllegalArgumentException("Number of channel descriptions is " + numChannels);
         return types[index];
     }
 
     public String getAssociation(final int index) {
         if (index > numChannels - 1)
-            throw new IllegalArgumentException(
-                    "Number of channel descriptions is " + numChannels);
+            throw new IllegalArgumentException("Number of channel descriptions is " + numChannels);
         return associations[index];
     }
 
