@@ -91,7 +91,7 @@ public class KakaduUtilities {
         // finding the available subsampling factors from the number of
         // resolution levels
         int discardLevels = 0;
-        for (int level = 0; level < levels; level++) {
+        for (int level = 0; level < levels + 1; level++) {
             // double the subSamplingFactor until it is lower than the
             // input subSamplingFactor
             if (optimalSubSamplingFactor < newSubSamplingFactor)
