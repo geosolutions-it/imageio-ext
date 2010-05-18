@@ -20,6 +20,8 @@ import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 import it.geosolutions.imageio.stream.input.spi.StringImageInputStreamSpi;
 import it.geosolutions.imageio.stream.input.spi.URLImageInputStreamSpi;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
+import it.geosolutions.imageio.utilities.Utilities;
 
 import java.io.File;
 import java.io.IOException;
@@ -146,58 +148,45 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
     	if(input==null)
     		return false;
         if (LOGGER.isLoggable(Level.FINE))
-            LOGGER.fine("Can Decode Input called with object "+input.toString());
+            LOGGER.fine("Can Decode Input called with object "+input!=null?input.toString():"null");
 
+        File sourceFile=null;
 
         // if input source is a string,
-        // convert input from String to File the try URL
-        if (input instanceof String)
-        {
-        	try{
-        		input =stringSPI.createInputStreamInstance(input,ImageIO.getUseCache(),ImageIO.getCacheDirectory());
-        	}
-        	catch (Throwable e) {
-                if (LOGGER.isLoggable(Level.FINE))
-                    LOGGER.log(Level.FINE,"Input filed does not exist or cannot be read",e);
-                return false;
-			}
+        // convert input from String to File then try URL
+        if (input instanceof String){
+        		final File file =new File((String)input);
+        		if(!file.exists()||!file.canRead()){
+    	           ///check for URL
+        		   input=new URL((String)input);
+        		}
+        		else
+        			input=file;
         }
 
         // if input source is an URL, open an InputStream
         if (input instanceof URL) {
-            try{
-            	input= URLSPI.createInputStreamInstance(input,ImageIO.getUseCache(),ImageIO.getCacheDirectory());
-            }catch (Throwable e) {
-                if (LOGGER.isLoggable(Level.FINE))
-                    LOGGER.log(Level.FINE,"Input filed does not exist or cannot be read",e);
-                return false;
-			}
+            input=Utilities.urlToFile((URL)input);
         }
 
         // if input source is a File,
         // convert input from File to FileInputStream
         if (input instanceof File)
-        	 try{
-        		 input = new FileImageInputStreamExtImpl((File) input);
-             }catch (Throwable e) {
-                 if (LOGGER.isLoggable(Level.FINE))
-                     LOGGER.log(Level.FINE,"Input filed does not exist or cannot be read",e);
-                 return false;
- 			}
+        	sourceFile=(File) input;
         
-        assert input instanceof ImageInputStream;
         // at this point it must be an instance of FileImageInputStreamExt to be able to proceed
-        if(!(input instanceof FileImageInputStreamExt))
-        	return false;
-        final FileImageInputStreamExt stream=(FileImageInputStreamExt) input;
+        if(input instanceof FileImageInputStreamExt)
+        	sourceFile=((FileImageInputStreamExt)input).getFile();
         	
+       if(sourceFile==null||!sourceFile.exists()||!sourceFile.canRead()){
+    	   return false;
+       }
 
         boolean isInputDecodable = false;
         // Checking if this specific SPI can decode the provided input
         Dataset ds =null;
         try {
-            final String s = stream.getFile().getAbsolutePath();
-            ds = GDALUtilities.acquireDataSet(s,gdalconst.GA_ReadOnly);
+            ds = GDALUtilities.acquireDataSet(sourceFile.getAbsolutePath(),gdalconst.GA_ReadOnly);
             isInputDecodable = isDecodable(ds);
 
         } catch (Throwable e) {
