@@ -249,8 +249,7 @@ public class KakaduUtilities {
             available = true;
         } catch (UnsatisfiedLinkError e) {
             if (LOGGER.isLoggable(Level.WARNING)){
-            	 StringBuilder sb = new StringBuilder("Failed to load the Kakadu native libs. This is not a problem unless you need to use the Kakadu plugin: it won't be enabled.").append(e.toString());
-            	 LOGGER.warning(sb.toString());
+            	 LOGGER.warning("Failed to load the Kakadu native libs. This is not a problem unless you need to use the Kakadu plugin: it won't be enabled. " + e.toString());
             }
             available = false;
         }
