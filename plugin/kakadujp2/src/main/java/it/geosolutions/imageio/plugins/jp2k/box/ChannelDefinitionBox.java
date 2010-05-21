@@ -228,9 +228,9 @@ public class ChannelDefinitionBox extends BaseJP2KBox {
         associations = new short[num];
 
         for (int i = 0, j = 2; i < num; i++) {
-            channels[i] = (short) (((data[j++] & 0xFF) << 8) + (data[j++] & 0xFF));
-            types[i] = (int) (((data[j++] & 0xFF) << 8) + (data[j++] & 0xFF));
-            associations[i] = (short) (((data[j++] & 0xFF) << 8) + (data[j++] & 0xFF));
+            channels[i] = (short) (((data[j++] & 0xFF) << 8) | (data[j++] & 0xFF));
+            types[i] = (int) (((data[j++] & 0xFF) << 8) | (data[j++] & 0xFF));
+            associations[i] = (short) (((data[j++] & 0xFF) << 8) | (data[j++] & 0xFF));
         }
     }
 

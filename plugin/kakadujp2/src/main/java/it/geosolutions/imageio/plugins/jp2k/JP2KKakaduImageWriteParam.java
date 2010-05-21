@@ -68,7 +68,9 @@ public class JP2KKakaduImageWriteParam extends ImageWriteParam {
     /**
      * The default number of decomposition levels.
      */
-    final static int DEFAULT_C_LEVELS = 7;
+    final static int DEFAULT_C_LEVELS = 5;
+    
+    private byte[] geoJp2 = null;
 
     /**
      * Sets <code>writeCodeStreamOnly</code>.
@@ -162,5 +164,13 @@ public class JP2KKakaduImageWriteParam extends ImageWriteParam {
      */
     public void setQualityLayers(final int qualityLayers) {
         this.qualityLayers = qualityLayers;
+    }
+    
+    public byte[] getGeoJp2() {
+        return geoJp2;
+    }
+
+    public void setGeoJp2(byte[] geoJp2) {
+        this.geoJp2 = geoJp2;
     }
 }

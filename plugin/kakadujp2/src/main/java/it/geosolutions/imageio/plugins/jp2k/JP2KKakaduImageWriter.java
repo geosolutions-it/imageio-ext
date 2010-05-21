@@ -19,6 +19,7 @@
  */
 package it.geosolutions.imageio.plugins.jp2k;
 
+import it.geosolutions.imageio.plugins.jp2k.box.UUIDBox;
 import it.geosolutions.imageio.stream.output.FileImageOutputStreamExt;
 import it.geosolutions.imageio.utilities.Utilities;
 import it.geosolutions.util.KakaduUtilities;
@@ -70,6 +71,9 @@ import kdu_jni.Siz_params;
  * @author Simone Giannecchini, GeoSolutions
  */
 public class JP2KKakaduImageWriter extends ImageWriter {
+    
+    private final static short[] GEOJP2_UUID = new short[] { 0xb1, 0x4b, 0xf8, 0xbd, 0x08, 
+        0x3d, 0x4b, 0x43, 0xa5, 0xae, 0x8c, 0xd7, 0xd5, 0xa6, 0xce, 0x03 };
 
     private final static int POWERS_2[] = new int[] { 1, 2, 4, 8, 16, 32, 64,
             128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072,
@@ -267,12 +271,14 @@ public class JP2KKakaduImageWriter extends ImageWriter {
         int qualityLayers = 1;
         int cLevels;
         final boolean cycc;
+        byte[] geoJp2 = null;
 
         if (param == null)
             param = getDefaultWriteParam();
         if (param instanceof JP2KKakaduImageWriteParam) {
             jp2Kparam = (JP2KKakaduImageWriteParam) param;
             writeCodeStreamOnly = jp2Kparam.isWriteCodeStreamOnly();
+            geoJp2 = jp2Kparam.getGeoJp2();
             double q = jp2Kparam.getQuality();
             if (q < 0.01) {
                 q = 0.01;
@@ -350,6 +356,8 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                 bytesOverHead += lutSize * numColorComponents + 4; // pclr LUT
                 bytesOverHead += 20; // cmap
             }
+        } else if (quality == 1) {
+            cycc = false;
         } else {
             cycc = true;
         }
@@ -361,15 +369,13 @@ public class JP2KKakaduImageWriter extends ImageWriter {
         // //
         final int xSubsamplingFactor = param.getSourceXSubsampling();
         final int ySubsamplingFactor = param.getSourceYSubsampling();
-        final Rectangle originalBounds = new Rectangle(sourceMinX, sourceMinY,
-                sourceWidth, sourceHeight);
+        final Rectangle originalBounds = new Rectangle(sourceMinX, sourceMinY, sourceWidth, sourceHeight);
         final Rectangle imageBounds = (Rectangle) originalBounds.clone();
         final Dimension destSize = new Dimension();
         KakaduUtilities.computeRegions(imageBounds, destSize, param);
 
         boolean resampleInputImage = false;
-        if (xSubsamplingFactor != 1 || ySubsamplingFactor != 1
-                || !imageBounds.equals(originalBounds)) {
+        if (xSubsamplingFactor != 1 || ySubsamplingFactor != 1 || !imageBounds.equals(originalBounds)) {
             resampleInputImage = true;
         }
 
@@ -397,8 +403,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                 outputTarget = new Kdu_simple_file_target();
                 ((Kdu_simple_file_target) outputTarget).Open(fileName);
                 final int extensionIndex = fileName.lastIndexOf(".");
-                final String suffix = fileName.substring(extensionIndex,
-                        fileName.length());
+                final String suffix = fileName.substring(extensionIndex, fileName.length());
                 if (suffix.equalsIgnoreCase(".jp2")
                         && LOGGER.isLoggable(Level.FINE))
                     LOGGER.fine("When writing codestreams, the \".j2c\" file suffix is suggested instead of \".jp2\"");
@@ -417,8 +422,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             if (bytesOverHead >= imageSize)
                 bytesOverHead = 0;
 
-            final long qualityLayersSize = (long) ((imageSize - (refineBytes ? bytesOverHead
-                    : 0)) * quality * bits * 0.125);
+            final long qualityLayersSize = (long) ((imageSize - (refineBytes ? bytesOverHead : 0)) * quality * bits * 0.125);
 
             // //
             //
@@ -437,9 +441,8 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                 codeStream.Create(params, target, null);
 
             if (!initializeCodestream(codeStream, cycc, cLevels, quality,
-                    qualityLayers, cm, writeCodeStreamOnly, dataType, target))
-                throw new IOException(
-                        "Unable to initialize the codestream due to a missing Jp2_target object");
+                    qualityLayers, cm, writeCodeStreamOnly, dataType, target, geoJp2))
+                throw new IOException("Unable to initialize the codestream due to a missing Jp2_target object");
 
             // //
             //
@@ -882,13 +885,15 @@ public class JP2KKakaduImageWriter extends ImageWriter {
     private boolean initializeCodestream(final Kdu_codestream codeStream,
             final boolean cycc, final int cLevels, final double quality,
             final int qualityLayers, final ColorModel cm,
-            final boolean writeCodeStreamOnly, final int dataType, final Jp2_target target)
+            final boolean writeCodeStreamOnly, final int dataType, 
+            final Jp2_target target, final byte[] geoJp2)
             throws KduException {
         Siz_params params = codeStream.Access_siz();
-        if (quality == 1 || cm instanceof IndexColorModel)
+        if (quality == 1 || cm instanceof IndexColorModel) {
             params.Parse_string("Creversible=yes");
-        else
+        } else {
             params.Parse_string("Creversible=no");
+        }
 
         StringBuilder sb = new StringBuilder();
         sb.append("Cycc=").append((cycc ? "yes" : "no"));
@@ -910,6 +915,22 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             if (target == null)
                 return false;
             initializeHeader(target, params, cm);
+            
+            if (geoJp2 != null && geoJp2.length > 0){
+                //Add geoJP2 box here.
+                //This is a quick solution.
+                //The ideal would be to leverage on metadata or on top of a better
+                //set of entities/helpers 
+                target.Open_next(UUIDBox.BOX_TYPE);
+                
+                byte[] outByte = new byte[GEOJP2_UUID.length];
+                for (int i = 0; i<GEOJP2_UUID.length; i++){
+                    outByte[i] = (byte) GEOJP2_UUID[i];
+                }
+                target.Write(outByte, GEOJP2_UUID.length);
+                target.Write(geoJp2, geoJp2.length);
+                target.Close();
+            }
             target.Open_codestream();
 
         }
@@ -966,8 +987,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
 
         if (quality < 1) {
             // Using lossy compression: setting a quality layers size limit
-            cumulativeQualityLayerSizes = computeQualityLayers(qualityLayers,
-                    qualityLayersSize);
+            cumulativeQualityLayerSizes = computeQualityLayers(qualityLayers, qualityLayersSize);
         } else {
             cumulativeQualityLayerSizes = null;
         }
@@ -980,16 +1000,15 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             // In case the computed stripeHeight is near to the
             // destination height, I will avoid multiple calls by
             // doing a single push.
-            double ratio = (double) maxStripeHeight
-                    / (double) destinationHeight;
+            double ratio = (double) maxStripeHeight / (double) destinationHeight;
             if (ratio > SINGLE_PUSH_THRESHOLD_RATIO)
                 maxStripeHeight = destinationHeight;
         }
 
         int minStripeHeight = MIN_BUFFER_SIZE / (rowSize);
-        if (minStripeHeight < 1)
+        if (minStripeHeight < 1) {
             minStripeHeight = 1;
-        else if (minStripeHeight > destinationHeight) {
+        } else if (minStripeHeight > destinationHeight) {
             minStripeHeight = destinationHeight;
         }
 
@@ -1017,8 +1036,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                 cumulativeQualityLayerSizes, null, 0, false, false,
                 addCommentMarker, 0, nComponents, false);
         final boolean useRecommendations = compressor
-                .Get_recommended_stripe_heights(minStripeHeight, 1024,
-                        stripeHeights, null);
+                .Get_recommended_stripe_heights(minStripeHeight, 1024, stripeHeights, null);
         if (!useRecommendations) {
             // Setting the stripeHeight to the max affordable stripe height
             for (int i = 0; i < nComponents; i++)
@@ -1058,14 +1076,12 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                 multipliers[i] = multi;
             }
 
-            double qualityStep = Math.floor((double) qualityLayersSize)
-                    / ((double) totals);
+            double qualityStep = Math.floor((double) qualityLayersSize) / ((double) totals);
 
             // Setting the cumulative layers sizes.
             for (int i = 0; i < qualityLayers; i++) {
                 long step = i != 0 ? qualityLayerSizes[i - 1] : 0;
-                qualityLayerSizes[i] = (long) Math.floor(qualityStep
-                        * multipliers[i]);
+                qualityLayerSizes[i] = (long) Math.floor(qualityStep * multipliers[i]);
                 cumulativeQualityLayerSizes[i] = qualityLayerSizes[i] + step;
             }
         } else {
