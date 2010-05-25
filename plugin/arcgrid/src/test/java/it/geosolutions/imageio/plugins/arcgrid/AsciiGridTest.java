@@ -16,14 +16,19 @@
  */
 package it.geosolutions.imageio.plugins.arcgrid;
 
+import it.geosolutions.imageio.plugins.arcgrid.AsciiGridsImageMetadata.RasterSpaceType;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
 import java.awt.Rectangle;
 import java.awt.image.Raster;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
@@ -34,10 +39,14 @@ import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
 
+import org.w3c.dom.Node;
+
+import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import com.sun.media.jai.operator.ImageReadDescriptor;
 import com.sun.media.jai.operator.ImageWriteDescriptor;
 
 /**
@@ -59,6 +68,20 @@ public class AsciiGridTest extends TestCase {
 
         // unzip it
         TestData.unzipFile(this, "arcgrid.zip");
+        
+        
+        //ungizip spearfish
+		BufferedInputStream fis = new BufferedInputStream(new FileInputStream(TestData.file(this, "spearfish.asc.gz")));
+		GZIPInputStream gs = new GZIPInputStream(fis);
+		
+		BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(new File(TestData.file(this, "."),"spearfish_dem.arx"))); 
+		
+		byte buffer []= new byte[512];
+		int i=0;
+		while((i=gs.read(buffer))>0)
+			fos.write(buffer,0,i);
+		fos.close();
+		gs.close();
 
     }
 
@@ -66,7 +89,7 @@ public class AsciiGridTest extends TestCase {
         TestSuite suite = new TestSuite();
 
         // Read a file using subSampling and sourceRegion settings
-        suite.addTest(new AsciiGridTest("testReadRegion"));
+        suite.addTest(new AsciiGridTest("testReadRegionAndMetadata"));
 
         // Read a GRASS, compressed (GZ) file
         suite.addTest(new AsciiGridTest("testReadGrassGZ"));
@@ -86,58 +109,63 @@ public class AsciiGridTest extends TestCase {
      */
     public void testReadWrite() throws FileNotFoundException, IOException {
         String title = new String("Simple JAI ImageRead operation test");
-        LOGGER.info("\n\n " + title + " \n");
-        File inputFile = TestData.file(this, "095b_dem_90m.asc");
-        ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
-        pbjImageRead.setParameter("Input", inputFile);
-        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-        if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image, title, true);
-        else
-            image.getTiles();
-        assertEquals(351, image.getWidth());
-        assertEquals(350, image.getHeight());
-
-        // //
-        //
-        // Writing it out
-        //
-        // //
-        final File foutput = TestData.temp(this, "095b_dem_90m.asc", false);
-        final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
-                "ImageWrite");
-        pbjImageWrite.setParameter("Output", foutput);
-        pbjImageWrite.addSource(image);
-
-        // //
-        //
-        // What I am doing here is crucial, that is getting the used writer and
-        // disposing it. This will force the underlying stream to write data on
-        // disk.
-        //
-        // //
-        final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
-        final ImageWriter writer = (ImageWriter) op
-                .getProperty(ImageWriteDescriptor.PROPERTY_NAME_IMAGE_WRITER);
-        writer.dispose();
-
-        // //
-        //
-        // Reading it back
-        //
-        // //
-        pbjImageRead = new ParameterBlockJAI("ImageRead");
-        pbjImageRead.setParameter("Input", foutput);
-        RenderedOp image2 = JAI.create("ImageRead", pbjImageRead);
-        title = new String("Read Back the just written image");
-        if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image, title, true);
-        else
-            image2.getTiles();
-
-        final String error[] = new String[1];
-        final boolean result = compare(image, image2, error);
-        assertTrue(error[0], result);
+        
+        final String[] files = TestData.file(this,".").list(new FilenameFilter() {
+			
+			public boolean accept(File dir, String name) {
+				return name.endsWith("asc")|name.endsWith("arx");
+			}
+		});
+        File inputDirectory = TestData.file(this, ".");
+        for(String fileName:files){
+	        ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
+	        pbjImageRead.setParameter("Input", new File(inputDirectory,fileName));
+	        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+	        if (TestData.isInteractiveTest())
+	            ImageIOUtilities.visualize(image, title, true);
+	        else
+	            image.getTiles();
+	
+	        // //
+	        //
+	        // Writing it out
+	        //
+	        // //
+	        final File foutput = TestData.temp(this, "file.asc", true);
+	        final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
+	                "ImageWrite");
+	        pbjImageWrite.setParameter("Output", foutput);
+	        pbjImageWrite.addSource(image);
+	
+	        // //
+	        //
+	        // What I am doing here is crucial, that is getting the used writer and
+	        // disposing it. This will force the underlying stream to write data on
+	        // disk.
+	        //
+	        // //
+	        final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
+	        final ImageWriter writer = (ImageWriter) op.getProperty(ImageWriteDescriptor.PROPERTY_NAME_IMAGE_WRITER);
+	        writer.dispose();
+	
+	        // //
+	        //
+	        // Reading it back
+	        //
+	        // //
+	        pbjImageRead = new ParameterBlockJAI("ImageRead");
+	        pbjImageRead.setParameter("Input", foutput);
+	        RenderedOp image2 = JAI.create("ImageRead", pbjImageRead);
+	        title = new String("Read Back the just written image");
+	        if (TestData.isInteractiveTest())
+	            ImageIOUtilities.visualize(image, title, true);
+	        else
+	            Assert.assertNotNull(image2.getTiles());
+	
+	        final String error[] = new String[1];
+	        final boolean result = compare(image, image2, error);
+	        assertTrue(error[0], result);
+        }
     }
 
     /**
@@ -157,8 +185,11 @@ public class AsciiGridTest extends TestCase {
             RenderedOp image = JAI.create("ImageRead", pbjImageRead);
             if (TestData.isInteractiveTest())
                 ImageIOUtilities.visualize(image, title, true);
-            else
-                assertNotNull(image.getTiles());
+            else{
+            	assertNotNull(image.getTiles());
+            	image.dispose();
+            }
+            
         }
 
     }
@@ -166,20 +197,22 @@ public class AsciiGridTest extends TestCase {
     /**
      * Read a file using subSampling and sourceRegion settings
      */
-    public void testReadRegion() throws FileNotFoundException, IOException {
+    public void testReadRegionAndMetadata() throws FileNotFoundException, IOException {
         String title = new String(
                 "JAI ImageRead using subSampling and sourceRegion ");
         LOGGER.info("\n\n " + title + " \n");
 
-        // //
+        //
+        //   				DEM.asc
+        //
+
         //
         // Preparing ImageRead parameters
         //
-        // //
         File inputFile = TestData.file(this, "dem.asc");
         ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
         pbjImageRead.setParameter("Input", inputFile);
-        final ImageReadParam irp = new ImageReadParam();
+        ImageReadParam irp = new ImageReadParam();
 
         // Setting sourceRegion on the original image
         irp.setSourceRegion(new Rectangle(200, 300, 1000, 1000));
@@ -190,8 +223,155 @@ public class AsciiGridTest extends TestCase {
         RenderedOp image = JAI.create("ImageRead", pbjImageRead);
         if (TestData.isInteractiveTest())
             ImageIOUtilities.visualize(image, title, true);
-        else
-            assertNotNull(image.getTiles());
+        else{
+        	// load data
+        	assertNotNull(image.getTiles());
+        	
+        	// chec metadata
+        	final AsciiGridsImageMetadata metadata=(AsciiGridsImageMetadata) image.getProperty(ImageReadDescriptor.PROPERTY_NAME_METADATA_IMAGE);
+        	assertNotNull(metadata);
+        	final Node mf = metadata.getAsTree(metadata.getNativeMetadataFormatName());
+        	// not grass
+        	assertEquals(Boolean.parseBoolean(mf.getChildNodes().item(0).getNodeValue()), false);
+        	
+        	// raster space type
+        	assertEquals(mf.getChildNodes().item(1).getAttributes().getNamedItem("rasterSpaceType").getNodeValue(),RasterSpaceType.PixelIsArea.toString());
+        	
+        	// no data 
+        	assertEquals(mf.getChildNodes().item(1).getAttributes().getNamedItem("noDataValue").getNodeValue(),"-9999.0");
+        	
+        	//width
+        	assertEquals(mf.getChildNodes().item(1).getAttributes().getNamedItem("nColumns").getNodeValue(),"1404");
+        	
+        	//height
+        	assertEquals(mf.getChildNodes().item(1).getAttributes().getNamedItem("nRows").getNodeValue(),"1400");
+        	
+        	//cellsizeX
+        	assertEquals(mf.getChildNodes().item(2).getAttributes().getNamedItem("cellsizeX").getNodeValue(),"22.5");
+        	
+        	//cellsizeY
+        	assertEquals(mf.getChildNodes().item(2).getAttributes().getNamedItem("cellsizeY").getNodeValue(),"22.5");
+        	
+        	//xll
+        	assertEquals(mf.getChildNodes().item(2).getAttributes().getNamedItem("xll").getNodeValue(),"969870.0");
+        	
+        	//yll
+        	assertEquals(mf.getChildNodes().item(2).getAttributes().getNamedItem("yll").getNodeValue(),"642840.0");        	
+        	
+        }
+        image.dispose();
+        
+        
+
+        //
+        //   				DEM.asc
+        //
+
+        //
+        // Preparing ImageRead parameters
+        //
+        inputFile = TestData.file(this, "spearfish_dem.arx");
+        pbjImageRead = new ParameterBlockJAI("ImageRead");
+        pbjImageRead.setParameter("Input", inputFile);
+        irp = new ImageReadParam();
+
+        // Setting subSampling factors
+        irp.setSourceSubsampling(4, 4, 0, 0);
+        pbjImageRead.setParameter("ReadParam", irp);
+        image = JAI.create("ImageRead", pbjImageRead);
+        if (TestData.isInteractiveTest())
+            ImageIOUtilities.visualize(image, title, true);
+        else{
+        	// load data
+        	assertNotNull(image.getTiles());
+        	
+        	// chec metadata
+        	final AsciiGridsImageMetadata metadata=(AsciiGridsImageMetadata) image.getProperty(ImageReadDescriptor.PROPERTY_NAME_METADATA_IMAGE);
+        	assertNotNull(metadata);
+        	final Node mf = metadata.getAsTree(metadata.getNativeMetadataFormatName());
+        	// not grass
+        	assertEquals(Boolean.parseBoolean(mf.getChildNodes().item(0).getNodeValue()), false);
+        	
+        	// raster space type
+        	assertEquals(mf.getChildNodes().item(1).getAttributes().getNamedItem("rasterSpaceType").getNodeValue(),RasterSpaceType.PixelIsArea.toString());
+        	
+        	// no data 
+        	assertEquals(mf.getChildNodes().item(1).getAttributes().getNamedItem("noDataValue").getNodeValue(),"NaN");
+        	
+        	//width
+        	assertEquals(mf.getChildNodes().item(1).getAttributes().getNamedItem("nColumns").getNodeValue(),"634");
+        	
+        	//height
+        	assertEquals(mf.getChildNodes().item(1).getAttributes().getNamedItem("nRows").getNodeValue(),"477");
+        	
+        	//cellsizeX
+        	assertEquals(mf.getChildNodes().item(2).getAttributes().getNamedItem("cellsizeX").getNodeValue(),"30.0");
+        	
+        	//cellsizeY
+        	assertEquals(mf.getChildNodes().item(2).getAttributes().getNamedItem("cellsizeY").getNodeValue(),"30.0");
+        	
+        	//xll
+        	assertEquals(mf.getChildNodes().item(2).getAttributes().getNamedItem("xll").getNodeValue(),"589980.0");
+        	
+        	//yll
+        	assertEquals(mf.getChildNodes().item(2).getAttributes().getNamedItem("yll").getNodeValue(),"4913700.0");        	
+        	
+        }
+        
+        //
+        //   				SWAN_NURC_LigurianSeaL07_HSIGN.asc
+        //
+
+        //
+        // Preparing ImageRead parameters
+        //
+        inputFile = TestData.file(this, "SWAN_NURC_LigurianSeaL07_HSIGN.asc");
+        pbjImageRead = new ParameterBlockJAI("ImageRead");
+        pbjImageRead.setParameter("Input", inputFile);
+        irp = new ImageReadParam();
+
+        // Setting subSampling factors
+        irp.setSourceSubsampling(4, 4, 0, 0);
+        pbjImageRead.setParameter("ReadParam", irp);
+        image = JAI.create("ImageRead", pbjImageRead);
+        if (TestData.isInteractiveTest())
+            ImageIOUtilities.visualize(image, title, true);
+        else{
+        	// load data
+        	assertNotNull(image.getTiles());
+        	
+        	// chec metadata
+        	final AsciiGridsImageMetadata metadata=(AsciiGridsImageMetadata) image.getProperty(ImageReadDescriptor.PROPERTY_NAME_METADATA_IMAGE);
+        	assertNotNull(metadata);
+        	final Node mf = metadata.getAsTree(metadata.getNativeMetadataFormatName());
+        	// not grass
+        	assertEquals(Boolean.parseBoolean(mf.getChildNodes().item(0).getNodeValue()), false);
+        	
+        	// raster space type
+        	assertEquals(mf.getChildNodes().item(1).getAttributes().getNamedItem("rasterSpaceType").getNodeValue(),RasterSpaceType.PixelIsPoint.toString());
+        	
+        	// no data 
+        	assertEquals(mf.getChildNodes().item(1).getAttributes().getNamedItem("noDataValue").getNodeValue(),"-9.0");
+        	
+        	//width
+        	assertEquals(mf.getChildNodes().item(1).getAttributes().getNamedItem("nColumns").getNodeValue(),"278");
+        	
+        	//height
+        	assertEquals(mf.getChildNodes().item(1).getAttributes().getNamedItem("nRows").getNodeValue(),"144");
+        	
+        	//cellsizeX
+        	assertEquals(mf.getChildNodes().item(2).getAttributes().getNamedItem("cellsizeX").getNodeValue(),"0.008999999478566561");
+        	
+        	//cellsizeY
+        	assertEquals(mf.getChildNodes().item(2).getAttributes().getNamedItem("cellsizeY").getNodeValue(),"0.008999999478566561");
+        	
+        	//xll
+        	assertEquals(mf.getChildNodes().item(2).getAttributes().getNamedItem("xll").getNodeValue(),"8.118000030517578");
+        	
+        	//yll
+        	assertEquals(mf.getChildNodes().item(2).getAttributes().getNamedItem("yll").getNodeValue(),"43.191001892089844");        	
+        	
+        }             
     }
 
     /**
@@ -207,16 +387,17 @@ public class AsciiGridTest extends TestCase {
      *                a container for error messages in case of differences.
      * @return <code>true</code> if everything is ok.
      */
-    private boolean compare(final RenderedOp image, final RenderedOp image2,
+    private static boolean compare(final RenderedOp image, final RenderedOp image2,
             final String error[]) {
         final int minTileX1 = image.getMinTileX();
         final int minTileY1 = image.getMinTileY();
-        final int width = image.getWidth();
-        final int height = image.getHeight();
+        final int width = image.getTileWidth();
+        final int height = image.getTileHeight();
         final int maxTileX1 = minTileX1 + image.getNumXTiles();
         final int maxTileY1 = minTileY1 + image.getNumYTiles();
         double value1 = 0, value2 = 0;
 
+        //compare values
         for (int tileIndexX = minTileX1; tileIndexX < maxTileX1; tileIndexX++)
             for (int tileIndexY = minTileY1; tileIndexY < maxTileY1; tileIndexY++) {
 
@@ -228,8 +409,8 @@ public class AsciiGridTest extends TestCase {
                         value1 = r1.getSampleDouble(i, j, 0);
                         value2 = r2.getSampleDouble(i, j, 0);
 
-                        if (value1 != value2) {
-                            error[0] = new StringBuffer(
+                        if (!(Double.isNaN(value1)&&Double.isNaN(value2))&&value1 != value2) {
+                            error[0] = new StringBuilder(
                                     "Written back image is not equal to the original one: ")
                                     .append(value1).append(", ").append(value2)
                                     .toString();
@@ -238,6 +419,9 @@ public class AsciiGridTest extends TestCase {
                     }
                 }
             }
+        
+        
+        // compare metadata
         return true;
     }
 }

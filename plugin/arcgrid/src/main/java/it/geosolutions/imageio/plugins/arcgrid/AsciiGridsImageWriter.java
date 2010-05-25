@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.arcgrid;
 
+import it.geosolutions.imageio.plugins.arcgrid.AsciiGridsImageMetadata.RasterSpaceType;
 import it.geosolutions.imageio.plugins.arcgrid.raster.AsciiGridRaster;
 
 import java.io.IOException;
@@ -83,7 +84,7 @@ public final class AsciiGridsImageWriter extends ImageWriter {
 	 * The <code>String</code> representing the rasterSpaceType which is one
 	 * of "PixelIsPoint" / "PixelIsArea"
 	 */
-	private String rasterSpaceTypeString;
+	private RasterSpaceType rasterSpaceType;
 
 	/**
 	 * The <code>String</code> to be written when a noData value is
@@ -216,11 +217,12 @@ public final class AsciiGridsImageWriter extends ImageWriter {
 				.getNamedItem("nColumns").getNodeValue());
 		nRows = Integer.parseInt(gridDescriptorNode.getAttributes()
 				.getNamedItem("nRows").getNodeValue());
-		rasterSpaceTypeString = gridDescriptorNode.getAttributes()
-				.getNamedItem("rasterSpaceType").getNodeValue();
-		noDataValueString = null;// remember the no data value can be
-		// optional
-		if (rasterType.equals(AsciiGridRaster.AsciiGridRasterType.GRASS)) {
+		rasterSpaceType = RasterSpaceType.valueOf(gridDescriptorNode.getAttributes()
+				.getNamedItem("rasterSpaceType").getNodeValue());
+		noDataValueString = null;// remember the no data value can be optional
+		
+		// we do not write anything down for GRASS
+		if (rasterType.equals(AsciiGridRaster.AsciiGridRasterType.ESRI)) {
 			Node dummyNode = gridDescriptorNode.getAttributes().getNamedItem(
 					"noDataValue");
 
@@ -311,7 +313,7 @@ public final class AsciiGridsImageWriter extends ImageWriter {
 		rasterWriter.writeHeader(Integer.toString(nColumns), Integer
 				.toString(nRows), Double.toString(xll), Double.toString(yll),
 				Double.toString(cellsizeX), Double.toString(cellsizeY),
-				rasterSpaceTypeString, noDataValueString);
+				rasterSpaceType.toString(), noDataValueString);
 	}
 
 	/**

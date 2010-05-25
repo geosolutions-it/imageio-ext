@@ -90,6 +90,8 @@ public final class AsciiGridsImageMetadata extends IIOMetadata {
 	 */
 	private RasterSpaceType rasterSpaceType = null;
 
+	private AsciiGridRasterType rasterFileType;
+
 	/**
 	 * A constructor which uses an input {@link AsciiGridRaster} to initialize
 	 * metadata fields
@@ -138,13 +140,14 @@ public final class AsciiGridsImageMetadata extends IIOMetadata {
 	 *            the value associated to noData grid values
 	 */
 	public AsciiGridsImageMetadata(int cols, int rows, double cellsizeX,
-			double cellsizeY, double xll, double yll, boolean isCorner,double inNoData) {
+			double cellsizeY, double xll, double yll, boolean isCorner,boolean grass,double inNoData) {
 		this();
+		rasterFileType=grass?AsciiGridRasterType.GRASS:AsciiGridRasterType.ESRI;
 		nCols = cols;
 		nRows = rows;
 		lowerLeftX = xll;
 		lowerLeftY = yll;
-		rasterSpaceType = !isCorner ? RasterSpaceType.PixelIsArea:  RasterSpaceType.PixelIsPoint;
+		rasterSpaceType = isCorner ? RasterSpaceType.PixelIsArea:  RasterSpaceType.PixelIsPoint;
 		cellSizeX = cellsizeX;
 		cellSizeY = cellsizeY;
 		noData = inNoData;
@@ -225,16 +228,14 @@ public final class AsciiGridsImageMetadata extends IIOMetadata {
 	 * @param inputRaster
 	 *            the input {@link AsciiGridRaster} used to initialize fields.
 	 */
-	public void inizializeFromRaster(AsciiGridRaster inputRaster) {
+	private void inizializeFromRaster(AsciiGridRaster inputRaster) {
 		if (inputRaster != null) {
 			nRows = inputRaster.getNRows();
 			nCols = inputRaster.getNCols();
 			noData = inputRaster.getNoData();
 
-			cellSizeX = inputRaster.getCellSizeX();// /
-			// inputRaster.getSourceXSubsampling();
-			cellSizeY = inputRaster.getCellSizeY(); // /
-			// inputRaster.getSourceYSubsampling();
+			cellSizeX = inputRaster.getCellSizeX();
+			cellSizeY = inputRaster.getCellSizeY(); 
 
 			if (inputRaster.isCorner()) {
 				rasterSpaceType = RasterSpaceType.PixelIsArea;
@@ -243,7 +244,11 @@ public final class AsciiGridsImageMetadata extends IIOMetadata {
 
 			lowerLeftX = inputRaster.getXllCellCoordinate();
 			lowerLeftY = inputRaster.getYllCellCoordinate();
-		}
+
+			rasterFileType=inputRaster.getRasterType();
+			
+		}else
+			throw new NullPointerException("Null inputRaster provided.");
 	}
 
 	/**
@@ -288,7 +293,7 @@ public final class AsciiGridsImageMetadata extends IIOMetadata {
 		// Setting Format Properties
 		// //
 		IIOMetadataNode node = new IIOMetadataNode("formatDescriptor");
-		node.setAttribute("GRASS", Boolean.toString(rasterSpaceType.equals(AsciiGridRasterType.GRASS)));
+		node.setAttribute("GRASS", Boolean.toString(rasterFileType.equals(AsciiGridRasterType.GRASS)));
 		root.appendChild(node);
 
 		// //
