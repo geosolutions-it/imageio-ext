@@ -78,10 +78,10 @@ public class ECWTest extends AbstractGDALTest {
                 .setTileWidth(512);
         RenderedOp image = JAI.create("ImageRead", pbjImageRead,
                 new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
-        if (TestData.isInteractiveTest())
+//        if (TestData.isInteractiveTest())
         	Viewer.visualizeAllInformation(image, fileName);
-        else
-            image.getTiles();
+//        else
+//            image.getTiles();
         Assert.assertEquals(200, image.getWidth());
         Assert.assertEquals(100, image.getHeight());
     }

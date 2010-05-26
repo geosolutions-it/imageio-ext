@@ -60,7 +60,8 @@
         <module>swan</module>
         <module>tiff</module>
         <module>matlab</module>
-	      <module>netcdf-nd</module>
+	    <module>netcdf-nd</module>
+	    <module>jmagickjpeg</module>
       </modules>
     </profile> 
     <profile>

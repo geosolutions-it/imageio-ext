@@ -16,7 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.jpeg;
 
-import it.geosolutions.imageio.imageioimpl.imagereadmt.CloneableImageReadParam;
+import it.geosolutions.imageio.imageioimpl.EnhancedImageReadParam;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 
 import java.awt.Dimension;
@@ -79,8 +79,7 @@ public class JpegJMagickImageReader extends ImageReader {
 	 * @author Simone Giannecchini, GeoSolutions.
 	 * @author Daniele Romagnoli, GeoSolutions.
 	 */
-	public static class JpegJMagickImageReaderReadParam extends
-			CloneableImageReadParam {
+	public static class JpegJMagickImageReaderReadParam extends EnhancedImageReadParam {
 
 		public String toString() {
 			final StringBuilder buff = new StringBuilder();

@@ -208,7 +208,8 @@ public final class GDALUtilities {
         return gdal.GetCacheUsed();
     }
 
-    public static List getJDKImageReaderWriterSPI(ServiceRegistry registry,
+    @SuppressWarnings("unchecked")
+	public static List getJDKImageReaderWriterSPI(ServiceRegistry registry,
             String formatName, boolean isReader) {
 
         IIORegistry iioRegistry = (IIORegistry) registry;
