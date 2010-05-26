@@ -17,11 +17,10 @@
 package it.geosolutions.imageio.plugins.dted;
 
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
-import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
-import it.geosolutions.imageio.gdalframework.Viewer;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
-import java.awt.RenderingHints;
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -29,9 +28,7 @@ import java.io.IOException;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.media.jai.ImageLayout;
-import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
-import javax.media.jai.RenderedOp;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -80,31 +77,17 @@ public class DTEDTest extends AbstractGDALTest {
         pbjImageRead.setParameter("readParam", irp);
 
         final ImageLayout l = new ImageLayout();
-        l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(32)
-                .setTileWidth(32);
+        l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(32).setTileWidth(32);
 
         // get a RenderedImage
-        RenderedOp image = JAI.create("ImageRead", pbjImageRead,
-                new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
-
+        ImageReader reader= new DTEDImageReader(new DTEDImageReaderSpi());
+        reader.setInput(file);
+        RenderedImage image = reader.read(0);
         if (TestData.isInteractiveTest()) {
-            image.getRendering();
-            ImageReader reader = (ImageReader) image
-                    .getProperty("JAI.ImageReader");
-            int noDataValue = -32767;
-            if (reader != null) {
-                GDALCommonIIOImageMetadata metadata = (GDALCommonIIOImageMetadata) reader
-                        .getImageMetadata(0);
-                try {
-                    double d = metadata.getNoDataValue(0);
-                    noDataValue = (int) d;
-                } catch (IllegalArgumentException iae) {
-                    //No matter since I'm only looking for nodata
-                }
-            }
-            Viewer.visualizeAllInformation(image, "test");
-        } else
-            Assert.assertNotNull(image.getTiles());
+            ImageIOUtilities.visualize(image, "test", true);
+        } else {
+            Assert.assertNotNull(image.getData());
+        }
         Assert.assertEquals(121, image.getWidth());
         Assert.assertEquals(121, image.getHeight());
     }

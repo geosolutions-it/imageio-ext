@@ -19,6 +19,7 @@ package it.geosolutions.imageio.plugins.ecw;
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.GDALUtilities;
 import it.geosolutions.imageio.gdalframework.Viewer;
+import it.geosolutions.imageio.imageioimpl.EnhancedImageReadParam;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
@@ -65,7 +66,7 @@ public class ECWTest extends AbstractGDALTest {
     	if(!isDriverAvailable)
     		return;
         final ParameterBlockJAI pbjImageRead;
-        final ImageReadParam irp = new ImageReadParam();
+        final EnhancedImageReadParam irp = new EnhancedImageReadParam();
         final String fileName = "sample.ecw";
         final File file = TestData.file(this, fileName);
 
@@ -74,14 +75,13 @@ public class ECWTest extends AbstractGDALTest {
         pbjImageRead.setParameter("Input", file);
         pbjImageRead.setParameter("readParam", irp);
         final ImageLayout l = new ImageLayout();
-        l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512)
-                .setTileWidth(512);
+        l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512).setTileWidth(512);
         RenderedOp image = JAI.create("ImageRead", pbjImageRead,
                 new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
-//        if (TestData.isInteractiveTest())
+        if (TestData.isInteractiveTest())
         	Viewer.visualizeAllInformation(image, fileName);
-//        else
-//            image.getTiles();
+        else
+            image.getTiles();
         Assert.assertEquals(200, image.getWidth());
         Assert.assertEquals(100, image.getHeight());
     }
@@ -98,8 +98,7 @@ public class ECWTest extends AbstractGDALTest {
         final int imageIndex = 0;
 
         mReader.setInput(file);
-        final RenderedImage image = mReader.readAsRenderedImage(imageIndex,
-                param);
+        final RenderedImage image = mReader.readAsRenderedImage(imageIndex, param);
         if (TestData.isInteractiveTest())
         	ImageIOUtilities.visualize(image, fileName);
         Assert.assertEquals(400, image.getWidth());
@@ -108,14 +107,34 @@ public class ECWTest extends AbstractGDALTest {
     }
 
     @Test
+    public void manualReadDestination() throws FileNotFoundException, IOException {
+    	if(!isDriverAvailable)
+    		return;
+        final ECWImageReaderSpi spi = new ECWImageReaderSpi();
+        final ECWImageReader mReader = new ECWImageReader(spi);
+        final String fileName = "sample.ecw";
+        final File file = TestData.file(this, fileName);
+        final EnhancedImageReadParam param = new EnhancedImageReadParam();
+        param.setDestinationRegion(new Rectangle(0,0,200,100));
+        final int imageIndex = 0;
+
+        mReader.setInput(file);
+        final RenderedImage image = mReader.readAsRenderedImage(imageIndex, param);
+        if (TestData.isInteractiveTest())
+        	ImageIOUtilities.visualize(image, fileName);
+        Assert.assertEquals(200, image.getWidth());
+        Assert.assertEquals(100, image.getHeight());
+        mReader.dispose();
+    }
+    
+    @Test
     public void ecwpRead() throws FileNotFoundException, IOException {
     	if(!isDriverAvailable)
     		return;
         if (ECWP.equalsIgnoreCase(ECWPSkipTest))
             return;
 
-        final ImageReader mReader = new ECWImageReaderSpi()
-                .createReaderInstance();
+        final ImageReader mReader = new ECWImageReaderSpi().createReaderInstance();
         final ECWPImageInputStream ecwp = new ECWPImageInputStream(ECWP);
         final ImageReadParam param = new ImageReadParam();
         param.setSourceSubsampling(1, 1, 0, 0);
@@ -123,8 +142,7 @@ public class ECWTest extends AbstractGDALTest {
         final int imageIndex = 0;
 
         mReader.setInput(ecwp);
-        final RenderedImage image = mReader.readAsRenderedImage(imageIndex,
-                param);
+        final RenderedImage image = mReader.readAsRenderedImage(imageIndex, param);
         if (TestData.isInteractiveTest())
             Viewer.visualizeAllInformation(image, ECWP);
         mReader.dispose();
