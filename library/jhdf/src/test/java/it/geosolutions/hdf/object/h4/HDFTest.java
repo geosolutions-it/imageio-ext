@@ -53,6 +53,7 @@ import ncsa.hdf.hdflib.HDFConstants;
 import ncsa.hdf.hdflib.HDFException;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.sun.media.imageioimpl.common.ImageUtil;
@@ -646,10 +647,11 @@ public class HDFTest  {
      * Test Paletted GR Images
      */
     @Test
+    @Ignore
     public void testVisualizePalettedGRImage() throws HDFException, IOException {
         if (!runTests)
             return;
-        StringBuffer outSb = new StringBuffer();
+        StringBuilder outSb = new StringBuilder();
         final File file = TestData.file(this, "palette.hdf4");
 
         final H4File myFile;
