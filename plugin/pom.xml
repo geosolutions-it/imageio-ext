@@ -60,14 +60,14 @@
         <module>swan</module>
         <module>tiff</module>
         <module>matlab</module>
-	    <module>netcdf-nd</module>
+	    <module>unidata-netcdf</module>
 	    <module>jmagickjpeg</module>
       </modules>
     </profile> 
     <profile>
       <id>nd</id>
       <modules>
-	      <module>netcdf-nd</module>
+	      <module>unidata-netcdf</module>
       </modules>
     </profile> 
     <profile>
