@@ -264,8 +264,7 @@ public class JP2KKakaduImageReader extends ImageReader {
         // Setting local variables for i-th codestream
         //
         // ///////////////////////////////////////////////////////////
-        JP2KCodestreamProperties codestreamP = multipleCodestreams
-                .get(imageIndex);
+        JP2KCodestreamProperties codestreamP = multipleCodestreams.get(imageIndex);
         final int maxAvailableQualityLayers = codestreamP.getMaxAvailableQualityLayers();
         final int[] componentIndexes = codestreamP.getComponentIndexes();
         final int nComponents = codestreamP.getNumComponents();
@@ -326,12 +325,10 @@ public class JP2KKakaduImageReader extends ImageReader {
         }
 
         // selected interpolation type
-        final int interpolationType = ((JP2KKakaduImageReadParam) param)
-                .getInterpolationType();
+        final int interpolationType = ((JP2KKakaduImageReadParam) param).getInterpolationType();
 
         // specified quality layers
-        int qualityLayers = ((JP2KKakaduImageReadParam) param)
-                .getQualityLayers();
+        int qualityLayers = ((JP2KKakaduImageReadParam) param).getQualityLayers();
         if (qualityLayers != -1) {
             // qualityLayers != -1 means that the user have specified that value
             if (qualityLayers > maxAvailableQualityLayers)
@@ -556,8 +553,7 @@ public class JP2KKakaduImageReader extends ImageReader {
 
         } catch (KduException e) {
             throw new RuntimeException(
-                    "Error caused by a Kakadu exception during creation of key objects! ",
-                    e);
+                    "Error caused by a Kakadu exception during creation of key objects! ", e);
         } catch (RasterFormatException rfe) {
             throw new RuntimeException("Error during raster creation", rfe);
         } finally {
@@ -575,8 +571,10 @@ public class JP2KKakaduImageReader extends ImageReader {
 				}
                 localFamilySource.Native_destroy();
 
-            } else
+            } else {
                 localRawSource.Native_destroy();
+            }
+        
         	
             if (deleteInputFile && inputFile.exists()) {
                 inputFile.delete();
@@ -1428,17 +1426,13 @@ public class JP2KKakaduImageReader extends ImageReader {
      */
     private JP2KBox getJp2Box(final String boxType) {
         final TreeModel boxesTree = fileWalker.getJP2KBoxesTree();
-        DefaultMutableTreeNode root = (DefaultMutableTreeNode) boxesTree
-                .getRoot();
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode) boxesTree.getRoot();
         DefaultMutableTreeNode node = null;
         if (root != null)
-            for (Enumeration e = root.breadthFirstEnumeration(); e
-                    .hasMoreElements();) {
-                DefaultMutableTreeNode current = (DefaultMutableTreeNode) e
-                        .nextElement();
-                JP2KBox box = (JP2KBox) current;
-                if (box != null
-                        && BoxUtilities.getTypeInt(boxType) == box.getType()) {
+            for (Enumeration e = root.breadthFirstEnumeration(); e.hasMoreElements();) {
+                final DefaultMutableTreeNode current = (DefaultMutableTreeNode) e.nextElement();
+                final JP2KBox box = (JP2KBox) current;
+                if (box != null && BoxUtilities.getTypeInt(boxType) == box.getType()) {
                     node = current;
                     break;
                 }

@@ -170,8 +170,9 @@ class JP2KFileWalker {
             // //
             final int boxtype = (int) (0xffffffff & inputBox.Get_box_type());
             final String typeString = BoxUtilities.getTypeString(boxtype);
-            if (LOGGER.isLoggable(Level.FINE))
+            if (LOGGER.isLoggable(Level.FINE)) {
                 LOGGER.fine("Found box " + typeString);
+            }
             LazyJP2KBox currentBox = null;
 
             // //
@@ -179,7 +180,7 @@ class JP2KFileWalker {
             // get the content of the box
             //
             // //
-            if (BoxUtilities.boxNames.contains(typeString)) {
+            if (BoxUtilities.boxNames.containsKey(boxtype)) {
                 final Jp2_locator locator = inputBox.Get_locator();
 
                 // created a lazily loaded box
@@ -187,10 +188,9 @@ class JP2KFileWalker {
                 parent.insert(currentBox, index++);
                 this.tree.nodesWereInserted(parent, new int[] { index - 1 });
             } else {
-                if (LOGGER.isLoggable(Level.INFO))
-                    LOGGER.info("Box of type " + typeString
-                            + " cannot be handled by this file type reader");
-
+                if (LOGGER.isLoggable(Level.INFO)) {
+                    LOGGER.info("Box of type " + typeString + " cannot be handled by this file type reader");
+                }
             }
 
             // //
@@ -201,8 +201,9 @@ class JP2KFileWalker {
             // reopen box
             if (BoxUtilities.SUPERBOX_NAMES.contains(typeString)) {
                 if (childBox.Open(inputBox)) {
-                    if (childBox.Exists())
+                    if (childBox.Exists()) {
                         parse(childBox, currentBox, 0);
+                    }
                     // close box
                     childBox.Close();
                 }
@@ -216,8 +217,9 @@ class JP2KFileWalker {
             // close box
             inputBox.Close();
             if (inputBox.Open_next()) {
-                if (inputBox.Exists())
+                if (inputBox.Exists()) {
                     parse(inputBox, parent, index);
+                }
 
             }
 

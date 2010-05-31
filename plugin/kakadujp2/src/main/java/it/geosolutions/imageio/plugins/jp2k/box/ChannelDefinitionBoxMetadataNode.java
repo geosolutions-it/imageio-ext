@@ -81,22 +81,19 @@ public class ChannelDefinitionBoxMetadataNode extends BaseJP2KBoxMetadataNode {
 
     public String getChannel(final int index) {
         if (index > numChannels - 1)
-            throw new IllegalArgumentException(
-                    "Number of channel descriptions is " + numChannels);
+            throw new IllegalArgumentException("Number of channel descriptions is " + numChannels);
         return channels[index];
     }
 
     public String getType(final int index) {
         if (index > numChannels - 1)
-            throw new IllegalArgumentException(
-                    "Number of channel descriptions is " + numChannels);
+            throw new IllegalArgumentException("Number of channel descriptions is " + numChannels);
         return types[index];
     }
 
     public String getAssociation(final int index) {
         if (index > numChannels - 1)
-            throw new IllegalArgumentException(
-                    "Number of channel descriptions is " + numChannels);
+            throw new IllegalArgumentException("Number of channel descriptions is " + numChannels);
         return associations[index];
     }
 
