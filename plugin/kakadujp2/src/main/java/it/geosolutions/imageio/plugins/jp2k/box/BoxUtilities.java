@@ -23,7 +23,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -54,9 +53,9 @@ public class BoxUtilities {
      * table will be used to construct a Box object from a Node object by using
      * reflection.
      */
-    public final static Hashtable<Integer, Class<? extends BaseJP2KBox>> boxClasses = new Hashtable<Integer, Class<? extends BaseJP2KBox>>();
+    public final static Map <Integer, Class<? extends BaseJP2KBox>> boxClasses = new HashMap <Integer, Class<? extends BaseJP2KBox>>();
 
-    public final static Hashtable<Integer, String> boxNames = new Hashtable<Integer, String>();
+    public final static Map <Integer, String> boxNames = new HashMap <Integer, String>();
 
     /**
      * The table to link tag names for all the JP2 boxes.
@@ -281,14 +280,12 @@ public class BoxUtilities {
      * 
      * @todo handle Exception
      */
-    public static JP2KBox createBox(int type, Node node)
-            throws IIOInvalidTreeException {
+    public static JP2KBox createBox(int type, Node node) throws IIOInvalidTreeException {
         Class<? extends JP2KBox> boxClass =boxClasses.get(new Integer(type));
 
         try {
             // gets the constructor with <code>Node</code> parameter
-            Constructor<? extends JP2KBox> cons = boxClass
-                    .getConstructor(new Class[] { Node.class });
+            Constructor<? extends JP2KBox> cons = boxClass.getConstructor(new Class[] { Node.class });
             if (cons != null) {
                 return cons.newInstance(new Object[] { node });
             }
