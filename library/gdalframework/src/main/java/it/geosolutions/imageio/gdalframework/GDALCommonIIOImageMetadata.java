@@ -33,12 +33,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 
 import org.gdal.gdal.Band;
+import org.gdal.gdal.ColorTable;
 import org.gdal.gdal.Dataset;
 import org.gdal.gdal.Driver;
 import org.gdal.gdal.gdal;
@@ -168,7 +170,9 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
         if (dataset == null)
             return;
         setDatasetDescription(dataset.GetDescription());
-        Driver driver = dataset.GetDriver();
+        Driver driver = null;
+	    try {
+	        driver = dataset.GetDriver();
         if (driver != null) {
             setDriverDescription(driver.GetDescription());
             setDriverName(driver.getShortName());
@@ -198,7 +202,27 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
         setGeoreferencingInfo(dataset);
         // clean up data set in order to avoid keeping them around for a lot
         // of time.
-        GDALUtilities.closeDataSet(dataset);
+	    } finally {
+	    	if (driver != null){
+	    		try{
+                    // Closing the driver
+	    			driver.delete();
+        		}catch (Throwable e) {
+					if(LOGGER.isLoggable(Level.FINEST))
+						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
+				}
+	    	}
+	    	if (dataset != null){
+	    		try{
+                    // Closing the dataset
+        			GDALUtilities.closeDataSet(dataset);
+        		}catch (Throwable e) {
+					if(LOGGER.isLoggable(Level.FINEST))
+						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
+				}
+	    	}
+	    }
+	        
     }
 
     /**
@@ -274,7 +298,10 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
         final int[] yBlockSize = new int[1];
 
         // Remember: RasterBand numeration starts from 1
-        dataset.GetRasterBand(1).GetBlockSize(xBlockSize, yBlockSize);
+        Band rband = null;
+        try {
+        	rband = dataset.GetRasterBand(1); 
+        	rband.GetBlockSize(xBlockSize, yBlockSize);
 
         final int tileHeight = yBlockSize[0];
         final int tileWidth = xBlockSize[0];
@@ -300,7 +327,7 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
         final int tileSize = tileWidth
                 * tileHeight
                 * numBands
-                * (gdal.GetDataTypeSize(dataset.GetRasterBand(1).getDataType()) / 8);
+	            * (gdal.GetDataTypeSize(rband.getDataType()) / 8);
 
         // bands variables
         final int[] banks = new int[numBands];
@@ -321,6 +348,7 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
         final int bandsOffset[] = new int[numBands];
         for (int band = 0; band < numBands; band++) {
             /* Bands are not 0-base indexed, so we must add 1 */
+	            try {
             pBand = dataset.GetRasterBand(band + 1);
             buf_type = pBand.getDataType();
             banks[band] = band;
@@ -338,6 +366,17 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
             colorInterpretations[band] = pBand.GetRasterColorInterpretation();
             numOverviews[band] = pBand.GetOverviewCount();
             bandsOffset[band] = band;
+	            } finally {
+	            	if (pBand != null){
+	            		try{
+	                        // Closing the band
+	            			pBand.delete();
+	            		}catch (Throwable e) {
+	    					if(LOGGER.isLoggable(Level.FINEST))
+	    						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
+	    				}
+	            	}
+	            }
         }
         setNoDataValues(noDataValues);
         setScales(scales);
@@ -398,16 +437,38 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
         //
         // //
         if (colorInterpretations[0] == gdalconstConstants.GCI_PaletteIndex) {
-            IndexColorModel icm = pBand.GetRasterColorTable()
-                    .getIndexColorModel(gdal.GetDataTypeSize(buf_type));
-
-            // TODO: fix the SWIG wrapper to avoid alpha setting when undefined
-            setColorModel(icm);
+	        	ColorTable ct = null;
+	        	try {
+	            	ct = rband.GetRasterColorTable();
+		            IndexColorModel icm = ct.getIndexColorModel(gdal.GetDataTypeSize(buf_type));
+		            setColorModel(icm);
+	            } finally {
+	            	if (ct != null){
+	            		try{
+	                        // Closing the band
+	            			ct.delete();
+	            		}catch (Throwable e) {
+	    					if(LOGGER.isLoggable(Level.FINEST))
+	    						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
+	    				}
+	            	}
+	            }
         } else
             setColorModel(GDALUtilities.buildColorModel(getSampleModel()));
 
         if (getColorModel() == null || getSampleModel() == null)
             return false;
+        } finally {
+        	if (rband != null){
+        		try{
+                    // Closing the band
+        			rband.delete();
+        		}catch (Throwable e) {
+					if(LOGGER.isLoggable(Level.FINEST))
+						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
+				}
+        	}
+        }
         return true;
     }
 
@@ -617,7 +678,7 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
         metadata.setNumBands(this.getNumBands());
 
         metadata.setColorModel(null);
-        ColorModel cm = this.getColorModel();
+        final ColorModel cm = this.getColorModel();
         if (cm != null) {
             if (cm instanceof IndexColorModel) {
                 // //

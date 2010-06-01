@@ -41,6 +41,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.IIOImage;
@@ -292,8 +293,9 @@ public abstract class GDALImageWriter extends ImageWriter {
         // allows to create a new File from an existing Dataset.
         //
         // /////////////////////////////////////////////////////////////////////
-        Dataset writeDataset;
-
+        Dataset writeDataset = null;
+        Driver driver = null;
+        try{
         // TODO: send some warning when setting georeferencing or size
         // properties, if cropping or sourceregion has been defined.
 
@@ -313,7 +315,7 @@ public abstract class GDALImageWriter extends ImageWriter {
             // Dataset creation
             //
             // //
-            final Driver driver = gdal.GetDriverByName(driverName);
+	            driver = gdal.GetDriverByName(driverName);
             writeDataset = driver.Create(fileName, destinationWidth,
                     destinationHeight, nBands, dataType, myOptions);
 
@@ -345,15 +347,16 @@ public abstract class GDALImageWriter extends ImageWriter {
             // allows to create a File from an existing Dataset.
             // ////////////////////////////////////////////////////////////////
 
-            final Driver driver = gdal.GetDriverByName(driverName);
+	            driver = gdal.GetDriverByName(driverName);
             // //
             //
             // Temporary Dataset creation from the originating image
             //
             // //
-            final File tempFile = File.createTempFile("datasetTemp", ".ds",
-                    null);
-            final Dataset tempDataset = createDatasetFromImage(
+	        final File tempFile = File.createTempFile("datasetTemp", ".ds", null);
+	        Dataset tempDataset = null; 
+		    try{
+		        	tempDataset = createDatasetFromImage(
                     inputRenderedImage, tempFile.getAbsolutePath(),
                     imageBounds, nBands, dataType, destinationWidth,
                     destinationHeight, xSubsamplingFactor, ySubsamplingFactor);
@@ -376,7 +379,17 @@ public abstract class GDALImageWriter extends ImageWriter {
             // //
             writeDataset = driver.CreateCopy(outputFile.getPath(), tempDataset,
                     0, myOptions);
-            GDALUtilities.closeDataSet(tempDataset);
+		        } finally {
+		        	if (tempDataset != null){
+		        		try{
+		                    // Closing the dataset
+		        			GDALUtilities.closeDataSet(tempDataset);
+		        		}catch (Throwable e) {
+							if(LOGGER.isLoggable(Level.FINEST))
+								LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
+						}
+		        	}
+		        }
             tempFile.delete();
         }
 
@@ -386,7 +399,27 @@ public abstract class GDALImageWriter extends ImageWriter {
         //
         // //
         writeDataset.FlushCache();
-        GDALUtilities.closeDataSet(writeDataset);
+        } finally{
+        	if (writeDataset != null){
+        		try{
+                    // Closing the dataset
+        			GDALUtilities.closeDataSet(writeDataset);
+        		}catch (Throwable e) {
+					if(LOGGER.isLoggable(Level.FINEST))
+						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
+				}
+        	}
+        	
+        	if (driver != null){
+	    		try{
+                    // Closing the driver
+	    			driver.delete();
+        		}catch (Throwable e) {
+					if(LOGGER.isLoggable(Level.FINEST))
+						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
+				}
+	    	}
+        }
     }
 
     /**

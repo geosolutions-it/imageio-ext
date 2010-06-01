@@ -234,7 +234,9 @@ public abstract class GDALImageReader extends ImageReader {
                         mainDatasetName = uri.toString();
                     }
                 } 
-                final Dataset mainDataset = GDALUtilities.acquireDataSet( mainDatasetName, gdalconstConstants.GA_ReadOnly);
+                Dataset mainDataset = null;
+                try{
+	                mainDataset = GDALUtilities.acquireDataSet( mainDatasetName, gdalconstConstants.GA_ReadOnly);
                 if (mainDataset == null)
                     return false;
                 // /////////////////////////////////////////////////////////////
@@ -280,7 +282,17 @@ public abstract class GDALImageReader extends ImageReader {
                     subdatasets.clear();
                 }
                 isInitialized = true;
-                GDALUtilities.closeDataSet(mainDataset);
+                } finally {
+                	if (mainDataset != null){
+                		try{
+                            // Closing the dataset
+                            GDALUtilities.closeDataSet(mainDataset);
+                		}catch (Throwable e) {
+        					if(LOGGER.isLoggable(Level.FINEST))
+        						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
+        				}
+                	}
+                }
             }
         }
         return nSubdatasets > 0;
@@ -325,8 +337,7 @@ public abstract class GDALImageReader extends ImageReader {
     private Raster readDatasetRaster(GDALCommonIIOImageMetadata item,
             Rectangle srcRegion, Rectangle dstRegion, int[] selectedBands)
             throws IOException {
-        return readDatasetRaster(item, srcRegion, dstRegion, selectedBands,
-                null);
+        return readDatasetRaster(item, srcRegion, dstRegion, selectedBands, null);
     }
 
     /**
@@ -347,8 +358,7 @@ public abstract class GDALImageReader extends ImageReader {
             Rectangle srcRegion, Rectangle dstRegion, int[] selectedBands,
             SampleModel destSampleModel) throws IOException {
 
-        SampleModel destSm = destSampleModel != null ? destSampleModel : item
-                .getSampleModel();
+        SampleModel destSm = destSampleModel != null ? destSampleModel : item.getSampleModel();
 
         SampleModel sampleModel = null;
         DataBuffer imgBuffer = null;
@@ -361,13 +371,13 @@ public abstract class GDALImageReader extends ImageReader {
         //
         // ////////////////////////////////////////////////////////////////////
         final String datasetName = item.getDatasetName();
-        final Dataset dataset = GDALUtilities.acquireDataSet(datasetName,
-                gdalconst.GA_ReadOnly);
+        final Dataset dataset = GDALUtilities.acquireDataSet(datasetName, gdalconst.GA_ReadOnly);
+        Band pBand = null;
 
         if (dataset == null)
-            throw new IOException("Error while acquiring the input dataset "
-                    + datasetName);
-
+            throw new IOException("Error while acquiring the input dataset " + datasetName);
+        
+        try {
         int dstWidth = dstRegion.width;
         int dstHeight = dstRegion.height;
         int srcRegionXOffset = srcRegion.x;
@@ -377,9 +387,6 @@ public abstract class GDALImageReader extends ImageReader {
 
         if (LOGGER.isLoggable(Level.FINE))
             LOGGER.fine("SourceRegion = " + srcRegion.toString());
-
-        // Band set-up
-        Band pBand = null;
 
         // Getting number of bands
         final int nBands = selectedBands != null ? selectedBands.length
@@ -456,11 +463,25 @@ public abstract class GDALImageReader extends ImageReader {
                 byteBands[k] = dataBuffer;
             } else {
                 // I need to read 1 band at a time.
-                returnVal = dataset.GetRasterBand(k + 1).ReadRaster_Direct(
+	            	Band rBand = null;
+	            	try{
+	            		rBand = dataset.GetRasterBand(k + 1);
+                returnVal = rBand.ReadRaster_Direct(
                         srcRegionXOffset, srcRegionYOffset, srcRegionWidth,
                         srcRegionHeight, dstWidth, dstHeight, bufferType,
                         dataBuffer);
                 byteBands[k] = dataBuffer;
+	            	} finally {
+	            		if (rBand != null){
+	            			try{
+	                            // Closing the band
+	            				rBand.delete();
+	                		}catch (Throwable e) {
+	        					if(LOGGER.isLoggable(Level.FINEST))
+	        						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
+	        				}
+	            		}
+	            	}
             }
             if (returnVal == gdalconstConstants.CE_None) {
                 if (!splitBands)
@@ -659,6 +680,27 @@ public abstract class GDALImageReader extends ImageReader {
         else
             sampleModel = new PixelInterleavedSampleModel(dataBufferType,
                     dstWidth, dstHeight, nBands, dstWidth * nBands, offsets);
+        } finally {
+        	if (pBand != null){
+        		try{
+                    // Closing the band
+        			pBand.delete();
+        		}catch (Throwable e) {
+					if(LOGGER.isLoggable(Level.FINEST))
+						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
+				}
+        	}
+        	if (dataset != null){
+        		try{
+                    // Closing the dataset
+        			GDALUtilities.closeDataSet(dataset);
+        		}catch (Throwable e) {
+					if(LOGGER.isLoggable(Level.FINEST))
+						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
+				}
+        	}
+        		  
+        }
 
         // ////////////////////////////////////////////////////////////////////
         //
@@ -667,7 +709,7 @@ public abstract class GDALImageReader extends ImageReader {
         // -------------------------------------------------------------------
         //
         // ////////////////////////////////////////////////////////////////////
-        GDALUtilities.closeDataSet(dataset);
+	      
         // return Raster.createWritableRaster(sampleModel, imgBuffer, new Point(
         // dstRegion.x, dstRegion.y));
         return Raster.createWritableRaster(sampleModel, imgBuffer, null);
@@ -785,9 +827,18 @@ public abstract class GDALImageReader extends ImageReader {
             }
             
             if (dataSet != null) {
-                isInputDecodable = ((GDALImageReaderSpi) this
+            	try{
+            		isInputDecodable = ((GDALImageReaderSpi) this
                         .getOriginatingProvider()).isDecodable(dataSet);
-                GDALUtilities.closeDataSet(dataSet);
+            	} finally {
+            		try{
+                        // Closing the dataset
+            			GDALUtilities.closeDataSet(dataSet);
+            		}catch (Throwable e) {
+    					if(LOGGER.isLoggable(Level.FINEST))
+    						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
+    				}
+            	}
             } else
                 isInputDecodable = false;
         }
