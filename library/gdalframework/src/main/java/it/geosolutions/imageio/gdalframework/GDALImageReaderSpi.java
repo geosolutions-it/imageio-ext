@@ -20,7 +20,6 @@ import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 import it.geosolutions.imageio.stream.input.spi.StringImageInputStreamSpi;
 import it.geosolutions.imageio.stream.input.spi.URLImageInputStreamSpi;
-import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.imageio.utilities.Utilities;
 
 import java.io.File;

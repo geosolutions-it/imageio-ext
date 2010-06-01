@@ -295,8 +295,6 @@ public abstract class GDALImageReader extends ImageReader {
         				}
                 	}
                 }
-                
-                
             }
         }
         return nSubdatasets > 0;
@@ -530,7 +528,7 @@ public abstract class GDALImageReader extends ImageReader {
 	        }
 	        else {
 	            ByteBuffer bands[] = new ByteBuffer[nBands];
-	            for (int k = 0; k < nBands; k++) {
+            for (int k = 0; (splitBands && k < nBands) || (k < 1 && !splitBands); k++) {
 	                bands[k]=ByteBuffer.wrap(byteBands[k],0,byteBands[k].length);
 	            }
 	            
