@@ -25,6 +25,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
@@ -38,9 +40,6 @@ import javax.swing.JFrame;
 
 import org.junit.Assert;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 /**
  * Testing reading capabilities for {@link JpegJMagickImageReader}
  * 
@@ -48,7 +47,24 @@ import junit.framework.TestSuite;
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class JPEGReadTest extends Assert {
+    
+    private static final Logger LOGGER = Logger.getLogger(JPEGReadTest.class.toString());
 
+    private static boolean isJmagickAvailable;
+    
+    static{
+        try{
+          System.loadLibrary("JMagick");
+          isJmagickAvailable = true;
+        } catch (UnsatisfiedLinkError e){
+            if (LOGGER.isLoggable(Level.WARNING)){
+                LOGGER.warning("Failed to load the JMagick libs. This is not a problem unless you need to use the JMagick plugins: they won't be enabled." + e.getLocalizedMessage());
+            }
+            isJmagickAvailable = false;
+        }
+        
+    }
+    
 	/**
 	 * Simple test read
 	 * 
@@ -56,7 +72,11 @@ public class JPEGReadTest extends Assert {
 	 * @throws IOException
 	 */
 	public void multithreadedJAIRead() throws FileNotFoundException, IOException {
-
+	    if (!isJmagickAvailable) {
+	            LOGGER.warning("JMagick Library is not Available; Skipping tests");
+	            return;
+	        }
+	    
 		// register the image read mt operation
 		ImageReadDescriptorMT.register(JAI.getDefaultInstance());
 
@@ -115,7 +135,10 @@ public class JPEGReadTest extends Assert {
 	 */
 	@org.junit.Test
 	public void ImageIORead() throws FileNotFoundException, IOException {
-
+	    if (!isJmagickAvailable) {
+                LOGGER.warning("JMagick Library is not Available; Skipping tests");
+                return;
+            }
 
 		// get the file we are going to read
 		final String fileName = "001140.jpg";

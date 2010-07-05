@@ -286,8 +286,7 @@ public final class GDALUtilities {
      * @param accessType
      * @return the acquired {@link Dataset}
      */
-    public static synchronized Dataset acquireDataSet(String name,
-            int accessType) {
+    public static synchronized Dataset acquireDataSet(String name, int accessType) {
         if (!isGDALAvailable())
             return null;
         return gdal.Open(name, accessType);
@@ -304,9 +303,9 @@ public final class GDALUtilities {
      * 
      * @return a <code>List</code> containing any metadata found.
      */
-    public static List getGDALImageMetadata(String dataSetName) {
+    public static List<String> getGDALImageMetadata(String dataSetName) {
         final Dataset ds = acquireDataSet(dataSetName, gdalconst.GA_ReadOnly);
-        final List gdalImageMetadata;
+        final List<String> gdalImageMetadata;
         if (ds != null) {
         	try {
         		gdalImageMetadata = ds.GetMetadata_List("");

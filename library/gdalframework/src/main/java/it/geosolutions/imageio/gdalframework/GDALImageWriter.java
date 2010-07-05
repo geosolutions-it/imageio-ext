@@ -92,8 +92,7 @@ public abstract class GDALImageWriter extends ImageWriter {
         // Checking for a simple integer value (size in bytes)
         //
         // //
-        Integer maxSize = Integer
-                .getInteger(GDALUtilities.GDALMEMORYRASTER_MAXSIZE_KEY);
+        Integer maxSize = Integer.getInteger(GDALUtilities.GDALMEMORYRASTER_MAXSIZE_KEY);
         if (maxSize != null)
             size = maxSize.intValue();
         else {
@@ -103,8 +102,7 @@ public abstract class GDALImageWriter extends ImageWriter {
             // Valid values should end with one of M,m,K,k
             //
             // //
-            final String maxSizes = System
-                    .getProperty(GDALUtilities.GDALMEMORYRASTER_MAXSIZE_KEY);
+            final String maxSizes = System.getProperty(GDALUtilities.GDALMEMORYRASTER_MAXSIZE_KEY);
             if (maxSizes != null) {
                 final int length = maxSizes.length();
                 final String value = maxSizes.substring(0, length - 1);
@@ -232,23 +230,20 @@ public abstract class GDALImageWriter extends ImageWriter {
         if (writingCapabilities == GDALUtilities.DriverCreateCapabilities.READ_ONLY)
             throw new IllegalStateException("This writer seems to not support either create or create copy");
         if (image == null)
-            throw new IllegalArgumentException(
-                    "The provided input image is invalid.");
+            throw new IllegalArgumentException("The provided input image is invalid.");
 
         // //
         //
         // Getting the source image and its main properties
         //
         // //
-        final PlanarImage inputRenderedImage = PlanarImage
-                .wrapRenderedImage(image.getRenderedImage());
+        final PlanarImage inputRenderedImage = PlanarImage.wrapRenderedImage(image.getRenderedImage());
         final int sourceWidth = inputRenderedImage.getWidth();
         final int sourceHeight = inputRenderedImage.getHeight();
         final int sourceMinX = inputRenderedImage.getMinX();
         final int sourceMinY = inputRenderedImage.getMinY();
-        final int dataType = GDALUtilities
-                .retrieveGDALDataBufferType(inputRenderedImage.getSampleModel()
-                        .getDataType());
+        final int dataType = GDALUtilities.retrieveGDALDataBufferType(
+                inputRenderedImage.getSampleModel().getDataType());
         final int nBands = inputRenderedImage.getNumBands();
 
         // //
@@ -258,7 +253,7 @@ public abstract class GDALImageWriter extends ImageWriter {
         // //
         final int xSubsamplingFactor = param.getSourceXSubsampling();
         final int ySubsamplingFactor = param.getSourceYSubsampling();
-        final Vector myOptions = (Vector) ((GDALImageWriteParam) param)
+        final List<String> myOptions = ((GDALImageWriteParam) param)
                 .getCreateOptionsHandler().getCreateOptions();
         Rectangle imageBounds = new Rectangle(sourceMinX, sourceMinY,
                 sourceWidth, sourceHeight);
@@ -525,15 +520,15 @@ public abstract class GDALImageWriter extends ImageWriter {
         // parameter crashes the JVM
         //
         // //
-        final List domains = imageMetadata.getGdalMetadataDomainsList();
+        final List<String> domains = imageMetadata.getGdalMetadataDomainsList();
         final int nDomains = domains.size();
         for (int i = 0; i < nDomains; i++) {
             final String domain = (String) domains.get(i);
             Map metadataMap = imageMetadata.getGdalMetadataDomain(domain);
             if (metadataMap != null) {
-                Iterator keysIt = metadataMap.keySet().iterator();
+                Iterator<String> keysIt = metadataMap.keySet().iterator();
                 while (keysIt.hasNext()) {
-                    final String key = (String) keysIt.next();
+                    final String key = keysIt.next();
                     final String value = (String) metadataMap.get(key);
                     dataset.SetMetadataItem(key, value, domain);
                 }

@@ -109,7 +109,7 @@
       <repository>
        <uniqueVersion>false</uniqueVersion>
        <id>geosolutions</id>
-       <url>ftp://ftp.geo-solutions.it</url>
+       <url>ftp://150.146.160.230/home/maven</url>
       </repository>
     </distributionManagement>
    </profile>

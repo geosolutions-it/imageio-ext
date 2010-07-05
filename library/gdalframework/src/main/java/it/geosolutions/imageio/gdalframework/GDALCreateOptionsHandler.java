@@ -16,13 +16,13 @@
  */
 package it.geosolutions.imageio.gdalframework;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 /**
  * Abstract class which allows to properly handle the set of "format specific"
@@ -83,35 +83,31 @@ public abstract class GDALCreateOptionsHandler {
      * field.
      */
 
-    private final Map createOptionsMap = Collections
-            .synchronizedMap(new HashMap());
+    private final Map<String, GDALCreateOption> createOptionsMap = Collections
+            .synchronizedMap(new HashMap<String, GDALCreateOption>());
 
     /**
      * Provides to return a {@link List} containing <code>String</code>s
      * representing all specified create options we need to give to the writer
      * when it call GDAL's create/createCopy method.
      */
-    public List getCreateOptions() {
+    public List<String> getCreateOptions() {
 
         // ////
         // 
         // approach 1
         //
         // ////
-        // TODO gdal actually requires Vector classes but it would be quite nice
-        // to move it to use a real list instead
-        final Vector options = new Vector();
+        final ArrayList<String> options = new ArrayList<String>();
         synchronized (createOptionsMap) {
-            final Collection values = createOptionsMap.values();
-            final Iterator it = values.iterator();
+            final Collection<GDALCreateOption> values = createOptionsMap.values();
+            final Iterator<GDALCreateOption> it = values.iterator();
             while (it.hasNext()) {
 
                 // retrieving the index of the next set option
-                final GDALCreateOption selectedOption = (GDALCreateOption) it
-                        .next();
+                final GDALCreateOption selectedOption = it.next();
                 if (selectedOption.isSet()) {
-                    final StringBuffer opt = new StringBuffer(selectedOption
-                            .getOptionName());
+                    final StringBuilder opt = new StringBuilder(selectedOption.getOptionName());
                     if (selectedOption.getRepresentedValueType() != GDALCreateOption.TYPE_NONE)
                         opt.append("=").append(selectedOption.getValue());
                     options.add(opt.toString());
@@ -131,14 +127,12 @@ public abstract class GDALCreateOptionsHandler {
      * @param optionValue
      *                value for the specified create option.
      */
-    public void setCreateOption(final String optionName,
-            final String optionValue) {
+    public void setCreateOption(final String optionName, final String optionValue) {
         synchronized (createOptionsMap) {
             if (!createOptionsMap.containsKey(optionName))
                 throw new IllegalArgumentException("Create option with name"
                         + optionName + " does not exist");
-            ((GDALCreateOption) createOptionsMap.get(optionName))
-                    .setValue(optionValue);
+            createOptionsMap.get(optionName).setValue(optionValue);
         }
     }
 
@@ -181,22 +175,21 @@ public abstract class GDALCreateOptionsHandler {
      * @param option
      *                to add to this handler.
      */
-    public void addCreateOptions(final Collection options) {
+    public void addCreateOptions(final Collection<GDALCreateOption> options) {
         if (options != null && options.size() > 0) {
             synchronized (createOptionsMap) {
-                final Iterator it = options.iterator();
+                final Iterator<GDALCreateOption> it = options.iterator();
                 while (it.hasNext()) {
                     final Object o = it.next();
                     // we add it only in case it has the right type
-                    if (o != null && (o instanceof GDALCreateOption)) {
+                    if (o != null && o instanceof GDALCreateOption) {
                         final GDALCreateOption option = (GDALCreateOption) o;
-                        createOptionsMap.put(option.getOptionName(), o);
+                        createOptionsMap.put(option.getOptionName(), option);
                     }
                 }
             }
         } else
-            throw new IllegalArgumentException(
-                    "The provided collection is null or empty");
+            throw new IllegalArgumentException("The provided collection is null or empty");
     }
 
     /**
