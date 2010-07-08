@@ -321,14 +321,14 @@ public class TIFFField implements Comparable {
         null,
         "Byte", "Ascii", "Short", "Long", "Rational",
         "SByte", "Undefined", "SShort", "SLong", "SRational",
-        "Float", "Double", "IFDPointer"
+        "Float", "Double", "IFDPointer", "Long8", "SLong8", "IFD8"
     };
 
     private static final boolean[] isIntegral = {
         false,
         true, false, true, true, false,
         true, true, true, true, false,
-        false, false, false
+        false, false, false, true, true, false
     };
 
     /** The tag. */
@@ -414,6 +414,10 @@ public class TIFFField implements Comparable {
                     break;
                 case TIFFTag.TIFF_LONG:
                 case TIFFTag.TIFF_IFD_POINTER:
+
+                case TIFFTag.TIFF_LONG8:
+                case TIFFTag.TIFF_IFD8:
+                case TIFFTag.TIFF_SLONG8:
                     ((long[])data)[idx] =
                         (long)Long.parseLong(value);
                     break;
@@ -732,7 +736,10 @@ public class TIFFField implements Comparable {
             return new char[count];
         case TIFFTag.TIFF_LONG:
         case TIFFTag.TIFF_IFD_POINTER:
-            return new long[count];
+        case TIFFTag.TIFF_LONG8:
+        case TIFFTag.TIFF_IFD8:
+        case TIFFTag.TIFF_SLONG8:
+        	return new long[count];
         case TIFFTag.TIFF_RATIONAL:
             return new long[count][2];
         case TIFFTag.TIFF_SSHORT:
@@ -960,7 +967,11 @@ public class TIFFField implements Comparable {
             return ((short[])data)[index];
         case TIFFTag.TIFF_SLONG:
             return ((int[])data)[index];
-        case TIFFTag.TIFF_LONG: case TIFFTag.TIFF_IFD_POINTER:
+        case TIFFTag.TIFF_LONG: 
+        case TIFFTag.TIFF_IFD_POINTER:
+        case TIFFTag.TIFF_LONG8:
+        case TIFFTag.TIFF_SLONG8:
+        case TIFFTag.TIFF_IFD8:
             return (int)((long[])data)[index];
         case TIFFTag.TIFF_FLOAT:
             return (int)((float[])data)[index];
@@ -1016,6 +1027,10 @@ public class TIFFField implements Comparable {
         case TIFFTag.TIFF_ASCII:
              String s = ((String[])data)[index];
              return (long)Double.parseDouble(s);
+        case TIFFTag.TIFF_LONG8:
+        case TIFFTag.TIFF_SLONG8:
+        case TIFFTag.TIFF_IFD8:
+        	return ((long[])data)[index];
         default:
             throw new ClassCastException();
         }
@@ -1071,6 +1086,10 @@ public class TIFFField implements Comparable {
         case TIFFTag.TIFF_ASCII:
              String s = ((String[])data)[index];
              return (float)Double.parseDouble(s);
+        case TIFFTag.TIFF_LONG8: 
+        case TIFFTag.TIFF_SLONG8: 
+        case TIFFTag.TIFF_IFD8:
+        	 return (float)((long[])data)[index];
         default:
             throw new ClassCastException();
         }
@@ -1120,6 +1139,10 @@ public class TIFFField implements Comparable {
         case TIFFTag.TIFF_ASCII:
              String s = ((String[])data)[index];
              return Double.parseDouble(s);
+        case TIFFTag.TIFF_LONG8: 
+        case TIFFTag.TIFF_SLONG8: 
+        case TIFFTag.TIFF_IFD8:
+        	 return (double)((long[])data)[index];
         default:
             throw new ClassCastException();
         }
@@ -1223,6 +1246,8 @@ public class TIFFField implements Comparable {
                     Long.toString(lvalue[1]);
             }
             return rationalString;
+        case TIFFTag.TIFF_LONG8: case TIFFTag.TIFF_IFD8: case TIFFTag.TIFF_SLONG8:
+        	return Long.toString(((long[])data)[index]);
         default:
             throw new ClassCastException();
         }

@@ -138,9 +138,15 @@ public class TIFFImageMetadata extends IIOMetadata {
     public void initializeFromStream(ImageInputStream stream,
                                      boolean ignoreUnknownFields)
         throws IOException {
-        rootIFD.initialize(stream, ignoreUnknownFields);
+    	initializeFromStream(stream, ignoreUnknownFields, false);
     }
 
+    public void initializeFromStream(ImageInputStream stream,
+            						boolean ignoreUnknownFields, boolean isBTIFF)
+    throws IOException {
+    	rootIFD.initialize(stream, ignoreUnknownFields, isBTIFF);
+    }
+    
     public void addShortOrLongField(int tagNumber, int value) {
         TIFFField field = new TIFFField(rootIFD.getTag(tagNumber), value);
         rootIFD.addTIFFField(field);

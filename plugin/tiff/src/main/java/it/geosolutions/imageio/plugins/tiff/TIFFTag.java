@@ -138,6 +138,21 @@ public class TIFFTag {
      * TIFF Specification Supplement 1.
      */
     public static final int TIFF_IFD_POINTER = 13;
+ 
+    /**
+     * Flag for unsigned 8 byte integer.
+     */
+    public static final int TIFF_LONG8 = 16;
+    
+    /**
+     * Flag for signed 8 byte integer.
+     */
+    public static final int TIFF_SLONG8 = 17;
+    
+    /**
+     * Flag for new unsigned 8 byte IFD offset.
+     */
+    public static final int TIFF_IFD8 = 18;
 
     /**
      * The numerically smallest constant representing a TIFF data type.
@@ -147,7 +162,7 @@ public class TIFFTag {
     /**
      * The numerically largest constant representing a TIFF data type.
      */
-    public static final int MAX_DATATYPE = TIFF_IFD_POINTER;
+    public static final int MAX_DATATYPE = TIFF_IFD8;
 
     private static final int[] sizeOfType = {
         0, //  0 = n/a
@@ -164,6 +179,11 @@ public class TIFFTag {
         4, // 11 = float
         8, // 12 = double 
         4, // 13 = IFD_POINTER
+        0, // 14 = n/a
+        0, // 15 = n/a
+        8, // 16 = TIFF_LONG8
+        8, // 17 = TIFF_SLONG8
+        8, // 18 = TIFF_IFD8
     };
 
     // Other tags

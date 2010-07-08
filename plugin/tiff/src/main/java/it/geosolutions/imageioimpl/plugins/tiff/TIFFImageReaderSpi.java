@@ -89,9 +89,9 @@ import com.sun.media.imageioimpl.common.PackageUtil;
 
 public class TIFFImageReaderSpi extends ImageReaderSpi {
 
-    private static final String[] names = { "tif", "TIF", "tiff", "TIFF" };
+    private static final String[] names = { "tif", "TIF", "tiff", "TIFF", "btiff", "BTIFF" };
 
-    private static final String[] suffixes = { "tif", "tiff" };
+    private static final String[] suffixes = { "tif", "tiff", "tf8", "btf", "TIF", "TIFF", "TF8", "BTF" };
 
     private static final String[] MIMETypes = { "image/tiff" };
 
@@ -141,10 +141,17 @@ public class TIFFImageReaderSpi extends ImageReaderSpi {
         stream.readFully(b);
         stream.reset();
 
-        return ((b[0] == (byte)0x49 && b[1] == (byte)0x49 &&
-                 b[2] == (byte)0x2a && b[3] == (byte)0x00) ||
-                (b[0] == (byte)0x4d && b[1] == (byte)0x4d &&
-                 b[2] == (byte)0x00 && b[3] == (byte)0x2a));
+        return (
+        		((b[0] == (byte)0x49 && b[1] == (byte)0x49 &&
+                  b[2] == (byte)0x2a && b[3] == (byte)0x00) ||
+                 (b[0] == (byte)0x4d && b[1] == (byte)0x4d &&
+                  b[2] == (byte)0x00 && b[3] == (byte)0x2a))||
+                
+                ((b[0] == (byte)0x49 && b[1] == (byte)0x49 &&
+                  b[2] == (byte)0x2b && b[3] == (byte)0x00) ||
+                 (b[0] == (byte)0x4d && b[1] == (byte)0x4d &&
+                  b[2] == (byte)0x00 && b[3] == (byte)0x2b))
+               );
     }
 
     public ImageReader createReaderInstance(Object extension) {

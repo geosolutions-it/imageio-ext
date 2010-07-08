@@ -89,6 +89,7 @@ import java.awt.color.ColorSpace;
 import java.awt.color.ICC_ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
 import java.awt.image.ComponentSampleModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
@@ -266,6 +267,8 @@ public class TIFFImageWriter extends ImageWriter {
     // Whether a sequence is being written.
     boolean isWritingSequence = false;
 
+    private boolean isBtiff = false;
+	
     /**
      * Converts a pixel's X coordinate into a horizontal tile index
      * relative to a given tile grid layout specified by its X offset
@@ -340,6 +343,8 @@ public class TIFFImageWriter extends ImageWriter {
                     // Check bytes for TIFF header.
                     if((b[0] == (byte)0x49 && b[1] == (byte)0x49 &&
                         b[2] == (byte)0x2a && b[3] == (byte)0x00) ||
+                       (b[0] == (byte)0x49 && b[1] == (byte)0x49 &&
+                    	b[2] == (byte)0x2b && b[3] == (byte)0x00) || //BigTiff
                        (b[0] == (byte)0x4d && b[1] == (byte)0x4d &&
                         b[2] == (byte)0x00 && b[3] == (byte)0x2a)) {
                         // TIFF header.
@@ -1088,8 +1093,9 @@ public class TIFFImageWriter extends ImageWriter {
             bitDepth = 16;
         } else if (bitDepth > 16 && bitDepth <=32) {
             bitDepth = 32;
-        }else if (bitDepth > 32)
+        } else if (bitDepth > 32) {
         	bitDepth = 64;
+        }
 
         for (int i = 0; i < bitsPerSample.length; i++) {
             bitsPerSample[i] = (char)bitDepth;
@@ -1442,14 +1448,14 @@ public class TIFFImageWriter extends ImageWriter {
             TIFFField stripOffsetsField =
                 new TIFFField(
                          base.getTag(BaselineTIFFTagSet.TAG_STRIP_OFFSETS),
-                         TIFFTag.TIFF_LONG,
+                         isBtiff?TIFFTag.TIFF_LONG8:TIFFTag.TIFF_LONG,
                          tilesDown);
             rootIFD.addTIFFField(stripOffsetsField);
 
             TIFFField stripByteCountsField =
                 new TIFFField(
                          base.getTag(BaselineTIFFTagSet.TAG_STRIP_BYTE_COUNTS),
-                         TIFFTag.TIFF_LONG,
+                         isBtiff?TIFFTag.TIFF_LONG8:TIFFTag.TIFF_LONG,
                          tilesDown);
             rootIFD.addTIFFField(stripByteCountsField);
         } else {
@@ -1472,14 +1478,14 @@ public class TIFFImageWriter extends ImageWriter {
             TIFFField tileOffsetsField =
                 new TIFFField(
                          base.getTag(BaselineTIFFTagSet.TAG_TILE_OFFSETS),
-                         TIFFTag.TIFF_LONG,
+                         isBtiff?TIFFTag.TIFF_LONG8:TIFFTag.TIFF_LONG,
                          tilesDown*tilesAcross);
             rootIFD.addTIFFField(tileOffsetsField);
 
             TIFFField tileByteCountsField =
                 new TIFFField(
                          base.getTag(BaselineTIFFTagSet.TAG_TILE_BYTE_COUNTS),
-                         TIFFTag.TIFF_LONG,
+                         isBtiff?TIFFTag.TIFF_LONG8:TIFFTag.TIFF_LONG,
                          tilesDown*tilesAcross);
             rootIFD.addTIFFField(tileByteCountsField);
         }
@@ -2593,12 +2599,22 @@ public class TIFFImageWriter extends ImageWriter {
 	} else {
 	    stream.writeShort(0x4949);
 	}
-	
-	stream.writeShort(42); // Magic number
-        stream.writeInt(0); // Offset of first IFD (0 == none)
 
-        nextSpace = stream.getStreamPosition();
+	if(!isBtiff){
+		stream.writeShort(42);
+		stream.writeInt(0);
+		nextSpace = stream.getStreamPosition();
         headerPosition = nextSpace - 8;
+	}
+	else {
+		stream.writeShort(43);
+		stream.writeShort(8);
+		stream.writeShort(0);
+		stream.writeLong(0);
+		nextSpace = stream.getStreamPosition();
+		headerPosition = nextSpace - 16;
+		}
+  
     }
 
     private void write(IIOMetadata sm,
@@ -2688,7 +2704,7 @@ public class TIFFImageWriter extends ImageWriter {
             
         this.imageType = new ImageTypeSpecifier(colorModel, sampleModel);
 
-	ImageUtil.canEncodeImage(this, this.imageType);
+        ImageUtil.canEncodeImage(this, this.imageType);
 
         // Compute output dimensions
         int destWidth = (sourceWidth + periodX - 1)/periodX;
@@ -2702,6 +2718,23 @@ public class TIFFImageWriter extends ImageWriter {
         clearAbortRequest();
         processImageStarted(0);
 
+        int[] sampleSize = sampleModel.getSampleSize();
+        
+    	long tot = 0;
+    	for(int i = 0; i < this.numBands; i++)
+    		tot += sampleSize[i];
+    	long sizeImage = (tot * this.sourceHeight * this.sourceWidth)/8;
+    	long var = 4294967296L;
+    	boolean isForceToBigTIFF = false;
+    	if (p instanceof TIFFImageWriteParam){
+    		isForceToBigTIFF = ((TIFFImageWriteParam)p).isForceToBigTIFF();
+    	}
+    	if (sizeImage > var || isForceToBigTIFF || isBtiff == true) 
+    		isBtiff = true;
+    	else 
+    		isBtiff = false;
+        
+        	
         // Optionally write the header.
 	if (writeHeader) {
             // Clear previous stream metadata.
@@ -2722,14 +2755,20 @@ public class TIFFImageWriter extends ImageWriter {
             // Write the header.
 	    writeHeader();
 
-            // Seek to the position of the IFD pointer in the header.
-            stream.seek(headerPosition + 4);
 
-            // Ensure IFD is written on a word boundary
-            nextSpace = (nextSpace + 3) & ~0x3;
-
-            // Write the pointer to the first IFD after the header.
-            stream.writeInt((int)nextSpace);
+	    // 1) Seek to the position of the IFD pointer in the header.
+ 		// 2) Ensure IFD is written on a proper type boundary
+	    // 3) Write the pointer to the first IFD after the header.
+  		if(!isBtiff) {
+  				stream.seek(headerPosition + 4);
+ 				nextSpace = (nextSpace + 3) & ~0x3;
+ 				stream.writeInt((int)nextSpace);
+ 		
+  		} else {
+ 				stream.seek(headerPosition + 8);
+ 				nextSpace = (nextSpace + 7) & ~0x7;
+ 				stream.writeLong(nextSpace);
+ 		}
 	}
 
         // Write out the IFD and any sub IFDs, followed by a zero
@@ -2774,7 +2813,6 @@ public class TIFFImageWriter extends ImageWriter {
         compressor.setStream(stream);
         
 	// Initialize scaling tables for this image
-        int[] sampleSize = sampleModel.getSampleSize();
         initializeScaleTables(sampleModel.getSampleSize());
 
         // Determine whether bilevel.
@@ -2802,10 +2840,10 @@ public class TIFFImageWriter extends ImageWriter {
 
         TIFFIFD rootIFD = imageMetadata.getRootIFD();
 
-        rootIFD.writeToStream(stream);
+        rootIFD.writeToStream(stream,isBtiff);
 
         this.nextIFDPointerPos = stream.getStreamPosition();
-        stream.writeInt(0);
+        stream.writeLong(0);
 
         // Seek to end of IFD data
         long lastIFDPosition = rootIFD.getLastPosition();
@@ -2858,12 +2896,22 @@ public class TIFFImageWriter extends ImageWriter {
                     // Fill in the offset and byte count for the file
                     stream.mark();
                     stream.seek(stripOrTileOffsetsPosition);
-                    stream.writeInt((int)pos);
-                    stripOrTileOffsetsPosition += 4;
                     
-                    stream.seek(stripOrTileByteCountsPosition);
-                    stream.writeInt(byteCount);
-                    stripOrTileByteCountsPosition += 4;
+                    if(!isBtiff){
+	                    stream.writeInt((int)pos);
+	                    stripOrTileOffsetsPosition += 4;
+	                    
+	                    stream.seek(stripOrTileByteCountsPosition);
+	                    stream.writeInt(byteCount);
+	                    stripOrTileByteCountsPosition += 4;
+                    } else {
+	                    stream.writeLong(pos);
+	                    stripOrTileOffsetsPosition += 8;
+	                    
+	                    stream.seek(stripOrTileByteCountsPosition);
+	                    stream.writeLong(byteCount);
+	                    stripOrTileByteCountsPosition += 8;
+                    }
                     stream.reset();
                 } catch (IOException e) {
                     throw new IIOException("I/O error writing TIFF file!", e);
@@ -2975,49 +3023,98 @@ public class TIFFImageWriter extends ImageWriter {
             stream.seek(startPos);
 	    throw new IIOException("Illegal byte order");
 	}
-	if (stream.readUnsignedShort() != 42) {
+
+	final int magicNumber = stream.readUnsignedShort();
+ 	if (magicNumber != 42 && magicNumber != 43) {
             stream.seek(startPos);
 	    throw new IIOException("Illegal magic number");
 	}
+ 	if (magicNumber == 43)
+ 		isBtiff = true;
 
-	ifdpos[0] = stream.getStreamPosition();
-	ifd[0] = stream.readUnsignedInt();
-        if (ifd[0] == 0) {
-            // imageIndex has to be >= -1 due to check above.
-            if(imageIndex > 0) {
-                stream.seek(startPos);
-                throw new IndexOutOfBoundsException
+
+ 	if(!isBtiff) {
+ 			ifdpos[0] = stream.getStreamPosition();
+ 			ifd[0] = stream.readUnsignedInt();
+ 			if (ifd[0] == 0) {
+ 				// imageIndex has to be >= -1 due to check above.
+ 				if(imageIndex > 0) {
+ 						stream.seek(startPos);
+ 						throw new IndexOutOfBoundsException
+ 						("imageIndex is greater than the largest available index!");
+ 				}
+ 				return;
+ 			}
+ 			stream.seek(ifd[0]);
+
+ 			for (int i = 0; imageIndex == -1 || i < imageIndex; i++) {
+ 					int numFields;
+ 					try {
+ 						numFields = stream.readShort();
+ 					} catch (EOFException eof) {
+ 						stream.seek(startPos);
+ 						ifd[0] = 0;
+ 						return;
+ 					  }
+ 					stream.skipBytes(12*numFields);
+
+ 					ifdpos[0] = stream.getStreamPosition();
+ 					ifd[0] = stream.readUnsignedInt();
+ 					if (ifd[0] == 0) {
+ 							if (imageIndex != -1 && i < imageIndex - 1) {
+ 									stream.seek(startPos);
+ 									throw new IndexOutOfBoundsException(
+ 									"imageIndex is greater than the largest available index!");
+ 							}
+ 							break;
+ 					}
+ 					stream.seek(ifd[0]);
+ 			}
+ 	}
+    else {
+		short eight = stream.readShort();
+		short zero = stream.readShort();
+			ifdpos[0] = stream.getStreamPosition();
+			ifd[0] = stream.readLong();
+			if (ifd[0] == 0) {
+				// imageIndex has to be >= -1 due to check above.
+				if(imageIndex > 0) {
+					stream.seek(startPos);
+					throw new IndexOutOfBoundsException
                     ("imageIndex is greater than the largest available index!");
-            }
-            return;
-        }
-	stream.seek(ifd[0]);
+				}
+				return;
+			}
+			stream.seek(ifd[0]);
 
-	for (int i = 0; imageIndex == -1 || i < imageIndex; i++) {
-            int numFields;
-            try {
-                numFields = stream.readShort();
-            } catch (EOFException eof) {
+			for (int i = 0; imageIndex == -1 || i < imageIndex; i++) {
+				long numFields;
+				try {
+					numFields = stream.readLong();
+				} catch (EOFException eof) {
                 stream.seek(startPos);
                 ifd[0] = 0;
                 return;
-            }
+				}
 
-            stream.skipBytes(12*numFields);
-
-	    ifdpos[0] = stream.getStreamPosition();
-	    ifd[0] = stream.readUnsignedInt();
-	    if (ifd[0] == 0) {
-		if (imageIndex != -1 && i < imageIndex - 1) {
-                    stream.seek(startPos);
-		    throw new IndexOutOfBoundsException(
-                    "imageIndex is greater than the largest available index!");
-		}
-		break;
-	    }
-	    stream.seek(ifd[0]);
-	}
+				stream.skipBytes(20*numFields);
+	
+	            ifdpos[0] = stream.getStreamPosition();
+	            ifd[0] = stream.readLong();
+	            if (ifd[0] == 0) {
+	            	if (imageIndex != -1 && i < imageIndex - 1) {
+	            		stream.seek(startPos);
+	            		throw new IndexOutOfBoundsException(
+	            		"imageIndex is greater than the largest available index!");
+	            	}
+	            	break;
+	            }
+	            stream.seek(ifd[0]);
+			}
     }
+ }	
+ 
+	
 
     public void writeInsert(int imageIndex,
                             IIOImage image,
@@ -3049,17 +3146,25 @@ public class TIFFImageWriter extends ImageWriter {
 	stream.seek(ifdpos[0]);
 
         // Update next space pointer in anticipation of next write.
-        if(ifdpos[0] + 4 > nextSpace) {
-            nextSpace = ifdpos[0] + 4;
-        }
+		if (!isBtiff) {
+	        // Update next space pointer in anticipation of next write.
+	        if(ifdpos[0] + 4 > nextSpace) {
+	            nextSpace = ifdpos[0] + 4;
+	        }			
+			nextSpace = (nextSpace + 3) & ~0x3;
+			stream.writeInt((int) nextSpace);
 
-        // Ensure IFD is written on a word boundary
-        nextSpace = (nextSpace + 3) & ~0x3;
+		} else {
+	        // Update next space pointer in anticipation of next write.
+	        if(ifdpos[0] + 8 > nextSpace) {
+	            nextSpace = ifdpos[0] + 8;
+	        }
+			nextSpace = (nextSpace + 7) & ~0x7;
+			stream.writeLong(nextSpace);
+		}
 
-        // Update the value to point to the next available space.
-	stream.writeInt((int)nextSpace);
 
-        // Seek to the next available space.
+    // Seek to the next available space.
 	stream.seek(nextSpace);
 
         // Write the image (IFD and data).

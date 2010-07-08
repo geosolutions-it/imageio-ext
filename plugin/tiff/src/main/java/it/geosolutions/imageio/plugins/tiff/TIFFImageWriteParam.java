@@ -200,8 +200,18 @@ public class TIFFImageWriteParam extends ImageWriteParam {
     int photometricInterpretation;
 
     private boolean appendedCompressionType = false;
+    
+    private boolean forceToBigTIFF = false;
 
-    /**
+    public boolean isForceToBigTIFF() {
+		return forceToBigTIFF;
+	}
+
+	public void setForceToBigTIFF(boolean forceToBigTIFF) {
+		this.forceToBigTIFF = forceToBigTIFF;
+	}
+
+	/**
      * Constructs a <code>TIFFImageWriteParam</code> instance
      * for a given <code>Locale</code>.
      *
@@ -213,6 +223,7 @@ public class TIFFImageWriteParam extends ImageWriteParam {
         this.canWriteCompressed = true;
         this.canWriteTiles = true;
         this.compressionTypes = TIFFImageWriter.TIFFCompressionTypes;
+        this.forceToBigTIFF = false;
     };
 
     public boolean isCompressionLossless() {

@@ -115,7 +115,13 @@ public class TIFFImageReader extends ImageReader {
 	
 	private static final boolean DEBUG = false; // XXX 'false' for release!!!
 
-    // The current ImageInputStream source.
+
+	private int magic = -1;
+	
+	private boolean isBTIFF = false;
+	
+	
+	// The current ImageInputStream source.
     ImageInputStream stream = null;
 
     // True if the file header has been read.
@@ -135,7 +141,7 @@ public class TIFFImageReader extends ImageReader {
     // A <code>List</code> of <code>Long</code>s indicating the stream
     // positions of the start of the IFD for each image.  Entries
     // are added as needed.
-    List imageStartPosition = new ArrayList();
+    List<Long> imageStartPosition = new ArrayList<Long>();
 
     // The number of images in the stream, if known, otherwise -1.
     int numImages = -1;
@@ -231,17 +237,46 @@ public class TIFFImageReader extends ImageReader {
                 streamMetadata.byteOrder = ByteOrder.LITTLE_ENDIAN;
                 stream.setByteOrder(ByteOrder.LITTLE_ENDIAN);
             }
-            
-            int magic = stream.readUnsignedShort();
-            if (magic != 42) {
+          
+            magic = stream.readUnsignedShort();
+            if (magic != 42 && magic != 43) {
                 processWarningOccurred(
                                      "Bad magic number in header, continuing");
             }
             
+            if (magic == 43)
+            	isBTIFF=true;
+            else 
+            	isBTIFF=false;
+            
             // Seek to start of first IFD
-            long offset = stream.readUnsignedInt();
-            imageStartPosition.add(new Long(offset));
-            stream.seek(offset);
+            long offset = -1;
+            
+            switch(magic) {
+            case 42:
+            	offset = stream.readUnsignedInt();
+                break;
+            case 43:
+            	int alwaysEight = stream.readUnsignedShort();
+            	if (alwaysEight != 8){
+            		processWarningOccurred("No BigTiff file format");
+            	}
+            	int alwaysZero = stream.readUnsignedShort();
+            	if (alwaysZero != 0){
+            		processWarningOccurred("No BigTiff file format");
+            	}
+            	
+            	offset = stream.readLong();
+            	break;
+            }
+ 
+            if (offset >= 0) {
+            	imageStartPosition.add(Long.valueOf(offset));
+            	stream.seek(offset);
+            } else {
+            	processWarningOccurred("Error calculating offset");
+            	     }
+            
         } catch (IOException e) {
             throw new IIOException("I/O error reading header!", e);
         }
@@ -257,11 +292,13 @@ public class TIFFImageReader extends ImageReader {
             int index = Math.min(imageIndex, imageStartPosition.size() - 1);
 
             // Seek to that position
-            Long l = (Long)imageStartPosition.get(index);
-            stream.seek(l.longValue());
+            long l = imageStartPosition.get(index);
+            stream.seek(l);
 
             // Skip IFDs until at desired index or last image found
-            while (index < imageIndex) {
+            switch(magic) {
+            case 42:
+            	while (index < imageIndex) {
                 int count = stream.readUnsignedShort();
                 stream.skipBytes(12*count);
 
@@ -270,9 +307,27 @@ public class TIFFImageReader extends ImageReader {
                     return index;
                 }
                 
-                imageStartPosition.add(new Long(offset));
+                imageStartPosition.add(Long.valueOf(offset));
                 stream.seek(offset);
                 ++index;
+            }
+                break;
+            
+            case 43:
+            	while (index < imageIndex) {
+                    long count = stream.readLong();
+                    stream.skipBytes(20*count);
+
+                    long offset = stream.readLong();
+                    if (offset == 0) {
+                        return index;
+                    }
+                    
+                    imageStartPosition.add(Long.valueOf(offset));
+                    stream.seek(offset);
+                    ++index;
+                }
+            	break;
             }
         } catch (IOException e) {
             throw new IIOException("Couldn't seek!", e);
@@ -355,7 +410,7 @@ public class TIFFImageReader extends ImageReader {
             }
 
             this.imageMetadata = new TIFFImageMetadata(tagSets);
-            imageMetadata.initializeFromStream(stream, ignoreMetadata);
+            imageMetadata.initializeFromStream(stream, ignoreMetadata, isBTIFF);
         } catch (IIOException iioe) {
             throw iioe;
         } catch (IOException ioe) {
@@ -750,7 +805,7 @@ public class TIFFImageReader extends ImageReader {
     public Iterator getImageTypes(int imageIndex) throws IIOException {
         List l; // List of ImageTypeSpecifiers
 
-        Integer imageIndexInteger = new Integer(imageIndex);
+        Integer imageIndexInteger = Integer.valueOf(imageIndex);
         if(imageTypeMap.containsKey(imageIndexInteger)) {
             // Return the cached ITS List.
             l = (List)imageTypeMap.get(imageIndexInteger);

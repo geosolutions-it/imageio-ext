@@ -87,9 +87,9 @@ import com.sun.media.imageioimpl.common.PackageUtil;
 
 public class TIFFImageWriterSpi extends ImageWriterSpi {
 
-    private static final String[] names = { "tif", "TIF", "tiff", "TIFF" };
+    private static final String[] names = { "tif", "TIF", "tiff", "TIFF", "btiff", "BTIFF" };
 
-    private static final String[] suffixes = { "tif", "tiff" };
+    private static final String[] suffixes = { "tif", "tiff", "tf8", "btf", "TIF", "TIFF", "TF8", "BTF" };
 
     private static final String[] MIMETypes = { "image/tiff" };
 

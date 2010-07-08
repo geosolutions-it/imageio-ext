@@ -1816,7 +1816,9 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
             super("StripByteCounts",
                   TAG_STRIP_BYTE_COUNTS,
                   (1 << TIFF_SHORT) |
-                  (1 << TIFF_LONG));
+                  (1 << TIFF_LONG) |
+                  (1 << TIFF_LONG8)
+                  );
         }
     }
 
@@ -1828,7 +1830,9 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
             super("StripOffsets",
                   TAG_STRIP_OFFSETS,
                   (1 << TIFF_SHORT) |
-                  (1 << TIFF_LONG));
+                  (1 << TIFF_LONG) |
+                  (1 << TIFF_LONG8)
+                  );
         }
     }
 
@@ -1931,7 +1935,9 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
             super("TileByteCounts",
                   TAG_TILE_BYTE_COUNTS,
                   (1 << TIFF_SHORT) |
-                  (1 << TIFF_LONG));
+                  (1 << TIFF_LONG) |
+                  (1 << TIFF_LONG8)
+                  );
         }
     }
 
@@ -1942,7 +1948,9 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
         public TileOffsets() {
             super("TileOffsets",
                   TAG_TILE_OFFSETS,
-                  1 << TIFF_LONG);
+                  (1 << TIFF_LONG) |
+                  (1 << TIFF_LONG8)
+                  );
         }
     }
 
