@@ -167,62 +167,65 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
             final String formatClassName) {
         super(false, formatName, formatClassName, null, null);
         setDatasetName(name);
-        if (dataset == null)
+        if (dataset == null) {
             return;
+        }
         setDatasetDescription(dataset.GetDescription());
         Driver driver = null;
-	    try {
-	        driver = dataset.GetDriver();
-        if (driver != null) {
-            setDriverDescription(driver.GetDescription());
-            setDriverName(driver.getShortName());
-        }
-        gdalDomainMetadataMap = Collections.synchronizedMap(new HashMap());
+        try {
+            driver = dataset.GetDriver();
+            if (driver != null) {
+                setDriverDescription(driver.GetDescription());
+                setDriverName(driver.getShortName());
+            }
+            gdalDomainMetadataMap = Collections.synchronizedMap(new HashMap());
 
-        // //
-        //
-        // Getting Metadata from Default domain and Image_structure domain
-        //
-        // //
-        Map defMap = dataset .GetMetadata_Dict(GDALUtilities.GDALMetadataDomain.DEFAULT);
-        if (defMap != null && defMap.size() > 0)
-            gdalDomainMetadataMap.put(GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP, defMap);
+            // //
+            //
+            // Getting Metadata from Default domain and Image_structure domain
+            //
+            // //
+            final Map defMap = dataset.GetMetadata_Dict(GDALUtilities.GDALMetadataDomain.DEFAULT);
+            if (defMap != null && defMap.size() > 0) {
+                gdalDomainMetadataMap.put(GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP, defMap);
+            }
 
-        Map imageStMap = dataset.GetMetadata_Dict(GDALUtilities.GDALMetadataDomain.IMAGESTRUCTURE);
-        if (imageStMap != null && imageStMap.size() > 0)
-            gdalDomainMetadataMap.put(GDALUtilities.GDALMetadataDomain.IMAGESTRUCTURE,imageStMap);
+            final Map imageStMap = dataset.GetMetadata_Dict(GDALUtilities.GDALMetadataDomain.IMAGESTRUCTURE);
+            if (imageStMap != null && imageStMap.size() > 0) {
+                gdalDomainMetadataMap.put(GDALUtilities.GDALMetadataDomain.IMAGESTRUCTURE, imageStMap);
+            }
 
-        // //
-        //
-        // Initializing member if needed
-        //
-        // //
-        if (initializationRequired)
-            setMembers(dataset);
-        setGeoreferencingInfo(dataset);
-        // clean up data set in order to avoid keeping them around for a lot
-        // of time.
-	    } finally {
-	    	if (driver != null){
-	    		try{
+            // //
+            //
+            // Initializing member if needed
+            //
+            // //
+            if (initializationRequired) {
+                setMembers(dataset);
+            }
+            setGeoreferencingInfo(dataset);
+            // clean up data set in order to avoid keeping them around for a lot
+            // of time.
+        } finally {
+            if (driver != null) {
+                try {
                     // Closing the driver
-	    			driver.delete();
-        		}catch (Throwable e) {
-					if(LOGGER.isLoggable(Level.FINEST))
-						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
-				}
-	    	}
-	    	if (dataset != null){
-	    		try{
+                    driver.delete();
+                } catch (Throwable e) {
+                    if (LOGGER.isLoggable(Level.FINEST))
+                        LOGGER.log(Level.FINEST, e.getLocalizedMessage(), e);
+                }
+            }
+            if (dataset != null) {
+                try {
                     // Closing the dataset
-        			GDALUtilities.closeDataSet(dataset);
-        		}catch (Throwable e) {
-					if(LOGGER.isLoggable(Level.FINEST))
-						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
-				}
-	    	}
-	    }
-	        
+                    GDALUtilities.closeDataSet(dataset);
+                } catch (Throwable e) {
+                    if (LOGGER.isLoggable(Level.FINEST))
+                        LOGGER.log(Level.FINEST, e.getLocalizedMessage(), e);
+                }
+            }
+        }
     }
 
     /**
@@ -300,174 +303,172 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
         // Remember: RasterBand numeration starts from 1
         Band rband = null;
         try {
-        	rband = dataset.GetRasterBand(1); 
-        	rband.GetBlockSize(xBlockSize, yBlockSize);
+            rband = dataset.GetRasterBand(1);
+            rband.GetBlockSize(xBlockSize, yBlockSize);
 
-        final int tileHeight = yBlockSize[0];
-        final int tileWidth = xBlockSize[0];
-        setTileHeight(tileHeight);
-        setTileWidth(tileWidth);
-        if (((long) tileHeight) * ((long) tileWidth) > Integer.MAX_VALUE)
-            performTileSizeTuning(dataset);
+            final int tileHeight = yBlockSize[0];
+            final int tileWidth = xBlockSize[0];
+            setTileHeight(tileHeight);
+            setTileWidth(tileWidth);
+            if (((long) tileHeight) * ((long) tileWidth) > Integer.MAX_VALUE) {
+                performTileSizeTuning(dataset);
+            }
 
-        // /////////////////////////////////////////////////////////////////
-        //
-        // Getting dataset main properties
-        //
-        // /////////////////////////////////////////////////////////////////
-        final int numBands = dataset.getRasterCount();
-        setNumBands(numBands);
-        if (numBands <= 0)
-            return false;
-        // final int xsize = dataset.getRasterXSize();
-        // final int ysize = dataset.getRasterYSize();
+            // /////////////////////////////////////////////////////////////////
+            //
+            // Getting dataset main properties
+            //
+            // /////////////////////////////////////////////////////////////////
+            final int numBands = dataset.getRasterCount();
+            setNumBands(numBands);
+            if (numBands <= 0) {
+                return false;
+            }
 
-        // If the image is very big, its size expressed as the number of
-        // bytes needed to store pixels, may be a negative number
-        final int tileSize = tileWidth
-                * tileHeight
-                * numBands
-	            * (gdal.GetDataTypeSize(rband.getDataType()) / 8);
+            // If the image is very big, its size expressed as the number of
+            // bytes needed to store pixels, may be a negative number
+            final int tileSize = tileWidth * tileHeight * numBands
+                    * (gdal.GetDataTypeSize(rband.getDataType()) / 8);
 
-        // bands variables
-        final int[] banks = new int[numBands];
-        final int[] offsetsR = new int[numBands];
-        final Double[] noDataValues = new Double[numBands];
-        final Double[] scales = new Double[numBands];
-        final Double[] offsets = new Double[numBands];
-        final Double[] minimums = new Double[numBands];
-        final Double[] maximums = new Double[numBands];
-        final int[] numOverviews = new int[numBands];
-        final int[] colorInterpretations = new int[numBands];
-        int buf_type = 0;
+            // bands variables
+            final int[] banks = new int[numBands];
+            final int[] offsetsR = new int[numBands];
+            final Double[] noDataValues = new Double[numBands];
+            final Double[] scales = new Double[numBands];
+            final Double[] offsets = new Double[numBands];
+            final Double[] minimums = new Double[numBands];
+            final Double[] maximums = new Double[numBands];
+            final int[] numOverviews = new int[numBands];
+            final int[] colorInterpretations = new int[numBands];
+            int buf_type = 0;
 
-        Band pBand = null;
+            Band pBand = null;
 
-        // scanning bands
-        final Double tempD[] = new Double[1];
-        final int bandsOffset[] = new int[numBands];
-        for (int band = 0; band < numBands; band++) {
-            /* Bands are not 0-base indexed, so we must add 1 */
-	            try {
-            pBand = dataset.GetRasterBand(band + 1);
-            buf_type = pBand.getDataType();
-            banks[band] = band;
-            offsetsR[band] = 0;
-            pBand.GetNoDataValue(tempD);
-            noDataValues[band] = tempD[0];
-            pBand.GetOffset(tempD);
-            offsets[band] = tempD[0];
-            pBand.GetScale(tempD);
-            scales[band] = tempD[0];
-            pBand.GetMinimum(tempD);
-            minimums[band] = tempD[0];
-            pBand.GetMaximum(tempD);
-            maximums[band] = tempD[0];
-            colorInterpretations[band] = pBand.GetRasterColorInterpretation();
-            numOverviews[band] = pBand.GetOverviewCount();
-            bandsOffset[band] = band;
-	            } finally {
-	            	if (pBand != null){
-	            		try{
-	                        // Closing the band
-	            			pBand.delete();
-	            		}catch (Throwable e) {
-	    					if(LOGGER.isLoggable(Level.FINEST))
-	    						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
-	    				}
-	            	}
-	            }
-        }
-        setNoDataValues(noDataValues);
-        setScales(scales);
-        setOffsets(offsets);
-        setMinimums(minimums);
-        setMaximums(maximums);
-        setNumOverviews(numOverviews);
-        setColorInterpretations(colorInterpretations);
+            // scanning bands
+            final Double tempD[] = new Double[1];
+            final int bandsOffset[] = new int[numBands];
+            for (int band = 0; band < numBands; band++) {
+                /* Bands are not 0-base indexed, so we must add 1 */
+                try {
+                    pBand = dataset.GetRasterBand(band + 1);
+                    buf_type = pBand.getDataType();
+                    banks[band] = band;
+                    offsetsR[band] = 0;
+                    pBand.GetNoDataValue(tempD);
+                    noDataValues[band] = tempD[0];
+                    pBand.GetOffset(tempD);
+                    offsets[band] = tempD[0];
+                    pBand.GetScale(tempD);
+                    scales[band] = tempD[0];
+                    pBand.GetMinimum(tempD);
+                    minimums[band] = tempD[0];
+                    pBand.GetMaximum(tempD);
+                    maximums[band] = tempD[0];
+                    colorInterpretations[band] = pBand.GetRasterColorInterpretation();
+                    numOverviews[band] = pBand.GetOverviewCount();
+                    bandsOffset[band] = band;
+                } finally {
+                    if (pBand != null) {
+                        try {
+                            // Closing the band
+                            pBand.delete();
+                        } catch (Throwable e) {
+                            if (LOGGER.isLoggable(Level.FINEST))
+                                LOGGER.log(Level.FINEST, e.getLocalizedMessage(), e);
+                        }
+                    }
+                }
+            }
+            setNoDataValues(noDataValues);
+            setScales(scales);
+            setOffsets(offsets);
+            setMinimums(minimums);
+            setMaximums(maximums);
+            setNumOverviews(numOverviews);
+            setColorInterpretations(colorInterpretations);
 
-        // /////////////////////////////////////////////////////////////////
-        //
-        // Variable used to specify the data type for the storing samples
-        // of the SampleModel
-        //
-        // /////////////////////////////////////////////////////////////////
-        int buffer_type = 0;
-        if (buf_type == gdalconstConstants.GDT_Byte)
-            buffer_type = DataBuffer.TYPE_BYTE;
-        else if (buf_type == gdalconstConstants.GDT_UInt16)
-            buffer_type = DataBuffer.TYPE_USHORT;
-        else if (buf_type == gdalconstConstants.GDT_Int16)
-            buffer_type = DataBuffer.TYPE_SHORT;
-        else if ((buf_type == gdalconstConstants.GDT_Int32)
-                || (buf_type == gdalconstConstants.GDT_UInt32))
-            buffer_type = DataBuffer.TYPE_INT;
-        else if (buf_type == gdalconstConstants.GDT_Float32)
-            buffer_type = DataBuffer.TYPE_FLOAT;
-        else if (buf_type == gdalconstConstants.GDT_Float64)
-            buffer_type = DataBuffer.TYPE_DOUBLE;
-        else
-            return false;
+            // /////////////////////////////////////////////////////////////////
+            //
+            // Variable used to specify the data type for the storing samples
+            // of the SampleModel
+            //
+            // /////////////////////////////////////////////////////////////////
+            int buffer_type = 0;
+            if (buf_type == gdalconstConstants.GDT_Byte)
+                buffer_type = DataBuffer.TYPE_BYTE;
+            else if (buf_type == gdalconstConstants.GDT_UInt16)
+                buffer_type = DataBuffer.TYPE_USHORT;
+            else if (buf_type == gdalconstConstants.GDT_Int16)
+                buffer_type = DataBuffer.TYPE_SHORT;
+            else if ((buf_type == gdalconstConstants.GDT_Int32)
+                    || (buf_type == gdalconstConstants.GDT_UInt32))
+                buffer_type = DataBuffer.TYPE_INT;
+            else if (buf_type == gdalconstConstants.GDT_Float32)
+                buffer_type = DataBuffer.TYPE_FLOAT;
+            else if (buf_type == gdalconstConstants.GDT_Float64)
+                buffer_type = DataBuffer.TYPE_DOUBLE;
+            else
+                return false;
 
-        // //
-        //
-        // Setting the Sample Model
-        //
-        // Here you have a nice trick. If you check the SampleMOdel class
-        // you'll see that there is an actual limitation on the width and
-        // height of an image that we can create that is it the product
-        // width*height cannot be bigger than the maximum integer.
-        //
-        // Well a way to pass beyond that is to use TileWidth and TileHeight
-        // instead of the real width and height when creating the sample
-        // model. It will work!
-        //
-        // //
-        if (tileSize < 0)
-            setSampleModel(new BandedSampleModel(buffer_type, tileWidth,
-                    tileHeight, tileWidth, banks, offsetsR));
-        else
-            setSampleModel(new PixelInterleavedSampleModel(buffer_type,
-                    tileWidth, tileHeight, numBands, tileWidth * numBands,
-                    bandsOffset));
+            // //
+            //
+            // Setting the Sample Model
+            //
+            // Here you have a nice trick. If you check the SampleMOdel class
+            // you'll see that there is an actual limitation on the width and
+            // height of an image that we can create that is it the product
+            // width*height cannot be bigger than the maximum integer.
+            //
+            // Well a way to pass beyond that is to use TileWidth and TileHeight
+            // instead of the real width and height when creating the sample
+            // model. It will work!
+            //
+            // //
+            if (tileSize < 0)
+                setSampleModel(new BandedSampleModel(buffer_type, tileWidth,
+                        tileHeight, tileWidth, banks, offsetsR));
+            else
+                setSampleModel(new PixelInterleavedSampleModel(buffer_type,
+                        tileWidth, tileHeight, numBands, tileWidth * numBands,
+                        bandsOffset));
 
-        // //
-        //
-        // Setting the Color Model
-        //
-        // //
-        if (colorInterpretations[0] == gdalconstConstants.GCI_PaletteIndex) {
-	        	ColorTable ct = null;
-	        	try {
-	            	ct = rband.GetRasterColorTable();
-		            IndexColorModel icm = ct.getIndexColorModel(gdal.GetDataTypeSize(buf_type));
-		            setColorModel(icm);
-	            } finally {
-	            	if (ct != null){
-	            		try{
-	                        // Closing the band
-	            			ct.delete();
-	            		}catch (Throwable e) {
-	    					if(LOGGER.isLoggable(Level.FINEST))
-	    						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
-	    				}
-	            	}
-	            }
-        } else
-            setColorModel(GDALUtilities.buildColorModel(getSampleModel()));
+            // //
+            //
+            // Setting the Color Model
+            //
+            // //
+            if (colorInterpretations[0] == gdalconstConstants.GCI_PaletteIndex) {
+                ColorTable colorTable = null;
+                try {
+                    colorTable = rband.GetRasterColorTable();
+                    IndexColorModel icm = colorTable.getIndexColorModel(gdal.GetDataTypeSize(buf_type));
+                    setColorModel(icm);
+                } finally {
+                    if (colorTable != null) {
+                        try {
+                            // Closing the band
+                            colorTable.delete();
+                        } catch (Throwable e) {
+                            if (LOGGER.isLoggable(Level.FINEST))
+                                LOGGER.log(Level.FINEST, e.getLocalizedMessage(), e);
+                        }
+                    }
+                }
+            } else
+                setColorModel(GDALUtilities.buildColorModel(getSampleModel()));
 
-        if (getColorModel() == null || getSampleModel() == null)
-            return false;
+            if (getColorModel() == null || getSampleModel() == null)
+                return false;
         } finally {
-        	if (rband != null){
-        		try{
+            if (rband != null) {
+                try {
                     // Closing the band
-        			rband.delete();
-        		}catch (Throwable e) {
-					if(LOGGER.isLoggable(Level.FINEST))
-						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
-				}
-        	}
+                    rband.delete();
+                } catch (Throwable e) {
+                    if (LOGGER.isLoggable(Level.FINEST))
+                        LOGGER.log(Level.FINEST, e.getLocalizedMessage(), e);
+                }
+            }
         }
         return true;
     }
@@ -492,10 +493,8 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
      * 
      * @see #isReadOnly()
      */
-    public void mergeTree(String formatName, Node root)
-            throws IIOInvalidTreeException {
-        throw new UnsupportedOperationException(
-                "mergeTree operation is not allowed");
+    public void mergeTree(String formatName, Node root) throws IIOInvalidTreeException {
+        throw new UnsupportedOperationException("mergeTree operation is not allowed");
     }
 
     /**
@@ -507,8 +506,7 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
      * @see #isReadOnly()
      */
     public void reset() {
-        throw new UnsupportedOperationException(
-                "reset operation is not allowed");
+        throw new UnsupportedOperationException("reset operation is not allowed");
     }
 
     /** Returns the Ground Control Points */
@@ -681,10 +679,7 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
         final ColorModel cm = this.getColorModel();
         if (cm != null) {
             if (cm instanceof IndexColorModel) {
-                // //
-                // TODO: Check this approach
-                // //
-                IndexColorModel icm = (IndexColorModel) cm;
+                final IndexColorModel icm = (IndexColorModel) cm;
                 final int mapSize = icm.getMapSize();
                 byte[] r = new byte[mapSize];
                 byte[] g = new byte[mapSize];
