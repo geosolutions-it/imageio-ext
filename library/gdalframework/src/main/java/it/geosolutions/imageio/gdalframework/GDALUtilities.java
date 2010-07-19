@@ -285,8 +285,7 @@ public final class GDALUtilities {
      * @param accessType
      * @return the acquired {@link Dataset}
      */
-    public static synchronized Dataset acquireDataSet(String name,
-            int accessType) {
+    public static synchronized Dataset acquireDataSet(String name, int accessType) {
         if (!isGDALAvailable())
             return null;
         return gdal.Open(name, accessType);

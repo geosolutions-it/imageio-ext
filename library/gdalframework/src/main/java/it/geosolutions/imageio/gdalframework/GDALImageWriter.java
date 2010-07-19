@@ -233,23 +233,20 @@ public abstract class GDALImageWriter extends ImageWriter {
         if (writingCapabilities == GDALUtilities.DriverCreateCapabilities.READ_ONLY)
             throw new IllegalStateException("This writer seems to not support either create or create copy");
         if (image == null)
-            throw new IllegalArgumentException(
-                    "The provided input image is invalid.");
+            throw new IllegalArgumentException("The provided input image is invalid.");
 
         // //
         //
         // Getting the source image and its main properties
         //
         // //
-        final PlanarImage inputRenderedImage = PlanarImage
-                .wrapRenderedImage(image.getRenderedImage());
+        final PlanarImage inputRenderedImage = PlanarImage.wrapRenderedImage(image.getRenderedImage());
         final int sourceWidth = inputRenderedImage.getWidth();
         final int sourceHeight = inputRenderedImage.getHeight();
         final int sourceMinX = inputRenderedImage.getMinX();
         final int sourceMinY = inputRenderedImage.getMinY();
-        final int dataType = GDALUtilities
-                .retrieveGDALDataBufferType(inputRenderedImage.getSampleModel()
-                        .getDataType());
+        final int dataType = GDALUtilities.retrieveGDALDataBufferType(
+                inputRenderedImage.getSampleModel().getDataType());
         final int nBands = inputRenderedImage.getNumBands();
 
         // //
