@@ -306,17 +306,17 @@ public final class GDALUtilities {
         final Dataset ds = acquireDataSet(dataSetName, gdalconst.GA_ReadOnly);
         final List gdalImageMetadata;
         if (ds != null) {
-        	try {
-        		gdalImageMetadata = ds.GetMetadata_List("");
-        	} finally {
-        		try{
+            try {
+                gdalImageMetadata = ds.GetMetadata_List("");
+            } finally {
+                try {
                     // Closing the dataset
-        			closeDataSet(ds);
-        		}catch (Throwable e) {
-					if(LOGGER.isLoggable(Level.FINEST))
-						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
-				}
-        	}
+                    closeDataSet(ds);
+                } catch (Throwable e) {
+                    if (LOGGER.isLoggable(Level.FINEST))
+                        LOGGER.log(Level.FINEST, e.getLocalizedMessage(), e);
+                }
+            }
         } else
             gdalImageMetadata = null;
         return gdalImageMetadata;

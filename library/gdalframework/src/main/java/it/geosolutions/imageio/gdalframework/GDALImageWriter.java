@@ -292,130 +292,131 @@ public abstract class GDALImageWriter extends ImageWriter {
         // /////////////////////////////////////////////////////////////////////
         Dataset writeDataset = null;
         Driver driver = null;
-        try{
-        // TODO: send some warning when setting georeferencing or size
-        // properties, if cropping or sourceregion has been defined.
+        try {
+            // TODO: send some warning when setting georeferencing or size
+            // properties, if cropping or sourceregion has been defined.
 
-        if (writingCapabilities == GDALUtilities.DriverCreateCapabilities.CREATE) {
-            // /////////////////////////////////////////////////////////////////
-            //
-            // Create is supported
-            // -------------------
-            //
-            // /////////////////////////////////////////////////////////////////
+            if (writingCapabilities == GDALUtilities.DriverCreateCapabilities.CREATE) {
+                // /////////////////////////////////////////////////////////////////
+                //
+                // Create is supported
+                // -------------------
+                //
+                // /////////////////////////////////////////////////////////////////
 
-            // Retrieving the file name.
-            final String fileName = outputFile.getAbsolutePath();
+                // Retrieving the file name.
+                final String fileName = outputFile.getAbsolutePath();
 
-            // //
-            //
-            // Dataset creation
-            //
-            // //
-	            driver = gdal.GetDriverByName(driverName);
-            writeDataset = driver.Create(fileName, destinationWidth,
-                    destinationHeight, nBands, dataType, myOptions);
+                // //
+                //
+                // Dataset creation
+                //
+                // //
+                driver = gdal.GetDriverByName(driverName);
+                writeDataset = driver.Create(fileName, destinationWidth, destinationHeight, nBands, dataType, myOptions);
 
-            // //
-            //
-            // Data Writing
-            //
-            // //
-            writeDataset = writeData(writeDataset, inputRenderedImage,
-                    imageBounds, nBands, dataType, xSubsamplingFactor,
-                    ySubsamplingFactor);
+                // //
+                //
+                // Data Writing
+                //
+                // //
+                writeDataset = writeData(writeDataset, inputRenderedImage, imageBounds, nBands, 
+                        dataType, xSubsamplingFactor, ySubsamplingFactor);
 
-            // //
-            //
-            // Metadata Setting
-            //
-            // //
-            if (imageMetadata != null) {
-                setMetadata(writeDataset, imageMetadata);
+                // //
+                //
+                // Metadata Setting
+                //
+                // //
+                if (imageMetadata != null) {
+                    setMetadata(writeDataset, imageMetadata);
+                }
+            } else {
+
+                // ////////////////////////////////////////////////////////////////
+                //
+                // Only CreateCopy is supported
+                // ----------------------------------------------------------------
+                //
+                // First of all, it is worth to point out that CreateCopy method
+                // allows to create a File from an existing Dataset.
+                // ////////////////////////////////////////////////////////////////
+
+                driver = gdal.GetDriverByName(driverName);
+                // //
+                //
+                // Temporary Dataset creation from the originating image
+                //
+                // //
+                final File tempFile = File.createTempFile("datasetTemp", ".ds", null);
+                Dataset tempDataset = null;
+                try {
+                    tempDataset = createDatasetFromImage(inputRenderedImage,
+                            tempFile.getAbsolutePath(), imageBounds, nBands,
+                            dataType, destinationWidth, destinationHeight,
+                            xSubsamplingFactor, ySubsamplingFactor);
+                    tempDataset.FlushCache();
+
+                    // //
+                    //
+                    // Metadata Setting on the temporary dataset since setting
+                    // metadata
+                    // with createCopy is not supported
+                    //
+                    // //
+                    if (imageMetadata != null) {
+                        setMetadata(tempDataset, imageMetadata);
+                    }
+
+                    // //
+                    //
+                    // Copy back the temporary dataset to the requested dataset
+                    //
+                    // //
+                    writeDataset = driver.CreateCopy(outputFile.getPath(), tempDataset, 0, myOptions);
+                } finally {
+                    if (tempDataset != null) {
+                        try {
+                            // Closing the dataset
+                            GDALUtilities.closeDataSet(tempDataset);
+                        } catch (Throwable e) {
+                            if (LOGGER.isLoggable(Level.FINEST)) {
+                                LOGGER.log(Level.FINEST, e.getLocalizedMessage(), e);
+                            }
+                        }
+                    }
+                }
+                tempFile.delete();
             }
-        } else {
-
-            // ////////////////////////////////////////////////////////////////
-            //
-            // Only CreateCopy is supported
-            // ----------------------------------------------------------------
-            //
-            // First of all, it is worth to point out that CreateCopy method
-            // allows to create a File from an existing Dataset.
-            // ////////////////////////////////////////////////////////////////
-
-	            driver = gdal.GetDriverByName(driverName);
-            // //
-            //
-            // Temporary Dataset creation from the originating image
-            //
-            // //
-	        final File tempFile = File.createTempFile("datasetTemp", ".ds", null);
-	        Dataset tempDataset = null; 
-		    try{
-		        	tempDataset = createDatasetFromImage(
-                    inputRenderedImage, tempFile.getAbsolutePath(),
-                    imageBounds, nBands, dataType, destinationWidth,
-                    destinationHeight, xSubsamplingFactor, ySubsamplingFactor);
-            tempDataset.FlushCache();
 
             // //
             //
-            // Metadata Setting on the temporary dataset since setting metadata
-            // with createCopy is not supported
+            // Flushing and closing dataset
             //
             // //
-            if (imageMetadata != null) {
-                setMetadata(tempDataset, imageMetadata);
-            }
-
-            // //
-            //
-            // Copy back the temporary dataset to the requested dataset
-            //
-            // //
-            writeDataset = driver.CreateCopy(outputFile.getPath(), tempDataset,
-                    0, myOptions);
-		        } finally {
-		        	if (tempDataset != null){
-		        		try{
-		                    // Closing the dataset
-		        			GDALUtilities.closeDataSet(tempDataset);
-		        		}catch (Throwable e) {
-							if(LOGGER.isLoggable(Level.FINEST))
-								LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
-						}
-		        	}
-		        }
-            tempFile.delete();
-        }
-
-        // //
-        //
-        // Flushing and closing dataset
-        //
-        // //
-        writeDataset.FlushCache();
-        } finally{
-        	if (writeDataset != null){
-        		try{
+            writeDataset.FlushCache();
+        } finally {
+            if (writeDataset != null) {
+                try {
                     // Closing the dataset
-        			GDALUtilities.closeDataSet(writeDataset);
-        		}catch (Throwable e) {
-					if(LOGGER.isLoggable(Level.FINEST))
-						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
-				}
-        	}
-        	
-        	if (driver != null){
-	    		try{
+                    GDALUtilities.closeDataSet(writeDataset);
+                } catch (Throwable e) {
+                    if (LOGGER.isLoggable(Level.FINEST)) {
+                        LOGGER.log(Level.FINEST, e.getLocalizedMessage(), e);
+                    }
+                }
+            }
+
+            if (driver != null) {
+                try {
                     // Closing the driver
-	    			driver.delete();
-        		}catch (Throwable e) {
-					if(LOGGER.isLoggable(Level.FINEST))
-						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
-				}
-	    	}
+                    driver.delete();
+                } catch (Throwable e) {
+                    if (LOGGER.isLoggable(Level.FINEST)) {
+                        LOGGER.log(Level.FINEST, e.getLocalizedMessage(), e);
+                    }
+                }
+            }
         }
     }
 
@@ -441,8 +442,9 @@ public abstract class GDALImageWriter extends ImageWriter {
         //
         // //
         final double[] geoTransformation = imageMetadata.getGeoTransformation();
-        if (geoTransformation != null)
+        if (geoTransformation != null) {
             dataset.SetGeoTransform(geoTransformation);
+        }
 
         // //
         //
@@ -450,8 +452,9 @@ public abstract class GDALImageWriter extends ImageWriter {
         //
         // //
         final String projection = imageMetadata.getProjection();
-        if (projection != null && projection.trim().length() != 0)
+        if (projection != null && projection.trim().length() != 0) {
             dataset.SetProjection(projection);
+        }
 
         // //
         //
@@ -476,8 +479,7 @@ public abstract class GDALImageWriter extends ImageWriter {
         final int nBands = imageMetadata.getNumBands();
         for (int i = 0; i < nBands; i++) {
             final Band band = dataset.GetRasterBand(i + 1);
-            final int colorInterpretation = imageMetadata
-                    .getColorInterpretations(i);
+            final int colorInterpretation = imageMetadata.getColorInterpretations(i);
             band.SetRasterColorInterpretation(colorInterpretation);
             if (i == 0 && nBands == 1) {
 
@@ -487,7 +489,7 @@ public abstract class GDALImageWriter extends ImageWriter {
                 //
                 // //
                 if (colorInterpretation == gdalconstConstants.GCI_PaletteIndex) {
-                    ColorModel cm = imageMetadata.getColorModel();
+                    final ColorModel cm = imageMetadata.getColorModel();
                     if (cm instanceof IndexColorModel) {
                         IndexColorModel icm = (IndexColorModel) cm;
 
@@ -497,12 +499,12 @@ public abstract class GDALImageWriter extends ImageWriter {
                         //
                         // //
                         final int size = icm.getMapSize();
-                        ColorTable ct = new ColorTable(
-                                gdalconstConstants.GPI_RGB);
+                        ColorTable colorTable = new ColorTable(gdalconstConstants.GPI_RGB);
                         int j = 0;
-                        for (; j < size; j++)
-                            ct.SetColorEntry(j, new Color(icm.getRGB(j)));
-                        band.SetRasterColorTable(ct);
+                        for (; j < size; j++) {
+                            colorTable.SetColorEntry(j, new Color(icm.getRGB(j)));
+                        }
+                        band.SetRasterColorTable(colorTable);
                     }
                 }
             }
@@ -562,10 +564,8 @@ public abstract class GDALImageWriter extends ImageWriter {
      * TODO: minimize JNI calls by filling the databuffer before calling
      * writeDirect
      */
-    private Dataset writeData(Dataset dataset,
-            RenderedImage inputRenderedImage, final Rectangle sourceRegion,
-            final int nBands, final int dataType, int xSubsamplingFactor,
-            int ySubsamplingFactor) {
+    private Dataset writeData(Dataset dataset, RenderedImage inputRenderedImage, final Rectangle sourceRegion, 
+            final int nBands, final int dataType, int xSubsamplingFactor, int ySubsamplingFactor) {
         final int typeSizeInBytes = gdal.GetDataTypeSize(dataType) / 8;
 
         // ////////////////////////////////////////////////////////////////////
@@ -620,8 +620,7 @@ public abstract class GDALImageWriter extends ImageWriter {
         // splitBands = false -> I read n Bands at once.
         // splitBands = true -> I need to read 1 Band at a time.
         boolean splitBands = false;
-        final boolean isSubSampled = ySubsamplingFactor > 1
-                || xSubsamplingFactor > 1;
+        final boolean isSubSampled = ySubsamplingFactor > 1 || xSubsamplingFactor > 1;
         int dstWidth = 0;
         int dstHeight = 0;
         int xOff = 0;
@@ -675,11 +674,11 @@ public abstract class GDALImageWriter extends ImageWriter {
                         // SrcRegion X Offset is contained in the current tile
                         // I need to update the Offset X
                         offsetX = srcRegionXOffset;
-                        if (srcRegionXEnd <= maxx)
-                            newWidth = srcRegionWidth; // Tile is wider than
-                        // the sourceRegion
-                        else
+                        if (srcRegionXEnd <= maxx) {
+                            newWidth = srcRegionWidth; // Tile is wider than the sourceRegion
+                        } else {
                             newWidth = tileW - (offsetX - minx);
+                        }
                     }
                 } else if (minx >= srcRegionXEnd)
                     break; // Tile is outside the sourceRegion
@@ -694,11 +693,11 @@ public abstract class GDALImageWriter extends ImageWriter {
                         // SrcRegion Y Offset is contained in the current tile
                         // I need to update the Offset Y
                         offsetY = srcRegionYOffset;
-                        if (srcRegionYEnd <= maxy)
-                            newHeight = srcRegionHeight;// Tile is higher than
-                        // the sourceRegion
-                        else
+                        if (srcRegionYEnd <= maxy) {
+                            newHeight = srcRegionHeight;// Tile is higher than the sourceRegion
+                        } else {
                             newHeight = tileH - (offsetY - miny);
+                        }
                     }
                 } else if (miny >= srcRegionYEnd)
                     break; // Tile is outside the sourceRegion
@@ -752,15 +751,12 @@ public abstract class GDALImageWriter extends ImageWriter {
                 // ////////////////////////////////////////////////////////////////////
                 ByteBuffer[] bandsBuffer;
                 if (!isSubSampled) {
-                    bandsBuffer = getDataRegion(raster, offsetX, offsetY,
-                            endX - 1, endY - 1, dataType, nBands, splitBands,
-                            capacity);
+                    bandsBuffer = getDataRegion(raster, offsetX, offsetY, endX - 1, endY - 1, 
+                            dataType, nBands, splitBands, capacity);
                 } else
-                    bandsBuffer = getSubSampledDataRegion(raster, offsetX,
-                            offsetY, endX - 1, endY - 1, srcRegionXOffset,
-                            srcRegionYOffset, xSubsamplingFactor,
-                            ySubsamplingFactor, dataType, nBands, splitBands,
-                            capacity);
+                    bandsBuffer = getSubSampledDataRegion(raster, offsetX, offsetY, endX - 1, endY - 1, 
+                            srcRegionXOffset, srcRegionYOffset, xSubsamplingFactor, ySubsamplingFactor, 
+                            dataType, nBands, splitBands, capacity);
 
                 // ////////////////////////////////////////////////////////////////////
                 //
