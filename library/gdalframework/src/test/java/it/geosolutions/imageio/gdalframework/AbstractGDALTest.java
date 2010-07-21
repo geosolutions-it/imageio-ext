@@ -33,7 +33,7 @@ public class AbstractGDALTest  {
     
     protected final static boolean isGDALDATAEnvSet;
     
-    protected final static String MISSING_DRIVER_MESSAGE = "Driver is not Available. Tests will be skipped"
+    protected final static String MISSING_DRIVER_MESSAGE = " Driver is not Available. Tests will be skipped"
         +"\n Make sure GDAL has been built with support for this format"
         + " and the required native libs are in the path "; 
     
