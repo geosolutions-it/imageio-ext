@@ -53,15 +53,11 @@ public class JP2KReadTest extends AbstractGDALTest {
     public final static String fileName = "test.jp2";
 
 	/** A simple flag set to true in case the JP2 MrSID driver is available */
-	protected static boolean isDriverAvailable;
-
-	private final static String msg = "JP2 MRSID Tests are skipped due to missing Driver.\n"
-	+ "Be sure GDAL has been built against MRSID and the required"
-	+ " lib is in the classpath";
+	protected static boolean isJp2MrSidDriverAvailable;
 
     static {
-	    try {
-	        isDriverAvailable = GDALUtilities.isDriverAvailable("JP2MrSID");
+        if (isGDALAvailable){
+                gdal.AllRegister();
 	        final Driver driverkak = gdal.GetDriverByName("JP2KAK");
 	        final Driver driverecw = gdal.GetDriverByName("JP2ECW");
 	        if (driverkak != null || driverecw != null) {
@@ -73,14 +69,14 @@ public class JP2KReadTest extends AbstractGDALTest {
 	            gdal.SetConfigOption("GDAL_SKIP", skipDriver.toString());
 	            gdal.AllRegister();
 	        }
-	        isDriverAvailable = GDALUtilities.isDriverAvailable("JP2MrSID");
-	    } catch (UnsatisfiedLinkError e) {
-	        if (LOGGER.isLoggable(Level.WARNING))
-	            LOGGER.warning(new StringBuilder("GDAL library unavailable.")
-	                    .toString());
-	        isDriverAvailable = false;
-	    }
-	}
+	        isJp2MrSidDriverAvailable = GDALUtilities.isDriverAvailable("JP2MrSID");
+        } else {
+            isJp2MrSidDriverAvailable = false;
+        }
+        if (!isJp2MrSidDriverAvailable){
+            AbstractGDALTest.missingDriverMessage("JP2MrSID");
+        }
+    }
 
 	/**
      * Simple test read
@@ -90,7 +86,7 @@ public class JP2KReadTest extends AbstractGDALTest {
      */
     @Test
     public void read() throws FileNotFoundException, IOException {
-        if (!isDriverAvailable) {
+        if (!isJp2MrSidDriverAvailable) {
             return;
         }
         final ParameterBlockJAI pbjImageRead;
@@ -118,7 +114,7 @@ public class JP2KReadTest extends AbstractGDALTest {
      */
     @Test
     public void jaiOperations() throws IOException {
-        if (!isDriverAvailable) {
+        if (!isJp2MrSidDriverAvailable) {
             return;
         }
         final File inputFile = TestData.file(this, fileName);
@@ -223,11 +219,4 @@ public class JP2KReadTest extends AbstractGDALTest {
         	Assert.assertNotNull(rotatedImage.getTiles());
     }
 
-    public void setUp() throws Exception {
-	super.setUp();
-	if (!isDriverAvailable) {
-	    LOGGER.warning(msg);
-	    return;
-	}
-    }
 }

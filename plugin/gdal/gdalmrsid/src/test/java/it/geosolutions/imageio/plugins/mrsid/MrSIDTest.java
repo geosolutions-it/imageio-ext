@@ -66,12 +66,18 @@ public class MrSIDTest extends AbstractGDALTest {
 
     protected static final String fileName = "n13250i.sid";
 	/** A simple flag set to true in case the MrSID driver is available */
-	protected final static boolean isDriverAvailable = GDALUtilities
-	        .isDriverAvailable("MRSID");
-	private final static String msg = "MRSID Tests are skipped due to missing Driver.\n"
-	+ "Make sure GDAL has been built against MRSID and the required"
-	+ " lib is in the classpath";
-
+    private final static boolean isMrSidAvailable;
+    
+    static{
+        if (isGDALAvailable) {  
+            isMrSidAvailable = GDALUtilities.isDriverAvailable("MrSID");
+        } else {
+            isMrSidAvailable = false;
+        }
+        if (!isMrSidAvailable){
+            AbstractGDALTest.missingDriverMessage("MrSID");
+        }
+    }
 
 
     /**
@@ -82,7 +88,7 @@ public class MrSIDTest extends AbstractGDALTest {
      */
     @Test
     public void metadataAccess() throws FileNotFoundException, IOException {
-        if (!isDriverAvailable) {
+        if (!isMrSidAvailable) {
             return;
         }
         try {
@@ -116,7 +122,7 @@ public class MrSIDTest extends AbstractGDALTest {
      */
     @Test
     public void jaiOperations() throws FileNotFoundException, IOException {
-        if (!isDriverAvailable) {
+        if (!isMrSidAvailable) {
             return;
         }
         try {
@@ -233,7 +239,7 @@ public class MrSIDTest extends AbstractGDALTest {
      */
     @Test
     public void subBandsRead() throws IOException {
-        if (!isDriverAvailable) {
+        if (!isMrSidAvailable) {
             return;
         }
         try {
@@ -326,7 +332,7 @@ public class MrSIDTest extends AbstractGDALTest {
      */
     @Test
     public void manualRead() throws IOException {
-        if (!isDriverAvailable) {
+        if (!isMrSidAvailable) {
             return;
         }
         try {
@@ -376,10 +382,6 @@ public class MrSIDTest extends AbstractGDALTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        if (!isDriverAvailable) {
-            LOGGER.warning(msg);
-            return;
-        }
         // general settings
         JAI.getDefaultInstance().getTileScheduler().setParallelism(10);
         JAI.getDefaultInstance().getTileScheduler().setPriority(4);

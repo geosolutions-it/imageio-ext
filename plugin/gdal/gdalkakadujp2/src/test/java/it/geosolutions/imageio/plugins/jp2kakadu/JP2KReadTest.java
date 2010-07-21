@@ -54,7 +54,7 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
      */
     @Test
     public void read() throws FileNotFoundException, IOException {
-        if (!isDriverAvailable) {
+        if (!isJp2KakDriverAvailable) {
             return;
         }
 
@@ -85,7 +85,7 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
      */
     @Test
     public void jaiOperations() throws IOException {
-        if (!isDriverAvailable) {
+        if (!isJp2KakDriverAvailable) {
             return;
         }
         final File inputFile = TestData.file(this, fileName);

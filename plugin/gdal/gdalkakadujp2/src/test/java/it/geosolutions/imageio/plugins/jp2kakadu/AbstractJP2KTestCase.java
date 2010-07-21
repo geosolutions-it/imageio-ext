@@ -19,12 +19,8 @@ package it.geosolutions.imageio.plugins.jp2kakadu;
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.GDALUtilities;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.gdal.gdal.Driver;
 import org.gdal.gdal.gdal;
-import org.junit.Before;
 
 /**
  * @author Daniele Romagnoli, GeoSolutions.
@@ -32,17 +28,10 @@ import org.junit.Before;
  */
 public class AbstractJP2KTestCase extends AbstractGDALTest {
 
-    protected static boolean isDriverAvailable;
-
-    private final static String msg = "JP2GDAL Kakadu Tests are skipped due to missing Driver.\n"
-            + "Be sure GDAL has been built against Kakadu and the required"
-            + " libs are in the classpath";
-
-    protected static final Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.plugins.jp2kakadu");
+    protected static boolean isJp2KakDriverAvailable;
 
     static {
-        try {
+        if (isGDALAvailable) {
             gdal.AllRegister();
             final Driver driverEcw = gdal.GetDriverByName("JP2ECW");
             final Driver drivermrsid = gdal.GetDriverByName("JP2MrSID");
@@ -55,21 +44,12 @@ public class AbstractJP2KTestCase extends AbstractGDALTest {
                 gdal.SetConfigOption("GDAL_SKIP", skipDriver.toString());
                 gdal.AllRegister();
             }
-            isDriverAvailable = GDALUtilities.isDriverAvailable("JP2KAK");
-        } catch (UnsatisfiedLinkError e) {
-            if (LOGGER.isLoggable(Level.WARNING))
-                LOGGER.warning(new StringBuilder("GDAL library unavailable.")
-                        .toString());
-            isDriverAvailable = false;
+            isJp2KakDriverAvailable = GDALUtilities.isDriverAvailable("JP2KAK");
+        } else {
+            isJp2KakDriverAvailable = false;
         }
-    }
-
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        if (!isDriverAvailable) {
-            LOGGER.warning(msg);
-            return;
+        if (!isJp2KakDriverAvailable) {
+            AbstractGDALTest.missingDriverMessage("JP2KAK");
         }
     }
 }

@@ -33,6 +33,10 @@ public class AbstractGDALTest  {
     
     protected final static boolean isGDALDATAEnvSet;
     
+    protected final static String MISSING_DRIVER_MESSAGE = "Driver is not Available. Tests will be skipped"
+        +"\n Make sure GDAL has been built with support for this format"
+        + " and the required native libs are in the path "; 
+    
     static{
         final String gdalData = System.getenv(GDAL_DATA);
         isGDALDATAEnvSet = gdalData!=null && gdalData.trim().length()>0;
@@ -49,14 +53,17 @@ public class AbstractGDALTest  {
             LOGGER.warning("GDAL Library is not Available");
             return;
         }
-
+    }
+    
+    public final static void missingDriverMessage(final String format){
+        LOGGER.warning(format + MISSING_DRIVER_MESSAGE);
     }
 
-    public static void warningMessage() {
+    public final static void warningMessage() {
         LOGGER.info("Test file not available");
     }
     
-    public static void warningMessage(final String customMessage) {
+    public final static void warningMessage(final String customMessage) {
         LOGGER.info(customMessage);
     }
 }

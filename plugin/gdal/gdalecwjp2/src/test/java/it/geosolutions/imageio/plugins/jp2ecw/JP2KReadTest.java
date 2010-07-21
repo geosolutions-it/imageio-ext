@@ -26,8 +26,6 @@ import java.awt.RenderingHints;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.imageio.ImageReadParam;
 import javax.media.jai.ImageLayout;
@@ -49,16 +47,12 @@ import org.junit.Before;
  */
 public class JP2KReadTest extends AbstractGDALTest {
 
-    private static final Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.plugins.jp2ecw");
-
     public final static String fileName = "test.jp2";
-
-	/** A simple flag set to true in case the JP2 ECW driver is available */
-	protected static boolean isDriverAvailable;
-
+    
+    private final static boolean isJP2ECWAvailable;
+    
     static {
-	    try {
+        if (isGDALAvailable){
 	        gdal.AllRegister();
 	        final Driver driverkak = gdal.GetDriverByName("JP2KAK");
 	        final Driver drivermrsid = gdal.GetDriverByName("JP2MrSID");
@@ -71,19 +65,14 @@ public class JP2KReadTest extends AbstractGDALTest {
 	            gdal.SetConfigOption("GDAL_SKIP", skipDriver.toString());
 	            gdal.AllRegister();
 	        }
-	        isDriverAvailable = GDALUtilities.isDriverAvailable("JP2ECW");
-	    } catch (UnsatisfiedLinkError e) {
-	        if (LOGGER.isLoggable(Level.WARNING))
-	            LOGGER.warning("GDAL library unavailable.");
-	        isDriverAvailable = false;
-	    }
-	}
-
-	private final static String msg = "JP2 ECW Tests are skipped due to missing Driver.\n"
-	+ "Make sure GDAL has been built against ECW and the required"
-	+ " lib is in the classpath";
-
-
+	        isJP2ECWAvailable = GDALUtilities.isDriverAvailable("JP2ECW");
+        } else {
+            isJP2ECWAvailable = false;
+        }
+        if (!isJP2ECWAvailable){
+            AbstractGDALTest.missingDriverMessage("JP2ECW");
+        }
+    }
 
     /**
      * Simple test read
@@ -93,7 +82,7 @@ public class JP2KReadTest extends AbstractGDALTest {
      */
 	@org.junit.Test
     public void testRead() throws FileNotFoundException, IOException {
-        if (!isDriverAvailable) {
+        if (!isJP2ECWAvailable) {
             return;
         }
         final ParameterBlockJAI pbjImageRead;
@@ -121,7 +110,7 @@ public class JP2KReadTest extends AbstractGDALTest {
      */
     @org.junit.Test
     public void testJaiOperations() throws IOException {
-        if (!isDriverAvailable) {
+        if (!isJP2ECWAvailable) {
             return;
         }
         final File inputFile = TestData.file(this, fileName);
@@ -229,13 +218,7 @@ public class JP2KReadTest extends AbstractGDALTest {
     @Before
     public void setUp() throws Exception {
 	    super.setUp();
-	    // general settings
-	    if (!isDriverAvailable) {
-	        LOGGER.warning(msg);
-	        return;
-	    }
-	    JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
-	            64 * 1024 * 1024);
+	    JAI.getDefaultInstance().getTileCache().setMemoryCapacity(64 * 1024 * 1024);
 	    JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
 	}
 

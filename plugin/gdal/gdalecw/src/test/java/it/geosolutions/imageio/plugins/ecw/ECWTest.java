@@ -38,6 +38,7 @@ import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -48,9 +49,19 @@ import org.junit.Test;
  */
 public class ECWTest extends AbstractGDALTest {
     
-    private final static boolean isDriverAvailable = isGDALAvailable && 
-    GDALUtilities.isDriverAvailable("ECW");
-
+    private final static boolean isECWAvailable;
+    
+    static{
+        if (isGDALAvailable) {  
+           isECWAvailable = GDALUtilities.isDriverAvailable("ECW");
+        } else {
+            isECWAvailable = false;
+        }
+        if (!isECWAvailable){
+            AbstractGDALTest.missingDriverMessage("ECW");
+        }
+    }
+    
     private final static String ECWPSkipTest = "ecwp://Set a valid link";
 
     private final static String ECWP = ECWPSkipTest; // Change with a valid
@@ -63,7 +74,7 @@ public class ECWTest extends AbstractGDALTest {
      */
     @Test
     public void imageRead() throws FileNotFoundException, IOException {
-    	if(!isDriverAvailable)
+    	if(!isECWAvailable)
     		return;
         final ParameterBlockJAI pbjImageRead;
         final EnhancedImageReadParam irp = new EnhancedImageReadParam();
@@ -88,7 +99,7 @@ public class ECWTest extends AbstractGDALTest {
 
     @Test
     public void manualRead() throws FileNotFoundException, IOException {
-    	if(!isDriverAvailable)
+    	if(!isECWAvailable)
     		return;
         final ECWImageReaderSpi spi = new ECWImageReaderSpi();
         final ECWImageReader mReader = new ECWImageReader(spi);
@@ -108,7 +119,7 @@ public class ECWTest extends AbstractGDALTest {
 
     @Test
     public void manualReadDestination() throws FileNotFoundException, IOException {
-    	if(!isDriverAvailable)
+    	if(!isECWAvailable)
     		return;
         final ECWImageReaderSpi spi = new ECWImageReaderSpi();
         final ECWImageReader mReader = new ECWImageReader(spi);
@@ -129,7 +140,7 @@ public class ECWTest extends AbstractGDALTest {
     
     @Test
     public void ecwpRead() throws FileNotFoundException, IOException {
-    	if(!isDriverAvailable)
+    	if(!isECWAvailable)
     		return;
         if (ECWP.equalsIgnoreCase(ECWPSkipTest))
             return;
@@ -146,6 +157,24 @@ public class ECWTest extends AbstractGDALTest {
         if (TestData.isInteractiveTest())
             Viewer.visualizeAllInformation(image, ECWP);
         mReader.dispose();
+    }
+    
+    @Test
+    public void emptyTest(){
+        
+    }
+    
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        // general settings
+        JAI.getDefaultInstance().getTileScheduler().setParallelism(10);
+        JAI.getDefaultInstance().getTileScheduler().setPriority(4);
+        JAI.getDefaultInstance().getTileScheduler().setPrefetchPriority(2);
+        JAI.getDefaultInstance().getTileScheduler().setPrefetchParallelism(5);
+        JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
+                128 * 1024 * 1024);
+        JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
     }
 
 

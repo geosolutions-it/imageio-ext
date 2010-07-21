@@ -72,7 +72,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // ////////////////////////////////////////////////////////////////////////
     @Test
     public void write_Clevels() throws IOException, FileNotFoundException {
-        if (!isDriverAvailable)
+        if (!isJp2KakDriverAvailable)
             return;
 
         LOGGER.info("Testing JP2 Write operation with Clevels option setting");
@@ -172,7 +172,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // ////////////////////////////////////////////////////////////////////////
     @Test
     public void write_Clayers() throws IOException, FileNotFoundException {
-        if (!isDriverAvailable)
+        if (!isJp2KakDriverAvailable)
             return;
         LOGGER.info("Testing JP2 Write operation with Clayers option setting");
         // //
@@ -271,7 +271,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     @Test
     public void write_Cprecincts() throws IOException,
             FileNotFoundException {
-        if (!isDriverAvailable)
+        if (!isJp2KakDriverAvailable)
             return;
         LOGGER
                 .info("Testing JP2 Write operation with Cprecincts option setting");
@@ -363,7 +363,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // ////////////////////////////////////////////////////////////////////////
     @Test
     public void write_Corder() throws IOException, FileNotFoundException {
-        if (!isDriverAvailable)
+        if (!isJp2KakDriverAvailable)
             return;
         LOGGER.info("Testing JP2 Write operation with Corder option setting");
         // //
@@ -479,7 +479,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // ////////////////////////////////////////////////////////////////////////
     @Test
     public void write_Cblk() throws IOException, FileNotFoundException {
-        if (!isDriverAvailable)
+        if (!isJp2KakDriverAvailable)
             return;
         LOGGER.info("Testing JP2 Write operation with Cblk option setting");
         // //
@@ -568,7 +568,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // ////////////////////////////////////////////////////////////////////////
     @Test
     public void write_Cmodes() throws IOException, FileNotFoundException {
-        if (!isDriverAvailable)
+        if (!isJp2KakDriverAvailable)
             return;
         LOGGER.info("Testing JP2 Write operation with CModes option setting");
         // //
@@ -643,7 +643,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // ////////////////////////////////////////////////////////////////////////
     @Test
     public void write_Cycc() throws IOException, FileNotFoundException {
-        if (!isDriverAvailable)
+        if (!isJp2KakDriverAvailable)
             return;
         LOGGER.info("Testing JP2 Write operation with Cycc option setting");
         // //
@@ -732,7 +732,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // ////////////////////////////////////////////////////////////////////////
     @Test
     public void write_GMLJp2() throws IOException, FileNotFoundException {
-        if (!isDriverAvailable)
+        if (!isJp2KakDriverAvailable)
             return;
         LOGGER.info("Testing JP2 Write operation with GMLJp2 option setting");
         // //
@@ -821,7 +821,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // ////////////////////////////////////////////////////////////////////////
     @Test
     public void write_GeoJp2() throws IOException, FileNotFoundException {
-        if (!isDriverAvailable)
+        if (!isJp2KakDriverAvailable)
             return;
         LOGGER.info("Testing JP2 Write operation with GeoJp2 option setting");
         // //
@@ -910,7 +910,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // ////////////////////////////////////////////////////////////////////////
     @Test
     public void write_ORGtparts() throws IOException, FileNotFoundException {
-        if (!isDriverAvailable)
+        if (!isJp2KakDriverAvailable)
             return;
         LOGGER
                 .info("Testing JP2 Write operation with ORGtparts option setting");
@@ -993,7 +993,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     @Test
     public void write_ORGgen_plt() throws IOException,
             FileNotFoundException {
-        if (!isDriverAvailable)
+        if (!isJp2KakDriverAvailable)
             return;
         LOGGER
                 .info("Testing JP2 Write operation with ORGgen_plt option setting");
@@ -1105,7 +1105,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     @Test
     public void write_ORGgen_tlm() throws IOException,
             FileNotFoundException {
-        if (!isDriverAvailable)
+        if (!isJp2KakDriverAvailable)
             return;
         LOGGER
                 .info("Testing JP2 Write operation with ORGgen_tlm option setting");
@@ -1164,7 +1164,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // ////////////////////////////////////////////////////////////////////////
     @Test
     public void write_COMSEG() throws IOException, FileNotFoundException {
-        if (!isDriverAvailable)
+        if (!isJp2KakDriverAvailable)
             return;
         LOGGER.info("Testing JP2 Write operation with COMSEG option setting");
         // //
@@ -1253,7 +1253,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // ////////////////////////////////////////////////////////////////////////
     @Test
     public void write_SProfile() throws IOException, FileNotFoundException {
-        if (!isDriverAvailable)
+        if (!isJp2KakDriverAvailable)
             return;
         LOGGER.info("Testing JP2 Write operation with SProfile option setting");
         // //
@@ -1341,7 +1341,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // ////////////////////////////////////////////////////////////////////////
     @Test
     public void write_Tiling() throws IOException, FileNotFoundException {
-        if (!isDriverAvailable)
+        if (!isJp2KakDriverAvailable)
             return;
         LOGGER.info("Testing JP2 Write operation with Tiling option setting");
         // //
@@ -1439,7 +1439,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // ////////////////////////////////////////////////////////////////////////
     @Test
     public void write_ROI() throws IOException, FileNotFoundException {
-        if (!isDriverAvailable)
+        if (!isJp2KakDriverAvailable)
             return;
         LOGGER.info("Testing JP2 Write operation with ROI option setting");
         // //
@@ -1534,7 +1534,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // ////////////////////////////////////////////////////////////////////////
     @Test
     public void write_Qguard() throws IOException, FileNotFoundException {
-        if (!isDriverAvailable)
+        if (!isJp2KakDriverAvailable)
             return;
         LOGGER.info("Testing JP2 Write operation with Qguard option setting");
         // //
@@ -1623,7 +1623,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // ////////////////////////////////////////////////////////////////////////
     @Test
     public void write_Qstep() throws IOException, FileNotFoundException {
-        if (!isDriverAvailable)
+        if (!isJp2KakDriverAvailable)
             return;
         LOGGER.info("Testing JP2 Write operation with Qstep option setting");
         // //
@@ -1747,7 +1747,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // of an input UINT16 jpeg2000 image.
     @Test
     public void write_Quality() throws IOException, FileNotFoundException {
-        if (!isDriverAvailable)
+        if (!isJp2KakDriverAvailable)
             return;
         LOGGER.info("Testing JP2 Write operation with Quality option setting");
         // //
@@ -1842,7 +1842,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     // ////////////////////////////////////////////////////////////////////////
     @Test
     public void write_FLUSH() throws IOException, FileNotFoundException {
-        if (!isDriverAvailable)
+        if (!isJp2KakDriverAvailable)
             return;
         LOGGER.info("Testing JP2 Write operation with FLUSH option setting");
         // //
@@ -1932,7 +1932,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
     @Test
     public void write_Parametrized() throws IOException,
             FileNotFoundException {
-        if (!isDriverAvailable)
+        if (!isJp2KakDriverAvailable)
             return;
         final File outputFile = TestData.temp(this, "writetest.jp2", false);
         outputFile.deleteOnExit();
