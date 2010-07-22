@@ -41,37 +41,5 @@
     </dependency>
   </dependencies>
   <name>Direct Kakadu Jpeg2000 Plugin</name>
-  <!-- url> </url -->
-  <build>
-	<plugins>
-      <!-- ======================================================= -->
-      <!--                      Compilation.                       -->
-      <!-- ======================================================= -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.5</source>  <!-- The -source argument for the Java compiler. -->
-          <target>1.5</target>  <!-- The -target argument for the Java compiler. -->
-          <debug>true</debug>   <!-- Whether to include debugging information.   -->
-          <encoding>ISO-8859-1</encoding> <!-- The -encoding argument for the Java compiler. -->
-        </configuration>
-      </plugin>
-      <!-- ======================================================= -->
-      <!--                        Tests                            -->
-      <!-- ======================================================= -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <includes>
-            <include>**/*Test.java</include>
-          </includes>
-          <forkMode>once</forkMode>
-          <argLine>-Xmx${test.maxHeapSize} -enableassertions -Dtest.extensive=${extensive.tests} -Dtest.interactive=${interactive.tests} -Ddata.path=${data.path}</argLine>
-         </configuration>
-      </plugin>
-	</plugins>
-</build>
 </project>
 

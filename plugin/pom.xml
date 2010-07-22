@@ -38,12 +38,18 @@
   <profiles>
     <profile>
         <id>jmagick</id>
+        <activation>
+         <property><name>all</name></property>
+        </activation>
         <modules>
            <module>jmagickjpeg</module>
         </modules>
     </profile>
     <profile>
       <id>base</id>
+        <activation>
+         <property><name>all</name></property>
+        </activation>      
        <modules>
 	    <module>gdal</module>
         <module>arcgrid</module>
@@ -52,32 +58,28 @@
       </modules>
     </profile>
     <profile>
-      <id>full</id>
-      <modules>
-	      <module>gdal</module>
-        <module>kakadujp2</module>
-        <module>arcgrid</module>
-        <module>swan</module>
-        <module>tiff</module>
-        <module>matlab</module>
-	    <module>unidata-netcdf</module>
-	    <module>jmagickjpeg</module>
-      </modules>
-    </profile> 
-    <profile>
       <id>nd</id>
+        <activation>
+         <property><name>all</name></property>
+        </activation>      
       <modules>
 	      <module>unidata-netcdf</module>
       </modules>
     </profile> 
     <profile>
       <id>mat</id>
+        <activation>
+         <property><name>all</name></property>
+        </activation>      
       <modules>
 	      <module>matlab</module>
       </modules>
     </profile> 
     <profile>
       <id>releasebuild</id>
+      <activation>
+         <property><name>all</name></property>
+        </activation>      
       <modules>
         <module>gdal</module>
         <module>kakadujp2</module>
