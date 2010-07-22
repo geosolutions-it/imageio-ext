@@ -7,15 +7,15 @@
     <version>1.1-SNAPSHOT</version>
   </parent>
   <groupId>it.geosolutions.imageio-ext</groupId>
-  <artifactId>imageio-ext-customstreams</artifactId>
+  <artifactId>imageio-ext-streams</artifactId>
   <packaging>jar</packaging>
   <version>1.1-SNAPSHOT</version>
   <name>Image I/O-Extensions - Custom Streams</name>
   <scm>
     <connection>
-      scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/library/customstreams
+      scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/library/streams
     </connection>
-    <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/library/customstreams</url>
+    <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/library/streams</url>
   </scm>
   <!-- ===================================================================== -->
   <!--     Dependencies management.                                          -->

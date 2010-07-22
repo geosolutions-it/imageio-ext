@@ -38,7 +38,7 @@
   </dependency>
   <dependency>
     <groupId>it.geosolutions.imageio-ext</groupId>
-    <artifactId>imageio-ext-customstreams</artifactId>
+    <artifactId>imageio-ext-streams</artifactId>
     <version>1.1-SNAPSHOT</version>
   </dependency>
 </dependencies>

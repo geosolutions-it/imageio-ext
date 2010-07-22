@@ -35,7 +35,7 @@
   <modules>
     <module>utilities</module>
     <module>test-data</module>
-    <module>customstreams</module>
+    <module>streams</module>
     <module>geocore</module>
     <module>gdalframework</module>
     <module>imagereadmt</module>
