@@ -2843,7 +2843,11 @@ public class TIFFImageWriter extends ImageWriter {
         rootIFD.writeToStream(stream,isBtiff);
 
         this.nextIFDPointerPos = stream.getStreamPosition();
-        stream.writeLong(0);
+        if (!isBtiff) {
+            stream.writeInt(0);
+        } else {
+            stream.writeLong(0);
+        }
 
         // Seek to end of IFD data
         long lastIFDPosition = rootIFD.getLastPosition();
