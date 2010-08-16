@@ -126,9 +126,6 @@ public class TIFFImageReader extends ImageReader {
 
     // True if the file header has been read.
     boolean gotHeader = false;
-    
-    // true if we already have parsed metadata for this element
-    boolean initialized = false;
 
     ImageReadParam imageReadParam = getDefaultReadParam();
 
@@ -189,15 +186,6 @@ public class TIFFImageReader extends ImageReader {
 
     int pixelsRead;
     int pixelsToRead;
-
-
-    private boolean isImageTiled= false;
-
-
-    private long tileOrStripByteCount;
-
-
-    private long tileOrStripOffset;
 
     public TIFFImageReader(ImageReaderSpi originatingProvider) {
         super(originatingProvider);
@@ -347,7 +335,6 @@ public class TIFFImageReader extends ImageReader {
 
         if (currIndex != imageIndex) {
             imageMetadata = null;
-            initialized = false;
         }
         currIndex = imageIndex;
         return imageIndex;
@@ -424,7 +411,6 @@ public class TIFFImageReader extends ImageReader {
 
             this.imageMetadata = new TIFFImageMetadata(tagSets);
             imageMetadata.initializeFromStream(stream, ignoreMetadata, isBTIFF);
-            initialized = false;
         } catch (IIOException iioe) {
             throw iioe;
         } catch (IOException ioe) {
@@ -432,18 +418,27 @@ public class TIFFImageReader extends ImageReader {
         }
     }
 
+    private int getWidth() {
+        return this.width;
+    }
+
+    private int getHeight() {
+        return this.height;
+    }
+
+    private int getNumBands() {
+        return this.numBands;
+    }
+
     // Returns tile width if image is tiled, else image width
     private int getTileOrStripWidth() {
-
         TIFFField f =
             imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_TILE_WIDTH);
-        return this.tileOrStripWidth = (f == null) ? width : f.getAsInt(0);
+        return (f == null) ? getWidth() : f.getAsInt(0);
     }
 
     // Returns tile height if image is tiled, else strip height
     private int getTileOrStripHeight() {
-
-        
         TIFFField f =
             imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_TILE_LENGTH);
         if (f != null) {
@@ -453,7 +448,7 @@ public class TIFFImageReader extends ImageReader {
         f = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_ROWS_PER_STRIP);
         // Default for ROWS_PER_STRIP is 2^32 - 1, i.e., infinity
         int h = (f == null) ? -1 : f.getAsInt(0);
-        return this.tileOrStripHeight = (h == -1) ? height : h;
+        return (h == -1) ? getHeight() : h;
     }
 
     private int getPlanarConfiguration() {
@@ -485,8 +480,8 @@ public class TIFFImageReader extends ImageReader {
                             imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_STRIP_OFFSETS);
                         int tw = getTileOrStripWidth();
                         int th = getTileOrStripHeight();
-                        int tAcross = (width + tw - 1)/tw;
-                        int tDown = (height + th - 1)/th;
+                        int tAcross = (getWidth() + tw - 1)/tw;
+                        int tDown = (getHeight() + th - 1)/th;
                         int tilesPerImage = tAcross*tDown;
                         long[] offsetArray = offsetField.getAsLongs();
                         if(offsetArray != null &&
@@ -502,7 +497,7 @@ public class TIFFImageReader extends ImageReader {
                         // Strips
                         int rowsPerStrip = getTileOrStripHeight();
                         int stripsPerImage =
-                            (height + rowsPerStrip - 1)/rowsPerStrip;
+                            (getHeight() + rowsPerStrip - 1)/rowsPerStrip;
                         long[] offsetArray = offsetField.getAsLongs();
                         if(offsetArray != null &&
                            offsetArray.length == stripsPerImage) {
@@ -523,8 +518,6 @@ public class TIFFImageReader extends ImageReader {
     }
 
     private long getTileOrStripOffset(int tileIndex) throws IIOException {
-        
-        
         TIFFField f =
             imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_TILE_OFFSETS);
         if (f == null) {
@@ -539,11 +532,10 @@ public class TIFFImageReader extends ImageReader {
                 ("Missing required strip or tile offsets field.");
         }
 
-        return this.tileOrStripOffset = f.getAsLong(tileIndex);
+        return f.getAsLong(tileIndex);
     }
 
     private long getTileOrStripByteCount(int tileIndex) throws IOException {
-        
         TIFFField f =
            imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_TILE_BYTE_COUNTS);
         if (f == null) {
@@ -580,7 +572,7 @@ public class TIFFImageReader extends ImageReader {
             }
         }
 
-        return this.tileOrStripByteCount = tileOrStripByteCount;
+        return tileOrStripByteCount;
     }
 
     private int getCompression() {
@@ -595,12 +587,12 @@ public class TIFFImageReader extends ImageReader {
 
     public int getWidth(int imageIndex) throws IOException {
         seekToImage(imageIndex);
-        return width;
+        return getWidth();
     }
 
     public int getHeight(int imageIndex) throws IOException {
         seekToImage(imageIndex);
-        return height;
+        return getHeight();
     }
 
     /**
@@ -621,9 +613,6 @@ public class TIFFImageReader extends ImageReader {
      * </pre>
      */
     private void initializeFromMetadata() {
-        if(initialized)
-            return;
-        
         TIFFField f;
 
         //
@@ -662,14 +651,7 @@ public class TIFFImageReader extends ImageReader {
             processWarningOccurred("ImageLength field is missing.");
             isMissingDimension = true;
         }
-        
-        //
-        // Tiling
-        //
-        tileOrStripWidth = getTileOrStripWidth();
-        tileOrStripHeight = getTileOrStripHeight();
-        
-        
+
         //
         // SamplesPerPixel
         //
@@ -831,8 +813,6 @@ public class TIFFImageReader extends ImageReader {
             extraSamples = f.getAsInts();
         }
 
-        // signal that this image is initialized
-        initialized = true;
 
     }
 
@@ -983,11 +963,9 @@ public class TIFFImageReader extends ImageReader {
     public boolean isImageTiled(int imageIndex) throws IOException {
         seekToImage(imageIndex);
 
-        if(initialized)
-            return isImageTiled;
         TIFFField f =
             imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_TILE_WIDTH);
-        return isImageTiled = f != null;
+        return f != null;
     }
 
     public int getTileWidth(int imageIndex) throws IOException {
@@ -1589,7 +1567,6 @@ public class TIFFImageReader extends ImageReader {
         streamMetadata = null;
         currIndex = -1;
         imageMetadata = null;
-        initialized = false;
         imageStartPosition = new ArrayList();
         numImages = -1;
         imageTypeMap = new HashMap();
