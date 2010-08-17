@@ -466,7 +466,7 @@ public class TIFFImageReader extends ImageReader {
                 // Storage Filter v2.01.000; cf. bug 4929147) do not
                 // correctly set the value of this field. Attempt to
                 // ascertain whether the value is correctly Planar.
-                if(getCompression() ==
+                if(compression ==
                    BaselineTIFFTagSet.COMPRESSION_OLD_JPEG &&
                    imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_JPEG_INTERCHANGE_FORMAT) !=
                    null) {
@@ -583,6 +583,7 @@ public class TIFFImageReader extends ImageReader {
         TIFFField f =
             imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_COMPRESSION);
         if (f == null) {
+            processWarningOccurred("Compression field is missing; assuming no compression");
 	    return BaselineTIFFTagSet.COMPRESSION_NONE;
 	} else {
             return f.getAsInt(0);
@@ -621,16 +622,14 @@ public class TIFFImageReader extends ImageReader {
             return;
 
         //
+        // Planar Config
+        //
+        this.planarConfiguration = getPlanarConfiguration();
+        
+        //
         // Compression
         //
-        TIFFField f = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_COMPRESSION);
-        if (f == null) {
-            processWarningOccurred
-                ("Compression field is missing; assuming no compression");
-            compression = BaselineTIFFTagSet.COMPRESSION_NONE;
-        } else {
-            compression = f.getAsInt(0);
-        }
+        compression=getCompression();
 
         // Whether key dimensional information is absent.
         boolean isMissingDimension = false;
@@ -638,7 +637,7 @@ public class TIFFImageReader extends ImageReader {
         //
         // ImageWidth -> width
         //
-        f = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_IMAGE_WIDTH);
+        TIFFField f = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_IMAGE_WIDTH);
         if (f != null) {
             this.width = f.getAsInt(0);
         } else {
@@ -947,7 +946,7 @@ public class TIFFImageReader extends ImageReader {
     public boolean isRandomAccessEasy(int imageIndex) throws IOException {
         if(currIndex != -1) {
             seekToImage(currIndex);
-            return getCompression() == BaselineTIFFTagSet.COMPRESSION_NONE;
+            return compression == BaselineTIFFTagSet.COMPRESSION_NONE;
         } else {
             return false;
         }
@@ -1069,7 +1068,6 @@ public class TIFFImageReader extends ImageReader {
 
         // ensure everything is initialized
         seekToImage(imageIndex);
-        this.planarConfiguration = getPlanarConfiguration();
 
         this.sourceBands = param.getSourceBands();
         if (sourceBands == null) {
@@ -1295,8 +1293,6 @@ public class TIFFImageReader extends ImageReader {
 
         tilesAcross = (width + tileOrStripWidth - 1)/tileOrStripWidth;
         tilesDown = (height + tileOrStripHeight - 1)/tileOrStripHeight;
-
-        int compression = getCompression();
 
         // Attempt to get decompressor and color converted from the read param
         
