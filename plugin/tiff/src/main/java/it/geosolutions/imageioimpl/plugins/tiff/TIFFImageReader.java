@@ -1138,7 +1138,7 @@ public class TIFFImageReader extends ImageReader {
 
         // Clip against the image bounds if the image is not tiled. If it
         // is tiled, the tile may legally extend beyond the image bounds.
-        if(!isImageTiled(currIndex)) {
+        if(!this.isImageTiled) {
             tileRect =
                 tileRect.intersection(new Rectangle(0, 0, width, height));
         }
