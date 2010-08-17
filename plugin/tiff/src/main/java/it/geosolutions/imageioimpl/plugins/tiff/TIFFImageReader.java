@@ -306,20 +306,25 @@ public class TIFFImageReader extends ImageReader {
             // Skip IFDs until at desired index or last image found
             switch(magic) {
             case 42:
-            	while (index < imageIndex) {
-                int count = stream.readUnsignedShort();
-                stream.skipBytes(12*count);
+                while (index < imageIndex) {
+                    int count = stream.readUnsignedShort();
+                    stream.skipBytes(12 * count);
 
-                long offset = stream.readUnsignedInt();
-                if (offset == 0) {
-                    System.out.println("Offset 0 in locate");
-                    return index;
+                    long offset = stream.readUnsignedInt();
+                    if (offset == 0) {
+                        if(DEBUG)
+                            System.out.println("Offset 0 in locate");
+                        currIndex=index;
+                        imageMetadata = null;
+                        // the current image index has changed, we got to reinitialized
+                        initialized = false;                        
+                        return index;
+                    }
+
+                    imageStartPosition.add(Long.valueOf(offset));
+                    stream.seek(offset);
+                    ++index;
                 }
-                
-                imageStartPosition.add(Long.valueOf(offset));
-                stream.seek(offset);
-                ++index;
-            }
                 break;
             
             case 43:
@@ -329,6 +334,10 @@ public class TIFFImageReader extends ImageReader {
 
                     long offset = stream.readLong();
                     if (offset == 0) {
+                        currIndex=index;
+                        imageMetadata = null;
+                        // the current image index has changed, we got to reinitialized
+                        initialized = false;                        
                         return index;
                     }
                     
