@@ -20,28 +20,19 @@ import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReader;
 import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
 import it.geosolutions.resources.TestData;
 
-import java.awt.RenderingHints;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
-import java.awt.image.renderable.ParameterBlock;
 import java.io.File;
 import java.io.IOException;
 
-import javax.imageio.ImageReader;
+import javax.imageio.ImageReadParam;
 import javax.imageio.stream.FileImageInputStream;
-import javax.imageio.stream.FileImageOutputStream;
-import javax.media.jai.Histogram;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
-import javax.media.jai.PlanarImage;
 import javax.media.jai.RenderedOp;
-import javax.swing.JFrame;
-
-import junit.framework.TestCase;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -55,52 +46,57 @@ public class TIFFReadTest extends Assert {
 
     @Test
     public void jaiReadFromFile() throws IOException {
-        final File file = TestData.file(this, "test.tif");
+        final File file = new File("c:/work/data/tiff/tm.tiff");//TestData.file(this, "test.tif");
         
+        final ImageReadParam param= new ImageReadParam();
+        param.setSourceRegion(new Rectangle(10,10,800,800));
         final TIFFImageReader reader =(TIFFImageReader) new TIFFImageReaderSpi().createReaderInstance();
-
-//        final File file = TestData.file(this, "test.tif");
-//        final TIFFImageReader reader =(TIFFImageReader) new TIFFImageReaderSpi().createReaderInstance();
-//
-//        reader.setInput(new FileImageInputStream(file));
-//        double sum=0;
-//        final long num = 10000l;
-//        for(long i=0;i<num;i++){
-//            final double time= System.nanoTime();
-//            BufferedImage image = reader.read(0);
-////            if (TestData.isInteractiveTest())
-////                ImageIOUtilities.visualize(image, "testManualRead");
-////            else
-//                Assert.assertNotNull(image.getData());
-//                sum+=System.nanoTime()-time;
-//            Assert.assertEquals(120, image.getWidth());
-//            Assert.assertEquals(107, image.getHeight());
-//            
-//            image.flush();
-//            image=null;
-//        }
-//        
-//        System.out.println("tempo in ms "+sum/num/1E6);
-//        reader.dispose();
-//    }
-        
+        reader.setInput(new FileImageInputStream(file));
+        double sum=0;
         final long num = 10000l;
-        for (long i = 0; i < num; i++) {
-            final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
-            ImageLayout l = new ImageLayout();
-            l.setTileHeight(16);
-            l.setTileWidth(16);        
-            pbjImageRead.setParameter("Input", file);
-            pbjImageRead.setParameter("imageChoice", 0);
-            pbjImageRead.setParameter("Reader", reader);
-            final RenderedOp image = JAI.create("ImageRead", pbjImageRead);
-//            , new RenderingHints(
-//                    JAI.KEY_IMAGE_LAYOUT, l));
-            assertNotNull(image.getTiles());
-            assertEquals(image.getWidth(), 120);
-            assertEquals(image.getHeight(), 107);
+        for(long i=0;i<num;i++){
+            final double time= System.nanoTime();
+            BufferedImage image = reader.read(0,param);
+//            if (TestData.isInteractiveTest())
+                ImageIOUtilities.visualize(image, "testManualRead");
+//            else
+                Assert.assertNotNull(image.getData());
+                sum+=System.nanoTime()-time;
+            Assert.assertEquals(120, image.getWidth());
+            Assert.assertEquals(107, image.getHeight());
+            
+            image.flush();
+            image=null;
         }
+        
+        System.out.println("tempo in ms "+sum/num/1E6);
+        reader.dispose();
     }
+        
+//        final long num = 10000l;
+//        
+//        final ImageReadParam param= new ImageReadParam();
+//        param.setSourceRegion(new Rectangle(10,10,800,800));
+//        for (long i = 0; i < num; i++) {
+//            final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
+////            ImageLayout l = new ImageLayout();
+////            l.setTileHeight(16);
+////            l.setTileWidth(16);        
+//            pbjImageRead.setParameter("Input", file);
+//            pbjImageRead.setParameter("imageChoice", 0);
+//            pbjImageRead.setParameter("ReadParam", param);
+//            pbjImageRead.setParameter("Reader", reader);
+//            final RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+////            , new RenderingHints(
+////                    JAI.KEY_IMAGE_LAYOUT, l));
+//            assertNotNull(image.getTiles());
+////            assertEquals(image.getWidth(), 120);
+////            assertEquals(image.getHeight(), 107);
+//            image.dispose();
+//            
+////            ImageIOUtilities.visualize(image);
+//        }
+//    }
 
     //
     // @org.junit.Test

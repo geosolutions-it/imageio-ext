@@ -118,14 +118,14 @@ public class TIFFImageReader extends ImageReader {
 
 	private int magic = -1;
 	
-	private boolean isBTIFF = false;
+	private boolean bigtiff = false;
 	
 	
 	// The current ImageInputStream source.
     ImageInputStream stream = null;
 
     // True if the file header has been read.
-    boolean gotHeader = false;
+    boolean gotTiffHeader = false;
     
     // true if we already have parsed metadata for this element
     boolean initialized = false;
@@ -141,9 +141,10 @@ public class TIFFImageReader extends ImageReader {
     // Metadata for image at 'currIndex', or null.
     TIFFImageMetadata imageMetadata = null;
     
-    // A <code>List</code> of <code>Long</code>s indicating the stream
-    // positions of the start of the IFD for each image.  Entries
-    // are added as needed.
+    /**
+     * A <code>List</code> of <code>Long</code>s indicating the stream positions of the start of the
+     * IFD for each image. Entries are added as needed.
+     */
     List<Long> imageStartPosition = new ArrayList<Long>();
 
     // The number of images in the stream, if known, otherwise -1.
@@ -151,7 +152,7 @@ public class TIFFImageReader extends ImageReader {
 
     // The ImageTypeSpecifiers of the images in the stream.
     // Contains a map of Integers to Lists.
-    HashMap imageTypeMap = new HashMap();
+    HashMap<Integer, List<ImageTypeSpecifier>> imageTypeMap = new HashMap<Integer, List<ImageTypeSpecifier>>();
 
     BufferedImage theImage = null;
 
@@ -220,7 +221,7 @@ public class TIFFImageReader extends ImageReader {
     // Do not seek to the beginning of the stream so as to allow users to
     // point us at an IFD within some other file format
     private void readHeader() throws IIOException {
-        if (gotHeader) {
+        if (gotTiffHeader) {
             return;
         }
         if (stream == null) {
@@ -252,9 +253,9 @@ public class TIFFImageReader extends ImageReader {
             }
             
             if (magic == 43)
-            	isBTIFF=true;
+            	bigtiff=true;
             else 
-            	isBTIFF=false;
+            	bigtiff=false;
             
             // Seek to start of first IFD
             long offset = -1;
@@ -280,15 +281,15 @@ public class TIFFImageReader extends ImageReader {
             if (offset >= 0) {
             	imageStartPosition.add(Long.valueOf(offset));
             	stream.seek(offset);
-            } else {
+            } else 
             	processWarningOccurred("Error calculating offset");
-            	     }
+            	     
             
         } catch (IOException e) {
             throw new IIOException("I/O error reading header!", e);
         }
 
-        gotHeader = true;
+        gotTiffHeader = true;
     }
 
     private int locateImage(int imageIndex) throws IIOException {
@@ -343,6 +344,7 @@ public class TIFFImageReader extends ImageReader {
 
         if (currIndex != imageIndex) {
             imageMetadata = null;
+            // the current image index has changed, we got to reini
             initialized = false;
         }
         currIndex = imageIndex;
@@ -394,7 +396,6 @@ public class TIFFImageReader extends ImageReader {
         }
 
         readMetadata();
-
         initializeFromMetadata();
     }
 
@@ -409,17 +410,17 @@ public class TIFFImageReader extends ImageReader {
         }
         try {
             // Create an object to store the image metadata
-            List tagSets;
+            List<BaselineTIFFTagSet> tagSets;
             if (imageReadParam instanceof TIFFImageReadParam) {
                 tagSets =
                     ((TIFFImageReadParam)imageReadParam).getAllowedTagSets();
             } else {
-                tagSets = new ArrayList(1);
+                tagSets = new ArrayList<BaselineTIFFTagSet>(1);
                 tagSets.add(BaselineTIFFTagSet.getInstance());
             }
 
             this.imageMetadata = new TIFFImageMetadata(tagSets);
-            imageMetadata.initializeFromStream(stream, ignoreMetadata, isBTIFF);
+            imageMetadata.initializeFromStream(stream, ignoreMetadata, bigtiff);
             initialized = false;
         } catch (IIOException iioe) {
             throw iioe;
@@ -430,9 +431,12 @@ public class TIFFImageReader extends ImageReader {
 
     // Returns tile width if image is tiled, else image width
     private int getTileOrStripWidth() {
-        TIFFField f =
-            imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_TILE_WIDTH);
-        return this.tileOrStripWidth = (f == null) ? width : f.getAsInt(0);
+        if(!initialized){
+            TIFFField f =
+                imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_TILE_WIDTH);
+            this.tileOrStripWidth = (f == null) ? width : f.getAsInt(0);
+        }
+        return this.tileOrStripWidth ;
     }
 
     // Returns tile height if image is tiled, else strip height
@@ -613,13 +617,11 @@ public class TIFFImageReader extends ImageReader {
     private void initializeFromMetadata() {
         if(initialized)
             return;
-        
-        TIFFField f;
 
         //
         // Compression
         //
-        f = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_COMPRESSION);
+        TIFFField f = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_COMPRESSION);
         if (f == null) {
             processWarningOccurred
                 ("Compression field is missing; assuming no compression");
@@ -677,9 +679,9 @@ public class TIFFImageReader extends ImageReader {
         int defaultBitDepth = 1;
         if(isMissingDimension &&
            (f = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_JPEG_INTERCHANGE_FORMAT)) != null) {
-            Iterator iter = ImageIO.getImageReadersByFormatName("JPEG");
+            Iterator<ImageReader> iter = ImageIO.getImageReadersByFormatName("JPEG");
             if(iter != null && iter.hasNext()) {
-                ImageReader jreader = (ImageReader)iter.next();
+                ImageReader jreader = iter.next();
                 try {
                     stream.mark();
                     stream.seek(f.getAsLong(0));
@@ -826,103 +828,100 @@ public class TIFFImageReader extends ImageReader {
 
     }
 
-    public Iterator getImageTypes(int imageIndex) throws IIOException {
-        List l; // List of ImageTypeSpecifiers
-
+    public Iterator<ImageTypeSpecifier> getImageTypes(int imageIndex) throws IIOException {
+        
         Integer imageIndexInteger = Integer.valueOf(imageIndex);
-        if(imageTypeMap.containsKey(imageIndexInteger)) {
+        if(imageTypeMap.containsKey(imageIndexInteger)) 
             // Return the cached ITS List.
-            l = (List)imageTypeMap.get(imageIndexInteger);
-        } else {
-            // Create a new ITS List.
-            l = new ArrayList(1);
+            return imageTypeMap.get(imageIndexInteger).iterator();
+        // Create a new ITS List.
+        final List<ImageTypeSpecifier> l= new ArrayList<ImageTypeSpecifier>();
 
-            // Create the ITS and cache if for later use so that this method
-            // always returns an Iterator containing the same ITS objects.
-            seekToImage(imageIndex);
-            ImageTypeSpecifier itsRaw = 
-                TIFFDecompressor.getRawImageTypeSpecifier
-                    (photometricInterpretation,
-                     compression,
-                     samplesPerPixel,
-                     bitsPerSample,
-                     sampleFormat,
-                     extraSamples,
-                     colorMap);
+        // Create the ITS and cache if for later use so that this method
+        // always returns an Iterator containing the same ITS objects.
+        seekToImage(imageIndex);
+        ImageTypeSpecifier itsRaw = 
+            TIFFDecompressor.getRawImageTypeSpecifier
+                (photometricInterpretation,
+                 compression,
+                 samplesPerPixel,
+                 bitsPerSample,
+                 sampleFormat,
+                 extraSamples,
+                 colorMap);
 
-            // Check for an ICCProfile field.
-            TIFFField iccProfileField =
-                imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_ICC_PROFILE);
+        // Check for an ICCProfile field.
+        TIFFField iccProfileField =
+            imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_ICC_PROFILE);
 
-            // If an ICCProfile field is present change the ImageTypeSpecifier
-            // to use it if the data layout is component type.
-            if(iccProfileField != null &&
-               itsRaw.getColorModel() instanceof ComponentColorModel) {
-                // Create a ColorSpace from the profile.
-                byte[] iccProfileValue = iccProfileField.getAsBytes();
-                ICC_Profile iccProfile =
-                    ICC_Profile.getInstance(iccProfileValue);
-                ICC_ColorSpace iccColorSpace =
-                    new ICC_ColorSpace(iccProfile);
+        // If an ICCProfile field is present change the ImageTypeSpecifier
+        // to use it if the data layout is component type.
+        if(iccProfileField != null &&
+           itsRaw.getColorModel() instanceof ComponentColorModel) {
+            // Create a ColorSpace from the profile.
+            byte[] iccProfileValue = iccProfileField.getAsBytes();
+            ICC_Profile iccProfile =
+                ICC_Profile.getInstance(iccProfileValue);
+            ICC_ColorSpace iccColorSpace =
+                new ICC_ColorSpace(iccProfile);
 
-                // Get the raw sample and color information.
-                ColorModel cmRaw = itsRaw.getColorModel();
-                ColorSpace csRaw = cmRaw.getColorSpace();
-                SampleModel smRaw = itsRaw.getSampleModel();
+            // Get the raw sample and color information.
+            ColorModel cmRaw = itsRaw.getColorModel();
+            ColorSpace csRaw = cmRaw.getColorSpace();
+            SampleModel smRaw = itsRaw.getSampleModel();
 
-                // Get the number of samples per pixel and the number
-                // of color components.
-                int numBands = smRaw.getNumBands();
-                int numComponents = iccColorSpace.getNumComponents();
+            // Get the number of samples per pixel and the number
+            // of color components.
+            int numBands = smRaw.getNumBands();
+            int numComponents = iccColorSpace.getNumComponents();
 
-                // Replace the ColorModel with the ICC ColorModel if the
-                // numbers of samples and color components are amenable.
-                if(numBands == numComponents ||
-                   numBands == numComponents + 1) {
-                    // Set alpha flags.
-                    boolean hasAlpha = numComponents != numBands;
-                    boolean isAlphaPre =
-                        hasAlpha && cmRaw.isAlphaPremultiplied();
+            // Replace the ColorModel with the ICC ColorModel if the
+            // numbers of samples and color components are amenable.
+            if(numBands == numComponents ||
+               numBands == numComponents + 1) {
+                // Set alpha flags.
+                boolean hasAlpha = numComponents != numBands;
+                boolean isAlphaPre =
+                    hasAlpha && cmRaw.isAlphaPremultiplied();
 
-                    // Create a ColorModel of the same class and with
-                    // the same transfer type.
-                    ColorModel iccColorModel =
-                        new ComponentColorModel(iccColorSpace,
-                                                cmRaw.getComponentSize(),
-                                                hasAlpha,
-                                                isAlphaPre,
-                                                cmRaw.getTransparency(),
-                                                cmRaw.getTransferType());
+                // Create a ColorModel of the same class and with
+                // the same transfer type.
+                ColorModel iccColorModel =
+                    new ComponentColorModel(iccColorSpace,
+                                            cmRaw.getComponentSize(),
+                                            hasAlpha,
+                                            isAlphaPre,
+                                            cmRaw.getTransparency(),
+                                            cmRaw.getTransferType());
 
-                    // Prepend the ICC profile-based ITS to the List. The
-                    // ColorModel and SampleModel are guaranteed to be
-                    // compatible as the old and new ColorModels are both
-                    // ComponentColorModels with the same transfer type
-                    // and the same number of components.
-                    l.add(new ImageTypeSpecifier(iccColorModel, smRaw));
+                // Prepend the ICC profile-based ITS to the List. The
+                // ColorModel and SampleModel are guaranteed to be
+                // compatible as the old and new ColorModels are both
+                // ComponentColorModels with the same transfer type
+                // and the same number of components.
+                l.add(new ImageTypeSpecifier(iccColorModel, smRaw));
 
-                    // Append the raw ITS to the List if and only if its
-                    // ColorSpace has the same type and number of components
-                    // as the ICC ColorSpace.
-                    if(csRaw.getType() == iccColorSpace.getType() &&
-                       csRaw.getNumComponents() ==
-                       iccColorSpace.getNumComponents()) {
-                        l.add(itsRaw);
-                    }
-                } else { // ICCProfile not compatible with SampleModel.
-                    // Append the raw ITS to the List.
+                // Append the raw ITS to the List if and only if its
+                // ColorSpace has the same type and number of components
+                // as the ICC ColorSpace.
+                if(csRaw.getType() == iccColorSpace.getType() &&
+                   csRaw.getNumComponents() ==
+                   iccColorSpace.getNumComponents()) {
                     l.add(itsRaw);
                 }
-            } else { // No ICCProfile field or raw ColorModel not component.
+            } else { // ICCProfile not compatible with SampleModel.
                 // Append the raw ITS to the List.
                 l.add(itsRaw);
             }
-
-            // Cache the ITS List.
-            imageTypeMap.put(imageIndexInteger, l);
+        } else { // No ICCProfile field or raw ColorModel not component.
+            // Append the raw ITS to the List.
+            l.add(itsRaw);
         }
 
+        // Cache the ITS List.
+        imageTypeMap.put(imageIndexInteger, l);
         return l.iterator();
+
     }
 
     public IIOMetadata getImageMetadata(int imageIndex) throws IIOException {
@@ -1081,7 +1080,7 @@ public class TIFFImageReader extends ImageReader {
         }
 
         // Initialize the destination image
-        Iterator imageTypes = getImageTypes(imageIndex);
+        Iterator<ImageTypeSpecifier> imageTypes = getImageTypes(imageIndex);
         ImageTypeSpecifier theImageType =
             ImageUtil.getDestinationType(param, imageTypes);
 
@@ -1574,15 +1573,15 @@ public class TIFFImageReader extends ImageReader {
 
     protected void resetLocal() {
         stream = null;
-        gotHeader = false;
+        gotTiffHeader = false;
         imageReadParam = getDefaultReadParam();
         streamMetadata = null;
         currIndex = -1;
         imageMetadata = null;
         initialized = false;
-        imageStartPosition = new ArrayList();
+        imageStartPosition = new ArrayList<Long>();
         numImages = -1;
-        imageTypeMap = new HashMap();
+        imageTypeMap = new HashMap<Integer, List<ImageTypeSpecifier>>();
         width = -1;
         height = -1;
         numBands = -1;
@@ -1600,7 +1599,7 @@ public class TIFFImageReader extends ImageReader {
     }
     
     protected static BufferedImage getDestination(ImageReadParam param,
-                                                  Iterator imageTypes,
+                                                  Iterator<ImageTypeSpecifier> imageTypes,
                                                   int width, int height)
             throws IIOException {
         if (imageTypes == null || !imageTypes.hasNext()) {
@@ -1634,7 +1633,7 @@ public class TIFFImageReader extends ImageReader {
             boolean foundIt = false;
             while (imageTypes.hasNext()) {
                 ImageTypeSpecifier type =
-                    (ImageTypeSpecifier)imageTypes.next();
+                    imageTypes.next();
                 if (type.equals(imageType)) {
                     foundIt = true;
                     break;
