@@ -342,9 +342,11 @@ public class TIFFImageReader extends ImageReader {
             throw new IIOException("Couldn't seek!", e);
         }
 
+        // are we changing ImageIndex??? If so, we got to reload the ImageMetadata as well as the
+        // various fields we initialized from them!
         if (currIndex != imageIndex) {
             imageMetadata = null;
-            // the current image index has changed, we got to reini
+            // the current image index has changed, we got to reinitialized
             initialized = false;
         }
         currIndex = imageIndex;
@@ -421,6 +423,7 @@ public class TIFFImageReader extends ImageReader {
 
             this.imageMetadata = new TIFFImageMetadata(tagSets);
             imageMetadata.initializeFromStream(stream, ignoreMetadata, bigtiff);
+            // we got to reinitialized!!!
             initialized = false;
         } catch (IIOException iioe) {
             throw iioe;
@@ -431,26 +434,25 @@ public class TIFFImageReader extends ImageReader {
 
     // Returns tile width if image is tiled, else image width
     private int getTileOrStripWidth() {
-        if(!initialized){
-            TIFFField f =
+        TIFFField f =
                 imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_TILE_WIDTH);
-            this.tileOrStripWidth = (f == null) ? width : f.getAsInt(0);
-        }
-        return this.tileOrStripWidth ;
+        return (f == null) ? width : f.getAsInt(0);
     }
 
     // Returns tile height if image is tiled, else strip height
     private int getTileOrStripHeight() {
+        int h =-1;
         TIFFField f =
             imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_TILE_LENGTH);
         if (f != null) {
-            return f.getAsInt(0);
+            h= f.getAsInt(0);
+        }else{
+        
+            f = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_ROWS_PER_STRIP);
+            // Default for ROWS_PER_STRIP is 2^32 - 1, i.e., infinity
+                h = (f == null) ? -1 : f.getAsInt(0);
         }
-
-        f = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_ROWS_PER_STRIP);
-        // Default for ROWS_PER_STRIP is 2^32 - 1, i.e., infinity
-        int h = (f == null) ? -1 : f.getAsInt(0);
-        return this.tileOrStripHeight = (h == -1) ? height : h;
+        return (h == -1) ? height : h;
     }
 
     private int getPlanarConfiguration() {
@@ -480,8 +482,8 @@ public class TIFFImageReader extends ImageReader {
                         // Tiles
                         offsetField =
                             imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_STRIP_OFFSETS);
-                        int tw = getTileOrStripWidth();
-                        int th = getTileOrStripHeight();
+                        int tw = tileOrStripWidth;
+                        int th = tileOrStripHeight;
                         int tAcross = (width + tw - 1)/tw;
                         int tDown = (height + th - 1)/th;
                         int tilesPerImage = tAcross*tDown;
@@ -497,7 +499,7 @@ public class TIFFImageReader extends ImageReader {
                         }
                     } else {
                         // Strips
-                        int rowsPerStrip = getTileOrStripHeight();
+                        int rowsPerStrip = tileOrStripHeight;
                         int stripsPerImage =
                             (height + rowsPerStrip - 1)/rowsPerStrip;
                         long[] offsetArray = offsetField.getAsLongs();
@@ -560,8 +562,8 @@ public class TIFFImageReader extends ImageReader {
             for(int i = 1; i < samplesPerPixel; i++) {
                 bitsPerPixel += bitsPerSample[i];
             }
-            int bytesPerRow = (getTileOrStripWidth()*bitsPerPixel + 7)/8;
-            tileOrStripByteCount = bytesPerRow*getTileOrStripHeight();
+            int bytesPerRow = (tileOrStripWidth*bitsPerPixel + 7)/8;
+            tileOrStripByteCount = bytesPerRow*tileOrStripHeight;
 
             // Clamp to end of stream if possible.
             long streamLength = stream.length();
@@ -981,12 +983,12 @@ public class TIFFImageReader extends ImageReader {
 
     public int getTileWidth(int imageIndex) throws IOException {
         seekToImage(imageIndex);
-        return getTileOrStripWidth();
+        return tileOrStripWidth;
     }
 
     public int getTileHeight(int imageIndex) throws IOException {
         seekToImage(imageIndex);
-        return getTileOrStripHeight();
+        return tileOrStripHeight;
     }
 
     public BufferedImage readTile(int imageIndex, int tileX, int tileY)
@@ -1065,10 +1067,8 @@ public class TIFFImageReader extends ImageReader {
 
         this.imageReadParam = param;
 
+        // ensure everything is initialized
         seekToImage(imageIndex);
-
-        this.tileOrStripWidth = getTileOrStripWidth();
-        this.tileOrStripHeight = getTileOrStripHeight();
         this.planarConfiguration = getPlanarConfiguration();
 
         this.sourceBands = param.getSourceBands();
