@@ -93,9 +93,11 @@ import java.awt.image.SampleModel;
 import java.io.IOException;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
@@ -112,16 +114,162 @@ import com.sun.media.imageioimpl.common.ImageUtil;
 import com.sun.media.imageioimpl.common.PackageUtil;
 
 public class TIFFImageReader extends ImageReader {
-	
-	private static final boolean DEBUG = false; // XXX 'false' for release!!!
+    
+    /**
+     * 
+     * @author Simone Giannecchini, GeoSoltions S.A.S.
+     *
+     */
+    private final static class PageInfo {
+        
+        protected PageInfo(boolean bigtiff, int[] bitsPerSample, char[] colorMap, int compression,
+                int height, int numBands, int photometricInterpretation, int width,
+                int tileOrStripWidth, int tileOrStripHeight, int planarConfiguration,
+                boolean isImageTiled, int samplesPerPixel, int[] sampleFormat, int[] extraSamples) {
+            this.bigtiff = bigtiff;
+            this.bitsPerSample = bitsPerSample;
+            this.colorMap = colorMap;
+            this.compression = compression;
+            this.height = height;
+            this.numBands = numBands;
+            this.photometricInterpretation = photometricInterpretation;
+            this.width = width;
+            this.tileOrStripWidth = tileOrStripWidth;
+            this.tileOrStripHeight = tileOrStripHeight;
+            this.planarConfiguration = planarConfiguration;
+            this.isImageTiled = isImageTiled;
+            this.samplesPerPixel = samplesPerPixel;
+            this.sampleFormat = sampleFormat;
+            this.extraSamples = extraSamples;
+        }
+
+        /* (non-Javadoc)
+         * @see java.lang.Object#hashCode()
+         */
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + (bigtiff ? 1231 : 1237);
+            result = prime * result + Arrays.hashCode(bitsPerSample);
+            result = prime * result + Arrays.hashCode(colorMap);
+            result = prime * result + compression;
+            result = prime * result + Arrays.hashCode(extraSamples);
+            result = prime * result + height;
+            result = prime * result + (isImageTiled ? 1231 : 1237);
+            result = prime * result + numBands;
+            result = prime * result + photometricInterpretation;
+            result = prime * result + planarConfiguration;
+            result = prime * result + Arrays.hashCode(sampleFormat);
+            result = prime * result + samplesPerPixel;
+            result = prime * result + tileOrStripHeight;
+            result = prime * result + tileOrStripWidth;
+            result = prime * result + width;
+            return result;
+        }
+
+        /* (non-Javadoc)
+         * @see java.lang.Object#equals(java.lang.Object)
+         */
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (!(obj instanceof PageInfo))
+                return false;
+            PageInfo other = (PageInfo) obj;
+            if (bigtiff != other.bigtiff)
+                return false;
+            if (!Arrays.equals(bitsPerSample, other.bitsPerSample))
+                return false;
+            if (!Arrays.equals(colorMap, other.colorMap))
+                return false;
+            if (compression != other.compression)
+                return false;
+            if (!Arrays.equals(extraSamples, other.extraSamples))
+                return false;
+            if (height != other.height)
+                return false;
+            if (isImageTiled != other.isImageTiled)
+                return false;
+            if (numBands != other.numBands)
+                return false;
+            if (photometricInterpretation != other.photometricInterpretation)
+                return false;
+            if (planarConfiguration != other.planarConfiguration)
+                return false;
+            if (!Arrays.equals(sampleFormat, other.sampleFormat))
+                return false;
+            if (samplesPerPixel != other.samplesPerPixel)
+                return false;
+            if (tileOrStripHeight != other.tileOrStripHeight)
+                return false;
+            if (tileOrStripWidth != other.tileOrStripWidth)
+                return false;
+            if (width != other.width)
+                return false;
+            return true;
+        }
+
+        /* (non-Javadoc)
+         * @see java.lang.Object#toString()
+         */
+        @Override
+        public String toString() {
+            return "PageInfo [bigtiff=" + bigtiff + ", bitsPerSample="
+                    + Arrays.toString(bitsPerSample) + ", colorMap=" + Arrays.toString(colorMap)
+                    + ", compression=" + compression + ", extraSamples="
+                    + Arrays.toString(extraSamples) + ", height=" + height + ", isImageTiled="
+                    + isImageTiled + ", numBands=" + numBands + ", photometricInterpretation="
+                    + photometricInterpretation + ", planarConfiguration=" + planarConfiguration
+                    + ", sampleFormat=" + Arrays.toString(sampleFormat) + ", samplesPerPixel="
+                    + samplesPerPixel + ", tileOrStripHeight=" + tileOrStripHeight
+                    + ", tileOrStripWidth=" + tileOrStripWidth + ", width=" + width + "]";
+        }
+
+        private boolean bigtiff = false;
+
+        private int[] bitsPerSample;
+
+        private char[] colorMap;
+
+        private int compression;
+
+        private int height = -1;
+
+        private int numBands = -1;
+
+        private int photometricInterpretation;
+
+        private int width = -1;
+        
+        private int tileOrStripWidth = -1, tileOrStripHeight = -1;
+
+        private int planarConfiguration = BaselineTIFFTagSet.PLANAR_CONFIGURATION_CHUNKY;
+
+        private boolean isImageTiled= false;
+
+        private int samplesPerPixel;
+
+        private int[] sampleFormat;
+
+        private int[] extraSamples;
 
 
-	private int magic = -1;
-	
-	private boolean bigtiff = false;
-	
-	
-	// The current ImageInputStream source.
+     
+    }
+
+    private static final boolean DEBUG = false; // XXX 'false' for release!!!
+
+    private int magic = -1;
+    
+    private Map<Integer, PageInfo> pagesInfo= new HashMap<Integer, PageInfo>();
+
+    private boolean bigtiff = false;
+        
+    // The current ImageInputStream source.
     ImageInputStream stream = null;
 
     // True if the file header has been read.
@@ -253,37 +401,37 @@ public class TIFFImageReader extends ImageReader {
             }
             
             if (magic == 43)
-            	bigtiff=true;
+                bigtiff=true;
             else 
-            	bigtiff=false;
+                bigtiff=false;
             
             // Seek to start of first IFD
             long offset = -1;
             
             switch(magic) {
             case 42:
-            	offset = stream.readUnsignedInt();
+                offset = stream.readUnsignedInt();
                 break;
             case 43:
-            	int alwaysEight = stream.readUnsignedShort();
-            	if (alwaysEight != 8){
-            		processWarningOccurred("No BigTiff file format");
-            	}
-            	int alwaysZero = stream.readUnsignedShort();
-            	if (alwaysZero != 0){
-            		processWarningOccurred("No BigTiff file format");
-            	}
-            	
-            	offset = stream.readLong();
-            	break;
+                int alwaysEight = stream.readUnsignedShort();
+                if (alwaysEight != 8){
+                        processWarningOccurred("No BigTiff file format");
+                }
+                int alwaysZero = stream.readUnsignedShort();
+                if (alwaysZero != 0){
+                        processWarningOccurred("No BigTiff file format");
+                }
+                
+                offset = stream.readLong();
+                break;
             }
  
             if (offset >= 0) {
-            	imageStartPosition.add(Long.valueOf(offset));
-            	stream.seek(offset);
+                imageStartPosition.add(Long.valueOf(offset));
+                stream.seek(offset);
             } else 
-            	processWarningOccurred("Error calculating offset");
-            	     
+                processWarningOccurred("Error calculating offset");
+                     
             
         } catch (IOException e) {
             throw new IIOException("I/O error reading header!", e);
@@ -328,7 +476,7 @@ public class TIFFImageReader extends ImageReader {
                 break;
             
             case 43:
-            	while (index < imageIndex) {
+                while (index < imageIndex) {
                     long count = stream.readLong();
                     stream.skipBytes(20*count);
 
@@ -345,7 +493,7 @@ public class TIFFImageReader extends ImageReader {
                     stream.seek(offset);
                     ++index;
                 }
-            	break;
+                break;
             }
         } catch (IOException e) {
             throw new IIOException("Couldn't seek!", e);
@@ -385,8 +533,10 @@ public class TIFFImageReader extends ImageReader {
         return streamMetadata;
     }
 
-    // Throw an IndexOutOfBoundsException if index < minIndex,
-    // and bump minIndex if required.
+    /**
+     * Throw an IndexOutOfBoundsException if index < minIndex, and bump minIndex if required.
+     * @param imageIndex
+     */
     private void checkIndex(int imageIndex) {
         if (imageIndex < minIndex) {
             throw new IndexOutOfBoundsException("imageIndex < minIndex!");
@@ -396,29 +546,67 @@ public class TIFFImageReader extends ImageReader {
         }
     }
 
-    // Verify that imageIndex is in bounds, find the image IFD, read the
-    // image metadata, initialize instance variables from the metadata.
+    /** 
+     * Verify that imageIndex is in bounds, find the image IFD, read the image metadata, initialize instance variables from the metadata.
+     * @param imageIndex
+     * @throws IIOException
+     */
     private void seekToImage(int imageIndex) throws IIOException {
         checkIndex(imageIndex);
 
+        // TODO we should do this initialization just once!!!
         int index = locateImage(imageIndex);
         if (index != imageIndex) {
             throw new IndexOutOfBoundsException("imageIndex out of bounds!");
         }
+        
+        final Integer i= Integer.valueOf(index);
+        // in case we have cache the info for this page
+        if(!pagesInfo.containsKey(i)){
+       
+            readMetadata();
+            initializeFromMetadata();
+        }else{
+            // initialize from cachedinfo only if needed
+            // TODO Improve
+            if(imageMetadata==null||!initialized)// this means the curindex has changed
+                initializeFromCachedInfo(pagesInfo.get(i));
+        }
+    }
 
-        readMetadata();
-        initializeFromMetadata();
+    private void initializeFromCachedInfo(PageInfo pageInfo) {
+        this.bigtiff=pageInfo.bigtiff;
+        this.bitsPerSample=pageInfo.bitsPerSample;
+        this.colorMap=pageInfo.colorMap;
+        this.compression=pageInfo.compression;
+        this.extraSamples=pageInfo.extraSamples;
+        this.height=pageInfo.height;
+        this.isImageTiled=pageInfo.isImageTiled;
+        this.numBands=pageInfo.numBands;
+        this.photometricInterpretation=pageInfo.photometricInterpretation;
+        this.planarConfiguration=pageInfo.planarConfiguration;
+        this.sampleFormat=pageInfo.sampleFormat;
+        this.samplesPerPixel=pageInfo.samplesPerPixel;
+        this.tileOrStripHeight=pageInfo.tileOrStripHeight;
+        this.tileOrStripWidth=pageInfo.tileOrStripWidth;
+        this.width=pageInfo.width;
+        
+        
+        
     }
 
     // Stream must be positioned at start of IFD for 'currIndex'
     private void readMetadata() throws IIOException {
-        if (stream == null) {
-            throw new IllegalStateException("Input not set!");
-        }
+
 
         if (imageMetadata != null) {
             return;
         }
+        
+        if (stream == null) {
+            throw new IllegalStateException("Input not set!");
+        }
+        
         try {
             // Create an object to store the image metadata
             List<BaselineTIFFTagSet> tagSets;
@@ -593,10 +781,10 @@ public class TIFFImageReader extends ImageReader {
             imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_COMPRESSION);
         if (f == null) {
             processWarningOccurred("Compression field is missing; assuming no compression");
-	    return BaselineTIFFTagSet.COMPRESSION_NONE;
-	} else {
+            return BaselineTIFFTagSet.COMPRESSION_NONE;
+        } else {
             return f.getAsInt(0);
-	}
+        }
     }
 
     public int getWidth(int imageIndex) throws IOException {
@@ -836,6 +1024,26 @@ public class TIFFImageReader extends ImageReader {
 
         // signal that this image is initialized
         initialized = true;
+        
+        // cache the page info for later reuse
+        pagesInfo.put(
+                currIndex, 
+                new PageInfo(
+                        bigtiff, 
+                        bitsPerSample, 
+                        colorMap, 
+                        compression,
+                        height,
+                        numBands,
+                        photometricInterpretation,
+                        width,
+                        tileOrStripWidth,
+                        tileOrStripHeight,
+                        planarConfiguration,
+                        isImageTiled,
+                        samplesPerPixel,
+                        sampleFormat,
+                        extraSamples));
 
     }
 
@@ -1390,9 +1598,9 @@ public class TIFFImageReader extends ImageReader {
                 if(DEBUG) {
                     System.out.println("Using TIFFLZWDecompressor");
                 }
-		TIFFField predictorField =
+                TIFFField predictorField =
                     imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_PREDICTOR);
-		int predictor = ((predictorField == null) ?
+                int predictor = ((predictorField == null) ?
                                  BaselineTIFFTagSet.PREDICTOR_NONE :
                                  predictorField.getAsInt(0));
                 this.decompressor = new TIFFLZWDecompressor(predictor);
@@ -1403,9 +1611,9 @@ public class TIFFImageReader extends ImageReader {
                        BaselineTIFFTagSet.COMPRESSION_ZLIB ||
                        compression ==
                        BaselineTIFFTagSet.COMPRESSION_DEFLATE) {
-		TIFFField predictorField =
+                TIFFField predictorField =
                     imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_PREDICTOR);
-		int predictor = ((predictorField == null) ?
+                int predictor = ((predictorField == null) ?
                                  BaselineTIFFTagSet.PREDICTOR_NONE :
                                  predictorField.getAsInt(0));
                 this.decompressor = new TIFFDeflateDecompressor(predictor);

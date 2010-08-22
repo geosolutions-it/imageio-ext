@@ -20,7 +20,6 @@ import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReader;
 import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
 import it.geosolutions.resources.TestData;
 
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +28,6 @@ import javax.imageio.ImageReadParam;
 import javax.imageio.stream.FileImageInputStream;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -41,32 +39,133 @@ import org.junit.Test;
 public class TIFFReadTest extends Assert {
 
     @Test
-    @Ignore
-    public void jaiReadFromFile() throws IOException {
+    public void readFromFileDirect() throws IOException {
         final File file = TestData.file(this, "test.tif");
-        
-        final ImageReadParam param= new ImageReadParam();
-        param.setSourceRegion(new Rectangle(10,10,800,800));
-        final TIFFImageReader reader =(TIFFImageReader) new TIFFImageReaderSpi().createReaderInstance();
+
+        final ImageReadParam param = new ImageReadParam();
+        // param.setSourceRegion(new Rectangle(10,10,800,800));
+        final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi()
+                .createReaderInstance();
         reader.setInput(new FileImageInputStream(file));
-        double sum=0;
-        final long num = 10000l;
-        for(long i=0;i<num;i++){
-            final double time= System.nanoTime();
-            BufferedImage image = reader.read(0,param);
-            if (TestData.isInteractiveTest())
-                ImageIOUtilities.visualize(image, "testManualRead");
-            else
-                Assert.assertNotNull(image.getData());
-            sum+=System.nanoTime()-time;
-            Assert.assertEquals(120, image.getWidth());
-            Assert.assertEquals(107, image.getHeight());
-            
-            image.flush();
-            image=null;
-        }
+        // double sum=0;
+        // final long num = 10000l;
+        // for(long i=0;i<num;i++){
+        // final double time= System.nanoTime();
         
-        System.out.println("time (ms) "+sum/num/1E6);
+        // IMAGE 0
+        BufferedImage image = reader.read(0, param);
+        if (TestData.isInteractiveTest())
+            ImageIOUtilities.visualize(image, "testManualRead");
+        else
+            Assert.assertNotNull(image.getData());
+        // sum+=System.nanoTime()-time;
+        Assert.assertEquals(120, image.getWidth());
+        Assert.assertEquals(107, image.getHeight());
+
+        image.flush();
+        image = null;
+        // }
+        
+        // IMAGE 2
+        image = reader.read(2, param);
+        if (TestData.isInteractiveTest())
+            ImageIOUtilities.visualize(image, "testManualRead");
+        else
+            Assert.assertNotNull(image.getData());
+        // sum+=System.nanoTime()-time;
+        Assert.assertEquals(40, image.getWidth());
+        Assert.assertEquals(36, image.getHeight());
+
+        image.flush();
+        image = null;
+
+
+
+        // IMAGE 4
+        image = reader.read(4, param);
+        if (TestData.isInteractiveTest())
+            ImageIOUtilities.visualize(image, "testManualRead");
+        else
+            Assert.assertNotNull(image.getData());
+        // sum+=System.nanoTime()-time;
+        Assert.assertEquals(24, image.getWidth());
+        Assert.assertEquals(22, image.getHeight());
+
+        image.flush();
+        image = null;
+        
+
+        // IMAGE 6
+        image = reader.read(6, param);
+        if (TestData.isInteractiveTest())
+            ImageIOUtilities.visualize(image, "testManualRead");
+        else
+            Assert.assertNotNull(image.getData());
+        // sum+=System.nanoTime()-time;
+        Assert.assertEquals(18, image.getWidth());
+        Assert.assertEquals(16, image.getHeight());
+
+        image.flush();
+        image = null;
+        
+
+
+        // IMAGE 1
+        image = reader.read(1, param);
+        if (TestData.isInteractiveTest())
+            ImageIOUtilities.visualize(image, "testManualRead");
+        else
+            Assert.assertNotNull(image.getData());
+        // sum+=System.nanoTime()-time;
+        Assert.assertEquals(60, image.getWidth());
+        Assert.assertEquals(54, image.getHeight());
+
+        image.flush();
+        image = null;
+
+
+        // IMAGE 3
+        image = reader.read(3, param);
+        if (TestData.isInteractiveTest())
+            ImageIOUtilities.visualize(image, "testManualRead");
+        else
+            Assert.assertNotNull(image.getData());
+        // sum+=System.nanoTime()-time;
+        Assert.assertEquals(30, image.getWidth());
+        Assert.assertEquals(27, image.getHeight());
+
+        image.flush();
+        image = null;
+
+        
+        // IMAGE 5
+        image = reader.read(5, param);
+        if (TestData.isInteractiveTest())
+            ImageIOUtilities.visualize(image, "testManualRead");
+        else
+            Assert.assertNotNull(image.getData());
+        // sum+=System.nanoTime()-time;
+        Assert.assertEquals(20, image.getWidth());
+        Assert.assertEquals(18, image.getHeight());
+
+        image.flush();
+        image = null;
+        
+        
+        // IMAGE 7
+        image = reader.read(7, param);
+        if (TestData.isInteractiveTest())
+            ImageIOUtilities.visualize(image, "testManualRead");
+        else
+            Assert.assertNotNull(image.getData());
+        // sum+=System.nanoTime()-time;
+        Assert.assertEquals(15, image.getWidth());
+        Assert.assertEquals(14, image.getHeight());
+
+        image.flush();
+        image = null;
+        
+        // System.out.println("time (ms) "+sum/num/1E6);
         reader.dispose();
     }
 }
