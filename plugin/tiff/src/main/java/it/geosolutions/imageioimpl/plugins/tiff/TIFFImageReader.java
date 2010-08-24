@@ -552,6 +552,16 @@ public class TIFFImageReader extends ImageReader {
      * @throws IIOException
      */
     private void seekToImage(int imageIndex) throws IIOException {
+        seekToImage(imageIndex, true);
+    }
+    
+    /** 
+     * Verify that imageIndex is in bounds, find the image IFD, read the image metadata, initialize instance variables from the metadata.
+     * @param imageIndex
+     * @param optimized
+     * @throws IIOException
+     */
+    private void seekToImage(int imageIndex, boolean optimized) throws IIOException {
         checkIndex(imageIndex);
 
         // TODO we should do this initialization just once!!!
@@ -561,6 +571,13 @@ public class TIFFImageReader extends ImageReader {
         }
         
         final Integer i= Integer.valueOf(index);
+        //optimized branch
+        if(!optimized){
+            
+            readMetadata();
+            initializeFromMetadata();
+        	return;
+        }
         // in case we have cache the info for this page
         if(!pagesInfo.containsKey(i)){
        
@@ -1058,7 +1075,7 @@ public class TIFFImageReader extends ImageReader {
 
         // Create the ITS and cache if for later use so that this method
         // always returns an Iterator containing the same ITS objects.
-        seekToImage(imageIndex);
+        seekToImage(imageIndex,false);
         ImageTypeSpecifier itsRaw = 
             TIFFDecompressor.getRawImageTypeSpecifier
                 (photometricInterpretation,
@@ -1144,7 +1161,7 @@ public class TIFFImageReader extends ImageReader {
     }
 
     public IIOMetadata getImageMetadata(int imageIndex) throws IIOException {
-        seekToImage(imageIndex);
+        seekToImage(imageIndex,false);
         TIFFImageMetadata im =
             new TIFFImageMetadata(imageMetadata.getRootIFD().getTagSetList());
         Node root =
