@@ -565,6 +565,34 @@ public class ImageIOUtilities {
 	}
 
 	/**
+	 * Retrieves the class of the native type for the specified {@link DataBuffer} type.
+	 * 
+	 * <p>
+	 * Spits an {@link IllegalArgumentException} in case the data type is unknown.
+	 * @param dataType {@link DataBuffer} type.
+	 * @return the class of the native type for the specified {@link DataBuffer} type or an {@link IllegalArgumentException}.
+	 */
+	public static Class<?> classForDataBufferType(final int dataType){
+		switch(dataType){
+		case DataBuffer.TYPE_BYTE:
+			return Byte.class;
+		case DataBuffer.TYPE_SHORT:case DataBuffer.TYPE_USHORT:
+			return Short.class;
+		case DataBuffer.TYPE_INT:
+			return Integer.class;
+		case DataBuffer.TYPE_FLOAT:
+			return Float.class;
+		case DataBuffer.TYPE_DOUBLE:
+			return Double.class;
+		case DataBuffer.TYPE_UNDEFINED:
+		default:
+			throw new IllegalArgumentException("Wrong datatype:"+dataType);
+			
+			
+		}
+	}
+
+	/**
 	 * Returns a short class name for the specified class. This method will omit
 	 * the package name. For example, it will return "String" instead of
 	 * "java.lang.String" for a {@link String} object. It will also name array
