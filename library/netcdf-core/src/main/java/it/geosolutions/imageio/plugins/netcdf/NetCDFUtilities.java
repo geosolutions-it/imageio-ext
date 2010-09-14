@@ -18,6 +18,7 @@ package it.geosolutions.imageio.plugins.netcdf;
 
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 import it.geosolutions.imageio.stream.input.URIImageInputStream;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.imageio.utilities.Utilities;
 
 import java.awt.image.DataBuffer;
@@ -151,31 +152,20 @@ public class NetCDFUtilities {
     public static final String NAME = "name";
     
     public static final String LONG_NAME = "long_name";
-    
-    
-//    private final static HashMap TSS_OAG_ACCEPTED = new HashMap();
-//
-//    private final static HashMap TSS_PE_ACCEPTED = new HashMap();
-//
-//    static {
-//        String[] values = new String[] { "temp", "temperr", "tempmean", "salt",
-//                "salterr", "saltmean", "dynht", "dynhterr", "dynhtmean" };
-//        int nValues = values.length;
-//        for (int i = 0; i < nValues; i++) {
-//            TSS_OAG_ACCEPTED.put(values[i], null);
-//        }
-//        values = new String[] { "temp", "temperr", "tempmean", "salt",
-//                "salterr", "saltmean", "dynht", "dynhterr", "dynhtmean",
-//                "vtot", "vclin", "NO3", "CELLNO3", "zoo", "NH4", "detritus",
-//                "CHL", "CELLNH4", "NH4pr", "NH3pr", "zgrphy", "u", "v" };
-//        nValues = values.length;
-//        for (int i = 0; i < nValues; i++) {
-//            TSS_PE_ACCEPTED.put(values[i], null);
-//        }
-//    }
 
+    /**
+     * Global attribute for coordinate variables.
+     * 
+     * @author Simone Giannecchini, GeoSolutions S.A.S.
+     *
+     */
+    public static enum Axis{
+    	X,Y,Z,T;
+    	
+    }
+    
     public static enum CheckType {
-        /*OAG, PE_MODEL,*/ NONE, UNSET, NOSCALARS, ONLYGEOGRIDS
+        NONE, UNSET, NOSCALARS, ONLYGEOGRIDS
     }
 
     /**
@@ -322,15 +312,27 @@ public class NetCDFUtilities {
     public static int getRawDataType(final VariableIF variable) {
         VariableDS ds = (VariableDS) variable;
         final DataType type = ds.getOriginalDataType();
-        if (DataType.BOOLEAN.equals(type) || DataType.BYTE.equals(type)) {
+        return transcodeNetCDFDataType(type,variable.isUnsigned());
+    }
+
+    /**
+     * Transcode a NetCDF data type into a java2D  DataBuffer type.
+     * 
+     * @param type the {@link DataType} to transcode.
+     * @param unsigned if the original data is unsigned or not
+     * @return an int representing the correct DataBuffer type.
+     */
+	public static int transcodeNetCDFDataType(
+			final DataType type,
+			final boolean unsigned) {
+		if (DataType.BOOLEAN.equals(type) || DataType.BYTE.equals(type)) {
             return DataBuffer.TYPE_BYTE;
         }
         if (DataType.CHAR.equals(type)) {
             return DataBuffer.TYPE_USHORT;
         }
         if (DataType.SHORT.equals(type)) {
-            return variable.isUnsigned() ? DataBuffer.TYPE_USHORT
-                    : DataBuffer.TYPE_SHORT;
+            return unsigned ? DataBuffer.TYPE_USHORT: DataBuffer.TYPE_SHORT;
         }
         if (DataType.INT.equals(type)) {
             return DataBuffer.TYPE_INT;
@@ -342,7 +344,35 @@ public class NetCDFUtilities {
             return DataBuffer.TYPE_DOUBLE;
         }
         return DataBuffer.TYPE_UNDEFINED;
-    }
+	}
+	
+    /**
+     * Transcode a NetCDF data type into a java2D  DataBuffer type.
+     * 
+     * @param type the {@link DataType} to transcode.
+     * @param unsigned if the original data is unsigned or not
+     * @return an int representing the correct DataBuffer type.
+     */
+	public static DataType transcodeDataType(
+			final int dataType) {
+		switch(dataType){
+		case DataBuffer.TYPE_BYTE:
+	            return DataType.BYTE;
+		case DataBuffer.TYPE_DOUBLE:
+            return DataType.DOUBLE;
+		case DataBuffer.TYPE_FLOAT:
+            return DataType.FLOAT;
+		case DataBuffer.TYPE_INT:
+            return DataType.INT;
+		case DataBuffer.TYPE_SHORT:
+            return DataType.SHORT;
+		case DataBuffer.TYPE_USHORT:
+			return DataType.SHORT;
+		case DataBuffer.TYPE_UNDEFINED:default:
+			throw new IllegalArgumentException("Invalid input data type:"+dataType);
+
+		}
+	}
 
     public static String getAttributesAsString(Attribute attr) {
         return getAttributesAsString(attr, false);
@@ -626,7 +656,7 @@ public class NetCDFUtilities {
             final URL tempURL = (URL) input;
             String protocol = tempURL.getProtocol();
             if (protocol.equalsIgnoreCase("file")) {
-                File file = Utilities.urlToFile(tempURL);
+                File file = ImageIOUtilities.urlToFile(tempURL);
                 if (!file.isDirectory())
                     dataset = NetcdfDataset.openDataset(file.getPath());
                 else
