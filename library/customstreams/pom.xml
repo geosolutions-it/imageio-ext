@@ -4,12 +4,12 @@
 	<parent>
 		<groupId>it.geosolutions.imageio-ext</groupId>
 		<artifactId>imageio-ext-library</artifactId>
-		<version>1.0-SNAPSHOT</version>
+		<version>1.0.8</version>
 	</parent>
 	<groupId>it.geosolutions.imageio-ext</groupId>
 	<artifactId>imageio-ext-customstreams</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0.8</version>
 	<name>Image I/O-Extensions - Custom Streams</name>
 	<scm>
 		<connection>

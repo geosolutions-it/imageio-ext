@@ -13,12 +13,12 @@
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.8</version>
   </parent>
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-deployer</artifactId>
   <packaging>pom</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.8</version>
   <name>GeoSolutions Image I/O-Extensions Dependency Deployer</name>
 
   <scm>
