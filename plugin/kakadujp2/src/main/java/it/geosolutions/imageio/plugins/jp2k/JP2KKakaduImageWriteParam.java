@@ -21,12 +21,47 @@ package it.geosolutions.imageio.plugins.jp2k;
 
 import javax.imageio.ImageWriteParam;
 
+import kdu_jni.Kdu_global;
+
 /**
  * @author Daniele Romagnoli, GeoSolutions
  * @author Simone Giannecchini, GeoSolutions
  */
 public class JP2KKakaduImageWriteParam extends ImageWriteParam {
 
+    public static final int UNSPECIFIED_ORG_GEN_TLM = -1;
+    
+    public enum ProgressionOrder{
+        
+        LRCP { 
+            int getValue(){
+                return Kdu_global.Corder_LRCP;
+            }
+        },
+        RLCP { 
+            int getValue(){
+                return Kdu_global.Corder_RLCP;
+            }
+        },
+        RPCL { 
+            int getValue(){
+                return Kdu_global.Corder_RPCL;
+            }
+        },
+        PCRL { 
+            int getValue(){
+                return Kdu_global.Corder_PCRL;
+            }
+        },
+        CPRL { 
+            int getValue(){
+                return Kdu_global.Corder_CPRL;
+            }
+        };
+        
+        abstract int getValue();        
+    };
+    
     /**
      * Default Constructor.
      */
@@ -36,6 +71,11 @@ public class JP2KKakaduImageWriteParam extends ImageWriteParam {
         qualityLayers = 1;
         canWriteCompressed = true;
         compressionMode = MODE_EXPLICIT;
+    }
+
+    @Override
+    public boolean canWriteTiles() {
+        return true;
     }
 
     /**
@@ -61,9 +101,34 @@ public class JP2KKakaduImageWriteParam extends ImageWriteParam {
     private int qualityLayers;
 
     /**
+     * Specify the progression order parameter.
+     */
+    private ProgressionOrder cOrder;
+    
+    /**
      * Specify the number of decompositions levels.
      */
     private int cLevels;
+    
+    /**
+     * if true, request the insertion of packet length information in the header of tile-parts
+     */
+    private boolean orgGen_plt;
+    
+    /**
+     * Controls the division of each tile's packets into tile-parts
+     */
+    private String orgT_parts;
+    
+    /**
+     * the cPrecincts settings; 
+     */
+    private String cPrecincts;
+    
+    /**
+     * Specify the TLM (tile-part-length) marker segments in the main header.
+     */
+    private int orgGen_tlm = UNSPECIFIED_ORG_GEN_TLM;
     
     /**
      * The default number of decomposition levels.
@@ -172,5 +237,57 @@ public class JP2KKakaduImageWriteParam extends ImageWriteParam {
 
     public void setGeoJp2(byte[] geoJp2) {
         this.geoJp2 = geoJp2;
+    }
+
+    public void setOrgGen_plt(boolean orgGen_plt) {
+        this.orgGen_plt = orgGen_plt;
+    }
+
+    public boolean isOrgGen_plt() {
+        return orgGen_plt;
+    }
+
+    public void setOrgGen_tlm(int orgGen_tlm) {
+        this.orgGen_tlm = orgGen_tlm;
+    }
+
+    public int getOrgGen_tlm() {
+        return orgGen_tlm;
+    }
+    
+    public void setOrgT_parts(String orgT_parts) {
+        this.orgT_parts = orgT_parts;
+    }
+
+    public String getOrgT_parts() {
+        return orgT_parts;
+    }
+
+    public ProgressionOrder getcOrder() {
+        return cOrder;
+    }
+
+    public void setcOrder(ProgressionOrder cOrder) {
+        this.cOrder = cOrder;
+    }
+
+    public String getcPrecincts() {
+        return cPrecincts;
+    }
+
+    public void setcPrecincts(String cPrecincts) {
+        this.cPrecincts = cPrecincts;
+    }
+
+    @Override
+    public String toString() {
+        return "JP2KKakaduImageWriteParam [writeCodeStreamOnly="
+                + writeCodeStreamOnly + ", quality=" + quality
+                + ", qualityLayers=" + qualityLayers + ", cOrder="
+                + cOrder + ", cLevels=" + cLevels + ", ORGgen_plt="
+                + orgGen_plt + ", cPrecincts=" + cPrecincts + ", ORGgen_tlm="
+                + orgGen_tlm + ", ORGt_parts=" + orgT_parts +", tilingMode=" 
+                + tilingMode + ", tileWidth=" + tileWidth
+                + ", tileHeight=" + tileHeight + "]";
     }
 }

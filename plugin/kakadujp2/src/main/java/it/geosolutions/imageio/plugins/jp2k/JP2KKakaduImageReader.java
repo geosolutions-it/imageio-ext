@@ -1300,11 +1300,11 @@ public class JP2KKakaduImageReader extends ImageReader {
             ColorSpace cs = null;
             
             //RGBN Workaround
-    	    if (associations.length == 4/* && associations[0]==1 && associations[1]==2 && associations[2]==3*/){
-    		cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
-    		hasAlpha = true;
-    	    } 
-    	    else if (profile != null)
+        	if (associations.length == 4/* && associations[0]==1 && associations[1]==2 && associations[2]==3*/){
+        		cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
+        		hasAlpha = true;
+        	}
+        	else if (profile != null)
                 cs = new ICC_ColorSpace(profile);
             else if (colorSpaceType == ColorSpecificationBox.ECS_sRGB)
                 cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
