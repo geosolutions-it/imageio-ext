@@ -353,15 +353,18 @@ public class JP2KTreeController implements JP2KTreeChecker, TreeModelListener{
                                     // 
                                     // //
                                     else if (boxType == ResolutionBox.BOX_TYPE){
-//                                        final ResolutionBox resBox = (ResolutionBox) child;
-                                        //TODO: Add checks
+                                        final ResolutionBox resBox = (ResolutionBox) child;
+                                        final int resCaptureBoxIndex = getChildIndex(resBox, ResolutionBox.BOX_TYPE_CAPTURE);
+                                        final int resDefaultBoxIndex = getChildIndex(resBox, ResolutionBox.BOX_TYPE_DEFAULT_DISPLAY);
+                                        if (resCaptureBoxIndex == -1 && resDefaultBoxIndex == -1){
+                                            errors.add(new IllegalStateException("Resolution Box should have a Capture Resolution box and/or a Default Display Resolution box"));
+                                        }
+                                     
                                     }
                                 }
                             }
                         }
                         break;
-                        
-                    case ResolutionBox.BOX_TYPE:
                         
                     }
                     if (errors.size()==0)

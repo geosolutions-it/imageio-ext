@@ -91,52 +91,38 @@ public class BoxUtilities {
 
         // Children of HeadCStream
         names.put(JP2HeaderBox.BOX_TYPE, JP2HeaderBox.JP2K_MD_NAME);
-        names.put(ContiguousCodestreamBox.BOX_TYPE,
-                ContiguousCodestreamBox.JP2K_MD_NAME);
+        names.put(ContiguousCodestreamBox.BOX_TYPE, ContiguousCodestreamBox.JP2K_MD_NAME);
         
         // Children of JPEG2000HeaderSuperBox
-        names.put(ImageHeaderBox.BOX_TYPE,
-                ImageHeaderBox.JP2K_MD_NAME);
+        names.put(ImageHeaderBox.BOX_TYPE, ImageHeaderBox.JP2K_MD_NAME);
 
         // Optional boxes in JPEG2000HeaderSuperBox
-        names.put(BitsPerComponentBox.BOX_TYPE,
-                BitsPerComponentBox.JP2K_MD_NAME);
-        names.put(ColorSpecificationBox.BOX_TYPE,
-                ColorSpecificationBox.JP2K_MD_NAME);
+        names.put(BitsPerComponentBox.BOX_TYPE, BitsPerComponentBox.JP2K_MD_NAME);
+        names.put(ColorSpecificationBox.BOX_TYPE, ColorSpecificationBox.JP2K_MD_NAME);
         names.put(PaletteBox.BOX_TYPE, PaletteBox.JP2K_MD_NAME);
-        names.put(ComponentMappingBox.BOX_TYPE,
-                ComponentMappingBox.JP2K_MD_NAME);
-        names.put(ChannelDefinitionBox.BOX_TYPE,
-                ChannelDefinitionBox.JP2K_MD_NAME);
-        names.put(ResolutionBox.BOX_TYPE,
-                ResolutionBox.JP2K_MD_NAME);
+        names.put(ComponentMappingBox.BOX_TYPE, ComponentMappingBox.JP2K_MD_NAME);
+        names.put(ChannelDefinitionBox.BOX_TYPE, ChannelDefinitionBox.JP2K_MD_NAME);
+        names.put(ResolutionBox.BOX_TYPE, ResolutionBox.JP2K_MD_NAME);
         names.put(ASOCBox.BOX_TYPE, ASOCBox.JP2K_MD_NAME);
 
         // Children of JPEG2000ResolutionBox
-        names.put(ResolutionBox.BOX_TYPE_CAPTURE,
-                "JPEG2000CaptureResolutionBox");
-        names.put(ResolutionBox.BOX_TYPE_DEFAULT_DISPLAY,
-                "JPEG2000DefaultDisplayResolutionBox");
+        names.put(ResolutionBox.BOX_TYPE_CAPTURE, ResolutionBox.JP2_MD_CAP_NAME);
+        names.put(ResolutionBox.BOX_TYPE_DEFAULT_DISPLAY, ResolutionBox.JP2_MD_DEF_DISP_NAME);
 
-        
-        
         // Children of JPEG2000UUIDInfoBox
         names.put(UUIDBox.BOX_TYPE, UUIDBox.JP2K_MD_NAME);
         names.put(UUIDInfoBox.BOX_TYPE, UUIDInfoBox.JP2K_MD_NAME);
         names.put(UUIDListBox.BOX_TYPE, UUIDListBox.JP2K_MD_NAME);
-        names.put(DataEntryURLBox.BOX_TYPE,
-                DataEntryURLBox.JP2K_MD_NAME);
+        names.put(DataEntryURLBox.BOX_TYPE, DataEntryURLBox.JP2K_MD_NAME);
         
         // JPX rreq
-        names.put(ReaderRequirementsBox.BOX_TYPE,
-        		ReaderRequirementsBox.JP2K_MD_NAME);  
+        names.put(ReaderRequirementsBox.BOX_TYPE, ReaderRequirementsBox.JP2K_MD_NAME);  
         names.put(CodestreamHeaderBox.BOX_TYPE, CodestreamHeaderBox.JP2K_MD_NAME);
         names.put(CompositingLayerHeaderBox.BOX_TYPE, CompositingLayerHeaderBox.JP2K_MD_NAME);
         
         
         // JPX Label Box 
-        names.put(LabelBox.BOX_TYPE,
-        		LabelBox.JP2K_MD_NAME); 
+        names.put(LabelBox.BOX_TYPE, LabelBox.JP2K_MD_NAME); 
     }
 
     // Initializes the hash table "boxClasses".
@@ -153,33 +139,24 @@ public class BoxUtilities {
         boxClasses.put(XMLBox.BOX_TYPE, XMLBox.class);
 
         boxClasses.put(JP2HeaderBox.BOX_TYPE, JP2HeaderBox.class);
-        boxClasses.put(ContiguousCodestreamBox.BOX_TYPE,
-                ContiguousCodestreamBox.class);
+        boxClasses.put(ContiguousCodestreamBox.BOX_TYPE, ContiguousCodestreamBox.class);
 
         // Children of JPEG2000HeaderSuperBox
-        boxClasses.put(ImageHeaderBox.BOX_TYPE,
-                ImageHeaderBox.class);
+        boxClasses.put(ImageHeaderBox.BOX_TYPE, ImageHeaderBox.class);
 
         // Optional boxes in JPEG2000HeaderSuperBox
-        boxClasses.put(BitsPerComponentBox.BOX_TYPE,
-                BitsPerComponentBox.class);
-        boxClasses.put(ColorSpecificationBox.BOX_TYPE,
-                ColorSpecificationBox.class);
+        boxClasses.put(BitsPerComponentBox.BOX_TYPE, BitsPerComponentBox.class);
+        boxClasses.put(ColorSpecificationBox.BOX_TYPE, ColorSpecificationBox.class);
         boxClasses.put(PaletteBox.BOX_TYPE, PaletteBox.class);
-        boxClasses.put(ComponentMappingBox.BOX_TYPE,
-                ComponentMappingBox.class);
-        boxClasses.put(ChannelDefinitionBox.BOX_TYPE,
-                ChannelDefinitionBox.class);
-        boxClasses
-                .put(ResolutionBox.BOX_TYPE, ResolutionBox.class);
+        boxClasses.put(ComponentMappingBox.BOX_TYPE, ComponentMappingBox.class);
+        boxClasses.put(ChannelDefinitionBox.BOX_TYPE, ChannelDefinitionBox.class);
+        boxClasses.put(ResolutionBox.BOX_TYPE, ResolutionBox.class);
         
         boxClasses.put(ASOCBox.BOX_TYPE, ASOCBox.class);
 
         // Children of JPEG2000ResolutionBox
-        boxClasses.put(ResolutionBox.BOX_TYPE_CAPTURE,
-                ResolutionBox.class);
-        boxClasses.put(ResolutionBox.BOX_TYPE_DEFAULT_DISPLAY,
-                ResolutionBox.class);
+        boxClasses.put(ResolutionBox.BOX_TYPE_CAPTURE, ResolutionBox.class);
+        boxClasses.put(ResolutionBox.BOX_TYPE_DEFAULT_DISPLAY, ResolutionBox.class);
 
         // Children of JPEG2000UUIDInfoBox
         boxClasses.put(UUIDInfoBox.BOX_TYPE, UUIDInfoBox.class);
@@ -187,20 +164,16 @@ public class BoxUtilities {
         
         boxClasses.put(UUIDBox.BOX_TYPE, UUIDBox.class);
         boxClasses.put(UUIDListBox.BOX_TYPE, UUIDListBox.class);
-        boxClasses.put(DataEntryURLBox.BOX_TYPE,
-                DataEntryURLBox.class);
+        boxClasses.put(DataEntryURLBox.BOX_TYPE, DataEntryURLBox.class);
         
         // JPX rreq
-        boxClasses.put(ReaderRequirementsBox.BOX_TYPE,
-        		ReaderRequirementsBox.class);   
+        boxClasses.put(ReaderRequirementsBox.BOX_TYPE, ReaderRequirementsBox.class);   
         
         boxClasses.put(CodestreamHeaderBox.BOX_TYPE, CodestreamHeaderBox.class);
         boxClasses.put(CompositingLayerHeaderBox.BOX_TYPE, CompositingLayerHeaderBox.class);
         
-        
         // JPX Label Box 
-        boxClasses.put(LabelBox.BOX_TYPE,
-        		LabelBox.class); 
+        boxClasses.put(LabelBox.BOX_TYPE, LabelBox.class); 
     }
 
     static {
@@ -216,8 +189,7 @@ public class BoxUtilities {
 
         // Children of HeadCStream
         boxNames.put(JP2HeaderBox.BOX_TYPE, JP2HeaderBox.NAME);
-        boxNames.put(ContiguousCodestreamBox.BOX_TYPE,
-                ContiguousCodestreamBox.NAME);
+        boxNames.put(ContiguousCodestreamBox.BOX_TYPE, ContiguousCodestreamBox.NAME);
         
         boxNames.put(ASOCBox.BOX_TYPE, ASOCBox.NAME);
 
@@ -225,42 +197,32 @@ public class BoxUtilities {
         boxNames.put(ImageHeaderBox.BOX_TYPE, ImageHeaderBox.NAME);
 
         // Optional boxes in JPEG2000HeaderSuperBox
-        boxNames.put(BitsPerComponentBox.BOX_TYPE,
-                BitsPerComponentBox.NAME);
-        boxNames.put(ColorSpecificationBox.BOX_TYPE,
-                ColorSpecificationBox.NAME);
+        boxNames.put(BitsPerComponentBox.BOX_TYPE, BitsPerComponentBox.NAME);
+        boxNames.put(ColorSpecificationBox.BOX_TYPE, ColorSpecificationBox.NAME);
         boxNames.put(PaletteBox.BOX_TYPE, PaletteBox.NAME);
-        boxNames.put(ComponentMappingBox.BOX_TYPE,
-                ComponentMappingBox.NAME);
-        boxNames.put(ChannelDefinitionBox.BOX_TYPE,
-                ChannelDefinitionBox.NAME);
+        boxNames.put(ComponentMappingBox.BOX_TYPE, ComponentMappingBox.NAME);
+        boxNames.put(ChannelDefinitionBox.BOX_TYPE, ChannelDefinitionBox.NAME);
         boxNames.put(ResolutionBox.BOX_TYPE, ResolutionBox.NAME);
 
         // Children of JPEG2000ResolutionBox
-        boxNames.put(ResolutionBox.BOX_TYPE_CAPTURE,
-                ResolutionBox.CAP_NAME);
-        boxNames.put(ResolutionBox.BOX_TYPE_DEFAULT_DISPLAY,
-                ResolutionBox.DEF_NAME);
+        boxNames.put(ResolutionBox.BOX_TYPE_CAPTURE, ResolutionBox.CAP_NAME);
+        boxNames.put(ResolutionBox.BOX_TYPE_DEFAULT_DISPLAY, ResolutionBox.DEF_NAME);
 
         boxNames.put(UUIDBox.BOX_TYPE, UUIDBox.NAME);
         boxNames.put(UUIDInfoBox.BOX_TYPE, UUIDInfoBox.NAME);
         
         // Children of JPEG2000UUIDInfoBox
         boxNames.put(UUIDListBox.BOX_TYPE, UUIDListBox.NAME);
-        boxNames.put(DataEntryURLBox.BOX_TYPE,
-                DataEntryURLBox.NAME);
+        boxNames.put(DataEntryURLBox.BOX_TYPE, DataEntryURLBox.NAME);
         
         // JPX rreq
-        boxNames.put(ReaderRequirementsBox.BOX_TYPE,
-        		ReaderRequirementsBox.NAME);
+        boxNames.put(ReaderRequirementsBox.BOX_TYPE, ReaderRequirementsBox.NAME);
         
         boxNames.put(CodestreamHeaderBox.BOX_TYPE, CodestreamHeaderBox.NAME);
         boxNames.put(CompositingLayerHeaderBox.BOX_TYPE, CompositingLayerHeaderBox.NAME);
         
-        
         // JPX Label Box 
-        boxNames.put(LabelBox.BOX_TYPE,
-        		LabelBox.NAME); 
+        boxNames.put(LabelBox.BOX_TYPE, LabelBox.NAME); 
     }
 
     /**

@@ -96,10 +96,9 @@ public class ResolutionBox extends BaseJP2KBox {
 
     public final static String NAME = "res ";
 
-    // TODO: fix this
-    public final static String CAP_NAME = "TODO";
+    public final static String CAP_NAME = "resc";
 
-    public final static String DEF_NAME = "TODO";
+    public final static String DEF_NAME = "resd";
 
     public final static String JP2K_MD_NAME = "JP2KResolutionBox";
 
