@@ -76,6 +76,9 @@
     </profile>
     <profile>
       <id>full</id>
+      <activation>
+         <property><name>all</name></property>
+      </activation>      
       <modules>
         <module>gdaldoq1</module>
         <module>gdaldoq2</module>
