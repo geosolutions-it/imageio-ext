@@ -99,7 +99,7 @@
       <repository>
        <uniqueVersion>false</uniqueVersion>
        <id>geosolutions</id>
-       <url>ftp://ftp.geo-solutions.it</url>
+       <url>ftp://maven.geo-solutions.it/home/maven</url>
       </repository>
     </distributionManagement>
    </profile>
@@ -345,7 +345,7 @@
     <repository>
       <id>geosolutions</id>
       <name>GeoSolutions libraries repository</name>
-      <url>http://mvn.geo-solutions.it/</url>
+      <url>http://maven.geo-solutions.it/</url>
     </repository>
     <repository>
       <id>codehaus</id>
