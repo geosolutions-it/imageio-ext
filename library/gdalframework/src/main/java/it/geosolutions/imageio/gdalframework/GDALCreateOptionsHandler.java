@@ -16,13 +16,13 @@
  */
 package it.geosolutions.imageio.gdalframework;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 /**
  * Abstract class which allows to properly handle the set of "format specific"
@@ -98,7 +98,7 @@ public abstract class GDALCreateOptionsHandler {
         // approach 1
         //
         // ////
-        final ArrayList<String> options = new ArrayList<String>();
+        final Vector<String> options = new Vector<String>();
         synchronized (createOptionsMap) {
             final Collection<GDALCreateOption> values = createOptionsMap.values();
             final Iterator<GDALCreateOption> it = values.iterator();

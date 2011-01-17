@@ -253,7 +253,7 @@ public abstract class GDALImageWriter extends ImageWriter {
         // //
         final int xSubsamplingFactor = param.getSourceXSubsampling();
         final int ySubsamplingFactor = param.getSourceYSubsampling();
-        final List<String> myOptions = ((GDALImageWriteParam) param)
+        final Vector<String> myOptions = (Vector<String>) ((GDALImageWriteParam) param)
                 .getCreateOptionsHandler().getCreateOptions();
         Rectangle imageBounds = new Rectangle(sourceMinX, sourceMinY,
                 sourceWidth, sourceHeight);
