@@ -1287,7 +1287,7 @@ public class EnhancedRandomAccessFile implements DataInput, DataOutput {
 	 * @task we can optimize this
 	 */
 	public String readLine() throws IOException {
-		StringBuffer input = new StringBuffer();
+		StringBuilder input = new StringBuilder();
 		int c;
 
 		while (((c = read()) != -1) && (c != '\n')) {

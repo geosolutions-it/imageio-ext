@@ -190,7 +190,7 @@ public class FileImageOutputStreamExtImpl extends ImageOutputStreamImpl
      */
     public String toString() {
 
-        return new StringBuffer("FileImageOutputStreamExtImpl which points to ")
+        return new StringBuilder("FileImageOutputStreamExtImpl which points to ")
                 .append(this.file.toString()).toString();
     }
 }
