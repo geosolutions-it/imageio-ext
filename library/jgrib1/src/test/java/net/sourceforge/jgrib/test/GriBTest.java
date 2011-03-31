@@ -11,13 +11,13 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 import net.sourceforge.jgrib.GribFile;
+import net.sourceforge.jgrib.GribFile.AccessType;
 import net.sourceforge.jgrib.GribRecord;
 import net.sourceforge.jgrib.GribRecordBDS;
 import net.sourceforge.jgrib.GribRecordBMS;
 import net.sourceforge.jgrib.GribRecordGDS;
 import net.sourceforge.jgrib.GribRecordIS;
 import net.sourceforge.jgrib.GribRecordPDS;
-import net.sourceforge.jgrib.GribFile.AccessType;
 import net.sourceforge.jgrib.gdsgrids.GribGDSFactory;
 import net.sourceforge.jgrib.gdsgrids.GribGDSLambert;
 import net.sourceforge.jgrib.gdsgrids.GribGDSPolarStereo;
@@ -36,6 +36,8 @@ public class GriBTest  {
 	private final static Logger LOGGER = Logger.getLogger(GriBTest.class.toString());
 
 	private GribFile gribFile = null;
+	
+	private final boolean extensiveTests = TestData.isExtensiveTest();
 
 	@Test
 	public void testGrib() throws FileNotFoundException, IOException
@@ -61,7 +63,7 @@ public class GriBTest  {
 				return false;
 			}
 		});
-		final int length = files.length;
+		final int length = extensiveTests ? files.length : Math.min(files.length, 3);
 
 		// /////////////////////////////////////////////////////////////////////
 		//
@@ -87,7 +89,7 @@ public class GriBTest  {
 			LOGGER.info(buffer.toString());
 			for (int j = 1; j <= recordCount; j++) {
 				
-				LOGGER.info("testing record "+j);
+//				LOGGER.info("testing record "+j);
 
 				final GribRecord oldRecord = gribFile.getRecord(j);
 				Assert.assertNotNull((oldRecord));
