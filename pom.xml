@@ -579,7 +579,6 @@
   <!--   Modules for the build in approximate dependency order    -->
   <!-- ========================================================== -->
   <modules>
-    <module>deploy</module>
     <module>library</module>
     <module>plugin</module>
   </modules>
