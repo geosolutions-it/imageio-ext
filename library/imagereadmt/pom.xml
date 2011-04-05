@@ -13,9 +13,9 @@
   <name>Image I/O-Extensions - Multithreading ImageRead</name>
   <scm>
     <connection>
-      scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/library/imagereadmt
+      scm:svn:https://svn.java.net/svn/imageio-ext~svn/trunk/library/imagereadmt
     </connection>
-    <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/library/imagereadmt</url>
+    <url>https://svn.java.net/svn/imageio-ext~svn/trunk/library/imagereadmt</url>
   </scm>
   <dependencies>
    <dependency>

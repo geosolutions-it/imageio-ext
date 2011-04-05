@@ -13,8 +13,8 @@
   <name>GeoTiff Plugin that internally uses GDAL</name>
   <scm>
       <connection>
-        scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/gdal/gdalgeotiff
+        scm:svn:https://svn.java.net/svn/imageio-ext~svn/trunk/plugin/gdal/gdalgeotiff
       </connection>
-      <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/gdal/gdalgeotiff</url>
+      <url>https://svn.java.net/svn/imageio-ext~svn/trunk/plugin/gdal/gdalgeotiff</url>
   </scm>
 </project>

@@ -13,8 +13,8 @@
   <name>WCS Plugin that internally uses GDAL</name>
    <scm>
      <connection>
-       scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/gdal/gdalwcs
+       scm:svn:https://svn.java.net/svn/imageio-ext~svn/trunk/plugin/gdal/gdalwcs
      </connection>
-     <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/gdal/gdalwcs</url>
+     <url>https://svn.java.net/svn/imageio-ext~svn/trunk/plugin/gdal/gdalwcs</url>
   </scm>
 </project>

@@ -30,9 +30,9 @@
 
   <scm>
     <connection>
-      scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk
+      scm:svn:https://svn.java.net/svn/imageio-ext~svn/trunk
     </connection>
-    <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk</url>
+    <url>https://svn.java.net/svn/imageio-ext~svn/trunk</url>
   </scm>
 
   <description>Container for tools and extensions to Image I/O project</description>
@@ -88,19 +88,6 @@
      </distributionManagement>
    </profile>
   <!--..................................-->
-  <!--      test Repository     -->
-  <!--..................................-->
-   <profile>
-    <id>testrepo</id>
-     <distributionManagement>  
-      <repository>
-       <uniqueVersion>false</uniqueVersion>
-       <id>testrepo</id>
-       <url>file:///C:/Users/Daniele/.m2/repository</url>
-      </repository>
-    </distributionManagement>
-   </profile>
-  <!--..................................-->
   <!--      GeoSolutions Repository     -->
   <!--..................................-->
    <profile>
@@ -109,7 +96,7 @@
       <repository>
        <uniqueVersion>false</uniqueVersion>
        <id>geosolutions</id>
-       <url>ftp://maven.geo-solutions.it/home/maven</url>
+       <url>ftp://maven.geo-solutions.it</url>
       </repository>
     </distributionManagement>
    </profile>
@@ -133,9 +120,31 @@
 				<name>release</name>
 			</property>
 		</activation>
-	<modules>
-		<module>release</module>
-	</modules>
+		 <build>
+    <plugins>
+
+      <!-- grab an ImageIO-Ext dependency to figure out its version -->
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeGroupIds>it.geosolutions.imageio-ext</includeGroupIds>
+              <includeArtifactIds>imageio-ext-gdalframework</includeArtifactIds>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+    </build>
+    <modules>
+      <module>release</module>
+    </modules>
   </profile>
   </profiles>
 
@@ -235,12 +244,6 @@
                 it.geosolutions.imageio.plugins.*
               </packages>
             </group>
-      <group>
-              <title>Revisited JHDF Access Libraries</title>
-              <packages>
-                it.geosolutions.hdf.object*
-              </packages>
-            </group>            
             <group>
               <title>Custom Streams</title>
               <packages>it.geosolutions.imageio.stream*:it.geosolutions.io*</packages>
@@ -535,7 +538,7 @@
             <descriptor>release/src.xml</descriptor>
             <descriptor>release/javadoc.xml</descriptor>
            </descriptors>
-           <finalName>imageio-ext-1.1</finalName>
+           <finalName>imageio-ext-1.1-SNAPSHOT</finalName>
            <outputDirectory>${project.build.directory}/release</outputDirectory>
           </configuration>
        </plugin>

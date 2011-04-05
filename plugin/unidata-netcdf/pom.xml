@@ -19,9 +19,9 @@
   </description>
   <scm>
     <connection>
-      scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/nd
+      scm:svn:https://svn.java.net/svn/imageio-ext~svn/trunk/plugin/nd
     </connection>
-    <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/nd</url>
+    <url>https://svn.java.net/svn/imageio-ext~svn/trunk/plugin/nd</url>
   </scm>
   
   <!-- ===================================================================== -->

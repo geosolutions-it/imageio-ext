@@ -6,18 +6,15 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <moduleSets>
       <moduleSet>
-        <includes>
-                     <include>it.geosolutions:imageio-ext-gdalframework</include>
-        </includes>
         <sources>
-          <outputDirectory>imageio-ext-1.0/${artifactId}/</outputDirectory>
+          <outputDirectory>imageio-ext-1.1-SNAPSHOT/${artifactId}/</outputDirectory>
         </sources>
       </moduleSet>
   </moduleSets>
   <fileSets>
   <fileSet>
         <directory>.</directory>
-        <outputDirectory>imageio-ext-1.0/</outputDirectory>
+        <outputDirectory>imageio-ext-1.1-SNAPSHOT/</outputDirectory>
                           <includes>
                                   <include>pom.xml</include>
                           </includes>

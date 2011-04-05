@@ -13,8 +13,8 @@
   <name>Arc Binary Grid Plugin that internally uses GDAL</name>
     <scm>
       <connection>
-        scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/gdal/gdalarcbinarygrid
+        scm:svn:https://svn.java.net/svn/imageio-ext~svn/trunk/plugin/gdal/gdalarcbinarygrid
       </connection>
-      <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/gdal/gdalarcbinarygrid</url>
+      <url>https://svn.java.net/svn/imageio-ext~svn/trunk/plugin/gdal/gdalarcbinarygrid</url>
   </scm>
 </project>

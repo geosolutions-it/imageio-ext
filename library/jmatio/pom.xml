@@ -14,9 +14,9 @@
  
    <scm>
      <connection>
-       scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/library/jmatio
+       scm:svn:https://svn.java.net/svn/imageio-ext~svn/trunk/library/jmatio
      </connection>
-     <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/library/jmatio</url>
+     <url>https://svn.java.net/svn/imageio-ext~svn/trunk/library/jmatio</url>
   </scm>
   
  <!-- ===================================================================== -->
