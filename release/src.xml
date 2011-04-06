@@ -23,7 +23,6 @@
         <directory>release</directory>
         <outputDirectory>/</outputDirectory>
         <includes>
-          <include>developer_README.txt</include>
           <include>LICENSE.txt</include>
           <include>MrSID_decoderSDK_license.txt</include>
           <include>imageio-ext-tiff-BSD-LICENSE.txt</include>
