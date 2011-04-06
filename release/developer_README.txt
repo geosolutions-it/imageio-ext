@@ -19,7 +19,7 @@ Install subversion.
 
 3) Checkout the Source Code
 Using SVN Checkout, get the source code:
-svn checkout https://imageio-ext.dev.java.net/imageio-ext/trunk
+svn checkout http://java.net/projects/imageio-ext/imageio-ext/trunk
 
 
 4) Download and install Maven
