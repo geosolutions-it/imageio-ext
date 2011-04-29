@@ -46,6 +46,8 @@ public class JP2GDALEcwImageReaderSpi extends GDALImageReaderSpi {
     private static final String[] mimeTypes = {"image/jp2", "image/jpeg2000"};  
 
     static final String version = "1.0";
+    
+    static final String description = "ECW JP2K Image Reader, version" + version; 
 
     static final String readerCN = "it.geosolutions.imageio.plugins.jp2ecw.JP2GDALEcwImageReader";
 
@@ -122,8 +124,7 @@ public class JP2GDALEcwImageReaderSpi extends GDALImageReaderSpi {
      * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
      */
     public String getDescription(Locale locale) {
-        return new StringBuffer("JP2K Image Reader, version ").append(version)
-                .toString();
+        return description;
     }
 
 }

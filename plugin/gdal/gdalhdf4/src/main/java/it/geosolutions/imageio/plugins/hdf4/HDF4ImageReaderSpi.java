@@ -42,6 +42,8 @@ public class HDF4ImageReaderSpi extends GDALImageReaderSpi {
     static final String[] MIMETypes = { "image/hdf" };
 
     static final String version = "1.0";
+    
+    static final String description = "HDF4 Image Reader, version " + version;
 
     static final String readerCN = "it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader";
 
@@ -108,7 +110,7 @@ public class HDF4ImageReaderSpi extends GDALImageReaderSpi {
      * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
      */
     public String getDescription(Locale locale) {
-        return "HDF4 Image Reader, version " + version;
+        return description;
     }
 
     private final static List<String> getSupportedFormatsList() {

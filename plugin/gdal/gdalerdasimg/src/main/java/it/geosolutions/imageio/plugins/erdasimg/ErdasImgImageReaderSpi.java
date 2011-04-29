@@ -46,6 +46,8 @@ public class ErdasImgImageReaderSpi extends GDALImageReaderSpi {
     static final String[] MIMETypes = { "image/img" };
 
     static final String version = "1.0";
+    
+    static final String description = "Erdas Imagine Image Reader, version " + version;
 
     static final String readerCN = "it.geosolutions.imageio.plugins.erdasimg.ErdasImgImageReader";
 
@@ -122,8 +124,7 @@ public class ErdasImgImageReaderSpi extends GDALImageReaderSpi {
      * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
      */
     public String getDescription(Locale locale) {
-        return new StringBuffer("Erdas Imagine Image Reader, version ").append(
-                version).toString();
+        return description;
     }
 
 }

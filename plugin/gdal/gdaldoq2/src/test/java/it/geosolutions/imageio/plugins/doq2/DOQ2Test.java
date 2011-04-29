@@ -18,6 +18,8 @@ package it.geosolutions.imageio.plugins.doq2;
 
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.Viewer;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
+import it.geosolutions.imageio.utilities.Utilities;
 import it.geosolutions.resources.TestData;
 
 import java.awt.Rectangle;
@@ -92,10 +94,12 @@ public class DOQ2Test extends AbstractGDALTest {
 
         if (TestData.isInteractiveTest()) {
             Viewer.visualizeAllInformation(image, "test");
-        } else
+        } else {
             Assert.assertNotNull(image.getTiles());
+        }
         Assert.assertEquals(500, image.getWidth());
         Assert.assertEquals(1, image.getHeight());
+        ImageIOUtilities.disposeImage(image);
     }
 
 }

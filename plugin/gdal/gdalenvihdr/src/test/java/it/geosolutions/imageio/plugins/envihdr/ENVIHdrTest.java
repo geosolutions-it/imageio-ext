@@ -52,5 +52,6 @@ public class ENVIHdrTest extends AbstractGDALTest {
             Viewer.visualizeAllInformation(image,fileName);
         else
             Assert.assertNotNull(image);
+        reader.dispose();
     }
 }

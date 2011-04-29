@@ -47,6 +47,8 @@ public class ArcBinaryGridImageReaderSpi extends GDALImageReaderSpi {
 	static final String[] MIMETypes = { "image/adf"};
 
 	static final String version = "1.0";
+	
+	static final String description = "Arc Binary Grid Image Reader, version " + version;
 
 	static final String readerCN = "it.geosolutions.imageio.plugins.arcbinarygrid.ArcBinaryGridImageReader";
 
@@ -125,8 +127,7 @@ public class ArcBinaryGridImageReaderSpi extends GDALImageReaderSpi {
 	 * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
 	 */
 	public String getDescription(Locale locale) {
-		return new StringBuffer("Arc Binary Grid Image Reader, version ").append(version)
-				.toString();
+		return description;
 	}
 	
 }

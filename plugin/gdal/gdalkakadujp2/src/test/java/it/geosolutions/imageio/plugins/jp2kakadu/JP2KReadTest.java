@@ -75,6 +75,7 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
             Viewer.visualizeBothMetadata(image, "");
         else
             Assert.assertNotNull(image.getTiles());
+        ImageIOUtilities.disposeImage(image);
     }
 
     /**
@@ -192,6 +193,7 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
             Viewer.visualizeAllInformation(rotatedImage, title.toString());
         else
             Assert.assertNotNull(rotatedImage.getTiles());
+        ImageIOUtilities.disposeImage(rotatedImage);
     }
 
 }

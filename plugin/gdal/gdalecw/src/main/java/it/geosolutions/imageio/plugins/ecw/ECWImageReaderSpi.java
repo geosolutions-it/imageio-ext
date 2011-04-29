@@ -50,6 +50,8 @@ public class ECWImageReaderSpi extends GDALImageReaderSpi {
     static final String[] MIMETypes = { "image/ecw" };
 
     static final String version = "1.0";
+    
+    static final String description = "ECW Image Reader, version " + version;
 
     static final String readerCN = "it.geosolutions.imageio.plugins.ecw.ECWImageReader";
 
@@ -139,8 +141,7 @@ public class ECWImageReaderSpi extends GDALImageReaderSpi {
      * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
      */
     public String getDescription(Locale locale) {
-        return new StringBuffer("ECW Image Reader, version ").append(version)
-                .toString();
+        return description;
     }
 
 }

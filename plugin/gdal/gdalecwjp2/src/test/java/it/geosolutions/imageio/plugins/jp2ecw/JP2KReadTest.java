@@ -100,6 +100,7 @@ public class JP2KReadTest extends AbstractGDALTest {
             Viewer.visualizeAllInformation(image,"gdaljp2k");
         else
             Assert.assertNotNull(image.getTiles());
+        ImageIOUtilities.disposeImage(image);
     }
 
     /**
@@ -213,6 +214,7 @@ public class JP2KReadTest extends AbstractGDALTest {
             Viewer.visualizeAllInformation(rotatedImage, title.toString());
         else
             Assert.assertNotNull(rotatedImage.getTiles());
+        ImageIOUtilities.disposeImage(rotatedImage);
     }
 
     @Before

@@ -59,5 +59,6 @@ public class EsriHdrTest extends AbstractGDALTest {
             Assert.assertNotNull(image);
         Assert.assertEquals(image.getWidth(), 600);
         Assert.assertEquals(image.getHeight(), 600);
+        reader.dispose();
     }
 }

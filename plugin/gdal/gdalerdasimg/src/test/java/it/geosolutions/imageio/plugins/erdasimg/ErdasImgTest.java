@@ -18,6 +18,7 @@ package it.geosolutions.imageio.plugins.erdasimg;
 
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.Viewer;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
 import java.io.File;
@@ -76,6 +77,7 @@ public class ErdasImgTest extends AbstractGDALTest {
             Viewer.visualizeAllInformation(image, "Read");
         else
             Assert.assertNotNull(image.getTiles());
+        ImageIOUtilities.disposeImage(image);
     }
 
 }

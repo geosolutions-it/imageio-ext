@@ -18,6 +18,7 @@ package it.geosolutions.imageio.plugins.jpeg;
 
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.Viewer;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
 import java.awt.Rectangle;
@@ -85,6 +86,7 @@ public class JPEGReadTest extends AbstractGDALTest {
             Viewer.visualizeAllInformation(image,fileName);
         else
             Assert.assertNotNull(image.getTiles());
+        ImageIOUtilities.disposeImage(image);
     }
 
     /**
@@ -170,6 +172,7 @@ public class JPEGReadTest extends AbstractGDALTest {
             Viewer.visualizeAllInformation(image,"imageread");
         else
         	Assert.assertNotNull(image.getTiles());
+        ImageIOUtilities.disposeImage(image);
     }
 
 }

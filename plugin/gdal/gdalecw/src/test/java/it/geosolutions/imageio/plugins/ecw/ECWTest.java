@@ -95,6 +95,7 @@ public class ECWTest extends AbstractGDALTest {
             image.getTiles();
         Assert.assertEquals(200, image.getWidth());
         Assert.assertEquals(100, image.getHeight());
+        ImageIOUtilities.disposeImage(image);
     }
 
     @Test

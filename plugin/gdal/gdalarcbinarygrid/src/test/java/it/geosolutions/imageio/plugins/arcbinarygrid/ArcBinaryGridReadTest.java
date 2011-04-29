@@ -91,6 +91,7 @@ public class ArcBinaryGridReadTest extends AbstractGDALTest {
             image.getTiles();
         Assert.assertEquals(251, image.getWidth());
         Assert.assertEquals(369, image.getHeight());
+        ImageIOUtilities.disposeImage(image);
     }
 
     /**
@@ -134,5 +135,6 @@ public class ArcBinaryGridReadTest extends AbstractGDALTest {
             ImageIOUtilities.visualize(image, "subsample read " + file.getName(), true);
         reader.reset();
         reader.dispose();
+        ImageIOUtilities.disposeImage(image);
     }
 }

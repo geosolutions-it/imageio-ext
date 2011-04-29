@@ -69,18 +69,11 @@ public class DTEDTest extends AbstractGDALTest {
         // ////////////////////////////////////////////////////////////////
         // preparing to read
         // ////////////////////////////////////////////////////////////////
-        final ParameterBlockJAI pbjImageRead;
-        final ImageReadParam irp = new ImageReadParam();
-
-        pbjImageRead = new ParameterBlockJAI("ImageRead");
-        pbjImageRead.setParameter("Input", file);
-        pbjImageRead.setParameter("readParam", irp);
-
         final ImageLayout l = new ImageLayout();
         l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(32).setTileWidth(32);
 
         // get a RenderedImage
-        ImageReader reader= new DTEDImageReader(new DTEDImageReaderSpi());
+        ImageReader reader= new DTEDImageReaderSpi().createReaderInstance();
         reader.setInput(file);
         RenderedImage image = reader.read(0);
         if (TestData.isInteractiveTest()) {
@@ -90,5 +83,6 @@ public class DTEDTest extends AbstractGDALTest {
         }
         Assert.assertEquals(121, image.getWidth());
         Assert.assertEquals(121, image.getHeight());
+        reader.dispose();
     }
 }

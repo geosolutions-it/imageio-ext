@@ -107,8 +107,8 @@ public class MrSIDTest extends AbstractGDALTest {
             ImageIOUtilities.displayImageIOMetadata(commonMetadata
                     .getAsTree(MrSIDIIOImageMetadata.mrsidImageMetadataName));
             if (TestData.isInteractiveTest())
-                Viewer.visualizeAllInformation(image, "", TestData
-                        .isInteractiveTest());
+                Viewer.visualizeAllInformation(image, "", TestData.isInteractiveTest());
+            ImageIOUtilities.disposeImage(image);
         } catch (FileNotFoundException fnfe) {
             warningMessage();
         }
@@ -224,7 +224,7 @@ public class MrSIDTest extends AbstractGDALTest {
                 Viewer.visualizeAllInformation(rotatedImage, "Rotated Image");
             else
             	Assert.assertNotNull(image.getTiles());
-
+            ImageIOUtilities.disposeImage(image);
         } catch (FileNotFoundException fnfe) {
             warningMessage();
         }
@@ -319,6 +319,7 @@ public class MrSIDTest extends AbstractGDALTest {
                 Viewer.visualizeAllInformation(image, "SourceBand selection");
             else
             	Assert.assertNotNull(image.getTiles());
+            ImageIOUtilities.disposeImage(image);
         } catch (FileNotFoundException fnfe) {
             warningMessage();
         }

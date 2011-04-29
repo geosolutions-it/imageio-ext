@@ -46,6 +46,8 @@ public class EsriHdrImageReaderSpi extends GDALImageReaderSpi {
     static final String[] MIMETypes = { "image/bil" };
 
     static final String version = "1.0";
+    
+    static final String description = "ESRI Hdr labelled Image Reader, version " + version; 
 
     static final String readerCN = "it.geosolutions.imageio.plugins.ehdr.EsriHdrImageReader";
 
@@ -115,7 +117,6 @@ public class EsriHdrImageReaderSpi extends GDALImageReaderSpi {
      * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
      */
     public String getDescription(Locale locale) {
-        return new StringBuffer("ESRI Hdr labelled Image Reader, version ")
-                .append(version).toString();
+        return description;
     }
 }

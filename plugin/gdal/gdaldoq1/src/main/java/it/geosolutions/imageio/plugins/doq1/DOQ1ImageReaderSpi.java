@@ -46,6 +46,8 @@ public class DOQ1ImageReaderSpi extends GDALImageReaderSpi {
     static final String[] MIMETypes = { "image/doq" };
 
     static final String version = "1.0";
+    
+    static final String description = "Digital Orthophoto Quarter Quadrangles Image Reader, version " + version;
 
     static final String readerCN = "it.geosolutions.imageio.plugins.doq1.DOQ1ImageReader";
 
@@ -121,8 +123,7 @@ public class DOQ1ImageReaderSpi extends GDALImageReaderSpi {
      * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
      */
     public String getDescription(Locale locale) {
-        return new StringBuffer("Digital Orthophoto Quarter Quadrangles Image Reader, version ").append(version)
-                .toString();
+        return description;
     }
 
 }

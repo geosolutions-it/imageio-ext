@@ -62,6 +62,8 @@ public class JP2GDALKakaduImageReaderSpi extends GDALImageReaderSpi {
     private static final String[] mimeTypes = {"image/jp2", "image/jpeg2000"};
 
     static final String version = "1.0";
+    
+    static final String description = "Kakadu JP2K (GDAL based) Image Reader, version " + version;
 
     static final String readerCN = "it.geosolutions.imageio.plugins.jp2kakadu.JP2GDALKakaduImageReader";
 
@@ -139,8 +141,7 @@ public class JP2GDALKakaduImageReaderSpi extends GDALImageReaderSpi {
      * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
      */
     public String getDescription(Locale locale) {
-        return new StringBuffer("JP2K Image Reader, version ").append(version)
-                .toString();
+        return description;
     }
 
     /**

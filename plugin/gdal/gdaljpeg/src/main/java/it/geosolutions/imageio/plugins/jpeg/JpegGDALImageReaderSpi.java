@@ -47,6 +47,8 @@ public class JpegGDALImageReaderSpi extends GDALImageReaderSpi {
 
     static final String version = "1.0";
 
+    static final String description = "JPEG Image Reader, version " + version;
+    
     static final String readerCN = "it.geosolutions.imageio.plugins.jpeg.JpegGDALImageReader";
 
     static final String vendorName = "GeoSolutions";
@@ -125,8 +127,7 @@ public class JpegGDALImageReaderSpi extends GDALImageReaderSpi {
      * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
      */
     public String getDescription(Locale locale) {
-        return new StringBuffer("JPEG Image Reader, version ").append(version)
-                .toString();
+        return description;
     }
 
     // /**
