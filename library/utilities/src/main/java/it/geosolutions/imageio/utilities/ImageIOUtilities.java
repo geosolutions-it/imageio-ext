@@ -18,6 +18,7 @@ package it.geosolutions.imageio.utilities;
 
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
+import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.ComponentSampleModel;
@@ -40,13 +41,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import javax.imageio.ImageReader;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageReaderWriterSpi;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.spi.ServiceRegistry;
+import javax.imageio.stream.ImageInputStream;
 import javax.media.jai.JAI;
 import javax.media.jai.OperationRegistry;
+import javax.media.jai.PlanarImage;
 import javax.media.jai.ROI;
 import javax.media.jai.RenderedOp;
 import javax.media.jai.registry.RIFRegistry;
@@ -60,6 +64,7 @@ import org.w3c.dom.Node;
 
 import com.sun.imageio.plugins.common.BogusColorSpace;
 import com.sun.media.jai.codecimpl.util.RasterFactory;
+import com.sun.media.jai.operator.ImageReadDescriptor;
 
 /**
  * Simple class containing commonly used utility methods.
@@ -850,4 +855,74 @@ public class ImageIOUtilities {
 			throw new IllegalArgumentException(message != null ? message : "The provided object was NULL");
 		}
 	}    
+	
+	
+    /**
+     * Allow to dispose this image, as well as the related image sources.
+     * 
+     * @param rOp
+     *            the image to be disposed.
+     */
+    public static void disposeImage(RenderedImage rOp) {
+        if (rOp != null) {
+            if (rOp instanceof RenderedOp) {
+                RenderedOp renderedOp = (RenderedOp) rOp;
+
+                final int nSources = renderedOp.getNumSources();
+                if (nSources > 0) {
+                    for (int k = 0; k < nSources; k++) {
+                        Object source = null;
+                        try {
+                            source = renderedOp.getSourceObject(k);
+
+                        } catch (ArrayIndexOutOfBoundsException e) {
+                            // Ignore
+                        }
+                        if (source != null) {
+                            if (source instanceof RenderedOp) {
+                                disposeImage((RenderedOp) source);
+                            } else if (source instanceof BufferedImage) {
+                                ((BufferedImage) source).flush();
+                                source = null;
+                            }
+                        }
+                    }
+                } else {
+                    // get the reader
+                    Object imageReader = rOp.getProperty(ImageReadDescriptor.PROPERTY_NAME_IMAGE_READER);
+                    if (imageReader != null && imageReader instanceof ImageReader) {
+                        final ImageReader reader = (ImageReader) imageReader;
+                        final ImageInputStream stream = (ImageInputStream) reader.getInput();
+                        try {
+                            stream.close();
+                        } catch (Throwable e) {
+                            // swallow this
+                        }
+                        try {
+                            reader.dispose();
+                        } catch (Throwable e) {
+                            // swallow this
+                        }
+                    }
+                }
+                final Object roi = rOp.getProperty("ROI");
+                if (roi != null && (roi instanceof ROI || roi instanceof RenderedImage)) {
+                    ROI roiImage = (ROI) roi;
+                    PlanarImage image = roiImage.getAsImage();
+                    if (image != null) {
+                        image.dispose();
+                        image = null;
+                        roiImage = null;
+                    }
+                }
+
+                if (rOp instanceof PlanarImage) {
+                    ((PlanarImage) rOp).dispose();
+                } else if (rOp instanceof BufferedImage) {
+                    ((BufferedImage) rOp).flush();
+                    rOp = null;
+                }
+            }
+        }
+    }
 }
