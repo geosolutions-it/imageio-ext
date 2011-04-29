@@ -46,6 +46,11 @@
                               <artifactId>imageio-ext-arcgrid</artifactId>
      <version>${project.version}</version>
      </dependency>
+     <dependency>
+                          <groupId>it.geosolutions.imageio-ext</groupId>
+                          <artifactId>imageio-ext-gdalbsb</artifactId>
+     <version>${project.version}</version>
+     </dependency>
         <dependency>
                       <groupId>it.geosolutions.imageio-ext</groupId>
                       <artifactId>imageio-ext-gdalenvihdr</artifactId>
