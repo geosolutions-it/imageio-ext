@@ -300,6 +300,7 @@ public class EnhancedRandomAccessFile implements DataInput, DataOutput {
 		// If the seek is into the buffer, just update the eraf pointer.
 		if ((pos >= bufferStart) && (pos < dataEnd)) {
 			filePosition = pos;
+			endOfFile = false;
 			return;
 		}
 
