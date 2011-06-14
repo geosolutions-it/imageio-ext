@@ -65,7 +65,8 @@
         <module>gdaldoq2</module>
         <module>gdalbsb</module>
         <module>gdalerdasimg</module>
-	      <module>gdalnitf</module>
+        <module>gdalnitf</module>
+        <module>gdalrpftoc</module>
         <module>gdalehdr</module>
         <module>gdalenvihdr</module>
         <module>gdaljpeg</module>
@@ -88,6 +89,7 @@
         <module>gdalbsb</module>
         <module>gdalerdasimg</module>
         <module>gdalnitf</module>
+        <module>gdalrpftoc</module>
         <module>gdalehdr</module>
         <module>gdalenvihdr</module>
         <module>gdalmrsid</module>
@@ -113,6 +115,7 @@
         <module>gdalbsb</module>
         <module>gdalerdasimg</module>
         <module>gdalnitf</module>
+        <module>gdalrpftoc</module>
         <module>gdalehdr</module>
         <module>gdalenvihdr</module>
         <module>gdalmrsid</module>
