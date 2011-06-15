@@ -4,17 +4,17 @@
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-gdalarcbinarygrid</artifactId>
   <packaging>jar</packaging>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.1.0</version>
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-gdal-plugin</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1.0</version>
   </parent>
   <name>Arc Binary Grid Plugin that internally uses GDAL</name>
     <scm>
       <connection>
-        scm:svn:https://svn.java.net/svn/imageio-ext~svn/branches/1.1.x/plugin/gdal/gdalarcbinarygrid
+        scm:svn:https://svn.java.net/svn/imageio-ext~svn/tags/1.1.0/plugin/gdal/gdalarcbinarygrid
       </connection>
-      <url>https://svn.java.net/svn/imageio-ext~svn/branches/1.1.x/plugin/gdal/gdalarcbinarygrid</url>
+      <url>https://svn.java.net/svn/imageio-ext~svn/tags/1.1.0/plugin/gdal/gdalarcbinarygrid</url>
   </scm>
 </project>

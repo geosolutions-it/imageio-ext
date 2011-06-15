@@ -4,19 +4,19 @@
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-library</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1.0</version>
   </parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-jmatio</artifactId>
     <packaging>jar</packaging>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1.0</version>
   <name>Revisited JMATIO Access Libraries</name>
  
    <scm>
      <connection>
-       scm:svn:https://svn.java.net/svn/imageio-ext~svn/branches/1.1.x/library/jmatio
+       scm:svn:https://svn.java.net/svn/imageio-ext~svn/tags/1.1.0/library/jmatio
      </connection>
-     <url>https://svn.java.net/svn/imageio-ext~svn/branches/1.1.x/library/jmatio</url>
+     <url>https://svn.java.net/svn/imageio-ext~svn/tags/1.1.0/library/jmatio</url>
   </scm>
   
  <!-- ===================================================================== -->
@@ -33,13 +33,11 @@
    <dependency>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-test-data</artifactId>
-    <version>1.1-SNAPSHOT</version>
     <scope>test</scope>
   </dependency>
   <dependency>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-streams</artifactId>
-    <version>1.1-SNAPSHOT</version>
   </dependency>
 </dependencies>
  </project>
