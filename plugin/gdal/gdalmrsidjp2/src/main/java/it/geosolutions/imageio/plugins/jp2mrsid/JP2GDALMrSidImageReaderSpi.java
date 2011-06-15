@@ -1,7 +1,7 @@
 /*
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
- *    https://imageio-ext.dev.java.net/
+ *    http://java.net/projects/imageio-ext/
  *    (C) 2007 - 2009, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
@@ -47,6 +47,8 @@ public class JP2GDALMrSidImageReaderSpi extends GDALImageReaderSpi {
 
     static final String version = "1.0";
 
+    static final String description = "MrSID JP2K Image Reader, version " + version;
+    
     static final String readerCN = "it.geosolutions.imageio.plugins.jp2mrsid.JP2GDALMrSidImageReader";
 
     static final String vendorName = "GeoSolutions";
@@ -122,7 +124,6 @@ public class JP2GDALMrSidImageReaderSpi extends GDALImageReaderSpi {
      * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
      */
     public String getDescription(Locale locale) {
-        return new StringBuffer("JP2K Image Reader, version ").append(version)
-                .toString();
+        return description;
     }
 }

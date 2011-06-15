@@ -1,7 +1,7 @@
 /*
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
- *    https://imageio-ext.dev.java.net/
+ *    http://java.net/projects/imageio-ext/
  *    (C) 2007 - 2009, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
@@ -19,6 +19,7 @@ package it.geosolutions.imageio.plugins.jp2mrsid;
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.GDALUtilities;
 import it.geosolutions.imageio.gdalframework.Viewer;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
 import java.awt.RenderingHints;
@@ -104,6 +105,7 @@ public class JP2KReadTest extends AbstractGDALTest {
             Viewer.visualizeAllInformation(image,fileName);
         else
             Assert.assertNotNull(image.getTiles());
+        ImageIOUtilities.disposeImage(image);
     }
 
     /**
@@ -217,6 +219,7 @@ public class JP2KReadTest extends AbstractGDALTest {
             Viewer.visualizeAllInformation(rotatedImage, title.toString());
         else
         	Assert.assertNotNull(rotatedImage.getTiles());
+        ImageIOUtilities.disposeImage(rotatedImage);
     }
 
 }

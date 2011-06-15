@@ -1,0 +1,19 @@
+GDAL BSB plugin
+~~~~~~~~~~~~~~~
+
+  IP Review:
+
+    * Daniele Romagnoli, Avril 29th, 2011
+  
+ STATUS: OK
+
+	* Code: Clean
+	
+	* Data: OK
+      
+* Data Credits
+  ~~~~~~~~~~~~
+  * rgbsmall.kap:
+
+     Freely available at: https://svn.osgeo.org/gdal/tags/1.7.3/autotest/gdrivers/data/
+

@@ -1,7 +1,7 @@
 /*
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
- *    https://imageio-ext.dev.java.net/
+ *    http://java.net/projects/imageio-ext/
  *    (C) 2007 - 2009, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
@@ -59,5 +59,6 @@ public class EsriHdrTest extends AbstractGDALTest {
             Assert.assertNotNull(image);
         Assert.assertEquals(image.getWidth(), 600);
         Assert.assertEquals(image.getHeight(), 600);
+        reader.dispose();
     }
 }

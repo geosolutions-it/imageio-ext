@@ -1,0 +1,17 @@
+GDAL NITF Plugin
+~~~~~~~~~~~~~~~~
+
+  IP Review:
+  
+ STATUS: OK
+
+	* Code: Clean
+
+	* Data: OK
+           
+* Data Credits
+  ~~~~~~~~~~~~
+  * A.TOC: 
+
+     data used originates from gdal the GDAL gdalautotest-1.7.3\gdrivers\data
+	 http://download.osgeo.org/gdal/gdalautotest-1.7.3.tar.gz -     

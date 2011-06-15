@@ -1,7 +1,7 @@
 /*
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
- *    https://imageio-ext.dev.java.net/
+ *    http://java.net/projects/imageio-ext/
  *    (C) 2007 - 2009, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
@@ -47,6 +47,8 @@ public class ArcGridImageReaderSpi extends GDALImageReaderSpi {
 	static final String[] MIMETypes = { "image/asc"};
 
 	static final String version = "1.0";
+	
+	static final String description = "Ascii ArcGrid Image Reader, version " + version;
 
 	static final String readerCN = "it.geosolutions.imageio.plugins.argrid.ArcGridImageReader";
 
@@ -125,8 +127,7 @@ public class ArcGridImageReaderSpi extends GDALImageReaderSpi {
 	 * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
 	 */
 	public String getDescription(Locale locale) {
-		return new StringBuffer("Ascii ArcGrid Image Reader, version ").append(version)
-				.toString();
+		return description;
 	}
 	
 }

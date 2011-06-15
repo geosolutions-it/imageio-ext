@@ -1,7 +1,7 @@
 /*
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
- *    https://imageio-ext.dev.java.net/
+ *    http://java.net/projects/imageio-ext/
  *    (C) 2007 - 2009, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
@@ -16,9 +16,12 @@
  */
 package it.geosolutions.imageio.plugins.geotiff;
 
+import it.geosolutions.imageio.core.GCP;
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
+import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
 import java.awt.Rectangle;
@@ -53,15 +56,33 @@ import com.sun.media.jai.operator.ImageWriteDescriptor;
  */
 public class GeoTiffTest extends AbstractGDALTest {
 
-	@Before
-	public void setUp() throws Exception {
-		super.setUp();
-		File file = TestData.file(this, "test-data.zip");
-	    Assert.assertTrue(file.exists());
+    final static List<GCP> referenceGCPs = new ArrayList<GCP>(4);
+    
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        File file = TestData.file(this, "test-data.zip");
+        Assert.assertTrue(file.exists());
 
-	        // unzip it
-	    TestData.unzipFile(this, "test-data.zip");
-	}
+        // unzip it
+        TestData.unzipFile(this, "test-data.zip");
+	    
+        final int columns[] = new int[] { 0, 50, 0, 50 };
+        final int rows[] = new int[] { 0, 50, 50, 0 };
+        final int easting[] = new int[] { -180, -135, -180, -135 };
+        final int northing[] = new int[] { 90, 45, 45, 90 };
+        for (int i = 0; i < 4; i++) {
+            GCP gcp = new GCP();
+            gcp.setId(Integer.toString(i + 1));
+            gcp.setDescription("");
+            gcp.setColumn(columns[i]);
+            gcp.setRow(rows[i]);
+            gcp.setEasting(easting[i]);
+            gcp.setNorthing(northing[i]);
+            referenceGCPs.add(gcp);
+        }
+
+    }
 	
     public GeoTiffTest() {
         super();
@@ -242,6 +263,8 @@ public class GeoTiffTest extends AbstractGDALTest {
             Viewer.visualizeAllInformation(image2,"Paletted image read back after writing");
         else
         	Assert.assertNotNull(image2.getTiles());
+        ImageIOUtilities.disposeImage(image2);
+        ImageIOUtilities.disposeImage(image);
     }
     
     @Test
@@ -277,4 +300,37 @@ public class GeoTiffTest extends AbstractGDALTest {
 	        reader.dispose();
         }
     }
+    
+    /**
+     * Test Read exploiting JAI-ImageIO tools capabilities
+     * 
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    @Test
+    public void testGCP() throws FileNotFoundException, IOException {
+        if (!isGDALAvailable) {
+            return;
+        }
+        
+        String fileName = "gcp.tif";
+        final File file = TestData.file(this, fileName);
+
+        ImageReader reader = new GeoTiffImageReaderSpi().createReaderInstance();
+        reader.setInput(file);
+        GDALCommonIIOImageMetadata metadata = (GDALCommonIIOImageMetadata)reader.getImageMetadata(0);
+        
+        final int gcpNumber = metadata.getGcpNumber();
+        Assert.assertEquals(gcpNumber, 4);
+        
+        final List<GCP> gcps = metadata.getGCPs();
+        Assert.assertNotNull(gcps);
+        Assert.assertFalse(gcps.isEmpty());
+        for (int i = 0; i < 4; i++){
+            Assert.assertEquals(gcps.get(i), referenceGCPs.get(i));
+        }
+        
+        reader.dispose();
+    }
+
 }

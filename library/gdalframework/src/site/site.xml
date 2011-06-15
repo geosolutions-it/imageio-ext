@@ -5,7 +5,7 @@
     <!--     Links to appears just below the right banner     -->
     <!-- ==================================================== -->
     <links>
-      <item name="ImageI/O-Ext" href="https://imageio-ext.dev.java.net/"/>
+      <item name="ImageI/O-Ext" href="http://java.net/projects/imageio-ext/"/>
       <item name="Javadoc"  href="http://geo-solutions.it/javadoc/imageio-ext/"/>
     </links>
 
@@ -21,7 +21,7 @@
     ${reports}  <!-- Replaced by menus for any configured reports (mailing lists, etc.) -->
 
     <menu name="Use">
-      <item name="Guides"  href="https://imageio-ext.dev.java.net/servlets/ProjectDocumentList"/>
+      <item name="Guides"  href="http://java.net/projects/imageio-ext/downloads"/>
     </menu>
   </body>
 </project>

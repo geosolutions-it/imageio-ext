@@ -13,9 +13,9 @@
   <name>JPEG Plugin that internally uses JMagick</name>
   <scm>
       <connection>
-        scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/jmagickjpeg
+        scm:svn:https://svn.java.net/svn/imageio-ext~svn/branches/1.1.x/plugin/jmagickjpeg
       </connection>
-      <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/jmagickjpeg</url>
+      <url>https://svn.java.net/svn/imageio-ext~svn/branches/1.1.x/plugin/jmagickjpeg</url>
   </scm>
   <!-- ===================================================================== -->
   <!--     Dependencies management.                                          -->

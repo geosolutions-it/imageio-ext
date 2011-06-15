@@ -22,12 +22,6 @@
        <version>1.1-SNAPSHOT</version>
     </dependency>
     <dependency>
-              <groupId>it.geosolutions.imageio-ext</groupId>
-              <artifactId>imageio-ext-jhdfaccess</artifactId>
-             
-     <version>${project.version}</version>
-     </dependency>
-    <dependency>
                   <groupId>it.geosolutions.imageio-ext</groupId>
                   <artifactId>imageio-ext-imagereadmt</artifactId>
      <version>${project.version}</version>
@@ -50,6 +44,11 @@
     <dependency>
                               <groupId>it.geosolutions.imageio-ext</groupId>
                               <artifactId>imageio-ext-arcgrid</artifactId>
+     <version>${project.version}</version>
+     </dependency>
+     <dependency>
+                          <groupId>it.geosolutions.imageio-ext</groupId>
+                          <artifactId>imageio-ext-gdalbsb</artifactId>
      <version>${project.version}</version>
      </dependency>
         <dependency>
@@ -94,6 +93,17 @@
      </dependency>
       <dependency>
                           <groupId>it.geosolutions.imageio-ext</groupId>
+                          <artifactId>imageio-ext-gdaldoq1</artifactId>
+     <version>${project.version}</version>
+     </dependency>
+      <dependency>
+                          <groupId>it.geosolutions.imageio-ext</groupId>
+                          <artifactId>imageio-ext-gdaldoq2</artifactId>
+     <version>${project.version}</version>
+     </dependency>
+
+   <dependency>
+                          <groupId>it.geosolutions.imageio-ext</groupId>
                           <artifactId>imageio-ext-gdalerdasimg</artifactId>
      <version>${project.version}</version>
      </dependency>
@@ -117,11 +127,17 @@
                           <artifactId>imageio-ext-tiff</artifactId>
      <version>${project.version}</version>
      </dependency>
-     <!-- <dependency>
+     <dependency>
                           <groupId>it.geosolutions.imageio-ext</groupId>
-                          <artifactId>imageio-ext-directkakadu</artifactId>
+                          <artifactId>imageio-ext-kakadu</artifactId>
      <version>${project.version}</version>
-     </dependency> -->
+     </dependency>
+     <dependency>
+                          <groupId>it.geosolutions.imageio-ext</groupId>
+                          <artifactId>imageio-ext-kakadujni</artifactId>
+     <version>${kakadu.version}</version>
+     </dependency>
+     
    </dependencies>
 
   <build>
@@ -138,29 +154,6 @@
           </execution>
         </executions>
       </plugin>
-
-      <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>install</phase>
-            <configuration>
-              <!-- remove some unwanted dependencies that get pulled over -->
-              <tasks>
-                <delete>
-                  <fileset dir="${project.build.directory}/dependency"
-                    includes="servlet-api-2.4.jar,core*.jar"/>
-                
-                </delete>
-              </tasks>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      
     </plugins>
   </build>
   

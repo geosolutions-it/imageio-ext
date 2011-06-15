@@ -1,7 +1,7 @@
 /*
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
- *        https://imageio-ext.dev.java.net/
+ *        http://java.net/projects/imageio-ext/
  *    (C) 2007 - 2009, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
@@ -18,6 +18,7 @@ package it.geosolutions.imageio.utilities;
 
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
+import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.ComponentSampleModel;
@@ -40,13 +41,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import javax.imageio.ImageReader;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageReaderWriterSpi;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.spi.ServiceRegistry;
+import javax.imageio.stream.ImageInputStream;
 import javax.media.jai.JAI;
 import javax.media.jai.OperationRegistry;
+import javax.media.jai.PlanarImage;
 import javax.media.jai.ROI;
 import javax.media.jai.RenderedOp;
 import javax.media.jai.registry.RIFRegistry;
@@ -60,6 +64,7 @@ import org.w3c.dom.Node;
 
 import com.sun.imageio.plugins.common.BogusColorSpace;
 import com.sun.media.jai.codecimpl.util.RasterFactory;
+import com.sun.media.jai.operator.ImageReadDescriptor;
 
 /**
  * Simple class containing commonly used utility methods.
@@ -629,52 +634,64 @@ public class ImageIOUtilities {
 	    return name;
 	}
 
-	/**
-	 * Takes a URL and converts it to a File. The attempts to deal with 
-	 * Windows UNC format specific problems, specifically files located
-	 * on network shares and different drives.
-	 * 
-	 * If the URL.getAuthority() returns null or is empty, then only the
-	 * url's path property is used to construct the file. Otherwise, the
-	 * authority is prefixed before the path.
-	 * 
-	 * It is assumed that url.getProtocol returns "file".
-	 * 
-	 * Authority is the drive or network share the file is located on.
-	 * Such as "C:", "E:", "\\fooServer"
-	 * 
-	 * @param url a URL object that uses protocol "file"
-	 * @return a File that corresponds to the URL's location
-	 */
-	public static File urlToFile(URL url) {
-	    String string = url.toExternalForm();
-	
-	    try {
-	        string = URLDecoder.decode(string, "UTF-8");
-	    } catch (UnsupportedEncodingException e) {
-	        // Shouldn't happen
-	    }
-	    
-	    String path3;
-	    String simplePrefix = "file:/";
-	    String standardPrefix = simplePrefix+"/";
-	    
-	    if( string.startsWith(standardPrefix) ){
-	        path3 = string.substring(standardPrefix.length());
-	    } else if( string.startsWith(simplePrefix)){
-	        path3 = string.substring(simplePrefix.length()-1);            
-	    } else {
-	        String auth = url.getAuthority();
-	        String path2 = url.getPath().replace("%20", " ");
-	        if (auth != null && !auth.equals("")) {
-	            path3 = "//" + auth + path2;
-	        } else {
-	            path3 = path2;
-	        }
-	    }
-	    
-	    return new File(path3);
-	}
+    /**
+     * Takes a URL and converts it to a File. The attempts to deal with 
+     * Windows UNC format specific problems, specifically files located
+     * on network shares and different drives.
+     * 
+     * If the URL.getAuthority() returns null or is empty, then only the
+     * url's path property is used to construct the file. Otherwise, the
+     * authority is prefixed before the path.
+     * 
+     * It is assumed that url.getProtocol returns "file".
+     * 
+     * Authority is the drive or network share the file is located on.
+     * Such as "C:", "E:", "\\fooServer"
+     * 
+     * @param url a URL object that uses protocol "file"
+     * @return a File that corresponds to the URL's location
+     */
+    public static File urlToFile(URL url) {
+        if (!"file".equals(url.getProtocol())) {
+            return null; // not a File URL
+        }
+        String string = url.toExternalForm();
+        if (string.contains("+")) {
+            // this represents an invalid URL created using either
+            // file.toURL(); or
+            // file.toURI().toURL() on a specific version of Java 5 on Mac
+            string = string.replace("+", "%2B");
+        }
+        try {
+            string = URLDecoder.decode(string, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("Could not decode the URL to UTF-8 format", e);
+        }
+        
+        String path3;
+        String simplePrefix = "file:/";
+        String standardPrefix = "file://";
+        String os = System.getProperty("os.name");
+
+        if (os.toUpperCase().contains("WINDOWS") && string.startsWith(standardPrefix)) {
+            // win32: host/share reference
+            path3 = string.substring(standardPrefix.length() - 2);
+        } else if (string.startsWith(standardPrefix)) {
+            path3 = string.substring(standardPrefix.length());
+        } else if (string.startsWith(simplePrefix)) {
+            path3 = string.substring(simplePrefix.length() - 1);
+        } else {
+            String auth = url.getAuthority();
+            String path2 = url.getPath().replace("%20", " ");
+            if (auth != null && !auth.equals("")) {
+                path3 = "//" + auth + path2;
+            } else {
+                path3 = path2;
+            }
+        }
+
+        return new File(path3);
+    }
 
 	/**
 	 * Given a pair of xSubsamplingFactor (xSSF) and ySubsamplingFactor (ySFF), 
@@ -838,4 +855,74 @@ public class ImageIOUtilities {
 			throw new IllegalArgumentException(message != null ? message : "The provided object was NULL");
 		}
 	}    
+	
+	
+    /**
+     * Allow to dispose this image, as well as the related image sources.
+     * 
+     * @param rOp
+     *            the image to be disposed.
+     */
+    public static void disposeImage(RenderedImage rOp) {
+        if (rOp != null) {
+            if (rOp instanceof RenderedOp) {
+                RenderedOp renderedOp = (RenderedOp) rOp;
+
+                final int nSources = renderedOp.getNumSources();
+                if (nSources > 0) {
+                    for (int k = 0; k < nSources; k++) {
+                        Object source = null;
+                        try {
+                            source = renderedOp.getSourceObject(k);
+
+                        } catch (ArrayIndexOutOfBoundsException e) {
+                            // Ignore
+                        }
+                        if (source != null) {
+                            if (source instanceof RenderedOp) {
+                                disposeImage((RenderedOp) source);
+                            } else if (source instanceof BufferedImage) {
+                                ((BufferedImage) source).flush();
+                                source = null;
+                            }
+                        }
+                    }
+                } else {
+                    // get the reader
+                    Object imageReader = rOp.getProperty(ImageReadDescriptor.PROPERTY_NAME_IMAGE_READER);
+                    if (imageReader != null && imageReader instanceof ImageReader) {
+                        final ImageReader reader = (ImageReader) imageReader;
+                        final ImageInputStream stream = (ImageInputStream) reader.getInput();
+                        try {
+                            stream.close();
+                        } catch (Throwable e) {
+                            // swallow this
+                        }
+                        try {
+                            reader.dispose();
+                        } catch (Throwable e) {
+                            // swallow this
+                        }
+                    }
+                }
+                final Object roi = rOp.getProperty("ROI");
+                if (roi != null && (roi instanceof ROI || roi instanceof RenderedImage)) {
+                    ROI roiImage = (ROI) roi;
+                    PlanarImage image = roiImage.getAsImage();
+                    if (image != null) {
+                        image.dispose();
+                        image = null;
+                        roiImage = null;
+                    }
+                }
+
+                if (rOp instanceof PlanarImage) {
+                    ((PlanarImage) rOp).dispose();
+                } else if (rOp instanceof BufferedImage) {
+                    ((BufferedImage) rOp).flush();
+                    rOp = null;
+                }
+            }
+        }
+    }
 }

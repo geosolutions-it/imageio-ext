@@ -1,7 +1,7 @@
 /*
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
- *    https://imageio-ext.dev.java.net/
+ *    http://java.net/projects/imageio-ext/
  *    (C) 2007 - 2009, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -61,7 +62,6 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
 
     /** The LOGGER for this class. */
     private static final Logger LOGGER = Logger.getLogger(GDALCommonIIOImageMetadata.class.toString());
-  
 
     /**
      * A map containing an HashMap for each domain if available (the Default
@@ -327,15 +327,15 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
 		            numOverviews[band] = pBand.GetOverviewCount();
 		            bandsOffset[band] = band;
 	            } finally {
-	            	if (pBand != null){
-	            		try{
-	                        // Closing the band
-	            			pBand.delete();
-	            		}catch (Throwable e) {
-	    					if(LOGGER.isLoggable(Level.FINEST))
-	    						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
-	    				}
-	            	}
+                        if (pBand != null) {
+                            try {
+                                // Closing the band
+                                pBand.delete();
+                            } catch (Throwable e) {
+                                if (LOGGER.isLoggable(Level.FINEST))
+                                    LOGGER.log(Level.FINEST, e.getLocalizedMessage(), e);
+                            }
+                        }
 	            }
 	        }
 	        setNoDataValues(noDataValues);
@@ -471,29 +471,64 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
                 "reset operation is not allowed");
     }
 
-    /** Returns the Ground Control Points */
-    public List<? extends GCP> getGCPs() {
-        // TODO: actually the Java bindings do not work properly when getting
-        // GCPs (the JVM crash). Uncomment the following code when the method
-        // getting GCPs works fine
-        //
-        //
-//        if (super.getGcps().isEmpty()) {
-//            final int nGCP = getGcpNumber();
-//            List gcps = new Vector(nGCP);
-//            final Dataset ds = GDALUtilities.acquireDataSet(getDatasetName(),
-//                    gdalconst.GA_ReadOnly);
-//            ds.GetGCPs((Vector) gcps);
-//              if (gcps!=null && gcps.isEmpty()){
-//                  List groundControlPoints = new ArrayList(nGCP);
-//                  Iterator it = gcps.iterator();
-//                  while (it.hasNext()){
-//                      groundControlPoints.add(new GDALGCP((org.gdal.gdal.GCP)it.next()));
-//                  }
-//                  setGcps(groundControlPoints);
-//              }
-//            GDALUtilities.closeDataSet(ds);
-//        }
+    /** 
+     * Returns the Ground Control Points 
+     */
+    public List<GCP> getGCPs() {
+        if (super.getGCPs().isEmpty()) {
+            Dataset ds = null;
+            try {
+            
+                // Getting the number of GCPs
+                final int nGCP = getGcpNumber();
+                List<org.gdal.gdal.GCP> gcps = new Vector<org.gdal.gdal.GCP>(nGCP);
+                ds = GDALUtilities.acquireDataSet(getDatasetName(), gdalconst.GA_ReadOnly);
+                ds.GetGCPs((Vector<org.gdal.gdal.GCP>) gcps);
+                
+                // Scan GCPs
+                if (gcps != null && !gcps.isEmpty()) {
+                    final List<GCP> groundControlPoints = new ArrayList<GCP>(nGCP);
+                    final Iterator<org.gdal.gdal.GCP> it = gcps.iterator();
+                    while (it.hasNext()) {
+                        org.gdal.gdal.GCP gdalGcp = null;
+                        try {
+                            // Setting up a GCP 
+                            gdalGcp = (org.gdal.gdal.GCP) it.next();
+                            GCP gcp = new GCP();
+                            gcp.setId(gdalGcp.getId());
+                            gcp.setDescription(gdalGcp.getInfo());
+                            gcp.setColumn((int)gdalGcp.getGCPPixel());
+                            gcp.setRow((int)gdalGcp.getGCPLine());
+                            gcp.setEasting(gdalGcp.getGCPX());
+                            gcp.setNorthing(gdalGcp.getGCPY());
+                            gcp.setElevation(gdalGcp.getGCPZ());
+                            groundControlPoints.add(gcp);
+                        } finally {
+                            if (gdalGcp != null) {
+                                try {
+                                    // Releasing native GCP object
+                                    gdalGcp.delete();
+                                } catch (Throwable e) {
+                                    if (LOGGER.isLoggable(Level.FINEST))
+                                        LOGGER.log(Level.FINEST, e.getLocalizedMessage(), e);
+                                }
+                            }
+                        }
+                    }
+                    setGcps(groundControlPoints);
+                }
+            } finally {
+                if (ds != null) {
+                    try {
+                        // Closing the dataset
+                        GDALUtilities.closeDataSet(ds);
+                    } catch (Throwable e) {
+                        if (LOGGER.isLoggable(Level.FINEST))
+                            LOGGER.log(Level.FINEST, e.getLocalizedMessage(), e);
+                    }
+                }
+            }
+        }
         return super.getGCPs();
     }
 
@@ -544,8 +579,7 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
      *         domain or the specified domain is unsupported.
      */
     protected Map getGdalMetadataDomain(final String metadataDomain) {
-        if (metadataDomain
-                .equalsIgnoreCase(GDALUtilities.GDALMetadataDomain.DEFAULT)) {
+        if (metadataDomain.equalsIgnoreCase(GDALUtilities.GDALMetadataDomain.DEFAULT)) {
             if (gdalDomainMetadataMap .containsKey(GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP))
                 return gdalDomainMetadataMap.get(GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP);
         } else if (metadataDomain.equalsIgnoreCase(GDALUtilities.GDALMetadataDomain.IMAGESTRUCTURE)|| metadataDomain.startsWith(GDALUtilities.GDALMetadataDomain.XML_PREFIX)) {
@@ -577,10 +611,11 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
             list = new ArrayList<String>(keys.size());
             while (keysIt.hasNext()) {
                 final String key = keysIt.next();
-                if (key.equals(GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP))
+                if (key.equals(GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP)) {
                     list.add(GDALUtilities.GDALMetadataDomain.DEFAULT);
-                else
+                } else {
                     list.add(key);
+                }
             }
         }
         return list;

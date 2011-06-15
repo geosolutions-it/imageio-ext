@@ -1,7 +1,7 @@
 /*
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
- *    https://imageio-ext.dev.java.net/
+ *    http://java.net/projects/imageio-ext/
  *    (C) 2007 - 2009, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
@@ -285,19 +285,25 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
         if (colorModel instanceof IndexColorModel) {
             final IndexColorModel icm = (IndexColorModel) colorModel;
             final int mapSize = icm.getMapSize();
+            final boolean hasAlpha = icm.hasAlpha();
             IIOMetadataNode node1 = new IIOMetadataNode("ColorTable");
             node1.setAttribute("sizeOfLocalColorTable", Integer.toString(mapSize));
-            final byte rgb[][] = new byte[3][mapSize];
+            final byte rgb[][] = new byte[3 + (hasAlpha? 1:0)][mapSize];
             icm.getReds(rgb[0]);
-            icm.getReds(rgb[1]);
-            icm.getReds(rgb[2]);
+            icm.getGreens(rgb[1]);
+            icm.getBlues(rgb[2]);
+            if (hasAlpha){
+                icm.getAlphas(rgb[3]);
+            }
             for (int i = 0; i < mapSize; i++) {
                 IIOMetadataNode nodeEntry = new IIOMetadataNode("ColorTableEntry");
                 nodeEntry.setAttribute("index", Integer.toString(i));
                 nodeEntry.setAttribute("red", Byte.toString(rgb[0][i]));
                 nodeEntry.setAttribute("green", Byte.toString(rgb[1][i]));
                 nodeEntry.setAttribute("blue", Byte.toString(rgb[2][i]));
-                nodeEntry.setAttribute("alpha", Byte.toString(rgb[3][i]));
+                if (hasAlpha){
+                    nodeEntry.setAttribute("alpha", Byte.toString(rgb[3][i]));
+                }
                 node1.appendChild(nodeEntry);
             }
             node.appendChild(node1);
@@ -477,7 +483,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     }
 
     /** Returns the Ground Control Points */
-    public List<? extends GCP> getGCPs() {
+    public List<GCP> getGCPs() {
         return Collections.unmodifiableList(gcps);
     }
 

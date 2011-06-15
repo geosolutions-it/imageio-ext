@@ -1,7 +1,7 @@
 /*
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
- *    https://imageio-ext.dev.java.net/
+ *    http://java.net/projects/imageio-ext/
  *    (C) 2007 - 2009, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
@@ -18,6 +18,7 @@ package it.geosolutions.imageio.plugins.arcgrid;
 
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.Viewer;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
 import java.awt.Rectangle;
@@ -74,6 +75,7 @@ public class ArcGridReadTest extends AbstractGDALTest {
 			image.getTiles();
 		Assert.assertEquals(351, image.getWidth());
 		Assert.assertEquals(350, image.getHeight());
+		ImageIOUtilities.disposeImage(image);
 	}
 
 	/**

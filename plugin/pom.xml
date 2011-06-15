@@ -19,9 +19,9 @@
   </description>
   <scm>
     <connection>
-      scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin
+      scm:svn:https://svn.java.net/svn/imageio-ext~svn/branches/1.1.x/plugin
     </connection>
-    <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin</url>
+    <url>https://svn.java.net/svn/imageio-ext~svn/branches/1.1.x/plugin</url>
   </scm>
   <dependencies>
     <dependency>
@@ -51,10 +51,9 @@
          <property><name>all</name></property>
         </activation>      
        <modules>
-	    <module>gdal</module>
         <module>arcgrid</module>
-        <module>swan</module>
         <module>tiff</module>
+        <module>gdal</module>
       </modules>
     </profile>
     <profile>
@@ -81,10 +80,10 @@
          <property><name>all</name></property>
         </activation>      
       <modules>
-        <module>gdal</module>
         <module>kakadujp2</module>
         <module>arcgrid</module>
         <module>tiff</module>
+        <module>gdal</module>
        </modules>
     </profile>
   </profiles>

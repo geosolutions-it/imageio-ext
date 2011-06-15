@@ -13,8 +13,8 @@
   <name>Erdas Imagine Plugin that internally uses GDAL</name>
    <scm>
      <connection>
-       scm:svn:https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/gdal/gdalerdasimg
+       scm:svn:https://svn.java.net/svn/imageio-ext~svn/branches/1.1.x/plugin/gdal/gdalerdasimg
      </connection>
-     <url>https://imageio-ext.dev.java.net/svn/imageio-ext/trunk/plugin/gdal/gdalerdasimg</url>
+     <url>https://svn.java.net/svn/imageio-ext~svn/branches/1.1.x/plugin/gdal/gdalerdasimg</url>
   </scm>
 </project>

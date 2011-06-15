@@ -20,7 +20,7 @@
 /*
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
- *    https://imageio-ext.dev.java.net/
+ *    http://java.net/projects/imageio-ext/
  *    (C) 2007 - 2009, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
@@ -300,6 +300,7 @@ public class EnhancedRandomAccessFile implements DataInput, DataOutput {
 		// If the seek is into the buffer, just update the eraf pointer.
 		if ((pos >= bufferStart) && (pos < dataEnd)) {
 			filePosition = pos;
+			endOfFile = false;
 			return;
 		}
 
@@ -1287,7 +1288,7 @@ public class EnhancedRandomAccessFile implements DataInput, DataOutput {
 	 * @task we can optimize this
 	 */
 	public String readLine() throws IOException {
-		StringBuffer input = new StringBuffer();
+		StringBuilder input = new StringBuilder();
 		int c;
 
 		while (((c = read()) != -1) && (c != '\n')) {

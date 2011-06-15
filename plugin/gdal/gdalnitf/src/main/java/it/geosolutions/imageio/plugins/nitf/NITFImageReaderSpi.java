@@ -1,7 +1,7 @@
 /*
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
- *    https://imageio-ext.dev.java.net/
+ *    http://java.net/projects/imageio-ext/
  *    (C) 2007 - 2009, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
@@ -48,6 +48,8 @@ public class NITFImageReaderSpi extends GDALImageReaderSpi {
     static final String[] MIMETypes = { "image/nitf" };
 
     static final String version = "1.0";
+    
+    static final String description = "NITF Image Reader, version " + version;
 
     static final String readerCN = "it.geosolutions.imageio.plugins.nitf.NITFImageReader";
 
@@ -124,8 +126,7 @@ public class NITFImageReaderSpi extends GDALImageReaderSpi {
      * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
      */
     public String getDescription(Locale locale) {
-        return new StringBuffer("NITF Image Reader, version ").append(version)
-                .toString();
+        return description;
     }
 
 }

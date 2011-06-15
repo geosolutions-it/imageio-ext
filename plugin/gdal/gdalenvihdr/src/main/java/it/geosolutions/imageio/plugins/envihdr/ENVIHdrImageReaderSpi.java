@@ -1,7 +1,7 @@
 /*
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
- *    https://imageio-ext.dev.java.net/
+ *    http://java.net/projects/imageio-ext/
  *    (C) 2008, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
@@ -46,6 +46,8 @@ public class ENVIHdrImageReaderSpi extends GDALImageReaderSpi {
     static final String[] MIMETypes = { "image/bil", "image/bip", "image/bsq"};
 
     static final String version = "1.0";
+    
+    static final String description = "ENVI Hdr labelled Image Reader, version " + version;
 
     static final String readerCN = "it.geosolutions.imageio.plugins.envi.ENVIHdrImageReader";
 
@@ -115,7 +117,6 @@ public class ENVIHdrImageReaderSpi extends GDALImageReaderSpi {
      * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
      */
     public String getDescription(Locale locale) {
-        return new StringBuffer("ENVI Hdr labelled Image Reader, version ")
-                .append(version).toString();
+        return description;
     }
 }

@@ -1,7 +1,7 @@
 /*
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
- *    https://imageio-ext.dev.java.net/
+ *    http://java.net/projects/imageio-ext/
  *    (C) 2007 - 2009, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
@@ -91,6 +91,7 @@ public class ArcBinaryGridReadTest extends AbstractGDALTest {
             image.getTiles();
         Assert.assertEquals(251, image.getWidth());
         Assert.assertEquals(369, image.getHeight());
+        ImageIOUtilities.disposeImage(image);
     }
 
     /**
@@ -134,5 +135,6 @@ public class ArcBinaryGridReadTest extends AbstractGDALTest {
             ImageIOUtilities.visualize(image, "subsample read " + file.getName(), true);
         reader.reset();
         reader.dispose();
+        ImageIOUtilities.disposeImage(image);
     }
 }

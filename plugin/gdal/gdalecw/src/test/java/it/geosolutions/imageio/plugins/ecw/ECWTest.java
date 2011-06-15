@@ -1,7 +1,7 @@
 /*
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
- *    https://imageio-ext.dev.java.net/
+ *    http://java.net/projects/imageio-ext/
  *    (C) 2007 - 2009, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
@@ -95,6 +95,7 @@ public class ECWTest extends AbstractGDALTest {
             image.getTiles();
         Assert.assertEquals(200, image.getWidth());
         Assert.assertEquals(100, image.getHeight());
+        ImageIOUtilities.disposeImage(image);
     }
 
     @Test
