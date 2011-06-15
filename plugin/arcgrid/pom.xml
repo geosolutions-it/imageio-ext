@@ -14,9 +14,9 @@
   
   <scm>
       <connection>
-        scm:svn:https://svn.java.net/svn/imageio-ext~svn/trunk/plugin/arcgrid
+        scm:svn:https://svn.java.net/svn/imageio-ext~svn/branches/1.1.x/plugin/arcgrid
       </connection>
-      <url>https://svn.java.net/svn/imageio-ext~svn/trunk/plugin/arcgrid</url>
+      <url>https://svn.java.net/svn/imageio-ext~svn/branches/1.1.x/plugin/arcgrid</url>
   </scm>
   
   <dependencies>

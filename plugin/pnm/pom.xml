@@ -14,9 +14,9 @@
   
   <scm>
       <connection>
-        scm:svn:https://svn.java.net/svn/imageio-ext~svn/trunk/plugin/pnm
+        scm:svn:https://svn.java.net/svn/imageio-ext~svn/branches/1.1.x/plugin/pnm
       </connection>
-      <url>https://svn.java.net/svn/imageio-ext~svn/trunk/plugin/pnm</url>
+      <url>https://svn.java.net/svn/imageio-ext~svn/branches/1.1.x/plugin/pnm</url>
   </scm>
   
 

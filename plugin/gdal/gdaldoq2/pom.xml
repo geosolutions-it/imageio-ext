@@ -13,8 +13,8 @@
   <name>Second Generation USGS DOQ dataset Plugin that internally uses GDAL</name>
    <scm>
      <connection>
-       scm:svn:https://svn.java.net/svn/imageio-ext~svn/trunk/plugin/gdal/gdaldoq2
+       scm:svn:https://svn.java.net/svn/imageio-ext~svn/branches/1.1.x/plugin/gdal/gdaldoq2
      </connection>
-     <url>https://svn.java.net/svn/imageio-ext~svn/trunk/plugin/gdal/gdaldoq2</url>
+     <url>https://svn.java.net/svn/imageio-ext~svn/branches/1.1.x/plugin/gdal/gdaldoq2</url>
   </scm>
 </project>

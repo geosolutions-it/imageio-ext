@@ -13,8 +13,8 @@
   <name>ECW Plugin that internally uses GDAL</name>
    <scm>
      <connection>
-       scm:svn:https://svn.java.net/svn/imageio-ext~svn/trunk/plugin/gdal/gdalecw
+       scm:svn:https://svn.java.net/svn/imageio-ext~svn/branches/1.1.x/plugin/gdal/gdalecw
      </connection>
-     <url>https://svn.java.net/svn/imageio-ext~svn/trunk/plugin/gdal/gdalecw</url>
+     <url>https://svn.java.net/svn/imageio-ext~svn/branches/1.1.x/plugin/gdal/gdalecw</url>
   </scm>
 </project>

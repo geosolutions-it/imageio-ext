@@ -19,9 +19,9 @@
   </description>
   <scm>
     <connection>
-      scm:svn:https://svn.java.net/svn/imageio-ext~svn/trunk/plugin
+      scm:svn:https://svn.java.net/svn/imageio-ext~svn/branches/1.1.x/plugin
     </connection>
-    <url>https://svn.java.net/svn/imageio-ext~svn/trunk/plugin</url>
+    <url>https://svn.java.net/svn/imageio-ext~svn/branches/1.1.x/plugin</url>
   </scm>
   
   <!-- ===================================================================== -->

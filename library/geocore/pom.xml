@@ -13,9 +13,9 @@
   <name>Image I/O-Extensions - GeoCore</name>
   <scm>
     <connection>
-      scm:svn:https://svn.java.net/svn/imageio-ext~svn/trunk/library/geocore
+      scm:svn:https://svn.java.net/svn/imageio-ext~svn/branches/1.1.x/library/geocore
     </connection>
-    <url>https://svn.java.net/svn/imageio-ext~svn/trunk/library/geocore</url>
+    <url>https://svn.java.net/svn/imageio-ext~svn/branches/1.1.x/library/geocore</url>
   </scm>
   <dependencies>
     <dependency>
