@@ -84,6 +84,7 @@
         <module>arcgrid</module>
         <module>tiff</module>
         <module>gdal</module>
+        <module>unidata-netcdf</module>
        </modules>
     </profile>
   </profiles>

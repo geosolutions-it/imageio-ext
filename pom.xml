@@ -426,11 +426,20 @@
        <version>${gdal.version}</version>
      </dependency>
      <dependency>
-    	<groupId>it.geosolutions.imageio-ext</groupId>
-  	<artifactId>imageio-ext-kakadujni</artifactId>
-	<version>${kakadu.version}</version>
-    </dependency>
-
+    	 <groupId>it.geosolutions.imageio-ext</groupId>
+       <artifactId>imageio-ext-kakadujni</artifactId>
+       <version>${kakadu.version}</version>
+     </dependency>
+     <dependency>
+       <groupId>it.geosolutions.imageio-ext</groupId>
+       <artifactId>imageio-ext-test-data</artifactId>
+       <version>${project.version}</version>
+     </dependency>
+     <dependency>
+      <groupId>it.geosolutions.imageio-ext</groupId>
+      <artifactId>imageio-ext-streams</artifactId>
+      <version>${project.version}</version>
+     </dependency>
     </dependencies>
   </dependencyManagement>
   
