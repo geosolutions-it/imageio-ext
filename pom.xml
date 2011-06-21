@@ -25,7 +25,7 @@
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext</artifactId>
   <packaging>pom</packaging>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.2-SNAPSHOT</version>
   <name>GeoSolutions Image I/O-Extensions Library Root Project</name>
 
   <scm>
@@ -430,7 +430,16 @@
   	<artifactId>imageio-ext-kakadujni</artifactId>
 	<version>${kakadu.version}</version>
     </dependency>
-
+     <dependency>
+       <groupId>it.geosolutions.imageio-ext</groupId>
+       <artifactId>imageio-ext-test-data</artifactId>
+       <version>${project.version}</version>
+     </dependency>
+     <dependency>
+      <groupId>it.geosolutions.imageio-ext</groupId>
+      <artifactId>imageio-ext-streams</artifactId>
+      <version>${project.version}</version>
+     </dependency>
     </dependencies>
   </dependencyManagement>
   
@@ -538,7 +547,7 @@
             <descriptor>release/src.xml</descriptor>
             <descriptor>release/javadoc.xml</descriptor>
            </descriptors>
-           <finalName>imageio-ext-1.1-SNAPSHOT</finalName>
+           <finalName>imageio-ext-1.2-SNAPSHOT</finalName>
            <outputDirectory>${project.build.directory}/release</outputDirectory>
           </configuration>
        </plugin>
