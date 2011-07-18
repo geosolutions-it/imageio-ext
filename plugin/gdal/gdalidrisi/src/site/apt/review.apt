@@ -3,7 +3,7 @@ GDAL ArcGrid plugin
 
   IP Review:
 
-    * Daniele Romagnoli, December 17th, 2008
+    * Simone Giannecchini, July 19th, 2011
   
   STATUS: OK
 
@@ -13,10 +13,9 @@ GDAL ArcGrid plugin
      
 * Data Credits
   ~~~~~~~~~~~~
-    * arcgrid.zip containing the following dataset:
+    * idrisi containing the following dataset:
 
-       * 095b_dem_90m.asc
+       * idrisi.rst
 
-           data freely available at:
-           http://download.osgeo.org/gdal/data/aaigrid/
+           data synthetically generated
    
