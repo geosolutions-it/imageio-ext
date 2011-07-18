@@ -74,6 +74,7 @@
         <module>gdalarcbinarygrid</module>
         <module>gdaldted</module>
         <module>gdalgeotiff</module>
+        <module>gdalidrisi</module>
       </modules>
     </profile>
     <profile>
@@ -89,6 +90,7 @@
         <module>gdalbsb</module>
         <module>gdalerdasimg</module>
         <module>gdalnitf</module>
+        <module>gdalidrisi</module>
         <module>gdalrpftoc</module>
         <module>gdalehdr</module>
         <module>gdalenvihdr</module>
@@ -114,6 +116,7 @@
         <module>gdalenvisat</module>
         <module>gdalbsb</module>
         <module>gdalerdasimg</module>
+        <module>gdalidrisi</module>
         <module>gdalnitf</module>
         <module>gdalrpftoc</module>
         <module>gdalehdr</module>
