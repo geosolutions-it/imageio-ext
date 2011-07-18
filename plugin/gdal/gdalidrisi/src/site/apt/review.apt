@@ -1,0 +1,21 @@
+GDAL ArcGrid plugin
+~~~~~~~~~~~~~~~~~~~
+
+  IP Review:
+
+    * Simone Giannecchini, July 19th, 2011
+  
+  STATUS: OK
+
+	* Code: Clean
+
+	* Data: OK
+     
+* Data Credits
+  ~~~~~~~~~~~~
+    * idrisi containing the following dataset:
+
+       * idrisi.rst
+
+           data synthetically generated
+   
