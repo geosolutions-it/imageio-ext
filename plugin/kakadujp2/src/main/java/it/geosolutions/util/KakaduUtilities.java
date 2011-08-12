@@ -51,6 +51,8 @@ import kdu_jni.Kdu_message_formatter;
  */
 public class KakaduUtilities {
 
+    public static final double DOUBLE_TOLERANCE = 1E-6;
+
     private static final Logger LOGGER = Logger
             .getLogger("it.geosolutions.util");
 
@@ -58,6 +60,8 @@ public class KakaduUtilities {
     private static boolean available;
 
     private static boolean init = false;
+
+    public static final double BIT_TO_BYTE_FACTOR = 0.125;
 
     private KakaduUtilities() {
 
