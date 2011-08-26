@@ -667,8 +667,9 @@ public class ImageIOUtilities {
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("Could not decode the URL to UTF-8 format", e);
         }
-        
+
         String path3;
+
         String simplePrefix = "file:/";
         String standardPrefix = "file://";
         String os = System.getProperty("os.name");

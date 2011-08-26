@@ -16,7 +16,7 @@
  */
 package it.geosolutions.imageio.stream.input.spi;
 
-import it.geosolutions.imageio.utilities.Utilities;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 
 import java.io.File;
 import java.io.IOException;
@@ -86,7 +86,7 @@ public class URLImageInputStreamSpi extends ImageInputStreamSpi {
         try {
             // URL that points to a file?
             final URL sourceURL = ((URL) input);
-            final File tempFile = Utilities.urlToFile(sourceURL);
+            final File tempFile = ImageIOUtilities.urlToFile(sourceURL);
             if (tempFile.exists() && tempFile.isFile() && tempFile.canRead())
                 return fileStreamSPI.createInputStreamInstance(tempFile,useCache, cacheDir);
 
