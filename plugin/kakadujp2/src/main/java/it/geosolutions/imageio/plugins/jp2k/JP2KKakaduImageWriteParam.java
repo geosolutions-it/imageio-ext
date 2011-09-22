@@ -24,6 +24,9 @@ import javax.imageio.ImageWriteParam;
 import kdu_jni.Kdu_global;
 
 /**
+ * Class holding Write parameters to customize the write operations, and set several fields, tags,
+ * markers through the kakadu machinery. 
+ * 
  * @author Daniele Romagnoli, GeoSolutions
  * @author Simone Giannecchini, GeoSolutions
  */
@@ -61,6 +64,13 @@ public class JP2KKakaduImageWriteParam extends ImageWriteParam {
         
         abstract int getValue();        
     };
+    
+    /** 
+     * Type of compression to better customize the quality specification. 
+     */
+    public enum Compression {
+        NUMERICALLY_LOSSLESS, LOSSY, UNDEFINED
+    }
     
     /**
      * Default Constructor.
@@ -121,9 +131,19 @@ public class JP2KKakaduImageWriteParam extends ImageWriteParam {
     private String orgT_parts;
     
     /**
-     * the cPrecincts settings; 
+     * the cPrecincts settings 
      */
     private String cPrecincts;
+    
+    /**
+     *  the bit rate for each quality layers
+     */
+    private double qualityLayersBitRates[];
+    
+    /**
+     * The type of compression. 
+     */
+    private Compression compression = Compression.UNDEFINED;
     
     /**
      * Specify the TLM (tile-part-length) marker segments in the main header.
@@ -135,7 +155,26 @@ public class JP2KKakaduImageWriteParam extends ImageWriteParam {
      */
     final static int DEFAULT_C_LEVELS = 5;
     
+    /**
+     * The default SProfile, actually: Profile2
+     */
+    final static int DEFAULT_SPROFILE = 2;
+    
+    /**
+     * 
+     */
     private byte[] geoJp2 = null;
+    
+    /**
+     * Field to override the static property related to adding Comment Markers 
+     * whithin the produced image. 
+     */
+    private boolean addCommentMarker = true;
+    
+    /**
+     * Restricted profile to which the code-stream conforms.
+     */
+    private int sProfile = DEFAULT_SPROFILE;
 
     /**
      * Sets <code>writeCodeStreamOnly</code>.
@@ -177,9 +216,15 @@ public class JP2KKakaduImageWriteParam extends ImageWriteParam {
      * @param quality
      *                a quality parameter representing a compression ratio. As
      *                an instance, a 0.2 quality represents a 5:1 compression
-     *                ratio.
+     *                ratio. This parameter will be ignored in case the 
+     *                qualityLayersBitRates parameter have been specified or
+     *                in case the Compression parameter has been specified 
+     *                through the {@link #setCompression(Compression)} method
+     *                using a {@link Compression#NUMERICALLY_LOSSLESS}
      * 
      * @see #getQuality()
+     * @see #setQualityLayersBitRates(double[])
+     * @see #setCompression(Compression)
      */
     public void setQuality(final double quality) {
         this.quality = quality;
@@ -226,6 +271,8 @@ public class JP2KKakaduImageWriteParam extends ImageWriteParam {
      *                the number of quality layers.
      * 
      * @see #getQualityLayers()
+     * @see #setQualityLayersBitRates(double[])
+     * @see #setCompression(Compression)
      */
     public void setQualityLayers(final int qualityLayers) {
         this.qualityLayers = qualityLayers;
@@ -277,6 +324,76 @@ public class JP2KKakaduImageWriteParam extends ImageWriteParam {
 
     public void setcPrecincts(String cPrecincts) {
         this.cPrecincts = cPrecincts;
+    }
+    
+    /**
+     * Set the qualityLayer bitRates. This parameter will override any quality value specified with 
+     * {@link #setQuality(double)} 
+     * 
+     * @param qualityLayersBitRates an array representing the cumulative bitRate 
+     *          for each qualityLayer. The length of the array should be equals
+     *          to the specified qualityLayers value.
+     * 
+     * @see #setQualityLayers
+     * @see #setCompression(Compression)
+     */
+    public void setQualityLayersBitRates(double qualityLayersBitRates[]) {
+        this.qualityLayersBitRates = qualityLayersBitRates;
+    }
+
+    public double[] getQualityLayersBitRates() {
+        return qualityLayersBitRates;
+    }
+
+    public boolean isAddCommentMarker() {
+        return addCommentMarker;
+    }
+
+    public void setAddCommentMarker(boolean addCommentMarker) {
+        this.addCommentMarker = addCommentMarker;
+    }
+
+    public int getsProfile() {
+        return sProfile;
+    }
+
+    public void setsProfile(int sProfile) {
+        this.sProfile = sProfile;
+    }
+
+    /**
+     * Set the compression type. One of {@link Compression#NUMERICALLY_LOSSLESS},
+     * {@link Compression#LOSSY}.
+     * 
+     * @param compression the type of compression to apply which could be numerically lossless,
+     * visually lossless (leveraging on quality bitrates) or lossy (leveraging on quality factor).
+     * <UL>
+     * <LI>Use NUMERICALLY_LOSSLESS if you want to specify a LossLess (reversible) compression
+     * (which is equivalent to specifying a quality = 1 parameter). The quality parameter will be 
+     * ignored.
+     * Optionally specify a qualityLayersBitRate parameter (make sure to set 0 as the last value 
+     * of the array) if you want to specify the quality layers structure. Otherwise the
+     * quality layers structure will be built using a dicothomic scale.</LI>
+     * <LI>Use LOSSY if you want to specify a Visually LossLess compression (which is still lossy).
+     * You need to specify a qualityLayersBitRate parameter when using this value.
+     * The quality parameter will be ignored.
+     * </LI>
+     * <LI>Use LOSSY if you want to specify a Lossy compression leveraging on the quality 
+     * parameter which should be < 1. In order to leverage on the quality parameter, the 
+     * qualityLayersBitRates parameter shouldn't be specified.
+     * </LI>
+     * </UL>
+     * 
+     * @see #setQualityLayers
+     * @see #setQuality(double)
+     * @see #setQualityLayersBitRates(double[])
+     */
+    public void setCompression(Compression compression) {
+        this.compression = compression;
+    }
+
+    public Compression getCompression() {
+        return compression;
     }
 
     @Override
