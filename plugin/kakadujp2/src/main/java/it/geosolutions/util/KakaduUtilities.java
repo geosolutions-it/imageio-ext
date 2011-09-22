@@ -311,4 +311,8 @@ public class KakaduUtilities {
             throw new IllegalArgumentException("Empty source region!");
         }
     }
+	
+    public static boolean notEqual(double value, double reference) {
+        return (Math.abs(value - reference) > KakaduUtilities.DOUBLE_TOLERANCE); 
+    }
 }

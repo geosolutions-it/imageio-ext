@@ -410,7 +410,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                             LOGGER.fine("Applying numerically lossless compression leveraging on " +
                             		"provided quality bit rates");
                         }
-                        if (notEqual(bitRates[bitRates.length - 1], 0)){
+                        if (KakaduUtilities.notEqual(bitRates[bitRates.length - 1], 0)){
                             throw new IllegalArgumentException("Asking for a Numerically Lossless " 
                             		+"but the last quality layer's bit rate should be 0 " 
                             		+ " instead of " + bitRates[bitRates.length - 1]);
@@ -1235,7 +1235,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
         case UNDEFINED:
         case NUMERICALLY_LOSSLESS:
         default:
-            if (notEqual(quality, 1d) || bitRates != null)  {
+            if (KakaduUtilities.notEqual(quality, 1d) || bitRates != null)  {
                 cumulativeQualityLayerSizes = computeQualityLayers(qualityLayers, qualityLayersSize, bitRates);
             } else {
                 cumulativeQualityLayerSizes = null;
@@ -1293,11 +1293,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
         }
     }
     
-  private static boolean notEqual(double value, double reference) {
-      return (Math.abs(value - reference) > KakaduUtilities.DOUBLE_TOLERANCE); 
-    }
-
-/**
+  /**
    * Given a requested number of qualityLayers, computes the cumulative
    * quality layers sizes to be set as argument of the stripe_compressor.
    * 
