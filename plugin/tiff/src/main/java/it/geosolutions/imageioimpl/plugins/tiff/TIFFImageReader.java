@@ -1759,6 +1759,8 @@ public class TIFFImageReader extends ImageReader {
     }
 
     protected void resetLocal() {
+        imageStartPosition.clear();
+        pagesInfo.clear();
         stream = null;
         gotTiffHeader = false;
         imageReadParam = getDefaultReadParam();
