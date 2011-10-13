@@ -104,6 +104,8 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.imageio.IIOException;
 import javax.imageio.IIOImage;
@@ -130,7 +132,33 @@ public class TIFFImageWriter extends ImageWriter {
     static final String EXIF_JPEG_COMPRESSION_TYPE = "EXIF JPEG";
 
     public static final int DEFAULT_BYTES_PER_STRIP = 8192;
+    
+    private final static double DEFAULT_PROGRESS_FACTOR_MULTIPLIER = 2.5;
+    
+    private static double PROGRESS_FACTOR_MULTIPLIER;
+    
+    private final static Logger LOGGER = Logger.getLogger(TIFFImageWriter.class.toString());
 
+    static {
+        // Initializing the progress factor multiplier
+        final String multiplier = System.getProperty("it.geosolutions.tiff.progressmultiplier");
+        boolean useDefault = true;
+        if (multiplier != null && multiplier.trim().length() > 0){
+            try {
+                PROGRESS_FACTOR_MULTIPLIER = Double.valueOf(multiplier);
+                useDefault = false;
+            } catch (NumberFormatException nfe) {
+                if (LOGGER.isLoggable(Level.WARNING)){
+                    LOGGER.log(Level.WARNING, "Unable to parse the specified progress multiplier " 
+                            + multiplier, nfe);
+                }
+            }
+        }
+        if (useDefault) {
+            PROGRESS_FACTOR_MULTIPLIER = DEFAULT_PROGRESS_FACTOR_MULTIPLIER;
+        }
+    }
+    
     /**
      * Supported TIFF compression types.
      */
@@ -2716,6 +2744,7 @@ public class TIFFImageWriter extends ImageWriter {
         // this.bitDepth = 8; // XXX fix?
 
         clearAbortRequest();
+        int progressStep = 1;
         processImageStarted(0);
 
         int[] sampleSize = sampleModel.getSampleSize();
@@ -2894,8 +2923,12 @@ public class TIFFImageWriter extends ImageWriter {
                         nextSpace = pos + byteCount;
                     }
 
-                    pixelsDone += tileRect.width*tileRect.height;
-                    processImageProgress(100.0F*pixelsDone/totalPixels);
+                    pixelsDone += tileRect.width * tileRect.height;
+                    float currentProgress = 100.0F * pixelsDone / totalPixels;
+                    if (currentProgress > progressStep * PROGRESS_FACTOR_MULTIPLIER){
+                        processImageProgress(currentProgress);
+                        progressStep++;
+                    }
         
                     // Fill in the offset and byte count for the file
                     stream.mark();
