@@ -146,7 +146,7 @@ public class TIFFImageReader extends ImageReader {
                 int samplesPerPixel, 
                 int[] sampleFormat, 
                 int[] extraSamples) {
-            this.imageMetadata=new SoftReference<TIFFImageMetadata>(imageMetadata);
+            this.imageMetadata = new SoftReference<TIFFImageMetadata>(imageMetadata);
             this.bigtiff = bigtiff;
             this.bitsPerSample = bitsPerSample;
             this.colorMap = colorMap;
@@ -164,6 +164,75 @@ public class TIFFImageReader extends ImageReader {
             this.extraSamples = extraSamples;
         }
 
+        /* (non-Javadoc)
+         * @see java.lang.Object#hashCode()
+         */
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + (bigtiff ? 1231 : 1237);
+            result = prime * result + Arrays.hashCode(bitsPerSample);
+            result = prime * result + Arrays.hashCode(colorMap);
+            result = prime * result + compression;
+            result = prime * result + Arrays.hashCode(extraSamples);
+            result = prime * result + height;
+            result = prime * result + (isImageTiled ? 1231 : 1237);
+            result = prime * result + numBands;
+            result = prime * result + photometricInterpretation;
+            result = prime * result + planarConfiguration;
+            result = prime * result + Arrays.hashCode(sampleFormat);
+            result = prime * result + samplesPerPixel;
+            result = prime * result + tileOrStripHeight;
+            result = prime * result + tileOrStripWidth;
+            result = prime * result + width;
+            return result;
+        }
+
+        /* (non-Javadoc)
+         * @see java.lang.Object#equals(java.lang.Object)
+         */
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (!(obj instanceof PageInfo))
+                return false;
+            PageInfo other = (PageInfo) obj;
+            if (bigtiff != other.bigtiff)
+                return false;
+            if (!Arrays.equals(bitsPerSample, other.bitsPerSample))
+                return false;
+            if (!Arrays.equals(colorMap, other.colorMap))
+                return false;
+            if (compression != other.compression)
+                return false;
+            if (!Arrays.equals(extraSamples, other.extraSamples))
+                return false;
+            if (height != other.height)
+                return false;
+            if (isImageTiled != other.isImageTiled)
+                return false;
+            if (numBands != other.numBands)
+                return false;
+            if (photometricInterpretation != other.photometricInterpretation)
+                return false;
+            if (planarConfiguration != other.planarConfiguration)
+                return false;
+            if (!Arrays.equals(sampleFormat, other.sampleFormat))
+                return false;
+            if (samplesPerPixel != other.samplesPerPixel)
+                return false;
+            if (tileOrStripHeight != other.tileOrStripHeight)
+                return false;
+            if (tileOrStripWidth != other.tileOrStripWidth)
+                return false;
+            if (width != other.width)
+                return false;
+            return true;
+        }
 
         /* (non-Javadoc)
          * @see java.lang.Object#toString()
@@ -534,11 +603,11 @@ public class TIFFImageReader extends ImageReader {
         if(pagesInfo.containsKey(i)){
             // initialize from cachedinfo only if needed
             // TODO Improve
-            if(imageMetadata==null||!initialized){// this means the curindex has changed
-                final PageInfo info=pagesInfo.get(i);
-                final TIFFImageMetadata metadata=info.imageMetadata.get();
-                if(metadata!=null){
-                    initializeFromCachedInfo(info,metadata);
+            if(imageMetadata == null || !initialized) {// this means the curindex has changed
+                final PageInfo info = pagesInfo.get(i);
+                final TIFFImageMetadata metadata = info.imageMetadata.get();
+                if (metadata != null) {
+                    initializeFromCachedInfo(info, metadata);
                     return;
                 }
                 pagesInfo.put(i,null);
@@ -551,25 +620,22 @@ public class TIFFImageReader extends ImageReader {
     }
 
     private void initializeFromCachedInfo(PageInfo pageInfo, TIFFImageMetadata imageMetadata) {
-        this.bigtiff=pageInfo.bigtiff;
-        this.bitsPerSample=pageInfo.bitsPerSample;
-        this.colorMap=pageInfo.colorMap;
-        this.compression=pageInfo.compression;
-        this.extraSamples=pageInfo.extraSamples;
-        this.height=pageInfo.height;
-        this.isImageTiled=pageInfo.isImageTiled;
-        this.numBands=pageInfo.numBands;
-        this.photometricInterpretation=pageInfo.photometricInterpretation;
-        this.planarConfiguration=pageInfo.planarConfiguration;
-        this.sampleFormat=pageInfo.sampleFormat;
-        this.samplesPerPixel=pageInfo.samplesPerPixel;
-        this.tileOrStripHeight=pageInfo.tileOrStripHeight;
-        this.tileOrStripWidth=pageInfo.tileOrStripWidth;
-        this.width=pageInfo.width;
-        this.imageMetadata=imageMetadata;
-        
-        
-        
+        this.bigtiff = pageInfo.bigtiff;
+        this.bitsPerSample = pageInfo.bitsPerSample;
+        this.colorMap = pageInfo.colorMap;
+        this.compression = pageInfo.compression;
+        this.extraSamples = pageInfo.extraSamples;
+        this.height = pageInfo.height;
+        this.isImageTiled = pageInfo.isImageTiled;
+        this.numBands = pageInfo.numBands;
+        this.photometricInterpretation = pageInfo.photometricInterpretation;
+        this.planarConfiguration = pageInfo.planarConfiguration;
+        this.sampleFormat = pageInfo.sampleFormat;
+        this.samplesPerPixel = pageInfo.samplesPerPixel;
+        this.tileOrStripHeight = pageInfo.tileOrStripHeight;
+        this.tileOrStripWidth = pageInfo.tileOrStripWidth;
+        this.width = pageInfo.width;
+        this.imageMetadata = imageMetadata;
     }
 
     // Stream must be positioned at start of IFD for 'currIndex'
@@ -1035,7 +1101,7 @@ public class TIFFImageReader extends ImageReader {
 
         // Create the ITS and cache if for later use so that this method
         // always returns an Iterator containing the same ITS objects.
-        seekToImage(imageIndex,true);
+        seekToImage(imageIndex, true);
         ImageTypeSpecifier itsRaw = 
             TIFFDecompressor.getRawImageTypeSpecifier
                 (photometricInterpretation,
@@ -1121,7 +1187,7 @@ public class TIFFImageReader extends ImageReader {
     }
 
     public IIOMetadata getImageMetadata(int imageIndex) throws IIOException {
-        seekToImage(imageIndex,true);
+        seekToImage(imageIndex, true);
         TIFFImageMetadata im =
             new TIFFImageMetadata(imageMetadata.getRootIFD().getTagSetList());
         Node root =
