@@ -152,22 +152,6 @@ public class TIFFImageMetadata extends IIOMetadata {
         rootIFD.addTIFFField(field);
     }
 
-//     public void initializeFromImageType(ImageTypeSpecifier imageType) {
-//         SampleModel sampleModel = imageType.getSampleModel();
-//         ColorModel colorModel = imageType.getColorModel();
-
-//         int numBands = sampleModel.getNumBands();
-//         char[] bitsPerSample = new char[numBands];
-//         for (int i = 0; i < numBands; i++) {
-//             bitsPerSample[i] = (char)(sampleModel.getSampleSize(i));
-//         }
-//         TIFFField bitsPerSampleField =
-//           new TIFFField(rootIFD.getTag(BaselineTIFFTagSet.TAG_BITS_PER_SAMPLE),
-//                           TIFFTag.TIFF_SHORT,
-//                           numBands,
-//                           bitsPerSample);
-//         rootIFD.addTIFFField(bitsPerSampleField);
-//     }
 
     public boolean isReadOnly() {
         return false;
