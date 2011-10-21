@@ -41,7 +41,6 @@ import javax.imageio.stream.FileImageOutputStream;
 import javax.media.jai.PlanarImage;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.sun.media.jai.operator.ImageReadDescriptor;
@@ -58,7 +57,6 @@ public class TIFFWriteTest extends Assert {
     private final static Logger LOGGER = Logger.getLogger(TIFFWriteTest.class.toString());
 
     @Test
-    @Ignore
     public void readFromFileJAI() throws IOException {
         final File file = TestData.file(this, "test.tif");
 
@@ -77,8 +75,8 @@ public class TIFFWriteTest extends Assert {
         else
             Assert.assertNotNull(PlanarImage.wrapRenderedImage(image).getTiles());
         // sum += System.nanoTime() - time;
-        Assert.assertEquals(120, image.getWidth());
-        Assert.assertEquals(107, image.getHeight());
+        Assert.assertEquals(30, image.getWidth());
+        Assert.assertEquals(26, image.getHeight());
 
         PlanarImage.wrapRenderedImage(image).dispose();
         image = null;
@@ -95,8 +93,8 @@ public class TIFFWriteTest extends Assert {
         else
             Assert.assertNotNull(image.getData());
         // sum+=System.nanoTime()-time;
-        Assert.assertEquals(10, image.getWidth());
-        Assert.assertEquals(10, image.getHeight());
+        Assert.assertEquals(8, image.getWidth());
+        Assert.assertEquals(7, image.getHeight());
 
         PlanarImage.wrapRenderedImage(image).dispose();
         image = null;
@@ -111,24 +109,8 @@ public class TIFFWriteTest extends Assert {
         else
             Assert.assertNotNull(image.getData());
         // sum+=System.nanoTime()-time;
-        Assert.assertEquals(24, image.getWidth());
-        Assert.assertEquals(22, image.getHeight());
-
-        PlanarImage.wrapRenderedImage(image).dispose();
-        image = null;
-
-        // IMAGE 6
-        image = ImageReadDescriptor.create(new FileImageInputStream(file), Integer.valueOf(6),
-                false, false, false, null, null, null,
-                new TIFFImageReaderSpi().createReaderInstance(), null);
-
-        if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image, "testManualRead");
-        else
-            Assert.assertNotNull(image.getData());
-        // sum+=System.nanoTime()-time;
-        Assert.assertEquals(18, image.getWidth());
-        Assert.assertEquals(16, image.getHeight());
+        Assert.assertEquals(2, image.getWidth());
+        Assert.assertEquals(2, image.getHeight());
 
         PlanarImage.wrapRenderedImage(image).dispose();
         image = null;
@@ -143,8 +125,8 @@ public class TIFFWriteTest extends Assert {
         else
             Assert.assertNotNull(image.getData());
         // sum+=System.nanoTime()-time;
-        Assert.assertEquals(60, image.getWidth());
-        Assert.assertEquals(54, image.getHeight());
+        Assert.assertEquals(15, image.getWidth());
+        Assert.assertEquals(13, image.getHeight());
 
         PlanarImage.wrapRenderedImage(image).dispose();
         image = null;
@@ -159,8 +141,8 @@ public class TIFFWriteTest extends Assert {
         else
             Assert.assertNotNull(image.getData());
         // sum+=System.nanoTime()-time;
-        Assert.assertEquals(30, image.getWidth());
-        Assert.assertEquals(27, image.getHeight());
+        Assert.assertEquals(4, image.getWidth());
+        Assert.assertEquals(4, image.getHeight());
 
         PlanarImage.wrapRenderedImage(image).dispose();
         image = null;
@@ -175,27 +157,13 @@ public class TIFFWriteTest extends Assert {
         else
             Assert.assertNotNull(image.getData());
         // sum+=System.nanoTime()-time;
-        Assert.assertEquals(20, image.getWidth());
-        Assert.assertEquals(18, image.getHeight());
+        Assert.assertEquals(1, image.getWidth());
+        Assert.assertEquals(1, image.getHeight());
 
         PlanarImage.wrapRenderedImage(image).dispose();
         image = null;
 
         // IMAGE 7
-        image = ImageReadDescriptor.create(new FileImageInputStream(file), Integer.valueOf(7),
-                false, false, false, null, null, null,
-                new TIFFImageReaderSpi().createReaderInstance(), null);
-
-        if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image, "testManualRead");
-        else
-            Assert.assertNotNull(image.getData());
-        // sum+=System.nanoTime()-time;
-        Assert.assertEquals(15, image.getWidth());
-        Assert.assertEquals(14, image.getHeight());
-
-        PlanarImage.wrapRenderedImage(image).dispose();
-        image = null;
 
     }
 
