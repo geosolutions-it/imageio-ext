@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.stream.output;
 
+import it.geosolutions.imageio.stream.AccessibleStream;
+
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -24,7 +26,7 @@ import javax.imageio.stream.ImageOutputStreamImpl;
 /**
  * @author Simone Giannecchini, GeoSolutions
  */
-public class ImageOutputStreamAdapter extends ImageOutputStreamImpl {
+public class ImageOutputStreamAdapter extends ImageOutputStreamImpl implements AccessibleStream<OutputStream>{
 
     // Supporting marking is a big issue. I should overline this somehow 
     
@@ -78,5 +80,13 @@ public class ImageOutputStreamAdapter extends ImageOutputStreamImpl {
     	}finally{
     		os.close();
     	}
+    }
+
+    public OutputStream getTarget() {
+        return os;
+    }
+
+    public Class<OutputStream> getBinding() {
+        return OutputStream.class;
     }
 }

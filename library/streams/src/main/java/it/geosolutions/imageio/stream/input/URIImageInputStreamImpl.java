@@ -56,4 +56,12 @@ public class URIImageInputStreamImpl extends ImageInputStreamImpl implements
         }
         this.uri = uri;
     }
+
+    public URI getTarget() {
+        return uri;
+    }
+
+    public Class<URI> getBinding() {
+        return URI.class;
+    }
 }

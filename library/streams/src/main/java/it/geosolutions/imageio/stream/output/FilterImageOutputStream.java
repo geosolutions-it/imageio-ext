@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.stream.output;
 
+import it.geosolutions.imageio.stream.AccessibleStream;
+
 import java.io.IOException;
 import java.nio.ByteOrder;
 
@@ -29,7 +31,7 @@ import javax.imageio.stream.ImageOutputStreamImpl;
  * @author Simone Giannecchini, GeoSolutions
  */
 public class FilterImageOutputStream extends ImageOutputStreamImpl implements
-        ImageOutputStream {
+        ImageOutputStream{
 
     protected ImageOutputStream ios;
 

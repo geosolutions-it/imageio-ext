@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageio.stream.output;
 
+import it.geosolutions.imageio.stream.AccessibleStream;
 import it.geosolutions.imageio.stream.eraf.EnhancedRandomAccessFile;
 
 import java.io.File;
@@ -46,8 +47,9 @@ import com.sun.media.imageio.stream.FileChannelImageOutputStream;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  * @author Simone Giannecchini, GeoSolutions
+ * @deprecated use {@link AccessibleStream} instead
  */
-public interface FileImageOutputStreamExt extends ImageOutputStream {
+public interface FileImageOutputStreamExt extends ImageOutputStream, AccessibleStream<File> {
 
     /**
      * Returns the associated {@link File}

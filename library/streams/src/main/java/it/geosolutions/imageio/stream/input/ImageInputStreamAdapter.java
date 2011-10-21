@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.stream.input;
 
+import it.geosolutions.imageio.stream.AccessibleStream;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.InflaterInputStream;
@@ -41,7 +43,7 @@ import javax.imageio.stream.MemoryCacheImageInputStream;
  * 
  * @author Simone Giannecchini, GeoSolutions
  */
-public class ImageInputStreamAdapter extends ImageInputStreamImpl {
+public class ImageInputStreamAdapter extends ImageInputStreamImpl implements AccessibleStream<InputStream> {
 
     private InputStream is;
 
@@ -163,5 +165,13 @@ public class ImageInputStreamAdapter extends ImageInputStreamImpl {
 
             }
         return new MemoryCacheImageInputStream(stream);
+    }
+
+    public InputStream getTarget() {
+        return is;
+    }
+
+    public Class<InputStream> getBinding() {
+        return InputStream.class;
     }
 }

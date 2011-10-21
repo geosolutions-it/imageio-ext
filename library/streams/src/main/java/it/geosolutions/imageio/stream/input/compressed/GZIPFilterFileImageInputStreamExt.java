@@ -52,4 +52,12 @@ public class GZIPFilterFileImageInputStreamExt extends GZIPImageInputStream
     public File getFile() {
         return file;
     }
+
+    public File getTarget() {
+        return file;
+    }
+
+    public Class<File> getBinding() {
+        return File.class;
+    }
 }

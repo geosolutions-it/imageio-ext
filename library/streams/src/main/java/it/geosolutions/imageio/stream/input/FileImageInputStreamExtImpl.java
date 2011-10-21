@@ -337,4 +337,12 @@ public  class FileImageInputStreamExtImpl extends ImageInputStreamImpl
         return new StringBuilder("FileImageInputStreamExtImpl which points to ")
                 .append(this.file.toString()).toString();
     }
+
+    public File getTarget() {
+        return file;
+    }
+
+    public Class<File> getBinding() {
+        return File.class;
+    }
 }

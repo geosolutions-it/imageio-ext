@@ -193,4 +193,17 @@ public class FileImageOutputStreamExtImpl extends ImageOutputStreamImpl
         return new StringBuilder("FileImageOutputStreamExtImpl which points to ")
                 .append(this.file.toString()).toString();
     }
+
+    /**
+     * Allows us to access the underlying file.
+     * 
+     * @return the underlying {@link File}.
+     */
+    public File getTarget() {
+        return file;
+    }
+
+    public Class<File> getBinding() {
+        return File.class;
+    }
 }
