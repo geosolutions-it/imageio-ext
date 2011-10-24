@@ -18,6 +18,7 @@ package it.geosolutions.imageio.plugins.rpftoc;
 
 import it.geosolutions.imageio.gdalframework.GDALUtilities;
 import it.geosolutions.imageio.gdalframework.Viewer;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
 import java.awt.image.Raster;
