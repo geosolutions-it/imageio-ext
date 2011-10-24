@@ -17,6 +17,7 @@
 package it.geosolutions.imageio.stream.input.spi;
 
 import it.geosolutions.imageio.stream.eraf.EnhancedRandomAccessFile;
+import it.geosolutions.imageio.stream.input.FileImageInputStreamExtFileChannelImpl;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 
 import java.io.File;
@@ -59,97 +60,119 @@ import com.sun.media.imageio.stream.FileChannelImageInputStream;
  */
 public class FileImageInputStreamExtImplSpi extends ImageInputStreamSpi {
 
-	/** Logger. */
-	private final static Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.stream.input.spi");
+    /** Logger. */
+    private final static Logger LOGGER = Logger
+            .getLogger("it.geosolutions.imageio.stream.input.spi");
 
-	private static final String vendorName = "GeoSolutions";
+    private static final String vendorName = "GeoSolutions";
 
-	private static final String version = "1.0";
+    private static final String version = "1.0";
 
-	private static final Class<File> inputClass = File.class;
+    private static final Class<File> inputClass = File.class;
 
-	/**
-	 * Constructs a blank {@link ImageInputStreamSpi}. It is up to the subclass
-	 * to initialize instance variables and/or override method implementations
-	 * in order to provide working versions of all methods.
-	 * 
-	 */
-	public FileImageInputStreamExtImplSpi() {
-		super(vendorName, version, inputClass);
-	}
+    private static volatile boolean useFileChannel;
 
-	/**
-	 * @see ImageInputStreamSpi#getDescription(Locale).
-	 */
-	public String getDescription(Locale locale) {
-		return "Service provider that wraps a FileImageInputStream";
-	}
+    static {
+        useFileChannel = Boolean.getBoolean("it.geosolutions.stream.useFileChannel");
+        if (useFileChannel && LOGGER.isLoggable(Level.INFO)) {
+            LOGGER.info("The FileImageInputStreamExtImplSpi will use File channels instead of " +
+            		"Enhanced Random Access Files");
+        }
+    }
 
-	/**
-	 * Upon registration, this method ensures that this SPI is listed at the top
-	 * of the ImageInputStreamSpi items, so that it will be invoked before the
-	 * default FileImageInputStreamSpi
-	 * 
-	 * @param registry
-	 *            ServiceRegistry where this object has been registered.
-	 * @param category
-	 *            a Class object indicating the registry category under which
-	 *            this object has been registered.
-	 */
-	public void onRegistration(ServiceRegistry registry, Class<?> category) {
-		super.onRegistration(registry, category);
-		Class<ImageInputStreamSpi> targetClass = ImageInputStreamSpi.class;
-		for (Iterator<? extends ImageInputStreamSpi> i = registry.getServiceProviders(targetClass, true); i.hasNext();) {
-			ImageInputStreamSpi other = i.next();
+    /**
+     * Constructs a blank {@link ImageInputStreamSpi}. It is up to the subclass
+     * to initialize instance variables and/or override method implementations
+     * in order to provide working versions of all methods.
+     * 
+     */
+    public FileImageInputStreamExtImplSpi() {
+        super(vendorName, version, inputClass);
+    }
 
-			if (other instanceof FileImageInputStreamSpi)
-				registry.deregisterServiceProvider(other);
-			if (this != other)
-				registry.setOrdering(targetClass, this, other);
+    /**
+     * @see ImageInputStreamSpi#getDescription(Locale).
+     */
+    public String getDescription(Locale locale) {
+        return "Service provider that wraps a FileImageInputStream";
+    }
 
-		}
-	}
+    /**
+     * Upon registration, this method ensures that this SPI is listed at the top
+     * of the ImageInputStreamSpi items, so that it will be invoked before the
+     * default FileImageInputStreamSpi
+     * 
+     * @param registry
+     *            ServiceRegistry where this object has been registered.
+     * @param category
+     *            a Class object indicating the registry category under which
+     *            this object has been registered.
+     */
+    public void onRegistration(ServiceRegistry registry, Class<?> category) {
+        super.onRegistration(registry, category);
+        Class<ImageInputStreamSpi> targetClass = ImageInputStreamSpi.class;
+        for (Iterator<? extends ImageInputStreamSpi> i = registry.getServiceProviders(targetClass,
+                true); i.hasNext();) {
+            ImageInputStreamSpi other = i.next();
 
-	/**
-	 * Returns an instance of the ImageInputStream implementation associated
-	 * with this service provider.
-	 * 
-	 * @param input
-	 *            an object of the class type returned by getInputClass.
-	 * @param useCache
-	 *            a boolean indicating whether a cache eraf should be used, in
-	 *            cases where it is optional.
-	 * 
-	 * @param cacheDir
-	 *            a File indicating where the cache eraf should be created, or
-	 *            null to use the system directory.
-	 * 
-	 * 
-	 * @return an ImageInputStream instance.
-	 * 
-	 * @throws IllegalArgumentException
-	 *             if input is not an instance of the correct class or is null.
-	 */
-	public ImageInputStream createInputStreamInstance(Object input,
-			boolean useCache, File cacheDir) {
-		if (!(input instanceof File)) {
-			if (LOGGER.isLoggable(Level.FINE))
-				LOGGER.fine("THe provided input is not a eraf.");
-			return null;
-		}
+            if (other instanceof FileImageInputStreamSpi)
+                registry.deregisterServiceProvider(other);
+            if (this != other)
+                registry.setOrdering(targetClass, this, other);
 
-		try {
-			return new FileImageInputStreamExtImpl((File) input);
-		} catch (FileNotFoundException e) {
-			if (LOGGER.isLoggable(Level.FINE))
-				LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
-			return null;
-		} catch (IOException e) {
-			if (LOGGER.isLoggable(Level.FINE))
-				LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
-			return null;
-		}
+        }
+    }
 
-	}
+    /**
+     * Returns an instance of the ImageInputStream implementation associated
+     * with this service provider.
+     * 
+     * @param input
+     *            an object of the class type returned by getInputClass.
+     * @param useCache
+     *            a boolean indicating whether a cache eraf should be used, in
+     *            cases where it is optional.
+     * 
+     * @param cacheDir
+     *            a File indicating where the cache eraf should be created, or
+     *            null to use the system directory.
+     * 
+     * 
+     * @return an ImageInputStream instance.
+     * 
+     * @throws IllegalArgumentException
+     *             if input is not an instance of the correct class or is null.
+     */
+    public ImageInputStream createInputStreamInstance(Object input, boolean useCache, File cacheDir) {
+        if (!(input instanceof File)) {
+            if (LOGGER.isLoggable(Level.FINE))
+                LOGGER.fine("THe provided input is not a eraf.");
+            return null;
+        }
+
+        try {
+            if (!useFileChannel) {
+                return new FileImageInputStreamExtImpl((File) input);
+            } else {
+                return new FileImageInputStreamExtFileChannelImpl((File) input);
+            }
+        } catch (FileNotFoundException e) {
+            if (LOGGER.isLoggable(Level.FINE))
+                LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
+            return null;
+        } catch (IOException e) {
+            if (LOGGER.isLoggable(Level.FINE))
+                LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
+            return null;
+        }
+
+    }
+
+    public static boolean isUseFileChannel() {
+        return useFileChannel;
+    }
+
+    public static void setUseFileChannel(boolean useFileChannel) {
+        FileImageInputStreamExtImplSpi.useFileChannel = useFileChannel;
+    }
 }

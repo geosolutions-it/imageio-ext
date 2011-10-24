@@ -48,8 +48,10 @@
         <module>gdaldoq1</module>
         <module>gdaldoq2</module>
         <module>gdalenvisat</module>
+        <module>gdalbsb</module>
         <module>gdalerdasimg</module>
         <module>gdalnitf</module>
+        <module>gdalrpftoc</module>
         <module>gdalehdr</module>
         <module>gdalenvihdr</module>
         <module>gdaljpeg</module>
@@ -69,8 +71,10 @@
       	<module>gdaldoq2</module>
         <module>gdalhdf4</module>
         <module>gdalenvisat</module>
+        <module>gdalbsb</module>
         <module>gdalerdasimg</module>
         <module>gdalnitf</module>
+        <module>gdalrpftoc</module>
         <module>gdalehdr</module>
         <module>gdalenvihdr</module>
         <module>gdalmrsid</module>
@@ -95,8 +99,10 @@
         <module>gdaldoq1</module>
 	      <module>gdaldoq2</module>
         <module>gdalenvisat</module>
+        <module>gdalbsb</module>
         <module>gdalerdasimg</module>
         <module>gdalnitf</module>
+        <module>gdalrpftoc</module>
         <module>gdalehdr</module>
         <module>gdalenvihdr</module>
         <module>gdalmrsid</module>
