@@ -189,7 +189,7 @@ public class FileImageOutputStreamExtImpl extends ImageOutputStreamImpl
      * @return a simple description for this {@link ImageOutputStream}.
      */
     public String toString() {
-        return "FileImageOutputStreamExtImpl which points to " this.file.toString();
+        return "FileImageOutputStreamExtImpl which points to " + this.file.toString();
     }
 
     /**
