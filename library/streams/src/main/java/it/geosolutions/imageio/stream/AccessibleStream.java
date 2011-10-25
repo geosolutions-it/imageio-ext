@@ -14,26 +14,31 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package it.geosolutions.imageio.stream.input;
-
-import it.geosolutions.imageio.stream.AccessibleStream;
-
-import java.io.File;
+package it.geosolutions.imageio.stream;
 
 import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.ImageOutputStream;
 
 /**
- * An {@link ImageInputStream} that gets its input from a {@link File}.
+ * Simple interface to expose the underlying target for an {@link ImageInputStream}or {@link ImageOutputStream}.
  * 
- * @author Daniele Romagnoli, GeoSolutions
  * @author Simone Giannecchini, GeoSolutions
- * @deprecated use AccessibleStream instead
+ *
+ * @param <T>
  */
-public interface FileImageInputStreamExt extends ImageInputStream, AccessibleStream<File> {
+public interface AccessibleStream<T> {
+    
     /**
-     * Returns the associated {@link File}
+     * Retrieves the target object on which we work.
      * 
-     * @return the associated {@link File}
+     * @return the target object on which we work.
      */
-    public File getFile();
+    public T getTarget();
+    
+    /**
+     * Retrieve the class for the target object.
+     * @return the class for the target object.
+     */
+    public Class<T> getBinding();
+
 }

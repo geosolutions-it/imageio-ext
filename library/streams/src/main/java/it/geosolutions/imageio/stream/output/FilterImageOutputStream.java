@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.stream.output;
 
+import it.geosolutions.imageio.stream.AccessibleStream;
+
 import java.io.IOException;
 import java.nio.ByteOrder;
 
@@ -29,7 +31,7 @@ import javax.imageio.stream.ImageOutputStreamImpl;
  * @author Simone Giannecchini, GeoSolutions
  */
 public class FilterImageOutputStream extends ImageOutputStreamImpl implements
-        ImageOutputStream {
+        ImageOutputStream, AccessibleStream {
 
     protected ImageOutputStream ios;
 
@@ -300,6 +302,19 @@ public class FilterImageOutputStream extends ImageOutputStreamImpl implements
 
     public void readBytes(IIOByteBuffer buf, int len) throws IOException {
         ios.readBytes(buf, len);
+    }
+
+    /**
+     * Allows us to access the underlying ImageOutputStream.
+     * 
+     * @return the underlying {@link ImageOutputStream}.
+     */
+    public ImageOutputStream getTarget() {
+        return ios;
+    }
+
+    public Class<ImageOutputStream> getBinding() {
+        return ImageOutputStream.class;
     }
 
 }

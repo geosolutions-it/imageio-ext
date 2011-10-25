@@ -37,11 +37,11 @@ import javax.imageio.stream.ImageOutputStreamImpl;
 public class FileImageOutputStreamExtImpl extends ImageOutputStreamImpl
         implements FileImageOutputStreamExt {
 
-	private EnhancedRandomAccessFile eraf;
+    private EnhancedRandomAccessFile eraf;
 
-    	private File file;
+    private File file;
 
-	private boolean isClosed;
+    private boolean isClosed;
 
     /**
      * A constructor which accepts a File as input.
@@ -189,8 +189,19 @@ public class FileImageOutputStreamExtImpl extends ImageOutputStreamImpl
      * @return a simple description for this {@link ImageOutputStream}.
      */
     public String toString() {
+        return "FileImageOutputStreamExtImpl which points to " +  this.file.toString();
+    }
 
-        return new StringBuilder("FileImageOutputStreamExtImpl which points to ")
-                .append(this.file.toString()).toString();
+    /**
+     * Allows us to access the underlying file.
+     * 
+     * @return the underlying {@link File}.
+     */
+    public File getTarget() {
+        return file;
+    }
+
+    public Class<File> getBinding() {
+        return File.class;
     }
 }
