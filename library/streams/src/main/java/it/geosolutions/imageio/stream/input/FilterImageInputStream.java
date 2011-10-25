@@ -69,5 +69,4 @@ public abstract class FilterImageInputStream extends ImageInputStreamImpl
     public void setByteOrder(ByteOrder byteOrder) {
         iis.setByteOrder(byteOrder);
     }
-    
 }

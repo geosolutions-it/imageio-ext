@@ -107,6 +107,6 @@ public class URLImageInputStreamSpi extends ImageInputStreamSpi {
      * @see ImageInputStreamSpi#getDescription(Locale).
      */
     public String getDescription(Locale locale) {
-        return "Service provider that helps connecting to the onject pointed by a URL";
+        return "Service provider that helps connecting to the object pointed by a URL";
     }
 }

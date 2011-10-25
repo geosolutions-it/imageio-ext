@@ -296,15 +296,14 @@ public  class FileImageInputStreamExtImpl extends ImageInputStreamImpl
      *                 in case something bad happens.
      */
     public void close() throws IOException {
-    	try{
-	    	if(!isClosed){
-		        super.close();
-		        eraf.close();
-	    	}
-    	}
-    	finally{
-    		isClosed=true;
-    	}
+        try {
+            if(!isClosed){
+                super.close();
+                eraf.close();
+            }
+        } finally {
+            isClosed=true;
+        }
     }
 
     /**
@@ -333,9 +332,7 @@ public  class FileImageInputStreamExtImpl extends ImageInputStreamImpl
      * @return a simple description for this {@link ImageInputStream}.
      */
     public String toString() {
-
-        return new StringBuilder("FileImageInputStreamExtImpl which points to ")
-                .append(this.file.toString()).toString();
+        return "FileImageInputStreamExtImpl which points to " + this.file.toString();
     }
 
     public File getTarget() {

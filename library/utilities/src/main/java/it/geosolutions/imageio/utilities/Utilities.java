@@ -29,7 +29,7 @@ import javax.media.jai.JAI;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  * @author Martin Desruisseaux
- *  @deprecated Use {@link ImageIOUtilities}
+ * @deprecated Use {@link ImageIOUtilities}
  *  
  */
 public final class Utilities {
