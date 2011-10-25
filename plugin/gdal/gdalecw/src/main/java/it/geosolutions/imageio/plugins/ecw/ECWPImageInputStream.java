@@ -239,4 +239,12 @@ public class ECWPImageInputStream implements URIImageInputStream {
     public long skipBytes(long n) throws IOException {
         return uriInputStream.skipBytes(n);
     }
+
+    public URI getTarget() {
+        return uriInputStream.getTarget();
+    }
+
+    public Class<URI> getBinding() {
+        return URI.class;
+    }
 }

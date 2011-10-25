@@ -23,7 +23,7 @@ import it.geosolutions.imageio.plugins.jp2k.JP2KKakaduImageWriteParam.Compressio
 import it.geosolutions.imageio.plugins.jp2k.JP2KKakaduImageWriteParam.ProgressionOrder;
 import it.geosolutions.imageio.plugins.jp2k.box.UUIDBox;
 import it.geosolutions.imageio.stream.output.FileImageOutputStreamExt;
-import it.geosolutions.imageio.utilities.Utilities;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.util.KakaduUtilities;
 
 import java.awt.Dimension;
@@ -298,7 +298,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
         else if (output instanceof URL) {
             final URL tempURL = (URL) output;
             if (tempURL.getProtocol().equalsIgnoreCase("file")) {
-                outputFile = Utilities.urlToFile(tempURL);
+                outputFile = ImageIOUtilities.urlToFile(tempURL);
             }
         } else if (output instanceof ImageOutputStream) {
             try {
