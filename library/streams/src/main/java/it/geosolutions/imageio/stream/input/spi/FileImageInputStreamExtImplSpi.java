@@ -17,6 +17,7 @@
 package it.geosolutions.imageio.stream.input.spi;
 
 import it.geosolutions.imageio.stream.eraf.EnhancedRandomAccessFile;
+import it.geosolutions.imageio.stream.input.FileImageInputStreamExtFileChannelImpl;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 
 import java.io.File;
@@ -59,25 +60,35 @@ import com.sun.media.imageio.stream.FileChannelImageInputStream;
  */
 public class FileImageInputStreamExtImplSpi extends ImageInputStreamSpi {
 
-	/** Logger. */
-	private final static Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.stream.input.spi");
+    /** Logger. */
+    private final static Logger LOGGER = Logger
+            .getLogger("it.geosolutions.imageio.stream.input.spi");
 
-	private static final String vendorName = "GeoSolutions";
+    private static final String vendorName = "GeoSolutions";
 
-	private static final String version = "1.0";
+    private static final String version = "1.0";
 
-	private static final Class<File> inputClass = File.class;
+    private static final Class<File> inputClass = File.class;
 
-	/**
-	 * Constructs a blank {@link ImageInputStreamSpi}. It is up to the subclass
-	 * to initialize instance variables and/or override method implementations
-	 * in order to provide working versions of all methods.
-	 * 
-	 */
-	public FileImageInputStreamExtImplSpi() {
-		super(vendorName, version, inputClass);
-	}
+    private static volatile boolean useFileChannel;
+
+    static {
+        useFileChannel = Boolean.getBoolean("it.geosolutions.stream.useFileChannel");
+        if (useFileChannel && LOGGER.isLoggable(Level.INFO)) {
+            LOGGER.info("The FileImageInputStreamExtImplSpi will use File channels instead of " +
+                    "Enhanced Random Access Files");
+        }
+    }
+
+    /**
+     * Constructs a blank {@link ImageInputStreamSpi}. It is up to the subclass
+     * to initialize instance variables and/or override method implementations
+     * in order to provide working versions of all methods.
+     * 
+     */
+    public FileImageInputStreamExtImplSpi() {
+        super(vendorName, version, inputClass);
+    }
 
 	/**
 	 * @see ImageInputStreamSpi#getDescription(Locale).
@@ -151,5 +162,13 @@ public class FileImageInputStreamExtImplSpi extends ImageInputStreamSpi {
 			return null;
 		}
 
-	}
+    }
+
+    public static boolean isUseFileChannel() {
+        return useFileChannel;
+    }
+
+    public static void setUseFileChannel(boolean useFileChannel) {
+        FileImageInputStreamExtImplSpi.useFileChannel = useFileChannel;
+    }
 }
