@@ -285,4 +285,12 @@ public class FileImageInputStreamExtFileChannelImpl extends ImageInputStreamImpl
     public String toString() {
         return "FileImageInputStreamExtFileChannelImpl which points to " + this.file.toString();
     }
+
+    public File getTarget() {
+        return file;
+    }
+
+    public Class<File> getBinding() {
+        return File.class;
+    }
 }
