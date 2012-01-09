@@ -845,6 +845,7 @@ public class JP2KKakaduImageReader extends ImageReader {
                 fos.close();
 
                 input = inputFile;
+                deleteInputFile = true;
             } catch (IOException ioe) {
                 throw new RuntimeException("Unable to create a temp file", ioe);
             }
