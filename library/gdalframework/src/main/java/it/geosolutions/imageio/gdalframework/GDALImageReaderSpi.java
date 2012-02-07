@@ -17,9 +17,9 @@
 package it.geosolutions.imageio.gdalframework;
 
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 import it.geosolutions.imageio.stream.input.spi.StringImageInputStreamSpi;
 import it.geosolutions.imageio.stream.input.spi.URLImageInputStreamSpi;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.imageio.utilities.Utilities;
 
 import java.io.File;
@@ -30,14 +30,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
-import javax.imageio.stream.ImageInputStream;
 
 import org.gdal.gdal.Dataset;
 import org.gdal.gdal.Driver;
@@ -165,7 +165,7 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
 
         // if input source is an URL, open an InputStream
         if (input instanceof URL) {
-            input=Utilities.urlToFile((URL)input);
+            input=ImageIOUtilities.urlToFile((URL)input);
         }
 
         // if input source is a File,
@@ -231,9 +231,7 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
             // input.
             final String sDriver = driver.getShortName();
 
-            // ////////////////////////////////////////////////////////////////
             // checking if this format is supported by the specific SPI */
-            // ////////////////////////////////////////////////////////////////
             return getSupportedFormats().contains(sDriver);
         }
         return false;
@@ -266,7 +264,7 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
      * Allows to deregister GDAL based spi in case GDAL libraries are
      * unavailable.
      */
-    public synchronized void onRegistration(
+    public void onRegistration(
     		final ServiceRegistry registry,
             final Class<?> category) {
         super.onRegistration(registry, category);
