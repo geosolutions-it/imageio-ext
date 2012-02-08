@@ -172,15 +172,6 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
 						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
 				}
 	    	}
-	    	if (dataset != null){
-	    		try{
-                    // Closing the dataset
-        			GDALUtilities.closeDataSet(dataset);
-        		}catch (Throwable e) {
-					if(LOGGER.isLoggable(Level.FINEST))
-						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
-				}
-	    	}
 	    }
 	        
     }

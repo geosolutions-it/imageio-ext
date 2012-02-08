@@ -61,7 +61,7 @@ import com.sun.media.jai.operator.ImageReadDescriptor;
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
-public final class GDALUtilities {
+public final class GDALUtilities {	
 	
     /**
      * Simple placeholder for Strings representing GDAL metadata domains.
@@ -286,10 +286,13 @@ public final class GDALUtilities {
      * @param accessType
      * @return the acquired {@link Dataset}
      */
-    public static synchronized Dataset acquireDataSet(String name, int accessType) {
+    public static Dataset acquireDataSet(final String name,final int accessType) {
         if (!isGDALAvailable())
             return null;
+        
+        System.out.println("CacheMax:"+getCacheMax()+" CacheUsed:"+getCacheUsed());
         return gdal.Open(name, accessType);
+
     }
 
     /**
@@ -310,13 +313,8 @@ public final class GDALUtilities {
         	try {
         		gdalImageMetadata = ds.GetMetadata_List("");
         	} finally {
-        		try{
-                    // Closing the dataset
-        			closeDataSet(ds);
-        		}catch (Throwable e) {
-					if(LOGGER.isLoggable(Level.FINEST))
-						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
-				}
+                // Closing the dataset
+    			closeDataSet(ds);
         	}
         } else
             gdalImageMetadata = null;
@@ -329,12 +327,18 @@ public final class GDALUtilities {
      * @param ds
      *                {@link Dataset} to close.
      */
-    public static synchronized void closeDataSet(Dataset ds) {
+    public static void closeDataSet(Dataset ds) {
         if (!isGDALAvailable())
             return;
         if (ds == null)
             throw new NullPointerException("The provided dataset is null");
-        ds.delete();
+        try {
+        	ds.delete();
+        } catch (Exception e) {
+			if(LOGGER.isLoggable(Level.INFO)){
+				LOGGER.log(Level.INFO,e.getLocalizedMessage(),e);
+			}
+		}
     }
 
     /**
@@ -466,11 +470,28 @@ public final class GDALUtilities {
      * @return a <code>List</code> containing metadata related to the stream.
      */
     public static List getGDALStreamMetadata(String datasetName) {
-        final Dataset ds = acquireDataSet(datasetName, gdalconst.GA_ReadOnly);
-        List gdalStreamMetadata = ds.GetMetadata_List("SUBDATASETS");
-        closeDataSet(ds);
-        return gdalStreamMetadata;
+    	Dataset ds=null;
+    	try{
+            ds = acquireDataSet(datasetName, gdalconst.GA_ReadOnly);
+            return ds.GetMetadata_List("SUBDATASETS");
+    	} catch (Exception e) {
+			if(LOGGER.isLoggable(Level.WARNING)){
+				LOGGER.log(Level.WARNING,e.getLocalizedMessage(),e);
+			}
+			return null;
+		} finally {
+			if(ds==null){
+        		try{
+                    // Closing the dataset
+        			GDALUtilities.closeDataSet(ds);
+        		}catch (Throwable e) {
+					if(LOGGER.isLoggable(Level.FINE))
+						LOGGER.log(Level.FINE,e.getLocalizedMessage(),e);
+				}
+			}
+		}
     }
+    	
 
     /**
      * Set the value of a specific attribute of a specific
@@ -627,14 +648,12 @@ public final class GDALUtilities {
         final int buffer_type = sampleModel.getDataType();
         final int numBands = sampleModel.getNumBands();
         if (numBands > 1) {
-            // /////////////////////////////////////////////////////////////////
             //
             // Number of Bands > 1.
             // ImageUtil.createColorModel provides to Creates a
             // ColorModel that may be used with the specified
             // SampleModel
             //
-            // /////////////////////////////////////////////////////////////////
             colorModel = ImageUtil.createColorModel(sampleModel);
             if (colorModel == null) {
                 LOGGER.severe("No ColorModels found");
@@ -664,12 +683,10 @@ public final class GDALUtilities {
         return colorModel;
     }
 
-	// ////////////////////////////////////////////////////////////////////////
 	//
 	// Provides to retrieve projections from the provided {@lik RenderedImage}
 	// and return the String containing properly formatted text.
 	//
-	// ////////////////////////////////////////////////////////////////////////
 	public static String buildCRSProperties(RenderedImage ri, final int index) {
 	    final Object imageReader = ri.getProperty(ImageReadDescriptor.PROPERTY_NAME_IMAGE_READER);
             StringBuffer sb = new StringBuffer("CRS Information:").append(newLine);
@@ -723,14 +740,11 @@ public final class GDALUtilities {
             return sb.toString();
 	}
 
-	// ///////////////////////////////////////////////////////////////////////
 	//
 	// Provides to retrieve metadata from the provided
 	// <code>RenderedImage</code>}
 	// and return the String containing properly formatted text.
 	//	 
-	// ///////////////////////////////////////////////////////////////////////
-	
 	public static String buildMetadataText(RenderedImage ri,
 	        final MetadataChoice metadataFields, final int index) {
 	    try {
@@ -761,11 +775,9 @@ public final class GDALUtilities {
 	    }
 	}
 
-	// ////////////////////////////////////////////////////////////////////////
 	//
 	// returns a String containing metadata from the provided reader
 	//
-	// ////////////////////////////////////////////////////////////////////////
 	// TODO: change with the new ImageIO - Metadata Capabilities
 	public static String getImageMetadata(GDALImageReader reader,
 	        final int index) {
@@ -782,16 +794,13 @@ public final class GDALUtilities {
 	    return "Image Metadata not found";
 	}
 
-	// ////////////////////////////////////////////////////////////////////////
 	//
 	// returns a String containing stream metadata from the provided reader
 	//
-	// ////////////////////////////////////////////////////////////////////////
 	public static String getStreamMetadata(GDALImageReader reader)
 	        throws IOException {
 	    final GDALCommonIIOImageMetadata mt = reader.getDatasetMetadata(reader.getNumImages(true) - 1);
-	    final List metadata = GDALUtilities.getGDALStreamMetadata(mt
-	            .getDatasetName());
+	    final List metadata = GDALUtilities.getGDALStreamMetadata(mt.getDatasetName());
 	    if (metadata != null) {
 	        final int size = metadata.size();
 	        StringBuffer sb = new StringBuffer("Stream Metadata:")
@@ -802,4 +811,8 @@ public final class GDALUtilities {
 	    }
 	    return "Stream Metadata not found";
 	}
+	
+//	public static void shutdown(){
+//		cache.invalidateAll();
+//	}
 }

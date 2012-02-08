@@ -37,6 +37,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
@@ -49,6 +50,7 @@ import javax.media.jai.RenderedOp;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.sun.media.jai.operator.ImageReadDescriptor;
@@ -93,13 +95,13 @@ public class MrSIDTest extends AbstractGDALTest {
         }
         try {
             final File file = TestData.file(this, fileName);
-            final ParameterBlockJAI pbjImageRead;
-            pbjImageRead = new ParameterBlockJAI("ImageRead");
+            final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
             pbjImageRead.setParameter("Input", file);
             RenderedOp image = JAI.create("ImageRead", pbjImageRead);
             IIOMetadata metadata = (IIOMetadata) image
                     .getProperty(ImageReadDescriptor.PROPERTY_NAME_METADATA_IMAGE);
             Assert.assertTrue(metadata instanceof GDALCommonIIOImageMetadata);
+            Assert.assertTrue(metadata instanceof MrSIDIIOImageMetadata);
             GDALCommonIIOImageMetadata commonMetadata = (GDALCommonIIOImageMetadata) metadata;
             ImageIOUtilities
                     .displayImageIOMetadata(commonMetadata
@@ -108,7 +110,29 @@ public class MrSIDTest extends AbstractGDALTest {
                     .getAsTree(MrSIDIIOImageMetadata.mrsidImageMetadataName));
             if (TestData.isInteractiveTest())
                 Viewer.visualizeAllInformation(image, "", TestData.isInteractiveTest());
-            ImageIOUtilities.disposeImage(image);
+            else {
+            	ImageIOUtilities.disposeImage(image);
+            }
+        } catch (FileNotFoundException fnfe) {
+            warningMessage();
+        }
+        
+        try {
+            final File file = TestData.file(this, fileName);
+            ImageReader reader= new MrSIDImageReaderSpi().createReaderInstance();
+            reader.setInput(ImageIO.createImageInputStream(file));
+            Assert.assertEquals(618,reader.getWidth(0));
+            Assert.assertEquals(1265,reader.getHeight(0));
+            IIOMetadata metadata = (IIOMetadata) reader.getImageMetadata(0);
+            Assert.assertTrue(metadata instanceof GDALCommonIIOImageMetadata);
+            Assert.assertTrue(metadata instanceof MrSIDIIOImageMetadata);
+            GDALCommonIIOImageMetadata commonMetadata = (GDALCommonIIOImageMetadata) metadata;
+            ImageIOUtilities
+                    .displayImageIOMetadata(commonMetadata
+                            .getAsTree(GDALCommonIIOImageMetadata.nativeMetadataFormatName));
+            ImageIOUtilities.displayImageIOMetadata(commonMetadata
+                    .getAsTree(MrSIDIIOImageMetadata.mrsidImageMetadataName));
+            reader.dispose();
         } catch (FileNotFoundException fnfe) {
             warningMessage();
         }
@@ -222,9 +246,10 @@ public class MrSIDTest extends AbstractGDALTest {
             final RenderedOp rotatedImage = JAI.create("Rotate", pbjRotate);
             if (TestData.isInteractiveTest())
                 Viewer.visualizeAllInformation(rotatedImage, "Rotated Image");
-            else
+            else {
             	Assert.assertNotNull(image.getTiles());
-            ImageIOUtilities.disposeImage(image);
+            	ImageIOUtilities.disposeImage(image);
+            }
         } catch (FileNotFoundException fnfe) {
             warningMessage();
         }
@@ -317,9 +342,11 @@ public class MrSIDTest extends AbstractGDALTest {
 
             if (TestData.isInteractiveTest())
                 Viewer.visualizeAllInformation(image, "SourceBand selection");
-            else
+            else {
             	Assert.assertNotNull(image.getTiles());
-            ImageIOUtilities.disposeImage(image);
+            	ImageIOUtilities.disposeImage(image);
+            }
+            
         } catch (FileNotFoundException fnfe) {
             warningMessage();
         }
@@ -378,18 +405,5 @@ public class MrSIDTest extends AbstractGDALTest {
         } catch (FileNotFoundException fnfe) {
             super.warningMessage();
         }
-    }
-
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        // general settings
-        JAI.getDefaultInstance().getTileScheduler().setParallelism(10);
-        JAI.getDefaultInstance().getTileScheduler().setPriority(4);
-        JAI.getDefaultInstance().getTileScheduler().setPrefetchPriority(2);
-        JAI.getDefaultInstance().getTileScheduler().setPrefetchParallelism(5);
-        JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
-                128 * 1024 * 1024);
-        JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
     }
 }

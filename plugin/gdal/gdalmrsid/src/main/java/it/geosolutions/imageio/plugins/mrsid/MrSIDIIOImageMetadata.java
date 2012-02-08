@@ -26,6 +26,7 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataFormat;
 import javax.imageio.metadata.IIOMetadataNode;
 
+import org.gdal.gdal.Dataset;
 import org.w3c.dom.Node;
 
 /**
@@ -56,8 +57,21 @@ public class MrSIDIIOImageMetadata extends GDALCommonIIOImageMetadata {
      *                the format supports subdatasets) of the dataset we want to
      *                open.
      */
-    public MrSIDIIOImageMetadata(final String dataseName) {
-        super(dataseName, mrsidImageMetadataName,
+    public MrSIDIIOImageMetadata(final String datasetName) {
+        super(datasetName, mrsidImageMetadataName,
+                mrsidImageMetadataFormatClassName);
+    }
+    
+    /**
+     * <code>MrSIDIIOImageMetadata</code> constructor.
+     * 
+     * @param dataset
+     *                The name (usually a File path or a subdataset name when
+     *                the format supports subdatasets) of the dataset we want to
+     *                open.
+     */
+    public MrSIDIIOImageMetadata(final Dataset dataset,final String datasetName) {
+        super(dataset, datasetName, mrsidImageMetadataName,
                 mrsidImageMetadataFormatClassName);
     }
 

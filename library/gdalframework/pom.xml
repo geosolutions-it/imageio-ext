@@ -41,7 +41,7 @@
       <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-geocore</artifactId>
       <version>${project.version}</version>
-    </dependency>
+    </dependency>  
   </dependencies>
   
   <build><plugins>

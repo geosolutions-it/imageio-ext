@@ -106,13 +106,6 @@ public class MrSIDImageReaderSpi extends GDALImageReaderSpi {
     }
 
     /**
-     * This method checks if the provided input can be decoded from this SPI
-     */
-    public boolean canDecodeInput(Object input) throws IOException {
-        return super.canDecodeInput(input);
-    }
-
-    /**
      * Returns an instance of the MrSIDImageReader
      * 
      * @see javax.imageio.spi.ImageReaderSpi#createReaderInstance(java.lang.Object)
