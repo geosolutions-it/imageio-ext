@@ -1,7 +1,7 @@
 /*
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
- *    https://imageio-ext.dev.java.net/
+ *    http://java.net/projects/imageio-ext/
  *    (C) 2008, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
@@ -51,6 +51,8 @@ import kdu_jni.Kdu_message_formatter;
  */
 public class KakaduUtilities {
 
+    public static final double DOUBLE_TOLERANCE = 1E-6;
+
     private static final Logger LOGGER = Logger
             .getLogger("it.geosolutions.util");
 
@@ -58,6 +60,8 @@ public class KakaduUtilities {
     private static boolean available;
 
     private static boolean init = false;
+
+    public static final double BIT_TO_BYTE_FACTOR = 0.125;
 
     private KakaduUtilities() {
 
@@ -306,5 +310,9 @@ public class KakaduUtilities {
         if (destSize.width <= 0 || destSize.height <= 0) {
             throw new IllegalArgumentException("Empty source region!");
         }
+    }
+
+    public static boolean notEqual(double value, double reference) {
+        return (Math.abs(value - reference) > KakaduUtilities.DOUBLE_TOLERANCE); 
     }
 }
