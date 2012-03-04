@@ -15,7 +15,7 @@
     <extensive.tests>false</extensive.tests>
     <interactive.tests>false</interactive.tests>
     <test.maxHeapSize>512M</test.maxHeapSize>
-    <gdal.version>1.8</gdal.version>
+    <gdal.version>1.7</gdal.version>
     <kakadu.version>5.2.6</kakadu.version>
   </properties>
 
@@ -73,17 +73,6 @@
        <id>opengeo</id>
        <name>OpenGeo - Maven 2 repo</name>
        <url>dav:http://repo.opengeo.org</url>
-      </repository>
-     </distributionManagement>
-   </profile>
-   <profile>
-   <id>deploygeosdi</id>
-     <distributionManagement>
-      <repository>
-       <uniqueVersion>false</uniqueVersion>
-       <id>geosdi</id>
-       <name>GeoSDI - Archiva repo</name>
-       <url>http://repo.geosdi.org/archiva/repository/geoSDI/</url>
       </repository>
      </distributionManagement>
    </profile>
