@@ -19,12 +19,14 @@
  */
 package it.geosolutions.imageio.plugins.jp2k;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageWriterSpi;
+import javax.imageio.stream.ImageOutputStream;
 
 /**
  * @author Daniele Romagnoli, GeoSolutions
@@ -68,13 +70,15 @@ public class JP2KKakaduImageWriterSpi extends ImageWriterSpi {
     static final String[] extraImageMetadataFormatNames = { null };
 
     static final String[] extraImageMetadataFormatClassNames = { null };
+    
+    static final Class[] OUTPUT_TYPE =  { File.class, ImageOutputStream.class };
 
     /**
      * Default {@link ImageWriterSpi} constructor for JP2K writers.
      */
     public JP2KKakaduImageWriterSpi() {
         super(vendorName, version, formatNames, suffixes, MIMETypes, writerCN,
-                STANDARD_OUTPUT_TYPE, readerSpiName,
+                OUTPUT_TYPE, readerSpiName,
                 supportsStandardStreamMetadataFormat,
                 nativeStreamMetadataFormatName,
                 nativeStreamMetadataFormatClassName,
