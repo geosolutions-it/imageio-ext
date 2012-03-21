@@ -331,6 +331,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
         byte[] geoJp2 = null;
         final boolean orgGen_plt;
         int orgGen_tlm = JP2KKakaduImageWriteParam.UNSPECIFIED_ORG_GEN_TLM;
+        int qGuard = -1;
         String orgT_parts = null;
         String cPrecincts = null;
         boolean setTiling = false;
@@ -381,6 +382,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             orgGen_plt = jp2Kparam.isOrgGen_plt();
             orgGen_tlm = jp2Kparam.getOrgGen_tlm();
             orgT_parts = jp2Kparam.getOrgT_parts();
+            qGuard = jp2Kparam.getqGuard();
             
             addCommentMarker &= jp2Kparam.isAddCommentMarker();
             sProfile = jp2Kparam.getsProfile();
@@ -567,7 +569,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
                 bytesOverHead = 0;
             }
 
-            final long qualityLayersSize = bitRates != null ? bandSize : 
+            final long qualityLayersSize = bitRates != null ? imageSize : 
                 (long) ((imageSize - bytesOverHead) * quality * bits * KakaduUtilities.BIT_TO_BYTE_FACTOR);
 
             // //
@@ -589,7 +591,7 @@ public class JP2KKakaduImageWriter extends ImageWriter {
 
             if (!initializeCodestream(codeStream, cycc, cLevels, quality, cLayers, colorModel, 
                     writeCodeStreamOnly, dataType, target, geoJp2, orgGen_plt, orgGen_tlm, 
-                    orgT_parts, cOrder, cPrecincts, compression)) {
+                    orgT_parts, qGuard, cOrder, cPrecincts, compression)) {
                 throw new IOException("Unable to initialize the codestream due to a missing " +
                     "Jp2_target object");
             }
@@ -1062,13 +1064,15 @@ public class JP2KKakaduImageWriter extends ImageWriter {
      * @param target
      *                the optional {@link Jp2_target} object in case we are
      *                writing only codestream.
-     * @param orgGen_tlm 
-     *                the Tile-part-lenght (TLM) marker marker segments in the main header.
      * @param orgGen_plt 
      *                if {@code true}, request the insertion of packet length information 
      *                in the header of tile-parts.
+     * @param orgGen_tlm 
+     *                the Tile-part-lenght (TLM) marker marker segments in the main header.
      * @param orgT_parts 
      *                parameter setting the division of each tile's packets into tile-parts
+     * @param qGuard
+     *                parameter setting the guard bits  
      * @param cOrder 
      *                the {@link ProgressionOrder} to be used.
      * @param cPrecincts 
@@ -1084,7 +1088,8 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             final boolean writeCodeStreamOnly, final int dataType, 
             final Jp2_target target, final byte[] geoJp2, 
             final boolean orgGen_plt, final int orgGen_tlm, 
-            final String orgT_parts, final ProgressionOrder cOrder, 
+            final String orgT_parts, final int qGuard, 
+            final ProgressionOrder cOrder, 
             final String cPrecincts, final Compression compression)
             throws KduException {
         final Siz_params params = codeStream.Access_siz();
@@ -1115,6 +1120,10 @@ public class JP2KKakaduImageWriter extends ImageWriter {
         if (dataType == DataBuffer.TYPE_SHORT || dataType == DataBuffer.TYPE_USHORT ){
             params.Parse_string("Qstep=0.0000152588");
         }
+
+        if (qGuard > 0) {
+            params.Parse_string("Qguard=" + qGuard);
+        }
         
         // //
         //
@@ -1128,9 +1137,9 @@ public class JP2KKakaduImageWriter extends ImageWriter {
         if (orgGen_tlm != JP2KKakaduImageWriteParam.UNSPECIFIED_ORG_GEN_TLM){
             org.Set("ORGgen_tlm",0,0,orgGen_tlm);
         }
-        if (orgT_parts != null && orgT_parts.length() > 0){
-            org.Parse_string("ORGt_parts=" + orgT_parts);
-        }
+//        if (orgT_parts != null && orgT_parts.length() > 0){
+//            org.Parse_string("ORGt_parts=" + orgT_parts);
+//        }
         
         // //
         //
@@ -1335,11 +1344,12 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             double qualityStep = Math.floor((double) referenceSize) / ((double) totals);
 
             // Setting the cumulative layers sizes.
-            for (int i = 0; i < qualityLayers; i++) {
+            for (int i = 0; i < qualityLayers - 1; i++) {
                 long step = i != 0 ? qualityLayerSizes[i - 1] : 0;
                 qualityLayerSizes[i] = (long) Math.floor(qualityStep * multipliers[i]);
                 cumulativeQualityLayerSizes[i] = qualityLayerSizes[i] + step;
             }
+            cumulativeQualityLayerSizes[qualityLayers - 1] = referenceSize;
         } else {
             // Use a single quality layer.
             cumulativeQualityLayerSizes[0] = referenceSize;

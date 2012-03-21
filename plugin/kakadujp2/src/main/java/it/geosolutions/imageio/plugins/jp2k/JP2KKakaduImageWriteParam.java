@@ -109,7 +109,12 @@ public class JP2KKakaduImageWriteParam extends ImageWriteParam {
      * Specify the number of quality layers
      */
     private int qualityLayers;
-
+    
+    /**
+     * Specify the number of guard bits
+     */
+    private int qGuard = -1;
+    
     /**
      * Specify the progression order parameter.
      */
@@ -316,6 +321,14 @@ public class JP2KKakaduImageWriteParam extends ImageWriteParam {
 
     public void setcOrder(ProgressionOrder cOrder) {
         this.cOrder = cOrder;
+    }
+
+    public int getqGuard() {
+        return qGuard;
+    }
+
+    public void setqGuard(int qGuard) {
+        this.qGuard = qGuard;
     }
 
     public String getcPrecincts() {
