@@ -26,7 +26,7 @@
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext</artifactId>
   <packaging>pom</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.9p2</version>
   <name>GeoSolutions Image I/O-Extensions Library Root Project</name>
 
   <scm>

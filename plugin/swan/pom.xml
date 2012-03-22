@@ -4,12 +4,12 @@
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-plugin</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.9p2</version>
   </parent>
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-swan</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.9p2</version>
   <name>SWAN Plugin</name>
     <scm>
         <connection>
