@@ -128,25 +128,25 @@ public abstract class GDALImageReader extends ImageReader {
         final String datasetName = datasetNames[imageIndex];
         
         GDALCommonIIOImageMetadata retVal = datasetMetadataMap.get(datasetName);
-        if(retVal==null) {
+        if (retVal == null) {
             // do we need to create a dataset
-        	Dataset ds = datasetsMap.get(datasetName);
-        	if(ds==null){
-        		ds=GDALUtilities.acquireDataSet(datasetName, gdalconst.GA_ReadOnly);
-        		Dataset dsOld = datasetsMap.putIfAbsent(datasetName,ds );
-        		if(dsOld!=null){
-        			// abandon the DataSet we created
-        			GDALUtilities.closeDataSet(ds);
-        			ds=dsOld;
-        		}
-        	}
-        	
-        	// Add a new GDALCommonIIOImageMetadata to the HashMap
-            final GDALCommonIIOImageMetadata datasetMetadataNew = createDatasetMetadata(ds,datasetName);
-            retVal=datasetMetadataMap.put(datasetName, datasetMetadataNew);
-            if(retVal==null) {
-            	retVal=datasetMetadataNew;
-            } 
+            Dataset ds = datasetsMap.get(datasetName);
+            if (ds == null) {
+                ds = GDALUtilities.acquireDataSet(datasetName, gdalconst.GA_ReadOnly);
+                Dataset dsOld = datasetsMap.putIfAbsent(datasetName, ds);
+                if (dsOld != null) {
+                    // abandon the DataSet we created
+                    GDALUtilities.closeDataSet(ds);
+                    ds = dsOld;
+                }
+            }
+
+            // Add a new GDALCommonIIOImageMetadata to the HashMap
+            final GDALCommonIIOImageMetadata datasetMetadataNew = createDatasetMetadata(datasetName);
+            retVal = datasetMetadataMap.put(datasetName, datasetMetadataNew);
+            if (retVal == null) {
+                retVal = datasetMetadataNew;
+            }
         }
         return retVal;
         
@@ -215,12 +215,26 @@ public abstract class GDALImageReader extends ImageReader {
         }
     }
 
+    
+    /**
+     * Build a proper {@link GDALCommonIIOImageMetadata} given the name of a
+     * dataset. The default implementation return a
+     * {@link GDALCommonIIOImageMetadata} instance.This method should be
+     * overridden by the specialized {@link GDALImageReader} in case you need to
+     * obtain a specific {@link GDALCommonIIOImageMetadata}'s subclass
+     * 
+     * @param datasetName
+     *                the name of the dataset
+     */
+    protected GDALCommonIIOImageMetadata createDatasetMetadata(final String datasetName) {
+        return new GDALCommonIIOImageMetadata(datasetName);
+    }
     /**
      * Build a proper {@link GDALCommonIIOImageMetadata} given an input dataset
      * as well as the file name containing such a dataset.
      */
     protected GDALCommonIIOImageMetadata createDatasetMetadata(final Dataset mainDataset, String mainDatasetFileName) {
-        return new GDALCommonIIOImageMetadata(mainDataset, mainDatasetFileName,true);
+        return new GDALCommonIIOImageMetadata(mainDataset, mainDatasetFileName, false);
     }
 
     /**
@@ -681,10 +695,10 @@ public abstract class GDALImageReader extends ImageReader {
         // format is supported by the specialized reader
         //
         boolean isInputDecodable = false;
-        String mainDatasetName=null;
-		Dataset mainDataSet=null;
-		if (imageInputStream != null) {
-            if (datasetSource != null){
+        String mainDatasetName = null;
+        Dataset mainDataSet = null;
+        if (imageInputStream != null) {
+            if (datasetSource != null) {
             	mainDatasetName=datasetSource.getAbsolutePath();
                 mainDataSet = GDALUtilities.acquireDataSet(datasetSource.getAbsolutePath(), gdalconstConstants.GA_ReadOnly);    
             }else if (uriSource != null){
@@ -721,7 +735,7 @@ public abstract class GDALImageReader extends ImageReader {
                 nSubdatasets = 1;
                 datasetNames = new String[1];
                 datasetNames[0] = mainDatasetName;
-                datasetMetadataMap.put(datasetNames[0], this.createDatasetMetadata(mainDataSet,datasetNames[0]));
+                datasetMetadataMap.put(datasetNames[0], this.createDatasetMetadata(mainDatasetName));
                 
             } else {
                 datasetNames = new String[nSubdatasets + 1];
@@ -731,7 +745,7 @@ public abstract class GDALImageReader extends ImageReader {
                     datasetNames[i] = subdatasetName.substring(nameStartAt);
                 }
                 datasetNames[nSubdatasets] = mainDatasetName;
-                datasetMetadataMap.put(datasetNames[nSubdatasets], createDatasetMetadata(mainDataSet, datasetNames[nSubdatasets]));                
+                datasetMetadataMap.put(datasetNames[nSubdatasets], createDatasetMetadata(mainDataSet, datasetNames[nSubdatasets]));
             }     
             // clean list
             subdatasets.clear();

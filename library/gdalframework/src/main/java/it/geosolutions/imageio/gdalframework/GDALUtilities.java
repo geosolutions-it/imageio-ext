@@ -61,7 +61,7 @@ import com.sun.media.jai.operator.ImageReadDescriptor;
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
-public final class GDALUtilities {	
+public final class GDALUtilities {
     /**
      * Simple placeholder for Strings representing GDAL metadata domains.
      */
@@ -288,10 +288,10 @@ public final class GDALUtilities {
     public static Dataset acquireDataSet(final String name,final int accessType) {
         if (!isGDALAvailable())
             return null;
-        if(name==null) {
-        	throw new IllegalArgumentException("Provided parameter is null:name");
+        if(name == null) {
+            throw new IllegalArgumentException("Provided parameter is null:name");
         }
-		return gdal.Open(name, accessType);
+        return gdal.Open(name, accessType);
 
     }
 
@@ -310,14 +310,15 @@ public final class GDALUtilities {
         final Dataset ds = acquireDataSet(dataSetName, gdalconst.GA_ReadOnly);
         final List<String> gdalImageMetadata;
         if (ds != null) {
-        	try {
-        		gdalImageMetadata = ds.GetMetadata_List("");
-        	} finally {
+            try {
+                gdalImageMetadata = ds.GetMetadata_List("");
+            } finally {
                 // Closing the dataset
-    			closeDataSet(ds);
-        	}
-        } else
+                closeDataSet(ds);
+            }
+        } else {
             gdalImageMetadata = null;
+        }
         return gdalImageMetadata;
     }
 
@@ -331,12 +332,12 @@ public final class GDALUtilities {
         if (ds == null)
             throw new NullPointerException("The provided dataset is null");
         try {
-        	ds.delete();
+            ds.delete();
         } catch (Exception e) {
-			if(LOGGER.isLoggable(Level.INFO)){
-				LOGGER.log(Level.INFO,e.getLocalizedMessage(),e);
-			}
-		}
+            if (LOGGER.isLoggable(Level.INFO)) {
+                LOGGER.log(Level.INFO, e.getLocalizedMessage(), e);
+            }
+        }
     }
 
     /**
@@ -468,28 +469,27 @@ public final class GDALUtilities {
      * @return a <code>List</code> containing metadata related to the stream.
      */
     public static List getGDALStreamMetadata(String datasetName) {
-    	Dataset ds=null;
-    	try{
+        Dataset ds = null;
+        try {
             ds = acquireDataSet(datasetName, gdalconst.GA_ReadOnly);
             return ds.GetMetadata_List("SUBDATASETS");
-    	} catch (Exception e) {
-			if(LOGGER.isLoggable(Level.WARNING)){
-				LOGGER.log(Level.WARNING,e.getLocalizedMessage(),e);
-			}
-			return null;
-		} finally {
-			if(ds==null){
-        		try{
+        } catch (Exception e) {
+            if (LOGGER.isLoggable(Level.WARNING)) {
+                LOGGER.log(Level.WARNING, e.getLocalizedMessage(), e);
+            }
+            return null;
+        } finally {
+            if (ds != null) {
+                try {
                     // Closing the dataset
-        			GDALUtilities.closeDataSet(ds);
-        		}catch (Throwable e) {
-					if(LOGGER.isLoggable(Level.FINE))
-						LOGGER.log(Level.FINE,e.getLocalizedMessage(),e);
-				}
-			}
-		}
+                    GDALUtilities.closeDataSet(ds);
+                } catch (Throwable e) {
+                    if (LOGGER.isLoggable(Level.FINE))
+                        LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
+                }
+            }
+        }
     }
-    	
 
     /**
      * Set the value of a specific attribute of a specific
@@ -599,41 +599,43 @@ public final class GDALUtilities {
      * Forces loading of GDAL libs.
      */
     public static void loadGDAL() {
-        if (init == false) {  
-        	synchronized (LOGGER) {
-        		if(init){
-        			return;
-        		}
-		        try {
-		            System.loadLibrary("gdaljni");
-		            gdal.AllRegister();
-		            final String versionInfo = gdal.VersionInfo("RELEASE_NAME");
-		            if (versionInfo!=null && versionInfo.trim().length()>0){
-		            	if (LOGGER.isLoggable(Level.INFO))
-		            		LOGGER.info("GDAL Native Library loaded (version: " + versionInfo + ")");
-		            }
-		
-		            // //
-		            //
-		            // Setting error messages handler.
-		            //
-		            // //
-		            final String cplDebug = System.getProperty(CPL_DEBUG);
-		            final boolean showErrors = getAsBoolean(cplDebug);
-		            if (!showErrors)
-		                gdal.PushErrorHandler("CPLQuietErrorHandler");
-		            GDALUtilities.available = true;
-		        } catch (UnsatisfiedLinkError e) {
-		            if (LOGGER.isLoggable(Level.WARNING)){
-		                StringBuilder sb = new StringBuilder("Failed to load the GDAL native libs. This is not a problem unless you need to use the GDAL plugins: they won't be enabled.").append(e.toString());
-		                LOGGER.warning(sb.toString());
-		            }
-		            GDALUtilities.available = false;
-		        } finally {
-		        	init=true;
-		        }
-        	}			
-		}
+        if (init == false) {
+            synchronized (LOGGER) {
+                if (init) {
+                    return;
+                }
+                try {
+                    System.loadLibrary("gdaljni");
+                    gdal.AllRegister();
+                    final String versionInfo = gdal.VersionInfo("RELEASE_NAME");
+                    if (versionInfo != null && versionInfo.trim().length() > 0) {
+                        if (LOGGER.isLoggable(Level.INFO))
+                            LOGGER.info("GDAL Native Library loaded (version: " + versionInfo + ")");
+                    }
+
+                    // //
+                    //
+                    // Setting error messages handler.
+                    //
+                    // //
+                    final String cplDebug = System.getProperty(CPL_DEBUG);
+                    final boolean showErrors = getAsBoolean(cplDebug);
+                    if (!showErrors)
+                        gdal.PushErrorHandler("CPLQuietErrorHandler");
+                    GDALUtilities.available = true;
+                } catch (UnsatisfiedLinkError e) {
+                    if (LOGGER.isLoggable(Level.WARNING)) {
+                        StringBuilder sb = new StringBuilder(
+                                "Failed to load the GDAL native libs. This is not a problem unless you need to use the GDAL plugins: they won't be enabled.")
+                                .append(e.toString());
+                        LOGGER.warning(sb.toString());
+                    }
+                    GDALUtilities.available = false;
+                } finally {
+                    init = true;
+                }
+            }
+        }
     }
 
     /**
