@@ -1,7 +1,7 @@
 /*
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
- *    https://imageio-ext.dev.java.net/
+ *    http://java.net/projects/imageio-ext/
  *    (C) 2007 - 2009, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
@@ -62,7 +62,6 @@ import com.sun.media.jai.operator.ImageReadDescriptor;
  * @author Simone Giannecchini, GeoSolutions.
  */
 public final class GDALUtilities {
-	
     /**
      * Simple placeholder for Strings representing GDAL metadata domains.
      */
@@ -347,11 +346,25 @@ public final class GDALUtilities {
      *         available. <code>false</code> otherwise.<BR>
      */
     public static boolean isDriverAvailable(final String driverName) {
-        if (!isGDALAvailable())
+        if (!isGDALAvailable()) {
             return false;
-        final Driver driver = gdal.GetDriverByName(driverName);
-        if (driver == null)
+        }    
+        Driver driver = null;
+        
+        try {
+        	driver = gdal.GetDriverByName(driverName);
+        } catch (UnsatisfiedLinkError e) {
+            if (LOGGER.isLoggable(Level.WARNING)) {
+                StringBuilder sb = new StringBuilder(
+                        "Failed to get the specified GDAL Driver: " + driverName).append(e.toString()).append("\n")
+                        .append("This is not a problem unless you need to use the specified GDAL plugin. It won't be enabled");
+                LOGGER.warning(sb.toString());
+            }
             return false;
+        } 
+        if (driver == null) {
+            return false;
+        }
         return true;
     }
 
@@ -621,14 +634,12 @@ public final class GDALUtilities {
         final int buffer_type = sampleModel.getDataType();
         final int numBands = sampleModel.getNumBands();
         if (numBands > 1) {
-            // /////////////////////////////////////////////////////////////////
             //
             // Number of Bands > 1.
             // ImageUtil.createColorModel provides to Creates a
             // ColorModel that may be used with the specified
             // SampleModel
             //
-            // /////////////////////////////////////////////////////////////////
             colorModel = ImageUtil.createColorModel(sampleModel);
             if (colorModel == null) {
                 LOGGER.severe("No ColorModels found");
@@ -658,74 +669,68 @@ public final class GDALUtilities {
         return colorModel;
     }
 
-	// ////////////////////////////////////////////////////////////////////////
 	//
 	// Provides to retrieve projections from the provided {@lik RenderedImage}
 	// and return the String containing properly formatted text.
 	//
-	// ////////////////////////////////////////////////////////////////////////
 	public static String buildCRSProperties(RenderedImage ri, final int index) {
 	    final Object imageReader = ri.getProperty(ImageReadDescriptor.PROPERTY_NAME_IMAGE_READER);
-	
-	    StringBuffer sb = new StringBuffer("CRS Information:").append(newLine);
+            StringBuffer sb = new StringBuffer("CRS Information:").append(newLine);
             if (imageReader != null && imageReader instanceof ImageReader){
                     final GDALImageReader reader = (GDALImageReader) imageReader;
-	    final String projection = reader.getProjection(index);
-	    if (!projection.equals(""))
-	        sb.append("Projections:").append(projection).append(newLine);
-	
-	    // Retrieving GeoTransformation Information
-	    final double[] geoTransformations = reader.getGeoTransform(index);
-	    if (geoTransformations != null) {
-	        sb.append("Geo Transformation:").append(newLine);
-	        sb
-	                .append("Origin = (")
-	                .append(Double.toString(geoTransformations[0]))
-	                .append(",")
-	                .append(Double.toString(geoTransformations[3]))
-	                .append(")")
-	                .append(newLine)
-	                .append("Pixel Size = (")
-	                .append(Double.toString(geoTransformations[1]))
-	                .append(",")
-	                .append(Double.toString(geoTransformations[5]))
-	                .append(")")
-	                .append(newLine)
-	                .append(newLine)
-	                .append(
-	                        "---------- Affine GeoTransformation Coefficients ----------")
-	                .append(newLine);
-	        for (int i = 0; i < 6; i++)
-	            sb.append("adfTransformCoeff[").append(i).append("]=").append(
-	                    Double.toString(geoTransformations[i])).append(newLine);
-	    }
-	
-	    // Retrieving Ground Control Points Information
-	    final int gcpCount = reader.getGCPCount(index);
-	    if (gcpCount != 0) {
-	        sb.append(newLine).append("Ground Control Points:").append(newLine)
-	                .append("Projections:").append(newLine).append(
-	                        reader.getGCPProjection(index)).append(newLine);
-	
-	        final List gcps = reader.getGCPs(index);
-	
-	        int size = gcps.size();
-	        for (int i = 0; i < size; i++)
-	            sb.append("GCP ").append(i + 1).append(gcps.get(i)).append(
-	                    newLine);
+        	    final String projection = reader.getProjection(index);
+        	    if (!projection.equals(""))
+        	        sb.append("Projections:").append(projection).append(newLine);
+        	
+        	    // Retrieving GeoTransformation Information
+        	    final double[] geoTransformations = reader.getGeoTransform(index);
+        	    if (geoTransformations != null) {
+        	        sb.append("Geo Transformation:").append(newLine);
+        	        sb
+        	                .append("Origin = (")
+        	                .append(Double.toString(geoTransformations[0]))
+        	                .append(",")
+        	                .append(Double.toString(geoTransformations[3]))
+        	                .append(")")
+        	                .append(newLine)
+        	                .append("Pixel Size = (")
+        	                .append(Double.toString(geoTransformations[1]))
+        	                .append(",")
+        	                .append(Double.toString(geoTransformations[5]))
+        	                .append(")")
+        	                .append(newLine)
+        	                .append(newLine)
+        	                .append(
+        	                        "---------- Affine GeoTransformation Coefficients ----------")
+        	                .append(newLine);
+        	        for (int i = 0; i < 6; i++)
+        	            sb.append("adfTransformCoeff[").append(i).append("]=").append(
+        	                    Double.toString(geoTransformations[i])).append(newLine);
         	    }
-	    }
-	    return sb.toString();
+        	
+        	    // Retrieving Ground Control Points Information
+        	    final int gcpCount = reader.getGCPCount(index);
+        	    if (gcpCount != 0) {
+        	        sb.append(newLine).append("Ground Control Points:").append(newLine)
+        	                .append("Projections:").append(newLine).append(
+        	                        reader.getGCPProjection(index)).append(newLine);
+        	
+        	        final List gcps = reader.getGCPs(index);
+        	
+        	        int size = gcps.size();
+        	        for (int i = 0; i < size; i++)
+        	            sb.append("GCP ").append(i + 1).append(gcps.get(i)).append(
+        	                    newLine);
+        	    }
+            }
+            return sb.toString();
 	}
 
-	// ///////////////////////////////////////////////////////////////////////
 	//
 	// Provides to retrieve metadata from the provided
 	// <code>RenderedImage</code>}
 	// and return the String containing properly formatted text.
 	//	 
-	// ///////////////////////////////////////////////////////////////////////
-	
 	public static String buildMetadataText(RenderedImage ri,
 	        final MetadataChoice metadataFields, final int index) {
 	    try {
@@ -734,19 +739,19 @@ public final class GDALUtilities {
 	        StringBuffer sb = new StringBuffer("");
 	        if (imageReader != null && imageReader instanceof ImageReader){
         	        final GDALImageReader reader = (GDALImageReader) imageReader;
-	        switch (metadataFields) {
-	        case ONLY_IMAGE_METADATA:
-	        case EVERYTHING:
-	            sb.append(getImageMetadata(reader, index));
-	            break;
-	        case ONLY_STREAM_METADATA:
-	            sb.append(getStreamMetadata(reader));
-	            break;
-	        case STREAM_AND_IMAGE_METADATA:
-	            sb.append(getImageMetadata(reader, index)).append(newLine)
-	                    .append(getStreamMetadata(reader));
-	            break;
-	        }
+        	        switch (metadataFields) {
+        	        case ONLY_IMAGE_METADATA:
+        	        case EVERYTHING:
+        	            sb.append(getImageMetadata(reader, index));
+        	            break;
+        	        case ONLY_STREAM_METADATA:
+        	            sb.append(getStreamMetadata(reader));
+        	            break;
+        	        case STREAM_AND_IMAGE_METADATA:
+        	            sb.append(getImageMetadata(reader, index)).append(newLine)
+        	                    .append(getStreamMetadata(reader));
+        	            break;
+        	        }
 	        }
 	        return sb.toString();
 	    } catch (Exception e) {
@@ -785,8 +790,7 @@ public final class GDALUtilities {
 	public static String getStreamMetadata(GDALImageReader reader)
 	        throws IOException {
 	    final GDALCommonIIOImageMetadata mt = reader.getDatasetMetadata(reader.getNumImages(true) - 1);
-	    final List metadata = GDALUtilities.getGDALStreamMetadata(mt
-	            .getDatasetName());
+	    final List metadata = GDALUtilities.getGDALStreamMetadata(mt.getDatasetName());
 	    if (metadata != null) {
 	        final int size = metadata.size();
 	        StringBuffer sb = new StringBuffer("Stream Metadata:")
