@@ -356,7 +356,7 @@ public final class GDALUtilities {
         } catch (UnsatisfiedLinkError e) {
             if (LOGGER.isLoggable(Level.WARNING)) {
                 StringBuilder sb = new StringBuilder(
-                        "Failed to get the specified GDAL Driver: " + driverName).append(e.toString()).append("\n")
+                        "Failed to get the specified GDAL Driver: " + driverName + "\nCause: ").append(e.toString()).append("\n")
                         .append("This is not a problem unless you need to use the specified GDAL plugin. It won't be enabled");
                 LOGGER.warning(sb.toString());
             }
@@ -761,11 +761,9 @@ public final class GDALUtilities {
 	    }
 	}
 
-	// ////////////////////////////////////////////////////////////////////////
 	//
 	// returns a String containing metadata from the provided reader
 	//
-	// ////////////////////////////////////////////////////////////////////////
 	// TODO: change with the new ImageIO - Metadata Capabilities
 	public static String getImageMetadata(GDALImageReader reader,
 	        final int index) {
@@ -782,11 +780,9 @@ public final class GDALUtilities {
 	    return "Image Metadata not found";
 	}
 
-	// ////////////////////////////////////////////////////////////////////////
 	//
 	// returns a String containing stream metadata from the provided reader
 	//
-	// ////////////////////////////////////////////////////////////////////////
 	public static String getStreamMetadata(GDALImageReader reader)
 	        throws IOException {
 	    final GDALCommonIIOImageMetadata mt = reader.getDatasetMetadata(reader.getNumImages(true) - 1);
