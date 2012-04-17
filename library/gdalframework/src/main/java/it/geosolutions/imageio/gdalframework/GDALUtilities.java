@@ -286,8 +286,9 @@ public final class GDALUtilities {
      * @return the acquired {@link Dataset}
      */
     public static Dataset acquireDataSet(final String name,final int accessType) {
-        if (!isGDALAvailable())
+        if (!isGDALAvailable()) {
             return null;
+        }
         if(name == null) {
             throw new IllegalArgumentException("Provided parameter is null:name");
         }
@@ -329,8 +330,9 @@ public final class GDALUtilities {
      *                {@link Dataset} to close.
      */
     public static void closeDataSet(Dataset ds) {
-        if (ds == null)
+        if (ds == null) {
             throw new NullPointerException("The provided dataset is null");
+        }
         try {
             ds.delete();
         } catch (Exception e) {
@@ -351,11 +353,24 @@ public final class GDALUtilities {
      *         available. <code>false</code> otherwise.<BR>
      */
     public static boolean isDriverAvailable(final String driverName) {
-        if (!isGDALAvailable())
+        if (!isGDALAvailable()) {
             return false;
-        final Driver driver = gdal.GetDriverByName(driverName);
-        if (driver == null)
+        }    
+        Driver driver = null;
+        
+        try {
+        	driver = gdal.GetDriverByName(driverName);
+        } catch (UnsatisfiedLinkError e) {
+            if (LOGGER.isLoggable(Level.WARNING)) {
+            	LOGGER.warning("Failed to get the specified GDAL Driver: " + driverName + 
+                        "\nCause: " + e.toString() + "\nThis is not a problem unless you " +
+                        "need to use the specified GDAL plugin. It won't be enabled");
+            }
             return false;
+        } 
+        if (driver == null) {
+            return false;
+        }
         return true;
     }
 
@@ -620,15 +635,15 @@ public final class GDALUtilities {
                     // //
                     final String cplDebug = System.getProperty(CPL_DEBUG);
                     final boolean showErrors = getAsBoolean(cplDebug);
-                    if (!showErrors)
+                    if (!showErrors) {
                         gdal.PushErrorHandler("CPLQuietErrorHandler");
+                    }
                     GDALUtilities.available = true;
                 } catch (UnsatisfiedLinkError e) {
                     if (LOGGER.isLoggable(Level.WARNING)) {
-                        StringBuilder sb = new StringBuilder(
-                                "Failed to load the GDAL native libs. This is not a problem unless you need to use the GDAL plugins: they won't be enabled.")
-                                .append(e.toString());
-                        LOGGER.warning(sb.toString());
+                        LOGGER.warning("Failed to load the GDAL native libs. This is not a problem "
+                        		+ "unless you need to use the GDAL plugins: they won't be enabled.\n" 
+                        		+ e.toString());
                     }
                     GDALUtilities.available = false;
                 } finally {
