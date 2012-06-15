@@ -83,8 +83,10 @@ import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageMetadata;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
-import javax.imageio.metadata.IIOMetadata;
+import java.util.Set;
+
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageOutputStream;
 import org.w3c.dom.Node;
@@ -104,6 +106,24 @@ public class TIFFFieldNode extends IIOMetadataNode {
     }
 
     private boolean isIFD;
+    
+    private final static Set<String> ATTRIBUTES_EXCLUSION_SET;
+    private final static boolean EXCLUDE_ATTRIBUTES;
+    
+    static {
+        if (!Boolean.getBoolean("it.geosolutions.tiff.metadata.debug"))
+        {
+            ATTRIBUTES_EXCLUSION_SET = new HashSet<String>();
+            ATTRIBUTES_EXCLUSION_SET.add("TileOffsets");
+            ATTRIBUTES_EXCLUSION_SET.add("TileByteCounts");
+            EXCLUDE_ATTRIBUTES = true;
+        }
+        else
+        {
+            ATTRIBUTES_EXCLUSION_SET = null;
+            EXCLUDE_ATTRIBUTES = false; 
+        }
+    }
 
     /** Initialization flag. */
     private Boolean isInitialized = Boolean.FALSE;
@@ -191,8 +211,13 @@ public class TIFFFieldNode extends IIOMetadataNode {
                                             "s");
 
                 TIFFTag tag = field.getTag();
-
-                for (int i = 0; i < count; i++) {
+                String tName = tag.getName();
+                boolean proceed = true;
+                if (EXCLUDE_ATTRIBUTES && tName != null && ATTRIBUTES_EXCLUSION_SET.contains(tName))
+                {
+                    proceed = false;
+                }
+                for (int i = 0; i < count && proceed; i++) {
                     IIOMetadataNode cchild =
                         new IIOMetadataNode("TIFF" +
                                             field.getTypeName(field.getType()));
