@@ -77,20 +77,15 @@ import it.geosolutions.imageio.plugins.tiff.TIFFDirectory;
 import it.geosolutions.imageio.plugins.tiff.TIFFField;
 import it.geosolutions.imageio.plugins.tiff.TIFFTag;
 import it.geosolutions.imageio.plugins.tiff.TIFFTagSet;
-import it.geosolutions.imageioimpl.plugins.tiff.TIFFIFD;
-import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageMetadata;
 
-import java.io.IOException;
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.imageio.metadata.IIOMetadataNode;
-import javax.imageio.stream.ImageOutputStream;
+
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 
 /**
@@ -197,7 +192,7 @@ public class TIFFFieldNode extends IIOMetadataNode {
                 child = new IIOMetadataNode("TIFFUndefined");
 
                 byte[] data = field.getAsBytes();
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < count; i++) {
                     sb.append(Integer.toString(data[i] & 0xff));
                     if (i < count - 1) {
