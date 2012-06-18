@@ -116,10 +116,10 @@ public class IdrisiReadTest extends AbstractGDALTest {
 		RenderedImage image = reader.read(0, rp);
 		if (TestData.isInteractiveTest())
 			Viewer.visualizeAllInformation(image, "subsample read " + file.getName());
-		reader.reset();
 
 		Assert.assertEquals((int) (reader.getWidth(0) / 2.0 + 0.5), image.getWidth());
 		Assert.assertEquals((int) (reader.getHeight(0) / 2.0 + 0.5), image.getHeight());
+                reader.reset();
 
 		// //
 		//
@@ -133,11 +133,11 @@ public class IdrisiReadTest extends AbstractGDALTest {
 		image = reader.read(0, rp);
 		if (TestData.isInteractiveTest())
 			Viewer.visualizeAllInformation(image, "subsample read " + file.getName());
-		reader.reset();
+		
 
 		Assert.assertEquals(60, image.getWidth());
 		Assert.assertEquals(42, image.getHeight());
-
+    reader.reset();
 		reader.dispose();
 	}
 }
