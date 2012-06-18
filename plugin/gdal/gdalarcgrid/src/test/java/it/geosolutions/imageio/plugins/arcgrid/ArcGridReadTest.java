@@ -112,11 +112,11 @@ public class ArcGridReadTest extends AbstractGDALTest {
 		RenderedImage image = reader.read(0, rp);
 		if (TestData.isInteractiveTest())
 			Viewer.visualizeAllInformation(image, "subsample read " + file.getName());
-		reader.reset();
 
 		Assert.assertEquals((int) (reader.getWidth(0) / 2.0 + 0.5), image.getWidth());
 		Assert.assertEquals((int) (reader.getHeight(0) / 2.0 + 0.5), image.getHeight());
-
+		reader.reset();
+		
 		// //
 		//
 		// read some data from it using sourceregion
