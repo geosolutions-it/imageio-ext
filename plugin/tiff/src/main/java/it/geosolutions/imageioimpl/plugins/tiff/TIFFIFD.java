@@ -293,11 +293,13 @@ public class TIFFIFD extends TIFFDirectory {
                 tag == BaselineTIFFTagSet.TAG_JPEG_INTERCHANGE_FORMAT_LENGTH) {
                 this.stripOrTileByteCountsPosition =
                     stream.getStreamPosition();
+                type = type == TIFFTag.TIFF_LONG ? TIFFTag.TIFF_LAZY_LONG : TIFFTag.TIFF_LAZY_LONG8;
             } else if (tag == BaselineTIFFTagSet.TAG_STRIP_OFFSETS ||
                        tag == BaselineTIFFTagSet.TAG_TILE_OFFSETS ||
                        tag == BaselineTIFFTagSet.TAG_JPEG_INTERCHANGE_FORMAT) {
                 this.stripOrTileOffsetsPosition =
                     stream.getStreamPosition();
+                type = type == TIFFTag.TIFF_LONG ? TIFFTag.TIFF_LAZY_LONG : TIFFTag.TIFF_LAZY_LONG8;
             }
 
             Object obj = null;
@@ -431,6 +433,10 @@ public class TIFFIFD extends TIFFDirectory {
                     obj = lBvalues;
                     break;
                 
+                case TIFFTag.TIFF_LAZY_LONG8:   
+                case TIFFTag.TIFF_LAZY_LONG:   
+                    obj = new TIFFLazyData(stream, stream.getStreamPosition(), type, count);
+                    break;
                 default:
                     // XXX Warning
                     break;

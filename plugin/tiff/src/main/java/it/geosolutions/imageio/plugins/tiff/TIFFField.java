@@ -76,6 +76,7 @@ package it.geosolutions.imageio.plugins.tiff;
 import it.geosolutions.imageio.plugins.tiff.TIFFTag;
 import it.geosolutions.imageio.plugins.tiff.TIFFTagSet;
 import it.geosolutions.imageioimpl.plugins.tiff.TIFFFieldNode;
+import it.geosolutions.imageioimpl.plugins.tiff.TIFFLazyData;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -1031,6 +1032,10 @@ public class TIFFField implements Comparable {
         case TIFFTag.TIFF_SLONG8:
         case TIFFTag.TIFF_IFD8:
         	return ((long[])data)[index];
+        case TIFFTag.TIFF_LAZY_LONG:
+                return (long)((TIFFLazyData)data).getAsLong(index);
+        case TIFFTag.TIFF_LAZY_LONG8:
+            return (long)((TIFFLazyData)data).getAsLong8(index);
         default:
             throw new ClassCastException();
         }

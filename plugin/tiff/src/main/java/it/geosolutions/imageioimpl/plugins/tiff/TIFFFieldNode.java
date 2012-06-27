@@ -111,6 +111,8 @@ public class TIFFFieldNode extends IIOMetadataNode {
             ATTRIBUTES_EXCLUSION_SET = new HashSet<String>();
             ATTRIBUTES_EXCLUSION_SET.add("TileOffsets");
             ATTRIBUTES_EXCLUSION_SET.add("TileByteCounts");
+            ATTRIBUTES_EXCLUSION_SET.add("StripOffsets");
+            ATTRIBUTES_EXCLUSION_SET.add("StripByteCounts");
             EXCLUDE_ATTRIBUTES = true;
         }
         else
