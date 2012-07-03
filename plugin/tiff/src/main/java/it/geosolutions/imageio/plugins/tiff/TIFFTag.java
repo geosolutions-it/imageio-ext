@@ -153,6 +153,17 @@ public class TIFFTag {
      * Flag for new unsigned 8 byte IFD offset.
      */
     public static final int TIFF_IFD8 = 18;
+    
+    /**
+     * Flag for TAGs to be lazily loaded.
+     */
+    public static final int TIFF_LAZY_LONG = 14;
+
+    
+    /**
+     * Flag for TAGs to be lazily loaded.
+     */
+    public static final int TIFF_LAZY_LONG8 = 15;
 
     /**
      * The numerically smallest constant representing a TIFF data type.
@@ -179,8 +190,8 @@ public class TIFFTag {
         4, // 11 = float
         8, // 12 = double 
         4, // 13 = IFD_POINTER
-        0, // 14 = n/a
-        0, // 15 = n/a
+        4, // 14 = n/a (//TIFF_LAZY_LONG)
+        8, // 15 = n/a (//TIFF_LAZY_LONG8)
         8, // 16 = TIFF_LONG8
         8, // 17 = TIFF_SLONG8
         8, // 18 = TIFF_IFD8

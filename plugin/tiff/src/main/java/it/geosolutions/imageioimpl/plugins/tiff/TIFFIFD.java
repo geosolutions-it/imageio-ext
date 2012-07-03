@@ -86,15 +86,16 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 
 
 public class TIFFIFD extends TIFFDirectory {
-
-    private long stripOrTileByteCountsPosition = -1;
+	
+	/** we do not allow lazy loading by default.**/
+    private static final boolean LAZY_LOADING = Boolean.getBoolean("it.geosolutions.imageio.tiff.lazy");
+	private long stripOrTileByteCountsPosition = -1;
     private long stripOrTileOffsetsPosition = -1;
     private long lastPosition = -1;
 
@@ -293,11 +294,17 @@ public class TIFFIFD extends TIFFDirectory {
                 tag == BaselineTIFFTagSet.TAG_JPEG_INTERCHANGE_FORMAT_LENGTH) {
                 this.stripOrTileByteCountsPosition =
                     stream.getStreamPosition();
+                if (LAZY_LOADING) {
+                	type = type == TIFFTag.TIFF_LONG ? TIFFTag.TIFF_LAZY_LONG : TIFFTag.TIFF_LAZY_LONG8;
+                }
             } else if (tag == BaselineTIFFTagSet.TAG_STRIP_OFFSETS ||
                        tag == BaselineTIFFTagSet.TAG_TILE_OFFSETS ||
                        tag == BaselineTIFFTagSet.TAG_JPEG_INTERCHANGE_FORMAT) {
                 this.stripOrTileOffsetsPosition =
                     stream.getStreamPosition();
+                if (LAZY_LOADING) {
+                	type = type == TIFFTag.TIFF_LONG ? TIFFTag.TIFF_LAZY_LONG : TIFFTag.TIFF_LAZY_LONG8;
+                }
             }
 
             Object obj = null;
@@ -431,6 +438,10 @@ public class TIFFIFD extends TIFFDirectory {
                     obj = lBvalues;
                     break;
                 
+                case TIFFTag.TIFF_LAZY_LONG8:   
+                case TIFFTag.TIFF_LAZY_LONG:   
+                    obj = new TIFFLazyData(stream, type, count);
+                    break;
                 default:
                     // XXX Warning
                     break;
