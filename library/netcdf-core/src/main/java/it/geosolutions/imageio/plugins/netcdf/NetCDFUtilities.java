@@ -19,7 +19,6 @@ package it.geosolutions.imageio.plugins.netcdf;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 import it.geosolutions.imageio.stream.input.URIImageInputStream;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
-import it.geosolutions.imageio.utilities.Utilities;
 
 import java.awt.image.DataBuffer;
 import java.io.File;

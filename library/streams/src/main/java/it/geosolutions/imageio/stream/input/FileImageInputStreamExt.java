@@ -27,7 +27,7 @@ import javax.imageio.stream.ImageInputStream;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  * @author Simone Giannecchini, GeoSolutions
- * @deprecated use AccessibleStream instead
+ * @deprecated use {@link AccessibleStream} instead
  */
 public interface FileImageInputStreamExt extends ImageInputStream, AccessibleStream<File> {
     /**

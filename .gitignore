@@ -1,0 +1,7 @@
+.svn
+.classpath
+.project
+.settings
+trace.db
+*/target/*
+target/
