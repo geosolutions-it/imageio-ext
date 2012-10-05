@@ -88,6 +88,9 @@ import javax.imageio.stream.ImageInputStream;
 
 
 public class TIFFJPEGDecompressor extends TIFFDecompressor {
+	
+	private static final String TURBO_JPEG_DECOMPRESSOR = "it.geosolutions.imageio.plugins.turbojpeg.TurboJpegImageReader";
+	
     private static final boolean DEBUG = false; // XXX false for release.
 
     // Start of Image
@@ -176,9 +179,13 @@ public class TIFFJPEGDecompressor extends TIFFDecompressor {
             // Initialize reader to the first one.
             this.JPEGReader = (ImageReader)iter.next();
 
-            if(DEBUG) System.out.println("Using "+
-                                         JPEGReader.getClass().getName());
-
+            String className = JPEGReader.getClass().getName();
+            if(DEBUG) System.out.println("Using "+ className);
+            
+            if (className.equalsIgnoreCase(TURBO_JPEG_DECOMPRESSOR)){
+            	useTurbo = true;
+            }
+            
             this.JPEGParam = JPEGReader.getDefaultReadParam();
         }
 
@@ -204,12 +211,13 @@ public class TIFFJPEGDecompressor extends TIFFDecompressor {
 
         // Set the stream variable depending on presence of JPEGTables.
         ImageInputStream is;
+        int dataLength = 0; 
         if(this.hasJPEGTables) {
             if(DEBUG) System.out.println("Reading abbreviated stream.");
             // The current strip or tile is an abbreviated JPEG stream.
 
             // Reallocate memory if there is not enough already.
-            int dataLength = tables.length + byteCount;
+            dataLength = tables.length + byteCount;
             if(data.length < dataLength) {
                 data = new byte[dataLength];
             }
@@ -236,23 +244,40 @@ public class TIFFJPEGDecompressor extends TIFFDecompressor {
             // Read remaining data.
             stream.readFully(data, dataOffset, byteCount - 2);
 
-            // Create ImageInputStream.
-            ByteArrayInputStream bais = new ByteArrayInputStream(data);
-            is = new MemoryCacheImageInputStream(bais);
+            if (useTurbo) {
+            	JPEGReader.setInput(data);
+            }
+            else {
+                // Create ImageInputStream.
+                ByteArrayInputStream bais = new ByteArrayInputStream(data);
+
+            	is = new MemoryCacheImageInputStream(bais);
+                // Set the stream on the reader.
+                JPEGReader.setInput(is, false, true);
+            }
+            
         } else {
             if(DEBUG) System.out.println("Reading complete stream.");
             // The current strip or tile is a complete JPEG stream.
             is = stream;
+            // Set the stream on the reader.
+            JPEGReader.setInput(is, false, true);
         }
 
-        // Set the stream on the reader.
-        JPEGReader.setInput(is, false, true);
 
-        // Set the destination to the raw image ignoring the parameters.
-        JPEGParam.setDestination(rawImage);
 
-        // Read the strip or tile.
-        JPEGReader.read(0, JPEGParam);
+        if (useTurbo) {
+			rawImage = JPEGReader.read(0);
+			// TODO Auto-generated catch block
+		} 
+        else
+        {
+            // Set the destination to the raw image ignoring the parameters.
+            JPEGParam.setDestination(rawImage);
+            // Read the strip or tile.
+            JPEGReader.read(0, JPEGParam);
+        }
+        
     }
 
     protected void finalize() throws Throwable {
