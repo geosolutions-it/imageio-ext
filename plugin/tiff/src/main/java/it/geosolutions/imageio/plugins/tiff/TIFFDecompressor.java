@@ -163,6 +163,8 @@ public abstract class TIFFDecompressor {
      */
     protected ImageReader reader;
 
+    protected boolean useTurbo = false;
+    
     /**
      * The <code>IIOMetadata</code> object containing metadata for the
      * current image.
@@ -2454,6 +2456,11 @@ public abstract class TIFFDecompressor {
         int dstOffset = 0;
         int pixelBitStride = 1;
         int scanlineStride = 0;
+        
+        if (useTurbo) {
+        	decodeRaw(byteData, dstOffset, pixelBitStride, scanlineStride);
+        } else {
+        
 
         // Analyze raw image
 
@@ -2883,6 +2890,7 @@ public abstract class TIFFDecompressor {
         // equals the raster of 'image' or is a child thereof.
         if (isDirectCopy) { // rawImage == image) {
             return;
+        }
         }
 
         // Copy the raw image data into the true destination image
