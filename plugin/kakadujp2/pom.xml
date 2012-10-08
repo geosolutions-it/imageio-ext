@@ -4,36 +4,36 @@
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-kakadu</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.9p2</version>
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-plugin</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.9</version>
   </parent>
   <properties>
-  	<data.path> </data.path>
+  	<dependencies.version>1.0.9</dependencies.version>
   </properties>
   <dependencies>
     <dependency>
   		<groupId>it.geosolutions.imageio-ext</groupId>
   		<artifactId>imageio-ext-customstreams</artifactId>
-			<version>${project.version}</version>
+			<version>${dependencies.version}</version>
     </dependency>
     <dependency>
   		<groupId>it.geosolutions.imageio-ext</groupId>
   		<artifactId>imageio-ext-imagereadmt</artifactId>
-			<version>${project.version}</version>
+			<version>${dependencies.version}</version>
     </dependency>
     <dependency>
   		<groupId>it.geosolutions.imageio-ext</groupId>
   		<artifactId>imageio-ext-test-data</artifactId>
-		<version>${project.version}</version>
+		<version>${dependencies.version}</version>
 		<scope>test</scope>
     </dependency>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-utilities</artifactId>
-      <version>${project.version}</version>
+      <version>${dependencies.version}</version>
     </dependency>
     <dependency>
     	<groupId>it.geosolutions.imageio-ext</groupId>
