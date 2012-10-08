@@ -4,7 +4,7 @@
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-kakadu</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.9p2</version>
+  <version>1.0.9p3</version>
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-plugin</artifactId>
