@@ -70,6 +70,7 @@ import org.gdal.gdal.Dataset;
 import org.gdal.gdal.gdal;
 import org.gdal.gdalconst.gdalconst;
 import org.gdal.gdalconst.gdalconstConstants;
+import org.gdal.osr.SpatialReference;
 
 /**
  * Main abstract class defining the main framework which needs to be used to
@@ -240,9 +241,10 @@ public abstract class GDALImageReader extends ImageReader {
     /**
      * Read data from the required region of the raster.
      * 
-     * @param itemMetadata
-     *                a <code>GDALCommonIIOImageMetadata</code> related to the
-     *                actual dataset
+     * @param destSM
+     *                sample model for the image
+     * @param dataset
+     *                GDAL <code>Dataset</code> to read
      * @param srcRegion
      *                the source Region to be read
      * @param dstRegion
@@ -252,18 +254,12 @@ public abstract class GDALImageReader extends ImageReader {
      * @return the read <code>Raster</code>
      */
     private Raster readDatasetRaster(
-    		GDALCommonIIOImageMetadata itemMetadata,
+    		SampleModel destSm,
+    		Dataset dataset,
             Rectangle srcRegion, 
             Rectangle dstRegion, 
-            int[] selectedBands,
-            SampleModel destSampleModel) throws IOException {
-
-        SampleModel destSm = destSampleModel != null ? destSampleModel : itemMetadata.getSampleModel();
-
-        final Dataset dataset = datasetsMap.get(itemMetadata.getDatasetName());
-        if (dataset == null)
-            throw new IOException("Error while acquiring the input dataset " + itemMetadata.getDatasetName());
-
+            int[] selectedBands) throws IOException {
+    	
         SampleModel sampleModel = null;
         DataBuffer imgBuffer = null;
         Band pBand = null;        
@@ -574,7 +570,7 @@ public abstract class GDALImageReader extends ImageReader {
 					if(LOGGER.isLoggable(Level.FINE))
 						LOGGER.log(Level.FINE,e.getLocalizedMessage(),e);
 				}
-        	}        		  
+        	}
         }
 
         // ////////////////////////////////////////////////////////////////////
@@ -853,135 +849,173 @@ public abstract class GDALImageReader extends ImageReader {
         //
         // //
         final GDALCommonIIOImageMetadata item = getDatasetMetadata(imageIndex);
-        final int width = item.getWidth();
-        final int height = item.getHeight();
-        final SampleModel itemSampleModel = item.getSampleModel();
-        int itemNBands = itemSampleModel.getNumBands();
-        int nDestBands;
-
-        BufferedImage bi = null;
-        final ImageReadParam imageReadParam;
-        if (param == null)
-            imageReadParam = getDefaultReadParam();
-        else
-            imageReadParam = param;
-
-        // //
-        //
-        // First, check for a specified ImageTypeSpecifier
-        //
-        // //
-        ImageTypeSpecifier imageType = imageReadParam.getDestinationType();
-        SampleModel destSampleModel = null;
-        if (imageType != null) {
-            destSampleModel = imageType.getSampleModel();
-            nDestBands = destSampleModel.getNumBands();
-        } else {
-            bi = imageReadParam.getDestination();
-            if (bi != null)
-                nDestBands = bi.getSampleModel().getNumBands();
-            else
-                nDestBands = itemNBands;
-        }
-
-        // //
-        //
-        // Second, bands settings check
-        //
-        // //
-        checkReadParamBandSettings(imageReadParam, itemNBands, nDestBands);
-        int[] srcBands = imageReadParam.getSourceBands();
-//        int[] destBands = imageReadParam.getDestinationBands();
-//
-        // //
-        //
-        // Third, destination image check
-        //
-        // //
-        // if (bi != null && imageType == null) {
-        // if ((srcBands == null) && (destBands == null)) {
-        // SampleModel biSampleModel = bi.getSampleModel();
-        // if (!bi.getColorModel().equals(item.getColorModel())
-        // || biSampleModel.getDataType() != itemSampleModel
-        // .getDataType())
-        // throw new IllegalArgumentException(
-        // "Provided destination image does not have a valid ColorModel or
-        // SampleModel");
-        // }
-        // }
-
-        // //
-        //
-        // Computing regions of interest
-        //
-        // //
-        Rectangle srcRegion = new Rectangle(0, 0, 0, 0);
-        Rectangle destRegion = new Rectangle(0, 0, 0, 0);
-        computeRegions(imageReadParam, width, height, bi, srcRegion, destRegion);
-        if (imageReadParam != null){
-        	if (imageReadParam instanceof EnhancedImageReadParam){
-        		final EnhancedImageReadParam eparam = (EnhancedImageReadParam) imageReadParam;
-        		final Rectangle dstRegion = eparam.getDestinationRegion();
-        		if (dstRegion != null){
-        			destRegion.height = dstRegion.height;
-        			destRegion.width = dstRegion.width;
-        		}
+        int width = item.getWidth();
+        int height = item.getHeight();
+        
+        final Dataset originalDataset = datasetsMap.get(item.getDatasetName());
+        if (originalDataset == null)
+            throw new IOException("Error while acquiring the input dataset " + item.getDatasetName());
+        
+        Dataset dataset = originalDataset;
+        Dataset warpedDataset = null;
+        try {
+	    	if (param instanceof GDALImageReadParam) {
+	    		GDALImageReadParam gdalImageReadParam = (GDALImageReadParam) param;
+	    		
+	    		// Check for source != destination
+	    		String sourceWkt = dataset.GetProjection();
+	    		String destinationWkt = gdalImageReadParam.getDestinationWkt();
+	    		SpatialReference sourceReference = new SpatialReference(sourceWkt);
+	    		SpatialReference destinationReference = new SpatialReference(destinationWkt);
+	    		// If the source reference is not the same as the destination reference
+	    		// lets warp the image using GDAL.
+	    		if (sourceReference.IsSame(destinationReference) == 0) {
+	    			dataset = gdal.AutoCreateWarpedVRT(
+						dataset, 
+						dataset.GetProjection(), 
+						destinationWkt, 
+						gdalImageReadParam.getResampleAlgorithm().getGDALResampleAlgorithm(), 
+						gdalImageReadParam.getMaxError());
+	    			warpedDataset = dataset;
+	    			
+	    			// width and height may have changed from original metadata
+	    			width = warpedDataset.getRasterXSize();
+	    			height = warpedDataset.getRasterYSize();
+	    		}
+	    	}
+	        
+	        final SampleModel itemSampleModel = item.getSampleModel();
+	        int itemNBands = itemSampleModel.getNumBands();
+	        int nDestBands;
+	
+	        BufferedImage bi = null;
+	        final ImageReadParam imageReadParam;
+	        if (param == null)
+	            imageReadParam = getDefaultReadParam();
+	        else
+	            imageReadParam = param;
+	
+	        // //
+	        //
+	        // First, check for a specified ImageTypeSpecifier
+	        //
+	        // //
+	        ImageTypeSpecifier imageType = imageReadParam.getDestinationType();
+	        SampleModel destSampleModel = null;
+	        if (imageType != null) {
+	            destSampleModel = imageType.getSampleModel();
+	            nDestBands = destSampleModel.getNumBands();
+	        } else {
+	            bi = imageReadParam.getDestination();
+	            if (bi != null)
+	                nDestBands = bi.getSampleModel().getNumBands();
+	            else
+	                nDestBands = itemNBands;
+	        }
+	
+	        // //
+	        //
+	        // Second, bands settings check
+	        //
+	        // //
+	        checkReadParamBandSettings(imageReadParam, itemNBands, nDestBands);
+	        int[] srcBands = imageReadParam.getSourceBands();
+	//        int[] destBands = imageReadParam.getDestinationBands();
+	//
+	        // //
+	        //
+	        // Third, destination image check
+	        //
+	        // //
+	        // if (bi != null && imageType == null) {
+	        // if ((srcBands == null) && (destBands == null)) {
+	        // SampleModel biSampleModel = bi.getSampleModel();
+	        // if (!bi.getColorModel().equals(item.getColorModel())
+	        // || biSampleModel.getDataType() != itemSampleModel
+	        // .getDataType())
+	        // throw new IllegalArgumentException(
+	        // "Provided destination image does not have a valid ColorModel or
+	        // SampleModel");
+	        // }
+	        // }
+	
+	        // //
+	        //
+	        // Computing regions of interest
+	        //
+	        // //
+	        Rectangle srcRegion = new Rectangle(0, 0, 0, 0);
+	        Rectangle destRegion = new Rectangle(0, 0, 0, 0);
+	        computeRegions(imageReadParam, width, height, bi, srcRegion, destRegion);
+	        if (imageReadParam != null){
+	        	if (imageReadParam instanceof EnhancedImageReadParam){
+	        		final EnhancedImageReadParam eparam = (EnhancedImageReadParam) imageReadParam;
+	        		final Rectangle dstRegion = eparam.getDestinationRegion();
+	        		if (dstRegion != null){
+	        			destRegion.height = dstRegion.height;
+	        			destRegion.width = dstRegion.width;
+	        		}
+	        	}
+	        }
+	        if (LOGGER.isLoggable(Level.FINE)) {
+	            LOGGER.fine("Source Region = " + srcRegion.toString());
+	            LOGGER.fine("Destination Region = " + destRegion.toString());
+	        }
+	
+	        // 
+	        // Getting data
+	        //
+	        if (bi == null) {
+	            // //
+	            //
+	            // No destination image has been specified.
+	            // Creating a new BufferedImage
+	            //			
+	            // //
+	            ColorModel cm;
+	            if (imageType == null) {
+	                cm = item.getColorModel();
+	                bi = new BufferedImage(cm, (WritableRaster) readDatasetRaster(
+	                        item.getSampleModel(), dataset, srcRegion, destRegion, srcBands), false, null);
+	            } else {
+	                cm = imageType.getColorModel();
+	                bi = new BufferedImage(cm,
+	                        (WritableRaster) readDatasetRaster(destSampleModel, dataset, srcRegion,
+	                                destRegion, srcBands), false,
+	                        null);
+	            }
+	
+	        } else {
+	            // //
+	            //			
+	            // the destination image has been specified.
+	            //			
+	            // //
+	            // Rectangle destSize = (Rectangle) destRegion.clone();
+	            // destSize.setLocation(0, 0);
+	
+	            Raster readRaster = readDatasetRaster(item.getSampleModel(), dataset, srcRegion, destRegion,
+	                    srcBands);
+	            WritableRaster raster = bi.getRaster().createWritableChild(0, 0,
+	                    bi.getWidth(), bi.getHeight(), 0, 0, null);
+	            // TODO: Work directly on a Databuffer avoiding setRect?
+	            raster.setRect(destRegion.x, destRegion.y, readRaster);
+	
+	            // Raster readRaster = readDatasetRaster(item, srcRegion,
+	            // destRegion,
+	            // srcBands);
+	            // WritableRaster raster = bi.getRaster().createWritableChild(
+	            // destRegion.x, destRegion.y, destRegion.width,
+	            // destRegion.height, destRegion.x, destRegion.y, null);
+	            // //TODO: Work directly on a Databuffer avoiding setRect?
+	            // raster.setRect(readRaster);
+	        }
+	        return bi;
+        } finally {
+        	if (warpedDataset != null) {
+        		GDALUtilities.closeDataSet(warpedDataset);
         	}
         }
-        if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine("Source Region = " + srcRegion.toString());
-            LOGGER.fine("Destination Region = " + destRegion.toString());
-        }
-
-        // 
-        // Getting data
-        //
-        if (bi == null) {
-            // //
-            //
-            // No destination image has been specified.
-            // Creating a new BufferedImage
-            //			
-            // //
-            ColorModel cm;
-            if (imageType == null) {
-                cm = item.getColorModel();
-                bi = new BufferedImage(cm, (WritableRaster) readDatasetRaster(
-                        item, srcRegion, destRegion, srcBands,null), false, null);
-            } else {
-                cm = imageType.getColorModel();
-                bi = new BufferedImage(cm,
-                        (WritableRaster) readDatasetRaster(item, srcRegion,
-                                destRegion, srcBands, destSampleModel), false,
-                        null);
-            }
-
-        } else {
-            // //
-            //			
-            // the destination image has been specified.
-            //			
-            // //
-            // Rectangle destSize = (Rectangle) destRegion.clone();
-            // destSize.setLocation(0, 0);
-
-            Raster readRaster = readDatasetRaster(item, srcRegion, destRegion,
-                    srcBands,null);
-            WritableRaster raster = bi.getRaster().createWritableChild(0, 0,
-                    bi.getWidth(), bi.getHeight(), 0, 0, null);
-            // TODO: Work directly on a Databuffer avoiding setRect?
-            raster.setRect(destRegion.x, destRegion.y, readRaster);
-
-            // Raster readRaster = readDatasetRaster(item, srcRegion,
-            // destRegion,
-            // srcBands);
-            // WritableRaster raster = bi.getRaster().createWritableChild(
-            // destRegion.x, destRegion.y, destRegion.width,
-            // destRegion.height, destRegion.x, destRegion.y, null);
-            // //TODO: Work directly on a Databuffer avoiding setRect?
-            // raster.setRect(readRaster);
-        }
-        return bi;
     }
 
     /**

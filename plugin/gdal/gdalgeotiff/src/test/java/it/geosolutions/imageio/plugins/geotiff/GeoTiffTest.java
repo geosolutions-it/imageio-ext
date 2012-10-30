@@ -19,6 +19,8 @@ package it.geosolutions.imageio.plugins.geotiff;
 import it.geosolutions.imageio.core.GCP;
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
+import it.geosolutions.imageio.gdalframework.GDALImageReadParam;
+import it.geosolutions.imageio.gdalframework.GDALImageReadParam.ResampleAlgorithm;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
@@ -49,6 +51,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.sun.media.jai.operator.ImageWriteDescriptor;
+
+import org.gdal.osr.SpatialReference;
 
 /**
  * @author Daniele Romagnoli, GeoSolutions.
@@ -331,6 +335,42 @@ public class GeoTiffTest extends AbstractGDALTest {
         }
         
         reader.dispose();
+    }
+    
+    /**
+     * Test Read exploiting JAI-ImageIO tools capabilities
+     * and GDAL warp.
+     * 
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    @Test
+    public void readWithWarp() throws FileNotFoundException, IOException {
+        if (!isGDALAvailable) {
+            return;
+        }
+        final ParameterBlockJAI pbjImageRead;
+        String fileName = "utmByte.tif";
+        final File file = TestData.file(this, fileName);
+        
+        SpatialReference destinationReference = new SpatialReference();
+        destinationReference.SetProjCS( "UTM 17 (WGS84) in northern hemisphere." );
+        destinationReference.SetWellKnownGeogCS( "WGS84" );
+        destinationReference.SetUTM( 17, 1 );
+        
+        GDALImageReadParam readParam = new GDALImageReadParam();
+        readParam.setDestinationWkt(destinationReference.ExportToWkt());
+        readParam.setResampleAlgorithm(ResampleAlgorithm.CUBIC);
+
+        pbjImageRead = new ParameterBlockJAI("ImageRead");
+        pbjImageRead.setParameter("Input", new FileImageInputStreamExtImpl(file));
+        pbjImageRead.setParameter("Reader", new GeoTiffImageReaderSpi().createReaderInstance());
+        pbjImageRead.setParameter("ReadParam", readParam);
+        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+        if (TestData.isInteractiveTest())
+            Viewer.visualizeAllInformation(image, "", true);
+        else
+        	Assert.assertNotNull(image.getTiles());
     }
 
 }
