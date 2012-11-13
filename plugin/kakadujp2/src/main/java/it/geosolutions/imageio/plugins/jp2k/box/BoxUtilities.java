@@ -159,8 +159,8 @@ public class BoxUtilities {
         boxClasses.put(ASOCBox.BOX_TYPE, ASOCBox.class);
 
         // Children of JPEG2000ResolutionBox
-        boxClasses.put(ResolutionBox.BOX_TYPE_CAPTURE, ResolutionBox.class);
-        boxClasses.put(ResolutionBox.BOX_TYPE_DEFAULT_DISPLAY, ResolutionBox.class);
+        boxClasses.put(ResolutionBox.BOX_TYPE_CAPTURE, CaptureResolutionBox.class);
+        boxClasses.put(ResolutionBox.BOX_TYPE_DEFAULT_DISPLAY, DefaultDisplayResolutionBox.class);
 
         // Children of JPEG2000UUIDInfoBox
         boxClasses.put(UUIDInfoBox.BOX_TYPE, UUIDInfoBox.class);
@@ -209,8 +209,8 @@ public class BoxUtilities {
         boxNames.put(ResolutionBox.BOX_TYPE, ResolutionBox.NAME);
 
         // Children of JPEG2000ResolutionBox
-        boxNames.put(ResolutionBox.BOX_TYPE_CAPTURE, ResolutionBox.CAP_NAME);
-        boxNames.put(ResolutionBox.BOX_TYPE_DEFAULT_DISPLAY, ResolutionBox.DEF_NAME);
+        boxNames.put(ResolutionBox.BOX_TYPE_CAPTURE, CaptureResolutionBox.CAP_NAME);
+        boxNames.put(ResolutionBox.BOX_TYPE_DEFAULT_DISPLAY, DefaultDisplayResolutionBox.DEF_NAME);
 
         boxNames.put(UUIDBox.BOX_TYPE, UUIDBox.NAME);
         boxNames.put(UUIDInfoBox.BOX_TYPE, UUIDInfoBox.NAME);

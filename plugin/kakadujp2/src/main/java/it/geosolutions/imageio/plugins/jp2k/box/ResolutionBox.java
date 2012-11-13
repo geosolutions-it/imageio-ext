@@ -118,7 +118,11 @@ public class ResolutionBox extends BaseJP2KBox {
      * content data array.
      */
     public ResolutionBox(int type, byte[] data) {
-        super(18, type, data);
+        super(8 + data.length, type, data);
+    }
+
+    public ResolutionBox(byte[] data) {
+        this(BOX_TYPE, data);
     }
 
     /**
@@ -126,7 +130,7 @@ public class ResolutionBox extends BaseJP2KBox {
      * horizontal/vertical resolutions.
      */
     public ResolutionBox(int type, float hRes, float vRes) {
-        super(18, type, null);
+        super(8 + 18, type, null);
         this.hRes = hRes;
         this.vRes = vRes;
         denomH = denomV = 1;
