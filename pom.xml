@@ -15,7 +15,7 @@
     <extensive.tests>false</extensive.tests>
     <interactive.tests>false</interactive.tests>
     <test.maxHeapSize>512M</test.maxHeapSize>
-    <gdal.version>1.7</gdal.version>
+    <gdal.version>1.9.2</gdal.version>
     <kakadu.version>5.2.6</kakadu.version>
   </properties>
 
