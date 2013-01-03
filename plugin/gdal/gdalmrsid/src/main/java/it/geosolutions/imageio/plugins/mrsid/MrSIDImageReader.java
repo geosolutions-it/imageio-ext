@@ -37,9 +37,8 @@ public class MrSIDImageReader extends GDALImageReader {
             .getLogger("it.geosolutions.imageio.plugins.mrsid");
 
     @Override
-	protected MrSIDIIOImageMetadata createDatasetMetadata(
-			Dataset mainDataset, String mainDatasetFileName) {
-		return new MrSIDIIOImageMetadata(mainDataset, mainDatasetFileName);
+	protected MrSIDIIOImageMetadata createDatasetMetadata(String mainDatasetFileName) {
+		return new MrSIDIIOImageMetadata(mainDatasetFileName);
 	}
     
     /**

@@ -54,18 +54,24 @@ public class JP2KReadTest extends AbstractGDALTest {
     static {
         if (isGDALAvailable){
 	        gdal.AllRegister();
-	        final Driver driverkak = gdal.GetDriverByName("JP2KAK");
-	        final Driver drivermrsid = gdal.GetDriverByName("JP2MrSID");
-	        if (driverkak != null || drivermrsid != null) {
-	            final StringBuilder skipDriver = new StringBuilder("");
-	            if (driverkak != null)
-	                skipDriver.append("JP2KAK ");
-	            if (drivermrsid != null)
-	                skipDriver.append("JP2MrSID");
-	            gdal.SetConfigOption("GDAL_SKIP", skipDriver.toString());
-	            gdal.AllRegister();
+	        final String versionInfo = gdal.VersionInfo("RELEASE_NAME");
+	        if (versionInfo.contains("1.9.") && System.getProperty("os.name").toLowerCase().startsWith("linux")) {
+	        	// JP2 ECW crashes on Linux with > 1.8: http://trac.osgeo.org/gdal/ticket/4201
+	        	isJP2ECWAvailable = false;
+	        } else {
+		        final Driver driverkak = gdal.GetDriverByName("JP2KAK");
+		        final Driver drivermrsid = gdal.GetDriverByName("JP2MrSID");
+		        if (driverkak != null || drivermrsid != null) {
+		            final StringBuilder skipDriver = new StringBuilder("");
+		            if (driverkak != null)
+		                skipDriver.append("JP2KAK ");
+		            if (drivermrsid != null)
+		                skipDriver.append("JP2MrSID");
+		            gdal.SetConfigOption("GDAL_SKIP", skipDriver.toString());
+		            gdal.AllRegister();
+		        }
+		        isJP2ECWAvailable = GDALUtilities.isDriverAvailable("JP2ECW");
 	        }
-	        isJP2ECWAvailable = GDALUtilities.isDriverAvailable("JP2ECW");
         } else {
             isJP2ECWAvailable = false;
         }
