@@ -28,23 +28,19 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageWriteParam;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import static org.junit.Assume.*;
 
 /**
  * @author Daniele Romagnoli, GeoSolutions SAS
  * 
  */
-public class JPEGMultiThTest extends BaseTest {
+public class JPEGMultiThTest extends JPEGWriterTest {
 
-    private static final Logger LOGGER = Logger.getLogger(JPEGMultiThTest.class.toString());    
-    
     private static ImageWriteParam param = new TurboJpegImageWriteParam();
 
     /**
@@ -57,7 +53,9 @@ public class JPEGMultiThTest extends BaseTest {
     @Ignore
     public void multithreadedTest() throws IOException {
 
-        assumeTrue(!SKIP_TESTS);
+        if (SKIP_TESTS) {
+            return;
+        }
 
         param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
         param.setCompressionQuality(0.75f);

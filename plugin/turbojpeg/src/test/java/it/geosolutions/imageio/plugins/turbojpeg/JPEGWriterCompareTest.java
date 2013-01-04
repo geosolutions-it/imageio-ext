@@ -42,17 +42,13 @@ import javax.media.jai.operator.ExtremaDescriptor;
 import javax.media.jai.operator.SubtractDescriptor;
 
 import org.junit.Test;
-import static org.junit.Assume.*;
 
 import com.sun.imageio.plugins.jpeg.JPEGImageReaderSpi;
 import com.sun.imageio.plugins.png.PNGImageReaderSpi;
 import com.sun.media.imageioimpl.common.PackageUtil;
-import java.util.logging.Logger;
 
-public class JPEGWriterCompareTest extends BaseTest {
+public class JPEGWriterCompareTest extends JPEGWriterTest{
 
-    private static final Logger LOGGER = Logger.getLogger(JPEGWriterCompareTest.class.toString());    
-    
     static final int LOOP = 30;
 
     static final long DELAY_MS = 15000;
@@ -250,7 +246,6 @@ public class JPEGWriterCompareTest extends BaseTest {
         
         if (SKIP_TESTS){
             LOGGER.warning(ERROR_LIB_MESSAGE);
-            assumeTrue(!SKIP_TESTS);            
             return;
         }
         

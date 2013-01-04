@@ -24,7 +24,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageWriteParam;
@@ -35,12 +34,9 @@ import javax.imageio.stream.ImageOutputStream;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import static org.junit.Assume.*;
 
-public class JPEGWriterSpeedTest extends BaseTest {
+public class JPEGWriterSpeedTest extends JPEGWriterTest {
 
-    private static final Logger LOGGER = Logger.getLogger(JPEGWriterSpeedTest.class.toString());    
-    
     private static final int LOOP = 20;
     
     static {
@@ -56,7 +52,9 @@ public class JPEGWriterSpeedTest extends BaseTest {
     public void testJPEGCLIB() throws FileNotFoundException, IOException, SecurityException,
             NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
 
-        assumeTrue(!SKIP_TESTS);            
+        if (SKIP_TESTS){
+            return;
+        }
         
         String fileName = null;
         ImageOutputStream out1 = null;
@@ -116,8 +114,9 @@ public class JPEGWriterSpeedTest extends BaseTest {
     public void testJPEGJDK() throws FileNotFoundException, IOException, SecurityException,
             NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
 
-        assumeTrue(!SKIP_TESTS);
-        
+        if (SKIP_TESTS){
+            return;
+        }
         String fileName = null;
         ImageOutputStream out1 = null;
         try {
@@ -173,7 +172,9 @@ public class JPEGWriterSpeedTest extends BaseTest {
     public void testJPEGTurbo() throws FileNotFoundException, IOException, SecurityException,
             NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
 
-        assumeTrue(!SKIP_TESTS);
+        if (SKIP_TESTS){
+            return;
+        }
         
         if (!TurboJpegUtilities.isTurboJpegAvailable()) {
             LOGGER.warning(ERROR_LIB_MESSAGE);
@@ -239,13 +240,4 @@ public class JPEGWriterSpeedTest extends BaseTest {
         }
     }
 
-    /**
-     * @param total
-     */
-    protected static void reportTime(String encoder, long total, final int LOOP) {
-        LOGGER.info("JPEG " + encoder + " TOTAL TIME = " + ((total) / 1000000)
-                + "(ms) ; AVERAGE TIME = " + (total / (1000 * LOOP)) + "(micros)");
-
-    }
-    
 }

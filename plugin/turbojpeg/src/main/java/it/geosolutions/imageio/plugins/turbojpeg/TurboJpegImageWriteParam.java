@@ -21,13 +21,11 @@ import java.util.Locale;
 import it.geosolutions.imageio.plugins.exif.EXIFMetadata;
 
 import javax.imageio.ImageWriteParam;
-import org.libjpegturbo.turbojpeg.TJ;
 
 /**
  * Class holding Write parameters to customize the write operations
  * 
  * @author Daniele Romagnoli, GeoSolutions SaS
- * @author Emanuele Tajariol, GeoSolutions SaS
  */
 public class TurboJpegImageWriteParam extends ImageWriteParam {
 	
@@ -46,7 +44,7 @@ public class TurboJpegImageWriteParam extends ImageWriteParam {
 
     public final static float DEFAULT_COMPRESSION_QUALITY = 0.75f;
     
-    public final static int DEFAULT_RGB_COMPONENT_SUBSAMPLING = TJ.SAMP_420;
+    public final static int DEFAULT_RGB_COMPONENT_SUBSAMPLING = TurboJpegLibrary.TJ_420;
         
     private int componentSubsampling = -1;
     

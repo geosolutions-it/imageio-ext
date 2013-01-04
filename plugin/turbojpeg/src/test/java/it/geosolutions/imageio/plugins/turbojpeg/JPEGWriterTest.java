@@ -25,6 +25,7 @@ import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 import it.geosolutions.resources.TestData;
 
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,23 +39,35 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageWriterSpi;
 
+import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import static org.junit.Assume.*;
-import static org.junit.Assert.*;
 
-import org.libjpegturbo.turbojpeg.TJ;
+import com.sun.imageio.plugins.jpeg.JPEGImageWriterSpi;
+import com.sun.media.imageioimpl.plugins.jpeg.CLibJPEGImageWriterSpi;
 
-public class JPEGWriterTest extends BaseTest {
+public class JPEGWriterTest extends Assert {
 
-    private static final Logger LOGGER = Logger.getLogger(JPEGWriterTest.class.toString());    
+    static final String INPUT_FILE_PATH = "/tmp/test.tif";
+
+    static final File INPUT_FILE = new File(INPUT_FILE_PATH);
+
+    static RenderedImage SAMPLE_IMAGE = null;
+
+    static boolean SKIP_TESTS = false;
     
-//    @Before
-//    public void setup() {
-//        SKIP_TESTS = !TurboJpegUtilities.isTurboJpegAvailable();
-//    }
+    static final Logger LOGGER = Logger.getLogger(JPEGWriterTest.class.toString());
+
+    static final String ERROR_LIB_MESSAGE = "The TurboJpeg native library hasn't been loaded: Skipping test";
+
+    static final String ERROR_FILE_MESSAGE = "The specified input file can't be read: Skipping test";
+    
+    @Before
+    public void setup() {
+        SKIP_TESTS = !TurboJpegUtilities.isTurboJpegAvailable();
+    }
     
 //    static {
 //        try {
@@ -77,6 +90,23 @@ public class JPEGWriterTest extends BaseTest {
 //        }
 //    }
 
+    static final String OUTPUT_FOLDER = "/home/dromagno/tmp2" // /media/bigdisk/data/turbojpeg"// System.getProperty("java.io.tmpdir")
+            + File.separatorChar;
+
+    static final CLibJPEGImageWriterSpi clibSPI = new CLibJPEGImageWriterSpi();
+
+    static final JPEGImageWriterSpi standardSPI = new JPEGImageWriterSpi();
+
+    static final TurboJpegImageWriterSpi turboSPI = new TurboJpegImageWriterSpi();
+
+    /**
+     * @param total
+     */
+    static void reportTime(String encoder, long total, final int LOOP) {
+        LOGGER.info("JPEG " + encoder + " TOTAL TIME = " + ((total) / 1000000)
+                + "(ms) ; AVERAGE TIME = " + (total / (1000 * LOOP)) + "(micros)");
+
+    }
 
     public static EXIFMetadata getDefaultInstance() {
         List<TIFFTagWrapper> baselineTiffTags = new ArrayList<TIFFTagWrapper>(2);
@@ -122,8 +152,7 @@ public class JPEGWriterTest extends BaseTest {
     public void basicWriterTest() throws IOException{
     	if (SKIP_TESTS){
     	    LOGGER.warning(ERROR_LIB_MESSAGE);
-            assumeTrue(!SKIP_TESTS);
-            return;
+    	    return;
     	}
         
     	//test-data
@@ -145,10 +174,9 @@ public class JPEGWriterTest extends BaseTest {
         assertNotNull("Unable to find TurboJpegImageWriter", writer);
 
         // create output file
-        final File output = TestData.temp(this, "output.jpeg", false);
+        final File output = TestData.temp(this, "output.jpeg", true);
         writer.setOutput(output);
         writer.write(ImageIO.read(input));
-        LOGGER.warning("Writing output to " + output);
         assertTrue("Unable to create output file", output.exists() && output.isFile());
 
     }
@@ -157,7 +185,6 @@ public class JPEGWriterTest extends BaseTest {
     public void writerTest() throws IOException {
         if (SKIP_TESTS){
             LOGGER.warning(ERROR_LIB_MESSAGE);
-            assumeTrue(!SKIP_TESTS);
             return;
         }
         
@@ -212,12 +239,11 @@ public class JPEGWriterTest extends BaseTest {
     public void writerTestComponentsSubsampling() throws IOException {
         if (SKIP_TESTS){
             LOGGER.warning(ERROR_LIB_MESSAGE);
-            assumeTrue(!SKIP_TESTS);
             return;
         }
         
         final long[] lengths = new long[3];
-        final int[] componentSubsampling = new int[]{TJ.SAMP_444,TJ.SAMP_422, TJ.SAMP_420}; 
+        final int[] componentSubsampling = new int[]{TurboJpegLibrary.TJ_444,TurboJpegLibrary.TJ_422, TurboJpegLibrary.TJ_420}; 
         // test-data
         final File input = TestData.file(this, "testmergb.png");
         assertTrue("Unable to find test data", input.exists() && input.isFile() && input.canRead());
@@ -251,15 +277,14 @@ public class JPEGWriterTest extends BaseTest {
             wParam.setComponentSubsampling(componentSubsampling[i]);
     
             // create output file
-            final File output = TestData.temp(this, "output.jpeg", false);
-            LOGGER.warning("output file is " + output);
+            final File output = TestData.temp(this, "output.jpeg", true);
             writer.setOutput(output);
             writer.write(null, image, wParam);
             writer.dispose();
             
             assertTrue("Unable to create output file", output.exists() && output.isFile());
             lengths[i] = output.length();
-//            output.delete();
+            output.delete();
         }
         
         assertEquals(lengths[0], 11604);

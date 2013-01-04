@@ -19,7 +19,7 @@ package it.geosolutions.imageio.plugins.turbojpeg;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.libjpegturbo.turbojpeg.TJ;
+import org.bridj.BridJ;
 
 /**
  * @author Daniele Romagnoli, GeoSolutions SaS
@@ -29,21 +29,18 @@ import org.libjpegturbo.turbojpeg.TJ;
  * 
  */
 public class TurboJpegUtilities {
-
-    private static final Logger LOGGER = Logger.getLogger(TurboJpegUtilities.class.getName());
-
-    public static final String FLAGS_PROPERTY = "it.geosolutions.imageio.plugins.turbojpeg.flags";
-
+    
+    private static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.turbojpeg.TurboJpegUtilities");
+    
     private static boolean isAvailable;
-
-    private static boolean isInitialized = false;
-
+    
+    private static boolean isInitialized;
+    
     public static boolean isTurboJpegAvailable() {
-
         loadTurboJpeg();
         return isAvailable;
     }
-
+    
     public static void loadTurboJpeg() {
         if (isInitialized) {
             return;
@@ -53,13 +50,12 @@ public class TurboJpegUtilities {
                 return;
             }
             try {
-                load();
-                isAvailable = true;
-
+                isAvailable = BridJ.getNativeLibrary("turbojpeg") != null;
+                
             } catch (Throwable t) {
-                if (LOGGER.isLoggable(Level.WARNING)) {
-                    LOGGER.warning("Failed to load the TurboJpeg native libs."
-                            + " This is not a problem, but the TurboJpeg encoder won't be available: " + t.toString());
+                if (LOGGER.isLoggable(Level.WARNING)){
+                    LOGGER.warning("Failed to load the TurboJpeg native libs. This is not a problem unless you need to " +
+                    		"use the TurboJpeg encoder: it won't be available" + t.toString());
                 }
             } finally {
                 isInitialized = true;
@@ -67,67 +63,42 @@ public class TurboJpegUtilities {
         }
 
     }
-
-    public static final String LIBNAME = "turbojpeg";
     
-    static void load() {
-        try {            
-            System.loadLibrary(LIBNAME); // If this method is called more than once with the same library name, the second and subsequent calls are ignored.
-            if (LOGGER.isLoggable(Level.INFO)) {
-                LOGGER.info("TurboJPEG library loaded ("+LIBNAME+")");
-            }
-        } catch (java.lang.UnsatisfiedLinkError e) {
-            String os = System.getProperty("os.name").toLowerCase();
-            if (os.indexOf("mac") >= 0) {
-                System.load("/usr/lib/libturbojpeg.jnilib");
-            } else {
-                throw e;
-            }
-        }
+//    static {
+//        loadTurboJpeg();
+//    }
+    
+    /** --------------------------------------------
+     *  Constants and method ported from the C code
+     *  --------------------------------------------
+     */
+    static final int H_SAMP_FACTOR[] = new int[] { 1, 2, 2, 1 };
+
+    static final int V_SAMP_FACTOR[] = new int[] { 1, 1, 2, 1 };
+
+    static final int PIXEL_SIZE[] = new int[] { 3, 3, 3, 1 };
+    
+    public static int bufSizeYuv(int width, int height, int jpegSubsamp) {
+        int retval = 0;
+        int pw = pad(width, H_SAMP_FACTOR[jpegSubsamp]);
+        int ph = pad(height, V_SAMP_FACTOR[jpegSubsamp]);
+        int cw = pw / H_SAMP_FACTOR[jpegSubsamp];
+        int ch = ph / V_SAMP_FACTOR[jpegSubsamp];
+        retval = pad(pw, 4) * ph + (jpegSubsamp == TurboJpegLibrary.TJ_GRAYSCALE ? 0 : pad(cw, 4) * ch * 2);
+        // Extra size added. got some VM crashes on very small images without some extra space
+        // Moreover, on c code available on trunk, this extra space has been added too.
+        return retval + 2048; 
     }
 
-    public static int getTurboJpegFlag(final String key) {
-        if (key != null) {
-            if (key.equalsIgnoreCase("FLAG_ACCURATEDCT")) {
-                return TJ.FLAG_ACCURATEDCT;
-            } else if (key.equalsIgnoreCase("FLAG_BOTTOMUP")) {
-                return TJ.FLAG_BOTTOMUP;
-            } else if (key.equalsIgnoreCase("FLAG_FASTDCT")) {
-                return TJ.FLAG_FASTDCT;
-            } else if (key.equalsIgnoreCase("FLAG_FASTUPSAMPLE")) {
-                return TJ.FLAG_FASTUPSAMPLE;
-            } else if (key.equalsIgnoreCase("FLAG_FORCEMMX")) {
-                return TJ.FLAG_FORCEMMX;
-            } else if (key.equalsIgnoreCase("FLAG_FORCESSE")) {
-                return TJ.FLAG_FORCESSE;
-            } else if (key.equalsIgnoreCase("FLAG_FORCESSE2")) {
-                return TJ.FLAG_FORCESSE2;
-            } else if (key.equalsIgnoreCase("FLAG_FORCESSE3")) {
-                return TJ.FLAG_FORCESSE3;
-            }
-        }
-        throw new IllegalArgumentException("Unsupported flag");
+    public static int bufSize(final int width, final int height) {
+        // Note the "+ 2048" at the end of the computation. It has been copied from the original
+        // c code to fix a potential issue. It could be the same we are encountering in the
+        // Yuv version.
+        return ((width + 15) & (~15)) * ((height + 15) & (~15)) * 6 + 2048; 
     }
 
-    public static String getTurboJpegFlagAsString(final int key) {
-        switch (key) {
-        case TJ.FLAG_ACCURATEDCT:
-            return "FLAG_ACCURATEDCT";
-        case TJ.FLAG_BOTTOMUP:
-            return "FLAG_BOTTOMUP";
-        case TJ.FLAG_FASTDCT:
-            return "FLAG_FASTDCT";
-        case TJ.FLAG_FASTUPSAMPLE:
-            return "FLAG_FASTUPSAMPLE";
-        case TJ.FLAG_FORCEMMX:
-            return "FLAG_FORCEMMX";
-        case TJ.FLAG_FORCESSE:
-            return "FLAG_FORCESSE";
-        case TJ.FLAG_FORCESSE2:
-            return "FLAG_FORCESSE2";
-        case TJ.FLAG_FORCESSE3:
-            return "FLAG_FORCESSE3";
-        }
-        throw new IllegalArgumentException("Unsupported flag");
+    public final static int pad(int v, int p) {
+        return ((v + (p) - 1) & (~((p) - 1)));
     }
+
 }

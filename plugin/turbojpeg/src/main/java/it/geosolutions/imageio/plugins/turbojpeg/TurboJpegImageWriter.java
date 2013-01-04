@@ -31,6 +31,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -45,9 +46,10 @@ import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.RenderedOp;
 
+import org.bridj.CLong;
+import org.bridj.Pointer;
+
 import com.sun.media.jai.opimage.CopyOpImage;
-import org.libjpegturbo.turbojpeg.TJ;
-import org.libjpegturbo.turbojpeg.TJCompressor;
 
 
 /**
@@ -71,7 +73,6 @@ public class TurboJpegImageWriter extends ImageWriter
     /**
      * Get a default {@link ImageWriteParam} instance.
      */
-    @Override
     public ImageWriteParam getDefaultWriteParam()
     {
         TurboJpegImageWriteParam wparam = new TurboJpegImageWriteParam();
@@ -151,7 +152,7 @@ public class TurboJpegImageWriter extends ImageWriter
         int componentSampling = param.getComponentSubsampling();
         final int quality = (int) (param.getCompressionQuality() * 100);
 
-        int pf = TJ.PF_RGB;
+        int flag = 0;
         if (bandOffsets.length == 3)
         {
             if (componentSampling == -1) {
@@ -159,52 +160,53 @@ public class TurboJpegImageWriter extends ImageWriter
             }
             if ((bandOffsets[0] == 2) && (bandOffsets[2] == 0))
             {
-                pf = TJ.PF_BGR;
+                flag = TurboJpegLibrary.TJ_BGR;
             }
         }
         else if (bandOffsets.length == 1 && componentSampling == -1)
         {
-            pf = TJ.PF_GRAY;
-            componentSampling = TJ.SAMP_GRAY;
+            componentSampling = TurboJpegLibrary.TJ_GRAYSCALE;
         }
         else
         {
             throw new IllegalArgumentException("TurboJPEG won't work with this type of sampleModel");
         }
 
-        if (componentSampling < 0)
-        {
-            throw new IOException("Subsampling level not set");
-        }
-        
         final int pixelsize = sm.getPixelStride();
         final int width = srcImage.getWidth();
         final int height = srcImage.getHeight();
         final int pitch = pixelsize * width;
-        
-        TJCompressor compressor = null;
+
+        Pointer<Byte> srcbuf = null;
+        Pointer<Byte> dstbuf = null;
+        Pointer<CLong> bufferSize = null;
+        Pointer<?> handle = null;
         try
         {
-//            final long jsize = TurboJpegUtilities.bufSize(width, height);
+
+            if (componentSampling < 0)
+            {
+                throw new IOException("Subsampling level not set");
+            }
+
+            final long jsize = TurboJpegUtilities.bufSize(width, height);
+            dstbuf = Pointer.allocateBytes(jsize);
+            bufferSize = Pointer.allocateCLong();
+            bufferSize.setInt((int) jsize);
 
             Rectangle rect = new Rectangle(srcImage.getMinX(), srcImage.getMinY(), srcImage.getWidth(), srcImage.getHeight());
             Raster data = srcImage.getData(rect);
             final byte[] inputImageData = ((DataBufferByte) data.getDataBuffer()).getData();
-            
-            final byte[] outputImageData;
-            try {
-                compressor = new TJCompressor();
-                compressor.setSourceImage(inputImageData, width, pitch, height, pf);
-                compressor.setJPEGQuality(quality);
-                compressor.setSubsamp(componentSampling);
-                
-                outputImageData = compressor.compress(TJ.FLAG_FASTDCT);                
-            } catch (Exception ex) {
-                throw new IOException("Error in turbojpeg comressor: " + ex.getMessage(), ex);
-            }            
-            
-            final int imageDataSize = compressor.getCompressedSize();            
-            
+            final ByteBuffer bb = ByteBuffer.wrap(inputImageData);
+            srcbuf = Pointer.pointerToBytes(bb);
+            handle = TurboJpegLibrary.tjInitCompress();
+
+            TurboJpegLibrary.tjCompress(handle, srcbuf, width, pitch, height, pixelsize, dstbuf,
+                bufferSize, componentSampling, quality, flag);
+
+            final int imageDataSize = bufferSize.getInt();
+            final byte[] outputImageData = dstbuf.getBytes();
+
             if (exif != null)
             {
                 EXIFUtilities.insertEXIFintoStream(
@@ -218,14 +220,50 @@ public class TurboJpegImageWriter extends ImageWriter
 
         finally
         {
-            if(compressor != null) {
+            if (handle != null)
+            {
                 try
                 {
-                    compressor.close();
+                    handle.release();
                 }
-                catch (Exception t)
+                catch (Throwable t)
                 {
                     LOGGER.log(Level.SEVERE, t.getLocalizedMessage(), t);
+                }
+            }
+
+            if (srcbuf != null)
+            {
+                try
+                {
+                    srcbuf.release();
+                }
+                catch (Throwable t)
+                {
+                	LOGGER.log(Level.SEVERE, t.getLocalizedMessage(), t);
+                }
+            }
+            if (bufferSize != null)
+            {
+                try
+                {
+                    bufferSize.release();
+                }
+                catch (Throwable t)
+                {
+                	LOGGER.log(Level.SEVERE, t.getLocalizedMessage(), t);
+                }
+            }
+
+            if (dstbuf != null)
+            {
+                try
+                {
+                    dstbuf.release();
+                }
+                catch (Throwable t)
+                {
+                	LOGGER.log(Level.SEVERE, t.getLocalizedMessage(), t);
                 }
             }
         }
