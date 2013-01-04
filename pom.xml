@@ -440,6 +440,17 @@
       <artifactId>imageio-ext-streams</artifactId>
       <version>${project.version}</version>
      </dependency>
+     <dependency>
+      <groupId>it.geosolutions.imageio-ext</groupId>
+      <artifactId>imageio-ext-imagereadmt</artifactId>
+      <version>${project.version}</version>
+     </dependency>
+     <dependency>
+      <groupId>it.geosolutions.imageio-ext</groupId>
+      <artifactId>imageio-ext-utilities</artifactId>
+      <version>${project.version}</version>
+     </dependency>
+
     </dependencies>
   </dependencyManagement>
   

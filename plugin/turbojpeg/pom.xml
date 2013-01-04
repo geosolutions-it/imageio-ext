@@ -1,0 +1,83 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+        
+    <parent>
+        <groupId>it.geosolutions.imageio-ext</groupId>
+        <artifactId>imageio-ext-plugin</artifactId>
+        <version>1.2-SNAPSHOT</version>
+    </parent>
+        
+    <groupId>it.geosolutions.imageio-ext</groupId>
+    <artifactId>imageio-ext-turbojpeg</artifactId>
+    <version>1.2-SNAPSHOT</version>
+
+    <packaging>jar</packaging>
+
+    <name>Turbo Jpeg Plugin</name>
+    <description>A plugin using the libjpeg-turbo binary lib.</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>it.geosolutions.imageio-ext</groupId>
+            <artifactId>imageio-ext-streams</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>it.geosolutions.imageio-ext</groupId>
+            <artifactId>imageio-ext-imagereadmt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>it.geosolutions.imageio-ext</groupId>
+            <artifactId>imageio-ext-test-data</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>it.geosolutions.imageio-ext</groupId>
+            <artifactId>imageio-ext-utilities</artifactId>
+        </dependency>
+                
+                
+        <dependency>
+            <groupId>org.libjpegturbo</groupId>
+            <artifactId>turbojpeg-wrapper</artifactId>
+            <version>1.2.1.1</version>
+        </dependency>
+                
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>1.4</version>
+        </dependency>
+                
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.10</version>
+            <scope>test</scope>
+        </dependency>
+
+
+    </dependencies>
+    
+<!--    <build>
+       <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <forkMode>once</forkMode>
+              <environmentVariables>
+                <LD_LIBRARY_PATH>/home/etajario/prj/libjpeg-turbo/build/trunk/.libs/</LD_LIBRARY_PATH>
+              </environmentVariables>
+              <systemProperties>
+                <property>
+                  <name>java.library.tmpdir</name>
+                  <value>target/tmplib</value>
+                </property>
+              </systemProperties>
+            </configuration>
+          </plugin>
+       </plugins>
+    </build>    -->
+
+</project>
+
