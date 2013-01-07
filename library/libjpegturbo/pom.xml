@@ -9,7 +9,7 @@
         
         <groupId>org.libjpegturbo</groupId>
         <artifactId>turbojpeg-wrapper</artifactId>
-        <version>1.2.1</version>
+        <version>1.2.1.1</version>
         <packaging>jar</packaging>
         <name>Libjpegturbo java wrapper</name>
 </project>
