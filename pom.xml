@@ -76,17 +76,6 @@
       </repository>
      </distributionManagement>
    </profile>
-   <profile>
-   <id>deploygeosdi</id>
-     <distributionManagement>
-      <repository>
-       <uniqueVersion>false</uniqueVersion>
-       <id>geosdi</id>
-       <name>GeoSDI - Archiva repo</name>
-       <url>http://repo.geosdi.org/archiva/repository/geoSDI/</url>
-      </repository>
-     </distributionManagement>
-   </profile>
   <!--..................................-->
   <!--      GeoSolutions Repository     -->
   <!--..................................-->
