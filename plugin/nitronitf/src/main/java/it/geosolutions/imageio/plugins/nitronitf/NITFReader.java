@@ -45,6 +45,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.imageio.IIOException;
 import javax.imageio.ImageReadParam;
@@ -62,13 +63,8 @@ import nitf.Reader;
 import nitf.Record;
 import nitf.SubWindow;
 
-import org.apache.commons.lang.NotImplementedException;
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 public class NITFReader extends ImageReader {
-    private static final Log log = LogFactory.getLog(NITFReader.class);
+    private static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.nitronitf.NITFReader");
 
     private IOHandle handle = null;
 
@@ -112,7 +108,7 @@ public class NITFReader extends ImageReader {
             reader = new Reader();
             record = reader.read(handle);
         } catch (NITFException e) {
-            log.error(ExceptionUtils.getStackTrace(e));
+            LOGGER.severe(e.getLocalizedMessage());
             throw new IIOException("NITF Exception", e);
         }
     }
@@ -135,7 +131,7 @@ public class NITFReader extends ImageReader {
                 imageReaderMap.put(key, reader.getNewImageReader(imageIndex));
             return imageReaderMap.get(key);
         } catch (NITFException e) {
-            log.error(ExceptionUtils.getStackTrace(e));
+            LOGGER.severe(e.getLocalizedMessage());
             throw new IIOException("NITF Exception", e);
         }
     }
@@ -146,7 +142,7 @@ public class NITFReader extends ImageReader {
         try {
             return record.getHeader().getNumImages().getIntData();
         } catch (NITFException e) {
-            log.error(ExceptionUtils.getStackTrace(e));
+            LOGGER.severe(e.getLocalizedMessage());
             throw new IIOException("NITF Exception", e);
         }
     }
@@ -157,7 +153,7 @@ public class NITFReader extends ImageReader {
         try {
             return record.getImages()[imageIndex].getSubheader().getNumCols().getIntData();
         } catch (NITFException e) {
-            log.error(ExceptionUtils.getStackTrace(e));
+            LOGGER.severe(e.getLocalizedMessage());
             throw new IIOException("NITF Exception", e);
         }
     }
@@ -168,7 +164,7 @@ public class NITFReader extends ImageReader {
         try {
             return record.getImages()[imageIndex].getSubheader().getNumRows().getIntData();
         } catch (NITFException e) {
-            log.error(ExceptionUtils.getStackTrace(e));
+            LOGGER.severe(e.getLocalizedMessage());
             throw new IIOException("NITF Exception", e);
         }
     }
@@ -204,11 +200,11 @@ public class NITFReader extends ImageReader {
                 }
                 l.add(ImageTypeSpecifier.createGrayscale(8, DataBuffer.TYPE_BYTE, false));
             } else {
-                throw new NotImplementedException("Support for pixels of size " + nbpp
+                throw new UnsupportedOperationException("Support for pixels of size " + nbpp
                         + " bytes has not been implemented yet");
             }
         } catch (NITFException e) {
-            log.error(ExceptionUtils.getStackTrace(e));
+            LOGGER.severe(e.getLocalizedMessage());
         }
         return l.iterator();
     }
@@ -248,7 +244,7 @@ public class NITFReader extends ImageReader {
         try {
             subheader = record.getImages()[imageIndex].getSubheader();
         } catch (NITFException e) {
-            throw new IOException(ExceptionUtils.getStackTrace(e));
+            throw new IOException(e);
         }
         String irep = subheader.getImageRepresentation().getStringData().trim();
         String pvType = subheader.getPixelValueType().getStringData().trim();
@@ -293,7 +289,7 @@ public class NITFReader extends ImageReader {
         else if (nBytes == 8 && pvType.equals("R")) {
             bufType = DataBuffer.TYPE_DOUBLE;
         } else {
-            throw new NotImplementedException("not yet implemented");
+            throw new UnsupportedOperationException("not yet implemented");
         }
 
         WritableRaster ras = ImageIOUtils.makeGenericPixelInterleavedWritableRaster(
@@ -443,7 +439,7 @@ public class NITFReader extends ImageReader {
                 }
             }
         } catch (NITFException e1) {
-            throw new IOException(ExceptionUtils.getStackTrace(e1));
+            throw new IOException(e1);
         }
     }
 
@@ -589,7 +585,7 @@ public class NITFReader extends ImageReader {
                 }
             }
         } catch (NITFException e1) {
-            throw new IOException(ExceptionUtils.getStackTrace(e1));
+            throw new IOException(e1);
         }
     }
 
@@ -633,9 +629,9 @@ public class NITFReader extends ImageReader {
                 return ImageIOUtils.rasterToBufferedImage(raster, imageType);
             }
         } catch (NITFException e) {
-            throw new IOException(ExceptionUtils.getStackTrace(e));
+            throw new IOException(e);
         }
-        throw new NotImplementedException("Image pixel type or bits per pixel not yet supported");
+        throw new UnsupportedOperationException("Image pixel type or bits per pixel not yet supported");
     }
 
     @Override
