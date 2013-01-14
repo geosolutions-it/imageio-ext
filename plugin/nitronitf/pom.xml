@@ -42,38 +42,10 @@
     </developers>
     <properties>
         <nitro.version>2.7-dev-r1130</nitro.version>
-        <log4j.version>1.2.14</log4j.version>
-        <commons-logging.version>1.1.1</commons-logging.version>
-        <commons-lang.version>2.4</commons-lang.version>
-        <commons-io.version>1.4</commons-io.version>
         <junit.version>4.4</junit.version>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-            <version>${commons-logging.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>${commons-lang.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>${commons-io.version}</version>
-            <scope>compile</scope>
-        </dependency>
         <dependency>
             <groupId>it.geosolutions.imageio-ext</groupId>
             <artifactId>imageio-ext-kakadu</artifactId>
