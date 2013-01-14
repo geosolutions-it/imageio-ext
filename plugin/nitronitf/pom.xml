@@ -1,0 +1,95 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>it.geosolutions.imageio-ext</groupId>
+    <artifactId>imageio-ext-nitf</artifactId>
+    <packaging>jar</packaging>
+    <version>1.2-SNAPSHOT</version>
+    <inceptionYear>2004</inceptionYear>
+    <name>NITRO ImageIO codec</name>
+    <url>http://nitro-nitf.sourceforge.net/</url>
+
+    <!-- inherits the parent pom -->
+    <parent>
+      <groupId>it.geosolutions.imageio-ext</groupId>
+      <artifactId>imageio-ext-plugin</artifactId>
+      <version>1.2-SNAPSHOT</version>
+    </parent>
+    <licenses>
+        <license>
+            <name>GNU Lesser General Public License, Version 3</name>
+            <url>http://www.gnu.org/licenses/lgpl.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Daniele Romagnoli</name>
+            <id>dromagno</id>
+            <email>daniele.romagnoli@geo-solutions.it</email>
+        </developer>
+        <developer>
+            <name>D. Pressel</name>
+            <id>gojira_1</id>
+            <email>gojira_1@users.sourceforge.net</email>
+        </developer>
+        <developer>
+            <name>Tom Zellman</name>
+            <id>tzellman</id>
+            <email>tzellman@users.sourceforge.net</email>
+        </developer>
+    </developers>
+    <properties>
+        <nitro.version>2.7-dev-r1130</nitro.version>
+        <log4j.version>1.2.14</log4j.version>
+        <commons-logging.version>1.1.1</commons-logging.version>
+        <commons-lang.version>2.4</commons-lang.version>
+        <commons-io.version>1.4</commons-io.version>
+        <junit.version>4.4</junit.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>${commons-logging.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>${commons-lang.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>it.geosolutions.imageio-ext</groupId>
+            <artifactId>imageio-ext-kakadu</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>nitro-nitf</groupId>
+            <artifactId>nitf-bindings</artifactId>
+            <version>${nitro.version}</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+</project>
