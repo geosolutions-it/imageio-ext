@@ -62,7 +62,7 @@
          <property><name>all</name></property>
         </activation>      
       <modules>
-	      <module>unidata-netcdf</module>
+        <module>unidata-netcdf</module>
       </modules>
     </profile> 
     <profile>
@@ -71,7 +71,7 @@
          <property><name>all</name></property>
         </activation>      
       <modules>
-	      <module>matlab</module>
+        <module>matlab</module>
       </modules>
     </profile> 
     <profile>
@@ -85,6 +85,7 @@
         <module>tiff</module>
         <module>gdal</module>
         <module>turbojpeg</module>
+        <module>nitronitf</module>
         <module>unidata-netcdf</module>
        </modules>
     </profile>
