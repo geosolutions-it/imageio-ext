@@ -14,43 +14,48 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package nitf.imageio.wrapper;
+package it.geosolutions.imageio.plugins.nitronitf.wrapper;
 
 /**
- * Wrapper class related to a TextSegment of a NITF file.
+ * Wrapper class for an identifiable NITF object. Main identification fields are Id, title and
+ * dateTime.
  * 
  * @author Daniele Romagnoli, GeoSolutions s.a.s.
  */
-public class TextWrapper extends IdentifiableNITFObjectWrapper {
+public class IdentifiableNITFObjectWrapper extends NITFObjectWrapper {
 
-    private String format;
-
-    private String attachmentLevel = "000";
-
-    private byte[] textContent;
-
-    public String getFormat() {
-        return format;
+    public IdentifiableNITFObjectWrapper() {
+        super();
     }
 
-    public void setFormat(String format) {
-        this.format = format;
+    public String getTitle() {
+        return title;
     }
 
-    public String getAttachmentLevel() {
-        return attachmentLevel;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public void setAttachmentLevel(String attachmentLevel) {
-        this.attachmentLevel = attachmentLevel;
+    public String getId() {
+        return id;
     }
 
-    public byte[] getTextContent() {
-        return textContent;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public void setTextContent(byte[] textContent) {
-        this.textContent = textContent;
+    public String getDateTime() {
+        return dateTime;
     }
+
+    public void setDateTime(String dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    private String title;
+
+    private String id;
+
+    private String dateTime;
 
 }

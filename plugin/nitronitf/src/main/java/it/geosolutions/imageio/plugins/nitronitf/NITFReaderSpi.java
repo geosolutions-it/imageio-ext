@@ -20,35 +20,32 @@
  *
  */
 
-package nitf.imageio;
-
-import it.geosolutions.imageio.stream.output.FileImageOutputStreamExt;
+package it.geosolutions.imageio.plugins.nitronitf;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Locale;
 
-import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.ImageWriter;
-import javax.imageio.spi.ImageWriterSpi;
+import javax.imageio.ImageReader;
+import javax.imageio.spi.ImageReaderSpi;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class NITFImageWriterSpi extends ImageWriterSpi {
-    private static final Log log = LogFactory.getLog(NITFImageWriterSpi.class);
+public class NITFReaderSpi extends ImageReaderSpi {
+    private static final Log log = LogFactory.getLog(NITFReaderSpi.class);
 
-    public NITFImageWriterSpi() {
+    public NITFReaderSpi() {
         super("NITRO", // vendorName
                 "1.0", // version
                 new String[] { "NITF", "nitf", "NSIF" }, // names
                 new String[] { "ntf", "nitf", "nsf" }, // suffixes
                 new String[] { "image/x-ntf", "image/x-nitf" }, // MIMETypes
-                NITFImageWriter.class.getName(), // writerClassName
-                new Class[] { File.class, FileImageOutputStreamExt.class }, // outputTypes
-                null, // readerSpiNames
+                NITFReader.class.getName(), // readerClassName
+                new Class[] { File.class }, // inputTypes
+                null, // writerSpiNames
                 false, // supportsStandardStreamMetadataFormat
                 null, // nativeStreamMetadataFormatName
                 null, // nativeStreamMetadataFormatClassName
@@ -60,6 +57,14 @@ public class NITFImageWriterSpi extends ImageWriterSpi {
                 null, // extraImageMetadataFormatNames
                 null // extraImageMetadataFormatClassNames
         );
+    }
+
+    @Override
+    public boolean canDecodeInput(Object source) throws IOException {
+        boolean result = source instanceof File;
+        if (result)
+            result = isNITF((File) source);
+        return result;
     }
 
     public static boolean isNITF(File file) {
@@ -82,19 +87,13 @@ public class NITFImageWriterSpi extends ImageWriterSpi {
     }
 
     @Override
-    public ImageWriter createWriterInstance(Object extension) throws IOException {
-        return new NITFImageWriter(this);
+    public ImageReader createReaderInstance(Object extension) throws IOException {
+        return new NITFReader(this);
     }
 
     @Override
     public String getDescription(Locale locale) {
-        return "NITF 2.0/2.1 Writer";
-    }
-
-    @Override
-    public boolean canEncodeImage(ImageTypeSpecifier type) {
-        // TODO RefactorMe
-        return true;
+        return "NITF 2.0/2.1 Reader";
     }
 
 }

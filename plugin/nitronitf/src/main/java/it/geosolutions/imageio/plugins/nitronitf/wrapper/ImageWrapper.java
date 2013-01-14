@@ -14,14 +14,15 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package nitf.imageio.wrapper;
+package it.geosolutions.imageio.plugins.nitronitf.wrapper;
+
+import it.geosolutions.imageio.plugins.nitronitf.NITFUtilities;
+import it.geosolutions.imageio.plugins.nitronitf.NITFUtilities.WriteCompression;
 
 import java.awt.image.RenderedImage;
 import java.util.List;
 import java.util.Map;
 
-import nitf.imageio.NITFUtilities;
-import nitf.imageio.NITFUtilities.WriteCompression;
 
 /**
  * Wrapper class related to an ImageSegment of a NITF file.

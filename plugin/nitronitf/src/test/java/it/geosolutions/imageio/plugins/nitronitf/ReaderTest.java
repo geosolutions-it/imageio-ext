@@ -20,7 +20,9 @@
  *
  */
 
-package nitf.imageio;
+package it.geosolutions.imageio.plugins.nitronitf;
+
+import it.geosolutions.imageio.plugins.nitronitf.NITFReaderSpi;
 
 import javax.imageio.ImageIO;
 import javax.imageio.spi.IIORegistry;

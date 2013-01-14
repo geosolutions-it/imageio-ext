@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package nitf.imageio.wrapper;
+package it.geosolutions.imageio.plugins.nitronitf.wrapper;
 
 import java.util.Map;
 

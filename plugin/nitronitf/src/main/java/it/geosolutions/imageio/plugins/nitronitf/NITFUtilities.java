@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package nitf.imageio;
+package it.geosolutions.imageio.plugins.nitronitf;
 
 import it.geosolutions.imageio.plugins.jp2k.JP2KKakaduImageWriteParam;
 import it.geosolutions.imageio.plugins.jp2k.JP2KKakaduImageWriteParam.Compression;

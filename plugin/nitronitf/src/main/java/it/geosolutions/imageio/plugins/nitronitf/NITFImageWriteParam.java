@@ -14,12 +14,13 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package nitf.imageio;
+package it.geosolutions.imageio.plugins.nitronitf;
+
+import it.geosolutions.imageio.plugins.nitronitf.NITFUtilities.WriteCompression;
+import it.geosolutions.imageio.plugins.nitronitf.wrapper.NITFProperties;
 
 import javax.imageio.ImageWriteParam;
 
-import nitf.imageio.NITFUtilities.WriteCompression;
-import nitf.imageio.wrapper.NITFProperties;
 
 /**
  * Class holding Write parameters to customize the write operations
