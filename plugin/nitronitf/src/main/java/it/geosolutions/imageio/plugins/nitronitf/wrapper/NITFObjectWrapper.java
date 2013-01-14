@@ -14,9 +14,9 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package nitf.imageio.wrapper;
+package it.geosolutions.imageio.plugins.nitronitf.wrapper;
 
-import nitf.imageio.NITFUtilities;
+import it.geosolutions.imageio.plugins.nitronitf.NITFUtilities;
 
 /**
  * Main Wrapper class recording encryption field, as well as security classification and security

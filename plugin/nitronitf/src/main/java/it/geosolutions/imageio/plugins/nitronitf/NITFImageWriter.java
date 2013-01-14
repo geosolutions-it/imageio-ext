@@ -14,12 +14,20 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package nitf.imageio;
+package it.geosolutions.imageio.plugins.nitronitf;
 
 import it.geosolutions.imageio.plugins.jp2k.JP2KKakaduImageWriteParam;
 import it.geosolutions.imageio.plugins.jp2k.JP2KKakaduImageWriteParam.Compression;
 import it.geosolutions.imageio.plugins.jp2k.JP2KKakaduImageWriter;
 import it.geosolutions.imageio.plugins.jp2k.JP2KKakaduImageWriterSpi;
+import it.geosolutions.imageio.plugins.nitronitf.NITFUtilities.WriteCompression;
+import it.geosolutions.imageio.plugins.nitronitf.wrapper.HeaderWrapper;
+import it.geosolutions.imageio.plugins.nitronitf.wrapper.ImageWrapper;
+import it.geosolutions.imageio.plugins.nitronitf.wrapper.NITFProperties;
+import it.geosolutions.imageio.plugins.nitronitf.wrapper.ShapeFileWrapper;
+import it.geosolutions.imageio.plugins.nitronitf.wrapper.TextWrapper;
+import it.geosolutions.imageio.plugins.nitronitf.wrapper.ImageWrapper.Category;
+import it.geosolutions.imageio.plugins.nitronitf.wrapper.ImageWrapper.ImageBand;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 import it.geosolutions.imageio.stream.output.FileImageOutputStreamExt;
@@ -68,14 +76,6 @@ import nitf.TextSubheader;
 import nitf.Version;
 import nitf.WriteHandler;
 import nitf.Writer;
-import nitf.imageio.NITFUtilities.WriteCompression;
-import nitf.imageio.wrapper.HeaderWrapper;
-import nitf.imageio.wrapper.ImageWrapper;
-import nitf.imageio.wrapper.ImageWrapper.Category;
-import nitf.imageio.wrapper.ImageWrapper.ImageBand;
-import nitf.imageio.wrapper.NITFProperties;
-import nitf.imageio.wrapper.ShapeFileWrapper;
-import nitf.imageio.wrapper.TextWrapper;
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -83,7 +83,7 @@ public class NITFImageWriter extends ImageWriter {
 
     private File outputFile;
 
-    private static final Logger LOGGER = Logger.getLogger("nitf.imageio.NITFWriter");
+    private static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.nitronitf.NITFImageWriter");
 
     private final static JP2KKakaduImageWriterSpi KAKADU_SPI = new JP2KKakaduImageWriterSpi();
 

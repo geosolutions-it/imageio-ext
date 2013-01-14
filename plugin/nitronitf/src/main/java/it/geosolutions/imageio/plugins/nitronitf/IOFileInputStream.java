@@ -1,4 +1,4 @@
-package nitf.imageio;
+package it.geosolutions.imageio.plugins.nitronitf;
 
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 

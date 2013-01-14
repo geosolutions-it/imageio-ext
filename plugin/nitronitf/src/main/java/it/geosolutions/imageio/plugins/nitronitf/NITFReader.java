@@ -20,7 +20,7 @@
  * see <http://www.gnu.org/licenses/>.
  */
 
-package nitf.imageio;
+package it.geosolutions.imageio.plugins.nitronitf;
 
 import java.awt.Point;
 import java.awt.Rectangle;
