@@ -61,7 +61,6 @@
             <groupId>nitro-nitf</groupId>
             <artifactId>nitf-bindings</artifactId>
             <version>${nitro.version}</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>
