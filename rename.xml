@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="Rename" default="rename">
   <target name="rename">
+    <property name="fromVersion" value="1.1-SNAPSHOT"/>
+    <property name="toVersion" value="1.1.6"/>
     <replace dir=".">
       <include name="**/pom.xml"/>
-     <replacefilter token="&lt;version&gt;1.1.6&lt;/version&gt;"
-                     value="&lt;version&gt;1.1-SNAPSHOT&lt;/version&gt;"/>
+     <replacefilter token="&lt;version&gt;${fromVersion}&lt;/version&gt;"
+                     value="&lt;version&gt;${toVersion}&lt;/version&gt;"/>
     </replace>
+    <replace dir=".">
+      <include name="**/src.xml"/>
+     <replacefilter token="&lt;outputDirectory&gt;imageio-ext-${fromVersion}"
+         value="&lt;outputDirectory&gt;imageio-ext-${toVersion}"/>
+    </replace>
+    <replace file="release.xml" token="${fromVersion}" value="${toVersion}"/>
   </target>
 </project>
 
