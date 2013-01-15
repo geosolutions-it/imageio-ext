@@ -158,6 +158,16 @@
     </dependency>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
+      <artifactId>imageio-ext-turbojpeg</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>it.geosolutions.imageio-ext</groupId>
+      <artifactId>imageio-ext-nitf</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-kakadujni</artifactId>
       <version>${kakadu.version}</version>
     </dependency>

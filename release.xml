@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="Release" default="release">
+  <target name="release">
+    <property name="version" value="1.1-SNAPSHOT" />
+    
+    <property name="host" value="demo.geo-solutions.it" />
+    <property name="remoteReleasesPath" value="fakepath" />
+    <property name="user" value="fakeuser" />
+    <property name="password" value="fakepassword" />
+    
+    <!-- Prepare deployment folder -->
+    <delete includeEmptyDirs="true" dir="deploy" />
+    <mkdir dir="deploy" />
+    
+    <!-- clean up the sources, by deleting included target folder -->
+    <delete includeEmptyDirs="true" dir="target/release/sources" />
+    <unzip overwrite="true" src="target/release/imageio-ext-${version}-src.zip" dest="target/release/sources" />
+     <delete includeEmptyDirs="true">
+        <fileset dir="target/release/sources" includes="**/target/" defaultexcludes="false"/>
+     </delete>
+     <zip destfile="deploy/imageio-ext-${version}-sources.zip" basedir="target/release/sources" />
+     
+     <!-- copying readme file -->
+     <copy file="readme.txt" tofile="deploy/readme.txt" />
+     
+     <!-- copying all jar classes to a single archive to be deployed -->
+     <mkdir dir="release/target/netcdf" />
+     <move todir="release/target/netcdf">
+       <fileset dir="release/target/dependency" includes="commons-http*, *grib*, grib*, *hdf*, *netcdf*, netcdf*, *4j*, opendap*" />
+     </move>
+     <zip destfile="deploy/imageio-ext-${version}-jars.zip" basedir="release/target/dependency" />
+     <zip destfile="deploy/imageio-ext-${version}-netcdf.zip" basedir="release/target/netcdf" />
+     
+     <!-- copying javadocs -->
+     <copy file="target/release/imageio-ext-${version}-javadoc.zip" toFile="deploy/imageio-ext-${version}-javadocs.zip" />
+     
+     <!-- transfer to Remote-->
+     <scp todir="${user}:${password}@${host}:${remoteReleasesPath}/${version}">
+       <fileset dir="deploy">
+         <include name="*"/>
+       </fileset>
+     </scp>
+  </target>
+</project>
+
