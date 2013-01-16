@@ -24,6 +24,7 @@
         <outputDirectory>/</outputDirectory>
         <includes>
           <include>LICENSE.txt</include>
+          <include>LICENSE.libjpegturbo.txt</include>
           <include>MrSID_decoderSDK_license.txt</include>
           <include>imageio-ext-tiff-BSD-LICENSE.txt</include>
           <include>imageio-ext-imagereadmt-BSD-LICENSE.txt</include>
