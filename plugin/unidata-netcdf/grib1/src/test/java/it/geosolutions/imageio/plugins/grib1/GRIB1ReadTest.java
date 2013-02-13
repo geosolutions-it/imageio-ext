@@ -15,7 +15,7 @@
  */
 package it.geosolutions.imageio.plugins.grib1;
 
-import it.geosolutions.imageio.ndplugin.BaseImageMetadata;
+import it.geosolutions.imageio.plugins.netcdf.UcarImageMetadata;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
@@ -73,7 +73,7 @@ public class GRIB1ReadTest {
 	                    ImageIOUtilities.visualize(ri);
 	                else
 	                    Assert.assertNotNull(ri.getData());
-	                ImageIOUtilities.displayImageIOMetadata(reader.getImageMetadata(index).getAsTree(BaseImageMetadata.nativeMetadataFormatName));
+	                ImageIOUtilities.displayImageIOMetadata(reader.getImageMetadata(index).getAsTree(UcarImageMetadata.nativeMetadataFormatName));
 	                ImageIOUtilities.displayImageIOMetadata(reader.getImageMetadata(index).getAsTree(GRIB1ImageMetadata.nativeMetadataFormatName));
 	            }
             }

@@ -15,7 +15,7 @@
  */
 package it.geosolutions.imageio.plugins.grib1;
 
-import it.geosolutions.imageio.ndplugin.BaseImageReaderSpi;
+import it.geosolutions.imageio.plugins.netcdf.UcarImageReaderSpi;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 
 import java.io.File;
@@ -32,7 +32,7 @@ import ucar.nc2.NetcdfFile;
  * 
  * @author Daniele Romagnoli, GeoSolutions
  */
-public class GRIB1ImageReaderSpi extends BaseImageReaderSpi {
+public class GRIB1ImageReaderSpi extends UcarImageReaderSpi {
     static final String[] suffixes = { "grib", "grb" };
 
     static final String[] formatNames = { "GRIB1" };

@@ -13,6 +13,11 @@
   <name>GRIB1 - Direct Plugin</name>
   
   <dependencies>
+     <dependency>
+      <groupId>it.geosolutions.imageio-ext</groupId>
+      <artifactId>imageio-ext-netcdf</artifactId>
+      <version>${project.version}</version>
+     </dependency>
     <dependency>
       <groupId>it.geosolutions</groupId>
       <artifactId>grib</artifactId>

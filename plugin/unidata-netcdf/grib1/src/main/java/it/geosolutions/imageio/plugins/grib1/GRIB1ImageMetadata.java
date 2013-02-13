@@ -16,11 +16,11 @@
 package it.geosolutions.imageio.plugins.grib1;
 
 import it.geosolutions.imageio.core.CoreCommonImageMetadata;
-import it.geosolutions.imageio.ndplugin.BaseImageMetadata;
-import it.geosolutions.imageio.ndplugin.BaseImageReader;
 import it.geosolutions.imageio.plugins.grib1.GRIB1ImageReader.GribVariableWrapper;
 import it.geosolutions.imageio.plugins.grib1.GRIB1ImageReader.VerticalLevel;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.KeyValuePair;
+import it.geosolutions.imageio.plugins.netcdf.UcarImageMetadata;
+import it.geosolutions.imageio.plugins.netcdf.UcarImageReader;
 
 import java.io.IOException;
 import java.util.List;
@@ -32,7 +32,7 @@ import org.w3c.dom.Node;
 /**
  * @author Daniele Romagnoli, GeoSolutions
  */
-public class GRIB1ImageMetadata extends BaseImageMetadata {
+public class GRIB1ImageMetadata extends UcarImageMetadata {
 
     // final Calendar baseTime = PDS.getGMTBaseTime();
 
@@ -138,23 +138,23 @@ public class GRIB1ImageMetadata extends BaseImageMetadata {
     
     public final static String PDSL_AXISTYPE = "axisType";
 
-    public GRIB1ImageMetadata(final BaseImageReader reader, final int imageIndex) {
+    public GRIB1ImageMetadata(final UcarImageReader reader, final int imageIndex) {
         super(checkReaderType(reader), imageIndex);
     }
 
-    private static BaseImageReader checkReaderType(final BaseImageReader reader) {
+    private static UcarImageReader checkReaderType(final UcarImageReader reader) {
     	if(reader instanceof GRIB1ImageReader)
     		return reader;
     	throw new IllegalArgumentException("Provided reader is of type "+reader.getClass().getCanonicalName());
 	}
 
 	@Override
-    protected void setMembers(BaseImageReader imageReader) throws IOException {
+    protected void setMembers(UcarImageReader imageReader) throws IOException {
         super.setMembers(imageReader);
         if (imageReader instanceof GRIB1ImageReader) {
             final int imageIndex = getImageIndex();
             GRIB1ImageReader reader = (GRIB1ImageReader) imageReader;
-            setDatasetName(reader.getInnerReader().getVariableName(imageIndex));
+            setDatasetName(reader.getVariableName(imageIndex));
             setDriverDescription(driverDescription);
             setDriverName(driverName);
         }
@@ -188,7 +188,7 @@ public class GRIB1ImageMetadata extends BaseImageMetadata {
             IIOMetadataNode gdsNode = new IIOMetadataNode(GDS);
             GRIB1ImageReader directReader = (GRIB1ImageReader) imageReader;
             final int imageIndex = getImageIndex();
-            final GribVariableWrapper wrapper = (GribVariableWrapper) directReader.getInnerReader().getVariableWrapper(imageIndex);
+            final GribVariableWrapper wrapper = (GribVariableWrapper) directReader.getVariableWrapper(imageIndex);
             List<KeyValuePair> coordsAttribute = directReader.getCoordinateAttributes();
             for (KeyValuePair pair : coordsAttribute){
             	gdsNode.setAttribute(pair.getKey(),pair.getValue());
