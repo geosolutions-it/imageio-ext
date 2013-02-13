@@ -17,7 +17,7 @@
 package it.geosolutions.imageio.plugins.hdf4.aps;
 
 import it.geosolutions.imageio.plugins.hdf4.BaseHDF4ImageReader;
-import it.geosolutions.imageio.plugins.netcdf.BaseNetCDFImageReader;
+import it.geosolutions.imageio.plugins.netcdf.BaseVariableWrapper;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities;
 
 import java.awt.image.DataBuffer;
@@ -59,21 +59,23 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
     
     Map<String, String> projectionMap = null;
 
+    private int numGlobalAttributes;
+
+    private Map<Range,APSDatasetWrapper> indexMap;
+    
     private class APSDatasetWrapper extends HDF4DatasetWrapper{
         private APSDatasetWrapper(Variable var) {
         	super(var);
 		}
     }
     
-    BaseNetCDFImageReader getInnerReader() {
-		return reader;
-	}
-
     /**
      * Initialize main properties for this <code>HDF4APSImageReader</code>
      */
     protected void initializeProfile() throws IOException {
-        final NetcdfDataset dataset = reader.getDataset();
+        
+        
+        final NetcdfDataset dataset = getDataset();
         if (dataset == null) {
             throw new IOException(
                     "Unable to initialize profile due to a null dataset");
@@ -81,7 +83,7 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
         final List<Variable> variables = dataset.getVariables();
         final List<Attribute> attributes = dataset.getGlobalAttributes();
         final int numVars = variables.size();
-        reader.setNumGlobalAttributes(attributes.size());
+        numGlobalAttributes = attributes.size();
 
         // //
         //
@@ -106,8 +108,7 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
             numImages = numVars;
         }
         setNumImages(numImages);
-        reader.setNumImages(numImages);
-        final Map<Range,APSDatasetWrapper> indexMap = new HashMap<Range, APSDatasetWrapper>(numImages);
+        indexMap = new HashMap<Range, APSDatasetWrapper>(numImages);
 
         Variable varProjection;
         // //
@@ -145,7 +146,6 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
 	    } catch (InvalidRangeException e) {
 	    	throw new IllegalArgumentException( "Error occurred during NetCDF file parsing", e);
 		}
-	    reader.setIndexMap(indexMap);
     }
 
     private static Map<String,String> buildProjectionAttributesMap(final Array data, int datatype) {
@@ -259,7 +259,24 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
 	
 	@Override
 	protected HDF4DatasetWrapper getDatasetWrapper(int imageIndex) {
-		return (HDF4DatasetWrapper) reader.getVariableWrapper(imageIndex);
+		return (HDF4DatasetWrapper) getVariableWrapper(imageIndex);
 	}
+
+    @Override
+    public BaseVariableWrapper getVariableWrapper( int imageIndex ) {
+        checkImageIndex(imageIndex);
+        BaseVariableWrapper wrapper = null;
+        for( Range range : indexMap.keySet() ) {
+            if (range.contains(imageIndex) && range.first() <= imageIndex && imageIndex < range.last()) {
+                wrapper = indexMap.get(range);
+            }
+        }
+        return wrapper;
+    }
+
+    @Override
+    public int getNumGlobalAttributes() {
+        return numGlobalAttributes;
+    }
 
 }

@@ -17,9 +17,8 @@
 package it.geosolutions.imageio.plugins.hdf4.terascan;
 
 import it.geosolutions.imageio.core.CoreCommonImageMetadata;
-import it.geosolutions.imageio.ndplugin.BaseImageReader;
-import it.geosolutions.imageio.plugins.netcdf.BaseNetCDFImageReader;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.KeyValuePair;
+import it.geosolutions.imageio.plugins.netcdf.UcarImageReader;
 import it.geosolutions.imageio.utilities.Utilities;
 
 import java.io.IOException;
@@ -36,11 +35,11 @@ public class HDF4TeraScanStreamMetadata extends IIOMetadata {
      */
     public static final String nativeMetadataFormatName = "it_geosolutions_imageio_plugins_hdf4_terascan_TeraScanstreamMetadata_1.0";
 
-    private BaseImageReader imageReader;
+    private UcarImageReader imageReader;
 
     public final static String GLOBAL_ATTRIBUTES = "GlobalAttributes";
 
-    public HDF4TeraScanStreamMetadata(final BaseImageReader imageReader) {
+    public HDF4TeraScanStreamMetadata(final UcarImageReader imageReader) {
         this.imageReader = imageReader;
     }
 
@@ -63,11 +62,10 @@ public class HDF4TeraScanStreamMetadata extends IIOMetadata {
         final IIOMetadataNode node = new IIOMetadataNode(GLOBAL_ATTRIBUTES);
         if (imageReader instanceof HDF4TeraScanImageReader) {
             final HDF4TeraScanImageReader reader = (HDF4TeraScanImageReader) imageReader;
-            final BaseNetCDFImageReader innerReader = reader.getInnerReader();
-            final int numAttributes = innerReader.getNumGlobalAttributes();
+            final int numAttributes = reader.getNumGlobalAttributes();
             try {
                 for (int i = 0; i < numAttributes; i++) {
-                	 final KeyValuePair keyValuePair = innerReader.getGlobalAttribute(i);
+                	 final KeyValuePair keyValuePair = reader.getGlobalAttribute(i);
                      String attribName = keyValuePair.getKey();
                      final String attribValue = keyValuePair.getValue();
                     // //

@@ -1,10 +1,28 @@
+/*
+ *    ImageI/O-Ext - OpenSource Java Image translation Library
+ *    http://www.geo-solutions.it/
+ *    http://java.net/projects/imageio-ext/
+ *    (C) 2007 - 2009, GeoSolutions
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    either version 3 of the License, or (at your option) any later version.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 package it.geosolutions.imageio.plugins.netcdf;
 
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.KeyValuePair;
+import it.geosolutions.imageio.stream.input.URIImageInputStream;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 
 import java.awt.image.SampleModel;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 
@@ -18,6 +36,13 @@ import ucar.nc2.dataset.CoordinateSystem;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dataset.VariableDS;
 
+/**
+ * An abstract class that handles most of the ucar netcdf libs backed datatypes.
+ * 
+ * @author Alessio Fabiani, GeoSolutions
+ * @author Simone Giannecchini, GeoSolutions
+ * @author Andrea Antonello (www.hydrologis.com)
+ */
 public abstract class UcarImageReader extends ImageReader {
 
     protected int numRasters = -1;
@@ -26,9 +51,54 @@ public abstract class UcarImageReader extends ImageReader {
         super(originatingProvider);
     }
 
+    /**
+     * A getter for the referenced image variable wrapper.
+     * 
+     * @param imageIndex the index of the image to pick.
+     * @return the {@link BaseVariableWrapper}.
+     */
     public abstract BaseVariableWrapper getVariableWrapper( int imageIndex );
 
+    /**
+     * Getter for the dataset that backs this reader.
+     * 
+     * @return the {@link NetcdfDataset}.
+     */
     public abstract NetcdfDataset getDataset();
+    
+    
+    /**
+     * @return the number of available global attributes.
+     */
+    public abstract int getNumGlobalAttributes();
+    
+    /**
+     * Get the {@link NetcdfDataset} out og an input object.
+     * 
+     * @param input the input object.
+     * @return the dataset or <code>null</code>.
+     * @throws IOException
+     */
+    protected NetcdfDataset extractDataset( Object input ) throws IOException {
+        NetcdfDataset dataset = null;
+        if (input instanceof URIImageInputStream) {
+            URIImageInputStream uriInStream = (URIImageInputStream) input;
+            dataset = NetcdfDataset.openDataset(uriInStream.getUri().toString());
+        }
+        if (input instanceof URL) {
+            final URL tempURL = (URL) input;
+            String protocol = tempURL.getProtocol();
+            if (protocol.equalsIgnoreCase("http") || protocol.equalsIgnoreCase("dods")) {
+                dataset = NetcdfDataset.openDataset(tempURL.toExternalForm());
+            }
+        }
+
+        if (dataset == null) {
+            dataset = NetCDFUtilities.getDataset(input);
+        }
+        
+        return dataset;
+    }
 
     public int getNumImages( final boolean allowSearch ) throws IOException {
         return numRasters;

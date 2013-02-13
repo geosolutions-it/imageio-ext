@@ -17,10 +17,9 @@
 package it.geosolutions.imageio.plugins.hdf4.terascan;
 
 import it.geosolutions.imageio.core.CoreCommonImageMetadata;
-import it.geosolutions.imageio.ndplugin.BaseImageMetadata;
-import it.geosolutions.imageio.ndplugin.BaseImageReader;
-import it.geosolutions.imageio.plugins.netcdf.BaseNetCDFImageReader;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.KeyValuePair;
+import it.geosolutions.imageio.plugins.netcdf.UcarImageMetadata;
+import it.geosolutions.imageio.plugins.netcdf.UcarImageReader;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -29,7 +28,7 @@ import javax.imageio.metadata.IIOMetadataNode;
 
 import org.w3c.dom.Node;
 
-public class HDF4TeraScanImageMetadata extends BaseImageMetadata {
+public class HDF4TeraScanImageMetadata extends UcarImageMetadata {
     public static final String nativeMetadataFormatName = "it_geosolutions_imageio_plugins_hdf4_terascan_terascanImageMetadata_1.0";
 
     private final static String driverName = "HDF4";
@@ -40,17 +39,16 @@ public class HDF4TeraScanImageMetadata extends BaseImageMetadata {
 
     private IIOMetadataNode nativeTree;
 
-    public HDF4TeraScanImageMetadata(final BaseImageReader reader,
+    public HDF4TeraScanImageMetadata(final UcarImageReader reader,
             final int imageIndex) {
         super(reader, imageIndex);
     }
 
-    protected void setMembers(BaseImageReader imageReader) throws IOException {
+    protected void setMembers(UcarImageReader imageReader) throws IOException {
         super.setMembers(imageReader);
         final int imageIndex = getImageIndex();
         if (imageReader instanceof HDF4TeraScanImageReader) {
             final HDF4TeraScanImageReader reader = (HDF4TeraScanImageReader) imageReader;
-            final BaseNetCDFImageReader innerReader = reader.getInnerReader();
             setDriverDescription(driverDescription);
             setDriverName(driverName);
             final double scale = reader.getScale(imageIndex);
@@ -81,10 +79,10 @@ public class HDF4TeraScanImageMetadata extends BaseImageMetadata {
             // overviews is always 0
             setNumOverviews(new int[] { 0 });
             
-            final int numAttributes = innerReader.getNumAttributes(imageIndex);
+            final int numAttributes = reader.getNumAttributes(imageIndex);
             this.additionalMetadata = new HashMap<String, String>(numAttributes);
             for (int i = 0; i < numAttributes; i++) {
-            	final KeyValuePair attributePair = innerReader.getAttribute(imageIndex, i);
+            	final KeyValuePair attributePair = reader.getAttribute(imageIndex, i);
                 final String attributeName = attributePair.getKey();
                 final String attributeValue = attributePair.getValue();
                 additionalMetadata.put(attributeName, attributeValue);

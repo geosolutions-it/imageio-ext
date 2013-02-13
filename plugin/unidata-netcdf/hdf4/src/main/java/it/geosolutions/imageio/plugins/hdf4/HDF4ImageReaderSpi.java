@@ -18,6 +18,7 @@ package it.geosolutions.imageio.plugins.hdf4;
 
 import it.geosolutions.imageio.plugins.netcdf.NetCDFImageReaderSpi;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities;
+import it.geosolutions.imageio.plugins.netcdf.UcarImageReaderSpi;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 
 import java.io.File;
@@ -38,7 +39,7 @@ import ucar.nc2.iosp.hdf4.H4iosp;
  * 
  * @author Daniele Romagnoli
  */
-public abstract class HDF4ImageReaderSpi extends NetCDFImageReaderSpi {
+public abstract class HDF4ImageReaderSpi extends UcarImageReaderSpi {
 
 	static{
 		NetcdfDataset.setDefaultEnhanceMode(EnumSet.of(Enhance.CoordSystems));

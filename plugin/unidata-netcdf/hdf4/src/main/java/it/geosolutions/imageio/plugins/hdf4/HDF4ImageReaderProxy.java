@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.hdf4;
 
+import it.geosolutions.imageio.plugins.netcdf.BaseVariableWrapper;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.KeyValuePair;
 
@@ -170,4 +171,19 @@ public class HDF4ImageReaderProxy extends BaseHDF4ImageReader{
 	protected void initializeProfile() throws IOException {
 		wrappee.initializeProfile();
 	}
+
+    @Override
+    public BaseVariableWrapper getVariableWrapper( int imageIndex ) {
+        return wrappee.getVariableWrapper(imageIndex);
+    }
+
+    @Override
+    public NetcdfDataset getDataset() {
+        return wrappee.getDataset();
+    }
+
+    @Override
+    public int getNumGlobalAttributes() {
+        return wrappee.getNumGlobalAttributes();
+    }
 }

@@ -16,7 +16,6 @@
  */
 package it.geosolutions.imageio.plugins.hdf4.aps;
 
-import it.geosolutions.imageio.plugins.netcdf.BaseNetCDFImageReader;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.KeyValuePair;
 
 import java.io.IOException;
@@ -252,8 +251,7 @@ public class HDF4APSStreamMetadata extends IIOMetadata {
 
     synchronized void buildMetadata(HDF4APSImageReader reader) {
         try {
-            final BaseNetCDFImageReader innerReader = reader.getInnerReader();
-        	final int numAttributes = innerReader.getNumGlobalAttributes();
+        	final int numAttributes = reader.getNumGlobalAttributes();
 
             // number of supported attributes
             final int nStdFileAttribMap = HDF4APSProperties.STD_FA_ATTRIB.length;
@@ -265,7 +263,7 @@ public class HDF4APSStreamMetadata extends IIOMetadata {
 
             for (int i = 0; i < numAttributes; i++) {
                 // get Attributes
-                final KeyValuePair keyValuePair = innerReader.getGlobalAttribute(i);
+                final KeyValuePair keyValuePair = reader.getGlobalAttribute(i);
                 final String attribName = keyValuePair.getKey();
                 final String attribValue = keyValuePair.getValue();
                 // get Attribute Name

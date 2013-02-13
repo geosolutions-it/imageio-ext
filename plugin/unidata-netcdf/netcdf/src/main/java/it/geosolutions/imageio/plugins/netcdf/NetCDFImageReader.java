@@ -17,7 +17,6 @@
 package it.geosolutions.imageio.plugins.netcdf;
 
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.CheckType;
-import it.geosolutions.imageio.stream.input.URIImageInputStream;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 
 import java.awt.Point;
@@ -31,7 +30,6 @@ import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -155,11 +153,10 @@ public class NetCDFImageReader extends UcarImageReader implements CancelTask {
             throw new IllegalArgumentException("Error occurred during NetCDF file parsing", e);
         }
         setNumImages(numImages);
-        int numAttribs = 0;
+        numGlobalAttributes = 0;
         final List<Attribute> globalAttributes = dataset.getGlobalAttributes();
         if (globalAttributes != null && !globalAttributes.isEmpty())
-            numAttribs = globalAttributes.size();
-        setNumGlobalAttributes(numAttribs); // XXX
+            numGlobalAttributes = globalAttributes.size();
     }
 
     /**
@@ -453,23 +450,9 @@ public class NetCDFImageReader extends UcarImageReader implements CancelTask {
             if (dataset != null)
                 reset();
 
-            if (input instanceof URIImageInputStream) {
-                URIImageInputStream uriInStream = (URIImageInputStream) input;
-                dataset = NetcdfDataset.openDataset(uriInStream.getUri().toString());
-            }
-            if (input instanceof URL) {
-                final URL tempURL = (URL) input;
-                String protocol = tempURL.getProtocol();
-                if (protocol.equalsIgnoreCase("http") || protocol.equalsIgnoreCase("dods")) {
-                    dataset = NetcdfDataset.openDataset(tempURL.toExternalForm());
-                }
-            }
+            dataset = extractDataset(input);
 
-            if (dataset == null) {
-                dataset = NetCDFUtilities.getDataset(input);
-            }
-
-            super.setInput(input, seekForwardOnly, ignoreMetadata);
+            // super.setInput(input, seekForwardOnly, ignoreMetadata);
 
             initialize();
         } catch (IOException e) {
@@ -479,10 +462,6 @@ public class NetCDFImageReader extends UcarImageReader implements CancelTask {
 
     public int getNumGlobalAttributes() {
         return numGlobalAttributes;
-    }
-
-    public void setNumGlobalAttributes( int numGlobalAttributes ) {
-        this.numGlobalAttributes = numGlobalAttributes;
     }
 
     /**

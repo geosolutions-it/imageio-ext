@@ -17,7 +17,7 @@
 package it.geosolutions.imageio.plugins.hdf4.terascan;
 
 import it.geosolutions.imageio.plugins.hdf4.BaseHDF4ImageReader;
-import it.geosolutions.imageio.plugins.netcdf.BaseNetCDFImageReader;
+import it.geosolutions.imageio.plugins.netcdf.BaseVariableWrapper;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -47,6 +47,10 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
 
     private IIOMetadata streamMetadata = null;
 
+    private int numGlobalAttributes;
+
+    private Map<Range,TerascanDatasetWrapper> indexMap;
+    
     public HDF4TeraScanImageReader(ImageReaderSpi originatingProvider) {
         super(originatingProvider);
     }
@@ -70,20 +74,19 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
      */
     protected void initializeProfile() throws IOException {
     	boolean checkProducts = true;
-    	final NetcdfDataset dataset = reader.getDataset();
+    	final NetcdfDataset dataset = getDataset();
         if (dataset == null) {
             throw new IOException(
                     "Unable to initialize profile due to a null dataset");
         }
         final List<Variable> variables = dataset.getVariables();
         final List<Attribute> attributes = dataset.getGlobalAttributes();
-        reader.setNumGlobalAttributes(attributes.size());
+        numGlobalAttributes = attributes.size();
         productList = HDF4TeraScanProperties.refineProductList(variables);
         final int numImages = productList != null ? productList.length : 0;
         setNumImages(numImages);
-        reader.setNumImages(numImages);
 
-        final Map<Range,TerascanDatasetWrapper> indexMap = new HashMap<Range, TerascanDatasetWrapper>(numImages);
+        indexMap = new HashMap<Range, TerascanDatasetWrapper>(numImages);
 
      // Scanning all the datasets
         try{
@@ -101,7 +104,6 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
         } catch (InvalidRangeException e) {
 	    	throw new IllegalArgumentException( "Error occurred during NetCDF file parsing", e);
 		}
-	    reader.setIndexMap(indexMap);
     }
 
     /**
@@ -112,13 +114,9 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
      */
     @Override
     protected HDF4DatasetWrapper getDatasetWrapper(int imageIndex) {
-    	return (HDF4DatasetWrapper) reader.getVariableWrapper(imageIndex);
+    	return (HDF4DatasetWrapper) getVariableWrapper(imageIndex);
     }
 
-    BaseNetCDFImageReader getInnerReader() {
-		return reader;
-	}
-    
     public void dispose() {
         super.dispose();
         productList = null;
@@ -254,5 +252,22 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
 	public synchronized IIOMetadata getStreamMetadata() throws IOException {
 		return getStreamMetadata(HDF4TeraScanStreamMetadata.nativeMetadataFormatName, null);
 	}
+
+    @Override
+    public BaseVariableWrapper getVariableWrapper( int imageIndex ) {
+        checkImageIndex(imageIndex);
+        BaseVariableWrapper wrapper = null;
+        for( Range range : indexMap.keySet() ) {
+            if (range.contains(imageIndex) && range.first() <= imageIndex && imageIndex < range.last()) {
+                wrapper = indexMap.get(range);
+            }
+        }
+        return wrapper;
+    }
+
+    @Override
+    public int getNumGlobalAttributes() {
+        return numGlobalAttributes;
+    }
 	
 }

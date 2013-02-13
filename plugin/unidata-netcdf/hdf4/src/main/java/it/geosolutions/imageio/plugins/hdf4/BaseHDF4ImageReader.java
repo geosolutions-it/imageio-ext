@@ -17,9 +17,8 @@
 package it.geosolutions.imageio.plugins.hdf4;
 
 import it.geosolutions.imageio.plugins.netcdf.BaseVariableWrapper;
-import it.geosolutions.imageio.plugins.netcdf.NetCDFImageReader;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities;
-import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.KeyValuePair;
+import it.geosolutions.imageio.plugins.netcdf.UcarImageReader;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 
 import java.awt.Point;
@@ -38,13 +37,11 @@ import java.awt.image.Raster;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageReadParam;
-import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
 
@@ -61,37 +58,39 @@ import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.iosp.hdf4.H4iosp;
 
-public abstract class BaseHDF4ImageReader extends NetCDFImageReader {
+public abstract class BaseHDF4ImageReader extends UcarImageReader {
 
-	protected class HDF4DatasetWrapper extends BaseVariableWrapper{
-        
+    protected class HDF4DatasetWrapper extends BaseVariableWrapper {
+
         private int numAttributes;
 
         public int getNumAttributes() {
-			return numAttributes;
-		}
-        
-        protected HDF4DatasetWrapper(final Variable var) {
-        	super(var);
+            return numAttributes;
+        }
+
+        protected HDF4DatasetWrapper( final Variable var ) {
+            super(var);
             numAttributes = var.getAttributes().size();
             final int numBands = getNumBands();
             final int width = getWidth();
             final int height = getHeight();
             if (numBands == 3)
-            	setSampleModel(new PixelInterleavedSampleModel(NetCDFUtilities.getRawDataType(var), width,
-            			height, numBands, width*numBands, new int[]{0,1,2}));	
+                setSampleModel(new PixelInterleavedSampleModel(NetCDFUtilities.getRawDataType(var), width, height, numBands,
+                        width * numBands, new int[]{0, 1, 2}));
             else
-            	setSampleModel(new BandedSampleModel(NetCDFUtilities.getRawDataType(var), width, height, numBands));	
+                setSampleModel(new BandedSampleModel(NetCDFUtilities.getRawDataType(var), width, height, numBands));
         }
-	}
-	
-	protected final static Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.hdf4");
+    }
+
+    protected final static Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.hdf4");
 
     /** set it to <code>true</code> when initialization has been performed */
     private boolean isInitialized = false;
 
-	protected abstract HDF4DatasetWrapper getDatasetWrapper(final int imageIndex);
-    
+    private NetcdfDataset dataset;
+
+    protected abstract HDF4DatasetWrapper getDatasetWrapper( final int imageIndex );
+
     /**
      * Additional initialization for a specific HDF "Profile". Depending on the
      * HDF data producer, the originating file has a proper data/metadata
@@ -105,7 +104,7 @@ public abstract class BaseHDF4ImageReader extends NetCDFImageReader {
      */
     protected abstract void initializeProfile() throws IOException;
 
-    protected BaseHDF4ImageReader(ImageReaderSpi originatingProvider) {
+    protected BaseHDF4ImageReader( ImageReaderSpi originatingProvider ) {
         super(originatingProvider);
     }
 
@@ -121,52 +120,55 @@ public abstract class BaseHDF4ImageReader extends NetCDFImageReader {
     }
 
     /**
-	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#dispose()
-	 */
+     * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#dispose()
+     */
     public void dispose() {
         super.dispose();
         isInitialized = false;
     }
+
+    @Override
+    public void setInput( Object input, boolean seekForwardOnly, boolean ignoreMetadata ) {
+        super.setInput(input, seekForwardOnly, ignoreMetadata);
+        // setInput(input, seekForwardOnly, ignoreMetadata);
+
+        if (dataset != null)
+            reset();
+
+        try {
+            dataset = extractDataset(input);
+        } catch (IOException e1) {
+            throw new IllegalArgumentException("Error occurred during NetCDF file opening", e1);
+        }
+
+        if (dataset != null) {
+            if (!(dataset.getIosp() instanceof H4iosp))
+                throw new IllegalArgumentException("Provided dataset is not an HDF4 file");
+        } else
+            throw new IllegalArgumentException("Provided dataset is not an HDF4 file");
+
+        try {
+            initialize();
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Error occurred during NetCDF file parsing", e);
+        }
+    }
     
     @Override
-	public void setInput(Object input, boolean seekForwardOnly,
-			boolean ignoreMetadata) {
-		super.setInput(input, seekForwardOnly, ignoreMetadata);
-		setInput(input, seekForwardOnly, ignoreMetadata);
-		final NetcdfDataset dataset = getDataset();
-		if(dataset!=null){
-    		if(!(dataset.getIosp() instanceof H4iosp))
-    			throw new IllegalArgumentException("Provided dataset is not an HDF4 file");
-    	}
-    	else
-    		throw new IllegalArgumentException("Provided dataset is not an HDF4 file");
-		
-		try {
-			initialize();
-		} catch (IOException e) {
-            throw new IllegalArgumentException("Error occurred during NetCDF file parsing", e);
-		}
-	}
-
-    /**
-	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#getStreamMetadata()
-	 */
-    public IIOMetadata getStreamMetadata() throws IOException {
-        throw new UnsupportedOperationException("Stream Metadata is not implemented for the base class, use corecommonstreammetadata");
+    public NetcdfDataset getDataset() {
+        return dataset;
     }
 
-	@Override
-	public void setInput(Object input, boolean seekForwardOnly) {
-		this.setInput(input, seekForwardOnly, false);
-	}
+    /**
+     * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#getStreamMetadata()
+     */
+    public IIOMetadata getStreamMetadata() throws IOException {
+        throw new UnsupportedOperationException(
+                "Stream Metadata is not implemented for the base class, use corecommonstreammetadata");
+    }
 
-	@Override
-	public void setInput(Object input) {
-		this.setInput(input, false, false);
-	}
-
-    protected BufferedImage read2DVariable (final int imageIndex, final ImageReadParam param) throws IOException{
-    	BufferedImage image = null;
+    protected BufferedImage read2DVariable( final int imageIndex, final ImageReadParam param ) throws IOException {
+        BufferedImage image = null;
         final HDF4DatasetWrapper wrapper = getDatasetWrapper(imageIndex);
         final Variable variable = wrapper.getVariable();
 
@@ -175,17 +177,17 @@ public abstract class BaseHDF4ImageReader extends NetCDFImageReader {
          * methods like 'getDestination' or 'computeRegions' (invoked below).
          */
         final int strideX, strideY;
-        final int[] srcBands, dstBands;
+        // final int[] srcBands, dstBands;
         if (param != null) {
             strideX = param.getSourceXSubsampling();
             strideY = param.getSourceYSubsampling();
-            srcBands = param.getSourceBands();
-            dstBands = param.getDestinationBands();
+            // srcBands = param.getSourceBands();
+            // dstBands = param.getDestinationBands();
         } else {
             strideX = 1;
             strideY = 1;
-            srcBands = null;
-            dstBands = null;
+            // srcBands = null;
+            // dstBands = null;
         }
         final int rank = variable.getRank();
 
@@ -209,32 +211,32 @@ public abstract class BaseHDF4ImageReader extends NetCDFImageReader {
         int destHeight = destRegion.y + destRegion.height;
 
         final List<Range> ranges = new LinkedList<Range>();
-        for (int i = 0; i < rank; i++) {
+        for( int i = 0; i < rank; i++ ) {
             final int first, length, stride;
-            switch (i) {
-	            case 1: {
-	                first = srcRegion.x;
-	                length = srcRegion.width;
-	                stride = strideX;
-	                break;
-	            }
-	            case 0: {
-	                first = srcRegion.y;
-	                length = srcRegion.height;
-	                stride = strideY;
-	                break;
-	            }
-	            default: {
-	                first = 0;
-	            	length = numBands;
-	                stride = 1;
-	                break;
-	            }
+            switch( i ) {
+            case 1: {
+                first = srcRegion.x;
+                length = srcRegion.width;
+                stride = strideX;
+                break;
+            }
+            case 0: {
+                first = srcRegion.y;
+                length = srcRegion.height;
+                stride = strideY;
+                break;
+            }
+            default: {
+                first = 0;
+                length = numBands;
+                stride = 1;
+                break;
+            }
             }
             try {
                 ranges.add(new Range(first, first + length - 1, stride));
             } catch (InvalidRangeException e) {
-             	//TODO LOGME
+                // TODO LOGME
             }
         }
         final Section sections = new Section(ranges);
@@ -248,51 +250,49 @@ public abstract class BaseHDF4ImageReader extends NetCDFImageReader {
         /*
          * Reads the requested sub-region only.
          */
-        final int size = destHeight*destWidth*numBands;
+        final int size = destHeight * destWidth * numBands;
         Array array = null;
         try {
             array = variable.read(sections);
             DataBuffer dataBuffer = null;
-            if (array instanceof ArrayByte){
-            	dataBuffer = new DataBufferByte((byte[])array.get1DJavaArray(byte.class),size);
-            } else if (array instanceof ArrayShort){
-            	dataBuffer = new DataBufferShort((short[])array.get1DJavaArray(short.class),size);
-            } else if (array instanceof ArrayInt){
-            	dataBuffer = new DataBufferInt((int[])array.get1DJavaArray(int.class),size);
-            } else if (array instanceof ArrayFloat){
-            	dataBuffer = new DataBufferFloat((float[])array.get1DJavaArray(float.class),size);
-            } else if (array instanceof ArrayDouble){
-            	dataBuffer = new DataBufferDouble((double[])array.get1DJavaArray(double.class),size);
+            if (array instanceof ArrayByte) {
+                dataBuffer = new DataBufferByte((byte[]) array.get1DJavaArray(byte.class), size);
+            } else if (array instanceof ArrayShort) {
+                dataBuffer = new DataBufferShort((short[]) array.get1DJavaArray(short.class), size);
+            } else if (array instanceof ArrayInt) {
+                dataBuffer = new DataBufferInt((int[]) array.get1DJavaArray(int.class), size);
+            } else if (array instanceof ArrayFloat) {
+                dataBuffer = new DataBufferFloat((float[]) array.get1DJavaArray(float.class), size);
+            } else if (array instanceof ArrayDouble) {
+                dataBuffer = new DataBufferDouble((double[]) array.get1DJavaArray(double.class), size);
             }
-            
-            WritableRaster raster = Raster.createWritableRaster(sampleModel, dataBuffer, new Point(0,0));
-            image = new BufferedImage(colorModel, raster,
-                    colorModel.isAlphaPremultiplied(), null);
+
+            WritableRaster raster = Raster.createWritableRaster(sampleModel, dataBuffer, new Point(0, 0));
+            image = new BufferedImage(colorModel, raster, colorModel.isAlphaPremultiplied(), null);
         } catch (InvalidRangeException e) {
-        	//TODO LOGME
-        } 
+            // TODO LOGME
+        }
         return image;
     }
-    
+
     /**
-	 * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#read(int, javax.imageio.ImageReadParam)
-	 */
+     * @see it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader#read(int, javax.imageio.ImageReadParam)
+     */
     @Override
-    public BufferedImage read(final int imageIndex, final ImageReadParam param)
-            throws IOException {
-    	return read2DVariable(imageIndex, param);
+    public BufferedImage read( final int imageIndex, final ImageReadParam param ) throws IOException {
+        return read2DVariable(imageIndex, param);
     }
 
-	/**
-	 * @see javax.imageio.ImageReader#getImageMetadata(int)
-	 */
-	@Override
-	public IIOMetadata getImageMetadata(final int imageIndex) throws IOException {
-		throw new UnsupportedOperationException("Change me as soon as possible to use corecommonimagemetadata");
-	}
-	
-	public IIOMetadata getImageMetadata(final int imageIndex, final String metadataFormat) throws IOException {
-		throw new UnsupportedOperationException("Change me as soon as possible to use corecommonimagemetadata");
-	}
-	
+    /**
+     * @see javax.imageio.ImageReader#getImageMetadata(int)
+     */
+    @Override
+    public IIOMetadata getImageMetadata( final int imageIndex ) throws IOException {
+        throw new UnsupportedOperationException("Change me as soon as possible to use corecommonimagemetadata");
+    }
+
+    public IIOMetadata getImageMetadata( final int imageIndex, final String metadataFormat ) throws IOException {
+        throw new UnsupportedOperationException("Change me as soon as possible to use corecommonimagemetadata");
+    }
+
 }
