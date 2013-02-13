@@ -16,7 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.hdf4;
 
-import it.geosolutions.imageio.ndplugin.BaseImageReaderSpi;
+import it.geosolutions.imageio.plugins.netcdf.NetCDFImageReaderSpi;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 
@@ -38,7 +38,7 @@ import ucar.nc2.iosp.hdf4.H4iosp;
  * 
  * @author Daniele Romagnoli
  */
-public abstract class HDF4ImageReaderSpi extends BaseImageReaderSpi {
+public abstract class HDF4ImageReaderSpi extends NetCDFImageReaderSpi {
 
 	static{
 		NetcdfDataset.setDefaultEnhanceMode(EnumSet.of(Enhance.CoordSystems));

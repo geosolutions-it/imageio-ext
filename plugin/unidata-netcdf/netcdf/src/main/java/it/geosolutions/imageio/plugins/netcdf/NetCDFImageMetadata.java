@@ -183,7 +183,7 @@ public class NetCDFImageMetadata extends CoreCommonImageMetadata {
 
     }
 
-    public NetCDFImageReader getImageReader() {
+    public UcarImageReader getImageReader() {
         return imageReader;
     }
 }
