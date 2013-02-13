@@ -16,7 +16,6 @@
  */
 package it.geosolutions.imageio.plugins.hdf4;
 
-import it.geosolutions.imageio.ndplugin.BaseImageReader;
 import it.geosolutions.imageio.plugins.netcdf.BaseNetCDFImageReader;
 import it.geosolutions.imageio.plugins.netcdf.BaseVariableWrapper;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities;
@@ -62,7 +61,7 @@ import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.iosp.hdf4.H4iosp;
 
-public abstract class BaseHDF4ImageReader extends BaseImageReader {
+public abstract class BaseHDF4ImageReader extends BaseNetCDFImageReader {
 
 	protected class HDF4DatasetWrapper extends BaseVariableWrapper{
         

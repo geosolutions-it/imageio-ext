@@ -16,18 +16,22 @@
  */
 package it.geosolutions.imageio.plugins.netcdf;
 
-import it.geosolutions.imageio.ndplugin.BaseImageReaderSpi;
+import it.geosolutions.imageio.stream.AccessibleStream;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 import it.geosolutions.imageio.stream.input.URIImageInputStream;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
 import java.util.EnumSet;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageReader;
+import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.stream.ImageInputStream;
 
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -38,11 +42,16 @@ import ucar.nc2.dataset.NetcdfDataset.Enhance;
  * 
  * @author Alessio Fabiani, GeoSolutions
  */
-public class NetCDFImageReaderSpi extends BaseImageReaderSpi {
+public class NetCDFImageReaderSpi extends ImageReaderSpi {
 
 	static{
 		NetcdfDataset.setDefaultEnhanceMode(EnumSet.of(Enhance.CoordSystems));
 	}
+	
+    protected static final Class<?>[] DIRECT_STANDARD_INPUT_TYPES = new Class[] {AccessibleStream.class,ImageInputStream.class,File.class,URL.class,URI.class };
+
+    protected static final String vendorName = "GeoSolutions";
+
 	
     /** Default Logger * */
     private static final Logger LOGGER = Logger

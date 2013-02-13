@@ -16,8 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.netcdf;
 
-import it.geosolutions.imageio.ndplugin.BaseImageReader;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.KeyValuePair;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.imageio.utilities.Utilities;
 
 import java.io.IOException;
@@ -34,12 +34,12 @@ public class NetCDFStreamMetadata extends IIOMetadata {
      */
     public static final String nativeMetadataFormatName = "it_geosolutions_imageio_plugins_netcdf_streamMetadata_1.0";
 
-    private BaseImageReader reader;
+    private NetCDFImageReader imageReader;
 
     public static final String GLOBAL_ATTRIBUTES = "GlobalAttributes";
 
-    public NetCDFStreamMetadata(final BaseImageReader reader) {
-        this.reader = reader;
+    public NetCDFStreamMetadata(final NetCDFImageReader reader) {
+        this.imageReader = reader;
 
     }
 
@@ -60,30 +60,27 @@ public class NetCDFStreamMetadata extends IIOMetadata {
         //
         // ////////////////////////////////////////////////////////////////////
         final IIOMetadataNode node = new IIOMetadataNode(GLOBAL_ATTRIBUTES);
-        if (reader instanceof NetCDFImageReader) {
-            final NetCDFImageReader directReader = (NetCDFImageReader) reader;
-            final BaseNetCDFImageReader innerReader = directReader.getInnerReader();
-            final int numAttributes = innerReader.getNumGlobalAttributes();
-            try {
-                for (int i = 0; i < numAttributes; i++) {
-                	KeyValuePair keyValuePair = innerReader.getGlobalAttribute(i);  
-                    String attributeName = keyValuePair.getKey();
-                    final String attributeValue = keyValuePair.getValue();
+        final int numAttributes = imageReader.getNumGlobalAttributes();
+        try {
+            for( int i = 0; i < numAttributes; i++ ) {
+                KeyValuePair keyValuePair = imageReader.getGlobalAttribute(i);
+                String attributeName = keyValuePair.getKey();
+                final String attributeValue = keyValuePair.getValue();
 
-                    // //
-                    // Note: IIOMetadata doesn't allow to set attribute name
-                    // containing "\\". Therefore we replace that char
-                    // //
-                    if (attributeName.contains("\\"))
-                        attributeName = Utilities.adjustAttributeName(attributeName);
-                    node.setAttribute(attributeName, attributeValue);
-                }
-            } catch (IOException e) {
-                throw new IllegalArgumentException("Unable to parse attribute", e);
+                // //
+                // Note: IIOMetadata doesn't allow to set attribute name
+                // containing "\\". Therefore we replace that char
+                // //
+                if (attributeName.contains("\\"))
+                    attributeName = ImageIOUtilities.adjustAttributeName(attributeName);
+                // XXX attributeName = Utilities.adjustAttributeName(attributeName);
+                node.setAttribute(attributeName, attributeValue);
             }
-
-            root.appendChild(node);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Unable to parse attribute", e);
         }
+
+        root.appendChild(node);
         return root;
     }
 

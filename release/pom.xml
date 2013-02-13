@@ -138,11 +138,6 @@
     </dependency>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
-      <artifactId>imageio-ext-netcdf-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-grib1</artifactId>
       <version>${project.version}</version>
     </dependency>

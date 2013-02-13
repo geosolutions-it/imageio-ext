@@ -16,8 +16,9 @@
  */
 package it.geosolutions.imageio.plugins.netcdf;
 
-import it.geosolutions.imageio.ndplugin.BaseImageReader;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.CheckType;
+import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.KeyValuePair;
+import it.geosolutions.imageio.stream.input.URIImageInputStream;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 
 import java.awt.Point;
@@ -31,11 +32,13 @@ import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.IIOException;
@@ -72,18 +75,20 @@ import ucar.nc2.util.CancelTask;
  * @author Alessio Fabiani, GeoSolutions
  * @author Simoe Giannecchini, GeoSolutions
  */
-public class NetCDFImageReader extends BaseImageReader implements CancelTask {
+public class NetCDFImageReader extends ImageReader implements CancelTask {
 
     protected final static Logger LOGGER = Logger .getLogger(NetCDFImageReader.class.toString());
 
     private CheckType checkType = CheckType.UNSET;
     
-    private BaseNetCDFImageReader reader;
-
-    BaseNetCDFImageReader getInnerReader() {
-		return reader;
-	}
-
+    /**
+     * The NetCDF dataset, or {@code null} if not yet open. The NetCDF file is
+     * open by {@link #ensureOpen} when first needed.
+     */
+    private NetcdfDataset dataset;
+    
+    private Map<Range, NetCDFVariableWrapper> indexMap; 
+    
 	/**
      * The last error from the NetCDF library.
      */
@@ -102,7 +107,60 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
             setSampleModel(new BandedSampleModel(bufferType, getWidth(), getHeight(), 1));
         }
     }
+    
+    // XXX should not be necessary any more 
+    //    public Map<Range, ?> getIndexMap() {
+    //        return indexMap;
+    //    }
+    //
+    //    public synchronized void setIndexMap(final Map<Range, ? extends BaseVariableWrapper> indexMap) {
+    //        if (initMap)
+    //            throw new IllegalStateException("Map already initialized");
+    //        initMap=true;
+    //        this.indexMap = indexMap;
+    //    }
 
+    private boolean initMap;
+    
+    public NetcdfDataset getDataset() {
+        return dataset;
+    }
+
+    private int numGlobalAttributes;
+
+    public void setNumGlobalAttributes(int numGlobalAttributes) {
+        this.numGlobalAttributes = numGlobalAttributes;
+    }
+    
+    protected int numRasters = -1;
+
+    public int getNumImages( final boolean allowSearch ) throws IOException {
+        return numRasters;
+    }
+
+    protected void setNumImages( final int numImages ) {
+        if (this.numRasters == -1)
+            this.numRasters = numImages;
+    }
+
+    /**
+     * Simple check of the specified image index. Valid indexes are belonging
+     * the range [0 - numRasters]. In case this constraint is not respected, an
+     * {@link IndexOutOfBoundsException} is thrown.
+     * 
+     * @param imageIndex
+     *                the index to be checked
+     * 
+     * @throw {@link IndexOutOfBoundsException} in case the provided imageIndex
+     *        is not in the range of supported ones.
+     */
+    public void checkImageIndex( final int imageIndex ) {
+        if (imageIndex < 0 || imageIndex >= numRasters) {
+            throw new IndexOutOfBoundsException(
+                    "Invalid imageIndex. It should " + (numRasters > 0 ? ("belong the range [0," + (numRasters - 1)) : "be 0"));
+        }
+    }
+    
     /**
      * Initialize main properties for this reader.
      * 
@@ -112,8 +170,8 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
     protected synchronized void initialize()  {
         int numImages = 0;
         
-        final Map<Range,NetCDFVariableWrapper>indexMap = new HashMap<Range, NetCDFVariableWrapper>();
-        final NetcdfDataset dataset = reader.getDataset();
+        indexMap = new HashMap<Range, NetCDFVariableWrapper>();
+        final NetcdfDataset dataset = getDataset();
         
         try {
 	        if (dataset != null) {
@@ -151,14 +209,12 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
         } catch (InvalidRangeException e) {
         	 throw new IllegalArgumentException( "Error occurred during NetCDF file parsing", e);
 		}
-        reader.setIndexMap(indexMap);
         setNumImages(numImages);
-        reader.setNumImages(numImages);
         int numAttribs = 0;
         final List<Attribute> globalAttributes = dataset.getGlobalAttributes();
         if (globalAttributes != null && !globalAttributes.isEmpty())
         	numAttribs = globalAttributes.size();
-        reader.setNumGlobalAttributes(numAttribs);
+        setNumGlobalAttributes(numAttribs); // XXX
     }
 
     /**
@@ -170,13 +226,20 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
      */
     public NetCDFImageReader(ImageReaderSpi originatingProvider) {
         super(originatingProvider);
-        reader = new BaseNetCDFImageReader(originatingProvider);
     }
 
-    protected NetCDFVariableWrapper getVariableWrapper(int imageIndex) {
-        return (NetCDFVariableWrapper) reader.getVariableWrapper(imageIndex);
+    protected NetCDFVariableWrapper getVariableWrapper( int imageIndex ) {
+        checkImageIndex(imageIndex);
+        BaseVariableWrapper wrapper = null;
+        for( Range range : indexMap.keySet() ) {
+            if (range.contains(imageIndex) && range.first() <= imageIndex && imageIndex < range.last()) {
+                wrapper = indexMap.get(range);
+            }
+        }
+        return (NetCDFVariableWrapper) wrapper;
+        // return (NetCDFVariableWrapper) reader.getVariableWrapper(imageIndex);
     }
-
+    
     /**
      * @see javax.imageio.ImageReader#getImageMetadata(int)
      */
@@ -201,7 +264,6 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
         Variable variable = null;
         Range indexRange = null;
         NetCDFVariableWrapper wrapper = null;
-        Map<Range,?> indexMap = reader.getIndexMap();
         for (Range range : indexMap.keySet()) {
             if (range.contains(imageIndex) 
                     /*
@@ -397,7 +459,7 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
      */
     private IIOException netcdfFailure(final Exception e) throws IOException {
         return new IIOException(new StringBuffer("Can't read file ").append(
-        		reader.getDataset().getLocation()).toString(), e);
+        		getDataset().getLocation()).toString(), e);
     }
 
     /**
@@ -410,7 +472,32 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
         super.dispose();
         lastError = null;
         checkType = CheckType.UNSET;
-        reader.dispose();
+
+        initMap = false;
+        indexMap.clear();
+        indexMap = null;
+        numGlobalAttributes = -1;
+        numRasters = -1;
+        try {
+            if (dataset != null) {
+                dataset.close();
+            }
+        } catch (IOException e) {
+            if (LOGGER.isLoggable(Level.WARNING))
+                LOGGER.warning("Errors closing NetCDF dataset."
+                        + e.getLocalizedMessage());
+        } finally {
+            dataset = null;
+        }
+    
+    }
+    
+    /**
+     * Reset the status of this reader
+     */
+    public void reset() {
+        super.setInput(null, false, false);
+        dispose();
     }
 
     /**
@@ -438,7 +525,7 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
     double getScale(final int imageIndex) throws IOException {
         checkImageIndex(imageIndex);
         double scale = Double.NaN;
-        final String scaleS = reader.getAttributeAsString(imageIndex,
+        final String scaleS = getAttributeAsString(imageIndex,
                 NetCDFUtilities.DatasetAttribs.SCALE_FACTOR);
         if (scaleS != null && scaleS.trim().length() > 0)
             scale = Double.parseDouble(scaleS);
@@ -454,7 +541,7 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
     double getFillValue(final int imageIndex) throws IOException {
         checkImageIndex(imageIndex);
         double fillValue = Double.NaN;
-        final String fillValueS = reader.getAttributeAsString(imageIndex,
+        final String fillValueS = getAttributeAsString(imageIndex,
                 NetCDFUtilities.DatasetAttribs.FILL_VALUE);
         if (fillValueS != null && fillValueS.trim().length() > 0)
             fillValue = Double.parseDouble(fillValueS);
@@ -470,7 +557,7 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
     double getOffset(final int imageIndex) throws IOException {
         checkImageIndex(imageIndex);
         double offset = Double.NaN;
-        final String offsetS = reader.getAttributeAsString(imageIndex,
+        final String offsetS = getAttributeAsString(imageIndex,
                 NetCDFUtilities.DatasetAttribs.ADD_OFFSET);
         if (offsetS != null && offsetS.trim().length() > 0)
             offset = Double.parseDouble(offsetS);
@@ -487,7 +574,7 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
         checkImageIndex(imageIndex);
         double range[] = null;
 
-        final String validRange = reader.getAttributeAsString(imageIndex,
+        final String validRange = getAttributeAsString(imageIndex,
                 NetCDFUtilities.DatasetAttribs.VALID_RANGE, true);
         if (validRange != null && validRange.trim().length() > 0) {
             String validRanges[] = validRange.split(",");
@@ -497,9 +584,9 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
                 range[1] = Double.parseDouble(validRanges[1]);
             }
         } else {
-        	final String validMin = reader.getAttributeAsString(imageIndex,
+        	final String validMin = getAttributeAsString(imageIndex,
                     NetCDFUtilities.DatasetAttribs.VALID_MIN, true);
-            final String validMax = reader.getAttributeAsString(imageIndex,
+            final String validMax = getAttributeAsString(imageIndex,
                     NetCDFUtilities.DatasetAttribs.VALID_MAX, true);
             if (validMax != null && validMax.trim().length() > 0
                     && validMin != null && validMin.trim().length() > 0) {
@@ -511,23 +598,12 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
         return range;
     }
 
-//    Variable getVariable(final int imageIndex) {
-//        Variable var = null;
-//        final NetCDFVariableWrapper wrapper = getVariableWrapper(imageIndex);
-//        if (wrapper != null)
-//            var = wrapper.getVariable();
-//        return var;
-//    }
-//
-//    Variable getVariableByName(final String varName) {
-//    	final List<Variable> varList = dataset.getVariables();
-//        for (Variable var : varList) {
-//            if (var.getName().equals(varName))
-//                return var;
-//        }
-//        return null;
-//    }
-
+    /**
+     * TODO move this to utility
+     * 
+     * @param variable
+     * @return
+     */
     CoordinateSystem getCoordinateSystem(Variable variable) {
         CoordinateSystem cs = null;
         if (variable != null) {
@@ -541,25 +617,75 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
 
 	@Override
 	public int getHeight(int imageIndex) throws IOException {
-		return reader.getHeight(imageIndex);
-	}
+        final BaseVariableWrapper wrapper = getVariableWrapper(imageIndex);
+        if (wrapper != null)
+            return wrapper.getHeight();
+        return -1;
+    }
 
-	@Override
-	public Iterator<ImageTypeSpecifier> getImageTypes(int imageIndex)
-			throws IOException {
-		return reader.getImageTypes(imageIndex);
-}
+    @Override
+    public Iterator<ImageTypeSpecifier> getImageTypes(int imageIndex) throws IOException {
+        final List<ImageTypeSpecifier> l = new java.util.ArrayList<ImageTypeSpecifier>();
+        final BaseVariableWrapper wrapper = getVariableWrapper(imageIndex);
+        if (wrapper != null) {
+            final SampleModel sampleModel = wrapper.getSampleModel();
+            final ImageTypeSpecifier imageType = new ImageTypeSpecifier(
+            ImageIOUtilities.createColorModel(sampleModel), sampleModel);
+            l.add(imageType);
+        }
+        return l.iterator();
+    }
 
-	@Override
-	public int getWidth(int imageIndex) throws IOException {
-		return reader.getWidth(imageIndex);
-	}
+    public int getWidth(int imageIndex) throws IOException {
+        final BaseVariableWrapper wrapper = getVariableWrapper(imageIndex);
+        if (wrapper != null)
+            return wrapper.getWidth();
+        return -1;
+    }
 
-	@Override
+    /**
+     * Sets the input source to use within this reader. {@code URI}s,
+     * {@code File}s, {@code String}s, {@code URL}s, {@code ImageInputStream}s
+     * are accepted input types.<BR>
+     * Other parameters ({@code seekForwardOnly} and {@code ignoreMetadata})
+     * are actually ignored.
+     * 
+     * @param input
+     *                the {@code Object} to be set as input of this reader.
+     * 
+     * @throws exception
+     *                 {@link IllegalArgumentException} in case the provided
+     *                 input {@code Object} cannot be properly parsed and used
+     *                 as input for the reader.
+     */
 	public void setInput(Object input, boolean seekForwardOnly,
 			boolean ignoreMetadata) {
 		super.setInput(input, seekForwardOnly, ignoreMetadata);
-		reader.setInput(input, seekForwardOnly, ignoreMetadata);
+        try {
+            if (dataset != null)
+                reset();
+            
+            if (input instanceof URIImageInputStream) {
+                URIImageInputStream uriInStream = (URIImageInputStream) input;
+                dataset = NetcdfDataset.openDataset(uriInStream.getUri().toString());
+            }
+            if (input instanceof URL) {
+                final URL tempURL = (URL) input;
+                String protocol = tempURL.getProtocol();
+                if (protocol.equalsIgnoreCase("http") || protocol.equalsIgnoreCase("dods")) {
+                    dataset = NetcdfDataset.openDataset(tempURL.toExternalForm());
+                }
+            }
+            
+            if (dataset == null) {
+                dataset = NetCDFUtilities.getDataset(input);
+            }
+
+            super.setInput(input, seekForwardOnly, ignoreMetadata);
+
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Error occurred during NetCDF file parsing", e);
+        }
 		initialize();
 	}
 
@@ -572,4 +698,74 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
 	public void setInput(Object input) {
 		this.setInput(input, false, false);
 	}
+	
+	
+    public String getAttributeAsString(final int imageIndex, final String attributeName) {
+        return getAttributeAsString(imageIndex, attributeName, false);
+    }
+
+    public String getAttributeAsString(final int imageIndex, final String attributeName,
+            final boolean isUnsigned) {
+        String attributeValue = "";
+        final BaseVariableWrapper wrapper = getVariableWrapper(imageIndex);
+        final Attribute attr = wrapper.getVariable().findAttributeIgnoreCase(attributeName);
+        if (attr != null)
+            attributeValue = NetCDFUtilities.getAttributesAsString(attr,
+                    isUnsigned);
+        return attributeValue;
+    }
+    
+    public KeyValuePair getAttribute(final int imageIndex, final int attributeIndex)
+    throws IOException {
+        KeyValuePair attributePair = null;
+        final Variable var = getVariable(imageIndex);
+        if (var != null) 
+            attributePair = NetCDFUtilities.getAttribute(var, attributeIndex);
+        return attributePair;
+    }
+    
+    private Variable getVariable(final int imageIndex) {
+        Variable var = null;
+        final BaseVariableWrapper wrapper = getVariableWrapper(imageIndex);
+        if (wrapper != null)
+            var = wrapper.getVariable();
+        return var;
+    }
+    
+    public String getVariableName(int imageIndex) {
+        String name = "";
+        BaseVariableWrapper wrapper = getVariableWrapper(imageIndex);
+        if (wrapper != null) {
+            name = wrapper.getName();
+        }
+        return name;
+    }
+
+    private Variable getVariableByName( final String varName ) {
+        final List<Variable> varList = dataset.getVariables();
+        for( Variable var : varList ) {
+            if (var.getName().equals(varName))
+                return var;
+        }
+        return null;
+    }
+    
+    public int getNumGlobalAttributes() {
+        return numGlobalAttributes;
+    }
+
+    public int getNumAttributes(int imageIndex) {
+        int numAttribs = 0;
+        final Variable var = getVariable(imageIndex);
+        if (var != null) {
+            final List<Attribute> attributes = var.getAttributes();
+            if (attributes != null && !attributes.isEmpty())
+                numAttribs = attributes.size();
+        }
+        return numAttribs;
+    }
+
+    public KeyValuePair getGlobalAttribute(final int attributeIndex) throws IOException {
+        return NetCDFUtilities.getGlobalAttribute(dataset, attributeIndex);
+    }
 }
