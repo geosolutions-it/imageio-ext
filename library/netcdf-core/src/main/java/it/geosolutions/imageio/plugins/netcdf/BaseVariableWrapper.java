@@ -92,6 +92,9 @@ public abstract class BaseVariableWrapper {
         return variable;
     }
 
+    /**
+     * @return the number of dimensions in the variable.  
+     */
     public int getRank() {
         return rank;
     }

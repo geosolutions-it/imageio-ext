@@ -125,6 +125,8 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
 	                    if (variable != null && variable instanceof VariableDS) {
 	                        if (!NetCDFUtilities.isVariableAccepted(variable,checkType))
 	                            continue;
+	                        
+	                        // get the length of the variables in each dimension
 	                        int[] shape = variable.getShape();
 	                        switch (shape.length) {
 	                        case 2:
@@ -201,7 +203,16 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
         NetCDFVariableWrapper wrapper = null;
         Map<Range,?> indexMap = reader.getIndexMap();
         for (Range range : indexMap.keySet()) {
-            if (range.contains(imageIndex) && range.first() <= imageIndex
+            if (range.contains(imageIndex) 
+                    /*
+                     * FIXME why is this even necessary?
+                     * - contains should handle it
+                     * - even if not, then shouldn't it be 
+                     *      imageIndex <= range.last()
+                     *      
+                     *      since the last is inclusive?
+                     */
+                    && range.first() <= imageIndex
                     && imageIndex < range.last()) {
                 wrapper = (NetCDFVariableWrapper) indexMap.get(range);
                 indexRange = range;
@@ -248,6 +259,10 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
         int destWidth = destRegion.x + destRegion.width;
         int destHeight = destRegion.y + destRegion.height;
 
+        /*
+         * build the ranges that need to be read from each 
+         * dimension based on the source region
+         */
         final List<Range> ranges = new LinkedList<Range>();
         for (int i = 0; i < rank; i++) {
             final int first, length, stride;
@@ -283,7 +298,13 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
                 throw netcdfFailure(e);
             }
         }
-        final Section sections = new Section(ranges);
+        
+        /*
+         * create the section of multidimensional array indices
+         * that defines the exact data that need to be read 
+         * for this image index and parameters 
+         */
+        final Section section = new Section(ranges);
 
         /*
          * Setting SampleModel and ColorModel.
@@ -312,7 +333,7 @@ public class NetCDFImageReader extends BaseImageReader implements CancelTask {
             final int dstBand = (dstBands == null) ? zi : dstBands[zi];
             final Array array;
             try {
-                array = variable.read(sections);
+                array = variable.read(section);
             } catch (InvalidRangeException e) {
                 throw netcdfFailure(e);
             }
