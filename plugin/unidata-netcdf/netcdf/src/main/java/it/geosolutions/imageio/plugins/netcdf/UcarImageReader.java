@@ -20,14 +20,17 @@ import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.KeyValuePair;
 import it.geosolutions.imageio.stream.input.URIImageInputStream;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 
+import java.awt.image.BufferedImage;
 import java.awt.image.SampleModel;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
 
 import ucar.nc2.Attribute;
@@ -65,13 +68,12 @@ public abstract class UcarImageReader extends ImageReader {
      * @return the {@link NetcdfDataset}.
      */
     public abstract NetcdfDataset getDataset();
-    
-    
+
     /**
      * @return the number of available global attributes.
      */
     public abstract int getNumGlobalAttributes();
-    
+
     /**
      * Get the {@link NetcdfDataset} out og an input object.
      * 
@@ -96,8 +98,31 @@ public abstract class UcarImageReader extends ImageReader {
         if (dataset == null) {
             dataset = NetCDFUtilities.getDataset(input);
         }
-        
+
         return dataset;
+    }
+
+    @Override
+    public void dispose() {
+        throw new RuntimeException("Implement me!");
+    }
+
+    public BufferedImage read( int imageIndex, ImageReadParam param ) throws IOException {
+        throw new RuntimeException("Implement me!");
+    }
+
+    public void setInput( Object input, boolean seekForwardOnly, boolean ignoreMetadata ) {
+        throw new RuntimeException("Implement me!");
+    }
+
+    @Override
+    public IIOMetadata getImageMetadata( int imageIndex ) throws IOException {
+        checkImageIndex(imageIndex);
+        throw new RuntimeException("Implement me!");
+    }
+
+    public IIOMetadata getStreamMetadata() throws IOException {
+        throw new RuntimeException("Implement me!");
     }
 
     public int getNumImages( final boolean allowSearch ) throws IOException {
@@ -155,10 +180,26 @@ public abstract class UcarImageReader extends ImageReader {
         return -1;
     }
 
+    /**
+     * Get an {@link Attribute} value as string by name and image index.
+     * 
+     * @param imageIndex the image index.
+     * @param attributeName the name of the {@link Attribute}.
+     * @return the attribute value as string.
+     */
     public String getAttributeAsString( final int imageIndex, final String attributeName ) {
         return getAttributeAsString(imageIndex, attributeName, false);
     }
 
+    /**
+     * Get an {@link Attribute} value as string by name and image index.
+     * 
+     * @param imageIndex the image index.
+     * @param attributeName the name of the {@link Attribute}.
+     * @param isUnsigned a flag that allows to handle byte
+     *                      attributes as unsigned.
+     * @return the attribute value as string.
+     */
     public String getAttributeAsString( final int imageIndex, final String attributeName, final boolean isUnsigned ) {
         String attributeValue = "";
         final BaseVariableWrapper wrapper = getVariableWrapper(imageIndex);
@@ -168,6 +209,14 @@ public abstract class UcarImageReader extends ImageReader {
         return attributeValue;
     }
 
+    /**
+     * Get an {@link Attribute} as a {@link KeyValuePair} representation as name/value. 
+     * 
+     * @param imageIndex the image index.
+     * @param attributeIndex the attribute index.
+     * @return the key/value pair of the attribute.
+     * @throws IOException
+     */
     public KeyValuePair getAttribute( final int imageIndex, final int attributeIndex ) throws IOException {
         KeyValuePair attributePair = null;
         final Variable var = getVariable(imageIndex);
@@ -176,6 +225,12 @@ public abstract class UcarImageReader extends ImageReader {
         return attributePair;
     }
 
+    /**
+     * Get a {@link Variable} by image index.
+     * 
+     * @param imageIndex the image index.
+     * @return the {@link Variable}.
+     */
     protected Variable getVariable( final int imageIndex ) {
         Variable var = null;
         final BaseVariableWrapper wrapper = getVariableWrapper(imageIndex);
@@ -184,6 +239,12 @@ public abstract class UcarImageReader extends ImageReader {
         return var;
     }
 
+    /**
+     * Get a Variable name by index.
+     * 
+     * @param imageIndex the image index.
+     * @return the name of the Variable.
+     */
     public String getVariableName( int imageIndex ) {
         String name = "";
         BaseVariableWrapper wrapper = getVariableWrapper(imageIndex);
@@ -193,6 +254,12 @@ public abstract class UcarImageReader extends ImageReader {
         return name;
     }
 
+    /**
+     * Get a {@link Variable} by name.
+     * 
+     * @param varName the name of the {@link Variable} to pick.
+     * @return the variable or <code>null</code>.
+     */
     protected Variable getVariableByName( final String varName ) {
         final List<Variable> varList = getDataset().getVariables();
         for( Variable var : varList ) {
@@ -202,6 +269,12 @@ public abstract class UcarImageReader extends ImageReader {
         return null;
     }
 
+    /**
+     * Get the number of available attributes of a variable identified by the image index.
+     * 
+     * @param imageIndex the image index.
+     * @return the number of {@link Attribute}s.
+     */
     public int getNumAttributes( int imageIndex ) {
         int numAttribs = 0;
         final Variable var = getVariable(imageIndex);
@@ -213,15 +286,23 @@ public abstract class UcarImageReader extends ImageReader {
         return numAttribs;
     }
 
+    /**
+     * Get a Global{@link Attribute} as a {@link KeyValuePair} representation as name/value
+     * by index. 
+     * 
+     * @param attributeIndex the attribute index.
+     * @return the global attribute identified by the index.
+     * @throws IOException
+     */
     public KeyValuePair getGlobalAttribute( final int attributeIndex ) throws IOException {
         return NetCDFUtilities.getGlobalAttribute(getDataset(), attributeIndex);
     }
 
     /**
-     * TODO move this to utility?
+     * Get the {@link CoordinateSystem} of a given {@link Variable}.
      * 
-     * @param variable
-     * @return
+     * @param variable the variable.
+     * @return the {@link CoordinateSystem} or <code>null</code>.
      */
     CoordinateSystem getCoordinateSystem( Variable variable ) {
         CoordinateSystem cs = null;

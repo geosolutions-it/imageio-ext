@@ -393,9 +393,6 @@ public class NetCDFImageReader extends UcarImageReader implements CancelTask {
         return wrapper;
     }
 
-    /**
-     * @see javax.imageio.ImageReader#getImageMetadata(int)
-     */
     @Override
     public IIOMetadata getImageMetadata( int imageIndex ) throws IOException {
         checkImageIndex(imageIndex);
