@@ -102,18 +102,18 @@ public abstract class UcarImageReader extends ImageReader {
         return dataset;
     }
 
-    @Override
-    public void dispose() {
-        throw new RuntimeException("Implement me!");
-    }
+//    @Override
+//    public void dispose() {
+//        throw new RuntimeException("Implement me!");
+//    }
 
     public BufferedImage read( int imageIndex, ImageReadParam param ) throws IOException {
         throw new RuntimeException("Implement me!");
     }
 
-    public void setInput( Object input, boolean seekForwardOnly, boolean ignoreMetadata ) {
-        throw new RuntimeException("Implement me!");
-    }
+//    public void setInput( Object input, boolean seekForwardOnly, boolean ignoreMetadata ) {
+//        throw new RuntimeException("Implement me!");
+//    }
 
     @Override
     public IIOMetadata getImageMetadata( int imageIndex ) throws IOException {
@@ -231,7 +231,7 @@ public abstract class UcarImageReader extends ImageReader {
      * @param imageIndex the image index.
      * @return the {@link Variable}.
      */
-    protected Variable getVariable( final int imageIndex ) {
+    public Variable getVariable( final int imageIndex ) {
         Variable var = null;
         final BaseVariableWrapper wrapper = getVariableWrapper(imageIndex);
         if (wrapper != null)
@@ -260,7 +260,7 @@ public abstract class UcarImageReader extends ImageReader {
      * @param varName the name of the {@link Variable} to pick.
      * @return the variable or <code>null</code>.
      */
-    protected Variable getVariableByName( final String varName ) {
+    public Variable getVariableByName( final String varName ) {
         final List<Variable> varList = getDataset().getVariables();
         for( Variable var : varList ) {
             if (var.getName().equals(varName))
@@ -304,7 +304,7 @@ public abstract class UcarImageReader extends ImageReader {
      * @param variable the variable.
      * @return the {@link CoordinateSystem} or <code>null</code>.
      */
-    CoordinateSystem getCoordinateSystem( Variable variable ) {
+    public CoordinateSystem getCoordinateSystem( Variable variable ) {
         CoordinateSystem cs = null;
         if (variable != null) {
             final List<CoordinateSystem> systems = ((VariableDS) variable).getCoordinateSystems();
@@ -320,7 +320,7 @@ public abstract class UcarImageReader extends ImageReader {
      * 
      * @throws IOException
      */
-    double getScale( final int imageIndex ) throws IOException {
+    public double getScale( final int imageIndex ) throws IOException {
         checkImageIndex(imageIndex);
         double scale = Double.NaN;
         final String scaleS = getAttributeAsString(imageIndex, NetCDFUtilities.DatasetAttribs.SCALE_FACTOR);
@@ -335,7 +335,7 @@ public abstract class UcarImageReader extends ImageReader {
      * 
      * @throws IOException
      */
-    double getFillValue( final int imageIndex ) throws IOException {
+    public double getFillValue( final int imageIndex ) throws IOException {
         checkImageIndex(imageIndex);
         double fillValue = Double.NaN;
         final String fillValueS = getAttributeAsString(imageIndex, NetCDFUtilities.DatasetAttribs.FILL_VALUE);
@@ -350,7 +350,7 @@ public abstract class UcarImageReader extends ImageReader {
      * 
      * @throws IOException
      */
-    double getOffset( final int imageIndex ) throws IOException {
+    public double getOffset( final int imageIndex ) throws IOException {
         checkImageIndex(imageIndex);
         double offset = Double.NaN;
         final String offsetS = getAttributeAsString(imageIndex, NetCDFUtilities.DatasetAttribs.ADD_OFFSET);
@@ -365,7 +365,7 @@ public abstract class UcarImageReader extends ImageReader {
      * 
      * @throws IOException
      */
-    double[] getValidRange( final int imageIndex ) throws IOException {
+    public double[] getValidRange( final int imageIndex ) throws IOException {
         checkImageIndex(imageIndex);
         double range[] = null;
 

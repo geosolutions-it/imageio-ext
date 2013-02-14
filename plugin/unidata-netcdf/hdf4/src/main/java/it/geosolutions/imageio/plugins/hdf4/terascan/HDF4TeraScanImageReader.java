@@ -18,6 +18,7 @@ package it.geosolutions.imageio.plugins.hdf4.terascan;
 
 import it.geosolutions.imageio.plugins.hdf4.BaseHDF4ImageReader;
 import it.geosolutions.imageio.plugins.netcdf.BaseVariableWrapper;
+import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -123,37 +124,16 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
         streamMetadata = null;
     }
 
-    /**
-     * Retrieve the ValidRange Parameters for the specified imageIndex. Return a
-     * couple of NaN if parameters are not available
-     * 
-     * @throws IOException
-     */
-    double[] getValidRange(final int imageIndex) throws IOException {
-        double[] range = new double[] { Double.NaN, Double.NaN };
-        String unsigned = getAttributeAsString(imageIndex, HDF4TeraScanProperties.DatasetAttribs.UNSIGNED);
-        boolean isUnsigned = false;
-        if (unsigned != null && unsigned.trim().length()>0)
-        	isUnsigned = Boolean.parseBoolean(unsigned);
-        	
-        String validRange = getAttributeAsString(imageIndex, HDF4TeraScanProperties.DatasetAttribs.VALID_RANGE, isUnsigned);
-        if (validRange != null && validRange.trim().length() > 0) {
-            String validRanges[] = validRange.split(",");
-            if (validRanges.length == 2) {
-                range = new double[2];
-                range[0] = Double.parseDouble(validRanges[0]);
-                range[1] = Double.parseDouble(validRanges[1]);
-            }
-        }
-        return range;
-    }
 
     /**
      * Retrieve the fillValue for the specified imageIndex.
      * 
      * @throws IOException
      */
-    double getFillValue(final int imageIndex) throws IOException {
+    public double getFillValue(final int imageIndex) throws IOException {
+        // FIXME this is the same as in UcarIR, just the fill constant is different
+        // (but the same value) could it be merged?
+        
         double fillValue = Double.NaN;
         String fillS = getAttributeAsString(imageIndex,
                 HDF4TeraScanProperties.DatasetAttribs.FILL_VALUE);
@@ -186,7 +166,10 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
      * 
      * @throws IOException
      */
-    double getScale(final int imageIndex) throws IOException {
+    public double getScale(final int imageIndex) throws IOException {
+        // FIXME this is the same as in UcarIR, just the scale constant is different
+        // (but the same value) could it be merged?
+        
         double scale = Double.NaN;
         String scaleS = getAttributeAsString(imageIndex, HDF4TeraScanProperties.DatasetAttribs.SCALE_FACTOR);
         if (scaleS != null && scaleS.trim().length() > 0)
@@ -200,7 +183,10 @@ public class HDF4TeraScanImageReader extends BaseHDF4ImageReader {
      * 
      * @throws IOException
      */
-    double getOffset(final int imageIndex) throws IOException {
+    public double getOffset(final int imageIndex) throws IOException {
+        // FIXME this is the same as in UcarIR, just the offset constant is different
+        // (but the same value) could it be merged?
+        
         double offset = Double.NaN;
         String offsetS = getAttributeAsString(imageIndex, HDF4TeraScanProperties.DatasetAttribs.ADD_OFFSET);
         if (offsetS != null && offsetS.trim().length() > 0)

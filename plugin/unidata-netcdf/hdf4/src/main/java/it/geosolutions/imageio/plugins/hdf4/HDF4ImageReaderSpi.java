@@ -16,7 +16,6 @@
  */
 package it.geosolutions.imageio.plugins.hdf4;
 
-import it.geosolutions.imageio.plugins.netcdf.NetCDFImageReaderSpi;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities;
 import it.geosolutions.imageio.plugins.netcdf.UcarImageReaderSpi;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;

@@ -90,12 +90,12 @@ public abstract class UcarImageMetadata extends CoreCommonImageMetadata {
         }
     }
 
-    protected int getImageIndex() {
+    public int getImageIndex() {
         return imageIndex;
     }
 
     @Override
-    protected synchronized Node createCommonNativeTree() {
+    public synchronized Node createCommonNativeTree() {
         if (this.commonNativeTree == null)
             commonNativeTree = super.createCommonNativeTree();
         return commonNativeTree;
