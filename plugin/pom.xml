@@ -57,15 +57,6 @@
       </modules>
     </profile>
     <profile>
-      <id>nd</id>
-        <activation>
-         <property><name>all</name></property>
-        </activation>      
-      <modules>
-        <module>unidata-netcdf</module>
-      </modules>
-    </profile> 
-    <profile>
       <id>mat</id>
         <activation>
          <property><name>all</name></property>
@@ -86,7 +77,6 @@
         <module>gdal</module>
         <module>turbojpeg</module>
         <module>nitronitf</module>
-        <module>unidata-netcdf</module>
        </modules>
     </profile>
   </profiles>
