@@ -288,6 +288,8 @@ public class TurboJpegImageWriter extends ImageWriter
             layout.setTileGridYOffset(minY);
             layout.setMinX(minX);
             layout.setMinY(minY);
+            layout.setWidth(w);
+            layout.setHeight(h);
             srcImage = new CopyOpImage(srcImage, hints, layout);
         }
         return srcImage;
