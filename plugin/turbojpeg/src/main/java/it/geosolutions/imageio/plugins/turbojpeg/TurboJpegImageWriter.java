@@ -253,6 +253,10 @@ public class TurboJpegImageWriter extends ImageWriter
         final int minY = srcImage.getMinY();
         final int tw = srcImage.getTileWidth();
         final int th = srcImage.getTileHeight();
+        
+        // Checking if the tiling size is bigger than the actual image size,
+        // in that case we need to do something like a crop by copying a 
+        // portion of the original data 
         if ((tw > w) || (th > h))
         {
             RenderingHints hints = null;
@@ -274,13 +278,18 @@ public class TurboJpegImageWriter extends ImageWriter
                 layout = new ImageLayout(srcImage);
                 hints = new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout);
             }
+            
+            // Imposing the layout of the requested image
+            // as well as reducing the tile layout which was 
+            // bigger than the image
             layout.setTileHeight(h);
             layout.setTileWidth(w);
             layout.setTileGridXOffset(minX);
             layout.setTileGridYOffset(minY);
+            layout.setMinX(minX);
+            layout.setMinY(minY);
             srcImage = new CopyOpImage(srcImage, hints, layout);
         }
-
         return srcImage;
     }
 
