@@ -52,26 +52,21 @@ public class JP2KReadTest extends AbstractGDALTest {
     private final static boolean isJP2ECWAvailable;
     
     static {
-        if (isGDALAvailable){
-	        gdal.AllRegister();
-	        final String versionInfo = gdal.VersionInfo("RELEASE_NAME");
-	        if (versionInfo.contains("1.9.") && System.getProperty("os.name").toLowerCase().startsWith("linux")) {
-	        	// JP2 ECW crashes on Linux with > 1.8: http://trac.osgeo.org/gdal/ticket/4201
-	        	isJP2ECWAvailable = false;
-	        } else {
-		        final Driver driverkak = gdal.GetDriverByName("JP2KAK");
-		        final Driver drivermrsid = gdal.GetDriverByName("JP2MrSID");
-		        if (driverkak != null || drivermrsid != null) {
-		            final StringBuilder skipDriver = new StringBuilder("");
-		            if (driverkak != null)
-		                skipDriver.append("JP2KAK ");
-		            if (drivermrsid != null)
-		                skipDriver.append("JP2MrSID");
-		            gdal.SetConfigOption("GDAL_SKIP", skipDriver.toString());
-		            gdal.AllRegister();
-		        }
-		        isJP2ECWAvailable = GDALUtilities.isDriverAvailable("JP2ECW");
-	        }
+        if (isGDALAvailable) {
+            gdal.AllRegister();
+            final Driver driverkak = gdal.GetDriverByName("JP2KAK");
+            final Driver drivermrsid = gdal.GetDriverByName("JP2MrSID");
+            if (driverkak != null || drivermrsid != null) {
+                final StringBuilder skipDriver = new StringBuilder("");
+                if (driverkak != null)
+                    skipDriver.append("JP2KAK ");
+                if (drivermrsid != null)
+                    skipDriver.append("JP2MrSID");
+                gdal.SetConfigOption("GDAL_SKIP", skipDriver.toString());
+                gdal.AllRegister();
+            }
+            isJP2ECWAvailable = GDALUtilities.isDriverAvailable("JP2ECW");
+            // }
         } else {
             isJP2ECWAvailable = false;
         }
@@ -225,9 +220,9 @@ public class JP2KReadTest extends AbstractGDALTest {
 
     @Before
     public void setUp() throws Exception {
-	    super.setUp();
-	    JAI.getDefaultInstance().getTileCache().setMemoryCapacity(64 * 1024 * 1024);
-	    JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
-	}
+        super.setUp();
+        JAI.getDefaultInstance().getTileCache().setMemoryCapacity(64 * 1024 * 1024);
+        JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
+    }
 
 }

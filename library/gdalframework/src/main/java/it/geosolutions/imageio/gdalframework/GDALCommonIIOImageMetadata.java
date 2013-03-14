@@ -131,49 +131,63 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
             return;
         setDatasetDescription(dataset.GetDescription());
         Driver driver = null;
-	    try {
-	        driver = dataset.GetDriver();
-	        if (driver != null) {
-	            setDriverDescription(driver.GetDescription());
-	            setDriverName(driver.getShortName());
-	        }
-	        gdalDomainMetadataMap = new HashMap<String, Map<String, String>>();
-	
-	        // //
-	        //
-	        // Getting Metadata from Default domain and Image_structure domain
-	        //
-	        // //
-	        Map<String, String> defMap = dataset.GetMetadata_Dict(GDALUtilities.GDALMetadataDomain.DEFAULT);
-	        if (defMap != null && defMap.size() > 0)
-	            gdalDomainMetadataMap.put(GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP, defMap);
-	
-	        Map<String, String> imageStMap = dataset.GetMetadata_Dict(GDALUtilities.GDALMetadataDomain.IMAGESTRUCTURE);
-	        if (imageStMap != null && imageStMap.size() > 0)
-	            gdalDomainMetadataMap.put(GDALUtilities.GDALMetadataDomain.IMAGESTRUCTURE,imageStMap);
-	
-	        // //
-	        //
-	        // Initializing member if needed
-	        //
-	        // //
-	        if (initializationRequired)
-	            setMembers(dataset);
-	        setGeoreferencingInfo(dataset);
-	        // clean up data set in order to avoid keeping them around for a lot
-	        // of time.
-	    } finally {
-	    	if (driver != null){
-	    		try{
+        try {
+            driver = dataset.GetDriver();
+            if (driver != null) {
+                setDriverDescription(driver.GetDescription());
+                setDriverName(driver.getShortName());
+            }
+            gdalDomainMetadataMap = new HashMap<String, Map<String, String>>();
+
+            // //
+            //
+            // Getting Metadata from Default domain and Image_structure domain
+            //
+            // //
+            Map<String, String> defMap = dataset
+                    .GetMetadata_Dict(GDALUtilities.GDALMetadataDomain.DEFAULT);
+            if (defMap != null && defMap.size() > 0)
+                gdalDomainMetadataMap.put(GDALUtilities.GDALMetadataDomain.DEFAULT_KEY_MAP, defMap);
+
+            Map<String, String> imageStMap = dataset
+                    .GetMetadata_Dict(GDALUtilities.GDALMetadataDomain.IMAGESTRUCTURE);
+            if (imageStMap != null && imageStMap.size() > 0)
+                gdalDomainMetadataMap.put(GDALUtilities.GDALMetadataDomain.IMAGESTRUCTURE,
+                        imageStMap);
+
+            // //
+            //
+            // Initializing member if needed
+            //
+            // //
+            if (initializationRequired)
+                setMembers(dataset);
+            setGeoreferencingInfo(dataset);
+            // clean up data set in order to avoid keeping them around for a lot
+            // of time.
+        } finally {
+            if (driver != null) {
+                try {
                     // Closing the driver
-	    			driver.delete();
-        		}catch (Throwable e) {
-					if(LOGGER.isLoggable(Level.FINEST))
-						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
-				}
-	    	}
-	    }
-	        
+                    driver.delete();
+                } catch (Throwable e) {
+                    if (LOGGER.isLoggable(Level.FINEST))
+                        LOGGER.log(Level.FINEST, e.getLocalizedMessage(), e);
+                }
+            }
+            if (initializationRequired) {
+                if (dataset != null)
+                    try {
+                        // Closing the dataset
+                        GDALUtilities.closeDataSet(dataset);
+                    } catch (Throwable e) {
+                        if (LOGGER.isLoggable(Level.FINEST))
+                            LOGGER.log(Level.FINEST, e.getLocalizedMessage(), e);
+                    }
+            }
+
+        }
+
     }
 
     /**
