@@ -132,7 +132,7 @@ public class TIFFTagSet {
             }
             TIFFTag tag = (TIFFTag)o;
 
-            allowedTagsByNumber.put(new Integer(tag.getNumber()), tag);
+            allowedTagsByNumber.put(Integer.valueOf(tag.getNumber()), tag);
             allowedTagsByName.put(tag.getName(), tag);
         }
     }
@@ -147,7 +147,7 @@ public class TIFFTagSet {
      * @return the numbered <code>TIFFTag</code>, or <code>null</code>.
      */
     public TIFFTag getTag(int tagNumber) {
-        return (TIFFTag)allowedTagsByNumber.get(new Integer(tagNumber));
+        return (TIFFTag)allowedTagsByNumber.get(Integer.valueOf(tagNumber));
     }
 
     /**
