@@ -25,6 +25,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageReadParam;
 import javax.imageio.stream.FileImageInputStream;
@@ -42,6 +44,11 @@ import com.sun.media.jai.operator.ImageReadDescriptor;
  * @author Daniele Romagnoli, GeoSolutions.
  */
 public class TIFFReadTest extends Assert {
+
+	
+	/** Logger used for recording any possible exception */
+	private Logger logger = Logger.getLogger(TIFFReadTest.class.getName());
+	
     @Test
     public void readFromFileJAI() throws IOException {
         final File file = TestData.file(this, "test.tif");
@@ -182,58 +189,76 @@ public class TIFFReadTest extends Assert {
 
         final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi()
                 .createReaderInstance();
-        reader.setInput(new FileImageInputStream(file));
-        // System.out.println(new IIOMetadataDumper(
-        // reader.getImageMetadata(0),TIFFImageMetadata.nativeMetadataFormatName).getMetadata());
+        
+        FileImageInputStream inputStream = new FileImageInputStream(file);
+        try{
+        	reader.setInput(inputStream);
+            // System.out.println(new IIOMetadataDumper(
+            // reader.getImageMetadata(0),TIFFImageMetadata.nativeMetadataFormatName).getMetadata());
 
-        // for(long i=0;i<num;i++){
-        // final double time= System.nanoTime();
-        // IMAGE 0
-        BufferedImage image = reader.read(0, param);
-        Assert.assertEquals(2, image.getWidth());
-        Assert.assertEquals(2, image.getHeight());
-        image.flush();
-        image = null;
+            // for(long i=0;i<num;i++){
+            // final double time= System.nanoTime();
+            // IMAGE 0
+            BufferedImage image = reader.read(0, param);
+            Assert.assertEquals(2, image.getWidth());
+            Assert.assertEquals(2, image.getHeight());
+            image.flush();
+            image = null;
 
-        image = reader.read(1, param);
-        Assert.assertEquals(2, image.getWidth());
-        Assert.assertEquals(2, image.getHeight());
-        image.flush();
-        image = null;
+            image = reader.read(1, param);
+            Assert.assertEquals(2, image.getWidth());
+            Assert.assertEquals(2, image.getHeight());
+            image.flush();
+            image = null;
 
-        image = reader.read(2, param);
-        Assert.assertEquals(2, image.getWidth());
-        Assert.assertEquals(2, image.getHeight());
-        image.flush();
-        image = null;
+            image = reader.read(2, param);
+            Assert.assertEquals(2, image.getWidth());
+            Assert.assertEquals(2, image.getHeight());
+            image.flush();
+            image = null;
 
-        image = reader.read(1, param);
-        Assert.assertEquals(2, image.getWidth());
-        Assert.assertEquals(2, image.getHeight());
-        image.flush();
-        image = null;
+            image = reader.read(1, param);
+            Assert.assertEquals(2, image.getWidth());
+            Assert.assertEquals(2, image.getHeight());
+            image.flush();
+            image = null;
 
-        image = reader.read(3, param);
-        Assert.assertEquals(2, image.getWidth());
-        Assert.assertEquals(2, image.getHeight());
-        image.flush();
-        image = null;
+            image = reader.read(3, param);
+            Assert.assertEquals(2, image.getWidth());
+            Assert.assertEquals(2, image.getHeight());
+            image.flush();
+            image = null;
 
-        image = reader.read(0, param);
-        Assert.assertEquals(2, image.getWidth());
-        Assert.assertEquals(2, image.getHeight());
-        image.flush();
-        image = null;
+            image = reader.read(0, param);
+            Assert.assertEquals(2, image.getWidth());
+            Assert.assertEquals(2, image.getHeight());
+            image.flush();
+            image = null;
 
 
-        // sum+=System.nanoTime()-time;
-        // Assert.assertEquals(120, image.getWidth());
-        // Assert.assertEquals(107, image.getHeight());
+            // sum+=System.nanoTime()-time;
+            // Assert.assertEquals(120, image.getWidth());
+            // Assert.assertEquals(107, image.getHeight());
 
-        // System.out.println("test "+i);
-        //
-        // }
-        // System.out.println(sum/num);
-        reader.dispose();
+            // System.out.println("test "+i);
+            //
+            // }
+            // System.out.println(sum/num);
+        }catch(Exception e){
+			// If an exception occurred the logger catch the exception and print
+			// the message
+			logger.log(Level.SEVERE, e.getMessage(), e);
+        }finally{
+			// Finally, if an exception has been thrown or not, the reader
+			// and the input stream are closed
+			if(inputStream!=null){
+				inputStream.flush();
+				inputStream.close();
+			}
+			
+			if (reader != null) {
+				reader.dispose();
+			}
+        }
     }
 }
