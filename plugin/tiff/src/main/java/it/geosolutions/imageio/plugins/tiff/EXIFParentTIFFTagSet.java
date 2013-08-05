@@ -100,7 +100,7 @@ public class EXIFParentTIFFTagSet extends TIFFTagSet {
         public EXIFIFDPointer() {
             super("EXIFIFDPointer",
                   TAG_EXIF_IFD_POINTER,
-                  1 << TIFFTag.TIFF_LONG,
+                  1 << TIFFTag.TIFF_LONG | 1<< TIFFTag.TIFF_IFD_POINTER,
                   EXIFTIFFTagSet.getInstance());
         }
     }

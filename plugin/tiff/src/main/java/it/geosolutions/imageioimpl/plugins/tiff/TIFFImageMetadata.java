@@ -187,7 +187,7 @@ public class TIFFImageMetadata extends IIOMetadata {
         while (iter.hasNext()) {
             TIFFField f = (TIFFField)iter.next();
             int tagNumber = f.getTagNumber();
-            TIFFTag tag = TIFFIFD.getTag(tagNumber, tagSets);
+             TIFFTag tag = TIFFIFD.getTag(tagNumber, tagSets);
 
             Node node = null;
             if (tag == null) {
