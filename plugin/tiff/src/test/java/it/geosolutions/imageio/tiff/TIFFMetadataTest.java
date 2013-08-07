@@ -66,29 +66,26 @@ public class TIFFMetadataTest {
 			int tagNumberColor = 40961;
 			int tagNumberXpixelRes = 40962;
 			int tagNumberYpixelRes = 40963;
-			// Boolean for checking if the EXIF tags are present
-			boolean exifVersion = subIFD.containsTIFFField(tagNumberExifVersion);
-			boolean dateTime = subIFD.containsTIFFField(tagNumberDateTime);
-			boolean compConfig = subIFD.containsTIFFField(tagNumberCompConfig);
-			boolean flashPix = subIFD.containsTIFFField(tagNumberFlashPix);
-			boolean xPixelRes = subIFD.containsTIFFField(tagNumberColor);
-			boolean yPixelRes = subIFD.containsTIFFField(tagNumberXpixelRes);
-			boolean colorSpace = subIFD.containsTIFFField(tagNumberYpixelRes);
 			// Test Assertions
-			assertTrue(exifVersion);
-			assertTrue(dateTime);
-			assertTrue(compConfig);
-			assertTrue(flashPix);
-			assertTrue(xPixelRes);
-			assertTrue(yPixelRes);
-			assertTrue(colorSpace);
+			assertTrue(subIFD.containsTIFFField(tagNumberExifVersion));
+			assertTrue(subIFD.containsTIFFField(tagNumberDateTime));
+			assertTrue(subIFD.containsTIFFField(tagNumberCompConfig));
+			assertTrue(subIFD.containsTIFFField(tagNumberFlashPix));
+			assertTrue(subIFD.containsTIFFField(tagNumberColor));
+			assertTrue(subIFD.containsTIFFField(tagNumberXpixelRes));
+			assertTrue(subIFD.containsTIFFField(tagNumberYpixelRes));
 		} catch (Exception e) {
 			// If an exception occurred the logger catch the exception and print
 			// the message
 			logger.log(Level.SEVERE, e.getMessage(), e);
 		} finally {
-			// Finally, if an exception has been thrown or not, the reader is
-			// closed
+			// Finally, if an exception has been thrown or not, the reader
+			// and the input stream are closed
+			if(stream0!=null){
+				stream0.flush();
+				stream0.close();
+			}
+			
 			if (reader != null) {
 				reader.dispose();
 			}
