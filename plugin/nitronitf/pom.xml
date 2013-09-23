@@ -41,8 +41,13 @@
         </developer>
     </developers>
     <properties>
-        <nitro.version>2.7-dev-r1130</nitro.version>
+        <nitro.version>2.7</nitro.version>
+        <nitro.classifier>r1269</nitro.classifier>
         <junit.version>4.4</junit.version>
+        <log4j.version>1.2.14</log4j.version>
+        <commons-logging.version>1.1.1</commons-logging.version>
+        <commons-lang.version>2.4</commons-lang.version>
+        <commons-io.version>1.4</commons-io.version>
     </properties>
 
     <dependencies>
@@ -60,7 +65,28 @@
         <dependency>
             <groupId>nitro-nitf</groupId>
             <artifactId>nitf-bindings</artifactId>
-            <version>${nitro.version}</version>
+            <version>${nitro.version}-${nitro.classifier}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>${commons-logging.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>${commons-lang.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
         </dependency>
     </dependencies>
 </project>
