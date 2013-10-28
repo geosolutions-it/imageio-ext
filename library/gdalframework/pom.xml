@@ -11,12 +11,6 @@
   <packaging>jar</packaging>
   <version>1.2-SNAPSHOT</version>
   <name>Image I/O-Extensions - GDAL Image IO Framework</name>
-  <scm>
-    <connection>
-      scm:svn:https://svn.java.net/svn/imageio-ext~svn/trunk/library/gdalframework
-    </connection>
-    <url>https://svn.java.net/svn/imageio-ext~svn/trunk/library/gdalframework</url>
-  </scm>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>

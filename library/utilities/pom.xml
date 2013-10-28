@@ -11,10 +11,4 @@
   <packaging>jar</packaging>
   <version>1.2-SNAPSHOT</version>
   <name>Image I/O-Extensions - utilities classes and methods</name>
-  <scm>
-    <connection>
-      scm:svn:https://svn.java.net/svn/imageio-ext~svn/trunk/library/utilities
-    </connection>
-    <url>https://svn.java.net/svn/imageio-ext~svn/trunk/library/utilities</url>
-  </scm>
 </project>

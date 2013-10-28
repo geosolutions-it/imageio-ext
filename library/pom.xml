@@ -18,13 +18,6 @@
   <packaging>pom</packaging>
   <name>GeoSolutions Image I/O-Extensions libraries</name>
 
-  <scm>
-    <connection>
-      scm:svn:https://svn.java.net/svn/imageio-ext~svn/trunk/library
-    </connection>
-    <url>https://svn.java.net/svn/imageio-ext~svn/trunk/library</url>
-  </scm>
-
   <description>
     Image I/O-Extensions core modules.
   </description>

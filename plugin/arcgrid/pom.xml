@@ -11,14 +11,6 @@
     <version>1.2-SNAPSHOT</version>
   </parent>
   <name>Pure java ArcGrid Plugin</name>
-  
-  <scm>
-      <connection>
-        scm:svn:https://svn.java.net/svn/imageio-ext~svn/trunk/plugin/arcgrid
-      </connection>
-      <url>https://svn.java.net/svn/imageio-ext~svn/trunk/plugin/arcgrid</url>
-  </scm>
-  
   <dependencies>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>

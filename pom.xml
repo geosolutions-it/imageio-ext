@@ -30,9 +30,9 @@
 
   <scm>
     <connection>
-      scm:svn:https://svn.java.net/svn/imageio-ext~svn/trunk
+      scm:git:git://github.com/geosolutions-it/imageio-ext/
     </connection>
-    <url>https://svn.java.net/svn/imageio-ext~svn/trunk</url>
+    <url>https://github.com/geosolutions-it/imageio-ext/tree/master/</url>
   </scm>
 
   <description>Container for tools and extensions to Image I/O project</description>

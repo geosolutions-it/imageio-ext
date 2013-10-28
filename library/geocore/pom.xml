@@ -11,12 +11,6 @@
   <packaging>jar</packaging>
   <version>1.2-SNAPSHOT</version>
   <name>Image I/O-Extensions - GeoCore</name>
-  <scm>
-    <connection>
-      scm:svn:https://svn.java.net/svn/imageio-ext~svn/trunk/library/geocore
-    </connection>
-    <url>https://svn.java.net/svn/imageio-ext~svn/trunk/library/geocore</url>
-  </scm>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -33,6 +27,6 @@
       <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-streams</artifactId>
       <version>${project.version}</version>
-    </dependency>      
+    </dependency>
   </dependencies>
 </project>

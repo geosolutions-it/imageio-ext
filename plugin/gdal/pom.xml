@@ -17,12 +17,6 @@
   <description>
     Image I/O-Extensions GDAL plugin modules.
   </description>
-  <scm>
-    <connection>
-      scm:svn:https://svn.java.net/svn/imageio-ext~svn/trunk/plugin
-    </connection>
-    <url>https://svn.java.net/svn/imageio-ext~svn/trunk/plugin</url>
-  </scm>
   
   <!-- ===================================================================== -->
   <!--     Dependencies management.                                          -->

@@ -11,12 +11,6 @@
   <packaging>jar</packaging>
   <version>1.2-SNAPSHOT</version>
   <name>Image I/O-Extensions - Multithreading ImageRead</name>
-  <scm>
-    <connection>
-      scm:svn:https://svn.java.net/svn/imageio-ext~svn/trunk/library/imagereadmt
-    </connection>
-    <url>https://svn.java.net/svn/imageio-ext~svn/trunk/library/imagereadmt</url>
-  </scm>
   <dependencies>
    <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
