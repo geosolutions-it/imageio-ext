@@ -11,14 +11,6 @@
     <packaging>jar</packaging>
     <version>1.1-SNAPSHOT</version>
   <name>Revisited JMATIO Access Libraries</name>
- 
-   <scm>
-     <connection>
-       scm:svn:https://svn.java.net/svn/imageio-ext~svn/branches/1.1.x/library/jmatio
-     </connection>
-     <url>https://svn.java.net/svn/imageio-ext~svn/branches/1.1.x/library/jmatio</url>
-  </scm>
-  
  <!-- ===================================================================== -->
  <!--     Dependencies management.                                          -->
  <!-- ===================================================================== -->

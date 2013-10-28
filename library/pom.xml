@@ -4,31 +4,19 @@
            xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                                http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
-
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext</artifactId>
     <version>1.1-SNAPSHOT</version>
   </parent>
-
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-library</artifactId>
   <version>1.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>GeoSolutions Image I/O-Extensions libraries</name>
-
-  <scm>
-    <connection>
-      scm:svn:https://svn.java.net/svn/imageio-ext~svn/branches/1.1.x/library
-    </connection>
-    <url>https://svn.java.net/svn/imageio-ext~svn/branches/1.1.x/library</url>
-  </scm>
-
   <description>
     Image I/O-Extensions core modules.
   </description>
-
   <!-- =========================================================== -->
   <!--     Modules for the build in approximate dependency order   -->
   <!-- =========================================================== -->
