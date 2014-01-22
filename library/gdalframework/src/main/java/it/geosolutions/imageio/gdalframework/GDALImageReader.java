@@ -787,6 +787,9 @@ public abstract class GDALImageReader extends ImageReader {
         for(Entry<String, Dataset> e:elements){
         	GDALUtilities.closeDataSet(e.getValue());
         }
+        if (datasetsMap != null) {
+            datasetsMap.clear();
+        }
     }
 
     /**
