@@ -30,6 +30,61 @@ public class ImageOutputStreamAdapter extends ImageOutputStreamImpl implements A
 
     // Supporting marking is a big issue. I should overline this somehow 
     
+    @Override
+    public void flushBefore(long arg0) throws IOException {
+        throw new UnsupportedOperationException("Operation not supported.");
+    }
+
+    @Override
+    public long getFlushedPosition() {
+        throw new UnsupportedOperationException("Operation not supported.");
+    }
+
+    @Override
+    public long getStreamPosition() throws IOException {
+        throw new UnsupportedOperationException("Operation not supported.");
+    }
+
+    @Override
+    public boolean isCached() {
+        return false;
+    }
+
+    @Override
+    public boolean isCachedFile() {
+        return false;
+    }
+
+    @Override
+    public boolean isCachedMemory() {
+        return false;
+    }
+
+    @Override
+    public void mark() {
+        throw new UnsupportedOperationException("Operation not supported.");
+    }
+
+    @Override
+    public void reset() throws IOException {
+        throw new UnsupportedOperationException("Operation not supported.");
+    }
+
+    @Override
+    public void seek(long arg0) throws IOException {
+        throw new UnsupportedOperationException("Operation not supported.");
+    }
+
+    @Override
+    public int skipBytes(int arg0) throws IOException {
+        throw new UnsupportedOperationException("Operation not supported.");
+    }
+
+    @Override
+    public long skipBytes(long arg0) throws IOException {
+        throw new UnsupportedOperationException("Operation not supported.");
+    }
+    
     private OutputStream os;
 
     public ImageOutputStreamAdapter(OutputStream os) {
