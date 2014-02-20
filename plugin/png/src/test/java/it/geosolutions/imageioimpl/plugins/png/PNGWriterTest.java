@@ -1,6 +1,6 @@
 package it.geosolutions.imageioimpl.plugins.png;
 
-import it.geosolutions.imageio.plugins.png.PNGJWriter;
+import it.geosolutions.imageio.plugins.png.PNGWriter;
 import it.geosolutions.resources.TestData;
 
 import java.awt.image.BufferedImage;
@@ -23,7 +23,7 @@ import ar.com.hjg.pngj.FilterType;
 public class PNGWriterTest extends TestCase {
 
     public void testWriter(){
-        PNGJWriter writer = new PNGJWriter();
+        PNGWriter writer = new PNGWriter();
         OutputStream out = null;
         try{
             

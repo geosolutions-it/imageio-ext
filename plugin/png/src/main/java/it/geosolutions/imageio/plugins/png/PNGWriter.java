@@ -22,7 +22,7 @@ import ar.com.hjg.pngj.chunks.PngChunkTRNS;
  * 
  * @author Andrea Aime - GeoSolutions
  */
-public class PNGJWriter {
+public class PNGWriter {
 
     private static final Logger LOGGER = Logger.getAnonymousLogger();
 
