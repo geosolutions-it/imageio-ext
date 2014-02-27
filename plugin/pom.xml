@@ -50,6 +50,15 @@
         <module>gdal</module>
       </modules>
     </profile>
+	<profile>
+      <id>png</id>
+        <activation>
+         <property><name>all</name></property>
+        </activation>      
+      <modules>
+        <module>png</module>
+      </modules>
+    </profile>
     <profile>
       <id>mat</id>
         <activation>
@@ -71,6 +80,7 @@
         <module>gdal</module>
         <module>turbojpeg</module>
         <module>nitronitf</module>
+		<module>png</module>
        </modules>
     </profile>
   </profiles>
