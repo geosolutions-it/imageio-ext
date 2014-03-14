@@ -5,3 +5,5 @@ The ImageIO-Ext project provides extensions, fixes and improvements for the stan
  * support the GDAL I/O library
  * support for readeing/writing JPEG2000 files with Kakadu
  * improved support for reading/writing tiff files
+
+Relases, along with the require native binary packages, can be found here: http://demo.geo-solutions.it/share/github/imageio-ext/releases/1.1.X/
