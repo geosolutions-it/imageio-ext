@@ -2,7 +2,6 @@ package com.jmatio.io;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 import it.geosolutions.resources.TestData;
 
 import java.io.File;
@@ -18,10 +17,6 @@ import junit.framework.JUnit4TestAdapter;
 
 import org.junit.Test;
 
-import com.jmatio.io.MatFileFilter;
-import com.jmatio.io.MatFileIncrementalWriter;
-import com.jmatio.io.MatFileReader;
-import com.jmatio.io.MatFileWriter;
 import com.jmatio.types.MLArray;
 import com.jmatio.types.MLCell;
 import com.jmatio.types.MLChar;
@@ -523,13 +518,15 @@ public class MatIOTest
         for ( int i = 0; i < referenceReal.length; i++ )
         {
             for (int j = 0; j < referenceReal[i].length; j++) {
-                assertEquals( "2D array mismatch (real)", referenceReal[i][j], ((MLSparse)mlArrayRetrived).getReal(i,j));
+                assertEquals("2D array mismatch (real)", referenceReal[i][j],
+                        ((MLSparse) mlArrayRetrived).getReal(i, j), 0d);
             }
         }
         for ( int i = 0; i < referenceImaginary.length; i++ )
         {
             for (int j = 0; j < referenceImaginary[i].length; j++) {
-                assertEquals( "2D array mismatch (imaginary)", referenceImaginary[i][j], ((MLSparse)mlArrayRetrived).getImaginary(i,j));
+                assertEquals("2D array mismatch (imaginary)", referenceImaginary[i][j],
+                        ((MLSparse) mlArrayRetrived).getImaginary(i, j), 0d);
             }
         }
     }
@@ -741,7 +738,7 @@ public class MatIOTest
         MatFileReader mfr = new MatFileReader( fileName );
         
         assertEquals("Test if value red from file equals NaN", Double.NaN, 
-                                    ((MLDouble)mfr.getMLArray( "x" )).get(0,0) );
+                ((MLDouble) mfr.getMLArray("x")).get(0, 0), 0d);
         
         
     }
@@ -761,11 +758,11 @@ public class MatIOTest
         mfr = new MatFileReader( fileName );
         assertEquals("Test min. value from file:" + fileName + " array: " + arrName, 
                      (byte)0, 
-                     ((MLUInt8)mfr.getMLArray( arrName )).get(0,0) );
+                ((MLUInt8) mfr.getMLArray(arrName)).get(0, 0), 0d);
         
         assertEquals("Test max. value from file:" + fileName + " array: " + arrName, 
                 (byte)255, 
-                ((MLUInt8)mfr.getMLArray( arrName )).get(0,1) );
+                ((MLUInt8) mfr.getMLArray(arrName)).get(0, 1), 0d);
         
         src = mfr.getMLArray( arrName );
         
@@ -779,11 +776,11 @@ public class MatIOTest
         mfr = new MatFileReader( fileName );
         assertEquals("Test min. value from file:" + fileName + " array: " + arrName, 
                      (byte)0, 
-                     ((MLUInt8)mfr.getMLArray( arrName )).get(0,0) );
+                ((MLUInt8) mfr.getMLArray(arrName)).get(0, 0), 0d);
         
         assertEquals("Test max. value from file:" + fileName + " array: " + arrName, 
                 (byte)255, 
-                ((MLUInt8)mfr.getMLArray( arrName )).get(0,1) );
+                ((MLUInt8) mfr.getMLArray(arrName)).get(0, 1), 0d);
     
         
         assertEquals("Test if array retrieved from " + fileName + " equals source array", 
@@ -807,11 +804,11 @@ public class MatIOTest
         
         assertEquals("Test min. value from file:" + fileName + " array: " + arrName, 
                      (byte)-128, 
-                     ((MLInt8)mfr.getMLArray( "arr" )).get(0,0) );
+                ((MLInt8) mfr.getMLArray("arr")).get(0, 0), 0d);
         
         assertEquals("Test max. value from file:" + fileName + " array: " + arrName, 
                 (byte)127, 
-                ((MLInt8)mfr.getMLArray( "arr" )).get(0,1) );
+                ((MLInt8) mfr.getMLArray("arr")).get(0, 1), 0d);
         
         src = mfr.getMLArray( "arr" );
         
@@ -825,11 +822,11 @@ public class MatIOTest
         mfr = new MatFileReader( fileName );
         assertEquals("Test min. value from file:" + fileName + " array: " + arrName, 
                      (byte)-128, 
-                     ((MLInt8)mfr.getMLArray( arrName )).get(0,0) );
+                ((MLInt8) mfr.getMLArray(arrName)).get(0, 0), 0d);
         
         assertEquals("Test max. value from file:" + fileName + " array: " + arrName, 
                 (byte)127, 
-                ((MLInt8)mfr.getMLArray( arrName )).get(0,1) );
+                ((MLInt8) mfr.getMLArray(arrName)).get(0, 1), 0d);
     
         
         assertEquals("Test if array retrieved from " + fileName + " equals source array", 
