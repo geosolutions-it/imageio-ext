@@ -53,29 +53,6 @@ public final class RasterByteGrayAlphaProvider extends AbstractScanlineProvider 
         } else {
             System.arraycopy(bytes, bytesIdx, row, offset, length);
         }
-        // } else {
-        // if (hasAlpha) {
-        // while (i < max) {
-        // final byte a = bytes[bytesIdx++];
-        // final byte b = bytes[bytesIdx++];
-        // final byte g = bytes[bytesIdx++];
-        // final byte r = bytes[bytesIdx++];
-        // row[i++] = r;
-        // row[i++] = g;
-        // row[i++] = b;
-        // row[i++] = a;
-        // }
-        // } else {
-        // while (i < max) {
-        // final byte b = bytes[bytesIdx++];
-        // final byte g = bytes[bytesIdx++];
-        // final byte r = bytes[bytesIdx++];
-        // row[i++] = r;
-        // row[i++] = g;
-        // row[i++] = b;
-        // }
-        // }
-        // }
     }
 
 }
