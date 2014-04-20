@@ -25,8 +25,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 
 import javax.imageio.ImageIO;
 import javax.media.jai.ImageLayout;
@@ -63,10 +61,6 @@ public class GrayAlpha8bitTest {
         float quality = 5f/9 - 1;
         new PNGWriter().writePNG(grayAlpha, bos, -quality, FilterType.FILTER_NONE);
         
-        FileOutputStream fos = new FileOutputStream(new File("/tmp/sample.png"));
-        fos.write(bos.toByteArray());
-        fos.close();
-
         BufferedImage read = ImageIO.read(new ByteArrayInputStream(bos.toByteArray()));
         BufferedImage gaBuffered = PlanarImage.wrapRenderedImage(grayAlpha).getAsBufferedImage();
         ImageAssert.assertImagesEqual(gaBuffered, read);
