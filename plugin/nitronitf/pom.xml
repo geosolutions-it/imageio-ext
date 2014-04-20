@@ -43,7 +43,6 @@
     <properties>
         <nitro.version>2.7</nitro.version>
         <nitro.classifier>r1269</nitro.classifier>
-        <junit.version>4.4</junit.version>
         <log4j.version>1.2.14</log4j.version>
         <commons-logging.version>1.1.1</commons-logging.version>
         <commons-lang.version>2.4</commons-lang.version>
@@ -58,7 +57,6 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

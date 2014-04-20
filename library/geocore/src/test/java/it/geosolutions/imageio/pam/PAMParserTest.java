@@ -31,7 +31,7 @@ public class PAMParserTest {
 
         // Scan the first band
         final PAMRasterBand band = bands.get(0);
-        assertEquals(1, band.getBand());
+        assertEquals(1, (int) band.getBand());
 
         // Checking histogram properties
         final Histograms histograms = band.getHistograms();
