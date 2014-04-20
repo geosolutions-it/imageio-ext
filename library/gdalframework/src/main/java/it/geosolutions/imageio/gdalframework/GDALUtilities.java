@@ -623,6 +623,7 @@ public final class GDALUtilities {
                     // this should be ensured by the
                     // bindings (gdal.jar), not a higher-level library
                     //System.loadLibrary("gdaljni");
+                	Class.forName("org.gdal.gdal");
                     gdal.AllRegister();
                     final String versionInfo = gdal.VersionInfo("RELEASE_NAME");
                     if (versionInfo != null && versionInfo.trim().length() > 0) {
@@ -641,7 +642,7 @@ public final class GDALUtilities {
                         gdal.PushErrorHandler("CPLQuietErrorHandler");
                     }
                     GDALUtilities.available = true;
-                } catch (UnsatisfiedLinkError e) {
+                } catch (ClassNotFoundException e) {
                     if (LOGGER.isLoggable(Level.WARNING)) {
                         LOGGER.warning("Failed to load the GDAL native libs. This is not a problem "
                         		+ "unless you need to use the GDAL plugins: they won't be enabled.\n" 
