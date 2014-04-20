@@ -620,7 +620,9 @@ public final class GDALUtilities {
                     return;
                 }
                 try {
-                    System.loadLibrary("gdaljni");
+                    // this should be ensured by the
+                    // bindings (gdal.jar), not a higher-level library
+                    //System.loadLibrary("gdaljni");
                     gdal.AllRegister();
                     final String versionInfo = gdal.VersionInfo("RELEASE_NAME");
                     if (versionInfo != null && versionInfo.trim().length() > 0) {
