@@ -389,20 +389,27 @@
   <dependencyManagement>
     <dependencies>
      <!-- Tests or legacy -->
+     <!-- provided by the distro -->
      <dependency>
         <groupId>javax.media</groupId>
        <artifactId>jai_core</artifactId>
        <version>1.1.3</version>
+       <scope>system</scope>
+       <systemPath>/usr/share/java/jai_core.jar</systemPath>
      </dependency>
      <dependency>
        <groupId>javax.media</groupId>
        <artifactId>jai_codec</artifactId>
        <version>1.1.3</version>
+       <scope>system</scope>
+       <systemPath>/usr/share/java/jai_codec.jar</systemPath>
      </dependency>
      <dependency>
        <groupId>javax.media</groupId>
        <artifactId>jai_imageio</artifactId>
        <version>1.1</version>
+       <scope>system</scope>
+       <systemPath>/usr/share/java/jai_imageio.jar</systemPath>
      </dependency>       
       <dependency>
         <groupId>junit</groupId>
@@ -410,9 +417,11 @@
         <version>4.0</version>
       </dependency>
       <dependency>
-       <groupId>it.geosolutions.imageio-ext</groupId>
-       <artifactId>imageio-ext-gdal-bindings</artifactId>
+       <groupId>org.gdal</groupId>
+       <artifactId>gdal</artifactId>
        <version>${gdal.version}</version>
+       <scope>system</scope>
+       <systemPath>/usr/share/java/gdal.jar</systemPath>
      </dependency>
      <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
