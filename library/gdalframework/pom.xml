@@ -4,12 +4,12 @@
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-library</artifactId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.2-remloadlibrary</version>
   </parent>
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-gdalframework</artifactId>
   <packaging>jar</packaging>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.2-remloadlibrary</version>
   <name>Image I/O-Extensions - GDAL Image IO Framework</name>
   <dependencies>
     <dependency>
@@ -17,9 +17,14 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
+    <!-- This dependency should be provided by the system
+         and comes from GDAL/OGR library -->
     <dependency>
-      <groupId>it.geosolutions.imageio-ext</groupId>
-      <artifactId>imageio-ext-gdal-bindings</artifactId>
+      <groupId>gdal</groupId>
+      <artifactId>org.gdal</artifactId>
+      <scope>system</scope>
+      <version>${gdal.version}</version>
+      <systemPath>${env.GDAL_JAR}</systemPath>
     </dependency>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
@@ -37,7 +42,6 @@
       <version>${project.version}</version>
     </dependency>  
   </dependencies>
-  
   <build><plugins>
   <plugin>
 	  <groupId>org.apache.maven.plugins</groupId>
