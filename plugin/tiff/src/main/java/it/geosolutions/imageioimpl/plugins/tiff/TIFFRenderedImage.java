@@ -125,11 +125,21 @@ public class TIFFRenderedImage implements RenderedImage {
         this.width = width/subsampleX;
         this.height = height/subsampleY;
 
+        if (this.width == 0 || this.height == 0) {
+            throw new IllegalArgumentException("Resulting width or height are zero");
+        }
+
         // If subsampling is being used, we may not match the
         // true tile grid exactly, but everything should still work
-        this.tileWidth = reader.getTileWidth(imageIndex)/subsampleX;
-        this.tileHeight = reader.getTileHeight(imageIndex)/subsampleY;
-        
+        //this.tileWidth = reader.getTileWidth(imageIndex)/subsampleX;
+        //this.tileHeight = reader.getTileHeight(imageIndex)/subsampleY;
+
+        // If we use the original code above we may end up with very small tileWidth/Height
+        // depending on the value of subsampleX/Y. This will lead to various JAI problems,
+        // e.g. imagine the tile cache filled up with millions of tiles of size 1 x 1.
+        this.tileWidth = Math.min(reader.getTileWidth(imageIndex), width);
+        this.tileHeight = Math.min(reader.getTileHeight(imageIndex), height);
+
         Iterator iter = reader.getImageTypes(imageIndex);
         this.its = (ImageTypeSpecifier)iter.next();
         tileParam.setDestinationType(its);
