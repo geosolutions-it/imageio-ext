@@ -139,11 +139,11 @@ public final class StringToDouble {
 	 * Resets the converter.
 	 * 
 	 * <p>
-	 * This method should be called each time a new value is consumed byt using
-	 * {@link StringToDouble#getValue()} method.
+	 * This method should be called each time a new value is consumed by using
+	 * {@link StringToDouble#compute()} method.
 	 * 
 	 */
-	void reset() {
+	public void reset() {
 		// Resetting Values
 		value = 0.0;
 		eof = false;

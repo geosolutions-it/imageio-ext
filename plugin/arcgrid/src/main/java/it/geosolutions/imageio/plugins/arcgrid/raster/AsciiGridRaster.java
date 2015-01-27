@@ -1152,7 +1152,7 @@ public abstract class AsciiGridRaster {
 		//
 		// ///////////////////////////////////////////////////////////////////
 		retVal = doubleConverter.compute();
-		// StringToDouble.release(doubleConverter);
+		doubleConverter.reset();
 		return retVal;
 	}
 
