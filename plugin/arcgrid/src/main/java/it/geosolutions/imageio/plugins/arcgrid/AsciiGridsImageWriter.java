@@ -36,6 +36,7 @@ import javax.media.jai.PlanarImage;
 import javax.media.jai.iterator.RectIter;
 import javax.media.jai.iterator.RectIterFactory;
 
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 /**
@@ -212,22 +213,18 @@ public final class AsciiGridsImageWriter extends ImageWriter {
 		// Grid description
 		//
 		// //
-		final Node gridDescriptorNode = formatDescriptorNode.getNextSibling();
-		nColumns = Integer.parseInt(gridDescriptorNode.getAttributes()
-				.getNamedItem("nColumns").getNodeValue());
-		nRows = Integer.parseInt(gridDescriptorNode.getAttributes()
-				.getNamedItem("nRows").getNodeValue());
-		rasterSpaceType = RasterSpaceType.valueOf(gridDescriptorNode.getAttributes()
-				.getNamedItem("rasterSpaceType").getNodeValue());
-		noDataValueString = null;// remember the no data value can be optional
 		
-		// we do not write anything down for GRASS
-		if (rasterType.equals(AsciiGridRaster.AsciiGridRasterType.ESRI)) {
-			Node dummyNode = gridDescriptorNode.getAttributes().getNamedItem(
-					"noDataValue");
-
-			if (dummyNode != null)
-				noDataValueString = dummyNode.getNodeValue();
+		final Node gridDescriptorNode = formatDescriptorNode.getNextSibling();
+		NamedNodeMap attributes = gridDescriptorNode.getAttributes();
+		nColumns = Integer.parseInt(attributes.getNamedItem("nColumns").getNodeValue());
+		nRows = Integer.parseInt(attributes.getNamedItem("nRows").getNodeValue());
+		rasterSpaceType = RasterSpaceType.valueOf(attributes
+				.getNamedItem("rasterSpaceType").getNodeValue());
+		noDataValueString = null;
+		
+		Node dummyNode = attributes.getNamedItem("noDataValue");
+		if (dummyNode != null) {
+			noDataValueString = dummyNode.getNodeValue();
 		}
 
 		// //
