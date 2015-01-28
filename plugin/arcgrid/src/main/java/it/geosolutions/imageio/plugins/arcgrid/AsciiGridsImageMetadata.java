@@ -303,9 +303,7 @@ public final class AsciiGridsImageMetadata extends IIOMetadata {
 		node.setAttribute("nColumns", Integer.toString(nCols));
 		node.setAttribute("nRows", Integer.toString(nRows));
 		node.setAttribute("rasterSpaceType", rasterSpaceType.toString());
-
-		if (!rasterSpaceType.equals(AsciiGridRasterType.GRASS)) 
-			node.setAttribute("noDataValue", Double.toString(noData));
+		node.setAttribute("noDataValue", Double.toString(noData));
 
 		root.appendChild(node);
 
