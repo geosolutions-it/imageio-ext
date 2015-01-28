@@ -1780,7 +1780,7 @@ public class TIFFImageReader extends ImageReader {
                             break;
                         }
 
-                        decodeTile(ti, tj, band);
+                        decodeTile(ti, tj, sb [0]);
                     }
 
                     if(isAbortRequested) break;
