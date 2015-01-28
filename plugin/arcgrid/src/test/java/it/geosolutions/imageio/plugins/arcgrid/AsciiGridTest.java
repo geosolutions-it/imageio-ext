@@ -17,6 +17,7 @@
 package it.geosolutions.imageio.plugins.arcgrid;
 
 import it.geosolutions.imageio.plugins.arcgrid.AsciiGridsImageMetadata.RasterSpaceType;
+import it.geosolutions.imageio.plugins.arcgrid.raster.AsciiGridRaster;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
@@ -34,17 +35,18 @@ import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 
 import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
 
-import org.w3c.dom.Node;
-
 import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.w3c.dom.Node;
 
 import com.sun.media.jai.operator.ImageReadDescriptor;
 import com.sun.media.jai.operator.ImageWriteDescriptor;
@@ -60,6 +62,7 @@ public class AsciiGridTest extends TestCase {
 
     private final static Logger LOGGER = Logger
             .getLogger("it.geosolutions.imageio.plugins.arcgrid");
+    private static final double DELTA = 1E-6d;
 
     protected void setUp() throws Exception {
         super.setUp();
@@ -96,6 +99,9 @@ public class AsciiGridTest extends TestCase {
 
         // Read an ArcGrid file and write it back to another file
         suite.addTest(new AsciiGridTest("testReadWrite"));
+
+        // Read an ESRI ArcGrid file and write it back to GRASS
+        suite.addTest(new AsciiGridTest("testReadAsEsriAndWriteAsGrass"));
 
         return suite;
     }
@@ -166,6 +172,80 @@ public class AsciiGridTest extends TestCase {
 	        final boolean result = compare(image, image2, error);
 	        assertTrue(error[0], result);
         }
+    }
+
+    /**
+     * Read an ESRI ArcGrid file and write it back as GRASS
+     */
+    public void testReadAsEsriAndWriteAsGrass() throws FileNotFoundException, IOException {
+        String title = new String("Simple JAI ImageRead operation test");
+
+        File testFile = TestData.file(this, "095b_dem_90m.asc");
+        ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
+        pbjImageRead.setParameter("Input", testFile);
+        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+        if (TestData.isInteractiveTest()) {
+            ImageIOUtilities.visualize(image, title, true);
+        } else {
+            assertNotNull(image.getTiles());
+        }
+        // //
+        //
+        // Writing it out
+        //
+        // //
+        final File foutput = TestData.temp(this, "file.asc", true);
+        final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
+                "ImageWrite");
+        pbjImageWrite.setParameter("Output", foutput);
+        pbjImageWrite.addSource(image);
+
+        final ImageReader reader = (ImageReader) image
+                .getProperty(ImageReadDescriptor.PROPERTY_NAME_IMAGE_READER);
+        final AsciiGridRaster raster = ((AsciiGridsImageReader) reader).getRasterReader();
+
+        AsciiGridsImageMetadata grassMetadata = new AsciiGridsImageMetadata(
+                raster.getNCols(), raster.getNRows(), raster.getCellSizeX(), raster.getCellSizeY(),
+                raster.getXllCellCoordinate(), raster.getYllCellCoordinate(), 
+                raster.isCorner(), true, raster.getNoData());
+//        writer.write (new IIOImage(image, null, grassMetadata));
+//        writer.dispose();
+        pbjImageWrite.setParameter("ImageMetadata", grassMetadata);
+        pbjImageWrite.setParameter("Transcode", false);
+
+        
+        // //
+        //
+        // What I am doing here is crucial, that is getting the used writer and
+        // disposing it. This will force the underlying stream to write data on
+        // disk.
+        //
+        // //
+        final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
+        final ImageWriter writer = (ImageWriter) op.getProperty(ImageWriteDescriptor.PROPERTY_NAME_IMAGE_WRITER);
+        writer.dispose();
+
+
+        
+        
+        // //
+        //
+        // Reading it back
+        //
+        // //
+        pbjImageRead = new ParameterBlockJAI("ImageRead");
+        pbjImageRead.setParameter("Input", foutput);
+        RenderedOp image2 = JAI.create("ImageRead", pbjImageRead);
+        title = new String("Read Back the just written image");
+        if (TestData.isInteractiveTest()) {
+            ImageIOUtilities.visualize(image2, title, true);
+        }else{
+            assertNotNull(image2.getTiles());
+        }
+
+        final String error[] = new String[1];
+        final boolean result = compare(image, image2, error, raster.getNoData());
+        assertTrue(error[0], result);
     }
 
     /**
@@ -374,6 +454,11 @@ public class AsciiGridTest extends TestCase {
         }             
     }
 
+    private static boolean compare(final RenderedOp image, final RenderedOp image2,
+            final String error[]) {
+        return compare(image, image2, error, Double.NaN);
+    }
+    
     /**
      * Compare images by testing each pixel of the first image equals the pixel
      * of the second image. Return <code>true</code> if compare is
@@ -385,10 +470,12 @@ public class AsciiGridTest extends TestCase {
      *                the first image to be compared
      * @param error
      *                a container for error messages in case of differences.
+     * @param noData 
+     *                a value representing noData
      * @return <code>true</code> if everything is ok.
      */
     private static boolean compare(final RenderedOp image, final RenderedOp image2,
-            final String error[]) {
+            final String error[], final double noData) {
         final int minTileX1 = image.getMinTileX();
         final int minTileY1 = image.getMinTileY();
         final int width = image.getTileWidth();
@@ -408,8 +495,12 @@ public class AsciiGridTest extends TestCase {
                     for (int j = r1.getMinY(); j < height; j++) {
                         value1 = r1.getSampleDouble(i, j, 0);
                         value2 = r2.getSampleDouble(i, j, 0);
-
-                        if (!(Double.isNaN(value1)&&Double.isNaN(value2))&&value1 != value2) {
+                        if (!Double.isNaN(noData)) {
+                            value1 = replaceNoData(value1, noData);
+                            value2 = replaceNoData(value2, noData);
+                        }
+                        
+                        if (!(Double.isNaN(value1)&&Double.isNaN(value2))&& Math.abs(value1 - value2) > DELTA) {
                             error[0] = new StringBuilder(
                                     "Written back image is not equal to the original one: ")
                                     .append(value1).append(", ").append(value2)
@@ -424,4 +515,13 @@ public class AsciiGridTest extends TestCase {
         // compare metadata
         return true;
     }
+
+    private static double replaceNoData(double value, double noData) {
+        if (!Double.isNaN(value) && Math.abs(value - noData) < DELTA) {
+            value = Double.NaN;
+        }
+        return value;
+
+    }
+
 }
