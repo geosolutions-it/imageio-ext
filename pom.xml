@@ -1,599 +1,670 @@
 <?xml version="1.0" encoding="UTF-8"?>
-  <project xmlns="http://maven.apache.org/POM/4.0.0"
-           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                                http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <!--                    -->
-  <!--    PROPERTIES      -->
-  <!--                    -->
-  <properties>
-    <path.native>${env.JAVA_HOME}/bin</path.native>
-    <java.lib>${env.JAVA_HOME}/jre/lib/ext</java.lib>
-    <m2.localrepo>${settings.localRepository}</m2.localrepo>
-    <extensive.tests>false</extensive.tests>
-    <interactive.tests>false</interactive.tests>
-    <test.maxHeapSize>512M</test.maxHeapSize>
-    <gdal.version>1.9.2</gdal.version>
-    <kakadu.version>5.2.6</kakadu.version>
-  </properties>
+    <!--                    -->
+    <!--    PROPERTIES      -->
+    <!--                    -->
+    <properties>
+        <path.native>${env.JAVA_HOME}/bin</path.native>
+        <java.lib>${env.JAVA_HOME}/jre/lib/ext</java.lib>
+        <m2.localrepo>${settings.localRepository}</m2.localrepo>
+        <extensive.tests>false</extensive.tests>
+        <interactive.tests>false</interactive.tests>
+        <test.maxHeapSize>512M</test.maxHeapSize>
+        <gdal.version>1.9.2</gdal.version>
+        <kakadu.version>5.2.6</kakadu.version>
+    </properties>
 
-  <!-- ======================================================== -->
-  <!--                    Project Description                   -->
-  <!-- ======================================================== -->
-  <groupId>it.geosolutions.imageio-ext</groupId>
-  <artifactId>imageio-ext</artifactId>
-  <packaging>pom</packaging>
-  <version>1.2-SENTBX</version>
-  <name>GeoSolutions Image I/O-Extensions Library Root Project</name>
+    <!-- ======================================================== -->
+    <!--                    Project Description                   -->
+    <!-- ======================================================== -->
+    <groupId>it.geosolutions.imageio-ext</groupId>
+    <artifactId>imageio-ext</artifactId>
+    <packaging>pom</packaging>
+    <version>1.2-SENTBX</version>
+    <name>GeoSolutions Image I/O-Extensions Library Root Project</name>
 
-  <scm>
-    <connection>
-      scm:git:git://github.com/geosolutions-it/imageio-ext/
-    </connection>
-    <url>https://github.com/geosolutions-it/imageio-ext/tree/master/</url>
-  </scm>
+    <scm>
+        <connection>
+            scm:git:git://github.com/geosolutions-it/imageio-ext/
+        </connection>
+        <url>https://github.com/geosolutions-it/imageio-ext/tree/master/</url>
+    </scm>
 
-  <description>Container for tools and extensions to Image I/O project</description>
-  <organization>
-    <name>GeoSolutions</name>
-    <url>http://www.geo-solutions.it</url>
-  </organization>
-  <inceptionYear>2006</inceptionYear>
-  <licenses>
-    <license>
-      <name>Lesser General Public License (LGPL)</name>
-      <url>http://www.gnu.org/copyleft/lesser.txt</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-  
-  <!-- ======================================================== -->
-  <!--                 Deployment Repository                    -->
-  <!-- ======================================================== -->
-  
-  <profiles>
-   <profile>
-   <id>deployosgeo</id>
-     <distributionManagement>
-      <repository>
-       <uniqueVersion>false</uniqueVersion>
-       <id>osgeo</id>
-       <name>OSGeo Geotools - Maven 2 repo</name>
-       <url>dav:http://download.osgeo.org/webdav/geotools/</url>
-      </repository>
-     </distributionManagement>
-   </profile>
-   <profile>
-   <id>deployopengeo</id>
-     <distributionManagement>
-      <repository>
-       <uniqueVersion>false</uniqueVersion>
-       <id>opengeo</id>
-       <name>OpenGeo - Maven 2 repo</name>
-       <url>dav:http://repo.opengeo.org</url>
-      </repository>
-     </distributionManagement>
-   </profile>
-  <!--..................................-->
-  <!--      GeoSolutions Repository     -->
-  <!--..................................-->
-   <profile>
-    <id>deploygeosolutions</id>
-     <distributionManagement>  
-      <repository>
-       <uniqueVersion>false</uniqueVersion>
-       <id>geosolutions</id>
-       <url>ftp://demo.geo-solutions.it</url>
-      </repository>
+    <description>Container for tools and extensions to Image I/O project</description>
+    <organization>
+        <name>GeoSolutions</name>
+        <url>http://www.geo-solutions.it</url>
+    </organization>
+    <inceptionYear>2006</inceptionYear>
+    <licenses>
+        <license>
+            <name>Lesser General Public License (LGPL)</name>
+            <url>http://www.gnu.org/copyleft/lesser.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <!-- ======================================================== -->
+    <!--                 Deployment Repository                    -->
+    <!-- ======================================================== -->
+
+    <profiles>
+        <profile>
+            <id>deployosgeo</id>
+            <distributionManagement>
+                <repository>
+                    <uniqueVersion>false</uniqueVersion>
+                    <id>osgeo</id>
+                    <name>OSGeo Geotools - Maven 2 repo</name>
+                    <url>dav:http://download.osgeo.org/webdav/geotools/</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+        <profile>
+            <id>deployopengeo</id>
+            <distributionManagement>
+                <repository>
+                    <uniqueVersion>false</uniqueVersion>
+                    <id>opengeo</id>
+                    <name>OpenGeo - Maven 2 repo</name>
+                    <url>dav:http://repo.opengeo.org</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+        <!--..................................-->
+        <!--      GeoSolutions Repository     -->
+        <!--..................................-->
+        <profile>
+            <id>deploygeosolutions</id>
+            <distributionManagement>
+                <repository>
+                    <uniqueVersion>false</uniqueVersion>
+                    <id>geosolutions</id>
+                    <url>ftp://demo.geo-solutions.it</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+        <!-- Profiles set on the command-line overwrite default properties. -->
+        <profile>
+            <id>extensive.tests</id>
+            <properties>
+                <extensive.tests>true</extensive.tests>
+            </properties>
+        </profile>
+        <profile>
+            <id>interactive.tests</id>
+            <properties>
+                <interactive.tests>true</interactive.tests>
+            </properties>
+        </profile>
+        <profile>
+            <id>release</id>
+            <activation>
+                <property>
+                    <name>release</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+
+                    <!-- grab an ImageIO-Ext dependency to figure out its version -->
+                    <plugin>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-dependencies</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>copy-dependencies</goal>
+                                </goals>
+                                <configuration>
+                                    <includeGroupIds>it.geosolutions.imageio-ext</includeGroupIds>
+                                    <includeArtifactIds>imageio-ext-gdalframework</includeArtifactIds>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            <modules>
+                <module>release</module>
+            </modules>
+        </profile>
+    </profiles>
+
+    <reporting>
+        <plugins>
+            <!-- ======================================================= -->
+            <!--     Javadoc generation.                                 -->
+            <!--                                                         -->
+            <!--     Notes:                                              -->
+            <!--       Do NOT enable deep copying of "doc-files"         -->
+            <!--       directories ("-docfilessubdirs" option), because  -->
+            <!--       it has the unwanted side effect to copy .svn      -->
+            <!--       directories as well.                              -->
+            <!--                                                         -->
+            <!--       Do NOT link source code, because it duplicates    -->
+            <!--       jxr-maven-plugin.                                 -->
+            <!--                                                         -->
+            <!--       <sourcepath/> and <subpackages/> elements do not  -->
+            <!--       seem to work with aggregated javadoc.             -->
+            <!--                                                         -->
+            <!-- ======================================================= -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+
+                <configuration>
+                    <!-- Necessary to enable javadoc to handle J2SE 1.4 features. -->
+                    <source>1.5</source>
+                    <!-- Specifies whether or not the version text is included.-->
+                    <version>false</version>
+                    <!-- Omit qualifying package name before class names in output.-->
+                    <noqualifier>all</noqualifier>
+                    <!-- Shuts off non-error and non-warning messages.-->
+                    <quiet>true</quiet>
+                    <!-- The maximum Java heap size to be used to run javadoc. -->
+                    <maxmemory>512M</maxmemory>
+                    <!-- Specifies the encoding name of the source files.-->
+                    <encoding>ISO-8859-1</encoding>
+                    <!-- Whether to build an aggregated report at the root.-->
+                    <aggregate>true</aggregate>
+
+                    <!-- Set an additional parameter for the command line. -->
+                    <additionalparam>-keywords</additionalparam>
+                    <breakiterator>true</breakiterator>
+                    <excludePackageNames>
+                        org.geotools.resources:org.geotools.maven:com
+                    </excludePackageNames>
+
+                    <!-- Enables the Javadoc tool to interpret a simple, one-argument -->
+                    <!-- custom block tag tagname in doc comments. Note: <placement/> -->
+                    <!-- should be a combinaison of the letters Xaoptcmf.             -->
+                    <tags>
+                        <tag>
+                            <name>todo</name>
+                            <placement>a</placement>
+                            <head>TODO:</head>
+                        </tag>
+                        <tag>
+                            <name>todo:</name>
+                            <placement>a</placement>
+                            <head>TODO:</head>
+                        </tag>
+                        <tag>
+                            <name>TODO</name>
+                            <placement>a</placement>
+                            <head>TODO:</head>
+                        </tag>
+                        <tag>
+                            <name>task</name>
+                            <placement>tfmc</placement>
+                            <head>TODO:</head>
+                        </tag>
+                        <tag>
+                            <name>UML</name>
+                            <placement>a</placement>
+                            <head>UML:</head>
+                        </tag>
+                        <tag>
+                            <name>uml.property</name>
+                            <placement>a</placement>
+                            <head>UML property:</head>
+                        </tag>
+                    </tags>
+
+                    <!-- Separates packages on the overview page into the    -->
+                    <!-- groups  specified.                                  -->
+                    <groups>
+                        <group>
+                            <title>GDAL Framework</title>
+                            <packages>
+                                it.geosolutions.imageio.gdalframework
+                            </packages>
+                        </group>
+                        <group>
+                            <title>Plugins</title>
+                            <packages>
+                                it.geosolutions.imageio.plugins.*
+                            </packages>
+                        </group>
+                        <group>
+                            <title>Custom Streams</title>
+                            <packages>it.geosolutions.imageio.stream*:it.geosolutions.io*</packages>
+                        </group>
+                        <group>
+                            <title>Multithreaded ImageRead</title>
+                            <packages>
+                                it.geosolutions.imageio.imageioimpl.imagereadmt*
+                            </packages>
+                        </group>
+                    </groups>
+                </configuration>
+            </plugin>
+
+            <!-- ======================================================= -->
+            <!--     Web site generation.                                -->
+            <!-- ======================================================= -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <configuration>
+                    <locales>en</locales>
+                </configuration>
+            </plugin>
+
+            <!-- basic project information -->
+            <plugin>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </reporting>
+
+
+    <!--..................................-->
+    <!--    java.net Maven2 Repository    -->
+    <!--..................................-->
+    <distributionManagement>
+        <!--<repository>-->
+            <!--<id>snap-repo-public</id>-->
+            <!--<name>Public Maven Repository for SNAP</name>-->
+            <!--<url>http://nexus.senbox.net/nexus/content/repositories/releases/</url>-->
+            <!--<uniqueVersion>false</uniqueVersion>-->
+        <!--</repository>-->
+        <!--<snapshotRepository>-->
+            <!--<id>snap-repo-public</id>-->
+            <!--<name>Public Maven Snapshot Repository for SNAP</name>-->
+            <!--<url>http://nexus.senbox.net/nexus/content/repositories/snapshots/</url>-->
+            <!--<uniqueVersion>false</uniqueVersion>-->
+        <!--</snapshotRepository>-->
+        <repository>
+            <id>bc-mvn-repo-public</id>
+            <name>Public Maven Repository at Brockmann Consult</name>
+            <url>scp://www.brockmann-consult.de/var/www/www.brockmann-consult.de/mvn/os</url>
+            <uniqueVersion>false</uniqueVersion>
+        </repository>
+        <snapshotRepository>
+            <id>bc-mvn-repo-public</id>
+            <name>Public Maven Snapshot Repository at Brockmann Consult</name>
+            <url>scp://www.brockmann-consult.de/var/www/www.brockmann-consult.de/mvn/os</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
     </distributionManagement>
-   </profile>
-     <!-- Profiles set on the command-line overwrite default properties. -->
-    <profile>
-      <id>extensive.tests</id>
-      <properties>
-        <extensive.tests>true</extensive.tests>
-      </properties>
-    </profile>
-    <profile>
-      <id>interactive.tests</id>
-      <properties>
-        <interactive.tests>true</interactive.tests>
-      </properties>
-    </profile>
-    <profile>
-	<id>release</id>
-		<activation>
-			<property>
-				<name>release</name>
-			</property>
-		</activation>
-		 <build>
-    <plugins>
-
-      <!-- grab an ImageIO-Ext dependency to figure out its version -->
-      <plugin>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-dependencies</id>
-            <phase>package</phase>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-              <includeGroupIds>it.geosolutions.imageio-ext</includeGroupIds>
-              <includeArtifactIds>imageio-ext-gdalframework</includeArtifactIds>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-    </build>
-    <modules>
-      <module>release</module>
-    </modules>
-  </profile>
-  </profiles>
-
-  <reporting>
-    <plugins>
-      <!-- ======================================================= -->
-      <!--     Javadoc generation.                                 -->
-      <!--                                                         -->
-      <!--     Notes:                                              -->
-      <!--       Do NOT enable deep copying of "doc-files"         -->
-      <!--       directories ("-docfilessubdirs" option), because  -->
-      <!--       it has the unwanted side effect to copy .svn      -->
-      <!--       directories as well.                              -->
-      <!--                                                         -->
-      <!--       Do NOT link source code, because it duplicates    -->
-      <!--       jxr-maven-plugin.                                 -->
-      <!--                                                         -->
-      <!--       <sourcepath/> and <subpackages/> elements do not  -->
-      <!--       seem to work with aggregated javadoc.             -->
-      <!--                                                         -->
-      <!-- ======================================================= -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        
-        <configuration>
-            <!-- Necessary to enable javadoc to handle J2SE 1.4 features. -->
-          <source>1.5</source>
-            <!-- Specifies whether or not the version text is included.-->
-          <version>false</version>
-            <!-- Omit qualifying package name before class names in output.-->
-          <noqualifier>all</noqualifier>
-            <!-- Shuts off non-error and non-warning messages.-->
-          <quiet>true</quiet>
-            <!-- The maximum Java heap size to be used to run javadoc. -->
-          <maxmemory>512M</maxmemory>
-            <!-- Specifies the encoding name of the source files.-->
-          <encoding>ISO-8859-1</encoding>
-            <!-- Whether to build an aggregated report at the root.-->
-          <aggregate>true</aggregate>
-          
-          <!-- Set an additional parameter for the command line. -->
-          <additionalparam>-keywords</additionalparam> 
-          <breakiterator>true</breakiterator>
-          <excludePackageNames>
-            org.geotools.resources:org.geotools.maven:com
-          </excludePackageNames>
-
-          <!-- Enables the Javadoc tool to interpret a simple, one-argument -->
-          <!-- custom block tag tagname in doc comments. Note: <placement/> -->
-          <!-- should be a combinaison of the letters Xaoptcmf.             -->
-          <tags>
-            <tag>
-              <name>todo</name>
-              <placement>a</placement>
-              <head>TODO:</head>
-            </tag>
-            <tag>
-              <name>todo:</name>
-              <placement>a</placement>
-              <head>TODO:</head>
-            </tag>
-            <tag>
-              <name>TODO</name>
-              <placement>a</placement>
-              <head>TODO:</head>
-            </tag>
-            <tag>
-              <name>task</name>
-              <placement>tfmc</placement>
-              <head>TODO:</head>
-            </tag>
-            <tag>
-              <name>UML</name>
-              <placement>a</placement>
-              <head>UML:</head>
-            </tag>
-            <tag>
-              <name>uml.property</name>
-              <placement>a</placement>
-              <head>UML property:</head>
-            </tag>
-          </tags>
-
-          <!-- Separates packages on the overview page into the    -->
-          <!-- groups  specified.                                  -->
-          <groups>
-            <group>
-              <title>GDAL Framework</title>
-              <packages>
-                it.geosolutions.imageio.gdalframework
-              </packages>
-            </group>
-            <group>
-              <title>Plugins</title>
-              <packages>
-                it.geosolutions.imageio.plugins.*
-              </packages>
-            </group>
-            <group>
-              <title>Custom Streams</title>
-              <packages>it.geosolutions.imageio.stream*:it.geosolutions.io*</packages>
-            </group>
-      <group>
-              <title>Multithreaded ImageRead</title>
-              <packages>
-               it.geosolutions.imageio.imageioimpl.imagereadmt*
-              </packages>
-            </group>
-           </groups>
-        </configuration>
-      </plugin>
-
-      <!-- ======================================================= -->
-      <!--     Web site generation.                                -->
-      <!-- ======================================================= -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-plugin</artifactId>
-        <configuration>
-          <locales>en</locales>
-        </configuration>
-      </plugin>
-
-      <!-- basic project information -->
-      <plugin>
-       <artifactId>maven-project-info-reports-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </reporting>
 
 
-  <!--..................................-->
-  <!--    java.net Maven2 Repository    -->
-  <!--..................................-->
-  <!-- <distributionManagement>                                             -->
-  <!--  <repository>                                                        -->
-  <!--  <id>java.net-m2-repository</id>                                     -->
-  <!--      <url>java-net:/maven2-repository/trunk/www/repository/</url>    -->
-  <!--    </repository>                                                     -->
-  <!-- </distributionManagement>                                            -->
-    
-    
-  <!-- ======================================================== -->
-  <!--                 Developers and contributors              -->
-  <!-- ======================================================== -->
-  <developers>
-    <developer>
-      <name>Alessio Fabiani</name>
-      <id>AlFa</id>
-      <email>alessio.fabiani@geo-solutions.it</email>
-      <organization>GeoSolutions</organization>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-    </developer>
-    <developer>
-      <name>Simone Giannecchini</name>
-      <id>Simboss</id>
-      <email>simone.giannecchini@geo-solutions.it</email>
-      <organization>GeoSolutions</organization>
-      <roles>
-        <role>Java Developer</role>
-        <role>Project Architect</role>
-      </roles>
-    </developer>
-    <developer>
-      <name>Daniele Romagnoli</name>
-      <id>Daniele</id>
-      <email>daniele.romagnoli@geo-solutions.it</email>
-      <organization>GeoSolutions</organization>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-    </developer>
-  </developers>
+    <!-- ======================================================== -->
+    <!--                 Developers and contributors              -->
+    <!-- ======================================================== -->
+    <developers>
+        <developer>
+            <name>Alessio Fabiani</name>
+            <id>AlFa</id>
+            <email>alessio.fabiani@geo-solutions.it</email>
+            <organization>GeoSolutions</organization>
+            <roles>
+                <role>Java Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Simone Giannecchini</name>
+            <id>Simboss</id>
+            <email>simone.giannecchini@geo-solutions.it</email>
+            <organization>GeoSolutions</organization>
+            <roles>
+                <role>Java Developer</role>
+                <role>Project Architect</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Daniele Romagnoli</name>
+            <id>Daniele</id>
+            <email>daniele.romagnoli@geo-solutions.it</email>
+            <organization>GeoSolutions</organization>
+            <roles>
+                <role>Java Developer</role>
+            </roles>
+        </developer>
+    </developers>
 
-  <!-- ======================================================== -->
-  <!--                     Plugin Repositories                  -->
-  <!-- ======================================================== -->
-  <pluginRepositories>
-    <pluginRepository>
-      <id>codehaus.org</id>
-      <name>CodeHaus Plugin Snapshots</name>
-      <url>http://snapshots.repository.codehaus.org</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </pluginRepository>
-  </pluginRepositories>
+    <!-- ======================================================== -->
+    <!--                     Plugin Repositories                  -->
+    <!-- ======================================================== -->
+    <pluginRepositories>
+        <pluginRepository>
+            <id>codehaus.org</id>
+            <name>CodeHaus Plugin Snapshots</name>
+            <url>http://snapshots.repository.codehaus.org</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>snap-repo-public</id>
+            <name>Public Maven Repository for SNAP</name>
+            <url>http://nexus.senbox.net/nexus/content/repositories/public/</url>
+            <releases>
+                <enabled>true</enabled>
+                <checksumPolicy>warn</checksumPolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <checksumPolicy>warn</checksumPolicy>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 
-  
-  <!-- ======================================================== -->
-  <!--                         Repositories                     -->
-  <!-- ======================================================== -->
-  <repositories>
-    <repository>
-      <id>geosolutions</id>
-      <name>GeoSolutions libraries repository</name>
-      <url>http://maven.geo-solutions.it/</url>
-    </repository>
-    <repository>
-      <id>codehaus</id>
-      <name>Codehaus maven repository</name>
-      <url>http://repository.codehaus.org/</url>
-    </repository>
-    <repository>
-      <id>jboss</id>
-      <name>jboss</name>
-      <url>http://repository.jboss.org/maven2/</url>
-    </repository>
-    <repository>
-      <id>codehaus.org</id>
-      <name>CodeHaus Snapshots</name>
-      <url>http://snapshots.repository.codehaus.org</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-     <repository>
-      <id>osgeo</id>
-      <name>Open Source Geospatial Foundation Repository</name>
-      <url>http://download.osgeo.org/webdav/geotools/</url>
-    </repository>
-    <repository>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <id>opengeo</id>
-      <name>OpenGeo Maven Repository</name>
-      <url>http://repo.opengeo.org</url>
-    </repository>
-    <repository>
-      <id>maven2-repository.dev.java.net</id>
-      <name>Java.net Repository for Maven</name>
-      <url>http://download.java.net/maven/2/</url>
-      <layout>default</layout>
-    </repository>
-  </repositories>
 
-  <!--                                                                       -->
-  <!--     Dependencies management.                                          -->
-  <!--     If a POM declares one of those dependencies, then it will use     -->
-  <!--     the version specified here. Otherwise, those dependencies are     -->
-  <!--     ignored.                                                          -->
-  <!--                                                                       -->
-  <dependencyManagement>
+    <!-- ======================================================== -->
+    <!--                         Repositories                     -->
+    <!-- ======================================================== -->
+    <repositories>
+        <repository>
+            <id>geosolutions</id>
+            <name>GeoSolutions libraries repository</name>
+            <url>http://maven.geo-solutions.it/</url>
+        </repository>
+        <repository>
+            <id>codehaus</id>
+            <name>Codehaus maven repository</name>
+            <url>http://repository.codehaus.org/</url>
+        </repository>
+        <repository>
+            <id>jboss</id>
+            <name>jboss</name>
+            <url>http://repository.jboss.org/maven2/</url>
+        </repository>
+        <repository>
+            <id>codehaus.org</id>
+            <name>CodeHaus Snapshots</name>
+            <url>http://snapshots.repository.codehaus.org</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>osgeo</id>
+            <name>Open Source Geospatial Foundation Repository</name>
+            <url>http://download.osgeo.org/webdav/geotools/</url>
+        </repository>
+        <repository>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <id>opengeo</id>
+            <name>OpenGeo Maven Repository</name>
+            <url>http://repo.opengeo.org</url>
+        </repository>
+        <repository>
+            <id>maven2-repository.dev.java.net</id>
+            <name>Java.net Repository for Maven</name>
+            <url>http://download.java.net/maven/2/</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
+            <id>snap-repo-public</id>
+            <name>Public Maven Repository for SNAP</name>
+            <url>http://nexus.senbox.net/nexus/content/repositories/public/</url>
+            <releases>
+                <enabled>true</enabled>
+                <checksumPolicy>warn</checksumPolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <checksumPolicy>warn</checksumPolicy>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>bc-mvn-repo-http</id>
+            <name>Public Maven Repository at Brockmann Consult</name>
+            <url>http://www.brockmann-consult.de/mvn/os</url>
+            <releases>
+                <enabled>true</enabled>
+                <checksumPolicy>warn</checksumPolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <checksumPolicy>warn</checksumPolicy>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <!--                                                                       -->
+    <!--     Dependencies management.                                          -->
+    <!--     If a POM declares one of those dependencies, then it will use     -->
+    <!--     the version specified here. Otherwise, those dependencies are     -->
+    <!--     ignored.                                                          -->
+    <!--                                                                       -->
+    <dependencyManagement>
+        <dependencies>
+            <!-- Tests or legacy -->
+            <dependency>
+                <groupId>javax.media</groupId>
+                <artifactId>jai_core</artifactId>
+                <version>1.1.3</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.media</groupId>
+                <artifactId>jai_codec</artifactId>
+                <version>1.1.3</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.media</groupId>
+                <artifactId>jai_imageio</artifactId>
+                <version>1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.11</version>
+            </dependency>
+            <dependency>
+                <groupId>it.geosolutions.imageio-ext</groupId>
+                <artifactId>imageio-ext-gdal-bindings</artifactId>
+                <version>${gdal.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>it.geosolutions.imageio-ext</groupId>
+                <artifactId>imageio-ext-kakadujni</artifactId>
+                <version>${kakadu.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>it.geosolutions.imageio-ext</groupId>
+                <artifactId>imageio-ext-kakadu</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>it.geosolutions.imageio-ext</groupId>
+                <artifactId>imageio-ext-test-data</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>it.geosolutions.imageio-ext</groupId>
+                <artifactId>imageio-ext-streams</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>it.geosolutions.imageio-ext</groupId>
+                <artifactId>imageio-ext-imagereadmt</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>it.geosolutions.imageio-ext</groupId>
+                <artifactId>imageio-ext-utilities</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>it.geosolutions.imageio-ext</groupId>
+                <artifactId>imageio-ext-test-data</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
-     <!-- Tests or legacy -->
-     <dependency>
-        <groupId>javax.media</groupId>
-       <artifactId>jai_core</artifactId>
-       <version>1.1.3</version>
-     </dependency>
-     <dependency>
-       <groupId>javax.media</groupId>
-       <artifactId>jai_codec</artifactId>
-       <version>1.1.3</version>
-     </dependency>
-     <dependency>
-       <groupId>javax.media</groupId>
-       <artifactId>jai_imageio</artifactId>
-       <version>1.1</version>
-     </dependency>       
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>4.11</version>
-      </dependency>
-      <dependency>
-       <groupId>it.geosolutions.imageio-ext</groupId>
-       <artifactId>imageio-ext-gdal-bindings</artifactId>
-       <version>${gdal.version}</version>
-     </dependency>
-     <dependency>
-      <groupId>it.geosolutions.imageio-ext</groupId>
-      <artifactId>imageio-ext-kakadujni</artifactId>
-      <version>${kakadu.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>it.geosolutions.imageio-ext</groupId>
-      <artifactId>imageio-ext-kakadu</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-     <dependency>
-       <groupId>it.geosolutions.imageio-ext</groupId>
-       <artifactId>imageio-ext-test-data</artifactId>
-       <version>${project.version}</version>
-     </dependency>
-     <dependency>
-      <groupId>it.geosolutions.imageio-ext</groupId>
-      <artifactId>imageio-ext-streams</artifactId>
-      <version>${project.version}</version>
-     </dependency>
-     <dependency>
-      <groupId>it.geosolutions.imageio-ext</groupId>
-      <artifactId>imageio-ext-imagereadmt</artifactId>
-      <version>${project.version}</version>
-     </dependency>
-     <dependency>
-      <groupId>it.geosolutions.imageio-ext</groupId>
-      <artifactId>imageio-ext-utilities</artifactId>
-      <version>${project.version}</version>
-     </dependency>
-     <dependency>
-      <groupId>it.geosolutions.imageio-ext</groupId>
-      <artifactId>imageio-ext-test-data</artifactId>
-      <version>${project.version}</version>
-     </dependency>
-
+        <!-- Tests or legacy -->
+        <dependency>
+            <groupId>javax.media</groupId>
+            <artifactId>jai_core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.media</groupId>
+            <artifactId>jai_codec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.media</groupId>
+            <artifactId>jai_imageio</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
-  </dependencyManagement>
-  
- <dependencies>
-  <!-- Tests or legacy -->
-  <dependency>
-	<groupId>javax.media</groupId>
-   <artifactId>jai_core</artifactId>
- </dependency>
- <dependency>
-   <groupId>javax.media</groupId>
-   <artifactId>jai_codec</artifactId>
- </dependency>
- <dependency>
-   <groupId>javax.media</groupId>
-   <artifactId>jai_imageio</artifactId>
- </dependency>       
-  <dependency>
-	<groupId>junit</groupId>
-	<artifactId>junit</artifactId>
-	<scope>test</scope>
-  </dependency>
-</dependencies>
 
 
-  <!-- ======================================================== -->
-  <!--                                                          -->
-  <!--                   Build Configuration                    -->
-  <!--                                                          -->
-  <!-- ======================================================== -->
- <build>
-    <!-- ========================================================= -->
-    <!--   Maven plugins dependencies management.                  -->
-    <!--   It should not be needed since Maven select by default   -->
-    <!--   the latest plugins. Unfortunatly, experience shows that -->
-    <!--   new plugin releases sometime introduce new bugs that    -->
-    <!--   break our build. So it is safer to specify plugin       -->
-    <!--   versions that are known to work.  This list is in       -->
-    <!--   alphabetical order for easier comparaison with latest   -->
-    <!--   plugins at                                              -->
-    <!--   http://www.ibiblio.org/maven2/org/apache/maven/plugins/ -->
-    <!-- ========================================================= -->
-    <pluginManagement>
-      <plugins>
-	<plugin>
-	 <groupId>org.apache.maven.plugins</groupId>
-	 <artifactId>maven-eclipse-plugin</artifactId>
-	 <version>2.5</version>
-    </plugin>
-      </plugins>
-    </pluginManagement>
-      
-   
-    <plugins>
-      <!-- ======================================================= -->
-      <!--                      Compilation.                       -->
-      <!-- ======================================================= -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.6</source>  <!-- The -source argument for the Java compiler. -->
-          <target>1.6</target>  <!-- The -target argument for the Java compiler. -->
-          <debug>true</debug>   <!-- Whether to include debugging information.   -->
-          <encoding>ISO-8859-1</encoding> <!-- The -encoding argument for the Java compiler. -->
-        </configuration>
-      </plugin>
-      <!-- ======================================================= -->
-      <!--                        Tests                            -->
-      <!-- ======================================================= -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <includes>
-            <include>**/*Test.java</include>
-          </includes>
-          <forkMode>once</forkMode>
-          <argLine>-Xmx${test.maxHeapSize} -enableassertions -Dtest.extensive=${extensive.tests} -Dtest.interactive=${interactive.tests}</argLine>
-         </configuration>
-      </plugin>
-      
-      <plugin>
-          <inherited>true</inherited>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-source-plugin</artifactId>
-          <configuration>
-           <attach>true</attach>
-          </configuration>
-          <executions>
-           <execution>
-            <id>attach-sources</id>
-            <goals>
-             <goal>jar</goal>
-            </goals>
-           </execution>
-          </executions>
-     </plugin>
-	<!-- artifact assembly -->
-      <plugin>
-          <artifactId>maven-assembly-plugin</artifactId>
-          <version>2.1</version>
-          <configuration>
-           <descriptors>
-            <descriptor>release/src.xml</descriptor>
-            <descriptor>release/javadoc.xml</descriptor>
-           </descriptors>
-           <finalName>imageio-ext-${project.version}</finalName>
-           <outputDirectory>${project.build.directory}/release</outputDirectory>
-          </configuration>
-       </plugin>
-    </plugins>
-   
-  <!-- ======================================================== -->
-  <!--              Extensions settings for Deployment          -->
-  <!-- ======================================================== -->
-   <extensions>
+    <!-- ======================================================== -->
+    <!--                                                          -->
+    <!--                   Build Configuration                    -->
+    <!--                                                          -->
+    <!-- ======================================================== -->
+    <build>
+        <!-- ========================================================= -->
+        <!--   Maven plugins dependencies management.                  -->
+        <!--   It should not be needed since Maven select by default   -->
+        <!--   the latest plugins. Unfortunatly, experience shows that -->
+        <!--   new plugin releases sometime introduce new bugs that    -->
+        <!--   break our build. So it is safer to specify plugin       -->
+        <!--   versions that are known to work.  This list is in       -->
+        <!--   alphabetical order for easier comparaison with latest   -->
+        <!--   plugins at                                              -->
+        <!--   http://www.ibiblio.org/maven2/org/apache/maven/plugins/ -->
+        <!-- ========================================================= -->
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-eclipse-plugin</artifactId>
+                    <version>2.5</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
 
-    
-    <!--.............................................-->
-    <!--       GeoSolutions (using wagon ftp)       -->
-    <!--.............................................-->
-      <extension>                                  
-       <groupId>org.apache.maven.wagon</groupId>   
-       <artifactId>wagon-ftp</artifactId>           
-       <version>1.0-beta-2</version>               
-      </extension>                                
-   
-    <!--....................................-->
-    <!--        (using wagon webdav)        -->
-    <!--....................................-->
-      <extension>
-       <groupId>org.apache.maven.wagon</groupId>
-       <artifactId>wagon-webdav</artifactId>
-       <version>1.0-beta-2</version>
-     </extension>
-   </extensions>
-  </build>
-  
-  <!-- ========================================================== -->
-  <!--   Modules for the build in approximate dependency order    -->
-  <!-- ========================================================== -->
-  <modules>
-    <module>library</module>
-    <module>plugin</module>
-  </modules>
+
+        <plugins>
+            <!-- ======================================================= -->
+            <!--                      Compilation.                       -->
+            <!-- ======================================================= -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <!-- The -source argument for the Java compiler. -->
+                    <target>1.6</target>
+                    <!-- The -target argument for the Java compiler. -->
+                    <debug>true</debug>
+                    <!-- Whether to include debugging information.   -->
+                    <encoding>ISO-8859-1</encoding>
+                    <!-- The -encoding argument for the Java compiler. -->
+                </configuration>
+            </plugin>
+            <!-- ======================================================= -->
+            <!--                        Tests                            -->
+            <!-- ======================================================= -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+                    <forkMode>once</forkMode>
+                    <argLine>-Xmx${test.maxHeapSize} -enableassertions -Dtest.extensive=${extensive.tests}
+                        -Dtest.interactive=${interactive.tests}
+                    </argLine>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <inherited>true</inherited>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <configuration>
+                    <attach>true</attach>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- artifact assembly -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.1</version>
+                <configuration>
+                    <descriptors>
+                        <descriptor>release/src.xml</descriptor>
+                        <descriptor>release/javadoc.xml</descriptor>
+                    </descriptors>
+                    <finalName>imageio-ext-${project.version}</finalName>
+                    <outputDirectory>${project.build.directory}/release</outputDirectory>
+                </configuration>
+            </plugin>
+        </plugins>
+
+        <!-- ======================================================== -->
+        <!--              Extensions settings for Deployment          -->
+        <!-- ======================================================== -->
+        <extensions>
+
+
+            <!--.............................................-->
+            <!--       GeoSolutions (using wagon ftp)       -->
+            <!--.............................................-->
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ftp</artifactId>
+                <version>1.0-beta-2</version>
+            </extension>
+
+            <!--....................................-->
+            <!--        (using wagon webdav)        -->
+            <!--....................................-->
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-webdav</artifactId>
+                <version>1.0-beta-2</version>
+            </extension>
+
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ssh</artifactId>
+                <version>1.0-beta-7</version>
+            </extension>
+        </extensions>
+    </build>
+
+    <!-- ========================================================== -->
+    <!--   Modules for the build in approximate dependency order    -->
+    <!-- ========================================================== -->
+    <modules>
+        <module>library</module>
+        <module>plugin</module>
+    </modules>
 </project>
