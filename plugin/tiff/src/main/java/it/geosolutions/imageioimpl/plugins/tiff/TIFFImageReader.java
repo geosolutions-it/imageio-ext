@@ -46,7 +46,7 @@
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
  *    http://java.net/projects/imageio-ext/
- *    (C) 2007 - 2009, GeoSolutions
+ *    (C) 2007 - 2015, GeoSolutions
  *    All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -73,11 +73,13 @@
  */
 package it.geosolutions.imageioimpl.plugins.tiff;
 
+import it.geosolutions.imageio.maskband.DatasetLayout;
 import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
 import it.geosolutions.imageio.plugins.tiff.TIFFColorConverter;
 import it.geosolutions.imageio.plugins.tiff.TIFFDecompressor;
 import it.geosolutions.imageio.plugins.tiff.TIFFField;
 import it.geosolutions.imageio.plugins.tiff.TIFFImageReadParam;
+import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -90,6 +92,7 @@ import java.awt.image.ComponentColorModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
+import java.io.File;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.nio.ByteOrder;
@@ -284,6 +287,12 @@ public class TIFFImageReader extends ImageReader {
 
     private static final boolean DEBUG = false; // XXX 'false' for release!!!
 
+    /** Constant Value for External Mask suffix*/
+    private static final String MASK_SUFFIX = ".msk";
+
+    /** Constant Value for External Overview suffix*/
+    private static final String OVR_SUFFIX = ".ovr";
+
     private int magic = -1;
     
     private Map<Integer, PageInfo> pagesInfo= new HashMap<Integer, PageInfo>();
@@ -361,8 +370,18 @@ public class TIFFImageReader extends ImageReader {
 
     private boolean isImageTiled= false;
 
+    // BAND MASK RELATED FIELDS
+    /** {@link DatasetLayout} implementation containing info about overviews and masks*/
+    private TiffDatasetLayoutImpl layout;
 
+    /** External File containing TIFF masks*/
+    private File externalMask;
 
+    /** External File containing TIFF Overviews*/
+    private File externalOverviews;
+
+    /** External File containing TIFF masks overviews*/
+    private File maskOverviews;
 
     public TIFFImageReader(ImageReaderSpi originatingProvider) {
         super(originatingProvider);
@@ -382,9 +401,40 @@ public class TIFFImageReader extends ImageReader {
                     ("input not an ImageInputStream!"); 
             }
             this.stream = (ImageInputStream)input;
+            // Check for external masks/overviews
+            if (input instanceof FileImageInputStreamExtImpl) {
+
+                FileImageInputStreamExtImpl stream = (FileImageInputStreamExtImpl) input;
+                // Getting File path
+                File inputFile = stream.getFile();
+                if (inputFile != null) {
+                    // Getting Parent
+                    File parent = inputFile.getParentFile();
+                    // Getting Mask file name
+                    File mask = new File(parent, inputFile.getName() + MASK_SUFFIX);
+                    // Check if exists and can be read
+                    if (mask.exists() && mask.canRead()) {
+                        externalMask = mask;
+                        // Getting external Mask Overviews
+                        File mskOverviews = new File(mask.getAbsolutePath() + OVR_SUFFIX);
+                        // Check if the file exists and can be read
+                        if (mskOverviews.exists() && mskOverviews.canRead()) {
+                            maskOverviews = mskOverviews;
+                        }
+                    }
+                    // Getting Overviews file name
+                    File ovr = new File(parent, inputFile.getName() + OVR_SUFFIX);
+                    // Check if exists and can be read
+                    if (ovr.exists() && ovr.canRead()) {
+                        externalOverviews = ovr;
+                    }
+                }
+            }
         } else {
             this.stream = null;
         }
+        // Creating the New DatasetLayout for handling Overviews and Masking
+        layout = new TiffDatasetLayoutImpl();
     }
 
     // Do not seek to the beginning of the stream so as to allow users to
@@ -457,10 +507,141 @@ public class TIFFImageReader extends ImageReader {
         } catch (IOException e) {
             throw new IIOException("I/O error reading header!", e);
         }
-
+        
+        
         gotTiffHeader = true;
     }
 
+    /**
+     * Method used for populating reader's {@link DatasetLayout}
+     * 
+     * @throws IIOException
+     */
+    private void defineDatasetLayout() throws IIOException {
+        if (!(layout.getNumInternalOverviews() == -1 && layout.getNumInternalMasks() == -1)) {
+            return;
+        }
+        // Initialize
+        readHeader();
+        // Getting Image Number
+        int numImg;
+        try {
+            numImg = getNumImages(true);
+        } catch (IOException e) {
+            throw new IIOException(e.getMessage(), e);
+        }
+        // Extracting the TIFF Tag NewSubfileType from each Image
+        int numOverviews = 0;
+        int numMasks = 0;
+        int numMaskOverView = 0;
+        // If not all the Images Metadata have been loaded, loop through images in order to add them
+        // if(pagesInfo != null && (numImg != pagesInfo.size())){
+        // Getting current Index which will be restored at the end of the operation
+        int currentIdx = currIndex;
+        // Loop the images
+        for (int i = 0; i < numImg; i++) {
+            // Seek to the image index i
+            seekToImage(i);
+            // Getting PageInfo
+            PageInfo info = pagesInfo.get(i);
+            // Getting Metadata
+            TIFFImageMetadata metadata = info.imageMetadata.get();
+            // Getting TIFF TAG_NEW_SUBFILE_TYPE
+            TIFFField f = metadata.getTIFFField(BaselineTIFFTagSet.TAG_NEW_SUBFILE_TYPE);
+            // Checking if exists
+            if (f != null) {
+                Object data = f.getData();
+                // Checking if the data is LONG
+                if (data instanceof long[]) {
+                    long ldata = ((long[]) data)[0];
+                    numMasks += ((ldata & BaselineTIFFTagSet.NEW_SUBFILE_TYPE_TRANSPARENCY) > 0) ? 1
+                            : 0;
+                    numOverviews += ((ldata & BaselineTIFFTagSet.NEW_SUBFILE_TYPE_REDUCED_RESOLUTION) > 0) ? 1
+                            : 0;
+                    numMaskOverView += ((ldata & BaselineTIFFTagSet.NEW_SUBFILE_TYPE_REDUCED_RESOLUTION) > 0 && (ldata & BaselineTIFFTagSet.NEW_SUBFILE_TYPE_TRANSPARENCY) > 0) ? 1
+                            : 0;
+                }
+            }
+        }
+        // Restore current Index
+        seekToImage(currentIdx);
+        // Setting Masks number and Overviews number
+        layout.setNumInternalMasks(numMasks);
+        layout.setNumInternalOverviews(numOverviews - numMaskOverView);
+    }
+
+    /**
+     * Method which checks if external masks or overviews are present and, if so, 
+     * updates the {@link DatasetLayout}
+     * 
+     * @throws IIOException
+     */
+    private void defineExternalMasks() throws IIOException {
+        // Check if already initialized
+        if ((externalMask == null || layout.getExternalMasks() != null)
+                && (maskOverviews == null || layout.getExternalMaskOverviews() != null)
+                && (externalOverviews == null || layout.getExternalOverviews() != null)) {
+            return;
+        }
+        // Initialize
+        readHeader();
+        // Setting Values to the DatasetLayout
+        layout.setExternalMasks(externalMask);
+        layout.setExternalMaskOverviews(maskOverviews);
+        layout.setExternalOverviews(externalOverviews);
+        layout.setNumExternalMasks(getNumImages(externalMask));
+        layout.setNumExternalMaskOverviews(getNumImages(maskOverviews));
+        layout.setNumExternalOverviews(getNumImages(externalOverviews));
+    }
+
+    /**
+     * Simple method for accessing the number of images inside an input file
+     * 
+     * @param inputFile Input {@link File} to check
+     * @return An integer defining the number of images contained in the input file
+     * @throws IIOException
+     */
+    private int getNumImages(File inputFile) throws IIOException {
+        // Init value to 0
+        int numImg = 0;
+        // Creating a new TIFFImageReader instance for reading
+        ImageReader reader = null;
+        // Initializing a null stream
+        FileImageInputStreamExtImpl stream = null;
+        // Searching for external Overviews
+        if (inputFile != null) {
+            try {
+                // Getting mask data stream
+                stream = new FileImageInputStreamExtImpl(inputFile);
+                // Creating the Reader
+                reader = originatingProvider.createReaderInstance();
+                reader.setInput(stream);
+                // Getting the image number (Indicates the Mask number)
+                numImg = reader.getNumImages(true);
+            } catch (IOException e) {
+                throw new IIOException("Unable to open input .msk file", e);
+            } finally {
+                // Closing reader
+                if (reader != null) {
+                    try {
+                        reader.dispose();
+                    } catch (Exception e) {
+                        // Eat the Exception
+                    }
+                }
+                // Closing stream
+                if (stream != null) {
+                    try {
+                        stream.close();
+                    } catch (Exception e) {
+                        // Eat the Exception
+                    }
+                }
+            }
+        }
+        return numImg;
+    }
+    
     private int locateImage(int imageIndex) throws IIOException {
         readHeader();
 
@@ -551,6 +732,12 @@ public class TIFFImageReader extends ImageReader {
 
     public IIOMetadata getStreamMetadata() throws IIOException {
         readHeader();
+        // Defining DatasetLayout
+        defineDatasetLayout();
+        // Defining External Masks
+        defineExternalMasks();
+        // Setting the Layout
+        streamMetadata.dtLayout = layout;
         return streamMetadata;
     }
 
