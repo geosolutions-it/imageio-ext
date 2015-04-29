@@ -46,7 +46,7 @@
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
  *    http://java.net/projects/imageio-ext/
- *    (C) 2007 - 2009, GeoSolutions
+ *    (C) 2007 - 2015, GeoSolutions
  *    All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -73,13 +73,23 @@
  */
 package it.geosolutions.imageioimpl.plugins.tiff;
 
+import it.geosolutions.imageio.maskband.DatasetLayout;
+
+import java.io.File;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.metadata.IIOInvalidTreeException;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
+/**
+ * {@link IIOMetadata} subclass containing Metadata associated to the whole TIFF file.
+ */
 public class TIFFStreamMetadata extends IIOMetadata {
 
     // package scope
@@ -89,12 +99,216 @@ public class TIFFStreamMetadata extends IIOMetadata {
     static final String nativeMetadataFormatClassName =
         "it.geosolutions.imageioimpl.plugins.tiff.TIFFStreamMetadataFormat";
 
+    /** Node name associated to the External mask File */
+    public static final String EXTERNAL_MASK_FILE = "externalMaskFile";
+
+    /** Node name associated to the External masks overview File */
+    public static final String EXTERNAL_MASK_OVERVIEW_FILE = "externalMaskOverviewMaskFile";
+
+    /** Node name associated to the External Overview File */
+    public static final String EXTERNAL_OVERVIEW_FILE = "externalOverviewFile";
+
+    /** Node name associated to the number of internal overviews */
+    public static final String NUM_INTERNAL_OVERVIEWS = "numInternalOverviews";
+
+    /** Node name associated to the number of external overviews */
+    public static final String NUM_EXTERNAL_OVERVIEWS = "numExternalOverviews";
+
+    /** Node name associated to the number of external mask overview */
+    public static final String NUM_EXTERNAL_MASK_OVERVIEWS = "numExternalMaskOverviews";
+
+    /** Node name associated to the number of external masks */
+    public static final String NUM_EXTERNAL_MASKS = "numExternalMasks";
+
+    /** Node name associated to the number of masks */
+    public static final String NUM_INTERNAL_MASKS = "numInternalMasks";
+
+    /** Node name associated to the file ByteOrder */
+    public static final String BYTE_ORDER = "ByteOrder";
+
+    /**
+     * Enum used for defining the various node of the Metadata Tree
+     * 
+     * @author Nicola Lagomarsini GeoSolutions
+     */
+    public enum MetadataNode {
+        B_ORDER(BYTE_ORDER) {
+            @Override
+            public String handleMetadata(TIFFStreamMetadata metadata, String value) {
+                if (value.equals(bigEndianString)) {
+                    metadata.byteOrder = ByteOrder.BIG_ENDIAN;
+                } else if (value.equals(littleEndianString)) {
+                    metadata.byteOrder = ByteOrder.LITTLE_ENDIAN;
+                } else {
+                    return "Incorrect value for " + BYTE_ORDER + " \"value\" attribute";
+                }
+                return null;
+            }
+        },
+        N_INT_MASK(NUM_INTERNAL_MASKS) {
+            @Override
+            public String handleMetadata(TIFFStreamMetadata metadata, String value) {
+                try {
+                    // Getting number
+                    int num = Integer.parseInt(value);
+                    // Setting value
+                    metadata.dtLayout.setNumInternalMasks(num);
+                } catch (Exception e) {
+                    return e.getMessage();
+                }
+                return null;
+            }
+        },
+        N_EXT_MASK(NUM_EXTERNAL_MASKS) {
+            @Override
+            public String handleMetadata(TIFFStreamMetadata metadata, String value) {
+                try {
+                    // Getting number
+                    int num = Integer.parseInt(value);
+                    // Setting value
+                    metadata.dtLayout.setNumExternalMasks(num);
+                } catch (Exception e) {
+                    return e.getMessage();
+                }
+                return null;
+            }
+        },
+        N_INT_OVR(NUM_INTERNAL_OVERVIEWS) {
+            @Override
+            public String handleMetadata(TIFFStreamMetadata metadata, String value) {
+                try {
+                    // Getting number
+                    int num = Integer.parseInt(value);
+                    // Setting value
+                    metadata.dtLayout.setNumInternalOverviews(num);
+                } catch (Exception e) {
+                    return e.getMessage();
+                }
+                return null;
+            }
+        },
+        N_EXT_OVR(NUM_EXTERNAL_OVERVIEWS) {
+            @Override
+            public String handleMetadata(TIFFStreamMetadata metadata, String value) {
+                try {
+                    // Getting number
+                    int num = Integer.parseInt(value);
+                    // Setting value
+                    metadata.dtLayout.setNumExternalOverviews(num);
+                } catch (Exception e) {
+                    return e.getMessage();
+                }
+                return null;
+            }
+        },
+        N_EXT_OVR_MASK(NUM_EXTERNAL_MASK_OVERVIEWS) {
+            @Override
+            public String handleMetadata(TIFFStreamMetadata metadata, String value) {
+                try {
+                    // Getting number
+                    int num = Integer.parseInt(value);
+                    // Setting value
+                    metadata.dtLayout.setNumExternalMaskOverviews(num);
+                } catch (Exception e) {
+                    return e.getMessage();
+                }
+                return null;
+            }
+        },
+        EXT_MASK_FILE(EXTERNAL_MASK_FILE) {
+            @Override
+            public String handleMetadata(TIFFStreamMetadata metadata, String value) {
+                metadata.dtLayout.setExternalMasks((value != null && !value.isEmpty()) ? new File(
+                        value) : null);
+                return null;
+            }
+        },
+        EXT_OVR_FILE(EXTERNAL_OVERVIEW_FILE) {
+            @Override
+            public String handleMetadata(TIFFStreamMetadata metadata, String value) {
+                metadata.dtLayout
+                        .setExternalMaskOverviews((value != null && !value.isEmpty()) ? new File(
+                                value) : null);
+                return null;
+            }
+        },
+        EXT_OVR_MASK_FILE(EXTERNAL_MASK_OVERVIEW_FILE) {
+            @Override
+            public String handleMetadata(TIFFStreamMetadata metadata, String value) {
+                metadata.dtLayout
+                        .setExternalOverviews((value != null && !value.isEmpty()) ? new File(value)
+                                : null);
+                return null;
+            }
+        };
+
+        /** Node Name*/
+        private String name;
+
+        private MetadataNode(String name) {
+            this.setName(name);
+        }
+
+        /** Getter for the Node Name*/
+        public String getName() {
+            return name;
+        }
+
+        /** Setter for the Node Name*/
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        /**
+         * This method allows to handle the input value inside the input {@link TIFFStreamMetadata}.
+         * 
+         * @param metadata
+         * @param value
+         * @return
+         */
+        public abstract String handleMetadata(TIFFStreamMetadata metadata, String value);
+
+        /**
+         * Static method which returns a {@link MetadataNode} from the input node name
+         * 
+         * @param name
+         * @return
+         */
+        public static MetadataNode getFromName(String name) {
+            for (MetadataNode node : values()) {
+                if (node.getName().equalsIgnoreCase(name)) {
+                    return node;
+                }
+            }
+            return null;
+        }
+    }
+
+    /** List of the allowed Node names */
+    private static List<String> names = new ArrayList<String>();
+
+    static {
+        // Populating the Node Name list
+        names.add(BYTE_ORDER);
+        names.add(NUM_INTERNAL_MASKS);
+        names.add(NUM_EXTERNAL_MASKS);
+        names.add(NUM_INTERNAL_OVERVIEWS);
+        names.add(NUM_EXTERNAL_OVERVIEWS);
+        names.add(NUM_EXTERNAL_MASK_OVERVIEWS);
+        names.add(EXTERNAL_MASK_FILE);
+        names.add(EXTERNAL_OVERVIEW_FILE);
+        names.add(EXTERNAL_MASK_OVERVIEW_FILE);
+    }
+
     private static final String bigEndianString =
         ByteOrder.BIG_ENDIAN.toString();
     private static final String littleEndianString =
         ByteOrder.LITTLE_ENDIAN.toString();
 
     public ByteOrder byteOrder = ByteOrder.BIG_ENDIAN;
+
+    /** {@link DatasetLayout} associated to the Metadata*/
+    public TiffDatasetLayoutImpl dtLayout = new TiffDatasetLayoutImpl();
 
     public TIFFStreamMetadata() {
         super(false,
@@ -116,40 +330,126 @@ public class TIFFStreamMetadata extends IIOMetadata {
     public Node getAsTree(String formatName) {
         IIOMetadataNode root = new IIOMetadataNode(nativeMetadataFormatName);
 
-        IIOMetadataNode byteOrderNode = new IIOMetadataNode("ByteOrder");
+        IIOMetadataNode byteOrderNode = new IIOMetadataNode(BYTE_ORDER);
         byteOrderNode.setAttribute("value", byteOrder.toString());
 
         root.appendChild(byteOrderNode);
+
+        // Setting Internal Mask number
+        IIOMetadataNode numInternalMasksNode = new IIOMetadataNode(NUM_INTERNAL_MASKS);
+        numInternalMasksNode.setAttribute("value", Integer.valueOf(dtLayout.getNumInternalMasks())
+                .toString());
+        // Setting External Mask number
+        IIOMetadataNode numExternalMasksNode = new IIOMetadataNode(NUM_EXTERNAL_MASKS);
+        numExternalMasksNode.setAttribute("value", Integer.valueOf(dtLayout.getNumExternalMasks())
+                .toString());
+        // Setting Internal Overview number
+        IIOMetadataNode numInternalOverviewsNode = new IIOMetadataNode(NUM_INTERNAL_OVERVIEWS);
+        numInternalOverviewsNode.setAttribute("value",
+                Integer.valueOf(dtLayout.getNumInternalOverviews()).toString());
+        // Setting Internal Overview number
+        IIOMetadataNode numExternalOverviewsNode = new IIOMetadataNode(NUM_EXTERNAL_OVERVIEWS);
+        numExternalOverviewsNode.setAttribute("value",
+                Integer.valueOf(dtLayout.getNumExternalOverviews()).toString());
+        // Setting External Mask Overview number
+        IIOMetadataNode numExternalMaskOverviewsNode = new IIOMetadataNode(
+                NUM_EXTERNAL_MASK_OVERVIEWS);
+        numExternalMaskOverviewsNode.setAttribute("value",
+                Integer.valueOf(dtLayout.getNumExternalMaskOverviews()).toString());
+        // Setting external file path
+        IIOMetadataNode externalMaskFileNode = new IIOMetadataNode(EXTERNAL_MASK_FILE);
+        File file = dtLayout.getExternalMasks();
+        externalMaskFileNode.setAttribute("value", file != null ? file.getAbsolutePath() : "");
+        // Setting external Overview file path
+        IIOMetadataNode externalOverviewFileNode = new IIOMetadataNode(EXTERNAL_OVERVIEW_FILE);
+        file = dtLayout.getExternalOverviews();
+        externalOverviewFileNode.setAttribute("value", file != null ? file.getAbsolutePath() : "");
+        // Setting Internal Overview number
+        IIOMetadataNode externalMaskOverviewFileNode = new IIOMetadataNode(
+                EXTERNAL_MASK_OVERVIEW_FILE);
+        file = dtLayout.getExternalMaskOverviews();
+        externalMaskOverviewFileNode.setAttribute("value", file != null ? file.getAbsolutePath()
+                : "");
+
+        // Setting Child nodes
+        root.appendChild(numInternalMasksNode);
+        root.appendChild(numExternalMasksNode);
+        root.appendChild(numInternalOverviewsNode);
+        root.appendChild(numExternalOverviewsNode);
+        root.appendChild(numExternalMaskOverviewsNode);
+        root.appendChild(externalMaskFileNode);
+        root.appendChild(externalOverviewFileNode);
+        root.appendChild(externalMaskOverviewFileNode);
+
         return root;
     }
-
-//     public void setFromTree(String formatName, Node root) {
-//     }
 
     private void mergeNativeTree(Node root) throws IIOInvalidTreeException {
         Node node = root;
         if (!node.getNodeName().equals(nativeMetadataFormatName)) {
             fatal(node, "Root must be " + nativeMetadataFormatName);
         }
-        
-        node = node.getFirstChild();
-        if (node == null || !node.getNodeName().equals("ByteOrder")) {
-            fatal(node, "Root must have \"ByteOrder\" child");
-        } 
 
-        NamedNodeMap attrs = node.getAttributes();
-        String order = (String)attrs.getNamedItem("value").getNodeValue();
-
-        if (order == null) {
-            fatal(node, "ByteOrder node must have a \"value\" attribute");
-        }
-        if (order.equals(bigEndianString)) {
-            this.byteOrder = ByteOrder.BIG_ENDIAN;
-        } else if (order.equals(littleEndianString)) {
-            this.byteOrder = ByteOrder.LITTLE_ENDIAN;
+        // Checking Childs
+        if (node.hasChildNodes()) {
+            // Check nodes
+            NodeList childNodes = root.getChildNodes();
+            int size = names.size();
+            // Iterate on the nodes
+            for (int i = 0; i < size; i++) {
+                Node child = childNodes.item(i);
+                String message = checkChild(child);
+                if (message != null && !message.isEmpty()) {
+                    fatal(child, message);
+                } else {
+                    // Check the childs
+                    String nodeName = child.getNodeName();
+                    NamedNodeMap attrs = child.getAttributes();
+                    String value = (String) attrs.getNamedItem("value").getNodeValue();
+                    // Getting Enum related to the Child
+                    MetadataNode metadataNode = MetadataNode.getFromName(nodeName);
+                    // Check if exists
+                    if (metadataNode == null) {
+                        fatal(child, "Undefined Node");
+                    } else {
+                        // Handle the value
+                        String exception = metadataNode.handleMetadata(this, value);
+                        // If an exception occurs, report it
+                        if (exception != null && !exception.isEmpty()) {
+                            fatal(child, exception);
+                        }
+                    }
+                }
+            }
         } else {
-            fatal(node, "Incorrect value for ByteOrder \"value\" attribute");
+            fatal(node, "Root must have childs");
         }
+    }
+
+    /**
+     * Method for checking if the {@link Node} object is related to the Metadata Tree
+     * 
+     * @param child
+     * @return
+     */
+    private String checkChild(Node child) {
+        // Null check
+        if (child == null) {
+            return "Root cannot have null child";
+        }
+        // Name check
+        String nodeName = child.getNodeName();
+        if (names.contains(nodeName)) {
+            NamedNodeMap attrs = child.getAttributes();
+            String value = (String) attrs.getNamedItem("value").getNodeValue();
+            // Null value check
+            if (value == null) {
+                return nodeName + " node must have a \"value\" attribute";
+            }
+        } else {
+            return "Root cannot have \"" + nodeName + "\" child";
+        }
+        return null;
     }
 
     public void mergeTree(String formatName, Node root)
@@ -166,5 +466,6 @@ public class TIFFStreamMetadata extends IIOMetadata {
 
     public void reset() {
         this.byteOrder = ByteOrder.BIG_ENDIAN;
+        dtLayout = new TiffDatasetLayoutImpl();
     }
 }
