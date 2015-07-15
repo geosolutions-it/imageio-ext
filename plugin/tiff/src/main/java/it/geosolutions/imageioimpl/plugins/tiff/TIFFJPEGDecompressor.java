@@ -77,14 +77,15 @@ import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
 import it.geosolutions.imageio.plugins.tiff.TIFFDecompressor;
 import it.geosolutions.imageio.plugins.tiff.TIFFField;
 
-import java.io.IOException;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Iterator;
+
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
-import javax.imageio.stream.MemoryCacheImageInputStream;
+import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.MemoryCacheImageInputStream;
 
 
 public class TIFFJPEGDecompressor extends TIFFDecompressor {
@@ -282,6 +283,14 @@ public class TIFFJPEGDecompressor extends TIFFDecompressor {
 
     protected void finalize() throws Throwable {
         super.finalize();
-        JPEGReader.dispose();
+        dispose();
+    }
+    
+    @Override
+    public void dispose() {
+        if(JPEGReader!=null){
+            JPEGReader.dispose();
+        }
+        JPEGReader=null;
     }
 }

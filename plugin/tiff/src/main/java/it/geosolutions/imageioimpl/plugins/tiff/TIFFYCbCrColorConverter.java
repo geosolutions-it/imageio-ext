@@ -77,8 +77,6 @@ import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
 import it.geosolutions.imageio.plugins.tiff.TIFFColorConverter;
 import it.geosolutions.imageio.plugins.tiff.TIFFField;
 
-import java.awt.color.ColorSpace;
-
 
 /**
  */

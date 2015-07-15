@@ -84,6 +84,11 @@ import java.io.IOException;
  */
 public class TIFFLSBCompressor extends TIFFCompressor {
 
+    @Override
+    public void dispose() {
+        
+    }
+
     public TIFFLSBCompressor() {
         super("", BaselineTIFFTagSet.COMPRESSION_NONE, true);
     }

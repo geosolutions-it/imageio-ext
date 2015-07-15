@@ -74,7 +74,6 @@
 package it.geosolutions.imageioimpl.plugins.tiff;
 
 import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
-import it.geosolutions.imageio.plugins.tiff.TIFFDecompressor;
 
 import java.io.IOException;
 

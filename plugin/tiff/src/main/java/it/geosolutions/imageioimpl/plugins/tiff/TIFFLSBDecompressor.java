@@ -112,4 +112,9 @@ public class TIFFLSBDecompressor extends TIFFDecompressor {
             }
         }
     }
+    
+    @Override
+    public void dispose() {
+    }    
+    
 }

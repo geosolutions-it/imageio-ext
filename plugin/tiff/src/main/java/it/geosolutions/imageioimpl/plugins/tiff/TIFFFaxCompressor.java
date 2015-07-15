@@ -77,7 +77,6 @@ import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
 import it.geosolutions.imageio.plugins.tiff.TIFFCompressor;
 import it.geosolutions.imageio.plugins.tiff.TIFFField;
 
-import java.io.IOException;
 import javax.imageio.metadata.IIOMetadata;
 
 
@@ -562,5 +561,9 @@ public abstract class TIFFFaxCompressor extends TIFFCompressor {
         }
 
         return outIndex - compOffset;
+    }
+    
+    @Override
+    public void dispose() {        
     }
 }

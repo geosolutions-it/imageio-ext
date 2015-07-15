@@ -77,17 +77,16 @@ import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
 import it.geosolutions.imageio.plugins.tiff.TIFFDecompressor;
 import it.geosolutions.imageio.plugins.tiff.TIFFField;
 
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.DataBufferByte;
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.io.IOException;
+
 import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.stream.MemoryCacheImageInputStream;
 import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.MemoryCacheImageInputStream;
 
 
 public class TIFFYCbCrDecompressor extends TIFFDecompressor {
@@ -595,4 +594,12 @@ public class TIFFYCbCrDecompressor extends TIFFDecompressor {
             }
         }
     }
+    
+    @Override
+    public void dispose() {
+        if(decompressor!=null){
+            decompressor.dispose();
+        }
+        decompressor=null;
+    }       
 }

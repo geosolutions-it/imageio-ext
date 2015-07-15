@@ -79,6 +79,7 @@ import it.geosolutions.imageio.plugins.tiff.TIFFDecompressor;
 import java.io.IOException;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
+
 import javax.imageio.IIOException;
 
 
@@ -180,5 +181,13 @@ public class TIFFDeflateDecompressor extends TIFFDecompressor {
                 dstOffset += scanlineStride;
             }
         }
+    }
+
+    @Override
+    public void dispose() {
+        if(inflater!=null){
+            inflater.end();
+        }
+        inflater=null;
     }
 }

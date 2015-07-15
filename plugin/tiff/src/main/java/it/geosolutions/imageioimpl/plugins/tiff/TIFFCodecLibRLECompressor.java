@@ -74,6 +74,7 @@
 package it.geosolutions.imageioimpl.plugins.tiff;
 
 import java.io.IOException;
+
 import javax.imageio.IIOException;
 
 public class TIFFCodecLibRLECompressor extends TIFFRLECompressor {

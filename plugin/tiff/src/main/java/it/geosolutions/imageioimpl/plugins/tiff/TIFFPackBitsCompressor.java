@@ -164,4 +164,8 @@ public class TIFFPackBitsCompressor extends TIFFCompressor {
 
         return bytesWritten;
     }
+    
+    @Override
+    public void dispose() {        
+    }    
 }

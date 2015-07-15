@@ -239,4 +239,9 @@ public class TIFFNullDecompressor extends TIFFDecompressor {
             }
         }
     }
+    
+    
+    @Override
+    public void dispose() {
+    }       
 }
