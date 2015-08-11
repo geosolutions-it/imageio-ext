@@ -38,9 +38,10 @@ public class SPITest {
                 found = true;
                 break;
             } 
-
-            assertTrue("Unable to find PNGImageWriterSPI", found);
         }
+
+        // did we find it
+        assertTrue("Unable to find PNGImageWriterSPI", found);
     }
 
 }
