@@ -18,7 +18,7 @@ package it.geosolutions.imageio.plugins.turbojpeg;
 
 import it.geosolutions.imageio.plugins.exif.EXIFMetadata;
 import it.geosolutions.imageio.plugins.exif.EXIFUtilities;
-import it.geosolutions.imageio.utilities.ImageOutputStreamAdapter2;
+import it.geosolutions.imageio.stream.output.ImageOutputStreamAdapter;
 
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -45,9 +45,10 @@ import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.RenderedOp;
 
-import com.sun.media.jai.opimage.CopyOpImage;
 import org.libjpegturbo.turbojpeg.TJ;
 import org.libjpegturbo.turbojpeg.TJCompressor;
+
+import com.sun.media.jai.opimage.CopyOpImage;
 
 
 /**
@@ -117,12 +118,12 @@ public class TurboJpegImageWriter extends ImageWriter
     public void setOutput(Object output) 
     {
         if (output instanceof OutputStream) {
-            outputStream = new ImageOutputStreamAdapter2((OutputStream) output);
-        } else if (output instanceof ImageOutputStreamAdapter2) {
-            outputStream = (ImageOutputStreamAdapter2) output;
+            outputStream = new ImageOutputStreamAdapter((OutputStream) output);
+        } else if (output instanceof ImageOutputStreamAdapter) {
+            outputStream = (ImageOutputStreamAdapter) output;
         } else if (output instanceof File){
             try {
-                outputStream = new ImageOutputStreamAdapter2(new FileOutputStream((File) output));
+                outputStream = new ImageOutputStreamAdapter(new FileOutputStream((File) output));
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
             }
@@ -208,7 +209,7 @@ public class TurboJpegImageWriter extends ImageWriter
             if (exif != null)
             {
                 EXIFUtilities.insertEXIFintoStream(
-                        ((ImageOutputStreamAdapter2) outputStream).getOs(), outputImageData, imageDataSize, exif);
+                        ((ImageOutputStreamAdapter) outputStream).getTarget(), outputImageData, imageDataSize, exif);
             }
             else
             {

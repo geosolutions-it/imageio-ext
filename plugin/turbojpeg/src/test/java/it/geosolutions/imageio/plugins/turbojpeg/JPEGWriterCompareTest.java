@@ -16,7 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.turbojpeg;
 
-import it.geosolutions.imageio.utilities.ImageOutputStreamAdapter2;
+import static org.junit.Assume.assumeTrue;
+import it.geosolutions.imageio.stream.output.ImageOutputStreamAdapter;
 import it.geosolutions.resources.TestData;
 
 import java.awt.image.BufferedImage;
@@ -26,6 +27,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.logging.Logger;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageReader;
@@ -42,12 +44,10 @@ import javax.media.jai.operator.ExtremaDescriptor;
 import javax.media.jai.operator.SubtractDescriptor;
 
 import org.junit.Test;
-import static org.junit.Assume.*;
 
 import com.sun.imageio.plugins.jpeg.JPEGImageReaderSpi;
 import com.sun.imageio.plugins.png.PNGImageReaderSpi;
 import com.sun.media.imageioimpl.common.PackageUtil;
-import java.util.logging.Logger;
 
 public class JPEGWriterCompareTest extends BaseTest {
 
@@ -196,7 +196,7 @@ public class JPEGWriterCompareTest extends BaseTest {
         final ImageWriteParam iwp = writer.getDefaultWriteParam();
 
         final ImageOutputStream outStream = nativeAcc ? new MemoryCacheImageOutputStream(
-                (OutputStream) destination) : new ImageOutputStreamAdapter2((OutputStream) destination);
+                (OutputStream) destination) : new ImageOutputStreamAdapter((OutputStream) destination);
         
         iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
         iwp.setCompressionType("JPEG");
@@ -205,18 +205,15 @@ public class JPEGWriterCompareTest extends BaseTest {
             iwp.setCompressionType(compression); // Lossy compression.
 
         }
-        if (iwp instanceof JPEGImageWriteParam) {
-            final JPEGImageWriteParam param = (JPEGImageWriteParam) iwp;
-            param.setOptimizeHuffmanTables(true);
-            try {
-                param.setProgressiveMode(JPEGImageWriteParam.MODE_DEFAULT);
-            } catch (UnsupportedOperationException e) {
-                throw (IOException) new IOException().initCause(e);
-                // TODO: inline cause when we will be allowed to target Java 6.
-            }
-        }
 
-        try {
+        try {        
+            if (iwp instanceof JPEGImageWriteParam) {
+                final JPEGImageWriteParam param = (JPEGImageWriteParam) iwp;
+                param.setOptimizeHuffmanTables(true);
+                param.setProgressiveMode(JPEGImageWriteParam.MODE_DEFAULT);
+
+            }
+
 
             writer.setOutput(outStream);
             writer.write(null, new IIOImage(image, null, null), iwp);

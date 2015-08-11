@@ -16,7 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.turbojpeg;
 
-import it.geosolutions.imageio.utilities.ImageOutputStreamAdapter2;
+import static org.junit.Assume.assumeTrue;
+import it.geosolutions.imageio.stream.output.ImageOutputStreamAdapter;
 
 import java.awt.image.RenderedImage;
 import java.io.File;
@@ -35,7 +36,6 @@ import javax.imageio.ImageWriteParam;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import static org.junit.Assume.*;
 
 /**
  * @author Daniele Romagnoli, GeoSolutions SAS
@@ -49,7 +49,6 @@ public class JPEGMultiThTest extends BaseTest {
 
     /**
      * TODO JUNIT tests
-     * 
      * @param args
      * @throws IOException
      */
@@ -105,13 +104,13 @@ public class JPEGMultiThTest extends BaseTest {
         }
 
         public String call() {
-            ImageOutputStreamAdapter2 out1 = null;
+            ImageOutputStreamAdapter out1 = null;
             TurboJpegImageWriter writer1 = null;
             try {
                 FileOutputStream fos = new FileOutputStream(new File(file));
                 System.out.println("writing on " + file);
 
-                out1 = new ImageOutputStreamAdapter2(fos);
+                out1 = new ImageOutputStreamAdapter(fos);
                 writer1 = (TurboJpegImageWriter) turboSPI.createWriterInstance();
                 writer1.setOutput(out1);
                 writer1.write(null, new IIOImage(bi, null, null), param);
