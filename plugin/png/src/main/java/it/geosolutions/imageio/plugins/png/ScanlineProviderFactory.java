@@ -50,7 +50,7 @@ public class ScanlineProviderFactory {
             }
         } else {
             // TODO: we could build a tile oriented reader that fetches tiles in parallel here
-            raster = image.getTile(image.getMinTileX(), image.getMinTileY());
+            raster = image.getData();
         }
 
         // grab the right scanline extractor based on image features
