@@ -29,9 +29,9 @@
  */
 package it.geosolutions.imageioimpl.plugins.tiff;
 
-import java.io.IOException;
-
 import it.geosolutions.imageio.plugins.tiff.TIFFTag;
+
+import java.io.IOException;
 
 import javax.imageio.stream.ImageInputStream;
 /**

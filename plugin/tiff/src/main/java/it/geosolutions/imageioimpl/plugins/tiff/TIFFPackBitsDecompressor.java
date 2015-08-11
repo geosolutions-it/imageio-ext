@@ -73,13 +73,9 @@
  */
 package it.geosolutions.imageioimpl.plugins.tiff;
 
-import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
 import it.geosolutions.imageio.plugins.tiff.TIFFDecompressor;
-import it.geosolutions.imageio.plugins.tiff.TIFFTag;
 
-import java.awt.Rectangle;
 import java.io.IOException;
-import javax.imageio.ImageReader;
 
 
 public class TIFFPackBitsDecompressor extends TIFFDecompressor {
@@ -163,5 +159,9 @@ public class TIFFPackBitsDecompressor extends TIFFDecompressor {
             }
         }
     }
+    
+    @Override
+    public void dispose() {
+    }       
 }
 

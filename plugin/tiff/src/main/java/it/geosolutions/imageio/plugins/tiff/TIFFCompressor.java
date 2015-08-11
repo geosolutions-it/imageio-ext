@@ -76,6 +76,7 @@ package it.geosolutions.imageio.plugins.tiff;
 import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageWriter;
 
 import java.io.IOException;
+
 import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageOutputStream;
@@ -307,5 +308,19 @@ public abstract class TIFFCompressor {
                                int width, int height,
                                int[] bitsPerSample,
                                int scanlineStride) throws IOException;
+                              
+    /**
+      * Allows any resources held by this object to be released.  The
+      * result of calling any other method (other than
+      * <code>finalize</code>) subsequent to a call to this method
+      * is undefined.
+      *
+      * <p>It is important for applications to call this method when they
+      * know they will no longer be using this <code>TIFFCompressor</code>.
+      * Otherwise, the writer may continue to hold on to resources
+      * indefinitely.
+      *
+      */
+     public abstract void dispose();
 
 }

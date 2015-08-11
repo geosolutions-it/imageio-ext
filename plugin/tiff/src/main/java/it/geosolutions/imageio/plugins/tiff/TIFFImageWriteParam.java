@@ -75,9 +75,8 @@ package it.geosolutions.imageio.plugins.tiff;
 
 import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageWriter;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
+
 import javax.imageio.ImageWriteParam;
 
 

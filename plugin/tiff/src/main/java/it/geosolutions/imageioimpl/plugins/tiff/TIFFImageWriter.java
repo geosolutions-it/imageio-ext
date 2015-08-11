@@ -89,7 +89,6 @@ import java.awt.color.ColorSpace;
 import java.awt.color.ICC_ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
 import java.awt.image.ComponentSampleModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
@@ -500,7 +499,9 @@ public class TIFFImageWriter extends ImageWriter {
             } catch(IIOException e) {
                 // XXX Warning
                 return null;
-            }
+            } finally {
+                bogusWriter.dispose();
+            }            
         }
 
         return outData;
@@ -3965,7 +3966,6 @@ public class TIFFImageWriter extends ImageWriter {
         imageType = null;
         byteOrder = null;
         param = null;
-        compressor = null;
         colorConverter = null;
         streamMetadata = null;
         imageMetadata = null;
@@ -3982,6 +3982,11 @@ public class TIFFImageWriter extends ImageWriter {
         replacePixelsByteCountsPosition = 0L;
         replacePixelsRegion = null;
         inReplacePixelsNest = false;
+        
+        if(compressor != null){
+            compressor.dispose();
+        }
+        compressor = null;
     }
     
     public void dispose() {

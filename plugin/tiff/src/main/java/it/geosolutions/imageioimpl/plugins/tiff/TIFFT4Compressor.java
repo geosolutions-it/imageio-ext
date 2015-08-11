@@ -75,11 +75,11 @@ package it.geosolutions.imageioimpl.plugins.tiff;
 
 
 import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
-import it.geosolutions.imageio.plugins.tiff.TIFFCompressor;
 import it.geosolutions.imageio.plugins.tiff.TIFFField;
 import it.geosolutions.imageio.plugins.tiff.TIFFTag;
 
 import java.io.IOException;
+
 import javax.imageio.IIOException;
 import javax.imageio.metadata.IIOMetadata;
 

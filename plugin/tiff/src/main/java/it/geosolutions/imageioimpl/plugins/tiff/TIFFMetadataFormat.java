@@ -73,18 +73,12 @@
  */
 package it.geosolutions.imageioimpl.plugins.tiff;
 
-import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
-import it.geosolutions.imageio.plugins.tiff.TIFFTag;
-import it.geosolutions.imageio.plugins.tiff.TIFFTagSet;
-
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import javax.imageio.ImageTypeSpecifier;
+
 import javax.imageio.metadata.IIOMetadataFormat;
 
 

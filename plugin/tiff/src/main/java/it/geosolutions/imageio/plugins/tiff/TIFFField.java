@@ -73,16 +73,11 @@
  */
 package it.geosolutions.imageio.plugins.tiff;
 
-import it.geosolutions.imageio.plugins.tiff.TIFFTag;
-import it.geosolutions.imageio.plugins.tiff.TIFFTagSet;
 import it.geosolutions.imageioimpl.plugins.tiff.TIFFFieldNode;
 import it.geosolutions.imageioimpl.plugins.tiff.TIFFLazyData;
 
-import java.io.IOException;
-import java.io.Serializable;
 import java.util.StringTokenizer;
-import javax.imageio.metadata.IIOMetadataNode;
-import javax.imageio.stream.ImageOutputStream;
+
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 

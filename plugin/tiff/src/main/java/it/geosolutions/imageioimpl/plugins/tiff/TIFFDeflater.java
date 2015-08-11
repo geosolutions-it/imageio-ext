@@ -79,6 +79,7 @@ import it.geosolutions.imageio.plugins.tiff.TIFFCompressor;
 
 import java.io.IOException;
 import java.util.zip.Deflater;
+
 import javax.imageio.ImageWriteParam;
 
 /**
@@ -168,5 +169,12 @@ public class TIFFDeflater extends TIFFCompressor {
         stream.write(compData, 0, numCompressedBytes);
 
         return numCompressedBytes;
+    }
+    
+    public void dispose() {
+        if (deflater != null) {
+            deflater.end();
+            deflater = null;
+        }
     }
 }

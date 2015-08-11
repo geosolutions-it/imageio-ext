@@ -77,6 +77,7 @@ import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
 import it.geosolutions.imageio.plugins.tiff.TIFFCompressor;
 
 import java.io.IOException;
+
 import javax.imageio.stream.ImageOutputStream;
 
 import com.sun.media.imageioimpl.common.LZWCompressor;
@@ -142,5 +143,9 @@ public class TIFFLZWCompressor extends TIFFCompressor {
             (int)(stream.getStreamPosition() - initialStreamPosition);
 
         return bytesWritten;
+    }
+    
+    @Override
+    public void dispose() {        
     }
 }

@@ -3068,4 +3068,16 @@ public abstract class TIFFDecompressor {
             }
         }
     }
+    
+    /**
+     * Allows any resources held by this object to be released. The result of
+     * calling any other method (other than <code>finalize</code>) subsequent to a
+     * call to this method is undefined.
+     * <p>
+     * It is important for applications to call this method when they know they will
+     * no longer be using this <code>TIFFDecompressor</code>. Otherwise, the writer
+     * may continue to hold on to resources indefinitely.
+     */
+    public abstract void dispose();
+	
 }

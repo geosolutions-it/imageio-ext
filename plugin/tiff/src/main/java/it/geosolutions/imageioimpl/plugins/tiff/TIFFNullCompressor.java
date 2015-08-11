@@ -111,4 +111,8 @@ public class TIFFNullCompressor extends TIFFCompressor {
 
         return numBytes;
     }
+    
+    @Override
+    public void dispose() {        
+    }    
 }

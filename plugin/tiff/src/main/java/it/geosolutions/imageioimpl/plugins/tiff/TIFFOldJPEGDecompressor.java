@@ -74,24 +74,15 @@
 package it.geosolutions.imageioimpl.plugins.tiff;
 
 import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
-import it.geosolutions.imageio.plugins.tiff.TIFFDecompressor;
 import it.geosolutions.imageio.plugins.tiff.TIFFField;
 
-import java.awt.Point;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.Iterator;
+import java.io.IOException;
+
 import javax.imageio.IIOException;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.ImageReadParam;
-import javax.imageio.plugins.jpeg.JPEGHuffmanTable;
-import javax.imageio.plugins.jpeg.JPEGImageReadParam;
-import javax.imageio.plugins.jpeg.JPEGQTable;
-import javax.imageio.stream.MemoryCacheImageInputStream;
 import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.MemoryCacheImageInputStream;
 
 
 /**

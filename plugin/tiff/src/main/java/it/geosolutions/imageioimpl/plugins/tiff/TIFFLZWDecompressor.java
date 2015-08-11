@@ -75,12 +75,10 @@ package it.geosolutions.imageioimpl.plugins.tiff;
 
 import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
 import it.geosolutions.imageio.plugins.tiff.TIFFDecompressor;
-import it.geosolutions.imageio.plugins.tiff.TIFFTag;
 
-import java.awt.Rectangle;
 import java.io.IOException;
+
 import javax.imageio.IIOException;
-import javax.imageio.ImageReader;
 
 
 public class TIFFLZWDecompressor extends TIFFDecompressor {
@@ -346,5 +344,9 @@ public class TIFFLZWDecompressor extends TIFFDecompressor {
             return 257;
         }
     }
+    
+    @Override
+    public void dispose() {
+    }       
 }
 

@@ -81,6 +81,7 @@ import it.geosolutions.imageio.plugins.tiff.TIFFTag;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Iterator;
+
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.metadata.IIOMetadata;
