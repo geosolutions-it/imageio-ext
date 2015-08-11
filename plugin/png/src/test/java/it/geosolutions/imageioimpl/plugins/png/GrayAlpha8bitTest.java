@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageioimpl.plugins.png;
 
+import it.geosolutions.imageio.plugins.png.PNGImageWriterSPI;
 import it.geosolutions.imageio.plugins.png.PNGWriter;
 
 import java.awt.Color;
@@ -26,7 +27,10 @@ import java.awt.image.RenderedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
@@ -64,5 +68,15 @@ public class GrayAlpha8bitTest {
         BufferedImage read = ImageIO.read(new ByteArrayInputStream(bos.toByteArray()));
         BufferedImage gaBuffered = PlanarImage.wrapRenderedImage(grayAlpha).getAsBufferedImage();
         ImageAssert.assertImagesEqual(gaBuffered, read);
+        
+        // now using imagewriter interface
+        ImageWriter writer = new PNGImageWriterSPI().createWriterInstance();
+        writer.setOutput(bos);
+        ImageWriteParam wp = writer.getDefaultWriteParam();
+        wp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+        wp.setCompressionQuality(-quality);
+        writer.write(null, new IIOImage(bi, null, null), wp);
+        writer.dispose();
+        ImageAssert.assertImagesEqual(bi, ImageIO.read(new ByteArrayInputStream(bos.toByteArray())));
     }
 }

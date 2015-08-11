@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageioimpl.plugins.png;
 
+import it.geosolutions.imageio.plugins.png.PNGImageWriter;
+import it.geosolutions.imageio.plugins.png.PNGImageWriterSPI;
 import it.geosolutions.imageio.plugins.png.PNGWriter;
 
 import java.awt.Color;
@@ -24,7 +26,10 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
 
 import org.junit.Test;
 
@@ -80,6 +85,21 @@ public class BufferedImageChildTest {
         // ImageAssert.showImage("ReadBack", 2000, readBack);
         
         ImageAssert.assertImagesEqual(subimage, readBack);
+        
+        // now using imagewriter interface
+        ImageWriter writer = new PNGImageWriterSPI().createWriterInstance();
+        writer.setOutput(bos);
+        ImageWriteParam wp = writer.getDefaultWriteParam();
+        wp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+        wp.setCompressionQuality(-quality);
+        writer.write(null, new IIOImage(subimage, null, null), wp);
+        writer.dispose();
+        bis = new ByteArrayInputStream(bos.toByteArray());
+        readBack = ImageIO.read(bis);
+        // ImageAssert.showImage("ReadBack", 2000, readBack);
+        
+        ImageAssert.assertImagesEqual(subimage, readBack);
+        
     }
     
     

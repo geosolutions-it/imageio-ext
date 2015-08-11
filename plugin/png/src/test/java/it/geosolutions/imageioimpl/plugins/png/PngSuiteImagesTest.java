@@ -18,7 +18,7 @@ package it.geosolutions.imageioimpl.plugins.png;
 
 
 import static org.junit.Assert.assertEquals;
-
+import it.geosolutions.imageio.plugins.png.PNGImageWriterSPI;
 import it.geosolutions.imageio.plugins.png.PNGWriter;
 
 import java.awt.RenderingHints;
@@ -35,7 +35,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.RenderedOp;
@@ -117,6 +120,16 @@ public class PngSuiteImagesTest {
         BufferedImage image = ImageIO.read(bis);
 
         ImageAssert.assertImagesEqual(original, image);
+        
+        // now using imagewriter interface
+        ImageWriter writer = new PNGImageWriterSPI().createWriterInstance();
+        writer.setOutput(bos);
+        ImageWriteParam wp = writer.getDefaultWriteParam();
+        wp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+        wp.setCompressionQuality(-quality);
+        writer.write(null, new IIOImage(original, null, null), wp);
+        writer.dispose();
+        ImageAssert.assertImagesEqual(original, ImageIO.read(new ByteArrayInputStream(bos.toByteArray())));
     }
 
     private void writeToFile(File file, byte[] bytes) throws IOException {
