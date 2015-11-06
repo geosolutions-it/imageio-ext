@@ -46,7 +46,7 @@
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
  *    http://java.net/projects/imageio-ext/
- *    (C) 2007 - 2009, GeoSolutions
+ *    (C) 2007 - 2015, GeoSolutions
  *    All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -3067,5 +3067,14 @@ public abstract class TIFFDecompressor {
                 dstOffset += scanlineStride;
             }
         }
+    }
+
+    /**
+     * Disposes the decompressor, relasing the fields using the most memory
+     */
+    public void dispose() {
+        this.image = null;
+        this.rawImage = null;
+        this.colorMap = null;
     }
 }

@@ -307,5 +307,14 @@ public abstract class TIFFCompressor {
                                int width, int height,
                                int[] bitsPerSample,
                                int scanlineStride) throws IOException;
+    
+    /**
+     * Clears the most expensive referenced fields
+     */
+    public void dispose() {
+        this.writer = null;
+        this.metadata = null;
+        this.stream = null;
+    }
 
 }

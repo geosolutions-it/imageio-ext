@@ -282,6 +282,15 @@ public class TIFFJPEGDecompressor extends TIFFDecompressor {
 
     protected void finalize() throws Throwable {
         super.finalize();
-        JPEGReader.dispose();
+        dispose();
+    }
+    
+    @Override
+    public void dispose() {
+        super.dispose();
+        if(JPEGReader != null) {
+            JPEGReader.dispose();
+            JPEGReader = null;
+        }
     }
 }
