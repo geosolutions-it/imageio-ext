@@ -532,8 +532,15 @@ public abstract class TIFFBaseJPEGCompressor extends TIFFCompressor {
 
     protected void finalize() throws Throwable {
         super.finalize();
+        dispose();
+    }
+    
+    @Override
+    public void dispose() {
+        super.dispose();
         if(JPEGWriter != null) {
             JPEGWriter.dispose();
+            JPEGWriter = null;
         }
     }
 }

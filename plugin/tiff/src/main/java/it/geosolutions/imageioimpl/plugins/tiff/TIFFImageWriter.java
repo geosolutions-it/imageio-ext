@@ -3985,8 +3985,11 @@ public class TIFFImageWriter extends ImageWriter {
     }
     
     public void dispose() {
-	reset();
-	super.dispose();
+        if(compressor != null) {
+            compressor.dispose();
+        }
+    	reset();
+    	super.dispose();
     }
 }
 
