@@ -1,7 +1,7 @@
 /*
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
- *    (C) 2007 - 2015, GeoSolutions
+ *    (C) 2007 - 2016, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -15,6 +15,7 @@
  */
 package it.geosolutions.imageio.tiff;
 
+import it.geosolutions.imageio.plugins.tiff.PrivateTIFFTagSet;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
@@ -34,6 +35,7 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageReadParam;
 import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.FileImageInputStream;
 import javax.media.jai.PlanarImage;
 
@@ -559,5 +561,90 @@ public class TIFFReadTest extends Assert {
                 reader.dispose();
             }
         }
+    }
+
+    @Test
+    public void readWithEmptyTiles() throws IOException {
+
+        // This input image is a 1440x720 image. However, the right half of the image
+        // is made of empty tiles filled with nodata
+        final File file = TestData.file(this, "emptyTiles.tif");
+
+        final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi()
+                .createReaderInstance();
+
+        FileImageInputStream inputStream = new FileImageInputStream(file);
+        try {
+            reader.setInput(inputStream);
+            ImageReadParam param = new ImageReadParam();
+            // Setting up a region to fall in the half of the image containing empty tiles
+            param.setSourceRegion(new Rectangle(360,0,720,720));
+            BufferedImage image = reader.read(0, param);
+            Assert.assertEquals(720, image.getWidth());
+            Assert.assertEquals(720, image.getHeight());
+
+            IIOMetadata metadata = reader.getImageMetadata(0);
+            Node rootNode = metadata.getAsTree(metadata.getNativeMetadataFormatName());
+            double noDataValue = getNoDataValue(rootNode);
+            
+            
+            // Check that the value is noData (the empty Tiles are filled with NoData) 
+            double val = image.getData().getSampleDouble(719, 0, 0);
+            assertEquals(Double.toString(noDataValue), Double.toString(val));
+            image.flush();
+            image = null;
+        } catch (Exception e) {
+            // If an exception occurred the logger catch the exception and print
+            // the message
+            logger.log(Level.SEVERE, e.getMessage(), e);
+        } finally {
+
+            if (inputStream != null) {
+                inputStream.flush();
+                inputStream.close();
+            }
+
+            if (reader != null) {
+                reader.dispose();
+            }
+        }
+    }
+
+    private double getNoDataValue(Node rootNode) {
+        final IIOMetadataNode noDataNode = getTiffField(rootNode, PrivateTIFFTagSet.TAG_GDAL_NODATA);
+        if (noDataNode == null) {
+            return Double.NaN;
+        }
+        Node node = ((IIOMetadataNode) noDataNode .getFirstChild()).getElementsByTagName("TIFFAscii").item(0);
+        final String valueAttribute = node.getAttributes().getNamedItem("value").getNodeValue();
+        final int length = valueAttribute.length() + 1;
+
+        final String noData = valueAttribute.substring(0, length - 1);
+        if (noData == null) {
+            return Double.NaN;
+        }
+        try {
+            if ("nan".equalsIgnoreCase(noData)) {
+                return Double.NaN;
+            }
+            return Double.parseDouble(noData);
+        } catch (NumberFormatException nfe) {
+            // TODO: Log a message.
+            return Double.NaN;
+        }
+    }
+
+    private IIOMetadataNode getTiffField(Node rootNode, final int tag) {
+        Node node = rootNode.getFirstChild();
+        if (node != null) {
+            node = node.getFirstChild();
+            for (; node != null; node = node.getNextSibling()) {
+                Node number = node.getAttributes().getNamedItem("number");
+                if (number != null && tag == Integer.parseInt(number.getNodeValue())) {
+                    return (IIOMetadataNode) node;
+                }
+            }
+        }
+        return null;
     }
 }
