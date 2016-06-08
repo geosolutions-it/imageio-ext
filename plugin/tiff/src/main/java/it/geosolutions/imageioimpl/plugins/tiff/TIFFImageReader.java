@@ -46,7 +46,7 @@
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
  *    http://java.net/projects/imageio-ext/
- *    (C) 2007 - 2015, GeoSolutions
+ *    (C) 2007 - 2016, GeoSolutions
  *    All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -75,6 +75,7 @@ package it.geosolutions.imageioimpl.plugins.tiff;
 
 import it.geosolutions.imageio.maskband.DatasetLayout;
 import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
+import it.geosolutions.imageio.plugins.tiff.PrivateTIFFTagSet;
 import it.geosolutions.imageio.plugins.tiff.TIFFColorConverter;
 import it.geosolutions.imageio.plugins.tiff.TIFFDecompressor;
 import it.geosolutions.imageio.plugins.tiff.TIFFField;
@@ -129,7 +130,7 @@ public class TIFFImageReader extends ImageReader {
      *
      */
     private final static class PageInfo {
-        
+
         private SoftReference<TIFFImageMetadata> imageMetadata;
 
         protected PageInfo(
@@ -148,7 +149,8 @@ public class TIFFImageReader extends ImageReader {
                 boolean isImageTiled, 
                 int samplesPerPixel, 
                 int[] sampleFormat, 
-                int[] extraSamples) {
+                int[] extraSamples,
+                Double noData) {
             this.imageMetadata = new SoftReference<TIFFImageMetadata>(imageMetadata);
             this.bigtiff = bigtiff;
             this.bitsPerSample = bitsPerSample;
@@ -165,6 +167,7 @@ public class TIFFImageReader extends ImageReader {
             this.samplesPerPixel = samplesPerPixel;
             this.sampleFormat = sampleFormat;
             this.extraSamples = extraSamples;
+            this.noData = noData;
         }
 
         /* (non-Javadoc)
@@ -181,6 +184,7 @@ public class TIFFImageReader extends ImageReader {
             result = prime * result + Arrays.hashCode(extraSamples);
             result = prime * result + height;
             result = prime * result + (isImageTiled ? 1231 : 1237);
+            result = prime * result + ((noData == null) ? 0 : noData.hashCode());
             result = prime * result + numBands;
             result = prime * result + photometricInterpretation;
             result = prime * result + planarConfiguration;
@@ -218,6 +222,11 @@ public class TIFFImageReader extends ImageReader {
                 return false;
             if (isImageTiled != other.isImageTiled)
                 return false;
+            if (noData == null) {
+                if (other.noData != null)
+                    return false;
+            } else if (!noData.equals(other.noData))
+                return false;
             if (numBands != other.numBands)
                 return false;
             if (photometricInterpretation != other.photometricInterpretation)
@@ -237,6 +246,8 @@ public class TIFFImageReader extends ImageReader {
             return true;
         }
 
+        
+
         /* (non-Javadoc)
          * @see java.lang.Object#toString()
          */
@@ -250,7 +261,8 @@ public class TIFFImageReader extends ImageReader {
                     + photometricInterpretation + ", planarConfiguration=" + planarConfiguration
                     + ", sampleFormat=" + Arrays.toString(sampleFormat) + ", samplesPerPixel="
                     + samplesPerPixel + ", tileOrStripHeight=" + tileOrStripHeight
-                    + ", tileOrStripWidth=" + tileOrStripWidth + ", width=" + width + "]";
+                    + ", tileOrStripWidth=" + tileOrStripWidth + ", width=" + width 
+                    + ", noData=" + noData + "]";
         }
 
         private boolean bigtiff = false;
@@ -281,7 +293,7 @@ public class TIFFImageReader extends ImageReader {
 
         private int[] extraSamples;
 
-
+        private Double noData = null; //Using a Double to allow null value.
      
     }
 
@@ -369,6 +381,8 @@ public class TIFFImageReader extends ImageReader {
 
 
     private boolean isImageTiled= false;
+
+    protected Double noData = null;
 
     // BAND MASK RELATED FIELDS
     /** {@link DatasetLayout} implementation containing info about overviews and masks*/
@@ -822,6 +836,7 @@ public class TIFFImageReader extends ImageReader {
         this.tileOrStripHeight = pageInfo.tileOrStripHeight;
         this.tileOrStripWidth = pageInfo.tileOrStripWidth;
         this.width = pageInfo.width;
+        this.noData = pageInfo.noData;
         this.imageMetadata = imageMetadata;
     }
 
@@ -1251,6 +1266,20 @@ public class TIFFImageReader extends ImageReader {
             extraSamples = f.getAsInts();
         }
 
+        // 
+        // NoData (if any, leveraging on GDAL tag)
+        //
+        this.noData = null;
+        f = imageMetadata.getTIFFField(PrivateTIFFTagSet.TAG_GDAL_NODATA);
+        if (f != null) {
+            String value = f.getAsString(0);
+            if ("nan".equalsIgnoreCase(value)) {
+                noData = Double.NaN;
+            } else {
+                noData = Double.parseDouble(value);
+            }
+        }
+
         // signal that this image is initialized
         initialized = true;
         
@@ -1273,7 +1302,8 @@ public class TIFFImageReader extends ImageReader {
                         isImageTiled,
                         samplesPerPixel,
                         sampleFormat,
-                        extraSamples));
+                        extraSamples,
+                        noData));
 
     }
 
@@ -1685,7 +1715,7 @@ public class TIFFImageReader extends ImageReader {
         decompressor.setStream(stream);
         decompressor.setOffset(offset);
         decompressor.setByteCount((int)byteCount);
-        
+        ((TIFFDecompressor)decompressor).setNoData(noData);
         decompressor.beginDecoding();
 
         stream.mark();
