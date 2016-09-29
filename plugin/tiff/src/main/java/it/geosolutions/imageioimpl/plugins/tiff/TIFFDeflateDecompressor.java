@@ -77,8 +77,10 @@ import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
 import it.geosolutions.imageio.plugins.tiff.TIFFDecompressor;
 
 import java.io.IOException;
+import java.nio.ByteOrder;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
+
 import javax.imageio.IIOException;
 
 
@@ -115,12 +117,20 @@ public class TIFFDeflateDecompressor extends TIFFDecompressor {
         if (predictor == 
             BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING) {
             int len = bitsPerSample.length;
-            for(int i = 0; i < len; i++) {
-                if(bitsPerSample[i] != 8) {
+            final int bps=bitsPerSample[0];
+            if (bps != 8 && bps != 16) {
+                throw new IIOException
+                    (bps + "-bit samples " +
+                     "are not supported for Horizontal " +
+                     "differencing Predictor");
+            }
+            for (int i = 0; i < len; i++) {
+                if( bitsPerSample[i] != bps) {
                     throw new IIOException
-                        (bitsPerSample[i] + "-bit samples "+
-                         "are not supported for Horizontal "+
-                         "differencing Predictor");
+                        ("Varying sample width is not " +
+                         "supported for Horizontal " +
+                         "differencing Predictor (first: " +
+                         bps + ", unexpected:" + bitsPerSample[i] + ")");
                 }
             }
         }
@@ -157,17 +167,47 @@ public class TIFFDeflateDecompressor extends TIFFDecompressor {
         // Reset the Inflater.
         inflater.reset();
 
-	if (predictor ==
-            BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING) {
-	    
-	    for (int j = 0; j < srcHeight; j++) {
-		int count = bufOffset + samplesPerPixel * (j * srcWidth + 1);
-		for (int i=samplesPerPixel; i<srcWidth*samplesPerPixel; i++) {
-		    buf[count] += buf[count - samplesPerPixel];
-		    count++;
-		}
-	    }
-	}
+        if (predictor == BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING) {
+            if (bitsPerSample[0] == 8) {
+                for (int j = 0; j < srcHeight; j++) {
+                    int count = bufOffset + samplesPerPixel * (j * srcWidth + 1);
+                    for (int i = samplesPerPixel; i < srcWidth * samplesPerPixel; i++) {
+                        buf[count] += buf[count - samplesPerPixel];
+                        count++;
+                    }
+                }
+            }
+            else if(bitsPerSample[0]==16) {
+                if (stream.getByteOrder() == ByteOrder.LITTLE_ENDIAN) {
+                    for (int j = 0; j < srcHeight; j++) {
+                        int count = dstOffset + samplesPerPixel * (j * srcWidth + 1) * 2;
+                        for (int i = samplesPerPixel; i < srcWidth * samplesPerPixel; i++) {
+                            int curr=(((int)buf[count]) & 0xFF) + (buf[count+1]<<8);
+                            int prev=(((int)buf[count-samplesPerPixel*2]) & 0xFF)+(buf[count+1-samplesPerPixel*2]<<8);
+                            curr+=prev;
+                            buf[count]=(byte)curr;
+                            buf[count+1]=(byte)(curr>>8);
+                            count+=2;
+                        }
+                    }
+                }
+                else
+                {
+                    for (int j = 0; j < srcHeight; j++) {
+                        int count = dstOffset + samplesPerPixel * (j * srcWidth + 1) * 2;
+                        for (int i = samplesPerPixel; i < srcWidth * samplesPerPixel; i++) {
+                            int curr=(((int)buf[count+1]) & 0xFF) + (buf[count]<<8);
+                            int prev=(((int)buf[count+1-samplesPerPixel*2]) & 0xFF)+(buf[count-samplesPerPixel*2]<<8);
+                            curr+=prev;
+                            buf[count+1]=(byte)curr;
+                            buf[count]=(byte)(curr>>8);
+                            count+=2;
+                        }
+                    }
+                }
+            }
+            else throw new IIOException("Unexpected branch of Horizontal differencing Predictor, bps="+bitsPerSample[0]);
+        }
 
         if(bytesPerRow != scanlineStride) {
             if(DEBUG) {
