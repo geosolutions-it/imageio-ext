@@ -136,7 +136,7 @@ public class TIFFLZWDecompressor extends TIFFDecompressor {
             BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING) {
             int len = bitsPerSample.length;
             final int bps=bitsPerSample[0];
-            if(bps != 8 && bps != 16) {
+            if (bps != 8 && bps != 16) {
                 throw new IIOException
                     (bps + "-bit samples "+
                      "are not supported for Horizontal "+
