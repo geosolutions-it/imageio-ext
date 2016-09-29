@@ -79,6 +79,7 @@ import it.geosolutions.imageio.plugins.tiff.TIFFTag;
 
 import java.awt.Rectangle;
 import java.io.IOException;
+import java.nio.ByteOrder;
 import javax.imageio.IIOException;
 import javax.imageio.ImageReader;
 
@@ -134,12 +135,20 @@ public class TIFFLZWDecompressor extends TIFFDecompressor {
         if (predictor == 
             BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING) {
             int len = bitsPerSample.length;
-            for(int i = 0; i < len; i++) {
-                if(bitsPerSample[i] != 8) {
+            final int bps=bitsPerSample[0];
+            if (bps != 8 && bps != 16) {
+                throw new IIOException
+                    (bps + "-bit samples "+
+                     "are not supported for Horizontal "+
+                     "differencing Predictor");
+            }
+            for(int i=1;i<len;i++) {
+                if(bitsPerSample[i]!=bps) {
                     throw new IIOException
-                        (bitsPerSample[i] + "-bit samples "+
-                         "are not supported for Horizontal "+
-                         "differencing Predictor");
+                        ("Varying sample width is not "+
+                         "supported for Horizontal "+
+                         "differencing Predictor (first: "+
+                         bps+", unexpected:"+bitsPerSample[i]+")");
                 }
             }
         }
@@ -224,20 +233,47 @@ public class TIFFLZWDecompressor extends TIFFDecompressor {
 	    }
 	}
 
-	if (predictor ==
-            BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING) {
-
-	    for (int j = 0; j < srcHeight; j++) {
-		
-		int count = dstOffset + samplesPerPixel * (j * srcWidth + 1);
-		
-		for (int i = samplesPerPixel; i < srcWidth * samplesPerPixel; i++) {
-		    
-		    dstData[count] += dstData[count - samplesPerPixel];
-		    count++;
-		}
-	    }
-	}
+        if (predictor == BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING) {
+            if(bitsPerSample[0]==8) {
+                for (int j = 0; j < srcHeight; j++) {
+                    int count = dstOffset + samplesPerPixel * (j * srcWidth + 1);
+                    for (int i = samplesPerPixel; i < srcWidth * samplesPerPixel; i++) {
+                        dstData[count] += dstData[count - samplesPerPixel];
+                        count++;
+                    }
+                }
+            }
+            else if(bitsPerSample[0]==16) {
+                if(stream.getByteOrder()==ByteOrder.LITTLE_ENDIAN) {
+                    for (int j = 0; j < srcHeight; j++) {
+                        int count = dstOffset + samplesPerPixel * (j * srcWidth + 1) * 2;
+                        for (int i = samplesPerPixel; i < srcWidth * samplesPerPixel; i++) {
+                            int curr=(((int)dstData[count]) & 0xFF) + (dstData[count+1]<<8);
+                            int prev=(((int)dstData[count-samplesPerPixel*2]) & 0xFF)+(dstData[count+1-samplesPerPixel*2]<<8);
+                            curr+=prev;
+                            dstData[count]=(byte)curr;
+                            dstData[count+1]=(byte)(curr>>8);
+                            count+=2;
+                        }
+                    }
+                }
+                else
+                {
+                    for (int j = 0; j < srcHeight; j++) {
+                        int count = dstOffset + samplesPerPixel * (j * srcWidth + 1) * 2;
+                        for (int i = samplesPerPixel; i < srcWidth * samplesPerPixel; i++) {
+                            int curr=(((int)dstData[count+1]) & 0xFF) + (dstData[count]<<8);
+                            int prev=(((int)dstData[count+1-samplesPerPixel*2]) & 0xFF)+(dstData[count-samplesPerPixel*2]<<8);
+                            curr+=prev;
+                            dstData[count+1]=(byte)curr;
+                            dstData[count]=(byte)(curr>>8);
+                            count+=2;
+                        }
+                    }
+                }
+            }
+            else throw new IIOException("Unexpected branch of Horizontal differencing Predictor, bps="+bitsPerSample[0]);
+        }
 
         return dstIndex - dstOffset;
     }

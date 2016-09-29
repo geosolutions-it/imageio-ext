@@ -610,6 +610,62 @@ public class TIFFReadTest extends Assert {
         }
     }
 
+    @Test
+    public void readLZWWithHorizontalDifferencingPredictorOn16Bits() throws IOException {
+        // This image has been created from test.tif using the command:
+        // gdal_translate -OT UInt16 -co COMPRESS=LZW -co PREDICTOR=2 test.tif lzwtest.tif
+        final File file = TestData.file(this, "lzwtest.tif");
+
+        final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi()
+                .createReaderInstance();
+
+        FileImageInputStream inputStream = new FileImageInputStream(file);
+        try {
+            reader.setInput(inputStream);
+            BufferedImage image = reader.read(0);
+            image.flush();
+            image = null;
+        } finally {
+
+            if (inputStream != null) {
+                inputStream.flush();
+                inputStream.close();
+            }
+
+            if (reader != null) {
+                reader.dispose();
+            }
+        }
+    }
+
+    @Test
+    public void readDeflateWithHorizontalDifferencingPredictorOn16Bits() throws IOException {
+        // This image has been created from test.tif using the command:
+        // gdal_translate -OT UInt16 -co COMPRESS=DEFLATE -co PREDICTOR=2 test.tif deflatetest.tif
+        final File file = TestData.file(this, "deflatetest.tif");
+
+        final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi()
+                .createReaderInstance();
+
+        FileImageInputStream inputStream = new FileImageInputStream(file);
+        try {
+            reader.setInput(inputStream);
+            BufferedImage image = reader.read(0);
+            image.flush();
+            image = null;
+        } finally {
+
+            if (inputStream != null) {
+                inputStream.flush();
+                inputStream.close();
+            }
+
+            if (reader != null) {
+                reader.dispose();
+            }
+        }
+    }
+
     private double getNoDataValue(Node rootNode) {
         final IIOMetadataNode noDataNode = getTiffField(rootNode, PrivateTIFFTagSet.TAG_GDAL_NODATA);
         if (noDataNode == null) {
