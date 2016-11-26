@@ -1,0 +1,15 @@
+<VRTDataset rasterXSize="512" rasterYSize="512">
+  <GeoTransform>  4.4072000000000000e+05,  6.0000000000000000e+01,  0.0000000000000000e+00,  3.7513200000000000e+06,  0.0000000000000000e+00, -6.0000000000000000e+01</GeoTransform>
+  <Metadata />
+  <VRTRasterBand dataType="Byte" band="1">
+    <Metadata />
+    <ColorInterp>Gray</ColorInterp>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">bw_sample.jpg</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="512" RasterYSize="512" DataType="Byte" BlockXSize="512" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="512" ySize="512" />
+      <DstRect xOff="0" yOff="0" xSize="512" ySize="512" />
+    </SimpleSource>
+  </VRTRasterBand>
+</VRTDataset>
