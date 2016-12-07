@@ -69,6 +69,7 @@
         <module>gdaldted</module>
         <module>gdalgeotiff</module>
         <module>gdalidrisi</module>
+		<module>gdalvrt</module>
       </modules>
     </profile>
     <profile>
@@ -100,6 +101,7 @@
         <module>gdalgeotiff</module>
         <module>gdalwms</module>
         <module>gdalwcs</module>
+		<module>gdalvrt</module>
        </modules>
     </profile> 
     <profile>
@@ -127,6 +129,7 @@
         <module>gdalgeotiff</module>
         <module>gdalwms</module>
         <module>gdalwcs</module>
+		<module>gdalvrt</module>
        </modules>
     </profile>
   </profiles>
