@@ -126,6 +126,11 @@
       <artifactId>imageio-ext-gdalkakadujp2</artifactId>
       <version>${project.version}</version>
     </dependency>
+     <dependency>
+      <groupId>it.geosolutions.imageio-ext</groupId>
+      <artifactId>imageio-ext-gdalvrt</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-tiff</artifactId>
@@ -174,6 +179,11 @@
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-png</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>it.geosolutions.imageio-ext</groupId>
+      <artifactId>imageio-ext-gdalvrt</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>
