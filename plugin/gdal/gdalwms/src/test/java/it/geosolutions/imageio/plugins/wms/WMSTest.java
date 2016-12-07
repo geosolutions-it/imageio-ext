@@ -30,6 +30,7 @@ import javax.imageio.ImageReader;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.Ignore;
 
 /**
  * Testing reading capabilities for {@link WMSImageReader}.
@@ -49,7 +50,7 @@ public class WMSTest extends AbstractGDALTest {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    @Test
+    @Ignore
     public void read() throws FileNotFoundException, IOException {
         if (!isDriverAvailable) {
             return;

@@ -1,0 +1,49 @@
+GDAL VRT Plugin
+~~~~~~~~~~~~~~~~
+
+  IP Review:
+  
+ STATUS: 
+
+	* Code: 
+
+	* Data: 
+           
+* Data Credits
+  ~~~~~~~~~~~~
+  * 001zc013.on1: 
+     data freely available at:
+     http://download.osgeo.org/gdal/data/nitf/cadrg/
+  * 095b_dem_90m.asc:
+     data freely available at:
+     http://download.osgeo.org/gdal/data/aaigrid/
+  * A.TOC: 
+     data used originates from gdal the GDAL gdalautotest-1.7.3\gdrivers\data
+	 http://download.osgeo.org/gdal/gdalautotest-1.7.3.tar.gz -
+  * bw_sample.jpg: 
+     data freely available at:
+     http://download.osgeo.org/gdal/data/jpeg/
+  * elggll.zip containing the following dataset:
+     * elggll.bil / elggll.hdr
+        data freely available at:
+        http://download.osgeo.org/gdal/data/ehdr/
+  * idrisi.rst
+     data synthetically generated
+  * n43.dt0:
+     Freely available at: http://download.osgeo.org/gdal/data/dted/
+  * rgbsmall.kap:
+     Freely available at: https://svn.osgeo.org/gdal/tags/1.7.3/autotest/gdrivers/data/
+  * sample-erdas.img
+     data generated using the gdal_translate utility, having "small_world.tif" as input file, which is freely available at:
+     http://download.osgeo.org/gdal/data/gtiff/
+  * small_world.jpg: 
+     data generated using the gdal_translate utility, having "small_world.tif" as input file, which is freely available at:
+     http://download.osgeo.org/gdal/data/gtiff/
+  * small_world.zip:
+     * small_world.img / small_world.hdr
+        data generated using the gdal_translate utility, having "small_world.tif" as input file, which is freely available at:
+        http://download.osgeo.org/gdal/data/gtiff/
+  * test-geotiff-data.zip containing datasets based on the following dataset:
+     * utm.tif:
+        data freely available at:
+        http://download.osgeo.org/gdal/data/gtiff/

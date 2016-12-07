@@ -1,0 +1,12 @@
+<VRTDataset rasterXSize="1536" rasterYSize="1536">
+  <srs>EPSG:4326</srs>
+  <GeoTransform>-99.252336448598129, 0.001460280373832, 0, 31.034482758620694, 0, -0.001346982758621</GeoTransform>
+  <VRTRasterBand dataType="Byte" band="1">
+    <ColorInterp>Gray</ColorInterp>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">001zc013.on1</SourceFilename>
+    </SimpleSource>
+    <NoDataValue>216</NoDataValue>
+  </VRTRasterBand>
+</VRTDataset>
+
