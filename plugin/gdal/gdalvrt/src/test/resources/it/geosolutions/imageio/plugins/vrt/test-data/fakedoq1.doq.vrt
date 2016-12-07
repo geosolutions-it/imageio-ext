@@ -1,0 +1,17 @@
+<VRTDataset rasterXSize="500" rasterYSize="500">
+  <SRS>PROJCS["WGS 84 / UTM zone 31N",GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",3],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",0],UNIT["metre",1]]</SRS>
+  <GeoTransform>  5.0000000000000000e+05,  1.0000000000000000e+00,  0.0000000000000000e+00,  5.0000000000000000e+06,  0.0000000000000000e+00, -1.0000000000000000e+00</GeoTransform>
+  <Metadata>
+    <MDI key="DOQ_DESC">USGS GeoTIFF DOQ 1:12000 Q-Quad of test file generated at hand</MDI>
+  </Metadata>
+  <VRTRasterBand dataType="Byte" band="1">
+    <Metadata />
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">fakedoq1.doq</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="500" RasterYSize="500" DataType="Byte" BlockXSize="500" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="500" ySize="500" />
+      <DstRect xOff="0" yOff="0" xSize="500" ySize="500" />
+    </SimpleSource>
+  </VRTRasterBand>
+</VRTDataset>

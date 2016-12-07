@@ -1,0 +1,36 @@
+<VRTDataset rasterXSize="400" rasterYSize="200">
+  <Metadata />
+  <VRTRasterBand dataType="Byte" band="1">
+    <Metadata />
+    <ColorInterp>Red</ColorInterp>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">small_world.jpg</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="400" RasterYSize="200" DataType="Byte" BlockXSize="400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="400" ySize="200" />
+      <DstRect xOff="0" yOff="0" xSize="400" ySize="200" />
+    </SimpleSource>
+  </VRTRasterBand>
+  <VRTRasterBand dataType="Byte" band="2">
+    <Metadata />
+    <ColorInterp>Green</ColorInterp>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">small_world.jpg</SourceFilename>
+      <SourceBand>2</SourceBand>
+      <SourceProperties RasterXSize="400" RasterYSize="200" DataType="Byte" BlockXSize="400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="400" ySize="200" />
+      <DstRect xOff="0" yOff="0" xSize="400" ySize="200" />
+    </SimpleSource>
+  </VRTRasterBand>
+  <VRTRasterBand dataType="Byte" band="3">
+    <Metadata />
+    <ColorInterp>Blue</ColorInterp>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">small_world.jpg</SourceFilename>
+      <SourceBand>3</SourceBand>
+      <SourceProperties RasterXSize="400" RasterYSize="200" DataType="Byte" BlockXSize="400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="400" ySize="200" />
+      <DstRect xOff="0" yOff="0" xSize="400" ySize="200" />
+    </SimpleSource>
+  </VRTRasterBand>
+</VRTDataset>
