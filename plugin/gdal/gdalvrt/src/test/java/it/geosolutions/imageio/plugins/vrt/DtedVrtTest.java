@@ -14,37 +14,35 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package it.geosolutions.imageio.plugins.wcs;
+package it.geosolutions.imageio.plugins.vrt;
 
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
-import it.geosolutions.imageio.gdalframework.GDALUtilities;
-import it.geosolutions.imageio.plugins.wcs.WCSImageReader;
-import it.geosolutions.imageio.plugins.wcs.WCSImageReaderSpi;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
+import org.junit.Assert;
+import org.junit.Before;
 
+import javax.imageio.ImageReader;
+import javax.media.jai.ImageLayout;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import javax.imageio.ImageReader;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.Ignore;
-
 /**
- * Testing reading capabilities for {@link WCSImageReader}.
+ * Testing reading capabilities for DTED with {@link VRTImageReader}.
  * 
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
-public class WCSTest extends AbstractGDALTest {
-    public final static String fileName = "wcs.xml";
+public class DtedVrtTest extends AbstractGDALTest {
+    public final static String fileName = "n43.dt0.vrt";
 
-    private final static boolean isDriverAvailable = isGDALAvailable
-            && GDALUtilities.isDriverAvailable("WCS");
+
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+    }
 
     /**
      * Test read exploiting common JAI operations (Crop-Translate-Rotate)
@@ -52,35 +50,30 @@ public class WCSTest extends AbstractGDALTest {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    @Ignore
-    public void read() throws FileNotFoundException, IOException {
-        if (!isDriverAvailable) {
+    @org.junit.Test
+    public void imageRead() throws FileNotFoundException, IOException {
+        if (!isGDALAvailable) {
             return;
         }
-        if (!isGDALDATAEnvSet){
-            warningMessage("GDAL_DATA environment variable has not been set. Tests are skipped");
-            return;
-        }
-        File file;
-        try {
-            file = TestData.file(this, fileName);
-        } catch (FileNotFoundException fnfe) {
-            warningMessage();
-            return;
-        }
+        File file = TestData.file(this, fileName);
+
         // ////////////////////////////////////////////////////////////////
         // preparing to read
         // ////////////////////////////////////////////////////////////////
-        final ImageReader mReader = new WCSImageReaderSpi()
-                .createReaderInstance();
-        mReader.setInput(file);
-        final RenderedImage image = mReader.read(0);
- 
-        if (TestData.isInteractiveTest()) {
-            ImageIOUtilities.visualize(image);
-        }
-        else
-            Assert.assertNotNull(image.getData());
-    }
+        final ImageLayout l = new ImageLayout();
+        l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(32).setTileWidth(32);
 
+        // get a RenderedImage
+        ImageReader reader= new VRTImageReaderSpi().createReaderInstance();
+        reader.setInput(file);
+        RenderedImage image = reader.read(0);
+        if (TestData.isInteractiveTest()) {
+            ImageIOUtilities.visualize(image, "test", true);
+        } else {
+            Assert.assertNotNull(image.getData());
+        }
+        Assert.assertEquals(121, image.getWidth());
+        Assert.assertEquals(121, image.getHeight());
+        reader.dispose();
+    }
 }

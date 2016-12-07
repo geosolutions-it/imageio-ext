@@ -1,0 +1,46 @@
+<VRTDataset rasterXSize="400" rasterYSize="200">
+  <SRS>GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],TOWGS84[0,0,0,0,0,0,0],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9108"]],AUTHORITY["EPSG","4326"]]</SRS>
+  <GeoTransform> -1.8000000000000000e+02,  9.0000000000000002e-01,  0.0000000000000000e+00,  9.0000000000000000e+01,  0.0000000000000000e+00, -9.0000000000000002e-01</GeoTransform>
+  <Metadata>
+    <MDI key="AREA_OR_POINT">Area</MDI>
+  </Metadata>
+  <VRTRasterBand dataType="Byte" band="1">
+    <Metadata>
+      <MDI key="LAYER_TYPE">athematic</MDI>
+    </Metadata>
+    <Description>Layer_1</Description>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">sample-erdas.img</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="400" RasterYSize="200" DataType="Byte" BlockXSize="64" BlockYSize="64" />
+      <SrcRect xOff="0" yOff="0" xSize="400" ySize="200" />
+      <DstRect xOff="0" yOff="0" xSize="400" ySize="200" />
+    </SimpleSource>
+  </VRTRasterBand>
+  <VRTRasterBand dataType="Byte" band="2">
+    <Metadata>
+      <MDI key="LAYER_TYPE">athematic</MDI>
+    </Metadata>
+    <Description>Layer_2</Description>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">sample-erdas.img</SourceFilename>
+      <SourceBand>2</SourceBand>
+      <SourceProperties RasterXSize="400" RasterYSize="200" DataType="Byte" BlockXSize="64" BlockYSize="64" />
+      <SrcRect xOff="0" yOff="0" xSize="400" ySize="200" />
+      <DstRect xOff="0" yOff="0" xSize="400" ySize="200" />
+    </SimpleSource>
+  </VRTRasterBand>
+  <VRTRasterBand dataType="Byte" band="3">
+    <Metadata>
+      <MDI key="LAYER_TYPE">athematic</MDI>
+    </Metadata>
+    <Description>Layer_3</Description>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">sample-erdas.img</SourceFilename>
+      <SourceBand>3</SourceBand>
+      <SourceProperties RasterXSize="400" RasterYSize="200" DataType="Byte" BlockXSize="64" BlockYSize="64" />
+      <SrcRect xOff="0" yOff="0" xSize="400" ySize="200" />
+      <DstRect xOff="0" yOff="0" xSize="400" ySize="200" />
+    </SimpleSource>
+  </VRTRasterBand>
+</VRTDataset>

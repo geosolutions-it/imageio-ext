@@ -1,0 +1,68 @@
+<VRTDataset rasterXSize="500" rasterYSize="7631">
+  <SRS>PROJCS["NAD 83 / UTM zone 18N",GEOGCS["NAD83",DATUM["North_American_Datum_1983",SPHEROID["GRS 1980",6378137,298.257222101]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",-75],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",0],UNIT["metre",1]]</SRS>
+  <GeoTransform>  3.7705400000000000e+05,  1.0000000000000000e+00,  0.0000000000000000e+00,  4.0822050000000000e+06,  0.0000000000000000e+00, -1.0000000000000000e+00</GeoTransform>
+  <Metadata>
+    <MDI key="AGENCY">WESTERN MAPPING CENTER (WMC) oversight agency*</MDI>
+    <MDI key="DATA_FILE_SIZE">144244800 data set size in bytes*</MDI>
+    <MDI key="EAST_LONGITUDE">-76 18 45.000 signed deg min sec SDDD MM SS.SSS*</MDI>
+    <MDI key="END_USGS_HEADER"></MDI>
+    <MDI key="IMAGE_SOURCE">COLOR INFRA-RED FILM b&amp;w, cir, natural color, other*</MDI>
+    <MDI key="METADATA_DATE">1997 10 18 date created or changed, yyyy mm dd*</MDI>
+    <MDI key="NATION">US nation code*</MDI>
+    <MDI key="NE_QUAD_CORNER_XY">383025.134 4081809.915 XY coords. of pri. NE quad corner*</MDI>
+    <MDI key="NORTH_LATITUDE">36 52 30.000 signed deg min sec SDDD MM SS.SSS*</MDI>
+    <MDI key="NW_QUAD_CORNER_XY">377454.607 4081888.326 XY coords. of pri. NW quad corner*</MDI>
+    <MDI key="PRODUCER">WMC producer/contractor*</MDI>
+    <MDI key="PRODUCTION_DATE">1997 6 26 yyyy mm dd*</MDI>
+    <MDI key="PRODUCTION_SYSTEM">DV2.6.3 10/9OV2.4 5/95 production system*</MDI>
+    <MDI key="QUADRANGLE_NAME">NORFOLK SOUTH 3.45 or 7.5-min. name*</MDI>
+    <MDI key="QUADRANT">NW quadrant indicator if cell size = 3.75-minutes*</MDI>
+    <MDI key="RASTER_ORDER">LEFT_RIGHT/TOP_BOTTOM video display order*</MDI>
+    <MDI key="RMSE_XY">1.20 doq horiz. accuracy*</MDI>
+    <MDI key="SE_QUAD_CORNER_XY">382929.876 4074876.254 XY coords. of pri. SE quad corner*</MDI>
+    <MDI key="SECONDARY_HORIZONTAL_DATUM">NAD27 secondary horizontal datum*</MDI>
+    <MDI key="SECONDARY_NE_QUAD_XY">383022.293 4081607.082 XY coords. - sec. NE quad cor.*</MDI>
+    <MDI key="SECONDARY_NW_QUAD_XY">377451.631 4081685.495 XY coords. - sec. NW quad cor.*</MDI>
+    <MDI key="SECONDARY_SE_QUAD_XY">382927.037 4074673.586 XY coords. - sec. SE quad cor.*</MDI>
+    <MDI key="SECONDARY_SW_QUAD_XY">377351.836 4074751.948 XY coords. - sec. SW quad cor.*</MDI>
+    <MDI key="SECONDARY_XY_ORIGIN">377021.063 4081986.163 coord upper left pixel sec datum*</MDI>
+    <MDI key="SOURCE_DEM_DATE">1997 6 26 source dem date yyyy mm dd*</MDI>
+    <MDI key="SOURCE_IMAGE_DATE">1994 3 22 source image date as yyyy mm dd*</MDI>
+    <MDI key="SOURCE_IMAGE_ID">NAPP 7688 123 source image id*</MDI>
+    <MDI key="SOUTH_LATITUDE">36 48 45.000 signed deg min sec SDDD MM SS.SSS*</MDI>
+    <MDI key="STANDARD_VERSION">1996 12 version of DOQ standard*</MDI>
+    <MDI key="STATE">VA state fip code*</MDI>
+    <MDI key="SW_QUAD_CORNER_XY">377354.810 4074954.614 XY coords. of pri. SW quad corner*</MDI>
+    <MDI key="WEST_LONGITUDE">-76 22 30.000 signed deg min sec SDDD MM SS.SSS*</MDI>
+  </Metadata>
+  <VRTRasterBand dataType="Byte" band="1">
+    <Metadata />
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">C3607614_truncated.NWS</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="500" RasterYSize="7631" DataType="Byte" BlockXSize="500" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="500" ySize="7631" />
+      <DstRect xOff="0" yOff="0" xSize="500" ySize="7631" />
+    </SimpleSource>
+  </VRTRasterBand>
+  <VRTRasterBand dataType="Byte" band="2">
+    <Metadata />
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">C3607614_truncated.NWS</SourceFilename>
+      <SourceBand>2</SourceBand>
+      <SourceProperties RasterXSize="500" RasterYSize="7631" DataType="Byte" BlockXSize="500" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="500" ySize="7631" />
+      <DstRect xOff="0" yOff="0" xSize="500" ySize="7631" />
+    </SimpleSource>
+  </VRTRasterBand>
+  <VRTRasterBand dataType="Byte" band="3">
+    <Metadata />
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">C3607614_truncated.NWS</SourceFilename>
+      <SourceBand>3</SourceBand>
+      <SourceProperties RasterXSize="500" RasterYSize="7631" DataType="Byte" BlockXSize="500" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="500" ySize="7631" />
+      <DstRect xOff="0" yOff="0" xSize="500" ySize="7631" />
+    </SimpleSource>
+  </VRTRasterBand>
+</VRTDataset>
