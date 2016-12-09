@@ -7,6 +7,8 @@
     <property name="remoteReleasesPath" value="fakepath" />
     <property name="user" value="fakeuser" />
     <property name="password" value="fakepassword" />
+    <property name="keyfile" value="/home/user/.ssh/id_rsa" />
+    <property name="port" value="22" />
     
     <!-- Prepare deployment folder -->
     <delete includeEmptyDirs="true" dir="deploy" />
@@ -35,7 +37,11 @@
      <copy file="target/release/imageio-ext-${version}-javadoc.zip" toFile="deploy/imageio-ext-${version}-javadocs.zip" />
      
      <!-- transfer to Remote-->
-     <scp todir="${user}:${password}@${host}:${remoteReleasesPath}/${version}" verbose="true">
+     <scp todir="${user}@${host}:${remoteReleasesPath}/${version}"
+        port="${port}"
+        keyfile="${keyfile}"
+        trust="true"
+        verbose="false">
        <fileset dir="deploy">
          <include name="*"/>
        </fileset>
