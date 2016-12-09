@@ -7,12 +7,12 @@
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1.17</version>
   </parent>
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-plugin</artifactId>
   <packaging>pom</packaging>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.1.17</version>
   <name>GeoSolutions Image I/O-Extensions plugins</name>
   <description>
     Image I/O-Extensions plugin modules.

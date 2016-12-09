@@ -4,13 +4,13 @@
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId> 
     <artifactId>imageio-ext-netcdf-plugin</artifactId> 
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1.17</version>
   </parent>
   <groupId>it.geosolutions.imageio-ext</groupId> 
   <artifactId>imageio-ext-netcdf</artifactId>
   <name>NetCDF - Direct Plugin</name>
   <packaging>jar</packaging>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.1.17</version>
    <dependencies>
     <dependency>
       <groupId>org.slf4j</groupId>

@@ -4,11 +4,11 @@
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-gdalrpftoc</artifactId>
   <packaging>jar</packaging>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.1.17</version>
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-gdal-plugin</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1.17</version>
   </parent>
   <name>RPFTOC Imaging Plugin that internally uses GDAL</name>
 </project>

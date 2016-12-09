@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="Release" default="release">
   <target name="release">
-    <property name="version" value="1.1-SNAPSHOT" />
+    <property name="version" value="1.1.17" />
     
     <property name="host" value="demo.geo-solutions.it" />
     <property name="remoteReleasesPath" value="fakepath" />

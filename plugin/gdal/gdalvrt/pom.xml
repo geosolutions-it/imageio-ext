@@ -3,11 +3,11 @@
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-gdal-plugin</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1.17</version>
   </parent>
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-gdalvrt</artifactId>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.1.17</version>
   <name>VRT plugin</name>
   <description>VRT plugin that internally uses GDAL</description>
   <dependencies>
