@@ -4,13 +4,13 @@
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId> 
     <artifactId>imageio-ext-library</artifactId> 
-    <version>1.1.17</version>
+    <version>1.1-SNAPSHOT</version>
   </parent>
   <groupId>it.geosolutions.imageio-ext</groupId> 
   <artifactId>imageio-ext-netcdf-core</artifactId>
   <name>Image I/O-Extensions - NetCDF Library support</name>
   <packaging>jar</packaging>
-  <version>1.1.17</version>
+  <version>1.1-SNAPSHOT</version>
    
    <!--repositories>
     <repository>

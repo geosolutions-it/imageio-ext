@@ -4,12 +4,12 @@
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-library</artifactId>
-    <version>1.1.17</version>
+    <version>1.1-SNAPSHOT</version>
   </parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-jmatio</artifactId>
     <packaging>jar</packaging>
-    <version>1.1.17</version>
+    <version>1.1-SNAPSHOT</version>
   <name>Revisited JMATIO Access Libraries</name>
  <!-- ===================================================================== -->
  <!--     Dependencies management.                                          -->
@@ -24,13 +24,13 @@
    <dependency>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-test-data</artifactId>
-    <version>1.1.17</version>
+    <version>1.1-SNAPSHOT</version>
     <scope>test</scope>
   </dependency>
   <dependency>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-streams</artifactId>
-    <version>1.1.17</version>
+    <version>1.1-SNAPSHOT</version>
   </dependency>
 </dependencies>
  </project>

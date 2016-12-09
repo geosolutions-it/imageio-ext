@@ -7,14 +7,14 @@
   <moduleSets>
       <moduleSet>
         <sources>
-          <outputDirectory>imageio-ext-1.1.17/${artifactId}/</outputDirectory>
+          <outputDirectory>imageio-ext-1.1-SNAPSHOT/${artifactId}/</outputDirectory>
         </sources>
       </moduleSet>
   </moduleSets>
   <fileSets>
   <fileSet>
         <directory>.</directory>
-        <outputDirectory>imageio-ext-1.1.17/</outputDirectory>
+        <outputDirectory>imageio-ext-1.1-SNAPSHOT/</outputDirectory>
                           <includes>
                                   <include>pom.xml</include>
                           </includes>

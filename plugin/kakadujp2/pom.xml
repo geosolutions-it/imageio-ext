@@ -4,11 +4,11 @@
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-kakadu</artifactId>
   <packaging>jar</packaging>
-  <version>1.1.17</version>
+  <version>1.1-SNAPSHOT</version>
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-plugin</artifactId>
-    <version>1.1.17</version>
+    <version>1.1-SNAPSHOT</version>
   </parent>
   <properties>
   	<data.path> </data.path>

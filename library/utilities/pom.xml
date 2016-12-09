@@ -4,11 +4,11 @@
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-library</artifactId>
-    <version>1.1.17</version>
+    <version>1.1-SNAPSHOT</version>
   </parent>
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-utilities</artifactId>
   <packaging>jar</packaging>
-  <version>1.1.17</version>
+  <version>1.1-SNAPSHOT</version>
   <name>Image I/O-Extensions - utilities classes and methods</name>
 </project>

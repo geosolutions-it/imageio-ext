@@ -7,12 +7,12 @@
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-plugin</artifactId>
-    <version>1.1.17</version>
+    <version>1.1-SNAPSHOT</version>
   </parent>
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-gdal-plugin</artifactId>
   <packaging>pom</packaging>
-  <version>1.1.17</version>
+  <version>1.1-SNAPSHOT</version>
   <name>GeoSolutions Image I/O-Extensions GDAL plugins</name>
   <description>
     Image I/O-Extensions GDAL plugin modules.

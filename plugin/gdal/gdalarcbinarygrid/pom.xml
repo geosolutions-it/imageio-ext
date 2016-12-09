@@ -4,11 +4,11 @@
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-gdalarcbinarygrid</artifactId>
   <packaging>jar</packaging>
-  <version>1.1.17</version>
+  <version>1.1-SNAPSHOT</version>
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-gdal-plugin</artifactId>
-    <version>1.1.17</version>
+    <version>1.1-SNAPSHOT</version>
   </parent>
   <name>Arc Binary Grid Plugin that internally uses GDAL</name>
 </project>
