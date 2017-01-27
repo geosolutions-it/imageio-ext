@@ -898,9 +898,9 @@ public abstract class TIFFDecompressor {
 
                 int idx = 0;
                 for (int i = 0; i < mapSize; i++) {
-                    redLut[i] = (byte)((colorMap[i]*255)/65535);
-                    greenLut[i] = (byte)((colorMap[mapSize + i]*255)/65535);
-                    blueLut[i] = (byte)((colorMap[2*mapSize + i]*255)/65535);
+                    redLut[i] = (byte)((colorMap[i]*256)/65536);
+                    greenLut[i] = (byte)((colorMap[mapSize + i]*256)/65536);
+                    blueLut[i] = (byte)((colorMap[2*mapSize + i]*256)/65536);
                 }
 
                 int dataType = bitsPerSample[0] <= 8 ?
