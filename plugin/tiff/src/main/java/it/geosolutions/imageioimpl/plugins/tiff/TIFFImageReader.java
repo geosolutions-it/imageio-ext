@@ -1980,7 +1980,9 @@ public class TIFFImageReader extends ImageReader {
             int[] db = new int[1];
             for (int tj = minTileY; tj <= maxTileY; tj++) {
                 for (int ti = minTileX; ti <= maxTileX; ti++) {
-                    for (int band = 0; band < numBands; band++) {
+                    // --> sourceBands.length may be less than numBands --> ArrayIndexOutOfBoundsException
+                    // Old buggy code: for (int band = 0; band < numBands; band++) {
+                    for (int band = 0; band < sourceBands.length; band++) {
                         sb[0] = sourceBands[band];
                         decompressor.setSourceBands(sb);
                         db[0] = destinationBands[band];
@@ -1995,7 +1997,7 @@ public class TIFFImageReader extends ImageReader {
                             break;
                         }
 
-                        decodeTile(ti, tj, band);
+                        decodeTile(ti, tj, sourceBands[band]);
                     }
 
                     if(isAbortRequested) break;
