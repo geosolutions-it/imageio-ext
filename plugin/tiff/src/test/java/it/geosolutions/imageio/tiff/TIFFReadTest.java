@@ -16,6 +16,7 @@
 package it.geosolutions.imageio.tiff;
 
 import it.geosolutions.imageio.core.CoreCommonImageMetadata;
+import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
 import it.geosolutions.imageio.plugins.tiff.PrivateTIFFTagSet;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
@@ -27,7 +28,9 @@ import it.geosolutions.resources.TestData;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteOrder;
@@ -42,6 +45,7 @@ import javax.media.jai.PlanarImage;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -659,6 +663,60 @@ public class TIFFReadTest extends Assert {
             reader.setInput(inputStream);
             BufferedImage image = reader.read(0);
             image.flush();
+            image = null;
+        } finally {
+
+            if (inputStream != null) {
+                inputStream.flush();
+                inputStream.close();
+            }
+
+            if (reader != null) {
+                reader.dispose();
+            }
+        }
+    }
+
+    @Test
+    public void readRGBAlphaExtraSample() throws IOException {
+        final boolean hasAlpha = true;
+        final String description = "Unassociated Alpha";
+        final int value = 2;
+        readExtraSample("sampleRGBA.tif", hasAlpha, description, value);
+    }
+
+    @Test
+    public void readRGBNotAlphaExtraSample() throws IOException {
+        final boolean hasAlpha = false;
+        final String description = "Unspecified";
+        final int value = 0;
+        readExtraSample("sampleRGBIR.tif", hasAlpha, description, value);
+    }
+
+    private void readExtraSample(String inputFile, boolean hasAlpha, String description, int value) throws IOException {
+        final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi()
+                .createReaderInstance();
+
+        final File file = TestData.file(this, inputFile);
+        FileImageInputStream inputStream = new FileImageInputStream(file);
+        try {
+            reader.setInput(inputStream);
+            BufferedImage image = reader.read(0);
+            SampleModel sm = image.getSampleModel();
+            ColorModel cm = image.getColorModel();
+            assertEquals(4, sm.getNumBands());
+            assertEquals(4, cm.getNumComponents());
+            assertTrue(hasAlpha == cm.hasAlpha());
+            image.flush();
+
+            IIOMetadata metadata = reader.getImageMetadata(0);
+            Node rootNode = metadata.getAsTree(metadata.getNativeMetadataFormatName());
+            IIOMetadataNode field = getTiffField(rootNode, BaselineTIFFTagSet.TAG_EXTRA_SAMPLES);
+            assertNotNull(field);
+            Node node = ((IIOMetadataNode) field.getFirstChild()).getElementsByTagName("TIFFShort").item(0);
+            NamedNodeMap map = node.getAttributes();
+            assertTrue(description.equalsIgnoreCase(map.item(1).getNodeValue()));
+            assertEquals(value, Integer.parseInt(map.item(0).getNodeValue()));
             image = null;
         } finally {
 
