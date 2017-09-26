@@ -73,6 +73,8 @@
  */
 package it.geosolutions.imageioimpl.plugins.tiff;
 
+import com.sun.media.imageioimpl.common.ImageUtil;
+import com.sun.media.imageioimpl.common.PackageUtil;
 import it.geosolutions.imageio.maskband.DatasetLayout;
 import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
 import it.geosolutions.imageio.plugins.tiff.PrivateTIFFTagSet;
@@ -81,45 +83,26 @@ import it.geosolutions.imageio.plugins.tiff.TIFFDecompressor;
 import it.geosolutions.imageio.plugins.tiff.TIFFField;
 import it.geosolutions.imageio.plugins.tiff.TIFFImageReadParam;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
+import org.w3c.dom.Node;
 
-import java.awt.Point;
-import java.awt.Rectangle;
+import javax.imageio.*;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.stream.ImageInputStream;
+import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_ColorSpace;
 import java.awt.color.ICC_Profile;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
-import java.awt.image.Raster;
-import java.awt.image.RenderedImage;
-import java.awt.image.SampleModel;
+import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.nio.ByteOrder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-
-import javax.imageio.IIOException;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReadParam;
-import javax.imageio.ImageReader;
-import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.spi.ImageReaderSpi;
-import javax.imageio.stream.ImageInputStream;
-
-import org.w3c.dom.Node;
-
-import com.sun.media.imageioimpl.common.ImageUtil;
-import com.sun.media.imageioimpl.common.PackageUtil;
 
 public class TIFFImageReader extends ImageReader {
-    
+
     /**
      * This class can be used to cache basic information about a tiff page.
      * <p>
@@ -1410,6 +1393,9 @@ public class TIFFImageReader extends ImageReader {
         Node root =
             imageMetadata.getAsTree(TIFFImageMetadata.nativeMetadataFormatName);
         im.setFromTree(TIFFImageMetadata.nativeMetadataFormatName, root);
+        if (noData != null) {
+            im.setNoData(new double[] {noData, noData});
+        }
         return im;
     }
 
@@ -1736,9 +1722,11 @@ public class TIFFImageReader extends ImageReader {
     public BufferedImage read(int imageIndex, ImageReadParam param)
         throws IOException {
         prepareRead(imageIndex, param);
+
+        // prepare for reading
         this.theImage = getDestination(param,
                                        getImageTypes(imageIndex),
-                                       width, height);
+                                       width, height, noData);
 
         srcXSubsampling = imageReadParam.getSourceXSubsampling();
         srcYSubsampling = imageReadParam.getSourceYSubsampling();
@@ -2072,7 +2060,7 @@ public class TIFFImageReader extends ImageReader {
     
     protected static BufferedImage getDestination(ImageReadParam param,
                                                   Iterator<ImageTypeSpecifier> imageTypes,
-                                                  int width, int height)
+                                                  int width, int height, Double noData)
             throws IIOException {
         if (imageTypes == null || !imageTypes.hasNext()) {
             throw new IllegalArgumentException("imageTypes null or empty!");
@@ -2135,8 +2123,15 @@ public class TIFFImageReader extends ImageReader {
             throw new IllegalArgumentException
                 ("width*height > Integer.MAX_VALUE!");
         }
-        
-        return imageType.createBufferedImage(destWidth, destHeight);
+
+        SampleModel sampleModel = imageType.getSampleModel(destWidth, destHeight);
+        ColorModel colorModel = imageType.getColorModel();
+        WritableRaster raster = Raster.createWritableRaster(sampleModel,  new Point(0, 0));
+        Hashtable properties = new Hashtable();
+        if ( noData != null ) {
+            properties.put("GC_NODATA", noData);
+        }
+        return new BufferedImage(colorModel, raster, colorModel.isAlphaPremultiplied(), properties);
     }
     
     @Override
