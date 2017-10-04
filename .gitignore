@@ -5,3 +5,8 @@
 trace.db
 */target/*
 target/
+target
+*.patch
+*.class
+*.pyc
+*.iml

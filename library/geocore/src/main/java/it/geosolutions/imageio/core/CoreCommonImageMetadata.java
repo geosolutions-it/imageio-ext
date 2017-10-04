@@ -145,6 +145,9 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     /** Array to store the color interpretation for each band */
     private int[] colorInterpretations;
 
+    /** The nodata range for this reader, if any (may be null) */
+    private double[] noData;
+
     /**
      * Private constructor
      */
@@ -451,6 +454,21 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
      */
     public SampleModel getSampleModel() {
         return sampleModel;
+    }
+
+    /**
+     * Returns the data for this dataset, as a range. May be <code>null</code>
+     */
+    public double[] getNoData() {
+        return noData;
+    }
+
+    /**
+     * Sets the nodata for this dataset. May be <code>null</code>
+     * @param noData
+     */
+    public void setNoData(double[] noData) {
+        this.noData = noData;
     }
 
     // ////////////////////////////////////////////////////////////////////////
@@ -776,4 +794,5 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
             throw new UnsupportedOperationException("colorInterpretations have already been defined");
         this.colorInterpretations = colorInterpretations;
     }
+
 }

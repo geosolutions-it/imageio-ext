@@ -15,6 +15,7 @@
  */
 package it.geosolutions.imageio.tiff;
 
+import it.geosolutions.imageio.core.CoreCommonImageMetadata;
 import it.geosolutions.imageio.plugins.tiff.PrivateTIFFTagSet;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
@@ -586,8 +587,14 @@ public class TIFFReadTest extends Assert {
             IIOMetadata metadata = reader.getImageMetadata(0);
             Node rootNode = metadata.getAsTree(metadata.getNativeMetadataFormatName());
             double noDataValue = getNoDataValue(rootNode);
-            
-            
+
+            // get it from the core common metadata too
+            CoreCommonImageMetadata ccm = (CoreCommonImageMetadata) metadata;
+            double[] noDataArray = ccm.getNoData();
+            assertNotNull(noDataArray);
+            assertEquals(noDataArray[0], noDataValue, 0d);
+            assertEquals(noDataArray[1], noDataValue, 0d);
+
             // Check that the value is noData (the empty Tiles are filled with NoData) 
             double val = image.getData().getSampleDouble(719, 0, 0);
             assertEquals(Double.toString(noDataValue), Double.toString(val));
