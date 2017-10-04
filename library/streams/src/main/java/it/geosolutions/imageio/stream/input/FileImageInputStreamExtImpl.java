@@ -300,6 +300,7 @@ public  class FileImageInputStreamExtImpl extends ImageInputStreamImpl
             if(!isClosed){
                 super.close();
                 eraf.close();
+                eraf = null;
             }
         } finally {
             isClosed=true;
