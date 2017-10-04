@@ -243,6 +243,8 @@ public class EnhancedRandomAccessFile implements DataInput, DataOutput {
 
 		// Close the underlying eraf object.
 		eraf.close();
+		eraf = null;
+		buffer = null;
 
 	}
 
