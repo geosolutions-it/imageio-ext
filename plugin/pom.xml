@@ -69,15 +69,6 @@
       </modules>
     </profile> 
     <profile>
-      <id>mat</id>
-        <activation>
-         <property><name>all</name></property>
-        </activation>      
-      <modules>
-        <module>matlab</module>
-      </modules>
-    </profile> 
-    <profile>
       <id>releasebuild</id>
       <activation>
          <property><name>all</name></property>
