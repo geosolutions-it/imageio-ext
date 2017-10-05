@@ -5,3 +5,4 @@ target
 *.patch
 *.class
 *.pyc
+*.iml
