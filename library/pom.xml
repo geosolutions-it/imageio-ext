@@ -32,7 +32,6 @@
     <module>geocore</module>
     <module>gdalframework</module>
     <module>imagereadmt</module>
-    <module>jmatio</module>
     <module>libjpegturbo</module>
   </modules>
 </project>
