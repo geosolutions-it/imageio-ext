@@ -1,0 +1,15 @@
+GDAL SRP Plugin
+~~~~~~~~~~~~~~~~
+
+  IP Review:
+  
+ STATUS: OK
+
+	* Code: Clean
+
+	* Data: OK
+           
+* Data Credits
+  ~~~~~~~~~~~~
+   Data used for tests originates from gdal the GDAL gdrivers/data folder inside
+   http://download.osgeo.org/gdal/2.2.3/gdalautotest-2.2.3.tar.gz
