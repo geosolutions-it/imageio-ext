@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="Rename" default="rename">
   <target name="rename">
-    <property name="fromVersion" value="1.1-SNAPSHOT"/>
+    <property name="fromVersion" value="1.1.15.1-IWC"/>
     <property name="toVersion" value="1.1.15"/>
     <replace dir=".">
       <include name="**/pom.xml"/>
