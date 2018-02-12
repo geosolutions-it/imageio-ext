@@ -11,4 +11,20 @@
     <version>1.2-SNAPSHOT</version>
   </parent>
   <name>Jpeg2000 (ECW) Plugin that internally uses GDAL</name>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <!-- See https://github.com/geosolutions-it/imageio-ext/issues/148 -->
+            <exclude>**/JP2KReadTest.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
 </project>
