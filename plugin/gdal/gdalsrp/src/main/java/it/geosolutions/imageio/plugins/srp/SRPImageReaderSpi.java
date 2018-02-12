@@ -36,7 +36,7 @@ public class SRPImageReaderSpi extends GDALImageReaderSpi {
 
     private static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.srp");
 
-    static final String[] suffixes = { "IMG", "THF" };
+    static final String[] suffixes = { "IMG", "GEN", "THF" };
 
     static final String[] formatNames = { "SRP" };
 
