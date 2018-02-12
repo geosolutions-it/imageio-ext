@@ -39,6 +39,7 @@ import javax.media.jai.RenderedOp;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -47,6 +48,8 @@ import org.junit.Test;
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
  */
+// See https://github.com/geosolutions-it/imageio-ext/issues/148
+@Ignore
 public class ECWTest extends AbstractGDALTest {
     
     private final static boolean isECWAvailable;
