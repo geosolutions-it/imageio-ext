@@ -16,52 +16,113 @@
  */
 package it.geosolutions.imageioimpl.plugins.png;
 
-import it.geosolutions.imageio.plugins.png.PNGWriter;
-import it.geosolutions.resources.TestData;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
-import junit.framework.TestCase;
-
-import org.junit.Assert;
+import org.junit.Test;
 
 import ar.com.hjg.pngj.FilterType;
+import ar.com.hjg.pngj.PngReader;
+import ar.com.hjg.pngj.chunks.ChunksList;
+import ar.com.hjg.pngj.chunks.PngMetadata;
+import it.geosolutions.imageio.plugins.png.PNGWriter;
+import it.geosolutions.resources.TestData;
 
 /**
  * Unit test for simple App.
  */
-public class PNGWriterTest extends TestCase {
+public class PNGWriterTest {
 
-    public void testWriter(){
+    @Test
+    public void testWriter() {
         PNGWriter writer = new PNGWriter();
         OutputStream out = null;
-        try{
-            
-        // read test image
-        BufferedImage read = ImageIO.read(TestData.file(this, "sample.jpeg"));
-        
-        File pngOut = TestData.temp(this, "test.png",true);
-        out = new FileOutputStream(pngOut);
-        
-        writer.writePNG(read, out, 1, FilterType.FILTER_NONE);
-        BufferedImage test = ImageIO.read(pngOut);
-        Assert.assertNotNull(test);
-        }catch(Exception e){
+        try {
+
+            // read test image
+            BufferedImage read = ImageIO.read(TestData.file(this, "sample.jpeg"));
+
+            File pngOut = TestData.temp(this, "test.png", true);
+            out = new FileOutputStream(pngOut);
+
+            writer.writePNG(read, out, 1, FilterType.FILTER_NONE);
+            BufferedImage test = ImageIO.read(pngOut);
+            assertNotNull(test);
+        } catch (Exception e) {
             e.printStackTrace();
-        }finally{
-            if(out!=null){
+        } finally {
+            if (out != null) {
                 try {
                     out.close();
                 } catch (IOException e) {
-                    
+
                 }
-                out=null;
+                out = null;
+            }
+        }
+    }
+
+    @Test
+    public void testTeXt() throws Exception {
+        PNGWriter writer = new PNGWriter();
+        OutputStream out = null;
+        File pngOut = null;
+        final String title = "Title";
+        final String description = "Sample Description";
+        final String software = "ImageIO-Ext";
+        final String author = "Me";
+        try {
+
+            // read test image
+            BufferedImage read = ImageIO.read(TestData.file(this, "sample.jpeg"));
+
+            pngOut = TestData.temp(this, "test.png", true);
+            out = new FileOutputStream(pngOut);
+
+            Map<String, String> textMetadata = new HashMap<String, String>();
+            textMetadata.put("Title", title);
+            textMetadata.put("Author", author);
+            textMetadata.put("Software", software);
+            textMetadata.put("Description", description);
+
+            writer.writePNG(read, out, 1, FilterType.FILTER_NONE, textMetadata);
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+
+                }
+
+            }
+        }
+
+        BufferedImage test = ImageIO.read(pngOut);
+        assertNotNull(test);
+        PngReader reader = null;
+        try {
+            reader = new PngReader(pngOut);
+            reader.readSkippingAllRows();
+            PngMetadata metadata = reader.getMetadata();
+            assertNotNull(metadata);
+            assertEquals(title, metadata.getTxtForKey("Title"));
+            assertEquals(description, metadata.getTxtForKey("Description"));
+            assertEquals(author, metadata.getTxtForKey("Author"));
+            assertEquals(software, metadata.getTxtForKey("Software"));
+        } finally {
+            if (reader != null) {
+                reader.close();
+
             }
         }
     }
