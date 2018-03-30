@@ -15,6 +15,7 @@
       <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-gdalgeotiff</artifactId>
       <version>${project.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>
