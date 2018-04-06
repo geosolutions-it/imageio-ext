@@ -433,7 +433,41 @@ public class ImageIOUtilities {
 
 		return list;
 	}
-    
+
+    /**
+     * Method to return core ImageReaderSPI/ImageWriterSPI for a given formatName.
+     */
+    public static List<ImageReaderWriterSpi> getImageReaderWriterSPI(ServiceRegistry registry,
+            ServiceRegistry.Filter filter, String formatName, boolean isReader) {
+
+        IIORegistry iioRegistry = (IIORegistry) registry;
+
+        final Class<? extends ImageReaderWriterSpi> spiClass = isReader ? ImageReaderSpi.class : ImageWriterSpi.class;
+
+        final Iterator<? extends ImageReaderWriterSpi> iter = iioRegistry
+                .getServiceProviders(spiClass, filter, true); // useOrdering
+
+        String formatNames[];
+        ImageReaderWriterSpi provider;
+
+        ArrayList<ImageReaderWriterSpi> list = new ArrayList<ImageReaderWriterSpi>();
+        while (iter.hasNext()) {
+            provider = (ImageReaderWriterSpi) iter.next();
+            {
+                // Get the formatNames supported by this Spi
+                formatNames = provider.getFormatNames();
+                for (int i = 0; i < formatNames.length; i++) {
+                    if (formatNames[i].equalsIgnoreCase(formatName)) {
+                        list.add(provider);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return list;
+    }
+
     /**
      * Replace the original provider with name originalProviderName with the provider with name 
      * customProviderName for the class providerClass and for the provided format .

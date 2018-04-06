@@ -73,8 +73,6 @@
  */
 package it.geosolutions.imageioimpl.plugins.tiff;
 
-import it.geosolutions.imageio.utilities.ImageIOUtilities;
-
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Locale;
@@ -82,10 +80,13 @@ import java.util.Locale;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageReaderWriterSpi;
+import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageInputStream;
 
 import com.sun.media.imageioimpl.common.PackageUtil;
+
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 
 public class TIFFImageReaderSpi extends ImageReaderSpi {
 
@@ -165,13 +166,44 @@ public class TIFFImageReaderSpi extends ImageReaderSpi {
             return;
         }
         registered = true;
-        Iterator<ImageReaderWriterSpi> readers = ImageIOUtilities.getJDKImageReaderWriterSPI(registry, "TIFF", true).iterator();
+        Iterator<ImageReaderWriterSpi> readers = ImageIOUtilities
+                .getImageReaderWriterSPI(registry, new TIFFFilter(true), "TIFF", true).iterator();
         while (readers.hasNext()) {
             final ImageReaderSpi spi = (ImageReaderSpi) readers.next();
-            if (spi == this)
+            if (spi == this) {
                 continue;
+            }
             registry.deregisterServiceProvider(spi);
             registry.setOrdering(category, this, spi);
+        }
+    }
+
+    /**
+     * Filter which returns <code>true</code> if and only if the provider is an ImageReader/WriterSpi which supports the TIFF format.
+     */
+    static class TIFFFilter implements ServiceRegistry.Filter {
+        boolean isReader;
+
+        TIFFFilter(boolean isReader) {
+            this.isReader = isReader;
+        }
+
+        public boolean filter(Object provider) {
+            boolean isSupportedSpi = isReader ? provider instanceof ImageReaderSpi
+                    : provider instanceof ImageWriterSpi;
+            if (!isSupportedSpi) {
+                return false;
+            }
+
+            ImageReaderWriterSpi spi = (ImageReaderWriterSpi) provider;
+            String[] formatNames = spi.getFormatNames();
+            for (int i = 0; i < formatNames.length; i++) {
+                if (formatNames[i].equalsIgnoreCase("TIFF")) {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
