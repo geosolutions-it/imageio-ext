@@ -73,17 +73,19 @@
  */
 package it.geosolutions.imageioimpl.plugins.tiff;
 
-import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import java.util.Iterator;
 import java.util.Locale;
 
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriter;
+import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageReaderWriterSpi;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.spi.ServiceRegistry;
 
 import com.sun.media.imageioimpl.common.PackageUtil;
+
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 
 public class TIFFImageWriterSpi extends ImageWriterSpi {
 
@@ -142,11 +144,13 @@ public class TIFFImageWriterSpi extends ImageWriterSpi {
             return;
         }
         registered = true;
-        final Iterator<ImageReaderWriterSpi> writers = ImageIOUtilities.getJDKImageReaderWriterSPI(registry, "TIFF", true).iterator();
+        final Iterator<ImageReaderWriterSpi> writers = ImageIOUtilities.getImageReaderWriterSPI(
+                registry, new TIFFImageReaderSpi.TIFFFilter(false), "TIFF", true).iterator();
         while (writers.hasNext()) {
             final ImageWriterSpi spi = (ImageWriterSpi) writers.next();
-            if (spi == this)
+            if (spi == this) {
                 continue;
+            }
             registry.deregisterServiceProvider(spi);
             registry.setOrdering(category, this, spi);
         }
