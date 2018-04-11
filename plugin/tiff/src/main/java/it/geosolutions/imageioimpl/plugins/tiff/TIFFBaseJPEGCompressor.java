@@ -97,7 +97,6 @@ import java.util.Iterator;
 import javax.imageio.IIOException;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOInvalidTreeException;
@@ -115,6 +114,12 @@ import org.w3c.dom.Node;
 public abstract class TIFFBaseJPEGCompressor extends TIFFCompressor {
 
     private static final boolean DEBUG = false; // XXX false for release.
+
+    public static final String DISABLE_TURBOJPEG_WRITER_KEY = "it.geosolutions.tiffcompressor.disableturbojpeg";
+
+    private static final String TURBOJPEG_WRITER_KEY = "TurboJpegImageWriter";
+
+    private static final boolean DISABLE_TURBOJPEG_WRITER = Boolean.getBoolean(DISABLE_TURBOJPEG_WRITER_KEY);
 
     // Stream metadata format.
     protected static final String STREAM_METADATA_NAME =
@@ -300,6 +305,12 @@ public abstract class TIFFBaseJPEGCompressor extends TIFFCompressor {
             while(iter.hasNext()) {
                 // Get a writer.
                 ImageWriter writer = (ImageWriter)iter.next();
+                final String className = writer.getClass().getName();
+
+                // Explicit exclusion of turboJpeg encoding
+                if (className.contains(TURBOJPEG_WRITER_KEY) && DISABLE_TURBOJPEG_WRITER) {
+                    continue;
+                }
 
                 // Verify its metadata support level.
                 if(supportsStreamMetadata || supportsImageMetadata) {
