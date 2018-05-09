@@ -315,4 +315,29 @@ public class KakaduUtilities {
     public static boolean notEqual(double value, double reference) {
         return (Math.abs(value - reference) > KakaduUtilities.DOUBLE_TOLERANCE); 
     }
+
+    /**
+     * Helper that reads a "terminated" string applying some work arounds for invalid data.
+     * Assumes all the bytes should be used, skips the eventual last terminator, and turns
+     * all ones in the middle in newlines, see also https://trac.osgeo.org/gdal/ticket/5760
+     *
+     * @param contents
+     * @return
+     */
+    public static String readTerminatedString(byte[] contents) {
+        StringBuilder builder = new StringBuilder("");
+        for (int i = 0; i < contents.length; i++) {
+            byte c = contents[i];
+            if ((c == 0 || c == -1)) {
+                if (i == contents.length - 1) {
+                    break; 
+                } else {
+                    c = '\n';
+                }
+            }
+            builder.append((char) c);
+        }
+
+        return builder.toString();
+    }
 }
