@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 
 import it.geosolutions.imageio.plugins.jp2k.JP2KBox;
 
+import it.geosolutions.util.KakaduUtilities;
 import org.w3c.dom.DOMException;
 
 import com.sun.media.imageioimpl.common.ImageUtil;
@@ -51,7 +52,7 @@ public class XMLBoxMetadataNode extends BaseJP2KBoxMetadataNode {
     }
 
     public String getXml() {
-        return ImageUtil.convertObjectToString(getContent());
+        return KakaduUtilities.readTerminatedString(getContent());
     }
 
     public ByteArrayInputStream getRawXml() {

@@ -16,6 +16,8 @@
 package it.geosolutions.imageio.plugins.jp2k;
 
 import it.geosolutions.imageio.imageioimpl.imagereadmt.ImageReadDescriptorMT;
+import it.geosolutions.imageio.plugins.jp2k.box.XMLBox;
+import it.geosolutions.imageio.plugins.jp2k.box.XMLBoxMetadataNode;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
@@ -25,9 +27,13 @@ import java.awt.image.RenderedImage;
 import java.awt.image.renderable.ParameterBlock;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.logging.Level;
 
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.FileImageOutputStream;
 import javax.media.jai.Histogram;
 import javax.media.jai.ImageLayout;
@@ -39,6 +45,10 @@ import javax.swing.JFrame;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Test;
+
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 
 /**
  * Testing reading capabilities for {@link JP2KKakaduImageReader} leveraging on
@@ -189,6 +199,26 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
         JFrame frame = new HistogramFrame(h, b);
         frame.pack();
         frame.show();
+    }
+    
+    @Test
+    public void testXMLBoxReading() throws Exception {
+        if (!runTests)
+            return;
+
+        final File file = TestData.file(this, "bogota_gml.jp2");
+        final ImageReader reader = new JP2KKakaduImageReaderSpi().createReaderInstance();
+        reader.setInput(file);
+        Assert.assertEquals(1,reader.getNumImages(false));
+        final JP2KStreamMetadata metadata = (JP2KStreamMetadata) reader.getStreamMetadata();
+        final List<IIOMetadataNode> boxes = metadata.searchOccurrencesNode(XMLBox.BOX_TYPE);
+        assertTrue(boxes != null);
+        assertEquals(1, boxes.size());
+        final XMLBoxMetadataNode xmlBox = (XMLBoxMetadataNode) boxes.get(0);
+        String xml = xmlBox.getXml();
+        assertTrue(xml.startsWith("<gml:FeatureCollection"));
+        assertTrue(xml.contains("gml:RectifiedGridCoverage"));
+        assertTrue(xml.endsWith("</gml:FeatureCollection>\n"));
     }
 
 }
