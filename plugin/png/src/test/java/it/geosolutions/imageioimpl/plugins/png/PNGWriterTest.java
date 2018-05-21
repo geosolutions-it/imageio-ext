@@ -20,6 +20,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -28,12 +31,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
+import javax.imageio.stream.FileImageInputStream;
+import javax.media.jai.RenderedOp;
+import javax.media.jai.operator.BandSelectDescriptor;
 
 import org.junit.Test;
 
+import com.sun.media.jai.operator.ImageReadDescriptor;
+
 import ar.com.hjg.pngj.FilterType;
 import ar.com.hjg.pngj.PngReader;
-import ar.com.hjg.pngj.chunks.ChunksList;
 import ar.com.hjg.pngj.chunks.PngMetadata;
 import it.geosolutions.imageio.plugins.png.PNGWriter;
 import it.geosolutions.resources.TestData;
@@ -123,6 +130,29 @@ public class PNGWriterTest {
             if (reader != null) {
                 reader.close();
 
+            }
+        }
+    }
+
+    @Test
+    public void testABGRFromBandSelect() throws Exception {
+        File source = new File("./src/test/resources/pngsuite/basn6a08.png");
+        FileImageInputStream fis = new FileImageInputStream(source);
+        RenderedOp readImage = ImageReadDescriptor.create(fis, 0, false, false, false, null, null, null, null, null);
+        RenderedOp bandSelect = BandSelectDescriptor.create(readImage, new int[] { 0, 1, 2 }, null);
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        float quality = 5f / 9 - 1;
+        new PNGWriter().writePNG(bandSelect, bos, -quality, FilterType.FILTER_NONE);
+        BufferedImage read = ImageIO.read(new ByteArrayInputStream(bos.toByteArray()));
+
+        Raster originalData = readImage.getAsBufferedImage().getRaster();
+        Raster encodedData = read.getRaster();
+        for (int y = 0; y < read.getHeight(); y++) {
+            for (int x = 0; x < read.getWidth(); x++) {
+                for (int b = 0; b < 3; b++) {
+                    assertEquals(originalData.getSample(x, y, b), encodedData.getSample(x, y, b));
+                }
             }
         }
     }
