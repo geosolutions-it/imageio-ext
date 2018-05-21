@@ -30,43 +30,49 @@ public final class RasterByteABGRProvider extends AbstractScanlineProvider {
     final byte[] bytes;
     final boolean bgrOrder;
     final boolean hasAlpha;
+    final int pixelStride;
+    final int[] bandOffsets;
+    final int numBands;
 
     public RasterByteABGRProvider(Raster raster, boolean hasAlpha) {
-        super(raster, 8, raster.getWidth() * (hasAlpha ? 4 : 3));
+        super(raster, 8, raster.getWidth() * (computePixelStride(raster, hasAlpha)));
         this.hasAlpha = hasAlpha;
         this.bytes = ((DataBufferByte) raster.getDataBuffer()).getData();
         ComponentSampleModel sm = (ComponentSampleModel) raster.getSampleModel();
         this.bgrOrder = sm.getBandOffsets()[0] != 0;
+        this.pixelStride = sm.getPixelStride();
+        this.bandOffsets = sm.getBandOffsets();
+        this.numBands = sm.getNumBands();
     }
 
-    
+    private static int computePixelStride(Raster raster, boolean hasAlpha) {
+        int pixelStride = ((ComponentSampleModel) raster.getSampleModel()).getPixelStride();
+        if (raster.getNumBands() != pixelStride) {
+            return pixelStride;
+        }
+        return hasAlpha ? 4 : 3;
+    }
+
     public void next(final byte[] row, final int offset, final int length) {
         int bytesIdx = cursor.next();
         int i = offset;
         final int max = offset + length;
-        if (!bgrOrder) {
+        if (!bgrOrder && (numBands == pixelStride)) {
             System.arraycopy(bytes, bytesIdx, row, offset, length);
         } else {
-            if (hasAlpha) {
-                while (i < max) {
-                    final byte a = bytes[bytesIdx++];
-                    final byte b = bytes[bytesIdx++];
-                    final byte g = bytes[bytesIdx++];
-                    final byte r = bytes[bytesIdx++];
-                    row[i++] = r;
-                    row[i++] = g;
-                    row[i++] = b;
-                    row[i++] = a;
+            while (i < max) {
+                for (int j = 0; j < numBands; j++) {
+                    // We assign data pixels on the expected order
+                    // So if bgrOrder (bandOffset is 2,1,0):
+                    // row[i+2] = B
+                    // row[i+1] = G
+                    // row[i+0] = R
+                    row[i + bandOffsets[j]] = bytes[bytesIdx + j];
                 }
-            } else {
-                while (i < max) {
-                    final byte b = bytes[bytesIdx++];
-                    final byte g = bytes[bytesIdx++];
-                    final byte r = bytes[bytesIdx++];
-                    row[i++] = r;
-                    row[i++] = g;
-                    row[i++] = b;
-                }
+                // Pixel stride may be longer than numBands due to bandSelect 
+                // sharing same dataBuffer of the original image
+                bytesIdx += pixelStride; 
+                i += numBands;
             }
         }
     }
