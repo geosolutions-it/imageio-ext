@@ -87,7 +87,7 @@ public class URLImageInputStreamSpi extends ImageInputStreamSpi {
             // URL that points to a file?
             final URL sourceURL = ((URL) input);
             final File tempFile = ImageIOUtilities.urlToFile(sourceURL);
-            if (tempFile.exists() && tempFile.isFile() && tempFile.canRead())
+            if (tempFile != null && tempFile.exists() && tempFile.isFile() && tempFile.canRead())
                 return fileStreamSPI.createInputStreamInstance(tempFile,useCache, cacheDir);
 
             // URL that does NOT points to a file, let's open up a stream
