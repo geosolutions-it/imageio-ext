@@ -18,7 +18,7 @@ package it.geosolutions.imageio.stream;
 
 /**
  * Testing custom ImageInputStream and ImageOutputStream.
- * 
+ *
  * @author Simone Giannecchini, GeoSolutions
  */
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
@@ -47,16 +47,16 @@ import org.junit.Test;
 
 import junit.framework.Assert;
 
-public class TestImageInputStream  {
-    
+public class ImageInputStreamTest  {
+
         private final String fileName = "a.txt";
         private final String directoryName = "test-data";
-    	private final static Logger LOGGER = Logger.getLogger(TestImageInputStream.class.toString());
+        private final static Logger LOGGER = Logger.getLogger(ImageInputStreamTest.class.toString());
 
 
 
 	/**
-	 * Testing {@link 
+	 * Testing {@link
 	 */
     @Test
 	public void imageInputStreamAdapter() {
@@ -173,7 +173,7 @@ public class TestImageInputStream  {
 	// }
 	// gzipIIS.close();
 	// LOGGER.info(buf.toString());
-	//		
+	//
 	// get the original unzipped eraf
 	// final FileImageInputStreamExtImpl fileIIS = new
 	// FileImageInputStreamExtImpl(
@@ -197,7 +197,7 @@ public class TestImageInputStream  {
 
 	/**
 	 * Testing capabilities of {@link URLImageInputStreamSpi}.
-	 * 
+	 *
 	 */
 	@Test
 	public void URLImageInputStream() {
@@ -251,7 +251,7 @@ public class TestImageInputStream  {
 
 	/**
 	 * Testing capabilities of {@link FileImageInputStreamExtImpl}.
-	 * 
+	 *
 	 */
 	@Test
 	public void fileImageInputStreamExtImpl() {
@@ -275,7 +275,7 @@ public class TestImageInputStream  {
 
     /**
      * Testing capabilities of {@link StringImageInputStreamSpi}.
-     * 
+     *
      */
 	@Test
     public void stringImageInputStream() {

@@ -39,11 +39,11 @@ import org.junit.Test;
 /**
  * @author Simone Giannecchini, GeoSolutions
  */
-public class TestImageOutputStream {
-    private final static Logger LOGGER = Logger.getLogger(TestImageOutputStream.class.toString());
+public class ImageOutputStreamTest {
+    private final static Logger LOGGER = Logger.getLogger(ImageOutputStreamTest.class.toString());
 
 
-    public TestImageOutputStream() {
+    public ImageOutputStreamTest() {
         super();
     }
     @Before
@@ -57,7 +57,7 @@ public class TestImageOutputStream {
 
     @Test
     public void test() throws FileNotFoundException, IOException {
-         
+
 
         // read test image
         RenderedImage image = JAI.create("ImageRead", TestData.file(this, "sample.jpeg"));
@@ -77,9 +77,9 @@ public class TestImageOutputStream {
                 test.flush();
                 test=null;
             }
-            
+
         }
-        
+
         // try to encode a png
         test=null;
         out=null;
@@ -90,15 +90,15 @@ public class TestImageOutputStream {
             ImageIO.write(image, "PNG", out);
             Assert.assertNotNull(null);// we should not get here!!!
         }catch(Exception e){
-            
+
         }finally{
             if(test!=null){
                 test.flush();
                 test=null;
             }
-            
+
         }
-        
+
         // try to encode a tiff
         test=null;
         out=null;
@@ -109,15 +109,15 @@ public class TestImageOutputStream {
             ImageIO.write(image, "tiff", out);
             Assert.assertNotNull(null);// we should not get here!!!
         }catch(Exception e){
-            
+
         }finally{
             if(test!=null){
                 test.flush();
                 test=null;
             }
-            
+
         }
-        
+
         // try to encode a bmp
         test=null;
         out=null;
@@ -128,15 +128,15 @@ public class TestImageOutputStream {
             ImageIO.write(image, "bmp", out);
             Assert.assertNotNull(null);// we should not get here!!!
         }catch(Exception e){
-            
+
         }finally{
             if(test!=null){
                 test.flush();
                 test=null;
             }
-            
+
         }
-        
+
         // try to encode a gif
         test=null;
         out=null;
@@ -152,10 +152,10 @@ public class TestImageOutputStream {
                 test.flush();
                 test=null;
             }
-            
-        }
-        
 
-        
+        }
+
+
+
     }
 }
