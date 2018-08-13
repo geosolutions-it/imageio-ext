@@ -620,7 +620,8 @@ public final class GDALUtilities {
                     return;
                 }
                 try {
-                    System.loadLibrary("gdaljni");
+                	
+                    Class.forName("org.gdal.gdal.gdal");
                     gdal.AllRegister();
                     final String versionInfo = gdal.VersionInfo("RELEASE_NAME");
                     if (versionInfo != null && versionInfo.trim().length() > 0) {
@@ -638,14 +639,15 @@ public final class GDALUtilities {
                     if (!showErrors) {
                         gdal.PushErrorHandler("CPLQuietErrorHandler");
                     }
-                    GDALUtilities.available = true;
-                } catch (UnsatisfiedLinkError e) {
+                    GDALUtilities.available = true;                
+                } catch (ClassNotFoundException e) {
                     if (LOGGER.isLoggable(Level.WARNING)) {
-                        LOGGER.warning("Failed to load the GDAL native libs. This is not a problem "
-                        		+ "unless you need to use the GDAL plugins: they won't be enabled.\n" 
+                        LOGGER.warning("Failed to load the GDAL native libs, because the gdal class cannot be resolved."
+                        		+ " This is not a problem unless you need to use the GDAL plugins: they won't be enabled.\n" 
                         		+ e.toString());
                     }
                     GDALUtilities.available = false;
+                
                 } finally {
                     init = true;
                 }
