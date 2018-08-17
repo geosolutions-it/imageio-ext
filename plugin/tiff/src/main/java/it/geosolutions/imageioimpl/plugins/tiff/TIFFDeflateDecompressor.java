@@ -78,11 +78,11 @@ import it.geosolutions.imageio.plugins.tiff.TIFFDecompressor;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
 import javax.imageio.IIOException;
-
 
 public class TIFFDeflateDecompressor extends TIFFDecompressor {
 
@@ -94,11 +94,10 @@ public class TIFFDeflateDecompressor extends TIFFDecompressor {
     public TIFFDeflateDecompressor(int predictor) throws IIOException {
         inflater = new Inflater();
 
-        if (predictor != BaselineTIFFTagSet.PREDICTOR_NONE && 
-            predictor != 
-            BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING) {
-            throw new IIOException("Illegal value for Predictor in " +
-                                   "TIFF file");
+        if (predictor != BaselineTIFFTagSet.PREDICTOR_NONE &&
+            predictor != BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING &&
+            predictor != BaselineTIFFTagSet.PREDICTOR_FLOATING_POINT) {
+            throw new IIOException("Illegal value for Predictor in TIFF file");
         }
 
         if(DEBUG) {
@@ -114,10 +113,9 @@ public class TIFFDeflateDecompressor extends TIFFDecompressor {
                                        int scanlineStride) throws IOException {
 
         // Check bitsPerSample.
-        if (predictor == 
-            BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING) {
+        if (predictor == BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING) {
             int len = bitsPerSample.length;
-            final int bps=bitsPerSample[0];
+            final int bps = bitsPerSample[0];
             if (bps != 8 && bps != 16) {
                 throw new IIOException
                     (bps + "-bit samples " +
@@ -125,12 +123,37 @@ public class TIFFDeflateDecompressor extends TIFFDecompressor {
                      "differencing Predictor");
             }
             for (int i = 0; i < len; i++) {
-                if( bitsPerSample[i] != bps) {
+                if (bitsPerSample[i] != bps) {
                     throw new IIOException
                         ("Varying sample width is not " +
                          "supported for Horizontal " +
                          "differencing Predictor (first: " +
                          bps + ", unexpected:" + bitsPerSample[i] + ")");
+                }
+            }
+        } else if (predictor == BaselineTIFFTagSet.PREDICTOR_FLOATING_POINT) {
+            int len = bitsPerSample.length;
+            final int bps = bitsPerSample[0];
+            if (bps != 16 && bps != 24 && bps != 32 && bps != 64) {
+                throw new IIOException
+                    (bps + "-bit samples " +
+                     "are not supported for Floating " +
+                     "point Predictor");
+            }
+            for (int i = 0; i < len; i++) {
+                if (bitsPerSample[i] != bps) {
+                    throw new IIOException
+                        ("Varying sample width is not " +
+                         "supported for Floating " +
+                         "point Predictor (first: " +
+                         bps + ", unexpected:" + bitsPerSample[i] + ")");
+                }
+            }
+            for (int sf : sampleFormat) {
+                if (sf != BaselineTIFFTagSet.SAMPLE_FORMAT_FLOATING_POINT) {
+                    throw new IIOException
+                        ("Floating point Predictor not supported" +
+                         "with " + sf + " data format");
                 }
             }
         }
@@ -207,6 +230,39 @@ public class TIFFDeflateDecompressor extends TIFFDecompressor {
                 }
             }
             else throw new IIOException("Unexpected branch of Horizontal differencing Predictor, bps="+bitsPerSample[0]);
+        } else if (predictor == BaselineTIFFTagSet.PREDICTOR_FLOATING_POINT) {
+            int bytesPerSample = bitsPerSample[0] / 8;
+            if (bytesPerRow % (bytesPerSample * samplesPerPixel) != 0) {
+                throw new IIOException
+                    ("The number of bytes in a row (" + bytesPerRow + ") is not divisible" +
+                     "by the number of bytes per pixel (" + bytesPerSample * samplesPerPixel + ")");
+            }
+
+            for (int j = 0; j < srcHeight; j++) {
+                int offset = bufOffset + j * bytesPerRow;
+                int count = offset + samplesPerPixel;
+                for (int i = samplesPerPixel; i < bytesPerRow; i++) {
+                    buf[count] += buf[count - samplesPerPixel];
+                    count++;
+                }
+
+                // Reorder the semi-BigEndian bytes.
+                byte[] tmp = Arrays.copyOfRange(buf, offset, offset + bytesPerRow);
+                int samplesPerRow = srcWidth * samplesPerPixel;
+                if (stream.getByteOrder() == ByteOrder.BIG_ENDIAN) {
+                    for (int i = 0; i < samplesPerRow; i++) {
+                        for (int k = 0; k < bytesPerSample; k++) {
+                            buf[offset + i * bytesPerSample + k] = tmp[k * samplesPerRow + i];
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < samplesPerRow; i++) {
+                        for (int k = 0; k < bytesPerSample; k++) {
+                            buf[offset + i * bytesPerSample + k] = tmp[(bytesPerSample - k - 1) * samplesPerRow + i];
+                        }
+                    }
+                }
+            }
         }
 
         if(bytesPerRow != scanlineStride) {
