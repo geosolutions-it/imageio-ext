@@ -24,6 +24,7 @@ import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.nio.ByteOrder;
 import java.util.logging.Level;
@@ -630,35 +631,44 @@ public class TIFFReadTest extends Assert {
     public void readLZWWithHorizontalDifferencingPredictorOn16Bits() throws IOException {
         // This image has been created from test.tif using the command:
         // gdal_translate -OT UInt16 -co COMPRESS=LZW -co PREDICTOR=2 test.tif lzwtest.tif
-        final File file = TestData.file(this, "lzwtest.tif");
-
-        final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi()
-                .createReaderInstance();
-
-        FileImageInputStream inputStream = new FileImageInputStream(file);
-        try {
-            reader.setInput(inputStream);
-            BufferedImage image = reader.read(0);
-            image.flush();
-            image = null;
-        } finally {
-
-            if (inputStream != null) {
-                inputStream.flush();
-                inputStream.close();
-            }
-
-            if (reader != null) {
-                reader.dispose();
-            }
-        }
+        assertImagesEqual(readTiff("test.tif"), readTiff("lzwtest.tif"));
     }
 
     @Test
     public void readDeflateWithHorizontalDifferencingPredictorOn16Bits() throws IOException {
         // This image has been created from test.tif using the command:
         // gdal_translate -OT UInt16 -co COMPRESS=DEFLATE -co PREDICTOR=2 test.tif deflatetest.tif
-        final File file = TestData.file(this, "deflatetest.tif");
+        assertImagesEqual(readTiff("test.tif"), readTiff("deflatetest.tif"));
+    }
+
+    @Test
+    public void readDeflateWithFloatingPointPredictor() throws IOException {
+        // This image has been created from test.tif using the command:
+        // gdal_translate -ot Float32 -co COMPRESS=DEFLATE -co PREDICTOR=3 test.tif deflate_predictor_3.tif
+        assertImagesEqual(readTiff("test.tif"), readTiff("deflate_predictor_3.tif"));
+    }
+
+    private void assertImagesEqual(BufferedImage expected, BufferedImage actual) {
+        assertEquals("Widths are different", expected.getWidth(), actual.getWidth());
+        assertEquals("Heights are different", expected.getHeight(), actual.getHeight());
+        int w = expected.getRaster().getWidth();
+        int h = expected.getRaster().getHeight();
+        assertArrayEquals(
+                "Rasters are different",
+                toByteArray(expected.getRaster().getDataElements(0, 0, w, h, null)),
+                toByteArray(actual.getRaster().getDataElements(0, 0, w, h, null)));
+    }
+
+    private byte[] toByteArray(Object arr) {
+        byte[] result = new byte[Array.getLength(arr)];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = ((Number) Array.get(arr, i)).byteValue();
+        }
+        return result;
+    }
+
+    private BufferedImage readTiff(String filename) throws IOException {
+        final File file = TestData.file(this, filename);
 
         final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi()
                 .createReaderInstance();
@@ -668,17 +678,11 @@ public class TIFFReadTest extends Assert {
             reader.setInput(inputStream);
             BufferedImage image = reader.read(0);
             image.flush();
-            image = null;
+            return image;
         } finally {
-
-            if (inputStream != null) {
-                inputStream.flush();
-                inputStream.close();
-            }
-
-            if (reader != null) {
-                reader.dispose();
-            }
+            inputStream.flush();
+            inputStream.close();
+            reader.dispose();
         }
     }
 
