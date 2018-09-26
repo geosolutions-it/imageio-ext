@@ -255,7 +255,16 @@ public class TIFFJPEGDecompressor extends TIFFDecompressor {
                 // Set the stream on the reader.
                 JPEGReader.setInput(is, false, true);
             }
-            
+        } else if (useTurbo) {
+            // Reallocate memory if there is not enough already.
+            dataLength = byteCount;
+            if (data == null || data.length < dataLength) {
+                data = new byte[dataLength];
+            }
+
+            // Read tile data.
+            stream.readFully(data, 0, byteCount);
+            JPEGReader.setInput(data);
         } else {
             if(DEBUG) System.out.println("Reading complete stream.");
             // The current strip or tile is a complete JPEG stream.
@@ -264,14 +273,9 @@ public class TIFFJPEGDecompressor extends TIFFDecompressor {
             JPEGReader.setInput(is, false, true);
         }
 
-
-
         if (useTurbo) {
-			rawImage = JPEGReader.read(0);
-			// TODO Auto-generated catch block
-		} 
-        else
-        {
+            rawImage = JPEGReader.read(0);
+        } else {
             // Set the destination to the raw image ignoring the parameters.
             JPEGParam.setDestination(rawImage);
             // Read the strip or tile.
