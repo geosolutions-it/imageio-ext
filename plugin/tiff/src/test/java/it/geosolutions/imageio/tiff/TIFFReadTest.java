@@ -15,16 +15,7 @@
  */
 package it.geosolutions.imageio.tiff;
 
-import it.geosolutions.imageio.core.CoreCommonImageMetadata;
-import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
-import it.geosolutions.imageio.plugins.tiff.PrivateTIFFTagSet;
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
-import it.geosolutions.imageio.utilities.ImageIOUtilities;
-import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReader;
-import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
-import it.geosolutions.imageioimpl.plugins.tiff.TIFFStreamMetadata.MetadataNode;
-import it.geosolutions.resources.TestData;
+import static org.junit.Assume.assumeTrue;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -33,6 +24,7 @@ import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.ByteOrder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,6 +43,20 @@ import org.w3c.dom.NodeList;
 
 import com.sun.media.jai.operator.ImageReadDescriptor;
 
+import it.geosolutions.imageio.core.CoreCommonImageMetadata;
+import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
+import it.geosolutions.imageio.plugins.tiff.PrivateTIFFTagSet;
+import it.geosolutions.imageio.plugins.turbojpeg.TurboJpegImageReader;
+import it.geosolutions.imageio.plugins.turbojpeg.TurboJpegUtilities;
+import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
+import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
+import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReader;
+import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
+import it.geosolutions.imageioimpl.plugins.tiff.TIFFJPEGDecompressor;
+import it.geosolutions.imageioimpl.plugins.tiff.TIFFStreamMetadata.MetadataNode;
+import it.geosolutions.resources.TestData;
+
 /**
  * Testing reading capabilities for {@link JP2KKakaduImageReader} leveraging on JAI.
  * 
@@ -59,10 +65,9 @@ import com.sun.media.jai.operator.ImageReadDescriptor;
  */
 public class TIFFReadTest extends Assert {
 
-	
-	/** Logger used for recording any possible exception */
-	private Logger logger = Logger.getLogger(TIFFReadTest.class.getName());
-	
+    /** Logger used for recording any possible exception */
+    private final static Logger logger = Logger.getLogger(TIFFReadTest.class.getName());
+
     @Test
     public void readFromFileJAI() throws IOException {
         final File file = TestData.file(this, "test.tif");
@@ -691,6 +696,73 @@ public class TIFFReadTest extends Assert {
         final String description = "Unspecified";
         final int value = 0;
         readExtraSample("sampleRGBIR.tif", hasAlpha, description, value);
+    }
+
+    @Test
+    public void readTIFFTurboJpegNoJpegTables() throws IOException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+        // This image has been created with this command on GDAL 2.1.3:
+        // gdal_translate -co COMPRESS=JPEG -CO TILED=YES -CO JPEGTABLESMODE=0\ 
+        // -CO BLOCKXSIZE=64 -CO BLOCKYSIZE=64 -outsize 256 256 -r bilinear test.tif notables.tif
+
+        // This will create a TIFF with internally compressed JPEG images but no JPEGTables metadata
+        // TurboJPEG Reader decodes byte array provided by the compressor
+        if (!TurboJpegUtilities.isTurboJpegAvailable()) {
+            logger.warning("Unable to find native libs. Tests are skipped");
+            assumeTrue(false);
+            return;
+        }
+        final File file = TestData.file(this, "notables.tif");
+
+        final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi().createReaderInstance();
+        FileImageInputStream fis = null;
+        BufferedImage image = null;
+
+        try {
+            fis = new FileImageInputStream(file);
+            reader.setInput(fis);
+            ImageReadParam param = new ImageReadParam();
+            param.setSourceRegion(new Rectangle(0,0,64,64));
+            image = reader.read(0, param);
+
+            assertEquals(64, image.getWidth());
+            assertEquals(64, image.getHeight());
+            assertEquals(1, image.getSampleModel().getNumBands());
+
+            // Using reflection to check the data array being used
+            Field f = reader.getClass().getDeclaredField("decompressor");
+            f.setAccessible(true);
+            TIFFJPEGDecompressor decompressor = (TIFFJPEGDecompressor) f.get(reader);
+
+            f = decompressor.getClass().getDeclaredField("JPEGReader");
+            f.setAccessible(true);
+            TurboJpegImageReader jpegReader = (TurboJpegImageReader) f.get(decompressor);
+
+            f = jpegReader.getClass().getDeclaredField("data");
+            f.setAccessible(true);
+            byte[] data = (byte[]) f.get(jpegReader);
+
+            // Before the fix, the data array would have been, more or less, big as 
+            // the whole stream content (almost 16000), making this check fail.
+            assertTrue(data.length < 300);
+            image.flush();
+            image = null;
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.dispose();
+                } catch (Throwable t) {
+                    // Does nothing
+                }
+            }
+
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (Throwable t) {
+                    // Does nothing
+                }
+            }
+        }
     }
 
     private void readExtraSample(String inputFile, boolean hasAlpha, String description, int value) throws IOException {
