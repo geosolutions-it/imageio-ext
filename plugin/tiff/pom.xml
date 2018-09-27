@@ -27,6 +27,13 @@
     	<groupId>it.geosolutions.imageio-ext</groupId>
     	<artifactId>imageio-ext-geocore</artifactId>
     	<version>${project.version}</version>
+    </dependency>
+    <dependency>
+    	<groupId>it.geosolutions.imageio-ext</groupId>
+    	<artifactId>imageio-ext-turbojpeg</artifactId>
+    	<version>${project.version}</version>
+    	<scope>test</scope>
     </dependency>    
+        
   </dependencies>
 </project>
