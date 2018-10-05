@@ -22,6 +22,8 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
@@ -209,23 +211,12 @@ public class KakaduUtilities {
             final int destinationWidth, final int destinationHeight,
             final int interpolationType) {
 
-        final WritableRaster raster = cm.createCompatibleWritableRaster(
-                destinationWidth, destinationHeight);
-
-        final BufferedImage finalImage = new BufferedImage(cm, raster, false, null);
-        final Graphics2D gc2D = finalImage.createGraphics();
-        gc2D.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-        gc2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-        gc2D.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
-        gc2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-                        interpolationType == JP2KKakaduImageReadParam.INTERPOLATION_NEAREST ? RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR
-                                : RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        gc2D.drawImage(bi, 0, 0, destinationWidth, destinationHeight, 0, 0, bi.getWidth(), bi.getHeight(), null);
-        gc2D.dispose();
-        bi.flush();
-        bi = null;
-
-        return finalImage;
+        AffineTransform at = new AffineTransform(destinationWidth / (float) bi.getWidth(), 0,
+                0, destinationHeight / (float) bi.getHeight(), 0, 0);
+        int interpolation = interpolationType == JP2KKakaduImageReadParam.INTERPOLATION_NEAREST
+                ? AffineTransformOp.TYPE_NEAREST_NEIGHBOR : AffineTransformOp.TYPE_BILINEAR;
+        AffineTransformOp op = new AffineTransformOp(at, interpolation);
+        return op.filter(bi, null);
     }
 
     /**
