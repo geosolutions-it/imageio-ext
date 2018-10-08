@@ -67,6 +67,8 @@ public class TurboJpegImageReader extends ImageReader {
     // the type of subsampling of the compressed data. (GRAY, 4:2:0, ...)
     private int subsamp;
 
+    TJDecompressor decompressor;
+
     static {
         String flagsProp = System.getProperty(TurboJpegUtilities.FLAGS_PROPERTY);
         if (flagsProp != null) {
@@ -80,6 +82,11 @@ public class TurboJpegImageReader extends ImageReader {
 
     public TurboJpegImageReader(ImageReaderSpi originatingProvider) {
         super(originatingProvider);
+        try {
+            this.decompressor = new TJDecompressor();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to initialize native decompressor", e);
+        }
     }
 
     @Override
@@ -136,25 +143,12 @@ public class TurboJpegImageReader extends ImageReader {
                        subsamp == TJ.SAMP_GRAY ? BufferedImage.TYPE_BYTE_GRAY : BufferedImage.TYPE_3BYTE_BGR);
 
         // Using local variables to avoid changing the internal state
-        TJDecompressor decompressor = null;
+        
         try {
-            decompressor = new TJDecompressor(data, data.length);
+            decompressor.setJPEGImage(data, data.length);
             decompressor.decompress(bi, flags);
         } catch (Exception e) {
             throw new IOException("Exception while decompressing:", e);
-        } finally {
-            if (decompressor != null) {
-                try {
-                    decompressor.close();
-                    decompressor = null;
-                } catch (Exception ex) {
-                    // Eat exception. There is nothing else we can do
-                    if (LOGGER.isLoggable(Level.FINE)) {
-                        LOGGER.fine("Exception occurred while closing the decompressor: "
-                                + ex.getLocalizedMessage());
-                    }
-                }
-            }
         }
         return bi;
     }
@@ -166,7 +160,6 @@ public class TurboJpegImageReader extends ImageReader {
         reset();
         this.ignoreMetadata = ignoreMetadata;
 
-        TJDecompressor decompressor = null;
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("setting input");
         }
@@ -197,7 +190,6 @@ public class TurboJpegImageReader extends ImageReader {
                 data = baos.toByteArray();
             }
             flags = EXTERNAL_FLAGS > 0 ? EXTERNAL_FLAGS : flags;
-            decompressor = new TJDecompressor();
             decompressor.setJPEGImage(data, data.length);
             width = decompressor.getWidth();
             height = decompressor.getHeight();
@@ -206,16 +198,6 @@ public class TurboJpegImageReader extends ImageReader {
         } catch (Exception ex) {
             throw new RuntimeException("Error creating jpegturbo decompressor: " + ex.getMessage(),
                     ex);
-        } finally {
-
-            if (decompressor != null) {
-                try {
-                    decompressor.close();
-                    decompressor = null;
-                } catch (Exception ex) {
-                    // Eat exception. There is nothing else we can do
-                }
-            }
         }
         super.setInput(input, seekForwardOnly, ignoreMetadata);
         // CHECKME: should we mark the position?
@@ -223,7 +205,7 @@ public class TurboJpegImageReader extends ImageReader {
 
     public void reset() {
         super.setInput(null, false, false);
-        dispose();
+        data = null;
     }
 
     private void checkIndex(int imageIndex) {
@@ -234,8 +216,22 @@ public class TurboJpegImageReader extends ImageReader {
 
     @Override
     public void dispose() {
-        if (data != null) {
-            data = null;
+        try {
+            reset();
+        } finally {
+            if (decompressor != null) {
+                try {
+                    decompressor.close();
+                    decompressor = null;
+                } catch (Exception ex) {
+                    // Eat exception. There is nothing else we can do
+                    if (LOGGER.isLoggable(Level.FINE)) {
+                        LOGGER.fine(
+                                "Exception occurred while closing the decompressor: "
+                                        + ex.getLocalizedMessage());
+                    }
+                }
+            }
         }
     }
 
