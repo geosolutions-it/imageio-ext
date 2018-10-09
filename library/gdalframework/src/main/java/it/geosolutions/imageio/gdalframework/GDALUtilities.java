@@ -620,7 +620,17 @@ public final class GDALUtilities {
                     return;
                 }
                 try {
-                    System.loadLibrary("gdaljni");
+                    try {
+                        // GDAL version >= 2.3.0
+                        System.loadLibrary("gdalalljni");
+                    } catch (UnsatisfiedLinkError e1) {
+                        if (LOGGER.isLoggable(Level.INFO)) {
+                            LOGGER.log(Level.INFO,"Failed to load the GDAL native libs from \"gdalalljni\". " +
+                                    "Falling back to \"gdaljni\".\n" +
+                                    e1.toString());
+                        }
+                        System.loadLibrary("gdaljni");
+                    }
                     gdal.AllRegister();
                     final String versionInfo = gdal.VersionInfo("RELEASE_NAME");
                     if (versionInfo != null && versionInfo.trim().length() > 0) {
@@ -639,11 +649,11 @@ public final class GDALUtilities {
                         gdal.PushErrorHandler("CPLQuietErrorHandler");
                     }
                     GDALUtilities.available = true;
-                } catch (UnsatisfiedLinkError e) {
+                } catch (UnsatisfiedLinkError e2) {
                     if (LOGGER.isLoggable(Level.WARNING)) {
                         LOGGER.warning("Failed to load the GDAL native libs. This is not a problem "
-                        		+ "unless you need to use the GDAL plugins: they won't be enabled.\n" 
-                        		+ e.toString());
+                                    + "unless you need to use the GDAL plugins: they won't be enabled.\n" 
+                                    + e2.toString());
                     }
                     GDALUtilities.available = false;
                 } finally {
