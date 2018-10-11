@@ -162,7 +162,7 @@
         
         <configuration>
             <!-- Necessary to enable javadoc to handle J2SE 1.4 features. -->
-          <source>1.5</source>
+          <source>1.8</source>
             <!-- Specifies whether or not the version text is included.-->
           <version>false</version>
             <!-- Omit qualifying package name before class names in output.-->
@@ -507,8 +507,8 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>1.6</source>  <!-- The -source argument for the Java compiler. -->
-          <target>1.6</target>  <!-- The -target argument for the Java compiler. -->
+          <source>1.8</source>  <!-- The -source argument for the Java compiler. -->
+          <target>1.8</target>  <!-- The -target argument for the Java compiler. -->
           <debug>true</debug>   <!-- Whether to include debugging information.   -->
           <encoding>ISO-8859-1</encoding> <!-- The -encoding argument for the Java compiler. -->
         </configuration>
