@@ -16,9 +16,7 @@
  */
 package it.geosolutions.imageio.stream.input.spi;
 
-import it.geosolutions.imageio.stream.eraf.EnhancedRandomAccessFile;
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExtFileChannelImpl;
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
+import com.sun.media.imageio.stream.FileChannelImageInputStream;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -34,8 +32,8 @@ import javax.imageio.spi.ImageInputStreamSpi;
 import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageInputStream;
 
-import com.sun.imageio.spi.FileImageInputStreamSpi;
-import com.sun.media.imageio.stream.FileChannelImageInputStream;
+import it.geosolutions.imageio.stream.eraf.EnhancedRandomAccessFile;
+import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 
 /**
  * Implementation of an {@link ImageInputStreamSpi} for instantiating an
@@ -114,7 +112,8 @@ public class FileImageInputStreamExtImplSpi extends ImageInputStreamSpi {
 		for (Iterator<? extends ImageInputStreamSpi> i = registry.getServiceProviders(targetClass, true); i.hasNext();) {
 			ImageInputStreamSpi other = i.next();
 
-			if (other instanceof FileImageInputStreamSpi)
+			// using class name to avoid warnings in JDK 11
+			if (other != null && other.getClass().getName().equals("com.sun.imageio.spi.FileImageInputStreamSpi"))
 				registry.deregisterServiceProvider(other);
 			if (this != other)
 				registry.setOrdering(targetClass, this, other);
