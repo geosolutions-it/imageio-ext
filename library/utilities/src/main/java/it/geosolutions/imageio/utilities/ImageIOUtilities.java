@@ -62,7 +62,7 @@ import javax.swing.SwingUtilities;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-import com.sun.imageio.plugins.common.BogusColorSpace;
+import com.sun.media.imageioimpl.common.BogusColorSpace;
 import com.sun.media.jai.codecimpl.util.RasterFactory;
 import com.sun.media.jai.operator.ImageReadDescriptor;
 
