@@ -4,6 +4,7 @@ cache:
     - "$HOME/.m2"
 language: java
 jdk:
+  - openjdk7
   - oraclejdk8
 script:
   - mvn -U clean install -Dall -Djava.awt.headless=true -DskipTests=false
