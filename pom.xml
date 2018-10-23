@@ -334,6 +334,14 @@
   <!--                         Repositories                     -->
   <!-- ======================================================== -->
   <repositories>
+     <repository>
+      <id>central.maven.org</id>
+      <name>Central Maven repository</name>
+      <url>http://central.maven.org/maven2</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
     <repository>
       <id>geosolutions</id>
       <name>GeoSolutions libraries repository</name>
@@ -343,17 +351,6 @@
       <id>jboss</id>
       <name>jboss</name>
       <url>http://repository.jboss.org/maven2/</url>
-    </repository>
-    <repository>
-      <id>codehaus.org</id>
-      <name>CodeHaus Snapshots</name>
-      <url>http://snapshots.repository.codehaus.org</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
     </repository>
      <repository>
       <id>osgeo</id>
@@ -367,12 +364,6 @@
       <id>opengeo</id>
       <name>OpenGeo Maven Repository</name>
       <url>http://repo.opengeo.org</url>
-    </repository>
-    <repository>
-      <id>maven2-repository.dev.java.net</id>
-      <name>Java.net Repository for Maven</name>
-      <url>http://download.java.net/maven/2/</url>
-      <layout>default</layout>
     </repository>
   </repositories>
 
