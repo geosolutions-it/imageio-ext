@@ -340,11 +340,6 @@
       <url>https://maven.geo-solutions.it/</url>
     </repository>
     <repository>
-      <id>codehaus</id>
-      <name>Codehaus maven repository</name>
-      <url>http://repository.codehaus.org/</url>
-    </repository>
-    <repository>
       <id>jboss</id>
       <name>jboss</name>
       <url>http://repository.jboss.org/maven2/</url>
