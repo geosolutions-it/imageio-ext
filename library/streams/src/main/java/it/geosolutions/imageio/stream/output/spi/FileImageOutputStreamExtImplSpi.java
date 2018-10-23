@@ -16,7 +16,6 @@
  */
 package it.geosolutions.imageio.stream.output.spi;
 
-import it.geosolutions.imageio.stream.output.FileImageOutputStreamExt;
 import it.geosolutions.imageio.stream.output.FileImageOutputStreamExtImpl;
 
 import java.io.File;
@@ -30,8 +29,6 @@ import java.util.logging.Logger;
 import javax.imageio.spi.ImageOutputStreamSpi;
 import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageOutputStream;
-
-import com.sun.imageio.spi.FileImageOutputStreamSpi;
 
 /**
  * A special ImageOutputStream Service Provider Interface which is able to
@@ -78,7 +75,8 @@ public class FileImageOutputStreamExtImplSpi extends ImageOutputStreamSpi {
         for (Iterator i = registry.getServiceProviders(targetClass, true); i.hasNext();) {
             other = i.next();
 
-            if (other instanceof FileImageOutputStreamSpi)
+            // using class name to avoid warnings in JDK 11
+            if (other != null && other.getClass().getName().equals("it.geosolutions.imageio.stream.output.FileImageOutputStreamExt"))
                 registry.deregisterServiceProvider(other);
             if (this != other) {
                 registry.setOrdering(targetClass, this, other);
