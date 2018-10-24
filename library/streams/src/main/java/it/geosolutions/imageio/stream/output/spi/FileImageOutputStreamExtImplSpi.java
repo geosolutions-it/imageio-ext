@@ -76,7 +76,7 @@ public class FileImageOutputStreamExtImplSpi extends ImageOutputStreamSpi {
             other = i.next();
 
             // using class name to avoid warnings in JDK 11
-            if (other != null && other.getClass().getName().equals("it.geosolutions.imageio.stream.output.FileImageOutputStreamExt"))
+            if (other != null && other.getClass().getName().equals("com.sun.imageio.spi.FileImageOutputStreamSpi"))
                 registry.deregisterServiceProvider(other);
             if (this != other) {
                 registry.setOrdering(targetClass, this, other);
