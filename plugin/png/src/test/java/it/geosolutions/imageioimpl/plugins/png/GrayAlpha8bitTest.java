@@ -40,6 +40,7 @@ import javax.media.jai.PlanarImage;
 import javax.media.jai.operator.BandMergeDescriptor;
 import javax.media.jai.operator.BandSelectDescriptor;
 import javax.media.jai.operator.ConstantDescriptor;
+import javax.media.jai.operator.MosaicDescriptor;
 
 import org.junit.Test;
 
@@ -130,20 +131,75 @@ public class GrayAlpha8bitTest {
         // Bottom Left  = WHITE WITH 50% TRANSPARENCY <-- 50% TRANSPARENT BLUE before BandSelect
         // Bottom Right = FULLY TRANSPARENT BLACK <------ FULLY TRANSPARENT GREEN before BandSelect
 
-        assertRectangle(raster, blueRectangle, 255, 255);
-        assertRectangle(raster, blueAlphaRectangle, 255, 128);
-        assertRectangle(raster, redRectangle, 0, 255);
-        assertRectangle(raster, greenRectangle, 0, 0);
+        assertRectangle(raster, blueRectangle, new int[]{ 255, 255 });
+        assertRectangle(raster, blueAlphaRectangle, new int[]{ 255, 128 });
+        assertRectangle(raster, redRectangle, new int[]{ 0, 255 });
+        assertRectangle(raster, greenRectangle, new int[]{ 0, 0 });
+    }
+
+    @Test
+    public void testGray8BitFromMosaicOnBandSelect() throws Exception {
+        // Create a Square with 3 regions:
+        // Top Left     = FULLY OPAQUE BLUE
+        // Top Right    = FULLY OPAQUE RED
+        // Bottom       = FULLY Green
+
+        /*
+         * B B B R R R
+         * B B B R R R
+         * B B B R R R
+         * G G G G G G
+         * G G G G G G
+         * G G G G G G
+         */
+        BufferedImage bi = new BufferedImage(6, 6, BufferedImage.TYPE_4BYTE_ABGR);
+        Graphics2D graphics = bi.createGraphics();
+
+        // FULLY OPAQUE BLUE
+        final Rectangle blueRectangle = new Rectangle(0, 0, 3, 3);
+        fillRectangle(graphics, blueRectangle, Color.BLUE);
+
+        // FULLY OPAQUE RED
+        final Rectangle redRectangle = new Rectangle(3, 0, 3, 3);
+        fillRectangle(graphics, redRectangle, Color.RED);
+
+        // FULLY OPAQUE GREEN
+        final Rectangle greenRectangle = new Rectangle(0, 3, 6, 3);
+        fillRectangle(graphics, greenRectangle, Color.GREEN);
+
+        graphics.dispose();
+
+        // Only select Blue Band
+        RenderedImage gray = BandSelectDescriptor.create(bi, new int[] { 2 }, null);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        float quality = 5f / 9 - 1;
+        RenderedImage mosaic = MosaicDescriptor.create(new RenderedImage[]{ gray },
+                MosaicDescriptor.MOSAIC_TYPE_OVERLAY, null, null, null, null, null);
+
+        new PNGWriter().writePNG(mosaic, bos, -quality, FilterType.FILTER_NONE);
+        BufferedImage read = ImageIO.read(new ByteArrayInputStream(bos.toByteArray()));
+        Raster raster = read.getData();
+
+        // Check regions after blue band selection
+        // Top Left     = FULLY WHITE <------------------ FULLY OPAQUE BLUE before BandSelect
+        // Top Right    = FULLY BLACK <------------------ FULLY OPAQUE RED before BandSelect
+        // Bottom       = FULLY BLACK <------------------ FULLY OPAQUE GREEN before BandSelect
+        final int white[] = new int[]{255};
+        final int black[] = new int[]{0};
+        assertRectangle(raster, blueRectangle, white);
+        assertRectangle(raster, redRectangle, black);
+        assertRectangle(raster, greenRectangle, black);
     }
 
     /**
      * check that every pixel of a rectangle has expectedPixelValue and alpha
      */
-    private void assertRectangle(Raster raster, Rectangle r, int expectedPixelValue, int expectedAlpha) {
+    private void assertRectangle(Raster raster, Rectangle r, int[] expectedPixelValue) {
         for (int x = r.x; x < r.x + r.width; x++) {
             for (int y = r.y; y < r.y + r.height; y++) {
-                assertEquals(expectedPixelValue, raster.getSample(x, y, 0));
-                assertEquals(expectedAlpha, raster.getSample(x, y, 1));
+                for (int k = 0; k < expectedPixelValue.length; k++) {
+                    assertEquals(expectedPixelValue[k], raster.getSample(x, y, k));
+                }
             }
         }
     }
