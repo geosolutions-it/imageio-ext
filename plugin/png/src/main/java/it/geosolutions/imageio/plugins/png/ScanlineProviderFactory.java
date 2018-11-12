@@ -24,6 +24,7 @@ import java.awt.image.DataBuffer;
 import java.awt.image.DirectColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.MultiPixelPackedSampleModel;
+import java.awt.image.PixelInterleavedSampleModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
@@ -76,6 +77,10 @@ public class ScanlineProviderFactory {
                         }
                     } else {
                         if (cm.getPixelSize() == 8) {
+                            if (sm instanceof PixelInterleavedSampleModel &&
+                                    (((PixelInterleavedSampleModel)sm).getPixelStride() != 1)) {
+                                    return new RasterByteSingleBandSkippingBytesProvider(raster);
+                                }
                             return new RasterByteSingleBandProvider(raster, 8, raster.getWidth());
                         } else if (cm.getPixelSize() == 4) {
                             int scanlineLength = (raster.getWidth() + 1) / 2;
