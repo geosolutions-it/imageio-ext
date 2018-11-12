@@ -27,6 +27,7 @@ import java.awt.image.Raster;
  */
 public final class RasterByteABGRProvider extends AbstractScanlineProvider {
 
+    final static int[] PIXEL_STRIDES = new int[]{3,4};
     final byte[] bytes;
     final boolean bgrOrder;
     final boolean hasAlpha;
@@ -35,7 +36,7 @@ public final class RasterByteABGRProvider extends AbstractScanlineProvider {
     final int numBands;
 
     public RasterByteABGRProvider(Raster raster, boolean hasAlpha) {
-        super(raster, 8, raster.getWidth() * (computePixelStride(raster, hasAlpha)));
+        super(raster, 8, raster.getWidth() * (computePixelStride(raster, PIXEL_STRIDES, hasAlpha)));
         this.hasAlpha = hasAlpha;
         this.bytes = ((DataBufferByte) raster.getDataBuffer()).getData();
         ComponentSampleModel sm = (ComponentSampleModel) raster.getSampleModel();
@@ -43,14 +44,6 @@ public final class RasterByteABGRProvider extends AbstractScanlineProvider {
         this.pixelStride = sm.getPixelStride();
         this.bandOffsets = sm.getBandOffsets();
         this.numBands = sm.getNumBands();
-    }
-
-    private static int computePixelStride(Raster raster, boolean hasAlpha) {
-        int pixelStride = ((ComponentSampleModel) raster.getSampleModel()).getPixelStride();
-        if (raster.getNumBands() != pixelStride) {
-            return pixelStride;
-        }
-        return hasAlpha ? 4 : 3;
     }
 
     public void next(final byte[] row, final int offset, final int length) {
@@ -67,7 +60,7 @@ public final class RasterByteABGRProvider extends AbstractScanlineProvider {
                     // row[i+2] = B
                     // row[i+1] = G
                     // row[i+0] = R
-                    row[i + bandOffsets[j]] = bytes[bytesIdx + j];
+                    row[i + j] = bytes[bytesIdx + bandOffsets[j]];
                 }
                 // Pixel stride may be longer than numBands due to bandSelect 
                 // sharing same dataBuffer of the original image
