@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.png;
 
+import java.awt.image.ComponentSampleModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.Raster;
 
@@ -94,6 +95,33 @@ public abstract class AbstractScanlineProvider implements ScanlineProvider {
     public void writeToPngRaw(byte[] raw) {
         // PNGJ stores in the first byte the filter type
         this.next(raw, 1, raw.length - 1);
+    }
+
+    /**
+     * Compute the pixelStride for the provided raster.
+     * The actual raster pixelStride will be returned in case the raster number of bands
+     * is not equal to the pixelStride.
+     * Otherwise the expected pixelStride will be returned.
+     * The expectedPixelStrides array can optionally have size = 2 (instead of 1).
+     * The second value will be returned in case the raster has alpha.
+     **/
+    public static int computePixelStride(Raster raster, int[] expectedPixelStrides, boolean hasAlpha) {
+        int pixelStride = ((ComponentSampleModel) raster.getSampleModel()).getPixelStride();
+        if (raster.getNumBands() != pixelStride) {
+            return pixelStride;
+        }
+        return (expectedPixelStrides.length == 2 && hasAlpha) ? expectedPixelStrides[1] : expectedPixelStrides[0];
+    }
+
+    /**
+     * Compute the pixelStride for the provided raster.
+     * The actual raster pixelStride will be returned in case the raster number of bands
+     * is not equal to the pixelStride.
+     * Otherwise the expected PixelStride will be returned assuming the raster has
+     * no alpha.
+     **/
+    public static int computePixelStride(Raster raster, int[] expectedPixelStrides) {
+        return computePixelStride(raster, expectedPixelStrides, false);
     }
 
 
