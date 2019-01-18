@@ -33,6 +33,7 @@ import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageInputStream;
 
 import it.geosolutions.imageio.stream.eraf.EnhancedRandomAccessFile;
+import it.geosolutions.imageio.stream.input.FileImageInputStreamExtFileChannelImpl;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 
 /**
@@ -145,12 +146,16 @@ public class FileImageInputStreamExtImplSpi extends ImageInputStreamSpi {
 			boolean useCache, File cacheDir) {
 		if (!(input instanceof File)) {
 			if (LOGGER.isLoggable(Level.FINE))
-				LOGGER.fine("THe provided input is not a eraf.");
+				LOGGER.fine("The provided input is not a eraf.");
 			return null;
 		}
 
-		try {
-			return new FileImageInputStreamExtImpl((File) input);
+        try {
+            if (!useFileChannel) {
+                return new FileImageInputStreamExtImpl((File) input);
+            } else {
+                return new FileImageInputStreamExtFileChannelImpl((File) input);
+            }
 		} catch (FileNotFoundException e) {
 			if (LOGGER.isLoggable(Level.FINE))
 				LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
