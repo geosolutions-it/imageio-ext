@@ -188,22 +188,15 @@ public class FileImageInputStreamExtFileChannelImpl extends ImageInputStreamImpl
         if (f == null) {
             throw new NullPointerException("f == null!");
         }
-        final StringBuilder buff = new StringBuilder("Invalid input file provided");
-        if (!f.exists() || f.isDirectory()) {
-            buff.append("exists: ").append(f.exists()).append("\n");
-            buff.append("isDirectory: ").append(f.isDirectory()).append("\n");
-            throw new FileNotFoundException(buff.toString());
-        }
-        if (!f.exists() || f.isDirectory() || !f.canRead()) {
-            buff.append("canRead: ").append(f.canRead()).append("\n");
-            throw new IOException(buff.toString());
-        }
         this.file = f;
+        // The underlying class already report potential IO issues with an IOException
+        // permissionDenied / notExists / isADirectory
         FileChannel fc = new FileInputStream(f).getChannel();
         this.fileChannelInputStream = new FileChannelImageInputStream(fc);
         // NOTE: this must be done accordingly to what ImageInputStreamImpl
         // does, otherwise some ImageReader subclasses might not work.
         this.fileChannelInputStream.setByteOrder(ByteOrder.BIG_ENDIAN);
+
     }
 
     /**
