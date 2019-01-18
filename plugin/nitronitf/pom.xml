@@ -43,7 +43,7 @@
     <properties>
         <nitro.version>2.7</nitro.version>
         <nitro.classifier>r1269</nitro.classifier>
-        <log4j.version>1.2-SNAPSHOT4</log4j.version>
+        <log4j.version>1.2.14</log4j.version>
         <commons-logging.version>1.1.1</commons-logging.version>
         <commons-lang.version>2.4</commons-lang.version>
         <commons-io.version>1.4</commons-io.version>
