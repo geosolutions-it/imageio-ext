@@ -103,6 +103,8 @@ import java.util.List;
 
 public class TIFFImageReader extends ImageReader {
 
+    final static boolean SKIP_EXTERNAL_FILES_LOOKUP = Boolean.getBoolean("it.geosolutions.skip.external.files.lookup");
+
     /**
      * This class can be used to cache basic information about a tiff page.
      * <p>
@@ -399,7 +401,7 @@ public class TIFFImageReader extends ImageReader {
             }
             this.stream = (ImageInputStream)input;
             // Check for external masks/overviews
-            if (input instanceof FileImageInputStreamExtImpl) {
+            if (!SKIP_EXTERNAL_FILES_LOOKUP && input instanceof FileImageInputStreamExtImpl) {
 
                 FileImageInputStreamExtImpl stream = (FileImageInputStreamExtImpl) input;
                 // Getting File path
