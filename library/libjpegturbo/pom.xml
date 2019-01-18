@@ -3,7 +3,7 @@
    <modelVersion>4.0.0</modelVersion>
    <groupId>org.libjpegturbo</groupId>
    <artifactId>turbojpeg-wrapper</artifactId>
-   <version>1.2.1.5</version>
+   <version>1.2-SNAPSHOT.5</version>
    <packaging>jar</packaging>
    <name>Libjpegturbo java wrapper</name>
    <distributionManagement>

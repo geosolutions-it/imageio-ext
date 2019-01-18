@@ -5,12 +5,12 @@
     <parent>
         <groupId>it.geosolutions.imageio-ext</groupId>
         <artifactId>imageio-ext-plugin</artifactId>
-        <version>1.2.1</version>
+        <version>1.2-SNAPSHOT</version>
     </parent>
         
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-turbojpeg</artifactId>
-    <version>1.2.1</version>
+    <version>1.2-SNAPSHOT</version>
 
     <packaging>jar</packaging>
 
@@ -40,7 +40,7 @@
         <dependency>
             <groupId>org.libjpegturbo</groupId>
             <artifactId>turbojpeg-wrapper</artifactId>
-            <version>1.2.1.5</version>
+            <version>1.2-SNAPSHOT.5</version>
         </dependency>
                 
         <dependency>
