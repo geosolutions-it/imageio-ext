@@ -777,7 +777,14 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
      * @see #TAG_PREDICTOR
      */
     public static final int PREDICTOR_HORIZONTAL_DIFFERENCING = 2;
-    
+
+    /**
+     * A value to be used with the "Predictor" tag.
+     *
+     * @see #TAG_PREDICTOR
+     */
+    public static final int PREDICTOR_FLOATING_POINT = 3;
+
     /**
      * Constant specifying the "WhitePoint" tag.
      */
