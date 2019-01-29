@@ -26,6 +26,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageReadParam;
@@ -206,11 +207,29 @@ public abstract class AsciiGridRaster {
 	protected long dataStartAt = -1;
 
 	/**
-	 * A TreeMap used to Skip spaces-count operation when the image is tiled. If
-	 * I need to load data values to fill the last tile, I need to skip a lot of
-	 * samples before finding useful data values. This TreeMap couples 'number
-	 * of spaces' to 'positions in the stream'. Thus, this search operation is
-	 * accelerated.
+	 * Used to remember the locations (in bytes offset from 0) of samples at tile boundaries within the data.
+	 * These locations speed up random access to tile data by allowing us to seek to the closest-lower known position in
+	 * the file to start reading from there.  Without this, due to the irregular layout (on disk) of the data, random tile
+	 * access would require a large amount of data to be needlessly skipped through before the right place in the file can
+	 * be found.
+	 * </p>
+	 * Example:  If we had ascii data that was laid out in the stream like so...
+	 * <pre>
+	 * 0          1          2          3          4          5
+	 * 01233456789012334567890123345678901233456789012334567890
+	 *
+	 * 0 0.1 3 33 4 1 0.9 5434 5 5 234 09 2 55432 3 0.87 3 588
+	 * </pre>
+	 *
+	 * Then a fully populated tileMarker index for a tile size is 2x2 would be
+	 *
+	 * <pre>
+	 * 3: 7
+	 * 7: 17
+	 * 11: 29
+	 * 15: 41
+	 * </pre>
+	 *
 	 */
 	protected TreeMap<Long,Long> tileMarker = new TreeMap<Long,Long>();
 
@@ -619,8 +638,8 @@ public abstract class AsciiGridRaster {
 		dstWidth = ((dstWidth - 1) / xSubsamplingFactor) + 1;
 		dstHeight = ((dstHeight - 1) / ySubsamplingFactor) + 1;
 
-		// Number of spaces to count before I find useful data
-		final long samplesToThrowAwayBeforeFirstValidSample = (nCols * srcRegionYOffset);
+		// Number of samples to count before I find useful data
+		final long tileBeginsAtSampleIndex = (nCols * srcRegionYOffset);
 
 		final TileFactory factory = (TileFactory) JAI.getDefaultInstance().getRenderingHint(JAI.KEY_TILE_FACTORY);
 		if (factory != null)
@@ -634,7 +653,6 @@ public abstract class AsciiGridRaster {
 
 		int ch = -1;
 		int prevCh = -1;
-		long samplesCounted = 0;
 		long streamPosition = 0;
 		// /////////////////////////////////////////////////////////////////////
 		//
@@ -649,59 +667,80 @@ public abstract class AsciiGridRaster {
 		//
 		// /////////////////////////////////////////////////////////////////////
 
-		// //
-		//
-		// 2.A: Looking at a tile marker in order to accelerate the search
-		//
-		// //
-		// I check if there is an useful entry in the TreeMap which
-		// retrieves a stream position
-		// positioning on the first data byte
-		imageIS.seek(dataStartAt);
-		if (samplesToThrowAwayBeforeFirstValidSample > 0) {
+
+		// we set these two based on the best information we can find in the tile index
+		final long samplesToSkip;
+		final long indexedSeekPos;
+
+		// this number is the zero-based position of the next sample that will be read from the input stream.  It gets
+		// updated as this method proceeds so that it agrees with the current state of imageIS
+		long nextSampleIndex;
+
+		if (tileBeginsAtSampleIndex > 0) {
+			// we can't start reading samples from the beginning - use the index to see if there's a stream position
+			// that can accelerate our search
 			synchronized (tileTreeMutex) {
-				Long markedPos = tileMarker.get(samplesToThrowAwayBeforeFirstValidSample);
+				Long exactPosition = tileMarker.get(tileBeginsAtSampleIndex);
 
 				// Case 1: Exact key
-				if (markedPos != null) {
-
-					imageIS.seek(markedPos);
-					samplesCounted = samplesToThrowAwayBeforeFirstValidSample;
-
-					// I have found a stream Position associated to the number
-					// of spaces that I need to count before finding useful data
-					// values. Thus, I dont need to search furthermore
-
+				if (exactPosition != null) {
+					if (LOGGER.getLevel() == Level.FINEST) {
+						LOGGER.finest(String.format(
+								"[lookup] Found exact position %d for sample %d%n", 
+								exactPosition, 
+								tileBeginsAtSampleIndex));
+					}
+					// this is an exact match - no sample skipping will be required, just set the stream position and we can start
+					// reading data in to the raster
+					samplesToSkip = 0;
+					indexedSeekPos = exactPosition;
+					nextSampleIndex = tileBeginsAtSampleIndex;
 				} else {
 					// Case 2: Nearest(Lower) Key
-					final SortedMap<Long,Long> sm = tileMarker.headMap(Long.valueOf(samplesToThrowAwayBeforeFirstValidSample));
+					final SortedMap<Long,Long> partitionedIndex = tileMarker.headMap(Long.valueOf(tileBeginsAtSampleIndex));
 
-					if (!sm.entrySet().isEmpty()) {
-						// searching the nearest key (belower)
-						final long key = sm.lastKey();
+					if (!partitionedIndex.entrySet().isEmpty()) {
+						// the highest/last key in the partitioned index will give us the best possible position to start from
+						// as it will be the closest to where we need to start reading from (given we read from left to right)
+						final long nearestSampleIndex = partitionedIndex.lastKey();
+						final long nearestPosition = tileMarker.get(partitionedIndex.lastKey());
 
-						// returning the stream position
-						markedPos = (Long) tileMarker.get(key);
+					  samplesToSkip = tileBeginsAtSampleIndex - nearestSampleIndex;
+					  if (LOGGER.getLevel() == Level.FINEST) {
+							LOGGER.finest(String.format("[lookup] Found nearest (%d) indexed stream position %d for sample %d%n",
+								tileBeginsAtSampleIndex,
+								nearestPosition,
+								nearestSampleIndex
+							));
+					  }
 
-						if (markedPos != null) {
-							// I have found a stream position related to a
-							// number of white spaces smaller than the requested
-							// number. Thus, I need to manually count the
-							// remaining number of spaces.
-
-							imageIS.seek(markedPos.longValue());
-							samplesCounted = (int) key;
-						}
+							indexedSeekPos = nearestPosition;
+							nextSampleIndex = nearestSampleIndex;
 					} else {
-						// positioning on the first data byte
-						imageIS.seek(dataStartAt);
-						samplesCounted = 0;// reinforcing
+						// NB pretty sure this can't ever happen, given that the index is populated from l->r, but let's leave it
+						// here as the test coverage doesn't give me much confidence that it's not needed for obscure reasons
+						indexedSeekPos = dataStartAt;
+						samplesToSkip = tileBeginsAtSampleIndex;
+						nextSampleIndex = 0;
 					}
 				}
-
 			}
+		} else {
+			indexedSeekPos = dataStartAt;
+			nextSampleIndex = 0;
+			samplesToSkip = 0;
 		}
+
+		// nextSampleIndex should now agree with seek position, this means the the next sample
+		// to be read will be the value with index position nextSampleIndex
+		imageIS.seek(indexedSeekPos);
 		streamPosition = imageIS.getStreamPosition();
+
+		if (LOGGER.getLevel() == Level.FINEST) {
+			LOGGER.finest(String.format("[lookup] After index lookup : indexedSeekPos=%d nextSampleIndex=%d%n",
+					indexedSeekPos, nextSampleIndex));
+		}
+
 		// //
 		//
 		// Check abort request
@@ -710,56 +749,50 @@ public abstract class AsciiGridRaster {
 		if (hasListeners && abortRequired) {
 			return raster;
 		}
-		// //
-		//
-		// 2.B: Maybe I need to count some white space before reaching the
-		// first useful data value or the tileMarker is empty
-		//
-		// //
 
-		// If I dont need to search the first useful data value,
-		// I Skip these operations.
-		if (samplesCounted < samplesToThrowAwayBeforeFirstValidSample) {
+		// if the seek position we found wasn't exact, then we need to skip through the ascii values
+		// until we find the data for the tile
+		int numSamplesSkipped = 0;
+		if (samplesToSkip > 0) {
 			final int tileH = getTileHeight();
 			final int tileW = getTileWidth();
 			Long key;
 			Long val;
-			while (samplesCounted < samplesToThrowAwayBeforeFirstValidSample) {
+
+			if (LOGGER.getLevel() == Level.FINEST) {
+				LOGGER.finest(String.format("[skipping] About to skip %d samples to go from %d to %d%n",
+						samplesToSkip, nextSampleIndex, tileBeginsAtSampleIndex));
+			}
+
+			while (numSamplesSkipped < samplesToSkip) {
 
 				ch = imageIS.read(); // Filling the Buffer
 				if (ch == -1)
-					// send error on end of file
 					throw new EOFException(
 							"EOF found while looking for valid input");
 				streamPosition++;
 
-				// The nested "if" check, groups consecutive
-				// whitespaces.
-				// example: 3______4 => only 1 whitespace, not 6
-				// (in the previous example, you have to substitute
-				// underscores with spaces)
-				// example: 3 /r/n /r/n 4 => only 1 whitespace, not 7
-				if ((ch != 32) && (ch != 10) && (ch != 13) && (ch != 9)) {
-					if ((prevCh == 32) || (prevCh == 10) || (prevCh == 13)
-							|| (prevCh == 9)) {
-						samplesCounted++;
+				// if the last character was whitespace and this isn't, then we've hit a sample
+				if (!isWhitespace(ch)) {
+					if (isWhitespace(prevCh)) {
+						numSamplesSkipped++;
+						nextSampleIndex++;
 
-						// Another space was counted. If the number of
-						// spaces counted is multiple of the Size of
-						// tile (tile Heigth*tile Width), I store a new
-						// couple in the TreeMap. This is useful when I
-						// dont load tiles in order. If, par example, I
-						// load in advance data values which are related
-						// to the last tile, I need to scan the whole
-						// file and I need to counts a great number of
-						// spaces. Thus, during this counting process, it is
-						// useful to annotate stream positions in the
-						// tileMarker
-						if ((samplesCounted % (tileH * tileW)) == 0) {
-							key = Long.valueOf(samplesCounted);
-							val = Long.valueOf(streamPosition);
+						// we've reached a tile boundary - mark this in the index to speed up future random access
+						if (((nextSampleIndex) % (tileH * tileW)) == 0) {
+							key = Long.valueOf(nextSampleIndex);
+							// the actual index is one character back - we have consumed the first
+							// character to get here, so we set the indexed stream position be such that
+							// the index lookup will place the stream in the correct place for reading to start
+							// to this remembered value
+							val = Long.valueOf(streamPosition) - 1;
 							synchronized (tileTreeMutex) {
 								if (!tileMarker.containsKey(key)) {
+									if (LOGGER.getLevel() == Level.FINEST) {
+										LOGGER.finest(String.format("[skipping] Reached tile boundary, marking sample position %d will be found at stream position %d%n", key,
+												val));
+									}
+
 									tileMarker.put(key, val);
 								}
 							}
@@ -775,16 +808,30 @@ public abstract class AsciiGridRaster {
 					// Check abort request at every 10%
 					//
 					// //
-					perc = (int) (((samplesCounted * 1.0f) / samplesToThrowAwayBeforeFirstValidSample) * 100);
+					perc = (int) (((nextSampleIndex * 1.0f) / tileBeginsAtSampleIndex) * 100);
 					if ((perc % (10 * iPerc) == 0) && (int) perc > 0) {
 						if (abortRequired)
 							return raster;
 						iPerc++;
-
 					}
 				}
 			}
 		}
+
+		// sample skipping consumes the first character from the next sample - let's rewind
+		// by a byte so we can read it again
+	  if (numSamplesSkipped > 0) {
+	  	if (LOGGER.getLevel() == Level.FINEST) {
+				LOGGER.finest(String.format("[skipping] Finished, numSamplesSkipped=%d, nextSampleIndex=%d streamPosition=%d%n",
+						numSamplesSkipped, nextSampleIndex, imageIS.getStreamPosition()));
+	  	}
+	  	imageIS.seek(imageIS.getStreamPosition() - 1);
+	  } else {
+	  	if (LOGGER.getLevel() == Level.FINEST) {
+				LOGGER.finest(String.format("[skipping] No skipping required, nextSampleIndex=%d streamPosition=%d%n",
+						nextSampleIndex, imageIS.getStreamPosition()));
+	  	}
+	  }
 
 		// /////////////////////////////////////////////////////////////////////
 		//
@@ -803,9 +850,10 @@ public abstract class AsciiGridRaster {
 		// 3.B: Variables initialization
 		//
 		// //
-		// so far I have read samplesToThrowAwayBeforeValidArea samples, either
-		// directly or using the cached stream positions
-		samplesCounted = 0;
+	  if (LOGGER.getLevel() == Level.FINEST) {
+			LOGGER.finest(String.format("[reading] starting read of %d samples %d..%d stream position %d%n",
+			samplesToLoad, nextSampleIndex, nextSampleIndex + samplesToLoad, imageIS.getStreamPosition()));
+	  }
 		prevCh = -1;
 		ch = -1;
 
@@ -820,12 +868,12 @@ public abstract class AsciiGridRaster {
 		long rasterX = 0;
 		long rasterY = 0;
 		long tempCol = 0, tempRow = 0;
+		long samplesRead = 0;
 
 		final double noDataValue = getNoData();
 		final StringToDouble doubleConverter = StringToDouble.acquire();
-		// final StringToDouble doubleConverter = StringToDouble.acquire();
 		// If I need to load 10 samples, I need to count 9 spaces
-		while (samplesCounted < samplesToLoad) {
+		while (samplesRead < samplesToLoad) {
 			value = getValue(imageIS, MAX_BYTES_TO_READ, MAX_VALUE_LENGTH,
 					doubleConverter);
 			// // //
@@ -833,8 +881,8 @@ public abstract class AsciiGridRaster {
 			// // Does subsampling allow to add this value?
 			// //
 			// // //
-			tempCol = samplesCounted % nCols;
-			tempRow = samplesCounted / nCols;
+			tempCol = samplesRead % nCols;
+			tempRow = samplesRead / nCols;
 
 			if (!((tempCol < srcRegionXOffset || tempCol >= srcRegionXOffset
 					+ srcRegionWidth))) {
@@ -845,7 +893,7 @@ public abstract class AsciiGridRaster {
 					// If there is an exponent, I update the value
 					// no data management
 					if (Double.isInfinite(value)) {
-						if ((samplesCounted != samplesToLoad)) {
+						if ((samplesRead != samplesToLoad)) {
 							StringToDouble.release(doubleConverter);
 							throw new IOException(
 									"Error on reading data due to an END of File or invalid data find");
@@ -871,7 +919,7 @@ public abstract class AsciiGridRaster {
 				}
 			}
 			// sample found
-			samplesCounted++;
+			samplesRead++;
 
 			if (hasListeners) {
 				// //
@@ -879,7 +927,7 @@ public abstract class AsciiGridRaster {
 				// Check abort request at every 10%
 				//
 				// //
-				perc = (int) (((samplesCounted * 1.0f) / samplesToLoad) * 100);
+				perc = (int) (((samplesRead * 1.0f) / samplesToLoad) * 100);
 				if ((perc % (10 * iPerc) == 0) && (int) perc > 0) {
 					if (abortRequired)
 						return raster;
@@ -891,96 +939,27 @@ public abstract class AsciiGridRaster {
 			value = 0;
 		}
 
+		// as with skipping samples, we put an entry in to the index to speed up future random access
 		synchronized (tileTreeMutex) {
-			// The image support Tiling.
-			// I put a couple in tileMarker: <spaces Counted>,<stream Position>.
-			// <stream position> says how many bytes I have to read in the
-			// stream before I have counted <spaces counted> spaces.
-			// I can use this information to skip useless space searches
-			// operations when I load Tiles not located at the beginning of the
-			// stream
-			tileMarker.put(Long.valueOf(samplesToLoad
-					+ samplesToThrowAwayBeforeFirstValidSample), new Long(
-					imageIS.getStreamPosition()));
+			// scan to beginning of next non-whitespace character - this needs to be exact so that skipping routine
+			// works correctly...
+			while ((ch = imageIS.read()) != -1 && isWhitespace(ch)) {
+			}
+			// ... now remember the position *before* the non w/s character
+			long streamPositionToCache = imageIS.getStreamPosition() - 1;
+			long samplePositionToCache = samplesRead + tileBeginsAtSampleIndex;
+
+			if (LOGGER.getLevel() == Level.FINEST) {
+				LOGGER.finest(String.format("[reading] Finished reading, marking sample position %d will begin at stream position %d%n",
+					samplePositionToCache,
+					streamPositionToCache));
+			}
+
+			tileMarker.put(samplePositionToCache, streamPositionToCache);
 		}
 		StringToDouble.release(doubleConverter);
 		return raster;
 	}
-
-	// /**
-	// * Writes the raster
-	// *
-	// * @param iterator
-	// * A <code>RectIterator</code> built on Lines and Pixels of the
-	// * Raster which need to be written.
-	// * @param noDataDouble
-	// * the value representing noData.
-	// * @param noDataMarker
-	// * a <code>String</code> which need to be printed when founding
-	// * a noData value
-	// * @throws IOException
-	// */
-	//
-	// public void writeRaster(RectIter iterator, Double noDataDouble,
-	// String noDataMarker) throws IOException {
-	//
-	// final boolean hasListeners = writer.isHasListeners();
-	// final int pixelsToWrite = hasListeners ? (writer.getNColumns() * writer
-	// .getNRows()) : 0;
-	// int pixelsWritten = 0;
-	// int perc = 0;
-	// int iPerc = 1;
-	//
-	// if (hasListeners && abortRequired) {
-	// return;
-	// }
-	//
-	// double sample;
-	// byte[] noDataMarkerBytes = noDataMarker.getBytes();
-	// byte[] newLineBytes = newline.getBytes();
-	// final NumberToByteArray ntba = new NumberToByteArray();
-	// final FastByteArrayWrapper fba = new FastByteArrayWrapper();
-	// while (!iterator.finishedLines()) {
-	// while (!iterator.finishedPixels()) {
-	// sample = iterator.getSampleDouble();
-	// pixelsWritten++;
-	// if (hasListeners) {
-	// perc = (int) (((pixelsWritten * 1.0f) / pixelsToWrite) * 1000);
-	//
-	// if ((perc % (25 * iPerc) == 0) && (int) perc > 0) {
-	// if (abortRequired) {
-	// return;
-	// }
-	// writer.processImageProgress(perc / 10f);
-	// iPerc++;
-	// }
-	// }
-	//
-	// // writing the sample
-	// if ((noDataDouble.compareTo(new Double(sample)) != 0)
-	// && !Double.isNaN(sample) && !Double.isInfinite(sample)) {
-	// fba.reset();
-	// ntba.append(fba, sample);
-	// imageOS.write(fba.getByteArray(), 0, fba.size());
-	// } else {
-	// imageOS.write(noDataMarkerBytes);
-	// }
-	//
-	// iterator.nextPixel();
-	//
-	// // space
-	// if (!iterator.finishedPixels())
-	// imageOS.write(32);
-	//
-	// }
-	//
-	// imageOS.write(newLineBytes);
-	// iterator.nextLine();
-	// iterator.startPixels();
-	//
-	// }
-	//
-	// }
 
 	/**
 	 * Writes the raster
@@ -1120,12 +1099,12 @@ public abstract class AsciiGridRaster {
 			// Eat spaces, tabs carriage return, line feeds.
 			//
 			// ///////////////////////////////////////////////////////////////////
-			if (b == 32 || b == 10 || b == 13 || b == 9) {
-				if (started)
+			if (isWhitespace(b)) {
+				if (started) {
 					break;
-				else
+				} else {
 					continue;
-
+				}
 			}
 			// only digits, '+', 'e', 'E', '*', '.' and ',' are allowed
 			if ((b < 48 || b > 57) && b != 43 && b != 45 && b != 69 && b != 101
@@ -1154,6 +1133,13 @@ public abstract class AsciiGridRaster {
 		retVal = doubleConverter.compute();
 		doubleConverter.reset();
 		return retVal;
+	}
+
+	/**
+	 * @return true if ch is a space, a tab, new line or carriage return
+	 */
+	private boolean isWhitespace(int ch) {
+		return ch == 32 || ch == 10 || ch == 13 || ch == 9;
 	}
 
 	/**
