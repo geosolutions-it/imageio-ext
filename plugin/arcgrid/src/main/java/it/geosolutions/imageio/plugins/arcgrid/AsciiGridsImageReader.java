@@ -831,7 +831,7 @@ public final class AsciiGridsImageReader extends ImageReader {
 	 * Resets this {@link AsciiGridsImageReader}.
 	 */
 	public void reset() {
-		dispose();
+		imageInputStream = null;
 		super.setInput(null, false, false);
 		rasterReader = null;
 		tileHeight = tileWidth = -1;

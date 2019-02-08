@@ -18,6 +18,7 @@ package it.geosolutions.imageio.plugins.arcgrid;
 
 import it.geosolutions.imageio.plugins.arcgrid.AsciiGridsImageMetadata.RasterSpaceType;
 import it.geosolutions.imageio.plugins.arcgrid.raster.AsciiGridRaster;
+import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
@@ -31,9 +32,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 
+import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
@@ -87,27 +90,21 @@ public class AsciiGridTest extends TestCase {
 		gs.close();
 
     }
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
-
-        // Read a file using subSampling and sourceRegion settings
-        suite.addTest(new AsciiGridTest("testReadRegionAndMetadata"));
-
-        // Read a GRASS, compressed (GZ) file
-        suite.addTest(new AsciiGridTest("testReadGrassGZ"));
-
-        // Read an ArcGrid file and write it back to another file
-        suite.addTest(new AsciiGridTest("testReadWrite"));
-
-        // Read an ESRI ArcGrid file and write it back to GRASS
-        suite.addTest(new AsciiGridTest("testReadAsEsriAndWriteAsGrass"));
-
-        return suite;
-    }
-
-    public static void main(java.lang.String[] args) {
-        junit.textui.TestRunner.run(suite());
+    
+    public void testSetInputTwice() throws IOException {
+        final File testFilesDirectory = TestData.file(this, ".");
+        final File dem = new File(testFilesDirectory, "dem.asc");
+        FileImageInputStreamExtImpl stream = new FileImageInputStreamExtImpl(dem);
+        ImageReader reader = ImageIO.getImageReaders(stream).next();
+        assertTrue(reader instanceof AsciiGridsImageReader);
+        try {
+            // used to throw an exception
+            reader.setInput(stream);
+            reader.setInput(stream);
+            reader.read(0);
+        } finally {
+            reader.dispose();
+        }
     }
 
     /**
