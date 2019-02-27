@@ -17,12 +17,11 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
-      <dependency>
-          <groupId>org.gdal</groupId>
-          <artifactId>gdal</artifactId>
-          <version>${gdal.version}</version>
-      </dependency>
-      <dependency>
+    <dependency>
+      <groupId>it.geosolutions.imageio-ext</groupId>
+      <artifactId>imageio-ext-gdal-bindings</artifactId>
+    </dependency>
+    <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-streams</artifactId>
       <version>${project.version}</version>
