@@ -624,8 +624,8 @@ public final class GDALUtilities {
                         // GDAL version >= 2.3.0
                         System.loadLibrary("gdalalljni");
                     } catch (UnsatisfiedLinkError e1) {
-                        if (LOGGER.isLoggable(Level.FINE)) {
-                            LOGGER.log(Level.FINE,"Failed to load the GDAL native libs from \"gdalalljni\". " +
+                        if (LOGGER.isLoggable(Level.INFO)) {
+                            LOGGER.log(Level.INFO,"Failed to load the GDAL native libs from \"gdalalljni\". " +
                                     "Falling back to \"gdaljni\".\n" +
                                     e1.toString());
                         }
@@ -636,17 +636,6 @@ public final class GDALUtilities {
                     if (versionInfo != null && versionInfo.trim().length() > 0) {
                         if (LOGGER.isLoggable(Level.INFO))
                             LOGGER.info("GDAL Native Library loaded (version: " + versionInfo + ")");
-                    }
-
-                    if (LOGGER.isLoggable(Level.FINE)) {
-                        int driverCount = gdal.GetDriverCount();
-                        List<String> drivers = new ArrayList<>();
-                        for (int i = 0; i < driverCount; i++) {
-                            Driver driver = gdal.GetDriver(i);
-                            drivers.add(driver.getShortName());
-                            driver.delete();
-                        }
-                        LOGGER.fine("Formats available in GDAL (not all exposed by imageio-ext): " +  drivers);
                     }
 
                     // //
