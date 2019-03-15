@@ -1423,9 +1423,10 @@ public class JP2KKakaduImageWriter extends ImageWriter {
             // Setting channels
             Jp2_channels channels = target.Access_channels();
             channels.Init(3);
-            channels.Set_colour_mapping(0, 0, 0);
-            channels.Set_colour_mapping(1, 0, 1);
-            channels.Set_colour_mapping(2, 0, 2);
+            // TODO: check the two new arguments, thought 0 seems to be the correct default for both 
+            channels.Set_colour_mapping(0, 0, 0, 0, 0);
+            channels.Set_colour_mapping(1, 0, 1, 0, 0);
+            channels.Set_colour_mapping(2, 0, 2, 0, 0);
         }
 
         // Finish the initialization by writing the header

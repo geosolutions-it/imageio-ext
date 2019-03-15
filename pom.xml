@@ -16,7 +16,7 @@
     <interactive.tests>false</interactive.tests>
     <test.maxHeapSize>512M</test.maxHeapSize>
     <gdal.version>1.9.2</gdal.version>
-    <kakadu.version>5.2.6</kakadu.version>
+    <kakadu.version>7.10.7</kakadu.version>
     <java.awt.headless>true</java.awt.headless>
     <gdal.version>2.2.0</gdal.version>  
   </properties>

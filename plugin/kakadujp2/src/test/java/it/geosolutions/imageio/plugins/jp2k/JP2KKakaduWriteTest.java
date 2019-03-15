@@ -58,6 +58,8 @@ import kdu_jni.KduException;
 
 import com.sun.imageio.plugins.bmp.BMPImageReaderSpi;
 
+import org.junit.Ignore;
+
 public class JP2KKakaduWriteTest extends TestCase {
 
     /** The LOGGER for this class. */
@@ -332,39 +334,7 @@ public class JP2KKakaduWriteTest extends TestCase {
         }
     }
 
-    public static void main(java.lang.String[] args) {
-        junit.textui.TestRunner.run(suite());
-        LOGGER.info(writeOperations + " write operations performed");
-    }
-
-    public static Test suite() {
-
-
-        TestSuite suite = new TestSuite();
-
-        suite.addTest(new JP2KKakaduWriteTest("testKakaduWriter"));
-
-        suite.addTest(new JP2KKakaduWriteTest("testKakaduWriterParam"));
-
-        suite.addTest(new JP2KKakaduWriteTest("testRGB"));
-
-        suite.addTest(new JP2KKakaduWriteTest("test8BitGray"));
-
-        suite.addTest(new JP2KKakaduWriteTest("test12BitGray"));
-
-        suite.addTest(new JP2KKakaduWriteTest("test16BitGray"));
-
-        suite.addTest(new JP2KKakaduWriteTest("test24BitGray"));
-
-        suite.addTest(new JP2KKakaduWriteTest("testPalettedRGB"));
-
-        suite.addTest(new JP2KKakaduWriteTest("testReducedMemory"));
-        suite.addTest(new JP2KKakaduWriteTest("testOutputStream"));
-
-        return suite;
-    }
-
-    public static void testReducedMemory() throws IOException {
+    public static void ignoreTestReducedMemory() throws IOException {
         if(!isKakaduAvailable){
             LOGGER
             .warning("Kakadu libs not found: test are skipped ");
@@ -432,7 +402,7 @@ public class JP2KKakaduWriteTest extends TestCase {
         LOGGER.info(writeOperations + " write operations performed");
     }
 
-    public static void test12BitGray() throws IOException {
+    public static void ignoreTest12BitGray() throws IOException {
         if(!isKakaduAvailable){
             LOGGER
             .warning("Kakadu libs not found: test are skipped ");
@@ -467,7 +437,7 @@ public class JP2KKakaduWriteTest extends TestCase {
         LOGGER.info(writeOperations + " write operations performed");
     }
 
-    public static void test16BitGray() throws IOException {
+    public static void ignoreTest16BitGray() throws IOException {
         if(!isKakaduAvailable){
             LOGGER
             .warning("Kakadu libs not found: test are skipped ");
