@@ -71,7 +71,9 @@ import com.sun.media.jai.operator.ImageReadDescriptor;
  */
 @SuppressWarnings("deprecation")
 public class ImageIOUtilities {
-    
+
+    private static boolean SKIP_EXTERNAL_FILES_LOOKUP = Boolean.getBoolean("it.geosolutions.skip.external.files.lookup");
+
     static final int MAX_SUBSAMPLING_FACTOR = Integer.MAX_VALUE;
 	static final int MAX_LEVELS = 31;
 	/**
@@ -958,5 +960,9 @@ public class ImageIOUtilities {
                 }
             }
         }
+    }
+
+    public static boolean isSkipExternalFilesLookup() {
+        return SKIP_EXTERNAL_FILES_LOOKUP;
     }
 }
