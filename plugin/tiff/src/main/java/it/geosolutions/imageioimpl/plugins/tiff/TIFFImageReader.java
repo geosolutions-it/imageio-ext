@@ -83,6 +83,8 @@ import it.geosolutions.imageio.plugins.tiff.TIFFDecompressor;
 import it.geosolutions.imageio.plugins.tiff.TIFFField;
 import it.geosolutions.imageio.plugins.tiff.TIFFImageReadParam;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
+
 import org.w3c.dom.Node;
 
 import javax.imageio.*;
@@ -102,8 +104,6 @@ import java.util.*;
 import java.util.List;
 
 public class TIFFImageReader extends ImageReader {
-
-    final static boolean SKIP_EXTERNAL_FILES_LOOKUP = Boolean.getBoolean("it.geosolutions.skip.external.files.lookup");
 
     /**
      * This class can be used to cache basic information about a tiff page.
@@ -401,7 +401,7 @@ public class TIFFImageReader extends ImageReader {
             }
             this.stream = (ImageInputStream)input;
             // Check for external masks/overviews
-            if (!SKIP_EXTERNAL_FILES_LOOKUP && input instanceof FileImageInputStreamExtImpl) {
+            if (!ImageIOUtilities.isSkipExternalFilesLookup() && input instanceof FileImageInputStreamExtImpl) {
 
                 FileImageInputStreamExtImpl stream = (FileImageInputStreamExtImpl) input;
                 // Getting File path
@@ -2151,4 +2151,5 @@ public class TIFFImageReader extends ImageReader {
         this.imageReadParam = null;
         this.stream = null;
     }
+
 }
