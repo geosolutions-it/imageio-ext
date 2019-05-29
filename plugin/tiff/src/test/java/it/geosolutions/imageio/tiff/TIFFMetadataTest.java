@@ -1,19 +1,33 @@
 package it.geosolutions.imageio.tiff;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
+import java.awt.image.RenderedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.imageio.stream.FileImageInputStream;
+
+import it.geosolutions.imageio.plugins.tiff.PrivateTIFFTagSet;
+import it.geosolutions.imageio.plugins.tiff.TIFFField;
 import it.geosolutions.imageio.plugins.tiff.TIFFImageReadParam;
 import it.geosolutions.imageioimpl.plugins.tiff.TIFFIFD;
 import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageMetadata;
 import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReader;
 import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
+import it.geosolutions.imageioimpl.plugins.tiff.gdal.GDALMetadata;
+import it.geosolutions.imageioimpl.plugins.tiff.gdal.GDALMetadataParser;
 import it.geosolutions.resources.TestData;
-import java.awt.image.RenderedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.imageio.stream.FileImageInputStream;
-import org.junit.Test;
 
 public class TIFFMetadataTest {
 	/** Logger used for recording any possible exception */
@@ -91,4 +105,65 @@ public class TIFFMetadataTest {
 			}
 		}
 	}
+
+    @Test
+    public void testGDALMetadataLowLevel() throws Exception {
+        // Selection of the input file from the TestData directory
+        File inputFile = TestData.file(this, "scaleOffset.tif");
+        // Instantiation of the read-params
+        final TIFFImageReadParam param = new TIFFImageReadParam();
+        // Instantiation of the file-reader
+        // Creation of the file input stream associated to the selected file
+        try (FileImageInputStream stream = new FileImageInputStream(inputFile)) {
+            TIFFImageReader reader =
+                    (TIFFImageReader) new TIFFImageReaderSpi().createReaderInstance();
+            reader.setInput(stream);
+
+            // Reading of the associated metadata
+            TIFFImageMetadata metadata = (TIFFImageMetadata) reader.getImageMetadata(0);
+            assertNotNull(metadata);
+
+            // check the GDAL metadata tag has been read and has the expected content
+            TIFFField gdalMetadata = metadata.getTIFFField(PrivateTIFFTagSet.TAG_GDAL_METADATA);
+            assertNotNull(gdalMetadata);
+            String xml = gdalMetadata.getAsString(0);
+
+            // check it parses
+            GDALMetadata parsed = GDALMetadataParser.parse(xml);
+            List<GDALMetadata.Item> items = parsed.getItems();
+
+            // Checking one item to double check it's as expected
+            assertEquals("Band_1", items.get(0).getName());
+            assertEquals("Max Band_1", items.get(0).getValue());
+            assertNull(items.get(0).getSample());
+            assertNull(items.get(0).getRole());
+        }
+    }
+
+    @Test
+    public void testGDALMetadataHighLevel() throws Exception {
+        // Selection of the input file from the TestData directory
+        File inputFile = TestData.file(this, "scaleOffset.tif");
+        // Instantiation of the read-params
+        final TIFFImageReadParam param = new TIFFImageReadParam();
+        // Instantiation of the file-reader
+        // Creation of the file input stream associated to the selected file
+        try (FileImageInputStream stream = new FileImageInputStream(inputFile)) {
+            TIFFImageReader reader =
+                    (TIFFImageReader) new TIFFImageReaderSpi().createReaderInstance();
+            reader.setInput(stream);
+
+            // Reading of the associated metadata
+            TIFFImageMetadata metadata = (TIFFImageMetadata) reader.getImageMetadata(0);
+            assertNotNull(metadata);
+
+            // check the GDAL metadata tag has been read and has the expected content
+            Double[] expectedScales = new Double[6];
+            Arrays.fill(expectedScales, 0.000100000000000000005);
+            assertArrayEquals(expectedScales, metadata.getScales());
+            Double[] expectedOffsets = new Double[6];
+            Arrays.fill(expectedOffsets, 0d);
+            assertArrayEquals(expectedOffsets, metadata.getOffsets());
+        }
+    }
 }
