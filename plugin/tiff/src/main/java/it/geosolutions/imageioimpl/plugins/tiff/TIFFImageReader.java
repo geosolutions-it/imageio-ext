@@ -84,6 +84,8 @@ import it.geosolutions.imageio.plugins.tiff.TIFFField;
 import it.geosolutions.imageio.plugins.tiff.TIFFImageReadParam;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
+import it.geosolutions.imageioimpl.plugins.tiff.gdal.GDALMetadata;
+import it.geosolutions.imageioimpl.plugins.tiff.gdal.GDALMetadataParser;
 
 import org.w3c.dom.Node;
 
@@ -102,8 +104,12 @@ import java.lang.ref.SoftReference;
 import java.nio.ByteOrder;
 import java.util.*;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class TIFFImageReader extends ImageReader {
+
+    private final static Logger LOGGER = Logger.getLogger(TIFFImageReader.class.toString());
 
     /**
      * This class can be used to cache basic information about a tiff page.
@@ -135,7 +141,9 @@ public class TIFFImageReader extends ImageReader {
                 int samplesPerPixel, 
                 int[] sampleFormat, 
                 int[] extraSamples,
-                Double noData) {
+                Double noData,
+                Double[] offsets,
+                Double[] scales) {
             this.imageMetadata = new SoftReference<TIFFImageMetadata>(imageMetadata);
             this.bigtiff = bigtiff;
             this.bitsPerSample = bitsPerSample;
@@ -153,6 +161,8 @@ public class TIFFImageReader extends ImageReader {
             this.sampleFormat = sampleFormat;
             this.extraSamples = extraSamples;
             this.noData = noData;
+            this.offsets = offsets;
+            this.scales = scales;
         }
 
         /* (non-Javadoc)
@@ -178,6 +188,8 @@ public class TIFFImageReader extends ImageReader {
             result = prime * result + tileOrStripHeight;
             result = prime * result + tileOrStripWidth;
             result = prime * result + width;
+            result = prime * result + Arrays.hashCode(offsets);
+            result = prime * result + Arrays.hashCode(scales);
             return result;
         }
 
@@ -228,10 +240,13 @@ public class TIFFImageReader extends ImageReader {
                 return false;
             if (width != other.width)
                 return false;
+            if (!Arrays.equals(offsets, other.offsets))
+                return false;
+            if (!Arrays.equals(scales, other.scales))
+                return false;
+
             return true;
         }
-
-        
 
         /* (non-Javadoc)
          * @see java.lang.Object#toString()
@@ -247,7 +262,10 @@ public class TIFFImageReader extends ImageReader {
                     + ", sampleFormat=" + Arrays.toString(sampleFormat) + ", samplesPerPixel="
                     + samplesPerPixel + ", tileOrStripHeight=" + tileOrStripHeight
                     + ", tileOrStripWidth=" + tileOrStripWidth + ", width=" + width 
-                    + ", noData=" + noData + "]";
+                    + ", noData=" + noData
+                    + ", offsets=" + Arrays.toString(offsets)
+                    + ", scales=" + Arrays.toString(scales)
+                    + "]";
         }
 
         private boolean bigtiff = false;
@@ -279,7 +297,11 @@ public class TIFFImageReader extends ImageReader {
         private int[] extraSamples;
 
         private Double noData = null; //Using a Double to allow null value.
-     
+
+        private Double[] scales;
+
+        private Double[] offsets;
+
     }
 
     private static final boolean DEBUG = false; // XXX 'false' for release!!!
@@ -368,6 +390,10 @@ public class TIFFImageReader extends ImageReader {
     private boolean isImageTiled= false;
 
     protected Double noData = null;
+
+    private Double[] scales;
+
+    private Double[] offsets;
 
     // BAND MASK RELATED FIELDS
     /** {@link DatasetLayout} implementation containing info about overviews and masks*/
@@ -849,7 +875,7 @@ public class TIFFImageReader extends ImageReader {
 
             this.imageMetadata = new TIFFImageMetadata(tagSets);
             imageMetadata.initializeFromStream(stream, ignoreMetadata, bigtiff);
-            // we got to reinitialized!!!
+            // we got to reinitialize!!!
             initialized = false;
         } catch (IIOException iioe) {
             throw iioe;
@@ -1265,6 +1291,28 @@ public class TIFFImageReader extends ImageReader {
             }
         }
 
+        // scales and offsets, if any
+        f = imageMetadata.getTIFFField(PrivateTIFFTagSet.TAG_GDAL_METADATA);
+        this.offsets = null;
+        this.scales = null;
+        if (f != null) {
+            // guard with try/catch to avoid regressions on upgrade (e.g., files that used to
+            // read fine that fail to read after an upgrade)
+            try {
+                String xml = f.getAsString(0);
+                GDALMetadata gdalMetadata = GDALMetadataParser.parse(xml);
+                // parse both before assigning to fields, to avoid partially setup data structure
+                Double[] offsets = gdalMetadata.getOffsets(numBands);
+                Double[] scales = gdalMetadata.getScales(numBands);
+                this.offsets = offsets;
+                this.scales = scales;
+            } catch(Exception e) {
+                if (LOGGER.isLoggable(Level.FINE)) {
+                    LOGGER.log(Level.FINE, "Skipping GDAL metadata parsing due to errors", e);
+                }
+            }
+        }
+        
         // signal that this image is initialized
         initialized = true;
         
@@ -1288,7 +1336,9 @@ public class TIFFImageReader extends ImageReader {
                         samplesPerPixel,
                         sampleFormat,
                         extraSamples,
-                        noData));
+                        noData,
+                        offsets,
+                        scales));
 
     }
 
@@ -1397,6 +1447,10 @@ public class TIFFImageReader extends ImageReader {
         im.setFromTree(TIFFImageMetadata.nativeMetadataFormatName, root);
         if (noData != null) {
             im.setNoData(new double[] {noData, noData});
+        }
+        if (scales != null && offsets != null) {
+            im.setScales(scales);
+            im.setOffsets(offsets);
         }
         return im;
     }
