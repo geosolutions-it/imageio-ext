@@ -40,6 +40,7 @@ import javax.imageio.spi.ImageReaderWriterSpi;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.spi.ServiceRegistry;
 
+import kdu_jni.Jp2_channels;
 import kdu_jni.KduException;
 import kdu_jni.Kdu_global;
 import kdu_jni.Kdu_message_formatter;
@@ -242,6 +243,14 @@ public class KakaduUtilities {
         try {
             System.loadLibrary("kdu_jni");
             available = true;
+            String nativeVersion = getKakaduNativeLibVersion();
+            String jniVersion = getKakaduJniLibVersion();
+            if (jniVersion.equalsIgnoreCase(nativeVersion)) {
+                LOGGER.info(String.format("Kakadu native library: %s, JNI library: %s", nativeVersion, jniVersion));
+            } else {
+                LOGGER.warning(String.format("Kakadu JNI/native version mismatch: native library: %s, JNI library: %s",
+                        nativeVersion, jniVersion));
+            }
         } catch (UnsatisfiedLinkError e) {
             if (LOGGER.isLoggable(Level.WARNING)){
             	 LOGGER.warning("Failed to load the Kakadu native libs. This is not a problem unless you need to use the Kakadu plugin: it won't be enabled. " + e.toString());
@@ -330,5 +339,52 @@ public class KakaduUtilities {
         }
 
         return builder.toString();
+    }
+
+    /**
+     * @return version returned by JNI Kakadu library in the format
+     *         {@code v<major>.<minor>.<patch>}, should not differ from the
+     *         {@link #getKakaduNativeLibVersion() native library version} to ensure
+     *         compatibility between the java bindings and the native library
+     */
+    public static String getKakaduJniLibVersion() {
+        String v = Kdu_global.KDU_CORE_VERSION;
+        return v;
+    }
+
+    /**
+     * @return Major version returned by the JNI Kakadu library (e.g. from
+     *         {@code v7.10.6} returns {@code 7})
+     */
+    public static int getKakaduJniMajorVersion() {
+        String versionString = getKakaduJniLibVersion();
+        return parseMajorVersion(versionString);
+    }
+
+    /**
+     * @return version returned by the native Kakadu library in the format
+     *         {@code v<major>.<minor>.<patch>}, should not differ from the
+     *         {@link #getKakaduJniLibVersion() JNI library version} to ensure
+     *         compatibility between the java bindings and the native library
+     */
+    public static String getKakaduNativeLibVersion() {
+        String kduCoreVersion;
+        try {
+            kduCoreVersion = Kdu_global.Kdu_get_core_version();
+        } catch (KduException e) {
+            throw new RuntimeException("Error querying kakadu version ", e);
+        }
+        return kduCoreVersion;
+    }
+    
+    /**
+     * Gets the major version from a kakadu version string (e.g. from
+     * {@code v7.10.6} returns {@code 7})
+     */
+    private static int parseMajorVersion(String versionString) {
+        String majorString = versionString.substring(0, versionString.indexOf('.'));
+        majorString = majorString.replaceAll("v", "");
+        int majorVersion = Integer.parseInt(majorString);
+        return majorVersion;
     }
 }
