@@ -326,9 +326,6 @@ public class JP2KKakaduWriteTest {
     }
 
     public @Test void testReducedMemory() throws IOException {
-        Assume.assumeTrue("REVISIT: This test fails with this Kakadu version:" + majorVersion + ": test skipped",
-                majorVersion < 7);
-
         System.setProperty(JP2KKakaduImageWriter.MAX_BUFFER_SIZE_KEY, "64K");
         final ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
         ColorModel cm = new ComponentColorModel(cs, new int[] { 16 }, false,
@@ -387,9 +384,6 @@ public class JP2KKakaduWriteTest {
     }
 
     public @Test void test12BitGray() throws IOException {
-        Assume.assumeTrue("REVISIT: This test fails with this Kakadu version:" + majorVersion + ": test skipped",
-                majorVersion < 7);
-
         final ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
         ColorModel cm = new ComponentColorModel(cs, new int[] { 12 }, false,
                 false, Transparency.OPAQUE, DataBuffer.TYPE_USHORT);
@@ -420,9 +414,6 @@ public class JP2KKakaduWriteTest {
     }
 
     public @Test void test16BitGray() throws IOException {
-        Assume.assumeTrue("REVISIT: This test fails with this Kakadu version:" + majorVersion + ": test skipped",
-                majorVersion < 7);
-
         final ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
         ColorModel cm = new ComponentColorModel(cs, new int[] { 16 }, false,
                 false, Transparency.OPAQUE, DataBuffer.TYPE_USHORT);

@@ -1117,7 +1117,15 @@ public class JP2KKakaduImageWriter extends ImageWriter {
         params.Parse_string("Clayers=" + qualityLayers);
         
         if (dataType == DataBuffer.TYPE_SHORT || dataType == DataBuffer.TYPE_USHORT ){
-            params.Parse_string("Qstep=0.0000152588");
+            // this setting fails with v7.x. Omiting it shouldn't be a problem though,
+            // according to <http://kakadusoftware.com/version-notes/version-7-10> :
+            // f. There are now fewer occasions when kdu_compress will warn about
+            // potentially insufficient quantization precision if Qstep is not explicitly
+            // specified, since the default policy now automatically configures Qstep to
+            // take into account the channel bit-depth of the source material.
+            if(KakaduUtilities.getKakaduJniMajorVersion() < 7) {
+                params.Parse_string("Qstep=0.0000152588");
+            }
         }
 
         if (qGuard > 0) {
