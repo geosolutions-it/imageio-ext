@@ -1422,10 +1422,9 @@ public class JP2KKakaduImageWriter extends ImageWriter {
 
             // Setting channels
             Jp2_channels channels = target.Access_channels();
-            channels.Init(3);
-            channels.Set_colour_mapping(0, 0, 0);
-            channels.Set_colour_mapping(1, 0, 1);
-            channels.Set_colour_mapping(2, 0, 2);
+            // Delegate to this utility method to handle JNI lib version signature
+            // differences in Jp2_channels..Set_colour_mapping()
+            KakaduUtilities.initializeRGBChannels(channels);
         }
 
         // Finish the initialization by writing the header

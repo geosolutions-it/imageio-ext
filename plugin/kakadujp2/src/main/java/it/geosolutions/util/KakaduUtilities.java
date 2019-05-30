@@ -17,6 +17,7 @@
 package it.geosolutions.util;
 
 import it.geosolutions.imageio.plugins.jp2k.JP2KKakaduImageReadParam;
+import it.geosolutions.imageio.plugins.jp2k.JP2KKakaduImageWriter;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -27,6 +28,8 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -386,5 +389,73 @@ public class KakaduUtilities {
         majorString = majorString.replaceAll("v", "");
         int majorVersion = Integer.parseInt(majorString);
         return majorVersion;
+    }
+
+    /**
+     * Prepares the channel for RGB writing handling the binary incompatibility
+     * between versions of the JNI library in
+     * {@link Jp2_channels#Set_colour_mapping}.
+     * <p>
+     * {@link Jp2_channels#Set_colour_mapping} in library version up to {@code v7.x}
+     * has three arguments
+     * ({@code int _colour_idx, int _codestream_component, int _lut_idx}). From
+     * {@code v7.x} this method has two additional arguments:
+     * ({@code int _codestream_idx, int _data_format}).
+     * <p>
+     * So far that's the only binary incompatibility found when dealing with Kakadu
+     * prior to 7.x and 7.x+. When/if more incompatibilities are found (probably
+     * with newer library versions in the future), a different approach may be
+     * needed to handle them.
+     * <p>
+     * For the time being, this method is used by {@link JP2KKakaduImageWriter}, and
+     * uses reflection to invoke {@code Jp2_channels.Set_colour_mapping(...)} with
+     * the correct number of arguments based on the
+     * {@link #getKakaduJniMajorVersion() major version} of the JNI library being
+     * used.
+     * 
+     * @param channels the channels object to initialize for RGB writing
+     * @throws KduException     propagated from the invocation of
+     *                          {@link Jp2_channels#Set_colour_mapping}
+     * @throws RuntimeException if an error occurs reflectivelly acquiring the
+     *                          {@code Set_colour_mapping} method or invoking it.
+     */
+    public static void initializeRGBChannels(Jp2_channels channels) throws KduException {
+        final int numColours = 3;
+        channels.Init(numColours);
+        // channels.Set_colour_mapping(0, 0, 0);
+        // channels.Set_colour_mapping(1, 0, 1);
+        // channels.Set_colour_mapping(2, 0, 2);
+        Method setColourMapping;
+        Object[] args1;
+        Object[] args2;
+        Object[] args3;
+        final int major = getKakaduJniMajorVersion();
+        try {
+            if (major < 7) {
+                setColourMapping = Jp2_channels.class.getMethod("Set_colour_mapping", int.class, int.class, int.class);
+                //int _colour_idx, int _codestream_component, int _lut_idx
+                args1 = new Object[] { 0, 0, 0 };
+                args2 = new Object[] { 1, 0, 1 };
+                args3 = new Object[] { 2, 0, 2 };
+            } else {
+                setColourMapping = Jp2_channels.class.getMethod("Set_colour_mapping", int.class, int.class, int.class,
+                        int.class, int.class);
+               //int _colour_idx, int _codestream_component, int _lut_idx, int _codestream_idx, int _data_format
+                final int _codestream_idx = 0;
+                final int _data_format = 0;
+                args1 = new Object[] { 0, 0, 0, _codestream_idx, _data_format };
+                args2 = new Object[] { 1, 0, 1, _codestream_idx, _data_format };
+                args3 = new Object[] { 2, 0, 2, _codestream_idx, _data_format };
+            }
+        } catch (NoSuchMethodException | SecurityException e) {
+            throw new RuntimeException("Unable to acquire method Jp2_channels.Set_colour_mapping reflectively", e);
+        }
+        try {
+            setColourMapping.invoke(channels, args1);
+            setColourMapping.invoke(channels, args2);
+            setColourMapping.invoke(channels, args3);
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            throw new RuntimeException("Error calling Jp2_channels.Set_colour_mapping(...)", e);
+        }
     }
 }
