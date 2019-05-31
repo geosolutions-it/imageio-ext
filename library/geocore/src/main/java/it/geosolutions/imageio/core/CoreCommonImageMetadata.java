@@ -511,7 +511,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     // 
     // ////////////////////////////////////////////////////////////////////////
     public Double[] getMaximums() {
-        return (Double[]) maximums.clone();
+        return maximums == null ? null : maximums.clone();
     }
 
     protected void setMaximums(Double[] maximums) {
@@ -521,7 +521,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     }
 
     public Double[] getMinimums() {
-        return (Double[]) minimums.clone();
+        return minimums == null ? null : minimums.clone();
     }
 
     protected void setMinimums(Double[] minimums) {
@@ -531,7 +531,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     }
 
     public Double[] getNoDataValues() {
-        return (Double[]) noDataValues.clone();
+        return noDataValues == null ? null : noDataValues.clone();
     }
 
     protected void setNoDataValues(Double[] noDataValues) {
@@ -541,27 +541,27 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     }
 
     public Double[] getScales() {
-        return (Double[]) scales.clone();
+        return scales == null ? null : scales.clone();
     }
 
-    protected void setScales(Double[] scales) {
+    public void setScales(Double[] scales) {
         if (this.scales!=null)
             throw new UnsupportedOperationException("scales have already been defined");
         this.scales = scales;
     }
 
     public Double[] getOffsets() {
-        return (Double[]) offsets.clone();
+        return offsets == null ? null : offsets.clone();
     }
 
-    protected void setOffsets(final Double[] offsets) {
+    public void setOffsets(final Double[] offsets) {
         if (this.offsets!=null)
             throw new UnsupportedOperationException("offsets have already been defined");
         this.offsets = offsets;
     }
 
     public int[] getNumOverviews() {
-        return (int[]) numOverviews.clone();
+        return numOverviews == null ? null : numOverviews.clone();
     }
 
     protected void setNumOverviews(final int[] numOverviews) {
