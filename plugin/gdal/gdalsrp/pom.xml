@@ -4,11 +4,11 @@
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-gdalsrp</artifactId>
   <packaging>jar</packaging>
-  <version>1.3-SNAPSHOT</version>
+  <version>1.3.2</version>
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-gdal-plugin</artifactId>
-    <version>1.3-SNAPSHOT</version>
+    <version>1.3.2</version>
   </parent>
   <name>SRP Imaging Plugin that internally uses GDAL</name>
 </project>
