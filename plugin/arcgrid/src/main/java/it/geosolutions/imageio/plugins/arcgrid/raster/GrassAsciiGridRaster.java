@@ -303,6 +303,7 @@ final class GrassAsciiGridRaster extends AsciiGridRaster {
 		cellSizeY = Double.parseDouble(cellsizeStringY);
 		xllCellCoordinate = Double.parseDouble(xllString);
 		yllCellCoordinate = Double.parseDouble(yllString);
+		noData = Double.parseDouble(noDataValue);
 		final double west = xllCellCoordinate;
 		final double south = yllCellCoordinate;
 		final double north = south + (cellSizeY * nRows);

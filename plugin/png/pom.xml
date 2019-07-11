@@ -6,11 +6,11 @@
 	<parent>
 		<groupId>it.geosolutions.imageio-ext</groupId>
 		<artifactId>imageio-ext-plugin</artifactId>
-		<version>1.2-SENTBX</version>
+		<version>1.2.4-SNAPSHOT</version>
 	</parent>
 	<groupId>it.geosolutions.imageio-ext</groupId>
 	<artifactId>imageio-ext-png</artifactId>
-	<version>1.2-SENTBX</version>
+	<version>1.2.4-SNAPSHOT</version>
 	<name>imageio-ext-png</name>
 	<url>http://maven.apache.org</url>
 	<properties>
@@ -37,7 +37,6 @@
 			<groupId>it.geosolutions.imageio-ext</groupId>
 			<artifactId>imageio-ext-streams</artifactId>
 			<version>${project.version}</version>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

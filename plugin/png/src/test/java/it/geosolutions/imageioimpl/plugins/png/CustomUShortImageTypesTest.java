@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageioimpl.plugins.png;
 
+import it.geosolutions.imageio.plugins.png.PNGImageWriterSPI;
 import it.geosolutions.imageio.plugins.png.PNGWriter;
 
 import java.awt.Color;
@@ -28,8 +29,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -78,5 +82,15 @@ public class CustomUShortImageTypesTest {
         
         BufferedImage read = ImageIO.read(new ByteArrayInputStream(bos.toByteArray()));
         ImageAssert.assertImagesEqual(bi, read);
+        
+        // now using imagewriter interface
+        ImageWriter writer = new PNGImageWriterSPI().createWriterInstance();
+        writer.setOutput(bos);
+        ImageWriteParam wp = writer.getDefaultWriteParam();
+        wp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+        wp.setCompressionQuality(-quality);
+        writer.write(null, new IIOImage(bi, null, null), wp);
+        writer.dispose();
+        ImageAssert.assertImagesEqual(bi, ImageIO.read(new ByteArrayInputStream(bos.toByteArray())));
     }
 }

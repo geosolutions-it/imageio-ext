@@ -4,12 +4,12 @@
         <parent>
                 <groupId>it.geosolutions.imageio-ext</groupId>
                 <artifactId>imageio-ext-library</artifactId>
-                <version>1.2-SENTBX</version>
+                <version>1.2.4-SNAPSHOT</version>
         </parent>
         
         <groupId>org.libjpegturbo</groupId>
         <artifactId>turbojpeg-wrapper</artifactId>
-        <version>1.2.1.1</version>
+        <version>1.2.4-SNAPSHOT</version>
         <packaging>jar</packaging>
         <name>Libjpegturbo java wrapper</name>
 </project>

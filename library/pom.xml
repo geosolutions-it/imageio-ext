@@ -9,12 +9,12 @@
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext</artifactId>
-    <version>1.2-SENTBX</version>
+    <version>1.2.4-SNAPSHOT</version>
   </parent>
 
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-library</artifactId>
-  <version>1.2-SENTBX</version>
+  <version>1.2.4-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>GeoSolutions Image I/O-Extensions libraries</name>
 
@@ -32,7 +32,7 @@
     <module>geocore</module>
     <module>gdalframework</module>
     <module>imagereadmt</module>
-    <module>jmatio</module>
+<!--    <module>jmatio</module>-->
     <module>libjpegturbo</module>
   </modules>
 </project>

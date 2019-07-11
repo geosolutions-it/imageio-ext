@@ -16,7 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.turbojpeg;
 
-import it.geosolutions.imageio.utilities.ImageOutputStreamAdapter2;
+import static org.junit.Assume.assumeTrue;
+import it.geosolutions.imageio.stream.output.ImageOutputStreamAdapter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,7 +36,6 @@ import javax.imageio.stream.ImageOutputStream;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import static org.junit.Assume.*;
 
 public class JPEGWriterSpeedTest extends BaseTest {
 
@@ -198,7 +198,7 @@ public class JPEGWriterSpeedTest extends BaseTest {
                             : "RGBTurbo") + INPUT_FILE.getName() + ".jpeg";
             final File file = new File(fileName);
             os = new FileOutputStream(file);
-            out1 = new ImageOutputStreamAdapter2(os);
+            out1 = new ImageOutputStreamAdapter(os);
 
             
             TurboJpegImageWriter writer1 = (TurboJpegImageWriter) spi.createWriterInstance();
@@ -212,7 +212,7 @@ public class JPEGWriterSpeedTest extends BaseTest {
             for (int i = 0; i < LOOP; i++) {
                 // Startup write
                 os = new FileOutputStream(file);
-                out1 = new ImageOutputStreamAdapter2(os);
+                out1 = new ImageOutputStreamAdapter(os);
                 writer1 = (TurboJpegImageWriter) spi.createWriterInstance();
                 writer1.setOutput(out1);
                 writer1.write(null, new IIOImage(SAMPLE_IMAGE, null, null), param);

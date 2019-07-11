@@ -46,7 +46,7 @@
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
  *    http://java.net/projects/imageio-ext/
- *    (C) 2007 - 2009, GeoSolutions
+ *    (C) 2007 - 2016, GeoSolutions
  *    All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -164,7 +164,8 @@ public abstract class TIFFDecompressor {
     protected ImageReader reader;
 
     protected boolean useTurbo = false;
-    
+
+    protected Double noData = null;
     /**
      * The <code>IIOMetadata</code> object containing metadata for the
      * current image.
@@ -1883,6 +1884,10 @@ public abstract class TIFFDecompressor {
         this.colorConverter = colorConverter;
     }
 
+    public void setNoData(Double noData) {
+        this.noData = noData;
+    }
+    
     /**
      * Returns an <code>ImageTypeSpecifier</code> describing an image
      * whose underlying data array has the same format as the raw
@@ -2616,26 +2621,36 @@ public abstract class TIFFDecompressor {
                     if(DEBUG) {
                         System.out.println("Decoding bytes directly");
                     }
-                    decodeRaw(byteData, dstOffset,
-                              pixelBitStride, scanlineStride);
+                    if (offset == 0 && byteCount == 0 && noData != null ) {
+                        setEmptyTile(byteData, dstOffset, pixelBitStride, scanlineStride, noData.byteValue());
+                    } else {
+                        decodeRaw(byteData, dstOffset, pixelBitStride, scanlineStride);
+                    }
                 } else if (floatData != null) {
                     if(DEBUG) {
                         System.out.println("Decoding floats directly");
                     }
-                    decodeRaw(floatData, dstOffset,
-                              pixelBitStride, scanlineStride);
-                    
+                    if (offset == 0 && byteCount == 0 && noData != null ) {
+                        setEmptyTile(floatData, dstOffset, pixelBitStride, scanlineStride, noData.floatValue());
+                    } else {
+                        decodeRaw(floatData, dstOffset, pixelBitStride, scanlineStride);
+                    }
                 } 
                 else if (doubleData != null) {
                     if(DEBUG) {
                         System.out.println("Decoding doubles directly");
                     }
-                    decodeRaw(doubleData, dstOffset,
-                              pixelBitStride, scanlineStride);
+                    if (offset == 0 && byteCount == 0 && noData != null ) {
+                        setEmptyTile(doubleData, dstOffset, pixelBitStride, scanlineStride, noData.doubleValue());
+                    } else {
+                        decodeRaw(doubleData, dstOffset, pixelBitStride, scanlineStride);
+                    }
                 }
                 else {
                     if (shortData != null) {
-                        if(areSampleSizesEqual(sm) &&
+                        if (offset == 0 && byteCount == 0 && noData != null ) {
+                            setEmptyTile(shortData, dstOffset, pixelBitStride, scanlineStride, noData.shortValue());
+                        } else if(areSampleSizesEqual(sm) &&
                            sm.getSampleSize(0) == 16) {
                             if(DEBUG) {
                                 System.out.println("Decoding shorts directly");
@@ -2657,7 +2672,9 @@ public abstract class TIFFDecompressor {
                                          dstOffset, scanlineStride);
                         }
                     } else if (intData != null) {
-                        if(areSampleSizesEqual(sm) &&
+                        if (offset == 0 && byteCount == 0 && noData != null ) {
+                            setEmptyTile(intData, dstOffset, pixelBitStride, scanlineStride, noData.intValue());
+                        } else if(areSampleSizesEqual(sm) &&
                            sm.getSampleSize(0) == 32) {
                             if(DEBUG) {
                                 System.out.println("Decoding ints directly");
@@ -3020,7 +3037,60 @@ public abstract class TIFFDecompressor {
         }
     }
 
-	public void decodeRaw(double[] doubleData, int dstOffset,
+    private void setEmptyTile(byte[] byteData, int dstOffset, int bitsPerPixel, int scanlineStride, byte noData) {
+        for (int j = 0; j < srcHeight; j++) {
+            for (int i = 0; i < srcWidth; i++) {
+                byteData[dstOffset + i] = noData;
+            }
+            dstOffset += scanlineStride;
+        }
+    }
+
+    private void setEmptyTile(short[] shortData, int dstOffset, int bitsPerPixel, int scanlineStride, short noData) {
+        int bytesPerRow = (srcWidth*bitsPerPixel + 7)/8;
+        int shortsPerRow = bytesPerRow/2;
+        for (int j = 0; j < srcHeight; j++) {
+            for (int i = 0; i < shortsPerRow; i++) {
+                shortData[dstOffset + i] = noData;
+            }
+            dstOffset += scanlineStride;
+        }
+    }
+    
+    private void setEmptyTile(int[] intData, int dstOffset, int bitsPerPixel, int scanlineStride, int noData) {
+        int numBands = bitsPerPixel/32;
+        int intsPerRow = srcWidth*numBands;
+        for (int j = 0; j < srcHeight; j++) {
+            for (int i = 0; i < intsPerRow; i++) {
+                intData[dstOffset + i] = noData;
+            }
+            dstOffset += scanlineStride;
+        }
+    }
+
+    private void setEmptyTile(float[] floatData, int dstOffset, int bitsPerPixel, int scanlineStride, float noData) {
+        int numBands = bitsPerPixel/32;
+        int floatsPerRow = srcWidth*numBands;
+        for (int j = 0; j < srcHeight; j++) {
+            for (int i = 0; i < floatsPerRow; i++) {
+                floatData[dstOffset + i] = noData;
+            }
+            dstOffset += scanlineStride;
+        }
+    }
+
+    private void setEmptyTile(double[] doubleData, int dstOffset, int bitsPerPixel, int scanlineStride, double noData) {
+        int numBands = bitsPerPixel/64;
+        int doublesPerRow = srcWidth*numBands;
+        for (int j = 0; j < srcHeight; j++) {
+            for (int i = 0; i < doublesPerRow; i++) {
+                doubleData[dstOffset + i] = noData;
+            }
+            dstOffset += scanlineStride;
+        }
+    }
+
+    public void decodeRaw(double[] doubleData, int dstOffset,
 			int pixelBitStride, int scanlineStride) throws IOException {
         int numBands = pixelBitStride/64;
         int doublesPerRow = srcWidth*numBands;
@@ -3068,4 +3138,14 @@ public abstract class TIFFDecompressor {
             }
         }
     }
+
+    /**
+     * Disposes the decompressor, relasing the fields using the most memory
+     */
+    public void dispose() {
+        this.image = null;
+        this.rawImage = null;
+        this.colorMap = null;
+    }
+
 }

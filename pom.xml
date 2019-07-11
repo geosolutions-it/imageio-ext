@@ -25,7 +25,7 @@
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext</artifactId>
     <packaging>pom</packaging>
-    <version>1.2-SENTBX</version>
+    <version>1.2.4-SNAPSHOT</version>
     <name>GeoSolutions Image I/O-Extensions Library Root Project</name>
 
     <scm>
@@ -270,28 +270,16 @@
     <!--    java.net Maven2 Repository    -->
     <!--..................................-->
     <distributionManagement>
-        <!--<repository>-->
-            <!--<id>snap-repo-public</id>-->
-            <!--<name>Public Maven Repository for SNAP</name>-->
-            <!--<url>http://nexus.senbox.net/nexus/content/repositories/releases/</url>-->
-            <!--<uniqueVersion>false</uniqueVersion>-->
-        <!--</repository>-->
-        <!--<snapshotRepository>-->
-            <!--<id>snap-repo-public</id>-->
-            <!--<name>Public Maven Snapshot Repository for SNAP</name>-->
-            <!--<url>http://nexus.senbox.net/nexus/content/repositories/snapshots/</url>-->
-            <!--<uniqueVersion>false</uniqueVersion>-->
-        <!--</snapshotRepository>-->
         <repository>
-            <id>bc-mvn-repo-public</id>
-            <name>Public Maven Repository at Brockmann Consult</name>
-            <url>scp://www.brockmann-consult.de/var/www/www.brockmann-consult.de/mvn/os</url>
-            <uniqueVersion>false</uniqueVersion>
+            <id>snap-repo-public</id>
+            <name>Public Maven Repository for SNAP</name>
+            <url>https://snap-build-server.tilaa.cloud/nexus/repository/snap-maven-public/</url>
+            <uniqueVersion>true</uniqueVersion>
         </repository>
         <snapshotRepository>
-            <id>bc-mvn-repo-public</id>
-            <name>Public Maven Snapshot Repository at Brockmann Consult</name>
-            <url>scp://www.brockmann-consult.de/var/www/www.brockmann-consult.de/mvn/os</url>
+            <id>snap-repo-public</id>
+            <name>Public Maven Snapshot Repository for SNAP</name>
+            <url>https://snap-build-server.tilaa.cloud/nexus/repository/snap-maven-snapshot/</url>
             <uniqueVersion>false</uniqueVersion>
         </snapshotRepository>
     </distributionManagement>
@@ -335,21 +323,21 @@
     <!--                     Plugin Repositories                  -->
     <!-- ======================================================== -->
     <pluginRepositories>
-        <pluginRepository>
-            <id>codehaus.org</id>
-            <name>CodeHaus Plugin Snapshots</name>
-            <url>http://snapshots.repository.codehaus.org</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
+<!--        <pluginRepository>-->
+<!--            <id>codehaus.org</id>-->
+<!--            <name>CodeHaus Plugin Snapshots</name>-->
+<!--            <url>http://snapshots.repository.codehaus.org</url>-->
+<!--            <releases>-->
+<!--                <enabled>false</enabled>-->
+<!--            </releases>-->
+<!--            <snapshots>-->
+<!--                <enabled>true</enabled>-->
+<!--            </snapshots>-->
+<!--        </pluginRepository>-->
         <pluginRepository>
             <id>snap-repo-public</id>
             <name>Public Maven Repository for SNAP</name>
-            <url>http://nexus.senbox.net/nexus/content/repositories/public/</url>
+            <url>https://snap-build-server.tilaa.cloud/nexus/repository/snap-maven-public/</url>
             <releases>
                 <enabled>true</enabled>
                 <checksumPolicy>warn</checksumPolicy>
@@ -366,72 +354,68 @@
     <!--                         Repositories                     -->
     <!-- ======================================================== -->
     <repositories>
-        <repository>
-            <id>geosolutions</id>
-            <name>GeoSolutions libraries repository</name>
-            <url>http://maven.geo-solutions.it/</url>
-        </repository>
-        <repository>
-            <id>codehaus</id>
-            <name>Codehaus maven repository</name>
-            <url>http://repository.codehaus.org/</url>
-        </repository>
-        <repository>
-            <id>jboss</id>
-            <name>jboss</name>
-            <url>http://repository.jboss.org/maven2/</url>
-        </repository>
-        <repository>
-            <id>codehaus.org</id>
-            <name>CodeHaus Snapshots</name>
-            <url>http://snapshots.repository.codehaus.org</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>osgeo</id>
-            <name>Open Source Geospatial Foundation Repository</name>
-            <url>http://download.osgeo.org/webdav/geotools/</url>
-        </repository>
-        <repository>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <id>opengeo</id>
-            <name>OpenGeo Maven Repository</name>
-            <url>http://repo.opengeo.org</url>
-        </repository>
-        <repository>
-            <id>maven2-repository.dev.java.net</id>
-            <name>Java.net Repository for Maven</name>
-            <url>http://download.java.net/maven/2/</url>
-            <layout>default</layout>
-        </repository>
+<!--        <repository>-->
+<!--            <id>geosolutions</id>-->
+<!--            <name>GeoSolutions libraries repository</name>-->
+<!--            <url>http://maven.geo-solutions.it/</url>-->
+<!--        </repository>-->
+<!--        <repository>-->
+<!--            <id>codehaus</id>-->
+<!--            <name>Codehaus maven repository</name>-->
+<!--            <url>http://repository.codehaus.org/</url>-->
+<!--        </repository>-->
+<!--        <repository>-->
+<!--            <id>jboss</id>-->
+<!--            <name>jboss</name>-->
+<!--            <url>http://repository.jboss.org/maven2/</url>-->
+<!--        </repository>-->
+<!--        <repository>-->
+<!--            <id>codehaus.org</id>-->
+<!--            <name>CodeHaus Snapshots</name>-->
+<!--            <url>http://snapshots.repository.codehaus.org</url>-->
+<!--            <releases>-->
+<!--                <enabled>false</enabled>-->
+<!--            </releases>-->
+<!--            <snapshots>-->
+<!--                <enabled>true</enabled>-->
+<!--            </snapshots>-->
+<!--        </repository>-->
+<!--        <repository>-->
+<!--            <id>osgeo</id>-->
+<!--            <name>Open Source Geospatial Foundation Repository</name>-->
+<!--            <url>http://download.osgeo.org/webdav/geotools/</url>-->
+<!--        </repository>-->
+<!--        <repository>-->
+<!--            <snapshots>-->
+<!--                <enabled>true</enabled>-->
+<!--            </snapshots>-->
+<!--            <id>opengeo</id>-->
+<!--            <name>OpenGeo Maven Repository</name>-->
+<!--            <url>http://repo.opengeo.org</url>-->
+<!--        </repository>-->
+<!--        <repository>-->
+<!--            <id>maven2-repository.dev.java.net</id>-->
+<!--            <name>Java.net Repository for Maven</name>-->
+<!--            <url>http://download.java.net/maven/2/</url>-->
+<!--            <layout>default</layout>-->
+<!--        </repository>-->
         <repository>
             <id>snap-repo-public</id>
             <name>Public Maven Repository for SNAP</name>
-            <url>http://nexus.senbox.net/nexus/content/repositories/public/</url>
+            <url>https://snap-build-server.tilaa.cloud/nexus/repository/snap-maven-public/</url>
             <releases>
                 <enabled>true</enabled>
                 <checksumPolicy>warn</checksumPolicy>
             </releases>
             <snapshots>
-                <enabled>true</enabled>
+                <enabled>false</enabled>
                 <checksumPolicy>warn</checksumPolicy>
             </snapshots>
         </repository>
         <repository>
-            <id>bc-mvn-repo-http</id>
-            <name>Public Maven Repository at Brockmann Consult</name>
-            <url>http://www.brockmann-consult.de/mvn/os</url>
-            <releases>
-                <enabled>true</enabled>
-                <checksumPolicy>warn</checksumPolicy>
-            </releases>
+            <id>snap-repo-snapshot</id>
+            <name>Public Maven Snapshot Repository for SNAP</name>
+            <url>https://snap-build-server.tilaa.cloud/nexus/repository/snap-maven-snapshot/</url>
             <snapshots>
                 <enabled>true</enabled>
                 <checksumPolicy>warn</checksumPolicy>
@@ -501,11 +485,6 @@
             <dependency>
                 <groupId>it.geosolutions.imageio-ext</groupId>
                 <artifactId>imageio-ext-utilities</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>it.geosolutions.imageio-ext</groupId>
-                <artifactId>imageio-ext-test-data</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -626,38 +605,41 @@
                     <outputDirectory>${project.build.directory}/release</outputDirectory>
                 </configuration>
             </plugin>
+<!--            <plugin>-->
+<!--                <artifactId>maven-deploy-plugin</artifactId>-->
+<!--            </plugin>-->
         </plugins>
 
         <!-- ======================================================== -->
         <!--              Extensions settings for Deployment          -->
         <!-- ======================================================== -->
-        <extensions>
+<!--        <extensions>-->
 
 
-            <!--.............................................-->
-            <!--       GeoSolutions (using wagon ftp)       -->
-            <!--.............................................-->
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ftp</artifactId>
-                <version>1.0-beta-2</version>
-            </extension>
+<!--            &lt;!&ndash;.............................................&ndash;&gt;-->
+<!--            &lt;!&ndash;       GeoSolutions (using wagon ftp)       &ndash;&gt;-->
+<!--            &lt;!&ndash;.............................................&ndash;&gt;-->
+<!--            <extension>-->
+<!--                <groupId>org.apache.maven.wagon</groupId>-->
+<!--                <artifactId>wagon-ftp</artifactId>-->
+<!--                <version>1.0-beta-2</version>-->
+<!--            </extension>-->
 
-            <!--....................................-->
-            <!--        (using wagon webdav)        -->
-            <!--....................................-->
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-webdav</artifactId>
-                <version>1.0-beta-2</version>
-            </extension>
+<!--            &lt;!&ndash;....................................&ndash;&gt;-->
+<!--            &lt;!&ndash;        (using wagon webdav)        &ndash;&gt;-->
+<!--            &lt;!&ndash;....................................&ndash;&gt;-->
+<!--            <extension>-->
+<!--                <groupId>org.apache.maven.wagon</groupId>-->
+<!--                <artifactId>wagon-webdav</artifactId>-->
+<!--                <version>1.0-beta-2</version>-->
+<!--            </extension>-->
 
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ssh</artifactId>
-                <version>1.0-beta-7</version>
-            </extension>
-        </extensions>
+<!--            <extension>-->
+<!--                <groupId>org.apache.maven.wagon</groupId>-->
+<!--                <artifactId>wagon-ssh</artifactId>-->
+<!--                <version>1.0-beta-7</version>-->
+<!--            </extension>-->
+<!--        </extensions>-->
     </build>
 
     <!-- ========================================================== -->

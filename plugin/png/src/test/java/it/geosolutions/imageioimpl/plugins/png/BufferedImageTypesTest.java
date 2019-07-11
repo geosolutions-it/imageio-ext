@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageioimpl.plugins.png;
 
+import it.geosolutions.imageio.plugins.png.PNGImageWriterSPI;
 import it.geosolutions.imageio.plugins.png.PNGWriter;
 
 import java.awt.image.BufferedImage;
@@ -27,7 +28,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -83,6 +87,28 @@ public class BufferedImageTypesTest {
         BufferedImage readBack = ImageIO.read(bis);
         
         boolean success = false;
+        try {
+            ImageAssert.assertImagesEqual(image, readBack);
+            success = true;
+        } finally {
+            if(!success) {
+                ImageIO.write(image, "PNG", new File("./target/" + name + "_expected.png"));
+                ImageIO.write(readBack, "PNG", new File("./target/" + name + "_actual.png"));
+            }
+        }
+        
+        // now using imagewriter interface
+        ImageWriter writer = new PNGImageWriterSPI().createWriterInstance();
+        writer.setOutput(bos);
+        ImageWriteParam wp = writer.getDefaultWriteParam();
+        wp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+        wp.setCompressionQuality(-quality);
+        writer.write(null, new IIOImage(image, null, null), wp);
+        writer.dispose();
+        bis = new ByteArrayInputStream(bos.toByteArray());
+        readBack = ImageIO.read(bis);
+        
+        success = false;
         try {
             ImageAssert.assertImagesEqual(image, readBack);
             success = true;

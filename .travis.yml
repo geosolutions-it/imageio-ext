@@ -1,0 +1,15 @@
+sudo: false
+cache:
+  directories:
+    - "$HOME/.m2"
+language: java
+jdk:
+  - oraclejdk7
+  - openjdk7
+  - oraclejdk8
+script:
+  - mvn -U clean install -Dall -Djava.awt.headless=true -DskipTests=false
+notifications:
+  email: false
+  on_failure: never
+env: GDAL_LIBRARY_NAME=disabled_see_geot-4733

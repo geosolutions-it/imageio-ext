@@ -73,24 +73,10 @@
  */
 package it.geosolutions.imageioimpl.plugins.tiff;
 
-import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
-import it.geosolutions.imageio.plugins.tiff.EXIFParentTIFFTagSet;
-import it.geosolutions.imageio.plugins.tiff.EXIFTIFFTagSet;
-import it.geosolutions.imageio.plugins.tiff.TIFFCompressor;
-import it.geosolutions.imageio.plugins.tiff.TIFFField;
-import it.geosolutions.imageio.plugins.tiff.TIFFTag;
-import it.geosolutions.imageio.plugins.tiff.TIFFTagSet;
-
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import javax.imageio.IIOException;
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.stream.MemoryCacheImageOutputStream;
+
+import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
 
 
 /**

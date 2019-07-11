@@ -46,7 +46,7 @@
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
  *    http://java.net/projects/imageio-ext/
- *    (C) 2007 - 2009, GeoSolutions
+ *    (C) 2007 - 2016, GeoSolutions
  *    All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -75,6 +75,7 @@ package it.geosolutions.imageio.plugins.tiff;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.imageio.ImageReadParam;
 
 /**
@@ -109,7 +110,7 @@ import javax.imageio.ImageReadParam;
  */
 public class TIFFImageReadParam extends ImageReadParam {
 
-    List allowedTagSets = new ArrayList(4);
+    List allowedTagSets = new ArrayList(5);
 
     TIFFDecompressor decompressor = null;
 
@@ -131,6 +132,7 @@ public class TIFFImageReadParam extends ImageReadParam {
         addAllowedTagSet(FaxTIFFTagSet.getInstance());
         addAllowedTagSet(EXIFParentTIFFTagSet.getInstance());
         addAllowedTagSet(GeoTIFFTagSet.getInstance());
+        addAllowedTagSet(PrivateTIFFTagSet.getInstance());
     }
 
     /**

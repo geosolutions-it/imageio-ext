@@ -16,7 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.turbojpeg;
 
-import it.geosolutions.imageio.utilities.ImageOutputStreamAdapter2;
+import it.geosolutions.imageio.stream.output.ImageOutputStreamAdapter;
 
 import java.io.File;
 import java.io.IOException;
@@ -84,7 +84,7 @@ public class TurboJpegImageWriterSpi extends ImageWriterSpi {
      */
     public TurboJpegImageWriterSpi() {
         super(vendorName, version, formatNames, suffixes, MIMETypes, writerCN,
-                new Class[]{ImageOutputStreamAdapter2.class, OutputStream.class, File.class}, readerSpiName,
+                new Class[]{ImageOutputStreamAdapter.class, OutputStream.class, File.class}, readerSpiName,
                 supportsStandardStreamMetadataFormat,
                 nativeStreamMetadataFormatName,
                 nativeStreamMetadataFormatClassName,
