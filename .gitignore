@@ -1,6 +1,7 @@
 .project
 .classpath
 .settings
+.idea
 target
 *.patch
 *.class

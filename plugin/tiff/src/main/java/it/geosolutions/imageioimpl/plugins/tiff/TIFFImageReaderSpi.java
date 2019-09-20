@@ -96,10 +96,10 @@ public class TIFFImageReaderSpi extends ImageReaderSpi {
 
     private static final String[] MIMETypes = { "image/tiff" };
 
-    private static final String readerClassName =
+    private static String readerClassName =
         "it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReader";
 
-    private static final String[] writerSpiNames = {
+    private static String[] writerSpiNames = {
         "it.geosolutions.imageioimpl.plugins.tiff.TIFFImageWriterSpi"
     };
 
@@ -123,6 +123,10 @@ public class TIFFImageReaderSpi extends ImageReaderSpi {
               "it.geosolutions.imageioimpl.plugins.tiff.TIFFImageMetadataFormat",
               new String[]{""}, new String[]{""}
               );
+    }
+
+    public static void setReaderClassName(String readerClassName) {
+        TIFFImageReaderSpi.readerClassName = readerClassName;
     }
 
     public String getDescription(Locale locale) {

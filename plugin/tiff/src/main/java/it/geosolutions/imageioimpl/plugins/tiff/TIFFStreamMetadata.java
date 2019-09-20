@@ -93,10 +93,10 @@ import org.w3c.dom.NodeList;
 public class TIFFStreamMetadata extends IIOMetadata {
 
     // package scope
-    static final String nativeMetadataFormatName =
+    protected static final String nativeMetadataFormatName =
         "com_sun_media_imageio_plugins_tiff_stream_1.0";
 
-    static final String nativeMetadataFormatClassName =
+    protected static final String nativeMetadataFormatClassName =
         "it.geosolutions.imageioimpl.plugins.tiff.TIFFStreamMetadataFormat";
 
     /** Node name associated to the External mask File */
