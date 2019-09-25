@@ -19,6 +19,8 @@ package it.geosolutions.imageioimpl.plugins.cog;
 import static it.geosolutions.imageioimpl.plugins.cog.PropertyLocator.getPropertyValue;
 
 /**
+ * Configuration for tile cache
+ *
  * @author joshfix
  * Created on 2019-09-19
  */

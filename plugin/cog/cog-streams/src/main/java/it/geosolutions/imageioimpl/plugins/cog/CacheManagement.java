@@ -33,6 +33,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
+ * Creates caches for tiles, headers, and filesizes, and provides methods to check keys and retrieve data.
+ *
  * @author joshfix
  * Created on 2019-09-19
  */

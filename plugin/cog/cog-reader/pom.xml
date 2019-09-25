@@ -29,7 +29,7 @@
     <profiles>
 
         <profile>
-            <id>http</id>
+            <id>cog-http</id>
             <properties>
                 <jar.finalName>${project.artifactId}-http-${project.version}</jar.finalName>
             </properties>
@@ -42,7 +42,7 @@
         </profile>
 
         <profile>
-            <id>s3</id>
+            <id>cog-s3</id>
             <properties>
                 <jar.finalName>${project.artifactId}-s3-${project.version}</jar.finalName>
             </properties>
@@ -55,7 +55,7 @@
         </profile>
 
         <profile>
-            <id>azure</id>
+            <id>cog-azure</id>
             <properties>
                 <jar.finalName>${project.artifactId}-azure-${project.version}</jar.finalName>
             </properties>
@@ -68,7 +68,7 @@
         </profile>
 
         <profile>
-            <id>all</id>
+            <id>cog-all</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>

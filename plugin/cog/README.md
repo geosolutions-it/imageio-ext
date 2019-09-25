@@ -37,10 +37,10 @@ BufferedImage cogImage = reader.read(0, param);
 ```
  
 ### Building
-The [cog-reader](./cog-reader/) module provides four build profiles, `http`, `s3`, `azure`, and `all`.  The selected  
-profile will include the ability to read COGs using either the `com.squareup.okhttp3:okhttp`, 
-`software.amazon.awssdk:s3`, or `com.azure:azure-storage-blob` client libraries.  The `all` profile is the default and 
-will include all of the dependencies.
+The [cog-reader](./cog-reader/) module provides four build profiles, `cog-http`, `cog-s3`, `cog-azure`, and `cog-all`.  
+The selected  profile will include the ability to read COGs using either the `com.squareup.okhttp3:okhttp`, 
+`software.amazon.awssdk:s3`, or `com.azure:azure-storage-blob` client libraries.  The `cog-all` profile is the default 
+and will include all of the dependencies.
  
 ### Notable Classes
 [CogImageReader](./cog-reader/src/main/java/it/geosolutions/imageioimpl/plugins/cog/CogImageReader.java) extends 

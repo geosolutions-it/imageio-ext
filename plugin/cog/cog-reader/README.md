@@ -10,4 +10,9 @@ the input stream's cache with the tile data
 * Passing the request on to `TIFFImageReader`, where it will take advantage of the data cached in the input stream.
 
 If the `ImageInputStream` implementation passed to the reader as a source is not an instance of `CogImageInputStream`, 
-the request will simply be passed on to `TIFFImageReader` to be read without taking advantage of COG optimizations. 
+the request will simply be passed on to `TIFFImageReader` to be read without taking advantage of COG optimizations.
+
+This module provides four build profiles, `cog-http`, `cog-s3`, `cog-azure`, and `cog-all`.  The selected profile will 
+include the ability to read COGs using either the `com.squareup.okhttp3:okhttp`, `software.amazon.awssdk:s3`, or 
+`com.azure:azure-storage-blob` client libraries.  The `cog-all` profile is the default and will include all of the 
+dependencies. 
