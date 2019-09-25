@@ -42,20 +42,20 @@ public class CogImageReader extends TIFFImageReader {
 
     @Override
     public BufferedImage read(int imageIndex, ImageReadParam param) throws IOException {
-        // if the image input stream isn't a DefaultCogImageInputStream, skip all this nonsense and just use the original code
-        if (!(stream instanceof DefaultCogImageInputStream)) {
+        // if the image input stream isn't a CogImageInputStream, skip all this nonsense and just use the original code
+        if (!(stream instanceof CogImageInputStream)) {
             return super.read(imageIndex, param);
         }
 
         // the input stream needs to have either been initialized with a RangeReader implementation or the RangeReader
         // implementation class needs to have been provided in a CogImageReadParam
-        if (!((DefaultCogImageInputStream)stream).isInitialized() && param instanceof CogImageReadParam) {
-            ((DefaultCogImageInputStream) stream).init((CogImageReadParam) param);
+        if (!((CogImageInputStream)stream).isInitialized() && param instanceof CogImageReadParam) {
+            ((CogImageInputStream) stream).init((CogImageReadParam) param);
         }
 
-        if (!((DefaultCogImageInputStream)stream).isInitialized()) {
-            throw new IOException("The DefaultCogImageInputStream has not been initialized.  Either pass a RangeReader"
-                    + " implementation to the DefaultCogImageInputStream via the constructor or init method, or declare"
+        if (!((CogImageInputStream)stream).isInitialized()) {
+            throw new IOException("The CogImageInputStream has not been initialized.  Either pass a RangeReader"
+                    + " implementation to the CogImageInputStream via the constructor or init method, or declare"
                     + " a valid RangeReader implementation class in the CogImageReadParam.");
         }
 
@@ -83,7 +83,7 @@ public class CogImageReader extends TIFFImageReader {
 
         LOGGER.fine("Reading tiles (" + minTileX + "," + minTileY + ") - (" + maxTileX + "," + maxTileY + ")");
 
-        CogTileInfo cogTileInfo = ((DefaultCogImageInputStream)stream).getCogTileInfo();
+        CogTileInfo cogTileInfo = ((CogImageInputStream)stream).getCogTileInfo();
 
         // loops through each requested tile and complies information about each tile offset and byte length
         if (planarConfiguration == BaselineTIFFTagSet.PLANAR_CONFIGURATION_PLANAR) {
@@ -109,9 +109,9 @@ public class CogImageReader extends TIFFImageReader {
         }
 
         // read the ranges and cache them in the image input stream delegate
-        ((DefaultCogImageInputStream) stream).readRanges();
+        ((CogImageInputStream) stream).readRanges();
 
-        // At this point, the DefaultCogImageInputStream has fetched and cached all of the bytes from the requested tiles.
+        // At this point, the CogImageInputStream has fetched and cached all of the bytes from the requested tiles.
         // Now we proceed with the legacy TIFFImageReader code.
         return super.read(imageIndex, param);
     }

@@ -58,7 +58,7 @@ public class CogReadTest {
 
     @Test
     public void readCogCaching() throws IOException {
-        DefaultCogImageInputStream cogStream = new CachingCogImageInputStream(cogUrl);
+        CachingCogImageInputStream cogStream = new CachingCogImageInputStream(cogUrl);
         CogImageReader reader = new CogImageReader(new CogImageReaderSpi());
         reader.setInput(cogStream);
 

@@ -20,9 +20,9 @@ already provided with imageio-ext.  The strategy is:
  * Allow TIFFImageReader to continue decoding single tiles at a time, using the in-memory byte data that has already 
  been fetched.
  
-[CogImageReader](./cog-reader/src/main/java/it/geosolutions/imageioimpl/plugins/cog/CogImageReader.java) extends from TIFFImageReader 
-and overrides the `read` method.  It provides the logic to determine which byte ranges need to be read before passing 
-the request on to TIFFImageReader's `read` method. 
+[CogImageReader](./cog-reader/src/main/java/it/geosolutions/imageioimpl/plugins/cog/CogImageReader.java) extends 
+TIFFImageReader and overrides the `read` method.  It provides the logic to determine which byte ranges need to be read 
+before passing the request on to TIFFImageReader's `read` method. 
 
 [CogTileInfo](./cog-commons/src/main/java/it/geosolutions/imageioimpl/plugins/cog/CogTileInfo.java) is a simple utility 
 class to store all of the metadata about each tile requested, including start byte position, end byte position, byte 
@@ -36,14 +36,20 @@ ImageInputStream being used is an instance of this class to determine if it shou
 ranges.  If the ImageInputStream does not implement CogImageInputStream, CogImageReader will simply pass the request on 
 to TIFFImageReader. 
  
-[DefaultCogImageInputStream](./cog-streams/src/main/java/it/geosolutions/imageioimpl/plugins/cog/DefaultCogImageInputStream.java) is an 
-ImageInputStream implementation that stores all requeted tile bytes a delegate MemoryCacheImageInputStream.  This is 
-sufficient for libraries that do not expect to make multiple requests for the same tiles.
+[DefaultCogImageInputStream](./cog-streams/src/main/java/it/geosolutions/imageioimpl/plugins/cog/DefaultCogImageInputStream.java) 
+is an ImageInputStream implementation that stores all requeted tile bytes a delegate MemoryCacheImageInputStream.  This 
+is sufficient for libraries that do not expect to make multiple requests for the same tiles.
  
 [CachingCogImageInputStream](./cog-streams/src/main/java/it/geosolutions/imageioimpl/plugins/cog/CachingCogImageInputStream.java)
 is an ImageInputStream implementation that will cache GeoTIFF tiles using Ehcache to prevent additional requests 
 for data that is expected to be read multiple times.  Subsequent reads of the same tiles using this input stream 
 provides a significant performance increase.
+
+[CogUri](./cog-commons/src/main/java/it/geosolutions/imageioimpl/plugins/cog/CogUri.java) is a simple Java bean that 
+is used as the CogImageReader's input source.  Using a custom class helps ImageIOExt.getImageInputStreamSPI() 
+automatically select the properly ImageInputStream implementation.  CogUri contains the URI of the image along with a 
+boolean `useCache` to specify whether the Caching or Default ImageInputStream implementation should be used.  The 
+value defaults to true and if not modified, the SPI will return the `CachingCogImageInputStream`.  
 
 [RangeBuilder](./cog-commons/src/main/java/it/geosolutions/imageioimpl/plugins/cog/RangeBuilder.java)) is responsible 
 for comparing individual tile start/end information and group all contiguous ranges into a single range.  These are 
