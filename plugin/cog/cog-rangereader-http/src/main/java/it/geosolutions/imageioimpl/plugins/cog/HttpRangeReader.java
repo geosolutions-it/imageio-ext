@@ -28,6 +28,8 @@ import java.util.*;
 import java.util.logging.Logger;
 
 /**
+ * RangeReader implementation to asynchronously read multiple ranges from an HTTP endpoint.
+ *
  * @author joshfix
  * Created on 2019-08-21
  */

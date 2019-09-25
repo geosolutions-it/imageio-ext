@@ -1,6 +1,8 @@
 package it.geosolutions.imageioimpl.plugins.cog;
 
 /**
+ * POJO to store metadata about a single COG tile.
+ *
  * @author joshfix
  * Created on 2019-09-24
  */

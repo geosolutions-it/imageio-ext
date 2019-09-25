@@ -27,6 +27,8 @@ import java.util.Iterator;
 import java.util.Locale;
 
 /**
+ * SPI for creating either `CachingCogImageInputStream` or `DefaultCogImageInputStream`.
+ *
  * @author joshfix
  * Created on 2019-08-23
  */

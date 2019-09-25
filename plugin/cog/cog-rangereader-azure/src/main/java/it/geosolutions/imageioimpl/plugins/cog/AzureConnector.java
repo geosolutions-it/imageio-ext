@@ -19,16 +19,15 @@ package it.geosolutions.imageioimpl.plugins.cog;
 import com.azure.storage.blob.BlobAsyncClient;
 import com.azure.storage.blob.BlobClientBuilder;
 
-import java.util.logging.Logger;
-
 /**
+ * Class to assist building Azure client.
+ *
  * @author joshfix
  * Created on 1/18/18
  */
 public class AzureConnector {
 
     private String connectionString;
-    private static final Logger LOGGER = Logger.getLogger(AzureConnector.class.getName());
 
     /**
      * Attempts to discover a connection string in system properties and environment variables based on the account

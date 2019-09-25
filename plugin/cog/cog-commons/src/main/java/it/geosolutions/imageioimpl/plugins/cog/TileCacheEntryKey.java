@@ -18,7 +18,12 @@ package it.geosolutions.imageioimpl.plugins.cog;
 
 import java.io.Serializable;
 
-/** Simple key for cache entries */
+/**
+ * A simple cache key for tiles requiring the image URL and the tile index.
+ *
+ * @author joshfix
+ * Created on 2019-09-18
+ */
 public class TileCacheEntryKey implements Serializable {
 
     private String url;

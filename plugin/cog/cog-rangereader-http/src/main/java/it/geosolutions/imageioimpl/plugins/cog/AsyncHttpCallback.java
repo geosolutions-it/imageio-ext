@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
+ * Callback for asynchronous HTTP requests for OkHttp
+ *
  * @author joshfix
  * Created on 2019-09-24
  */

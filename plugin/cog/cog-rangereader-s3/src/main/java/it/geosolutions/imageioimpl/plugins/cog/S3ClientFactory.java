@@ -24,6 +24,8 @@ import software.amazon.awssdk.services.s3.S3AsyncClientBuilder;
 import java.net.URI;
 
 /**
+ * Utility class to assist building S3 async client.
+ *
  * @author joshfix
  * Created on 2019-09-19
  */

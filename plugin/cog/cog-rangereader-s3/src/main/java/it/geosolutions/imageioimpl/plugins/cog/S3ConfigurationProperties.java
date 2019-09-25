@@ -22,6 +22,8 @@ import java.net.URLDecoder;
 import java.util.*;
 
 /**
+ * Helps locate configuration properties in system/environment for use in building S3 client.
+ *
  * @author joshfix
  * Created on 2019-09-19
  */

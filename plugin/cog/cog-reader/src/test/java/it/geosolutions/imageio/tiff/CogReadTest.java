@@ -24,16 +24,15 @@ import org.junit.Test;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.logging.Logger;
 
 /**
+ * Tests reading COGs with both caching and non-caching CogImageInputStreams.
+ *
  * @author joshfix
  * Created on 2019-08-22
  */
 public class CogReadTest {
 
-    /** Logger used for recording any possible exception */
-    private final static Logger logger = Logger.getLogger(CogReadTest.class.getName());
     private static final String cogUrl = "https://s3-us-west-2.amazonaws.com/landsat-pds/c1/L8/153/075/LC08_L1TP_153075_20190515_20190515_01_RT/LC08_L1TP_153075_20190515_20190515_01_RT_B2.TIF";
 
     @Test

@@ -22,6 +22,12 @@ import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
 import javax.imageio.ImageReader;
 import java.util.Locale;
 
+/**
+ * SPI for creating `CogImageReader`
+ *
+ * @author joshfix
+ * Created on 2019-09-18
+ */
 public class CogImageReaderSpi extends TIFFImageReaderSpi {
 
     public CogImageReaderSpi() {

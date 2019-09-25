@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Utility class to store all discovered connection strings for Azure.
+ *
  * @author joshfix
  * Created on 2019-04-03
  */
