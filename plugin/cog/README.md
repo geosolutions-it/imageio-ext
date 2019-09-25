@@ -20,6 +20,13 @@ already provided with imageio-ext.  The strategy is:
  * Allow TIFFImageReader to continue decoding single tiles at a time, using the in-memory byte data that has already 
  been fetched.
  
+### Building
+The [cog-reader](./cog-reader/) module provides four build profiles, `http`, `s3`, `azure`, and `all`.  The selected  
+profile will include the ability to read COGs using either the `com.squareup.okhttp3:okhttp`, 
+`software.amazon.awssdk:s3`, or `com.azure:azure-storage-blob` client libraries.  The `all` profile is the default and 
+will include all of the dependencies.
+ 
+### Notable Classes
 [CogImageReader](./cog-reader/src/main/java/it/geosolutions/imageioimpl/plugins/cog/CogImageReader.java) extends 
 TIFFImageReader and overrides the `read` method.  It provides the logic to determine which byte ranges need to be read 
 before passing the request on to TIFFImageReader's `read` method. 
