@@ -16,33 +16,32 @@
  */
 package it.geosolutions.imageio.tiff;
 
-import it.geosolutions.imageio.plugins.cog.CogImageReadParam;
 import it.geosolutions.imageioimpl.plugins.cog.*;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.logging.Logger;
-
-import static org.junit.Assert.assertEquals;
-
 /**
+ * Tests cache.  CogImageInputStreams are tested in the cog-reader module.
+ *
  * @author joshfix
  * Created on 2019-08-22
  */
-public class CogReadTest {
-
-    /** Logger used for recording any possible exception */
-    private final static Logger logger = Logger.getLogger(CogReadTest.class.getName());
+public class CacheTest {
 
     @Test
-    public void readGetEntry() {
+    public void testCache() {
         byte[] content = new byte[128];
         content[0] = 74;
+
+        TileCacheEntryKey key = new TileCacheEntryKey("http://test.url.com/image.tif", 0);
+        CacheManagement.DEFAULT.cacheTile(key, content);
+
+        Assert.assertTrue(CacheManagement.DEFAULT.keyExists(key));
+
+        byte[] fetchedContent = CacheManagement.DEFAULT.getTile(key);
+
+        Assert.assertEquals(content.length, fetchedContent.length);
+        Assert.assertEquals(content[0], fetchedContent[0]);
     }
 
 }
