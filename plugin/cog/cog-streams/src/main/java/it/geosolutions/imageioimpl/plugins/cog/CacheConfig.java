@@ -19,7 +19,8 @@ package it.geosolutions.imageioimpl.plugins.cog;
 import static it.geosolutions.imageioimpl.plugins.cog.PropertyLocator.getPropertyValue;
 
 /**
- * Basic configuration properties for the S3 caching
+ * @author joshfix
+ * Created on 2019-09-19
  */
 public class CacheConfig {
 

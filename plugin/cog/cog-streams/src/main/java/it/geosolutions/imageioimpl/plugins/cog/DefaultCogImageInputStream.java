@@ -32,10 +32,14 @@ import java.util.logging.Logger;
 import static it.geosolutions.imageioimpl.plugins.cog.CogTileInfo.HEADER_TILE_INDEX;
 
 /**
+ * ImageInputStream implementation for COG.  This class will asynchronously request all requested ranges be read by
+ * the provided RangeReader implementation and cache the results in a delegate MemoryCacheImageInputStream.  When
+ * TIFFImageReader requests tiles, all of the data will be already prefetched and ready to be used.
+ *
  * @author joshfix
  * Created on 2019-08-23
  */
-public class HttpCogImageInputStream implements ImageInputStream, CogImageInputStream {
+public class DefaultCogImageInputStream implements ImageInputStream, CogImageInputStream {
 
     protected int initialHeaderReadLength = 16384;
     private boolean initialized = false;
@@ -45,21 +49,25 @@ public class HttpCogImageInputStream implements ImageInputStream, CogImageInputS
     protected RangeReader rangeReader;
     protected MemoryCacheImageInputStream delegate;
 
-    private final static Logger LOGGER = Logger.getLogger(HttpCogImageInputStream.class.getName());
+    private final static Logger LOGGER = Logger.getLogger(DefaultCogImageInputStream.class.getName());
 
-    public HttpCogImageInputStream(String url) {
+    public DefaultCogImageInputStream(String url) {
         this(URI.create(url));
     }
 
-    public HttpCogImageInputStream(URL url) {
+    public DefaultCogImageInputStream(URL url) {
         this(URI.create(url.toString()));
     }
 
-    public HttpCogImageInputStream(URI uri) {
+    public DefaultCogImageInputStream(URI uri) {
         this.uri = uri;
     }
 
-    public HttpCogImageInputStream(URI uri, RangeReader rangeReader) {
+    public DefaultCogImageInputStream(CogUri cogUri) {
+        this.uri = cogUri.getUri();
+    }
+
+    public DefaultCogImageInputStream(URI uri, RangeReader rangeReader) {
         this.uri = uri;
         this.rangeReader = rangeReader;
         initialHeaderReadLength = rangeReader.getHeaderLength();

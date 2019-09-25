@@ -31,7 +31,7 @@ public class ConnectionDirectory {
     public static String getConnectionString(String accountName) {
         if (!directory.containsKey(accountName)) {
             String envVarName = accountName.toUpperCase() + AZURE_CONNECTION_STRING_ENV_VAR_SUFFIX;
-            String connectionString = PropertyLocator.getPropertyValue(envVarName, "");
+            String connectionString = PropertyLocator.getEnvironmentValue(envVarName, "");
             directory.put(accountName, connectionString);
             return connectionString;
         }

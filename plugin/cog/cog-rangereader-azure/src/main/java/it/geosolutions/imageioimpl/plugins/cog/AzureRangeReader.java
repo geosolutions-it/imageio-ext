@@ -74,20 +74,17 @@ public class AzureRangeReader extends RangeReader {
                 .downloadWithResponse(blobRange, null, null, false)
                 .block();
 
-        final PositionTracker positionTracker = new PositionTracker(0);
+        buffer.position(0);
         response.value()
                 .map(bb -> {
-                    buffer.position(positionTracker.getPosition());
                     buffer.put(bb);
-                    positionTracker.advancePosition(bb.limit());
                     return bb;
                 })
                 .blockLast();
 
-        byte[] b = new byte[headerLength];
         buffer.rewind();
+        byte[] b = new byte[headerLength];
         buffer.get(b, 0, headerLength);
-
         return b;
     }
 
@@ -143,11 +140,9 @@ public class AzureRangeReader extends RangeReader {
                 if (future.isDone()) {
                     if (!completed.contains(key)) {
                         try {
-                            final PositionTracker positionTracker = new PositionTracker((int)key);
+                            buffer.position((int)key);
                             future.get().value().map(bb -> {
-                                buffer.position(positionTracker.getPosition());
                                 buffer.put(bb);
-                                positionTracker.advancePosition(bb.limit());
                                 return bb;
                             }).blockLast();
 

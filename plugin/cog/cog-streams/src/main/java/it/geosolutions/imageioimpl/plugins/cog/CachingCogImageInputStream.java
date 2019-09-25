@@ -29,10 +29,14 @@ import java.util.logging.Logger;
 import static it.geosolutions.imageioimpl.plugins.cog.CogTileInfo.HEADER_TILE_INDEX;
 
 /**
+ * This ImageInputStream implementation asynchronously fetches all tiles/ranges via the RangeReader implementation and
+ * utilizes ehcache to cache each tile requested by the TIFFImageReader.  All subsequent tile reads will be fetched
+ * from cache.
+ *
  * @author joshfix
  * Created on 2019-08-28
  */
-public class CachingHttpCogImageInputStream extends ImageInputStreamImpl implements CogImageInputStream {
+public class CachingCogImageInputStream extends ImageInputStreamImpl implements CogImageInputStream {
 
     private boolean initialized = false;
     protected int initialHeaderReadLength = 16384;
@@ -41,22 +45,25 @@ public class CachingHttpCogImageInputStream extends ImageInputStreamImpl impleme
     protected RangeReader rangeReader;
     protected CogTileInfo cogTileInfo;
 
+    private final static Logger LOGGER = Logger.getLogger(CachingCogImageInputStream.class.getName());
 
-    private final static Logger LOGGER = Logger.getLogger(CachingHttpCogImageInputStream.class.getName());
-
-    public CachingHttpCogImageInputStream(String url) {
-        this(URI.create(url));
-    }
-
-    public CachingHttpCogImageInputStream(URL url) {
-        this(URI.create(url.toString()));
-    }
-
-    public CachingHttpCogImageInputStream(URI uri) {
+    public CachingCogImageInputStream(URI uri) {
         this.uri = uri;
     }
 
-    public CachingHttpCogImageInputStream(URI uri, RangeReader rangeReader) {
+    public CachingCogImageInputStream(String uri) {
+        this(URI.create(uri));
+    }
+
+    public CachingCogImageInputStream(URL url) {
+        this(url.toString());
+    }
+
+    public CachingCogImageInputStream(CogUri cogUri) {
+        this.uri = cogUri.getUri();
+    }
+
+    public CachingCogImageInputStream(URI uri, RangeReader rangeReader) {
         this.uri = uri;
         this.rangeReader = rangeReader;
         initialHeaderReadLength = rangeReader.getHeaderLength();

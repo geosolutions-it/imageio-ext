@@ -21,30 +21,40 @@ import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.logging.Logger;
 
 /**
  * @author joshfix
  * Created on 2019-08-23
  */
-public class HttpCogImageInputStreamSpi extends ImageInputStreamSpi {
+public class CogImageInputStreamSpi extends ImageInputStreamSpi {
 
-    private static final String vendorName = "Josh Fix";
+    private static final String vendorName = "GeoSolutions";
     private static final String version = "1.0";
-    private static final Class<String> inputClass = String.class;
-    private final static Logger LOGGER = Logger.getLogger(HttpCogImageInputStreamSpi.class.getName());
+    private static final Class<CogUri> inputClass = CogUri.class;
 
-    public HttpCogImageInputStreamSpi() {
+    public CogImageInputStreamSpi() {
         super(vendorName, version, inputClass);
     }
 
     @Override
     public ImageInputStream createInputStreamInstance(Object input, boolean useCache, File cacheDir) throws IOException {
-        if (input instanceof String || input instanceof URL) {
-            return new HttpCogImageInputStream(input.toString());
+        if (input instanceof CogUri) {
+            if (((CogUri)input).isUseCache()) {
+                return new CachingCogImageInputStream((CogUri) input);
+            } else {
+                return new DefaultCogImageInputStream((CogUri) input);
+            }
+        }
+        if (input instanceof String || input instanceof URL || input instanceof URI) {
+            if (((CogUri)input).isUseCache()) {
+                return new CachingCogImageInputStream(new CogUri(input.toString()));
+            } else {
+                return new DefaultCogImageInputStream(new CogUri(input.toString()));
+            }
         }
         throw new IOException("Invalid input.");
     }
@@ -58,7 +68,8 @@ public class HttpCogImageInputStreamSpi extends ImageInputStreamSpi {
     public void onRegistration(ServiceRegistry registry, Class<?> category) {
         super.onRegistration(registry, category);
         Class<ImageInputStreamSpi> targetClass = ImageInputStreamSpi.class;
-        for (Iterator<? extends ImageInputStreamSpi> i = registry.getServiceProviders(targetClass, true); i.hasNext();) {
+        for (Iterator<? extends ImageInputStreamSpi> i =
+             registry.getServiceProviders(targetClass, true); i.hasNext();) {
             ImageInputStreamSpi other = i.next();
 
             if (this != other)

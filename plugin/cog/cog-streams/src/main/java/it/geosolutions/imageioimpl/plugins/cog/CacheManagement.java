@@ -32,7 +32,10 @@ import java.net.URL;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-/** Very basic EhCache handling */
+/**
+ * @author joshfix
+ * Created on 2019-09-19
+ */
 public enum CacheManagement implements CogTileCacheProvider {
 
     DEFAULT;
@@ -97,7 +100,7 @@ public enum CacheManagement implements CogTileCacheProvider {
     }
 
     public <K extends Class, V extends Class> CacheConfiguration<K, V> buildCacheConfiguration(K keyType, V valueType,
-                                                      ResourcePoolsBuilder resourcePoolsBuilder) {
+                                                                                               ResourcePoolsBuilder resourcePoolsBuilder) {
         CacheConfigurationBuilder cacheConfigurationBuilder = CacheConfigurationBuilder
                 .newCacheConfigurationBuilder(keyType, valueType, resourcePoolsBuilder);
 
@@ -114,7 +117,9 @@ public enum CacheManagement implements CogTileCacheProvider {
     }
 
 
-    /** Get the logger from this method because when needed the class hasn't been loaded yet */
+    /**
+     * Get the logger from this method because when needed the class hasn't been loaded yet
+     */
     private static Logger logger() {
         if (LOGGER == null) {
             LOGGER = Logger.getLogger(CacheManagement.class.getCanonicalName());

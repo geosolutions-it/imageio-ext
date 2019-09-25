@@ -42,9 +42,11 @@ public class AzureConnector {
 
     public BlobAsyncClient getAzureClient(String container, String filename) {
         // Retrieve storage account from connection-string.
-        return new BlobClientBuilder()
-                .connectionString(connectionString)
-                .containerName(container)
+        BlobClientBuilder blobClientBuilder = new BlobClientBuilder();
+        if (connectionString != null && !connectionString.isEmpty()) {
+            blobClientBuilder.connectionString(connectionString);
+        }
+        return blobClientBuilder.containerName(container)
                 .blobName(filename)
                 .buildBlobAsyncClient();
     }
