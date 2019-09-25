@@ -1,10 +1,28 @@
+/*
+ *    ImageI/O-Ext - OpenSource Java Image translation Library
+ *    http://www.geo-solutions.it/
+ *    http://java.net/projects/imageio-ext/
+ *    (C) 2019, GeoSolutions
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    either version 3 of the License, or (at your option) any later version.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 package it.geosolutions.imageioimpl.plugins.cog;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * Utility class to build a list of ranges that need to be read by determining if tiles are in a contiguous sequence.
+ * Utility class to examine all COG tiles that need to be read for the current request and build a list of ranges
+ * tiles that are in a contiguous sequence.
  *
  * @author joshfix
  * Created on 2019-08-27
@@ -14,8 +32,7 @@ public class RangeBuilder {
     protected long currentRangeStart;
     protected long currentRangeEnd;
     protected boolean tileAdded = false;
-    protected boolean finalized = false;
-    protected List<long[]> ranges = new ArrayList<>();
+    protected Set<long[]> ranges = new HashSet<>();
 
     public RangeBuilder(long initialRangeStart, long initialRangeEnd) {
         // we don't add the initial start/end range immediately.  instead, we will wait until the next range is added
@@ -25,33 +42,40 @@ public class RangeBuilder {
         currentRangeEnd = initialRangeEnd;
     }
 
-    public void addTileRange(long offset, long tileOrStripByteCount) {
+    /**
+     * Accepts a start and end byte position and determines if the start position directly follows the current range
+     * end position.  If true, the range end will be extended.  If false, the current range will be added to the list
+     * of ranges and a new current range start/end will be established.
+     *
+     * @param start the start byte position
+     * @param end the end byte position
+     */
+    public void addTileRange(long start, long end) {
         tileAdded = true;
 
-        if (finalized) {
-            // in the event the getRanges method has already been called, remove that range from the collection so
-            // that we can compare the current tile range for contiguity.
-            finalized = false;
-            ranges.remove(ranges.size() - 1);
-        }
-        if (offset == currentRangeEnd + 1) {
+        if (start == currentRangeEnd + 1) {
             // this tile starts where the last one left off
-            currentRangeEnd = offset + tileOrStripByteCount - 1;
+            currentRangeEnd = end;
         } else {
             // this tile is in a new position.  add the current range and start a new one.
             ranges.add(new long[]{currentRangeStart, currentRangeEnd});
-            currentRangeStart = offset;
-            currentRangeEnd = currentRangeStart + tileOrStripByteCount - 1;
+            currentRangeStart = start;
+            currentRangeEnd = end;
         }
     }
 
-    public List<long[]> getRanges() {
+    /**
+     * Returns the set of ranges.  Note that the addTileRange method only adds a range to the list if the range was not
+     * contiguous
+     * @return
+     */
+    public Set<long[]> getRanges() {
         if (tileAdded) {
-            // calling this method implies we're finished examining ranges.  the final range start/end needs to be
-            // added to the set of ranges.
-            ranges.add(new long[]{currentRangeStart, currentRangeEnd});
-            finalized = true;
+            Set<long[]> rangeCopy = new HashSet<>(ranges);
+            rangeCopy.add(new long[]{currentRangeStart, currentRangeEnd});
+            return rangeCopy;
         }
-        return ranges;
+
+        return Collections.EMPTY_SET;
     }
 }

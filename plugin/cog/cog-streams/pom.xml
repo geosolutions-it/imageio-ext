@@ -11,20 +11,14 @@
 
     <name>Cloud Optimized GeoTIFF Streams</name>
 
-    <properties>
-        <ehcache.version>3.4.0</ehcache.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>it.geosolutions.imageio-ext</groupId>
             <artifactId>imageio-ext-cog-commons</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.ehcache</groupId>
             <artifactId>ehcache</artifactId>
-            <version>${ehcache.version}</version>
         </dependency>
     </dependencies>
 

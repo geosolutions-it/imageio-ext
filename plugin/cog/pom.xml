@@ -13,6 +13,13 @@
     <packaging>pom</packaging>
     <name>cog</name>
 
+    <properties>
+        <azure.version>12.0.0-preview.3</azure.version>
+        <okhttp.version>4.2.0</okhttp.version>
+        <aws.version>2.9.2</aws.version>
+        <ehcache.version>3.4.0</ehcache.version>
+    </properties>
+
     <modules>
         <module>cog-reader</module>
         <module>cog-commons</module>
@@ -21,5 +28,135 @@
         <module>cog-rangereader-s3</module>
         <module>cog-rangereader-azure</module>
     </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>it.geosolutions.imageio-ext</groupId>
+                <artifactId>imageio-ext-tiff</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>it.geosolutions.imageio-ext</groupId>
+                <artifactId>imageio-ext-cog-commons</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>it.geosolutions.imageio-ext</groupId>
+                <artifactId>imageio-ext-cog-rangereader-http</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>it.geosolutions.imageio-ext</groupId>
+                <artifactId>imageio-ext-cog-rangereader-s3</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>it.geosolutions.imageio-ext</groupId>
+                <artifactId>imageio-ext-cog-rangereader-azure</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>it.geosolutions.imageio-ext</groupId>
+                <artifactId>imageio-ext-cog-streams</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.azure</groupId>
+                <artifactId>azure-storage-blob</artifactId>
+                <version>${azure.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>${okhttp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>s3</artifactId>
+                <version>${aws.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>auth</artifactId>
+                <version>${aws.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ehcache</groupId>
+                <artifactId>ehcache</artifactId>
+                <version>${ehcache.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <profiles>
+
+        <profile>
+            <id>http</id>
+            <dependencies>
+                <dependency>
+                    <groupId>it.geosolutions.imageio-ext</groupId>
+                    <artifactId>imageio-ext-cog-reader</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>it.geosolutions.imageio-ext</groupId>
+                    <artifactId>imageio-ext-cog-streams</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>it.geosolutions.imageio-ext</groupId>
+                    <artifactId>imageio-ext-cog-commons</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>it.geosolutions.imageio-ext</groupId>
+                    <artifactId>imageio-ext-cog-rangereader-http</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>s3</id>
+            <dependencies>
+                <dependency>
+                    <groupId>it.geosolutions.imageio-ext</groupId>
+                    <artifactId>imageio-ext-cog-reader</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>it.geosolutions.imageio-ext</groupId>
+                    <artifactId>imageio-ext-cog-streams</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>it.geosolutions.imageio-ext</groupId>
+                    <artifactId>imageio-ext-cog-commons</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>it.geosolutions.imageio-ext</groupId>
+                    <artifactId>imageio-ext-cog-rangereader-s3</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>azure</id>
+            <dependencies>
+                <dependency>
+                    <groupId>it.geosolutions.imageio-ext</groupId>
+                    <artifactId>imageio-ext-cog-reader</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>it.geosolutions.imageio-ext</groupId>
+                    <artifactId>imageio-ext-cog-streams</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>it.geosolutions.imageio-ext</groupId>
+                    <artifactId>imageio-ext-cog-commons</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>it.geosolutions.imageio-ext</groupId>
+                    <artifactId>imageio-ext-cog-rangereader-azure</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+
+    </profiles>
 
 </project>

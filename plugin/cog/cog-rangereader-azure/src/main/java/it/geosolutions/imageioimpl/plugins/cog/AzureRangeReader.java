@@ -1,10 +1,24 @@
+/*
+ *    ImageI/O-Ext - OpenSource Java Image translation Library
+ *    http://www.geo-solutions.it/
+ *    http://java.net/projects/imageio-ext/
+ *    (C) 2019, GeoSolutions
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    either version 3 of the License, or (at your option) any later version.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 package it.geosolutions.imageioimpl.plugins.cog;
 
 import com.azure.core.http.rest.Response;
 import com.azure.storage.blob.BlobAsyncClient;
-import com.azure.storage.blob.models.BlobAccessConditions;
 import com.azure.storage.blob.models.BlobRange;
-import com.azure.storage.blob.models.ReliableDownloadOptions;
 import reactor.core.publisher.Flux;
 
 import java.net.URI;
@@ -17,22 +31,19 @@ import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
 /**
+ * Reads URIs from Azure with the format
+ * wasb://<container>@<storage_account>.blob.core.windows.net/path/image.tif
+ * or
+ * http[s]://<storage_account>.blob.core.windows.net/<container>/path/image.tif
+ *
  * @author joshfix
  * Created on 2019-08-21
  */
-public class AzureRangeReader implements RangeReader {
-
-    protected int timeout = 5;
-    protected int filesize = -1;
-    protected int headerByteLength = 16384;
-
-    protected URI uri;
+public class AzureRangeReader extends RangeReader {
 
     protected String containerName;
     protected String filename;
-    protected ByteBuffer buffer;
     private final AzureConnector connector;
-
     private BlobAsyncClient client;
 
     private final static Logger LOGGER = Logger.getLogger(AzureRangeReader.class.getName());
@@ -45,20 +56,8 @@ public class AzureRangeReader implements RangeReader {
         this(URI.create(url.toString()));
     }
 
-    public static void main(String... args) {
-        URI uri = URI.create("wasb://destination@imageryproducts.blob.core.windows.net/1000004_2128820_2017-12-19_100c/1000004_2128820_2017-12-19_100c-6u03f6c6-d437da84facd6e6f187b8cb1a3e85cf4-zoneclip-20171219224236000.tif");
-        AzureRangeReader reader = new AzureRangeReader(uri);
-        reader.readHeader(16384);
-        long[] range1 = new long[]{20000, 25000};
-        long[] range2 = new long[]{30000, 35000};
-        reader.readAsync(range1, range2);
-        byte[] bytes = reader.getBytes();
-        System.out.println("bytes length: " + bytes.length);
-
-    }
-
     public AzureRangeReader(URI uri) {
-        this.uri = uri;
+       super(uri);
 
         containerName = AzureUrlParser.getContainerName(uri);
         filename = AzureUrlParser.getFilename(uri, containerName);
@@ -68,55 +67,28 @@ public class AzureRangeReader implements RangeReader {
         buffer = ByteBuffer.allocate(filesize);
     }
 
-    public void setHeaderByteLength(int headerByteLength) {
-        this.headerByteLength = headerByteLength;
-    }
-
-    public void setFilesize(int filesize) {
-        this.filesize = filesize;
-        buffer = ByteBuffer.allocate(filesize);
-    }
-
     @Override
-    public int getFilesize() {
-        return filesize;
-    }
-
-    @Override
-    public byte[] getBytes() {
-        return buffer.array();
-    }
-
-    @Override
-    public byte[] readHeader(int headerByteLength) {
-        BlobRange blobRange = new BlobRange(0l, (long)headerByteLength);
-        blobRange = new BlobRange(0l, (long)filesize);
-
-        BlobAccessConditions conditions = new BlobAccessConditions();
-        //conditions.
-
+    public byte[] readHeader() {
+        BlobRange blobRange = new BlobRange(0l, (long)headerLength);
         Response<Flux<ByteBuffer>> response = client
                 .downloadWithResponse(blobRange, null, null, false)
                 .block();
 
-
+        final PositionTracker positionTracker = new PositionTracker(0);
         response.value()
                 .map(bb -> {
-                    //byte[] b = bb.array();
-                    int length = bb.capacity();
+                    buffer.position(positionTracker.getPosition());
                     buffer.put(bb);
-                    System.out.println("put length " + length + " - current pos: " + buffer.position());
+                    positionTracker.advancePosition(bb.limit());
                     return bb;
                 })
                 .blockLast();
 
-        //buffer.put(header, 0, headerByteLength);
-        byte[] b = new byte[headerByteLength];
+        byte[] b = new byte[headerLength];
         buffer.rewind();
-        buffer.get(b, 0, headerByteLength);
+        buffer.get(b, 0, headerLength);
 
         return b;
-        //return header;
     }
 
 
@@ -124,7 +96,6 @@ public class AzureRangeReader implements RangeReader {
     public void readAsync(Collection<long[]> ranges) {
         readAsync(ranges.toArray(new long[][]{}));
     }
-
 
     @Override
     public void readAsync(long[]... ranges) {
@@ -172,13 +143,14 @@ public class AzureRangeReader implements RangeReader {
                 if (future.isDone()) {
                     if (!completed.contains(key)) {
                         try {
+                            final PositionTracker positionTracker = new PositionTracker((int)key);
                             future.get().value().map(bb -> {
+                                buffer.position(positionTracker.getPosition());
                                 buffer.put(bb);
-                                System.out.println("b len: " + bb.capacity());
+                                positionTracker.advancePosition(bb.limit());
                                 return bb;
                             }).blockLast();
 
-                            //writeValue((int)key, future.get().value().blockFirst().array());
                             completed.add(key);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -192,50 +164,32 @@ public class AzureRangeReader implements RangeReader {
         }
     }
 
-    /**
-     * Prevents making new range requests for image data that overlap with the header range that has already been read
-     *
-     * @param ranges
-     * @return
-     */
-    protected long[][] reconcileRanges(long[][] ranges) {
-        boolean modified = false;
-        List<long[]> newRanges = new ArrayList<>();
-        for (int i = 0; i < ranges.length; i++) {
-            if (ranges[i][0] < headerByteLength) {
-                // this range starts inside of what we already read for the header
-                modified = true;
-                if (ranges[i][1] < headerByteLength) {
-                    // this range is fully inside the header which was already read; discard this range
-                    LOGGER.fine("Removed range " + ranges[i][0] + "-" + ranges[i][1] + " as it lies fully within"
-                            + " the data already read in the header request");
-                } else {
-                    // this range starts inside the header range, but ends outside of it.
-                    // add a new range that starts at the end of the header range
-                    long[] newRange = new long[]{headerByteLength + 1, ranges[i][1]};
+    class PositionTracker {
+        private int position;
 
-                    if (newRange[0] >= newRange[1]) {
-                        // TODO this can happen because of the way the header is added to CogTileInfo -- needs to be fixed
-                        continue;
-                    }
-                    newRanges.add(newRange);
-                    LOGGER.fine("Modified range " + ranges[i][0] + "-" + ranges[i][1]
-                            + " to " + (headerByteLength + 1) + "-" + ranges[i][1] + " as it overlaps with data previously"
-                            + " read in the header request");
-                }
-            } else {
-                // fully outside the header area, keep the range
-                newRanges.add(ranges[i]);
-            }
+        public PositionTracker(int position) {
+            this.position = position;
         }
 
-        if (modified) {
-            return newRanges.toArray(new long[][]{});
-        } else {
-            LOGGER.fine("No ranges modified.");
-            return ranges;
+        public void setPosition(int position) {
+            this.position = position;
         }
+
+        public int getPosition() {
+            return position;
+        }
+
+        public PositionTracker position(int position) {
+            setPosition(position);
+            return this;
+        }
+
+        public PositionTracker advancePosition(int len) {
+            position += len;
+            return this;
+        }
+
+
     }
-
 
 }

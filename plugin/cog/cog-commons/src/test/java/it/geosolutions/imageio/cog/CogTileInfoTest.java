@@ -1,7 +1,8 @@
 /*
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
- *    (C) 2007 - 2016, GeoSolutions
+ *    http://java.net/projects/imageio-ext/
+ *    (C) 2019, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,18 +17,16 @@
 package it.geosolutions.imageio.cog;
 
 import it.geosolutions.imageioimpl.plugins.cog.CogTileInfo;
-import it.geosolutions.imageioimpl.plugins.cog.RangeBuilder;
+import it.geosolutions.imageioimpl.plugins.cog.TileRange;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.List;
 
 /**
  * Testing ability to build tile range metadata.
  * 
  * @author joshfix
  */
-public class CogTileInfoTest extends Assert {
+public class CogTileInfoTest {
 
     @Test
     public void buildTileInfo() {
@@ -40,7 +39,7 @@ public class CogTileInfoTest extends Assert {
         info.addTileRange(tile1Index, tile1Offset, tile1ByteLength);
 
         // verify the header length is adjusted to not overlap with the first tile offset
-        Assert.assertEquals(tile1Offset - 1, info.getHeaderSize());
+        Assert.assertEquals(tile1Offset, info.getHeaderSize());
 
         // verify the added tile range has the expected offset and length
         Assert.assertEquals(tile1Offset, info.getFirstTileOffset());
@@ -50,8 +49,8 @@ public class CogTileInfoTest extends Assert {
         Assert.assertEquals(tile1Index, info.getTileIndex(tile1Offset + (tile1ByteLength / 2)));
 
         // test that getting a tile range by an offset or by index results in the same TileRange object
-        CogTileInfo.TileRange tileRange1 = info.getTileRange((long)(tile1Offset + (tile1ByteLength / 2)));
-        CogTileInfo.TileRange tileRange2 = info.getTileRange(tile1Index);
+        TileRange tileRange1 = info.getTileRange((long)(tile1Offset + (tile1ByteLength / 2)));
+        TileRange tileRange2 = info.getTileRange(tile1Index);
         Assert.assertEquals(tileRange1, tileRange2);
 
     }

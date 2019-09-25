@@ -1,3 +1,19 @@
+/*
+ *    ImageI/O-Ext - OpenSource Java Image translation Library
+ *    http://www.geo-solutions.it/
+ *    http://java.net/projects/imageio-ext/
+ *    (C) 2019, GeoSolutions
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    either version 3 of the License, or (at your option) any later version.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 package it.geosolutions.imageioimpl.plugins.cog;
 
 import it.geosolutions.imageio.plugins.cog.CogImageReadParam;
@@ -10,7 +26,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.ByteOrder;
+import java.util.Set;
 import java.util.logging.Logger;
+
+import static it.geosolutions.imageioimpl.plugins.cog.CogTileInfo.HEADER_TILE_INDEX;
 
 /**
  * @author joshfix
@@ -18,12 +37,14 @@ import java.util.logging.Logger;
  */
 public class HttpCogImageInputStream implements ImageInputStream, CogImageInputStream {
 
-    protected int headerByteLength = 16384;
+    protected int initialHeaderReadLength = 16384;
     private boolean initialized = false;
+
     protected URI uri;
-    protected CogTileInfo cogTileInfo = new CogTileInfo();
+    protected CogTileInfo cogTileInfo;
     protected RangeReader rangeReader;
     protected MemoryCacheImageInputStream delegate;
+
     private final static Logger LOGGER = Logger.getLogger(HttpCogImageInputStream.class.getName());
 
     public HttpCogImageInputStream(String url) {
@@ -41,22 +62,16 @@ public class HttpCogImageInputStream implements ImageInputStream, CogImageInputS
     public HttpCogImageInputStream(URI uri, RangeReader rangeReader) {
         this.uri = uri;
         this.rangeReader = rangeReader;
-        try {
-            initializeHeader();
-        } catch (IOException e) {
-            LOGGER.severe("Unable to initialize header");
-            throw new RuntimeException(e);
-        }
+        initialHeaderReadLength = rangeReader.getHeaderLength();
+        cogTileInfo = new CogTileInfo(initialHeaderReadLength);
+        initializeHeader();
     }
 
     public void init(RangeReader rangeReader) {
         this.rangeReader = rangeReader;
-        try {
-            initializeHeader();
-        } catch (IOException e) {
-            LOGGER.severe("Unable to initialize header");
-            throw new RuntimeException(e);
-        }
+        initialHeaderReadLength = rangeReader.getHeaderLength();
+        cogTileInfo = new CogTileInfo(initialHeaderReadLength);
+        initializeHeader();
     }
 
     public void init(CogImageReadParam param) {
@@ -64,6 +79,8 @@ public class HttpCogImageInputStream implements ImageInputStream, CogImageInputS
         if (null != rangeReaderClass) {
             try {
                 rangeReader = rangeReaderClass.getDeclaredConstructor(URI.class).newInstance(uri);
+                rangeReader.setHeaderLength(initialHeaderReadLength);
+                cogTileInfo = new CogTileInfo(initialHeaderReadLength);
             } catch (Exception e) {
                 LOGGER.severe("Unable to instantiate range reader class " + rangeReaderClass.getCanonicalName());
                 throw new RuntimeException(e);
@@ -74,16 +91,11 @@ public class HttpCogImageInputStream implements ImageInputStream, CogImageInputS
             return;
         }
 
-        try {
-            initializeHeader();
-        } catch (IOException e) {
-            LOGGER.severe("Unable to initialize header");
-            throw new RuntimeException(e);
-        }
+        initializeHeader();
     }
 
-    protected void initializeHeader() throws IOException {
-        rangeReader.readHeader(headerByteLength);
+    protected void initializeHeader() {
+        rangeReader.readHeader();
         // wrap the result in a MemoryCacheInputStream
         delegate = new MemoryCacheImageInputStream(new ByteArrayInputStream(rangeReader.getBytes()));
         initialized = true;
@@ -100,23 +112,25 @@ public class HttpCogImageInputStream implements ImageInputStream, CogImageInputS
     }
 
     @Override
-    public void setHeaderByteLength(int headerByteLength) {
-        this.headerByteLength = headerByteLength;
+    public void setInitialHeaderReadLength(int initialHeaderReadLength) {
+        this.initialHeaderReadLength = initialHeaderReadLength;
     }
 
     @Override
     public void readRanges() {
         // read data with the RangeReader and set the byte order and pointer on the new input stream
-        long firstTileOffset = cogTileInfo.getFirstTileOffset();
-        long firstTileByteLength = cogTileInfo.getFirstTileByteLength();
-        RangeBuilder rangeBuilder = new RangeBuilder(firstTileOffset, firstTileOffset + firstTileByteLength);
+        RangeBuilder rangeBuilder = new RangeBuilder(0, cogTileInfo.getHeaderSize() - 1);
 
-        cogTileInfo.getTileRanges().forEach((tileIndex, tileRange) ->
-                rangeBuilder.addTileRange(tileRange.getStart(), tileRange.getByteLength()));
+        cogTileInfo.getTileRanges().forEach((tileIndex, tileRange) -> {
+            if (tileIndex == HEADER_TILE_INDEX) {
+                return;
+            }
+            rangeBuilder.addTileRange(tileRange.getStart(), tileRange.getEnd());
+        });
 
         // read all of the ranges asynchronously
-        long[][] ranges = rangeBuilder.getRanges().toArray(new long[][]{});
-        LOGGER.fine("Submitting " + ranges.length + " range request(s)");
+        Set<long[]> ranges = rangeBuilder.getRanges();
+        LOGGER.fine("Submitting " + ranges.size() + " range request(s)");
 
         rangeReader.readAsync(ranges);
 

@@ -1,7 +1,8 @@
 /*
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
- *    (C) 2007 - 2016, GeoSolutions
+ *    http://java.net/projects/imageio-ext/
+ *    (C) 2019, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -19,6 +20,7 @@ import it.geosolutions.imageioimpl.plugins.cog.RangeBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,7 +28,7 @@ import java.util.List;
  * 
  * @author joshfix
  */
-public class RangeBuilderTest extends Assert {
+public class RangeBuilderTest {
 
     @Test
     public void buildRanges() {
@@ -36,27 +38,28 @@ public class RangeBuilderTest extends Assert {
         // verify that after adding a single range that is not contiguous with the initial range there are two ranges
         // that start and end where expected
         long tileRange1Start = 200;
-        long tileRange1Length = 100;
+        long tileRange1End = 300;
         RangeBuilder rangeBuilder = new RangeBuilder(initialRangeStart, initialRangeEnd);
-        rangeBuilder.addTileRange(tileRange1Start, tileRange1Length);
-        List<long[]> ranges = rangeBuilder.getRanges();
+        rangeBuilder.addTileRange(tileRange1Start, tileRange1End);
+        List<long[]> ranges = new ArrayList<>(rangeBuilder.getRanges());
         Assert.assertEquals(2, ranges.size());
-        Assert.assertEquals(initialRangeStart, ranges.get(0)[0]);
-        Assert.assertEquals(initialRangeEnd, ranges.get(0)[1]);
-        Assert.assertEquals(tileRange1Start, ranges.get(1)[0]);
-        Assert.assertEquals(tileRange1Start + tileRange1Length - 1, ranges.get(1)[1]);
+
+        ranges.forEach(range -> {
+           Assert.assertTrue(range[0] == initialRangeStart || range[0] == tileRange1Start);
+            Assert.assertTrue(range[1] == initialRangeEnd || range[1] == tileRange1End);
+        });
 
         // verify that after adding adding a tile range that is contiguous with the initial range there is a single
         // range that starts at the initial start and ends at the end of the new tile length
         long tileRange2Start = 101;
-        long tileRange2Length = 200;
+        long tileRange2End = 200;
         rangeBuilder = new RangeBuilder(initialRangeStart, initialRangeEnd);
-        rangeBuilder.addTileRange(tileRange2Start, tileRange2Length);
-        ranges = rangeBuilder.getRanges();
+        rangeBuilder.addTileRange(tileRange2Start, tileRange2End);
+        ranges = new ArrayList<>(rangeBuilder.getRanges());
         Assert.assertEquals(1, ranges.size());
         Assert.assertEquals(initialRangeStart, ranges.get(0)[0]);
-        Assert.assertEquals(tileRange2Start + tileRange2Length - 1, ranges.get(0)[1]);
+        Assert.assertEquals(tileRange2End, ranges.get(0)[1]);
         // verify the byte length of the range
-        Assert.assertEquals((initialRangeEnd - initialRangeStart) + tileRange2Length, ranges.get(0)[1] - initialRangeStart);
+        Assert.assertEquals(tileRange2End - initialRangeStart, ranges.get(0)[1] - ranges.get(0)[0]);
     }
 }

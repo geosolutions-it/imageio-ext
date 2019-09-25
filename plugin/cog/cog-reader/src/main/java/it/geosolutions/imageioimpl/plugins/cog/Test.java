@@ -16,7 +16,6 @@ import java.net.URL;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -33,15 +32,33 @@ public class Test {
     static boolean saveFile = false;
     static String cogImageUrl = "https://s3-us-west-2.amazonaws.com/landsat-pds/c1/L8/153/075/LC08_L1TP_153075_20190515_20190515_01_RT/LC08_L1TP_153075_20190515_20190515_01_RT_B2.TIF";
     //static String cogImageUrl = "s3://landsat-pds/c1/L8/153/075/LC08_L1TP_153075_20190515_20190515_01_RT/LC08_L1TP_153075_20190515_20190515_01_RT_B2.TIF";
-    //static String cogImageUrl = "wasb://destination@imageryproducts.blob.core.windows.net/1000004_2128820_2017-12-19_100c/1000004_2128820_2017-12-19_100c-6u03f6c6-d437da84facd6e6f187b8cb1a3e85cf4-zoneclip-20171219224236000.tif";
-    static ImageInputStream cogStream = new CachingHttpCogImageInputStream(cogImageUrl);
-    //static ImageInputStream cogStream = new HttpCogImageInputStream(cogImageUrl);
+
+    //static String cogImageUrl = "wasb://planet@boundlesstest.blob.core.windows.net/20180103_175714_0f34_3B_AnalyticMS.tif";
+    //static String cogImageUrl = "https://boundlesstest.blob.core.windows.net/planet/20180103_175714_0f34_3B_AnalyticMS.tif";
+    //static ImageInputStream cogStream = new CachingHttpCogImageInputStream(cogImageUrl);
+    static ImageInputStream cogStream = new HttpCogImageInputStream(cogImageUrl);
 
     static {
+
+
         int x = 1000;
         int y = 1000;
+        int width = 500;
+        int height = 500;
+
+
+/*
+        int x = 000;
+        int y = 000;
+        int width = 500;
+        int height = 500;
+*/
+/*
+        int x = 000;
+        int y = 000;
         int width = 2000;
         int height = 2000;
+*/
         param.setSourceRegion(new Rectangle(x, y, width, height));
         //param.setRangeReaderClass(AzureRangeReader.class);
         //param.setRangeReaderClass(S3RangeReader.class);
@@ -50,9 +67,10 @@ public class Test {
 
     public static void main(String... args) throws Exception {
         //headToHeadTest(5);
-        //readCog();
+
         //readTiff();
-        readCog(4);
+        //readCog();
+        readCog(2);
 
     }
 
@@ -65,6 +83,7 @@ public class Test {
 
     public static void readCog() throws Exception {
         cogStream = new CachingHttpCogImageInputStream(cogImageUrl);
+        //cogStream = new HttpCogImageInputStream(cogImageUrl);
         display(readCog(param));
     }
 
@@ -121,7 +140,7 @@ public class Test {
     }
 static int count = 0;
     public static void display(BufferedImage bi) throws Exception {
-        if (count++ != 1) {
+        if (count++ != 0) {
             return;
         }
         if (saveFile) {
@@ -131,13 +150,13 @@ static int count = 0;
 
         JLabel picLabel = new JLabel(new ImageIcon(bi));
         picLabel.setVisible(true);
-        picLabel.setSize(1000, 1000);
+        picLabel.setSize(1500, 1500);
         JFrame frame = new JFrame();
         JPanel panel = new JPanel();
         panel.add(picLabel);
         frame.add(panel);
-        frame.setSize(1000, 1000);
-        panel.setSize(1000, 1000);
+        frame.setSize(1500, 1500);
+        panel.setSize(1500, 1500);
         panel.setVisible(true);
         frame.setVisible(true);
     }

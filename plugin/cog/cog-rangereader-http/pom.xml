@@ -11,30 +11,15 @@
 
     <name>Cloud Optimized GeoTIFF HTTP Range Reader</name>
 
-    <properties>
-        <java.version>11</java.version>
-        <maven.compiler.source>11</maven.compiler.source>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>it.geosolutions.imageio-ext</groupId>
             <artifactId>imageio-ext-cog-commons</artifactId>
-            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>11</source>
-                    <target>11</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

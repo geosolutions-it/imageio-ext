@@ -1,8 +1,22 @@
+/*
+ *    ImageI/O-Ext - OpenSource Java Image translation Library
+ *    http://www.geo-solutions.it/
+ *    http://java.net/projects/imageio-ext/
+ *    (C) 2019, GeoSolutions
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    either version 3 of the License, or (at your option) any later version.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 package it.geosolutions.imageioimpl.plugins.cog;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URLDecoder;
 
 /**
  * @author joshfix
@@ -36,31 +50,33 @@ public class S3ConfigurationProperties {
         region = PropertyLocator.getPropertyValue(AWS_S3_REGION_KEY, null);
         endpoint = PropertyLocator.getPropertyValue(AWS_S3_ENDPOINT_KEY, null);
 
+        if (user == null && password == null) {
+            String userPass = uri.getUserInfo();
+            if (userPass != null && !userPass.isEmpty()) {
+                String[] userPassArray = userPass.split(":");
+                user = userPassArray[0];
+                password = userPassArray[1];
+            }
+        }
+
+        String scheme = uri.getScheme().toLowerCase();
+        if (scheme.startsWith("http")) {
+            String host = uri.getHost();
+            if (host.toLowerCase().startsWith("s3-") && host.contains(".")) {
+                region = host.substring(3).split("\\.")[0];
+            }
+        }
+
         if (region == null) {
             throw new RuntimeException("No region info found for alias " + alias + ".  Please set system property "
                     + AWS_S3_REGION_KEY + " or environment variable "
-                    + PropertyLocator.convertPropertytoEnvVar(AWS_S3_REGION_KEY));
+                    + PropertyLocator.convertPropertyToEnvVar(AWS_S3_REGION_KEY));
         }
 
-        String[] parts = uri.toString().split("/");
-        if (alias.startsWith("http")) {
-            bucket = parts[parts.length - 2];
-            key = parts[parts.length - 1];
-        } else {
-            StringBuilder keyBuilder = new StringBuilder();
-            bucket = parts[2];
-            for (int i = 3; i < parts.length; i++) {
-                try {
-                    keyBuilder.append("/").append(URLDecoder.decode(parts[i], "UTF-8"));
-                } catch (UnsupportedEncodingException e) {
-                    throw new RuntimeException("Unable to decode key part " + parts[i] + " for URL " + uri);
-                }
-            }
-            key = keyBuilder.toString();
-            /* Strip leading slash */
-            key = key.startsWith("/") ? key.substring(1) : key;
-        }
-
+        String path = uri.getPath();
+        path = path.startsWith("/") ? path.substring(1) : path;
+        bucket = scheme.startsWith("http") ? path.split("/")[0] : uri.getHost();
+        key = scheme.startsWith("http") ? path.substring(bucket.length() + 1) : path;
         filename = nameFromKey(key);
     }
 

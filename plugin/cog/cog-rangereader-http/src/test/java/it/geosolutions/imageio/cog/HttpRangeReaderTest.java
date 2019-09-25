@@ -1,7 +1,8 @@
 /*
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
- *    (C) 2007 - 2016, GeoSolutions
+ *    http://java.net/projects/imageio-ext/
+ *    (C) 2019, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,6 +17,7 @@
 package it.geosolutions.imageio.cog;
 
 import it.geosolutions.imageioimpl.plugins.cog.HttpRangeReader;
+import it.geosolutions.imageioimpl.plugins.cog.RangeReader;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -24,16 +26,15 @@ import org.junit.Test;
  * 
  * @author joshfix
  */
-public class HttpRangeReaderTest extends Assert {
+public class HttpRangeReaderTest {
 
     private static final String cogUrl = "https://s3-us-west-2.amazonaws.com/landsat-pds/c1/L8/153/075/LC08_L1TP_153075_20190515_20190515_01_RT/LC08_L1TP_153075_20190515_20190515_01_RT_B2.TIF";
 
     @Test
     public void readRanges() {
-        HttpRangeReader rangeReader = new HttpRangeReader(cogUrl);
-        int headerByteLength = 16384;
-        byte[] header = rangeReader.readHeader(headerByteLength);
-        Assert.assertEquals(headerByteLength, header.length);
+        RangeReader rangeReader = new HttpRangeReader(cogUrl);
+        byte[] header = rangeReader.readHeader();
+        Assert.assertEquals(rangeReader.getHeaderLength(), header.length);
 
         long[] range1 = new long[]{20000, 21000};
         long[] range2 = new long[]{30000, 31000};
@@ -65,7 +66,6 @@ public class HttpRangeReaderTest extends Assert {
         nonZeroValueFound = false;
         for (long i = range1[1] + 1; i < range2[0] - 1; i++) {
             if (bytes[(int)i] != 0) {
-                System.out.println("found non zero at " + i);
                 nonZeroValueFound = true;
                 break;
             }

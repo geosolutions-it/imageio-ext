@@ -1,7 +1,23 @@
+/*
+ *    ImageI/O-Ext - OpenSource Java Image translation Library
+ *    http://www.geo-solutions.it/
+ *    http://java.net/projects/imageio-ext/
+ *    (C) 2019, GeoSolutions
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    either version 3 of the License, or (at your option) any later version.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 package it.geosolutions.imageioimpl.plugins.cog;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * This is a utility class that stores all of the required tile range metadata for a given read operation.
@@ -14,22 +30,26 @@ public class CogTileInfo {
     protected int headerSize;
     protected long firstTileOffset = Long.MAX_VALUE;
     protected long firstTileByteLength;
-    protected Map<Integer, TileRange> tileRanges = new HashMap<>();
-
-    public CogTileInfo() {}
+    protected Map<Integer, TileRange> tileRanges = new TreeMap<>();
+    public static final int HEADER_TILE_INDEX = -100;
 
     public CogTileInfo(int headerSize) {
         this.headerSize = headerSize;
     }
 
     public void addTileRange(int tileIndex, long offset, long byteLength) {
+        //if ((offset < firstTileOffset && offset > 0) || tileIndex == 0) {
         if (offset < firstTileOffset && offset > 0) {
             firstTileOffset = offset;
             firstTileByteLength = byteLength;
         }
-        if (offset < headerSize) {
-            headerSize = (int)offset -1;
+        if (offset < headerSize && offset > 0) {
+            //headerSize = (int)offset - 1;
+            headerSize = (int)offset;
+            tileRanges.put(HEADER_TILE_INDEX, new TileRange(HEADER_TILE_INDEX, 0, headerSize));
         }
+
+
         tileRanges.put(tileIndex, new TileRange(tileIndex, offset, byteLength));
     }
 
@@ -50,6 +70,7 @@ public class CogTileInfo {
     }
 
     public Map<Integer, TileRange> getTileRanges() {
+
         return tileRanges;
     }
 
@@ -75,70 +96,4 @@ public class CogTileInfo {
         return -1;
     }
 
-    public static class TileRange {
-
-        private final long start;
-        private final long end;
-        private final long byteLength;
-        private final int index;
-
-        public TileRange(int index, long start, long byteLength) {
-            this.index = index;
-            this.start = start;
-            this.byteLength = byteLength;
-            this.end = start + byteLength;
-        }
-
-        public int getIndex() {
-            return index;
-        }
-
-        public long getStart() {
-            return start;
-        }
-
-        public long getEnd() {
-            return end;
-        }
-
-        public long getByteLength() {
-            return byteLength;
-        }
-
-        @Override
-        public String toString() {
-            return "index: " + index + " - start: " + start + " - byteLength: " + byteLength + " - end: " + end;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-
-            TileRange that = (TileRange) o;
-
-            if (index != that.index || start != that.start || byteLength != that.byteLength || end != that.end) {
-                return false;
-            }
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = 31 * result + (int)start;
-            result = 31 * result + (int)byteLength;
-            result = 31 * result + (int)end;
-            result = 31 * result + index;
-            return result;
-        }
-
-    }
 }

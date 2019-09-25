@@ -1,7 +1,8 @@
 /*
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
- *    (C) 2007 - 2016, GeoSolutions
+ *    http://java.net/projects/imageio-ext/
+ *    (C) 2019, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -20,24 +21,31 @@ import it.geosolutions.imageioimpl.plugins.cog.S3RangeReader;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.IOException;
-
 /**
  * Testing HTTP range reading capabilities.
  * 
  * @author joshfix
  */
-public class S3RangeReaderTest extends Assert {
-
-    private static final String cogUrl = "s3://landsat-pds/c1/L8/153/075/LC08_L1TP_153075_20190515_20190515_01_RT/LC08_L1TP_153075_20190515_20190515_01_RT_B2.TIF";
-    private static final String region = "us-west-2";
+public class S3RangeReaderTest {
 
     @Test
-    public void readRanges() throws IOException {
+    public void readS3Ranges() {
+        String cogUrl = "s3://landsat-pds/c1/L8/153/075/LC08_L1TP_153075_20190515_20190515_01_RT/LC08_L1TP_153075_20190515_20190515_01_RT_B2.TIF";
+        String region = "us-west-2";
+
         System.setProperty("s3.aws.region", region);
-        RangeReader rangeReader = new S3RangeReader(cogUrl);
+        readRanges(new S3RangeReader(cogUrl));
+    }
+
+    @Test
+    public void readHttpRanges() {
+        String cogUrl = "https://s3-us-west-2.amazonaws.com/landsat-pds/c1/L8/153/075/LC08_L1TP_153075_20190515_20190515_01_RT/LC08_L1TP_153075_20190515_20190515_01_RT_B2.TIF";
+        readRanges(new S3RangeReader(cogUrl));
+    }
+
+    public void readRanges(RangeReader rangeReader) {
         int headerByteLength = 16384;
-        byte[] header = rangeReader.readHeader(headerByteLength);
+        byte[] header = rangeReader.readHeader();
         Assert.assertEquals(headerByteLength, header.length);
 
         long[] range1 = new long[]{20000, 21000};
@@ -70,7 +78,6 @@ public class S3RangeReaderTest extends Assert {
         nonZeroValueFound = false;
         for (long i = range1[1] + 1; i < range2[0] - 1; i++) {
             if (bytes[(int)i] != 0) {
-                System.out.println("found non zero at " + i);
                 nonZeroValueFound = true;
                 break;
             }
