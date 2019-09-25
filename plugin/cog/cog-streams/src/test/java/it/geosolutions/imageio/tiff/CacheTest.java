@@ -16,7 +16,8 @@
  */
 package it.geosolutions.imageio.tiff;
 
-import it.geosolutions.imageioimpl.plugins.cog.*;
+import it.geosolutions.imageioimpl.plugins.cog.CacheManagement;
+import it.geosolutions.imageioimpl.plugins.cog.TileCacheEntryKey;
 import org.junit.Assert;
 import org.junit.Test;
 

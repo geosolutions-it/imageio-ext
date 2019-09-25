@@ -30,8 +30,8 @@ public class Test {
     static List<Long> tiffTimes = new ArrayList<>();
     static CogImageReadParam param = new CogImageReadParam();
     static boolean saveFile = false;
-    static String cogImageUrl = "https://s3-us-west-2.amazonaws.com/landsat-pds/c1/L8/153/075/LC08_L1TP_153075_20190515_20190515_01_RT/LC08_L1TP_153075_20190515_20190515_01_RT_B2.TIF";
-    //static String cogImageUrl = "s3://landsat-pds/c1/L8/153/075/LC08_L1TP_153075_20190515_20190515_01_RT/LC08_L1TP_153075_20190515_20190515_01_RT_B2.TIF";
+    //static String cogImageUrl = "https://s3-us-west-2.amazonaws.com/landsat-pds/c1/L8/153/075/LC08_L1TP_153075_20190515_20190515_01_RT/LC08_L1TP_153075_20190515_20190515_01_RT_B2.TIF";
+    static String cogImageUrl = "s3://landsat-pds/c1/L8/153/075/LC08_L1TP_153075_20190515_20190515_01_RT/LC08_L1TP_153075_20190515_20190515_01_RT_B2.TIF?region=us-west-2";
 
     //static String cogImageUrl = "wasb://planet@boundlesstest.blob.core.windows.net/20180103_175714_0f34_3B_AnalyticMS.tif";
     //static String cogImageUrl = "https://boundlesstest.blob.core.windows.net/planet/20180103_175714_0f34_3B_AnalyticMS.tif";
@@ -61,8 +61,8 @@ public class Test {
 */
         param.setSourceRegion(new Rectangle(x, y, width, height));
         //param.setRangeReaderClass(AzureRangeReader.class);
-        //param.setRangeReaderClass(S3RangeReader.class);
-        param.setRangeReaderClass(HttpRangeReader.class);
+        param.setRangeReaderClass(S3RangeReader.class);
+        //param.setRangeReaderClass(HttpRangeReader.class);
     }
 
     public static void main(String... args) throws Exception {

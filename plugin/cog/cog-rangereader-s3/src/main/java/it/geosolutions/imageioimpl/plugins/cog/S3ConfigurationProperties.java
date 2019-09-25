@@ -16,7 +16,10 @@
  */
 package it.geosolutions.imageioimpl.plugins.cog;
 
+
 import java.net.URI;
+import java.net.URLDecoder;
+import java.util.*;
 
 /**
  * @author joshfix
@@ -50,15 +53,14 @@ public class S3ConfigurationProperties {
         region = PropertyLocator.getPropertyValue(AWS_S3_REGION_KEY, null);
         endpoint = PropertyLocator.getPropertyValue(AWS_S3_ENDPOINT_KEY, null);
 
-        if (user == null && password == null) {
-            String userPass = uri.getUserInfo();
-            if (userPass != null && !userPass.isEmpty()) {
-                String[] userPassArray = userPass.split(":");
-                user = userPassArray[0];
-                password = userPassArray[1];
-            }
+        String userPass = uri.getUserInfo();
+        if (userPass != null && !userPass.isEmpty()) {
+            String[] userPassArray = userPass.split(":");
+            user = userPassArray[0];
+            password = userPassArray[1];
         }
 
+        // if protocol is http, get the region from the host
         String scheme = uri.getScheme().toLowerCase();
         if (scheme.startsWith("http")) {
             String host = uri.getHost();
@@ -67,6 +69,19 @@ public class S3ConfigurationProperties {
             }
         }
 
+        // if region is null, try to get the region from a URL parameter
+        if (region == null) {
+            for (Map.Entry<String, List<String>> entry : splitQuery(uri).entrySet()) {
+                if (entry.getKey().equalsIgnoreCase("region")) {
+                    List<String> regions = entry.getValue();
+                    if (regions != null && regions.size() > 0) {
+                        region = regions.get(0);
+                    }
+                }
+            }
+        }
+
+        // if region is null,
         if (region == null) {
             throw new RuntimeException("No region info found for alias " + alias + ".  Please set system property "
                     + AWS_S3_REGION_KEY + " or environment variable "
@@ -83,6 +98,25 @@ public class S3ConfigurationProperties {
     private String nameFromKey(String key) {
         String[] parts = key.split("/");
         return parts[parts.length - 1];
+    }
+
+    public static Map<String, List<String>> splitQuery(URI uri)  {
+        try {
+            final Map<String, List<String>> query_pairs = new LinkedHashMap<>();
+            final String[] pairs = uri.getQuery().split("&");
+            for (String pair : pairs) {
+                final int idx = pair.indexOf("=");
+                final String key = idx > 0 ? URLDecoder.decode(pair.substring(0, idx), "UTF-8") : pair;
+                if (!query_pairs.containsKey(key)) {
+                    query_pairs.put(key, new LinkedList<>());
+                }
+                final String value = idx > 0 && pair.length() > idx + 1 ? URLDecoder.decode(pair.substring(idx + 1), "UTF-8") : null;
+                query_pairs.get(key).add(value);
+            }
+            return query_pairs;
+        } catch (Exception e) {
+            return Collections.emptyMap();
+        }
     }
 
     public String getUser() {

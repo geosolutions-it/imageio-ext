@@ -20,6 +20,22 @@ already provided with imageio-ext.  The strategy is:
  * Allow TIFFImageReader to continue decoding single tiles at a time, using the in-memory byte data that has already 
  been fetched.
  
+A code sample may look like this:
+
+```java
+CogUri cogUri = new CogUri("https://server.com/cog.tif", true);
+ImageInputStream cogStream = new CogImageInputStreamSpi().createInputStreamInstance(cogUri);
+
+CogImageReader reader = new CogImageReader(new CogImageReaderSpi());
+reader.setInput(cogStream);
+
+CogImageReadParam param = new CogImageReadParam();
+param.setSourceRegion(new Rectangle(500, 500, 1000, 1000));
+param.setRangeReaderClass(HttpRangeReader.class);
+
+BufferedImage cogImage = reader.read(0, param);
+```
+ 
 ### Building
 The [cog-reader](./cog-reader/) module provides four build profiles, `http`, `s3`, `azure`, and `all`.  The selected  
 profile will include the ability to read COGs using either the `com.squareup.okhttp3:okhttp`, 
@@ -82,6 +98,11 @@ When using the CachingCogImageInputStream, each tile is individually stored in c
 size; instead it is simply the size of the tile.  This way, when the TIFFImageReader begins it's process of looping 
 through each individual tile to decode and requests to read a tile, only one call is needed to be made to fetch that 
 tile from cache. 
+
+[CogImageReadParam](./cog-commons/src/main/java/it/geosolutions/imageio/plugins/cog/CogImageReadParam) extends 
+`TIFFImageReadParam` and provides an additional field `Class<? extends RangeReader> rangeReaderClass;`.  This provides 
+the `CogImageInputStream` implementation the information necessary to know which `RangeReader` to construct.  This
+object is passed to the `read` method of `CogImageReader`.
 
 [CogTileCacheProvider](./cog-commons/src/main/java/it/geosolutions/imageioimpl/plugins/cog/CogTileCacheProvider.java) 
 is a simple interface to define the methods that need to be implemented for `CachingCogImageInputStream` to cache 

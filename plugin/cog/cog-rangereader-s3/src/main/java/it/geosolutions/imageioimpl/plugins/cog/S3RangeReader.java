@@ -40,7 +40,9 @@ import static software.amazon.awssdk.core.async.AsyncResponseTransformer.toBytes
  * https://s3-<region>.amazonaws.com/<bucket>/<key>
  * or
  * s3://<bucket>/<key>
- * For the latter, the region must be set via environment variables or system properties.
+ * For the latter, the region must be set via environment variables, system properties or be provided via the URL
+ * parameter `region`:
+ * * s3://<bucket>/<key>?region=us-west-2
  *
  * API documentation: https://docs.aws.amazon.com/sdk-for-java/v2/developer-guide/aws-sdk-java-dg-v2.pdf
  *
@@ -75,7 +77,7 @@ public class S3RangeReader extends RangeReader {
         try {
             HeadObjectResponse headResponse = client.headObject(headObjectRequest).get();
             filesize = headResponse.contentLength().intValue();
-            buffer = ByteBuffer.allocate((int) filesize);
+            buffer = ByteBuffer.allocate(filesize);
         } catch (Exception e) {
             LOGGER.severe("Error reading file " + uri);
             throw new RuntimeException(e);
