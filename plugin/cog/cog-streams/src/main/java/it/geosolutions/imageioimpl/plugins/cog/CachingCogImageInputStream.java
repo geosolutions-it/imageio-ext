@@ -125,7 +125,7 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
     public void setInitialHeaderReadLength(int initialHeaderReadLength) {
         this.initialHeaderReadLength = initialHeaderReadLength;
     }
-static int count = 0;
+
     /**
      * TIFFImageReader will read and decode the requested region of the GeoTIFF tile by tile.  Because of this, we will
      * not arbitrarily store fixed-length byte chunks in cache, but instead create a cache entry for all the bytes for
@@ -189,11 +189,9 @@ static int count = 0;
                         Arrays.copyOfRange(b, (int) tileRange.getStart(), (int) (tileRange.getEnd() + 1));
                 CacheManagement.DEFAULT.cacheTile(key, tileBytes);
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.warning("Unable to cache tile at index " + tileIndex + ". " + e.getMessage());
             }
-
         });
-
     }
 
     @Override
@@ -201,7 +199,6 @@ static int count = 0;
         byte[] b = new byte[1];
         read(b, 0, 1);
         return b[0];
-
     }
 
     @Override

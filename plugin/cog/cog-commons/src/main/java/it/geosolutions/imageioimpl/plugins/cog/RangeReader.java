@@ -53,7 +53,7 @@ public abstract class RangeReader {
             if (ranges[i][0] < headerLength - 1) {
                 // this range starts inside of what we already read for the header
                 modified = true;
-                if (ranges[i][1] < headerLength - 1 || ranges[i][1] == headerLength -1) {
+                if (ranges[i][1] <= headerLength - 1) {
                     // this range is fully inside the header which was already read; discard this range
                     LOGGER.fine("Removed range " + ranges[i][0] + "-" + ranges[i][1] + " as it lies fully within"
                             + " the data already read in the header request");

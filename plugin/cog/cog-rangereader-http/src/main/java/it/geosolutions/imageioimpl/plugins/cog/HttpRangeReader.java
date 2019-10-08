@@ -84,7 +84,8 @@ public class HttpRangeReader extends RangeReader {
                 .build();
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
-                throw new IOException();
+                throw new IOException("Unable to read header for " + uri + ". "
+                        + "Code: " + response.code() + ". Reason: " + response.message());
             }
             // get the filesize
             String contentRange = response.header(CONTENT_RANGE_HEADER);
@@ -94,7 +95,7 @@ public class HttpRangeReader extends RangeReader {
                     filesize = Integer.parseInt(length);
                     buffer = ByteBuffer.allocate(filesize);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    throw new IOException("Unable to parse the \"content-range\" header response for " + uri, e);
                 }
             }
 
@@ -103,7 +104,6 @@ public class HttpRangeReader extends RangeReader {
             writeValue(0, headerBytes);
             return headerBytes;
         } catch (IOException e) {
-            LOGGER.severe("Unable to read header for " + uri);
             throw new RuntimeException("Unable to read header for " + uri, e);
         }
     }
@@ -133,9 +133,7 @@ public class HttpRangeReader extends RangeReader {
 
             Call call = client.newCall(request);
             AsyncHttpCallback callback = new AsyncHttpCallback().startPosition((int) ranges[i][0]);
-
             call.enqueue(callback);
-
             callbacks.put(ranges[i][0], callback);
         }
 
@@ -149,7 +147,7 @@ public class HttpRangeReader extends RangeReader {
         try {
             buffer.put(bytes);
         } catch (Exception e) {
-            LOGGER.severe("Error writing bytes to ByteBuffer for source " + uri);
+            LOGGER.severe("Error writing bytes to ByteBuffer for source " + uri + ".  " + e.getMessage());
         }
     }
 
@@ -172,7 +170,8 @@ public class HttpRangeReader extends RangeReader {
                             writeValue(callback.getStartPosition(), callback.getBytes());
                             completed.add(key);
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            LOGGER.severe("An error occurred while writing the contents of the HTTP response "
+                                    + "to the final ByteBuffer.  " + e.getMessage());
                         }
                     }
                 } else {

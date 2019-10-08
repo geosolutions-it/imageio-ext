@@ -38,17 +38,14 @@ public class CogTileInfo {
     }
 
     public void addTileRange(int tileIndex, long offset, long byteLength) {
-        //if ((offset < firstTileOffset && offset > 0) || tileIndex == 0) {
         if (offset < firstTileOffset && offset > 0) {
             firstTileOffset = offset;
             firstTileByteLength = byteLength;
         }
         if (offset < headerSize && offset > 0) {
-            //headerSize = (int)offset - 1;
             headerSize = (int)offset;
             tileRanges.put(HEADER_TILE_INDEX, new TileRange(HEADER_TILE_INDEX, 0, headerSize));
         }
-
 
         tileRanges.put(tileIndex, new TileRange(tileIndex, offset, byteLength));
     }

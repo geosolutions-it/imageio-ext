@@ -20,6 +20,7 @@ package it.geosolutions.imageioimpl.plugins.cog;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * Helps locate configuration properties in system/environment for use in building S3 client.
@@ -42,6 +43,8 @@ public class S3ConfigurationProperties {
     public final String AWS_S3_PASSWORD_KEY;
     public final String AWS_S3_ENDPOINT_KEY;
     public final String AWS_S3_REGION_KEY;
+
+    private final static Logger LOGGER = Logger.getLogger(S3ConfigurationProperties.class.getName());
 
     public S3ConfigurationProperties(String alias, URI uri) {
         this.alias = alias;
@@ -117,6 +120,7 @@ public class S3ConfigurationProperties {
             }
             return query_pairs;
         } catch (Exception e) {
+            LOGGER.warning("Unable to split query into key/value pairs for URI " + uri + ". "  + e.getMessage());
             return Collections.emptyMap();
         }
     }

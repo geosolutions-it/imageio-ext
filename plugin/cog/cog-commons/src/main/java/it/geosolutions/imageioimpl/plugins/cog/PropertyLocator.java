@@ -17,7 +17,7 @@
 package it.geosolutions.imageioimpl.plugins.cog;
 
 /**
- * This utility class examines will look for either a system property or environment variable.  When calling
+ * This utility class will look for either a system property or environment variable.  When calling
  * `getPropertyValue`, if no system property is found, the property key with the format `my.property.key` will be
  * converted to `MY_PROPERTY_KEY` and an attempt will be made to fetch from the environment.  Similarly, when
  * `getEnvironmentValue` is called, if no env var is found, the key will be converted to system property style and an
@@ -35,6 +35,7 @@ public class PropertyLocator {
         }
 
         String environmentKey = convertPropertyToEnvVar(key);
+        value = System.getenv(environmentKey);
         if (null != value) {
             return value;
         }
@@ -49,7 +50,7 @@ public class PropertyLocator {
         }
 
         String propertyKey = convertEnvVarToProperty(key);
-        value = System.getProperty(key);
+        value = System.getProperty(propertyKey);
         if (null != value) {
             return value;
         }

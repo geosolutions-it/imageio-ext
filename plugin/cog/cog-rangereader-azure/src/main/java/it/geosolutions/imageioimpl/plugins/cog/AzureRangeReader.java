@@ -57,19 +57,19 @@ public class AzureRangeReader extends RangeReader {
     }
 
     public AzureRangeReader(URI uri) {
-       super(uri);
+        super(uri);
 
         containerName = AzureUrlParser.getContainerName(uri);
         filename = AzureUrlParser.getFilename(uri, containerName);
         connector = new AzureConnector(AzureUrlParser.getAccountName(uri));
         client = connector.getAzureClient(containerName, filename);
-        filesize = (int)client.getProperties().block().blobSize();
+        filesize = (int) client.getProperties().block().blobSize();
         buffer = ByteBuffer.allocate(filesize);
     }
 
     @Override
     public byte[] readHeader() {
-        BlobRange blobRange = new BlobRange(0l, (long)headerLength);
+        BlobRange blobRange = new BlobRange(0l, (long) headerLength);
         Response<Flux<ByteBuffer>> response = client
                 .downloadWithResponse(blobRange, null, null, false)
                 .block();
@@ -107,21 +107,12 @@ public class AzureRangeReader extends RangeReader {
             CompletableFuture<Response<Flux<ByteBuffer>>> future = client
                     .downloadWithResponse(blobRange, null, null, false)
                     .toFuture();
-                    futures.put(ranges[i][0], future);
+            futures.put(ranges[i][0], future);
         }
 
         awaitCompletion(futures);
         Instant end = Instant.now();
         LOGGER.fine("Time to read all ranges: " + Duration.between(start, end));
-    }
-
-    protected void writeValue(int position, byte[] bytes) {
-        buffer.position(position);
-        try {
-            buffer.put(bytes);
-        } catch (Exception e) {
-            LOGGER.severe("Error writing bytes to ByteBuffer for source " + uri);
-        }
     }
 
     /**
@@ -140,15 +131,16 @@ public class AzureRangeReader extends RangeReader {
                 if (future.isDone()) {
                     if (!completed.contains(key)) {
                         try {
-                            buffer.position((int)key);
-                            future.get().value().map(bb -> {
-                                buffer.put(bb);
-                                return bb;
-                            }).blockLast();
-
+                            buffer.position((int) key);
+                            future
+                                    .get()
+                                    .value()
+                                    .map(buffer::put)
+                                    .blockLast();
                             completed.add(key);
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            LOGGER.severe("An error occurred while writing the contents of the buffered response "
+                                    + "from Azure to the final ByteBuffer. " + e.getMessage());
                         }
                     }
                 } else {

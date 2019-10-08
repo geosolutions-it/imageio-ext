@@ -160,7 +160,8 @@ public class S3RangeReader extends RangeReader {
                             writeValue((int)key, future.get().asByteArray());
                             completed.add(key);
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            LOGGER.warning("Unable to write data from S3 to the destination ByteBuffer. "
+                                    + e.getMessage());
                         }
                     }
                 } else {

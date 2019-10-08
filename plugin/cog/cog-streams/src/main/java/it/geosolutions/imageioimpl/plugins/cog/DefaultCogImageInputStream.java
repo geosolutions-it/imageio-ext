@@ -148,7 +148,7 @@ public class DefaultCogImageInputStream implements ImageInputStream, CogImageInp
         try {
             streamPos = delegate.getStreamPosition();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.warning("Unable to get the delegate input stream position. " + e.getMessage());
         }
 
         // create a new delegate with the newly acquired bytes
@@ -159,7 +159,7 @@ public class DefaultCogImageInputStream implements ImageInputStream, CogImageInp
         try {
             delegate.seek(streamPos);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.warning("Unable to set the delegate input stream position. " + e.getMessage());
         }
     }
 
