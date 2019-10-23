@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 
 /**
  * ImageReader implementation extending from TIFFImageReader.  If this class encounters an ImageInputStream that does
- * not implement `CogImageInputStream`, it will simply pas the request on to TIFFImageReader.  Otherwise, it will
+ * not implement `CogImageInputStream`, it will simply pass the request on to TIFFImageReader.  Otherwise, it will
  * prefetch all requested tiles using the CogImageInputStream and cache them in the input stream object for
  * `TIFFImageReader` to utilize.
  *

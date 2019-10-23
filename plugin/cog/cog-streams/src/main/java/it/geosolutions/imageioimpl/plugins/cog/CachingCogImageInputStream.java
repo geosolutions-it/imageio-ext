@@ -209,19 +209,7 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
         int relativeStreamPos = (int) (streamPos - tileRange.getStart() + off);
 
         // copy the bytes from the fetched tile into the destination byte array
-        for (int i = 0; i < len; i++) {
-            try {
-                b[i] = bytes[relativeStreamPos + i];
-            } catch (Exception e) {
-                LOGGER.severe("Error copying bytes. requested offset: " + off
-                        + " - requested length: " + len
-                        + " - relativeStreamPos: " + relativeStreamPos
-                        + " - streamPos: " + streamPos
-                        + " - tile range start: " + tileRange.getStart()
-                        + " - tile range length: " + tileRange.getByteLength());
-            }
-        }
-
+        System.arraycopy(bytes, relativeStreamPos, b, 0, len);
         streamPos += len;
         return len;
     }

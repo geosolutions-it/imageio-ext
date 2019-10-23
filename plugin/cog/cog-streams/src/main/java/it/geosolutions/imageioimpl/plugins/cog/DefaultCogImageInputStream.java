@@ -22,6 +22,7 @@ import javax.imageio.stream.ImageInputStreamImpl;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -141,8 +142,9 @@ public class DefaultCogImageInputStream extends ImageInputStreamImpl implements 
 
     @Override
     public int read() throws IOException {
-        streamPos++;
-        return 0;
+        byte[] b = new byte[1];
+        read(b, 0, 1);
+        return b[0];
     }
 
     @Override
@@ -163,23 +165,16 @@ public class DefaultCogImageInputStream extends ImageInputStreamImpl implements 
 
         // this should never happen -- we should have read all bytes from all tiles in the request envelope
         if (contiguousRange == null || rangeStart == -1L) {
-            streamPos += len;
-            return len;
+            LOGGER.severe("The requested offset is not present in the available data.  Requested offset: " + off
+                    + " - requested length: " + len
+                    + " - streamPos: " + streamPos);
+            throw new IOException("No COG data available for the requested byte location.");
         }
 
         int relativeStreamPos = (int)(streamPos - rangeStart) + off;
-        // copy the bytes from the fetched tile into the destination byte array
-        for (int i = 0; i < len; i++) {
-            try {
-                b[i] = contiguousRange[relativeStreamPos + i];
-            } catch (Exception e) {
-                LOGGER.severe("Error copying bytes. requested offset: " + off
-                        + " - requested length: " + len
-                        + " - relativeStreamPos: " + relativeStreamPos
-                        + " - streamPos: " + streamPos);
-            }
-        }
 
+        // copy the bytes from the fetched tile into the destination byte array
+        System.arraycopy(contiguousRange, relativeStreamPos, b, 0, len);
         streamPos += len;
         return len;
     }
