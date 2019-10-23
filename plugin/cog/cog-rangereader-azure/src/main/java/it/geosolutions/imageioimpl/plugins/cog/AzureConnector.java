@@ -47,7 +47,7 @@ public class AzureConnector {
         }
         return blobClientBuilder.containerName(container)
                 .blobName(filename)
-                .buildBlobAsyncClient();
+                .buildAsyncClient();
     }
 
     public void setConnectionString(String connectionString) {

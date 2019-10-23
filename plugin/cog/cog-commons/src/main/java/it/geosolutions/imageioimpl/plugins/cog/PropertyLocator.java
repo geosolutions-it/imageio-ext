@@ -59,10 +59,15 @@ public class PropertyLocator {
     }
 
     public static String convertEnvVarToProperty(String envVar) {
-        return envVar.toLowerCase().replace("_", ".");
+        return envVar
+                .toLowerCase()
+                .replace("_", ".");
     }
 
     public static String convertPropertyToEnvVar(String property) {
-        return property.toUpperCase().replace(".", "_");
+        return property
+                .toUpperCase()
+                .replace(".", "_")
+                .replace("-", "_");
     }
 }

@@ -45,18 +45,15 @@ public class CogImageInputStreamSpi extends ImageInputStreamSpi {
     @Override
     public ImageInputStream createInputStreamInstance(Object input, boolean useCache, File cacheDir) throws IOException {
         if (input instanceof CogUri) {
-            if (((CogUri)input).isUseCache()) {
-                return new CachingCogImageInputStream((CogUri) input);
-            } else {
-                return new DefaultCogImageInputStream((CogUri) input);
-            }
+            return ((CogUri) input).isUseCache()
+                    ? new CachingCogImageInputStream((CogUri) input)
+                    : new DefaultCogImageInputStream((CogUri) input);
         }
+
         if (input instanceof String || input instanceof URL || input instanceof URI) {
-            if (((CogUri)input).isUseCache()) {
-                return new CachingCogImageInputStream(new CogUri(input.toString()));
-            } else {
-                return new DefaultCogImageInputStream(new CogUri(input.toString()));
-            }
+            return useCache
+                    ? new CachingCogImageInputStream(new CogUri(input.toString()))
+                    : new DefaultCogImageInputStream(new CogUri(input.toString()).useCache(false));
         }
         throw new IOException("Invalid input.");
     }
@@ -71,7 +68,7 @@ public class CogImageInputStreamSpi extends ImageInputStreamSpi {
         super.onRegistration(registry, category);
         Class<ImageInputStreamSpi> targetClass = ImageInputStreamSpi.class;
         for (Iterator<? extends ImageInputStreamSpi> i =
-             registry.getServiceProviders(targetClass, true); i.hasNext();) {
+             registry.getServiceProviders(targetClass, true); i.hasNext(); ) {
             ImageInputStreamSpi other = i.next();
 
             if (this != other)

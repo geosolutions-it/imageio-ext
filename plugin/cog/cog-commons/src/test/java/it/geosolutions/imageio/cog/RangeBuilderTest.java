@@ -16,7 +16,7 @@
  */
 package it.geosolutions.imageio.cog;
 
-import it.geosolutions.imageioimpl.plugins.cog.RangeBuilder;
+import it.geosolutions.imageioimpl.plugins.cog.ContiguousRangeComposer;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -39,7 +39,7 @@ public class RangeBuilderTest {
         // that start and end where expected
         long tileRange1Start = 200;
         long tileRange1End = 300;
-        RangeBuilder rangeBuilder = new RangeBuilder(initialRangeStart, initialRangeEnd);
+        ContiguousRangeComposer rangeBuilder = new ContiguousRangeComposer(initialRangeStart, initialRangeEnd);
         rangeBuilder.addTileRange(tileRange1Start, tileRange1End);
         List<long[]> ranges = new ArrayList<>(rangeBuilder.getRanges());
         Assert.assertEquals(2, ranges.size());
@@ -53,7 +53,7 @@ public class RangeBuilderTest {
         // range that starts at the initial start and ends at the end of the new tile length
         long tileRange2Start = 101;
         long tileRange2End = 200;
-        rangeBuilder = new RangeBuilder(initialRangeStart, initialRangeEnd);
+        rangeBuilder = new ContiguousRangeComposer(initialRangeStart, initialRangeEnd);
         rangeBuilder.addTileRange(tileRange2Start, tileRange2End);
         ranges = new ArrayList<>(rangeBuilder.getRanges());
         Assert.assertEquals(1, ranges.size());

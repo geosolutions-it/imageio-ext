@@ -31,8 +31,7 @@ import java.util.Locale;
 public class CogImageReaderSpi extends TIFFImageReaderSpi {
 
     public CogImageReaderSpi() {
-        super();
-        super.setReaderClassName(CogImageReader.class.getCanonicalName());
+        super(CogImageReader.class.getCanonicalName());
     }
 
     @Override

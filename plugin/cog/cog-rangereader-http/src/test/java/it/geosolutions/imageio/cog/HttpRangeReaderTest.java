@@ -16,10 +16,13 @@
  */
 package it.geosolutions.imageio.cog;
 
+import it.geosolutions.imageioimpl.plugins.cog.CogTileInfo;
 import it.geosolutions.imageioimpl.plugins.cog.HttpRangeReader;
 import it.geosolutions.imageioimpl.plugins.cog.RangeReader;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.Map;
 
 /**
  * Testing HTTP range reading capabilities.
@@ -32,20 +35,20 @@ public class HttpRangeReaderTest {
 
     @Test
     public void readRanges() {
-        RangeReader rangeReader = new HttpRangeReader(cogUrl);
+        RangeReader rangeReader = new HttpRangeReader(cogUrl, CogTileInfo.DEFAULT_HEADER_LENGTH);
         byte[] header = rangeReader.readHeader();
-        Assert.assertEquals(rangeReader.getHeaderLength(), header.length);
+        Assert.assertEquals(CogTileInfo.DEFAULT_HEADER_LENGTH, header.length);
 
         long[] range1 = new long[]{20000, 21000};
         long[] range2 = new long[]{30000, 31000};
-        rangeReader.readAsync(range1, range2);
-
-        byte[] bytes = rangeReader.getBytes();
+        Map<Long, byte[]> data = rangeReader.read(range1, range2);
 
         // verify the first range was read
         boolean nonZeroValueFound = false;
-        for (long i = range1[0]; i < range1[1]; i++) {
-            if (bytes[(int)i] != 0) {
+        byte[] range1Bytes = data.get(range1[0]);
+        long range1Length = range1[1] - range1[0];
+        for (int i = 0; i < range1Length; i++) {
+            if (range1Bytes[i] != 0) {
                 nonZeroValueFound = true;
                 break;
             }
@@ -54,22 +57,15 @@ public class HttpRangeReaderTest {
 
         // verify the second range was read
         nonZeroValueFound = false;
-        for (long i = range2[0]; i < range2[1]; i++) {
-            if (bytes[(int)i] != 0) {
+        byte[] range2Bytes = data.get(range2[0]);
+        long range2Length = range2[1] - range2[0];
+        for (int i = 0; i < range2Length; i++) {
+            if (range2Bytes[i] != 0) {
                 nonZeroValueFound = true;
                 break;
             }
         }
         Assert.assertTrue(nonZeroValueFound);
 
-        // verify there is no data between the end of the first range and the start of the second range
-        nonZeroValueFound = false;
-        for (long i = range1[1] + 1; i < range2[0] - 1; i++) {
-            if (bytes[(int)i] != 0) {
-                nonZeroValueFound = true;
-                break;
-            }
-        }
-        Assert.assertFalse(nonZeroValueFound);
     }
 }

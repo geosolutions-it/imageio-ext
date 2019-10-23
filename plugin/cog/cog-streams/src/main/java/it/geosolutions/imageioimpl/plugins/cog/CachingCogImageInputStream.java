@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -33,13 +34,15 @@ import static it.geosolutions.imageioimpl.plugins.cog.CogTileInfo.HEADER_TILE_IN
  * utilizes ehcache to cache each tile requested by the TIFFImageReader.  All subsequent tile reads will be fetched
  * from cache.
  *
+ * NOTE: This is a special use case class and is intended for use ONLY with the CogImageReader.  Using this
+ * ImageInputStream for other purposes will almost certainly result in errors/failures.
+ *
  * @author joshfix
  * Created on 2019-08-28
  */
 public class CachingCogImageInputStream extends ImageInputStreamImpl implements CogImageInputStream {
 
     private boolean initialized = false;
-    protected int initialHeaderReadLength = 16384;
 
     protected URI uri;
     protected RangeReader rangeReader;
@@ -66,13 +69,11 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
     public CachingCogImageInputStream(URI uri, RangeReader rangeReader) {
         this.uri = uri;
         this.rangeReader = rangeReader;
-        initialHeaderReadLength = rangeReader.getHeaderLength();
         initializeHeader();
     }
 
     public void init(RangeReader rangeReader) {
         this.rangeReader = rangeReader;
-        initialHeaderReadLength = rangeReader.getHeaderLength();
         initializeHeader();
     }
 
@@ -80,8 +81,9 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
         Class<? extends RangeReader> rangeReaderClass = ((CogImageReadParam) param).getRangeReaderClass();
         if (null != rangeReaderClass) {
             try {
-                rangeReader = rangeReaderClass.getDeclaredConstructor(URI.class).newInstance(uri);
-                rangeReader.setHeaderLength(initialHeaderReadLength);
+                int headerLength = cogTileInfo == null ? CogTileInfo.DEFAULT_HEADER_LENGTH : cogTileInfo.getHeaderLength();
+                rangeReader = rangeReaderClass.getDeclaredConstructor(URI.class, int.class)
+                        .newInstance(uri, headerLength);
             } catch (Exception e) {
                 LOGGER.severe("Unable to instantiate range reader class " + rangeReaderClass.getCanonicalName());
                 throw new RuntimeException(e);
@@ -104,26 +106,18 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
         // determine if the header has already been cached
         if (!CacheManagement.DEFAULT.headerExists(uri.toString())) {
             CacheManagement.DEFAULT.cacheHeader(uri.toString(), rangeReader.readHeader());
-            CacheManagement.DEFAULT.cacheFilesize(uri.toString(), rangeReader.getFilesize());
-            cogTileInfo = new CogTileInfo(initialHeaderReadLength);
-            cogTileInfo.addTileRange(HEADER_TILE_INDEX, 0, initialHeaderReadLength);
+            cogTileInfo = new CogTileInfo();
         } else {
             int headerLength = CacheManagement.DEFAULT.getHeader(uri.toString()).length;
-            rangeReader.setFilesize(CacheManagement.DEFAULT.getFilesize(uri.toString()));
             rangeReader.setHeaderLength(headerLength);
             cogTileInfo = new CogTileInfo(headerLength);
-            cogTileInfo.addTileRange(HEADER_TILE_INDEX, 0, headerLength);
         }
         initialized = true;
     }
 
+    @Override
     public CogTileInfo getCogTileInfo() {
         return cogTileInfo;
-    }
-
-    @Override
-    public void setInitialHeaderReadLength(int initialHeaderReadLength) {
-        this.initialHeaderReadLength = initialHeaderReadLength;
     }
 
     /**
@@ -141,18 +135,9 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
      */
     @Override
     public void readRanges() {
-        long firstTileOffset = cogTileInfo.getFirstTileOffset();
-
-        // update the cached header with the actual header header bytes/size (we originally read with a default of 16k)
-        byte[] headerBytes = CacheManagement.DEFAULT.getHeader(uri.toString());
-        if (firstTileOffset < headerBytes.length) {
-            byte[] newHeaderBytes = Arrays.copyOf(headerBytes, (int) firstTileOffset);
-            CacheManagement.DEFAULT.cacheHeader(uri.toString(), newHeaderBytes);
-            rangeReader.setHeaderLength(newHeaderBytes.length);
-        }
-
         // instantiate the range builder
-        RangeBuilder rangeBuilder = new RangeBuilder(0, cogTileInfo.getHeaderSize() - 1);
+        ContiguousRangeComposer contiguousRangeComposer =
+                new ContiguousRangeComposer(0, cogTileInfo.getHeaderLength() - 1);
 
         // determine which requested tiles are not in cache and build the required ranges that need to be read (if any)
         cogTileInfo.getTileRanges().forEach((tileIndex, tileRange) -> {
@@ -162,20 +147,19 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
 
             TileCacheEntryKey key = new TileCacheEntryKey(uri.toString(), tileIndex);
             if (!CacheManagement.DEFAULT.keyExists(key)) {
-                //rangeBuilder.addTileRange(tileRange.getStart(), tileRange.getByteLength());
-                rangeBuilder.addTileRange(tileRange.getStart(), tileRange.getEnd());
+                contiguousRangeComposer.addTileRange(tileRange.getStart(), tileRange.getEnd());
             }
         });
 
         // get the ranges for the tiles that are not already cached.  if there are none, simply return
-        Set<long[]> ranges = rangeBuilder.getRanges();
+        Set<long[]> ranges = contiguousRangeComposer.getRanges();
         if (ranges.size() == 0) {
             return;
         }
 
         // read all they byte ranges for tiles that are not in cache
         LOGGER.fine("Submitting " + ranges.size() + " range request(s)");
-        rangeReader.readAsync(ranges);
+        Map<Long, byte[]> data = rangeReader.read(ranges);
 
         // cache the bytes for each tile
         cogTileInfo.getTileRanges().forEach((tileIndex, tileRange) -> {
@@ -183,13 +167,17 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
                 return;
             }
             TileCacheEntryKey key = new TileCacheEntryKey(uri.toString(), tileIndex);
-            try {
-                byte[] b = rangeReader.getBytes();
-                byte[] tileBytes =
-                        Arrays.copyOfRange(b, (int) tileRange.getStart(), (int) (tileRange.getEnd() + 1));
-                CacheManagement.DEFAULT.cacheTile(key, tileBytes);
-            } catch (Exception e) {
-                LOGGER.warning("Unable to cache tile at index " + tileIndex + ". " + e.getMessage());
+
+            for (Map.Entry<Long, byte[]> entry : data.entrySet()) {
+                long contiguousRangeOffset = entry.getKey();
+                int contiguousRangeLength = (int)contiguousRangeOffset + entry.getValue().length;
+                if (tileRange.getStart() >= contiguousRangeOffset && tileRange.getEnd() < contiguousRangeLength) {
+                    byte[] contiguousBytes = entry.getValue();
+                    long relativeOffset = tileRange.getStart() - contiguousRangeOffset;
+                    byte[] tileBytes = Arrays
+                            .copyOfRange(contiguousBytes, (int) relativeOffset, (int) tileRange.getEnd());
+                    CacheManagement.DEFAULT.cacheTile(key, tileBytes);
+                }
             }
         });
     }
@@ -221,9 +209,9 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
         int relativeStreamPos = (int) (streamPos - tileRange.getStart() + off);
 
         // copy the bytes from the fetched tile into the destination byte array
-        for (long i = 0; i < len; i++) {
+        for (int i = 0; i < len; i++) {
             try {
-                b[(int) i] = bytes[(int) (relativeStreamPos + i)];
+                b[i] = bytes[relativeStreamPos + i];
             } catch (Exception e) {
                 LOGGER.severe("Error copying bytes. requested offset: " + off
                         + " - requested length: " + len

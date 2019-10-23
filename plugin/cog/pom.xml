@@ -14,9 +14,9 @@
     <name>cog</name>
 
     <properties>
-        <azure.version>12.0.0-preview.3</azure.version>
+        <azure.version>12.0.0-preview.4</azure.version>
         <okhttp.version>4.2.0</okhttp.version>
-        <aws.version>2.9.2</aws.version>
+        <aws.version>2.9.24</aws.version>
         <ehcache.version>3.4.0</ehcache.version>
     </properties>
 

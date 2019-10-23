@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
- * Creates caches for tiles, headers, and filesizes, and provides methods to check keys and retrieve data.
+ * Creates caches for tiles and headers, and provides methods to check keys and retrieve cached data.
  *
  * @author joshfix
  * Created on 2019-09-19
@@ -44,7 +44,6 @@ public enum CacheManagement implements CogTileCacheProvider {
 
     public static final String TILE_CACHE = "tile_cache";
     public static final String HEADER_CACHE = "header_cache";
-    public static final String FILESIZE_CACHE = "filesize_cache";
     private CacheManager manager;
     private CacheConfig config;
     private static Logger LOGGER;
@@ -80,7 +79,6 @@ public enum CacheManagement implements CogTileCacheProvider {
         if (removeCacheIfExists) {
             manager.removeCache(TILE_CACHE);
             manager.removeCache(HEADER_CACHE);
-            manager.removeCache(FILESIZE_CACHE);
         }
 
         ResourcePoolsBuilder resourcePoolsBuilder = ResourcePoolsBuilder.heap(config.getHeapEntries());
@@ -95,8 +93,6 @@ public enum CacheManagement implements CogTileCacheProvider {
                 buildCacheConfiguration(TileCacheEntryKey.class, byte[].class, resourcePoolsBuilder));
         manager.createCache(HEADER_CACHE,
                 buildCacheConfiguration(String.class, byte[].class, resourcePoolsBuilder));
-        manager.createCache(FILESIZE_CACHE,
-                buildCacheConfiguration(String.class, Integer.class, resourcePoolsBuilder));
 
         return manager;
     }
@@ -137,10 +133,6 @@ public enum CacheManagement implements CogTileCacheProvider {
         return manager.getCache(HEADER_CACHE, String.class, byte[].class);
     }
 
-    private Cache<String, Integer> getFilesizeCache() {
-        return manager.getCache(FILESIZE_CACHE, String.class, Integer.class);
-    }
-
     @Override
     public byte[] getTile(TileCacheEntryKey key) {
         return getTileCache().get(key);
@@ -169,21 +161,6 @@ public enum CacheManagement implements CogTileCacheProvider {
     @Override
     public boolean headerExists(String key) {
         return getHeaderCache().containsKey(key);
-    }
-
-    @Override
-    public void cacheFilesize(String key, int size) {
-        getFilesizeCache().put(key, size);
-    }
-
-    @Override
-    public int getFilesize(String key) {
-        return getFilesizeCache().get(key);
-    }
-
-    @Override
-    public boolean filesizeExists(String key) {
-        return getFilesizeCache().containsKey(key);
     }
 
     public CacheConfig getCacheConfig() {

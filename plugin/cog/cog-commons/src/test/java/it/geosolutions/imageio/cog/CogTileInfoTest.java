@@ -39,11 +39,7 @@ public class CogTileInfoTest {
         info.addTileRange(tile1Index, tile1Offset, tile1ByteLength);
 
         // verify the header length is adjusted to not overlap with the first tile offset
-        Assert.assertEquals(tile1Offset, info.getHeaderSize());
-
-        // verify the added tile range has the expected offset and length
-        Assert.assertEquals(tile1Offset, info.getFirstTileOffset());
-        Assert.assertEquals(tile1ByteLength, info.getFirstTileByteLength());
+        Assert.assertEquals(tile1Offset, info.getHeaderLength());
 
         // verify that given a position in the byte array, the proper tile index is returned
         Assert.assertEquals(tile1Index, info.getTileIndex(tile1Offset + (tile1ByteLength / 2)));

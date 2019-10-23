@@ -23,7 +23,9 @@ import java.util.*;
 import java.util.logging.Logger;
 
 /**
- * Helps locate configuration properties in system/environment for use in building S3 client.
+ * Helps locate configuration properties in system/environment for use in building S3 client.  Attempts to read
+ * environment variables containing connection settings and if not found, will fallback to attempting to read system
+ * properties.  If still not found, the provided default values will be used.
  *
  * @author joshfix
  * Created on 2019-09-19
@@ -38,25 +40,40 @@ public class S3ConfigurationProperties {
     private String bucket;
     private String key;
     private String filename;
+    private int corePoolSize;
+    private int maxPoolSize;
+    private int keepAliveTime;
 
     public final String AWS_S3_USER_KEY;
     public final String AWS_S3_PASSWORD_KEY;
     public final String AWS_S3_ENDPOINT_KEY;
     public final String AWS_S3_REGION_KEY;
+    public final String AWS_S3_CORE_POOL_SIZE_KEY;
+    public final String AWS_S3_MAX_POOL_SIZE_KEY;
+    public final String AWS_S3_KEEP_ALIVE_TIME;
 
     private final static Logger LOGGER = Logger.getLogger(S3ConfigurationProperties.class.getName());
 
     public S3ConfigurationProperties(String alias, URI uri) {
-        this.alias = alias;
-        AWS_S3_USER_KEY = alias + ".aws.user";
-        AWS_S3_PASSWORD_KEY = alias + ".aws.password";
-        AWS_S3_ENDPOINT_KEY = alias + ".aws.endpoint";
-        AWS_S3_REGION_KEY = alias + ".aws.region";
+        this.alias = alias.toUpperCase();
+        AWS_S3_USER_KEY = "IIO_" + this.alias + "_AWS_USER";
+        AWS_S3_PASSWORD_KEY = "IIO_" + this.alias + "_AWS_PASSWORD";
+        AWS_S3_ENDPOINT_KEY = "IIO_" + this.alias + "_AWS_ENDPOINT";
+        AWS_S3_REGION_KEY = "IIO_" + this.alias + "_AWS_REGION";
+        AWS_S3_CORE_POOL_SIZE_KEY = "IIO_" + this.alias + "_AWS_CORE_POOL_SIZE";
+        AWS_S3_MAX_POOL_SIZE_KEY = "IIO_" + this.alias + "_AWS_MAX_POOL_SIZE";
+        AWS_S3_KEEP_ALIVE_TIME = "IIO_" + this.alias + "_AWS_KEEP_ALIVE_TIME";
 
-        user = PropertyLocator.getPropertyValue(AWS_S3_USER_KEY, null);
-        password = PropertyLocator.getPropertyValue(AWS_S3_PASSWORD_KEY, null);
-        region = PropertyLocator.getPropertyValue(AWS_S3_REGION_KEY, null);
-        endpoint = PropertyLocator.getPropertyValue(AWS_S3_ENDPOINT_KEY, null);
+        user = PropertyLocator.getEnvironmentValue(AWS_S3_USER_KEY, null);
+        password = PropertyLocator.getEnvironmentValue(AWS_S3_PASSWORD_KEY, null);
+        region = PropertyLocator.getEnvironmentValue(AWS_S3_REGION_KEY, null);
+        endpoint = PropertyLocator.getEnvironmentValue(AWS_S3_ENDPOINT_KEY, null);
+        corePoolSize = Integer.parseInt(
+                PropertyLocator.getEnvironmentValue(AWS_S3_CORE_POOL_SIZE_KEY, "50"));
+        maxPoolSize = Integer.parseInt(
+                PropertyLocator.getEnvironmentValue(AWS_S3_MAX_POOL_SIZE_KEY, "128"));
+        keepAliveTime = Integer.parseInt(
+                PropertyLocator.getEnvironmentValue(AWS_S3_KEEP_ALIVE_TIME, "10"));
 
         String userPass = uri.getUserInfo();
         if (userPass != null && !userPass.isEmpty()) {
@@ -88,9 +105,9 @@ public class S3ConfigurationProperties {
 
         // if region is null,
         if (region == null) {
-            throw new RuntimeException("No region info found for alias " + alias + ".  Please set system property "
-                    + AWS_S3_REGION_KEY + " or environment variable "
-                    + PropertyLocator.convertPropertyToEnvVar(AWS_S3_REGION_KEY));
+            throw new RuntimeException("No region info found for alias " + this.alias
+                    + ".  Please set environment variable '" + AWS_S3_REGION_KEY
+                    + "' or system property '" + PropertyLocator.convertEnvVarToProperty(AWS_S3_REGION_KEY) + "'");
         }
 
         String path = uri.getPath();
@@ -155,5 +172,17 @@ public class S3ConfigurationProperties {
 
     public String getFilename() {
         return filename;
+    }
+
+    public int getCorePoolSize() {
+        return corePoolSize;
+    }
+
+    public int getMaxPoolSize() {
+        return maxPoolSize;
+    }
+
+    public int getKeepAliveTime() {
+        return keepAliveTime;
     }
 }

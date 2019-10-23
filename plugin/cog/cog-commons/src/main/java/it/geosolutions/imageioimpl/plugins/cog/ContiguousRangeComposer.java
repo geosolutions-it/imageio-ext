@@ -27,17 +27,21 @@ import java.util.Set;
  * @author joshfix
  * Created on 2019-08-27
  */
-public class RangeBuilder {
+public class ContiguousRangeComposer {
 
     protected long currentRangeStart;
     protected long currentRangeEnd;
     protected boolean tileAdded = false;
     protected Set<long[]> ranges = new HashSet<>();
 
-    public RangeBuilder(long initialRangeStart, long initialRangeEnd) {
-        // we don't add the initial start/end range immediately.  instead, we will wait until the next range is added
-        // and compare it's start position with the current end position.  if it's contiguous, we extend the end range
-        // by the byte count of the added tile.  if it's not, we add the current start/end as a range.
+    /**
+     * we don't add the initial start/end range immediately.  instead, we will wait until the next range is added
+     * and compare it's start position with the current end position.  if it's contiguous, we extend the end range
+     * by the byte count of the added tile.  if it's not, we add the current start/end as a range.
+     * @param initialRangeStart start byte location of the tile
+     * @param initialRangeEnd end byte location of the tile
+     */
+    public ContiguousRangeComposer(long initialRangeStart, long initialRangeEnd) {
         currentRangeStart = initialRangeStart;
         currentRangeEnd = initialRangeEnd;
     }

@@ -39,7 +39,7 @@ import java.util.logging.Logger;
  * @author joshfix
  * Created on 2019-08-21
  */
-public class AzureRangeReader extends RangeReader {
+public class AzureRangeReader extends AbstractRangeReader {
 
     protected String containerName;
     protected String filename;
@@ -48,23 +48,21 @@ public class AzureRangeReader extends RangeReader {
 
     private final static Logger LOGGER = Logger.getLogger(AzureRangeReader.class.getName());
 
-    public AzureRangeReader(String url) {
-        this(URI.create(url));
+    public AzureRangeReader(String url, int headerLength) {
+        this(URI.create(url), headerLength);
     }
 
-    public AzureRangeReader(URL url) {
-        this(URI.create(url.toString()));
+    public AzureRangeReader(URL url, int headerLength) {
+        this(URI.create(url.toString()), headerLength);
     }
 
-    public AzureRangeReader(URI uri) {
-        super(uri);
+    public AzureRangeReader(URI uri, int headerLength) {
+        super(uri, headerLength);
 
         containerName = AzureUrlParser.getContainerName(uri);
         filename = AzureUrlParser.getFilename(uri, containerName);
         connector = new AzureConnector(AzureUrlParser.getAccountName(uri));
         client = connector.getAzureClient(containerName, filename);
-        filesize = (int) client.getProperties().block().blobSize();
-        buffer = ByteBuffer.allocate(filesize);
     }
 
     @Override
@@ -74,74 +72,83 @@ public class AzureRangeReader extends RangeReader {
                 .downloadWithResponse(blobRange, null, null, false)
                 .block();
 
-        buffer.position(0);
-        response.value()
-                .map(bb -> {
-                    buffer.put(bb);
-                    return bb;
-                })
+        ByteBuffer buffer = ByteBuffer.allocate(headerLength);
+
+        response.getValue()
+                .map(buffer::put)
                 .blockLast();
 
-        buffer.rewind();
-        byte[] b = new byte[headerLength];
-        buffer.get(b, 0, headerLength);
-        return b;
+        byte[] header = buffer.array();
+        data.put(0L, header);
+        return header;
     }
 
 
     @Override
-    public void readAsync(Collection<long[]> ranges) {
-        readAsync(ranges.toArray(new long[][]{}));
+    public Map<Long, byte[]> read(Collection<long[]> ranges) {
+        return read(ranges.toArray(new long[][]{}));
     }
 
     @Override
-    public void readAsync(long[]... ranges) {
+    public Map<Long, byte[]> read(long[]... ranges) {
         ranges = reconcileRanges(ranges);
 
         Instant start = Instant.now();
-        Map<Long, CompletableFuture<Response<Flux<ByteBuffer>>>> futures = new HashMap<>(ranges.length);
+        Map<long[], CompletableFuture<Response<Flux<ByteBuffer>>>> futures = new HashMap<>(ranges.length);
 
         for (int i = 0; i < ranges.length; i++) {
-            BlobRange blobRange = new BlobRange(ranges[i][0], ranges[i][1]);
+            long length = ranges[i][1] - ranges[i][0];
+            BlobRange blobRange = new BlobRange(ranges[i][0], length);
 
             CompletableFuture<Response<Flux<ByteBuffer>>> future = client
                     .downloadWithResponse(blobRange, null, null, false)
                     .toFuture();
-            futures.put(ranges[i][0], future);
+            futures.put(ranges[i], future);
         }
 
         awaitCompletion(futures);
         Instant end = Instant.now();
         LOGGER.fine("Time to read all ranges: " + Duration.between(start, end));
+        return data;
     }
 
     /**
-     * Blocks until all ranges have been read and written to the ByteBuffer
+     * Blocks until all ranges have been read
      *
      * @param futures
      */
-    protected void awaitCompletion(Map<Long, CompletableFuture<Response<Flux<ByteBuffer>>>> futures) {
+    protected void awaitCompletion(Map<long[], CompletableFuture<Response<Flux<ByteBuffer>>>> futures) {
         boolean stillWaiting = true;
-        List<Long> completed = new ArrayList<>(futures.size());
+        List<long[]> completed = new ArrayList<>(futures.size());
         while (stillWaiting) {
             boolean allDone = true;
-            for (Map.Entry<Long, CompletableFuture<Response<Flux<ByteBuffer>>>> entry : futures.entrySet()) {
-                long key = entry.getKey();
+            for (Map.Entry<long[], CompletableFuture<Response<Flux<ByteBuffer>>>> entry : futures.entrySet()) {
+                long[] key = entry.getKey();
                 CompletableFuture<Response<Flux<ByteBuffer>>> future = entry.getValue();
-                if (future.isDone()) {
-                    if (!completed.contains(key)) {
-                        try {
-                            buffer.position((int) key);
-                            future
-                                    .get()
-                                    .value()
-                                    .map(buffer::put)
-                                    .blockLast();
-                            completed.add(key);
-                        } catch (Exception e) {
-                            LOGGER.severe("An error occurred while writing the contents of the buffered response "
-                                    + "from Azure to the final ByteBuffer. " + e.getMessage());
-                        }
+                if (future.isDone() && !completed.contains(key)) {
+                    try {
+                        long length = key[1] - key[0] + 8192;
+                        ByteBuffer buffer = ByteBuffer.allocate((int) length);
+                        //LOGGER.severe("Reading results for range " + key[0] + "-" + key[1] + " with length " + length);
+                        //buffer.position((int) key);
+                        int pos = 0;
+                        future
+                                .get()
+                                .getValue()
+                                .map(buffer::put)
+                                .blockLast();
+                        buffer.rewind();
+                        //buffer.limit((int) (length - 8192));
+                       byte[] bytes = buffer.array();
+                       LOGGER.severe("before byte length: " + bytes.length);
+                        byte[] rangeBytes = Arrays
+                                .copyOfRange(bytes, 0, (int)length - 8192);
+                        LOGGER.severe("final byte length: " + rangeBytes.length);
+                        data.put(key[0], rangeBytes);
+                        completed.add(key);
+                    } catch (Exception e) {
+                        LOGGER.severe("An error occurred while reading the contents of the buffered response "
+                                + "from Azure. " + e.getMessage());
                     }
                 } else {
                     allDone = false;
@@ -149,34 +156,6 @@ public class AzureRangeReader extends RangeReader {
             }
             stillWaiting = !allDone;
         }
-    }
-
-    class PositionTracker {
-        private int position;
-
-        public PositionTracker(int position) {
-            this.position = position;
-        }
-
-        public void setPosition(int position) {
-            this.position = position;
-        }
-
-        public int getPosition() {
-            return position;
-        }
-
-        public PositionTracker position(int position) {
-            setPosition(position);
-            return this;
-        }
-
-        public PositionTracker advancePosition(int len) {
-            position += len;
-            return this;
-        }
-
-
     }
 
 }

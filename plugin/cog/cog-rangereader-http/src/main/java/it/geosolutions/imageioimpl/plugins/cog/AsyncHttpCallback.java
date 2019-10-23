@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 public class AsyncHttpCallback implements Callback {
 
     private boolean done = false;
-    private int startPosition;
+    private long startPosition;
     private byte[] bytes;
     private final static Logger LOGGER = Logger.getLogger(AsyncHttpCallback.class.getName());
 
@@ -52,15 +52,15 @@ public class AsyncHttpCallback implements Callback {
         return done;
     }
 
-    public void setStartPosition(int startPosition) {
+    public void setStartPosition(long startPosition) {
         this.startPosition = startPosition;
     }
 
-    public int getStartPosition() {
+    public long getStartPosition() {
         return startPosition;
     }
 
-    public AsyncHttpCallback startPosition(int startPosition) {
+    public AsyncHttpCallback startPosition(long startPosition) {
         setStartPosition(startPosition);
         return this;
     }

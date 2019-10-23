@@ -24,21 +24,52 @@ package it.geosolutions.imageioimpl.plugins.cog;
  */
 public interface CogTileCacheProvider {
 
+    /**
+     * Returns the cached bytes for a COG tile.
+     *
+     * @param key The key used to identify the COG tile
+     * @return The byte array containing the tile data
+     */
     byte[] getTile(TileCacheEntryKey key);
 
+    /**
+     * Enters a new tile into cache.
+     *
+     * @param key The key used to identify the COG tile
+     * @param tileBytes The byte array containing the tile data
+     */
     void cacheTile(TileCacheEntryKey key, byte[] tileBytes);
 
+    /**
+     * Specifies whether or not the key exists in cache.
+     *
+     * @param key The key used to identify the COG tile
+     * @return Boolean value representing whether or not the tile has been cached
+     */
     boolean keyExists(TileCacheEntryKey key);
 
+    /**
+     * Returns the cached bytes for a COG header.
+     *
+     * @param key The key used to identify the COG header
+     * @return The byte array containing the header data
+     */
     byte[] getHeader(String key);
 
+    /**
+     * Enters a new tile into cache.
+     *
+     * @param key The key used to identify the COG header
+     * @param headerBytes he byte array containing the header data
+     */
     void cacheHeader(String key, byte[] headerBytes);
 
+    /**
+     * Specifies whether or not the key exists in cache.
+     *
+     * @param key The key used to identify the COG header
+     * @return Boolean value representing whether or not the header has been cached
+     */
     boolean headerExists(String key);
 
-    int getFilesize(String key);
-
-    void cacheFilesize(String key, int filesize);
-
-    boolean filesizeExists(String key);
 }

@@ -21,10 +21,12 @@ import okhttp3.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.nio.ByteBuffer;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -33,75 +35,56 @@ import java.util.logging.Logger;
  * @author joshfix
  * Created on 2019-08-21
  */
-public class HttpRangeReader extends RangeReader {
+public class HttpRangeReader extends AbstractRangeReader {
 
     protected OkHttpClient client;
+    private String credentials;
 
-    public static final String CONTENT_RANGE_HEADER = "content-range";
     private final static Logger LOGGER = Logger.getLogger(HttpRangeReader.class.getName());
 
-    public HttpRangeReader(String url) {
-        this(URI.create(url));
+    public HttpRangeReader(String url, int headerLength) {
+        this(URI.create(url), headerLength);
     }
 
-    public HttpRangeReader(URL url) {
-        this(URI.create(url.toString()));
+    public HttpRangeReader(URL url, int headerLength) {
+        this(URI.create(url.toString()), headerLength);
     }
 
-    public HttpRangeReader(URI uri) {
-        super(uri);
-
-        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
+    public HttpRangeReader(URI uri, int headerLength) {
+        super(uri, headerLength);
 
         if (uri.getUserInfo() != null && !uri.getUserInfo().isEmpty()) {
             String[] userPassArray = uri.getUserInfo().split(":");
             final String user = userPassArray[0];
             final String password = userPassArray.length == 2 ? userPassArray[1] : null;
-
-            Authenticator authenticator = (route, response) -> {
-                if (response.request().header("Authorization") != null) {
-                    return null; // Give up, we've already attempted to authenticate.
-                }
-
-                String credential = Credentials.basic(user, password);
-                return response.request().newBuilder()
-                        .header("Authorization", credential)
-                        .build();
-            };
-
-            clientBuilder.authenticator(authenticator);
+            credentials = Credentials.basic(user, password);
         }
 
-        client = clientBuilder.build();
+        client = HttpClientFactory.getClient();
     }
 
     @Override
     public byte[] readHeader() {
         LOGGER.fine("Reading header");
-        Request request = new Request.Builder()
+        Request.Builder requestBuilder = new Request.Builder()
                 .url(uri.toString())
-                .header("range", "bytes=" + 0 + "-" + (headerLength - 1))
-                .build();
+                .header("range", "bytes=" + 0 + "-" + (headerLength - 1));
+
+        if (credentials != null) {
+            requestBuilder.header("Authorization", credentials);
+        }
+
+        Request request = requestBuilder.build();
+
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
                 throw new IOException("Unable to read header for " + uri + ". "
                         + "Code: " + response.code() + ". Reason: " + response.message());
             }
-            // get the filesize
-            String contentRange = response.header(CONTENT_RANGE_HEADER);
-            if (contentRange.contains("/")) {
-                String length = contentRange.split("/")[1];
-                try {
-                    filesize = Integer.parseInt(length);
-                    buffer = ByteBuffer.allocate(filesize);
-                } catch (Exception e) {
-                    throw new IOException("Unable to parse the \"content-range\" header response for " + uri, e);
-                }
-            }
 
             // get the header bytes
             byte[] headerBytes = response.body().bytes();
-            writeValue(0, headerBytes);
+            data.put(0L, headerBytes);
             return headerBytes;
         } catch (IOException e) {
             throw new RuntimeException("Unable to read header for " + uri, e);
@@ -109,46 +92,31 @@ public class HttpRangeReader extends RangeReader {
     }
 
     @Override
-    public void readAsync(Collection<long[]> ranges) {
-        readAsync(ranges.toArray(new long[][]{}));
+    public Map<Long, byte[]> read(Collection<long[]> ranges) {
+        return read(ranges.toArray(new long[][]{}));
     }
 
     @Override
-    public void readAsync(long[]... ranges) {
+    public Map<Long, byte[]> read(long[]... ranges) {
         ranges = reconcileRanges(ranges);
         if (ranges.length == 0) {
-            return;
+            return data;
         }
 
         Instant start = Instant.now();
-        Map<Long, AsyncHttpCallback> callbacks = new HashMap<>(ranges.length);
+       List<AsyncHttpCallback> callbacks = new ArrayList<>(ranges.length);
 
         for (int i = 0; i < ranges.length; i++) {
-
-            Request request = new Request.Builder()
-                    .url(uri.toString())
-                    .header("Accept", "*/*")
-                    .header("range", "bytes=" + ranges[i][0] + "-" + ranges[i][1])
-                    .build();
-
-            Call call = client.newCall(request);
-            AsyncHttpCallback callback = new AsyncHttpCallback().startPosition((int) ranges[i][0]);
+            Call call = client.newCall(buildRequest(ranges[i]));
+            AsyncHttpCallback callback = new AsyncHttpCallback().startPosition(ranges[i][0]);
             call.enqueue(callback);
-            callbacks.put(ranges[i][0], callback);
+            callbacks.add(callback);
         }
 
         awaitCompletion(callbacks);
         Instant end = Instant.now();
         LOGGER.fine("Time to read all ranges: " + Duration.between(start, end));
-    }
-
-    protected void writeValue(int position, byte[] bytes) {
-        buffer.position(position);
-        try {
-            buffer.put(bytes);
-        } catch (Exception e) {
-            LOGGER.severe("Error writing bytes to ByteBuffer for source " + uri + ".  " + e.getMessage());
-        }
+        return data;
     }
 
     /**
@@ -156,19 +124,17 @@ public class HttpRangeReader extends RangeReader {
      *
      * @param callbacks
      */
-    protected void awaitCompletion(Map<Long, AsyncHttpCallback> callbacks) {
+    protected void awaitCompletion(List<AsyncHttpCallback> callbacks) {
         boolean stillWaiting = true;
         List<Long> completed = new ArrayList<>(callbacks.size());
         while (stillWaiting) {
             boolean allDone = true;
-            for (Map.Entry<Long, AsyncHttpCallback> entry : callbacks.entrySet()) {
-                long key = entry.getKey();
-                AsyncHttpCallback callback = entry.getValue();
+            for (AsyncHttpCallback callback : callbacks) {
                 if (callback.isDone()) {
-                    if (!completed.contains(key)) {
+                    if (!completed.contains(callback.getStartPosition())) {
                         try {
-                            writeValue(callback.getStartPosition(), callback.getBytes());
-                            completed.add(key);
+                            data.put(callback.getStartPosition(), callback.getBytes());
+                            completed.add(callback.getStartPosition());
                         } catch (Exception e) {
                             LOGGER.severe("An error occurred while writing the contents of the HTTP response "
                                     + "to the final ByteBuffer.  " + e.getMessage());
@@ -184,11 +150,16 @@ public class HttpRangeReader extends RangeReader {
 
     protected Request buildRequest(long[] range) {
         LOGGER.fine("Building request for range " + range[0] + '-' + range[1] + " to " + uri.toString());
-        return new Request.Builder()
+        Request.Builder requestBuilder = new Request.Builder()
                 .url(uri.toString())
                 .header("Accept", "*/*")
-                .header("range", "bytes=" + range[0] + "-" + range[1])
-                .build();
+                .header("range", "bytes=" + range[0] + "-" + range[1]);
+
+        if (credentials != null) {
+            requestBuilder.header("Authorization", credentials);
+        }
+
+        return requestBuilder.build();
     }
 
 }

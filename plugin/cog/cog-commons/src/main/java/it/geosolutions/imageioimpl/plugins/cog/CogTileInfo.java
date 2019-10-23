@@ -27,54 +27,99 @@ import java.util.TreeMap;
  */
 public class CogTileInfo {
 
-    protected int headerSize;
-    protected long firstTileOffset = Long.MAX_VALUE;
-    protected long firstTileByteLength;
+    protected int headerLength = DEFAULT_HEADER_LENGTH;
     protected Map<Integer, TileRange> tileRanges = new TreeMap<>();
     public static final int HEADER_TILE_INDEX = -100;
+    public static final int DEFAULT_HEADER_LENGTH = 16384;
 
-    public CogTileInfo(int headerSize) {
-        this.headerSize = headerSize;
+    public CogTileInfo() {
+        addHeaderRange();
     }
 
-    public void addTileRange(int tileIndex, long offset, long byteLength) {
-        if (offset < firstTileOffset && offset > 0) {
-            firstTileOffset = offset;
-            firstTileByteLength = byteLength;
+    public CogTileInfo(int headerLength) {
+        this.headerLength = headerLength;
+        addHeaderRange();
+    }
+
+    /**
+     * Adds a TileRange to the map containing the information about the COG header.
+     *
+     * @return The created TileRange
+     */
+    public TileRange addHeaderRange() {
+        return tileRanges.put(HEADER_TILE_INDEX, new TileRange(HEADER_TILE_INDEX, 0, headerLength));
+    }
+
+    /**
+     * Adds a new TileRange to the map.
+     *
+     * @param tileIndex The index of the tile
+     * @param offset The byte offset of the tile
+     * @param byteLength The byte length of the tile
+     * @return The created TileRange
+     */
+    public TileRange addTileRange(int tileIndex, long offset, long byteLength) {
+        checkHeaderSize(offset);
+        return tileRanges.put(tileIndex, new TileRange(tileIndex, offset, byteLength));
+    }
+
+    /**
+     * We don't actually know the true header size and use an arbitrary value (16KB). If a tile offset starts before
+     * the end of the header, we can reduce the header size.  Note that this does not necessarily provide us with the
+     * true end location of the header, but we can avoid overlapping header and tile ranges by reducing it.
+     *
+     * @param offset the starting offset of the tile range to be added
+     */
+    protected void checkHeaderSize(long offset) {
+        if (offset < headerLength && offset > 0) {
+            headerLength = (int)offset;
+            tileRanges.put(HEADER_TILE_INDEX, new TileRange(HEADER_TILE_INDEX, 0, headerLength));
         }
-        if (offset < headerSize && offset > 0) {
-            headerSize = (int)offset;
-            tileRanges.put(HEADER_TILE_INDEX, new TileRange(HEADER_TILE_INDEX, 0, headerSize));
-        }
-
-        tileRanges.put(tileIndex, new TileRange(tileIndex, offset, byteLength));
     }
 
-    public void setHeaderSize(int headerSize) {
-        this.headerSize = headerSize;
+    /**
+     * If the header length is known to be a value other than the default, it may be specified with this method.
+     *
+     * @param headerLength the byte length of the header
+     */
+    public void setHeaderLength(int headerLength) {
+        this.headerLength = headerLength;
     }
 
-    public int getHeaderSize() {
-        return headerSize;
+    /**
+     * Returns the byte length of the header.
+     *
+     * @return the byte length of the header
+     */
+    public int getHeaderLength() {
+        return headerLength;
     }
 
-    public long getFirstTileOffset() {
-        return firstTileOffset;
-    }
-
-    public long getFirstTileByteLength() {
-        return firstTileByteLength;
-    }
-
+    /**
+     * Returns the map of TileRanges.
+     *
+     * @return the map of TileRanges
+     */
     public Map<Integer, TileRange> getTileRanges() {
-
         return tileRanges;
     }
 
+    /**
+     * Gets a TileRange by tile index.
+     *
+     * @param tileIndex the index of the tile
+     * @return the TileRange at the given index
+     */
     public TileRange getTileRange(int tileIndex) {
         return tileRanges.get(tileIndex);
     }
 
+    /**
+     * Given a byte location / offset, returns the corresponding TileRange object.
+     *
+     * @param offset the byte location of the requested TileRange
+     * @return the TileRange for the given offset
+     */
     public TileRange getTileRange(long offset) {
         for (TileRange tileRange : tileRanges.values()) {
             if (offset >= tileRange.getStart() && offset < tileRange.getEnd()) {
@@ -84,6 +129,12 @@ public class CogTileInfo {
         return null;
     }
 
+    /**
+     * Given a byte location / offset, returns the corresponding tile index.
+     *
+     * @param offset the byte location of the requested TileRange
+     * @return the index of the tile
+     */
     public int getTileIndex(long offset) {
         for (Map.Entry<Integer, TileRange> entry : tileRanges.entrySet()) {
             if (offset >= entry.getValue().getStart() && offset < entry.getValue().getEnd()) {

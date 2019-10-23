@@ -21,12 +21,9 @@ import software.amazon.awssdk.core.async.AsyncResponseTransformer;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
-import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
-import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
 
 import java.net.URI;
 import java.net.URL;
-import java.nio.ByteBuffer;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
@@ -49,39 +46,25 @@ import static software.amazon.awssdk.core.async.AsyncResponseTransformer.toBytes
  * @author joshfix
  * Created on 2019-08-21
  */
-public class S3RangeReader extends RangeReader {
+public class S3RangeReader extends AbstractRangeReader {
 
     protected S3AsyncClient client;
     protected S3ConfigurationProperties configProps;
 
     private final static Logger LOGGER = Logger.getLogger(S3RangeReader.class.getName());
 
-    public S3RangeReader(String url) {
-        this(URI.create(url));
+    public S3RangeReader(String url, int headerLength) {
+        this(URI.create(url), headerLength);
     }
 
-    public S3RangeReader(URL url) {
-        this(URI.create(url.toString()));
+    public S3RangeReader(URL url, int headerLength) {
+        this(URI.create(url.toString()), headerLength);
     }
 
-    public S3RangeReader(URI uri) {
-        super(uri);
-
+    public S3RangeReader(URI uri, int headerLength) {
+        super(uri, headerLength);
         configProps = new S3ConfigurationProperties(uri.getScheme(), uri);
-
         client = S3ClientFactory.getS3Client(configProps);
-        HeadObjectRequest headObjectRequest = HeadObjectRequest.builder()
-                .bucket(configProps.getBucket())
-                .key(configProps.getKey())
-                .build();
-        try {
-            HeadObjectResponse headResponse = client.headObject(headObjectRequest).get();
-            filesize = headResponse.contentLength().intValue();
-            buffer = ByteBuffer.allocate(filesize);
-        } catch (Exception e) {
-            LOGGER.severe("Error reading file " + uri);
-            throw new RuntimeException(e);
-        }
     }
 
     @Override
@@ -95,7 +78,7 @@ public class S3RangeReader extends RangeReader {
         try {
             ResponseBytes<GetObjectResponse> responseBytes = client.getObject(headerRequest, toBytes()).get();
             byte[] bytes = responseBytes.asByteArray();
-            buffer.put(bytes, 0, headerLength);
+            data.put(0L, bytes);
             return bytes;
         } catch (Exception e) {
             LOGGER.severe("Error reading header for " + uri);
@@ -104,13 +87,13 @@ public class S3RangeReader extends RangeReader {
     }
 
     @Override
-    public void readAsync(Collection<long[]> ranges) {
-        readAsync(ranges.toArray(new long[][]{}));
+    public Map<Long, byte[]> read(Collection<long[]> ranges) {
+        return read(ranges.toArray(new long[][]{}));
     }
 
 
     @Override
-    public void readAsync(long[]... ranges) {
+    public Map<Long, byte[]> read(long[]... ranges) {
         ranges = reconcileRanges(ranges);
 
         Instant start = Instant.now();
@@ -130,15 +113,7 @@ public class S3RangeReader extends RangeReader {
         awaitCompletion(downloads);
         Instant end = Instant.now();
         LOGGER.fine("Time to read all ranges: " + Duration.between(start, end));
-    }
-
-    protected void writeValue(int position, byte[] bytes) {
-        buffer.position(position);
-        try {
-            buffer.put(bytes);
-        } catch (Exception e) {
-            LOGGER.severe("Error writing bytes to ByteBuffer for source " + uri);
-        }
+        return data;
     }
 
     /**
@@ -157,7 +132,7 @@ public class S3RangeReader extends RangeReader {
                 if (future.isDone()) {
                     if (!completed.contains(key)) {
                         try {
-                            writeValue((int)key, future.get().asByteArray());
+                            data.put(key, future.get().asByteArray());
                             completed.add(key);
                         } catch (Exception e) {
                             LOGGER.warning("Unable to write data from S3 to the destination ByteBuffer. "

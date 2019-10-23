@@ -18,36 +18,36 @@ package it.geosolutions.imageioimpl.plugins.cog;
 
 import it.geosolutions.imageio.plugins.cog.CogImageReadParam;
 
-import javax.imageio.stream.IIOByteBuffer;
-import javax.imageio.stream.ImageInputStream;
-import javax.imageio.stream.MemoryCacheImageInputStream;
-import java.io.ByteArrayInputStream;
+import javax.imageio.stream.ImageInputStreamImpl;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.nio.ByteOrder;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
 import static it.geosolutions.imageioimpl.plugins.cog.CogTileInfo.HEADER_TILE_INDEX;
 
 /**
- * ImageInputStream implementation for COG.  This class will asynchronously request all requested ranges be read by
- * the provided RangeReader implementation and cache the results in a delegate MemoryCacheImageInputStream.  When
- * TIFFImageReader requests tiles, all of the data will be already prefetched and ready to be used.
+ * ImageInputStream implementation for COG.  This class will request all requested ranges be read by
+ * the provided RangeReader implementation and store the results in memory.  When TIFFImageReader requests tiles, the
+ * byte data will be served from the `data` Map.
+ *
+ * NOTE: This is a special use case class and is intended for use ONLY with the CogImageReader.  Using this
+ * ImageInputStream for other purposes will almost certainly result in errors/failures.
  *
  * @author joshfix
  * Created on 2019-08-23
  */
-public class DefaultCogImageInputStream implements ImageInputStream, CogImageInputStream {
+public class DefaultCogImageInputStream extends ImageInputStreamImpl implements CogImageInputStream {
 
-    protected int initialHeaderReadLength = 16384;
     private boolean initialized = false;
 
     protected URI uri;
     protected CogTileInfo cogTileInfo;
     protected RangeReader rangeReader;
-    protected MemoryCacheImageInputStream delegate;
+    protected Map<Long, byte[]> data;
 
     private final static Logger LOGGER = Logger.getLogger(DefaultCogImageInputStream.class.getName());
 
@@ -70,15 +70,13 @@ public class DefaultCogImageInputStream implements ImageInputStream, CogImageInp
     public DefaultCogImageInputStream(URI uri, RangeReader rangeReader) {
         this.uri = uri;
         this.rangeReader = rangeReader;
-        initialHeaderReadLength = rangeReader.getHeaderLength();
-        cogTileInfo = new CogTileInfo(initialHeaderReadLength);
+        cogTileInfo = new CogTileInfo();
         initializeHeader();
     }
 
     public void init(RangeReader rangeReader) {
         this.rangeReader = rangeReader;
-        initialHeaderReadLength = rangeReader.getHeaderLength();
-        cogTileInfo = new CogTileInfo(initialHeaderReadLength);
+        cogTileInfo = new CogTileInfo();
         initializeHeader();
     }
 
@@ -86,9 +84,9 @@ public class DefaultCogImageInputStream implements ImageInputStream, CogImageInp
         Class<? extends RangeReader> rangeReaderClass = ((CogImageReadParam) param).getRangeReaderClass();
         if (null != rangeReaderClass) {
             try {
-                rangeReader = rangeReaderClass.getDeclaredConstructor(URI.class).newInstance(uri);
-                rangeReader.setHeaderLength(initialHeaderReadLength);
-                cogTileInfo = new CogTileInfo(initialHeaderReadLength);
+                cogTileInfo = new CogTileInfo();
+                rangeReader = rangeReaderClass.getDeclaredConstructor(URI.class, int.class)
+                        .newInstance(uri, cogTileInfo.getHeaderLength());
             } catch (Exception e) {
                 LOGGER.severe("Unable to instantiate range reader class " + rangeReaderClass.getCanonicalName());
                 throw new RuntimeException(e);
@@ -103,9 +101,8 @@ public class DefaultCogImageInputStream implements ImageInputStream, CogImageInp
     }
 
     protected void initializeHeader() {
-        rangeReader.readHeader();
-        // wrap the result in a MemoryCacheInputStream
-        delegate = new MemoryCacheImageInputStream(new ByteArrayInputStream(rangeReader.getBytes()));
+        data = new HashMap<>();
+        data.put(0L, rangeReader.readHeader());
         initialized = true;
     }
 
@@ -120,280 +117,71 @@ public class DefaultCogImageInputStream implements ImageInputStream, CogImageInp
     }
 
     @Override
-    public void setInitialHeaderReadLength(int initialHeaderReadLength) {
-        this.initialHeaderReadLength = initialHeaderReadLength;
-    }
-
-    @Override
     public void readRanges() {
         // read data with the RangeReader and set the byte order and pointer on the new input stream
-        RangeBuilder rangeBuilder = new RangeBuilder(0, cogTileInfo.getHeaderSize() - 1);
+        ContiguousRangeComposer contiguousRangeComposer = new ContiguousRangeComposer(0, cogTileInfo.getHeaderLength() - 1);
 
         cogTileInfo.getTileRanges().forEach((tileIndex, tileRange) -> {
             if (tileIndex == HEADER_TILE_INDEX) {
                 return;
             }
-            rangeBuilder.addTileRange(tileRange.getStart(), tileRange.getEnd());
+            contiguousRangeComposer.addTileRange(tileRange.getStart(), tileRange.getEnd());
         });
 
         // read all of the ranges asynchronously
-        Set<long[]> ranges = rangeBuilder.getRanges();
+        Set<long[]> ranges = contiguousRangeComposer.getRanges();
         LOGGER.fine("Submitting " + ranges.size() + " range request(s)");
 
-        rangeReader.readAsync(ranges);
-
-        // obtain the byte order and stream position from the existing delegate
-        ByteOrder byteOrder = delegate.getByteOrder();
-        long streamPos = 0;
-        try {
-            streamPos = delegate.getStreamPosition();
-        } catch (IOException e) {
-            LOGGER.warning("Unable to get the delegate input stream position. " + e.getMessage());
-        }
-
-        // create a new delegate with the newly acquired bytes
-        delegate = new MemoryCacheImageInputStream(new ByteArrayInputStream(rangeReader.getBytes()));
-
-        // set the byte order and stream position
-        delegate.setByteOrder(byteOrder);
-        try {
-            delegate.seek(streamPos);
-        } catch (IOException e) {
-            LOGGER.warning("Unable to set the delegate input stream position. " + e.getMessage());
-        }
+        data = rangeReader.read(ranges);
     }
 
     public String getUrl() {
         return uri.toString();
     }
 
-    public ImageInputStream getDelegate() {
-        return delegate;
-    }
-
-    @Override
-    public void setByteOrder(ByteOrder byteOrder) {
-        delegate.setByteOrder(byteOrder);
-    }
-
-    @Override
-    public ByteOrder getByteOrder() {
-        return delegate.getByteOrder();
-    }
-
     @Override
     public int read() throws IOException {
-        return delegate.read();
-    }
-
-    @Override
-    public int read(byte[] b) throws IOException {
-        return delegate.read(b);
+        streamPos++;
+        return 0;
     }
 
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
-        return delegate.read(b, off, len);
-    }
+        byte[] contiguousRange = null;
+        long rangeStart = -1L;
 
-    @Override
-    public long length() {
-        return rangeReader.getBytes().length;
-    }
+        // find they byte array in the data map corresponding to the current request
+        long absoluteOffset = streamPos + off;
+        for (Map.Entry<Long, byte[]> entry : data.entrySet()) {
+            long start = entry.getKey();
+            long end = entry.getKey() + entry.getValue().length;
+            if (absoluteOffset >= start && absoluteOffset < end) {
+                contiguousRange = entry.getValue();
+                rangeStart = entry.getKey();
+            }
+        }
 
-    @Override
-    public int skipBytes(int n) throws IOException {
-        return delegate.skipBytes(n);
-    }
+        // this should never happen -- we should have read all bytes from all tiles in the request envelope
+        if (contiguousRange == null || rangeStart == -1L) {
+            streamPos += len;
+            return len;
+        }
 
-    @Override
-    public long skipBytes(long n) throws IOException {
-        return delegate.skipBytes(n);
-    }
+        int relativeStreamPos = (int)(streamPos - rangeStart) + off;
+        // copy the bytes from the fetched tile into the destination byte array
+        for (int i = 0; i < len; i++) {
+            try {
+                b[i] = contiguousRange[relativeStreamPos + i];
+            } catch (Exception e) {
+                LOGGER.severe("Error copying bytes. requested offset: " + off
+                        + " - requested length: " + len
+                        + " - relativeStreamPos: " + relativeStreamPos
+                        + " - streamPos: " + streamPos);
+            }
+        }
 
-    @Override
-    public void seek(long pos) throws IOException {
-        delegate.seek(pos);
-    }
-
-    @Override
-    public void mark() {
-        delegate.mark();
-    }
-
-    @Override
-    public void reset() throws IOException {
-        delegate.reset();
-    }
-
-    @Override
-    public void flushBefore(long pos) throws IOException {
-        delegate.flushBefore(pos);
-    }
-
-    @Override
-    public void flush() throws IOException {
-        delegate.flush();
-    }
-
-    @Override
-    public long getFlushedPosition() {
-        return delegate.getFlushedPosition();
-    }
-
-    @Override
-    public boolean isCached() {
-        return delegate.isCached();
-    }
-
-    @Override
-    public boolean isCachedMemory() {
-        return delegate.isCachedMemory();
-    }
-
-    @Override
-    public boolean isCachedFile() {
-        return delegate.isCachedFile();
-    }
-
-    @Override
-    public void close() throws IOException {
-        delegate.close();
-    }
-
-    @Override
-    public void readBytes(IIOByteBuffer buf, int len) throws IOException {
-        delegate.readBytes(buf, len);
-    }
-
-    @Override
-    public boolean readBoolean() throws IOException {
-        return delegate.readBoolean();
-    }
-
-    @Override
-    public byte readByte() throws IOException {
-        return delegate.readByte();
-    }
-
-    @Override
-    public int readUnsignedByte() throws IOException {
-        return delegate.readUnsignedByte();
-    }
-
-    @Override
-    public short readShort() throws IOException {
-        return delegate.readShort();
-    }
-
-    @Override
-    public int readUnsignedShort() throws IOException {
-        return delegate.readUnsignedShort();
-    }
-
-    @Override
-    public char readChar() throws IOException {
-        return delegate.readChar();
-    }
-
-    @Override
-    public int readInt() throws IOException {
-        return delegate.readInt();
-    }
-
-    @Override
-    public long readUnsignedInt() throws IOException {
-        return delegate.readUnsignedInt();
-    }
-
-    @Override
-    public long readLong() throws IOException {
-        return delegate.readLong();
-    }
-
-    @Override
-    public float readFloat() throws IOException {
-        return delegate.readFloat();
-    }
-
-    @Override
-    public double readDouble() throws IOException {
-        return delegate.readDouble();
-    }
-
-    @Override
-    public String readLine() throws IOException {
-        return delegate.readLine();
-    }
-
-    @Override
-    public String readUTF() throws IOException {
-        return delegate.readUTF();
-    }
-
-    @Override
-    public void readFully(byte[] b, int off, int len) throws IOException {
-        delegate.readFully(b, off, len);
-    }
-
-    @Override
-    public void readFully(byte[] b) throws IOException {
-        delegate.readFully(b);
-    }
-
-    @Override
-    public void readFully(short[] s, int off, int len) throws IOException {
-        delegate.readFully(s, off, len);
-    }
-
-    @Override
-    public void readFully(char[] c, int off, int len) throws IOException {
-        delegate.readFully(c, off, len);
-    }
-
-    @Override
-    public void readFully(int[] i, int off, int len) throws IOException {
-        delegate.readFully(i, off, len);
-    }
-
-    @Override
-    public void readFully(long[] l, int off, int len) throws IOException {
-        delegate.readFully(l, off, len);
-    }
-
-    @Override
-    public void readFully(float[] f, int off, int len) throws IOException {
-        delegate.readFully(f, off, len);
-    }
-
-    @Override
-    public void readFully(double[] d, int off, int len) throws IOException {
-        delegate.readFully(d, off, len);
-    }
-
-    @Override
-    public long getStreamPosition() throws IOException {
-        return delegate.getStreamPosition();
-    }
-
-    @Override
-    public int getBitOffset() throws IOException {
-        return delegate.getBitOffset();
-    }
-
-    @Override
-    public void setBitOffset(int bitOffset) throws IOException {
-        delegate.setBitOffset(bitOffset);
-    }
-
-    @Override
-    public int readBit() throws IOException {
-        return delegate.readBit();
-    }
-
-    @Override
-    public long readBits(int numBits) throws IOException {
-        return delegate.readBits(numBits);
+        streamPos += len;
+        return len;
     }
 
 }
