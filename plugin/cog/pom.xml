@@ -14,7 +14,6 @@
     <name>cog</name>
 
     <properties>
-        <azure.version>12.0.0-preview.4</azure.version>
         <okhttp.version>4.2.0</okhttp.version>
         <aws.version>2.9.24</aws.version>
         <ehcache.version>3.4.0</ehcache.version>
@@ -26,7 +25,6 @@
         <module>cog-streams</module>
         <module>cog-rangereader-http</module>
         <module>cog-rangereader-s3</module>
-        <module>cog-rangereader-azure</module>
     </modules>
 
     <dependencyManagement>
@@ -53,18 +51,8 @@
             </dependency>
             <dependency>
                 <groupId>it.geosolutions.imageio-ext</groupId>
-                <artifactId>imageio-ext-cog-rangereader-azure</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>it.geosolutions.imageio-ext</groupId>
                 <artifactId>imageio-ext-cog-streams</artifactId>
                 <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.azure</groupId>
-                <artifactId>azure-storage-blob</artifactId>
-                <version>${azure.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.squareup.okhttp3</groupId>
