@@ -33,7 +33,7 @@ import static it.geosolutions.imageioimpl.plugins.cog.CogTileInfo.HEADER_TILE_IN
  * This ImageInputStream implementation asynchronously fetches all tiles/ranges via the RangeReader implementation and
  * utilizes ehcache to cache each tile requested by the TIFFImageReader.  All subsequent tile reads will be fetched
  * from cache.
- *
+ * <p>
  * NOTE: This is a special use case class and is intended for use ONLY with the CogImageReader.  Using this
  * ImageInputStream for other purposes will almost certainly result in errors/failures.
  *
@@ -94,7 +94,7 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
         if (null != rangeReaderClass) {
             try {
                 rangeReader = rangeReaderClass.getDeclaredConstructor(URI.class, int.class)
-                        .newInstance(uri,  param.getHeaderLength());
+                        .newInstance(uri, param.getHeaderLength());
             } catch (Exception e) {
                 LOGGER.severe("Unable to instantiate range reader class " + rangeReaderClass.getCanonicalName());
                 throw new RuntimeException(e);
@@ -188,7 +188,7 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
 
             for (Map.Entry<Long, byte[]> entry : data.entrySet()) {
                 long contiguousRangeOffset = entry.getKey();
-                int contiguousRangeLength = (int)contiguousRangeOffset + entry.getValue().length;
+                int contiguousRangeLength = (int) contiguousRangeOffset + entry.getValue().length;
                 if (tileRange.getStart() >= contiguousRangeOffset && tileRange.getEnd() < contiguousRangeLength) {
                     byte[] contiguousBytes = entry.getValue();
                     long relativeOffset = tileRange.getStart() - contiguousRangeOffset;
@@ -210,9 +210,7 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
     @Override
     public int read(byte[] b, int off, int len) {
         // based on the stream position, determine which tile we are in and fetch the corresponding TileRange
-        try {
-            TileRange tileRange = cogTileInfo.getTileRange(streamPos);
-
+        TileRange tileRange = cogTileInfo.getTileRange(streamPos);
 
         // get the bytes from cache for the tile. need to determine if we're reading from the header or a tile.
         byte[] bytes;
@@ -231,10 +229,6 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
         // copy the bytes from the fetched tile into the destination byte array
         System.arraycopy(bytes, relativeStreamPos, b, 0, len);
         streamPos += len;
-        return len;
-        } catch (Exception e) {
-            LOGGER.severe(e.getMessage());
-        }
         return len;
     }
 

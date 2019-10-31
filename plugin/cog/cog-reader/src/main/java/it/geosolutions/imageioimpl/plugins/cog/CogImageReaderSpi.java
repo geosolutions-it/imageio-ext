@@ -17,9 +17,12 @@
 package it.geosolutions.imageioimpl.plugins.cog;
 
 import com.sun.media.imageioimpl.common.PackageUtil;
+import it.geosolutions.imageio.plugins.cog.CogImageReadParam;
 import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
 
 import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+import java.io.IOException;
 import java.util.Locale;
 
 /**
@@ -42,6 +45,37 @@ public class CogImageReaderSpi extends TIFFImageReaderSpi {
     @Override
     public ImageReader createReaderInstance(Object extension) {
         return new CogImageReader(this);
+    }
+
+    @Override
+    public boolean canDecodeInput(Object input) throws IOException {
+        // the input stream for a cog must be an instance of CogImageInputStream
+        if (!(input instanceof CogImageInputStream)) {
+            return false;
+        }
+
+        // cog input streams must have the header initialized before they can be used in any capacity
+        if (!((CogImageInputStream)input).isInitialized()) {
+            return false;
+        }
+
+        ImageInputStream stream = (ImageInputStream) input;
+        byte[] b = new byte[4];
+        stream.mark();
+        stream.readFully(b);
+        stream.reset();
+
+        return (
+                ((b[0] == (byte) 0x49 && b[1] == (byte) 0x49 &&
+                        b[2] == (byte) 0x2a && b[3] == (byte) 0x00) ||
+                        (b[0] == (byte) 0x4d && b[1] == (byte) 0x4d &&
+                                b[2] == (byte) 0x00 && b[3] == (byte) 0x2a)) ||
+
+                        ((b[0] == (byte) 0x49 && b[1] == (byte) 0x49 &&
+                                b[2] == (byte) 0x2b && b[3] == (byte) 0x00) ||
+                                (b[0] == (byte) 0x4d && b[1] == (byte) 0x4d &&
+                                        b[2] == (byte) 0x00 && b[3] == (byte) 0x2b))
+        );
     }
 
 }
