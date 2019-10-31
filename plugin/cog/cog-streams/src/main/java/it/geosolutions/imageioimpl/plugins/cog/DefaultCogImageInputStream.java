@@ -22,7 +22,6 @@ import javax.imageio.stream.ImageInputStreamImpl;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -70,38 +69,57 @@ public class DefaultCogImageInputStream extends ImageInputStreamImpl implements 
 
     public DefaultCogImageInputStream(URI uri, RangeReader rangeReader) {
         this.uri = uri;
-        this.rangeReader = rangeReader;
-        cogTileInfo = new CogTileInfo();
+        init(rangeReader);
         initializeHeader();
     }
 
+    /**
+     * Directly sets the range reader and reads the header.
+     *
+     * @param rangeReader A `RangeReader` implementation to be used.
+     */
+    @Override
     public void init(RangeReader rangeReader) {
         this.rangeReader = rangeReader;
-        cogTileInfo = new CogTileInfo();
         initializeHeader();
     }
 
+    /**
+     * Uses the class specified in `CogImageReadParam` to attempt to instantiate a `RangeReader` implementation, then
+     * reads the header.
+     *
+     * @param param An `ImageReadParam` that contains information about which `RangeReader` implementation to use.
+     */
+    @Override
     public void init(CogImageReadParam param) {
         Class<? extends RangeReader> rangeReaderClass = ((CogImageReadParam) param).getRangeReaderClass();
+
         if (null != rangeReaderClass) {
             try {
-                cogTileInfo = new CogTileInfo();
                 rangeReader = rangeReaderClass.getDeclaredConstructor(URI.class, int.class)
-                        .newInstance(uri, cogTileInfo.getHeaderLength());
+                        .newInstance(uri, param.getHeaderLength());
             } catch (Exception e) {
                 LOGGER.severe("Unable to instantiate range reader class " + rangeReaderClass.getCanonicalName());
                 throw new RuntimeException(e);
             }
+        } else {
+            throw new RuntimeException("Range reader class not specified in CogImageReadParam.");
         }
 
         if (rangeReader == null) {
-            return;
+            throw new RuntimeException("Unable to instantiate range reader class "
+                    + rangeReaderClass.getCanonicalName());
         }
 
-        initializeHeader();
+        initializeHeader(param.getHeaderLength());
     }
 
     protected void initializeHeader() {
+        initializeHeader(CogImageReadParam.DEFAULT_HEADER_LENGTH);
+    }
+
+    protected void initializeHeader(int headerLength) {
+        cogTileInfo = new CogTileInfo(headerLength);
         data = new HashMap<>();
         data.put(0L, rangeReader.readHeader());
         initialized = true;

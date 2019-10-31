@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageio.cog;
 
+import it.geosolutions.imageio.plugins.cog.CogImageReadParam;
 import it.geosolutions.imageioimpl.plugins.cog.CogTileInfo;
 import it.geosolutions.imageioimpl.plugins.cog.TileRange;
 import org.junit.Assert;
@@ -30,8 +31,7 @@ public class CogTileInfoTest {
 
     @Test
     public void buildTileInfo() {
-        int headerLength = 16384;
-        CogTileInfo info = new CogTileInfo(headerLength);
+        CogTileInfo info = new CogTileInfo(CogImageReadParam.DEFAULT_HEADER_LENGTH);
 
         int tile1Index = 0;
         int tile1Offset = 10000;

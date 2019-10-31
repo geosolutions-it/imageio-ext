@@ -27,7 +27,10 @@ import it.geosolutions.imageioimpl.plugins.cog.RangeReader;
  */
 public class CogImageReadParam extends TIFFImageReadParam {
 
-    Class<? extends RangeReader> rangeReaderClass;
+    protected int headerLength = DEFAULT_HEADER_LENGTH;
+    protected Class<? extends RangeReader> rangeReaderClass;
+
+    public static final int DEFAULT_HEADER_LENGTH = 16384;
 
     public CogImageReadParam() {
         super();
@@ -38,11 +41,30 @@ public class CogImageReadParam extends TIFFImageReadParam {
         this.rangeReaderClass = rangeReaderClass;
     }
 
+    public CogImageReadParam(int headerLength) {
+        super();
+        this.headerLength = headerLength;
+    }
+
+    public CogImageReadParam(Class<? extends RangeReader> rangeReaderClass, int headerLength) {
+        super();
+        this.rangeReaderClass = rangeReaderClass;
+        this.headerLength = headerLength;
+    }
+
     public Class<? extends RangeReader> getRangeReaderClass() {
         return rangeReaderClass;
     }
 
     public void setRangeReaderClass(Class<? extends RangeReader> rangeReaderClass) {
         this.rangeReaderClass = rangeReaderClass;
+    }
+
+    public int getHeaderLength() {
+        return headerLength;
+    }
+
+    public void setHeaderLength(int headerLength) {
+        this.headerLength = headerLength;
     }
 }

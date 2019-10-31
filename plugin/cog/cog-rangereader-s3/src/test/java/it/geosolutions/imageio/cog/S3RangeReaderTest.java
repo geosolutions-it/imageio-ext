@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageio.cog;
 
+import it.geosolutions.imageio.plugins.cog.CogImageReadParam;
 import it.geosolutions.imageioimpl.plugins.cog.CogTileInfo;
 import it.geosolutions.imageioimpl.plugins.cog.RangeReader;
 import it.geosolutions.imageioimpl.plugins.cog.S3RangeReader;
@@ -37,13 +38,13 @@ public class S3RangeReaderTest {
         String region = "us-west-2";
 
         System.setProperty("iio.s3.aws.region", region);
-        readRanges(new S3RangeReader(cogUrl, CogTileInfo.DEFAULT_HEADER_LENGTH));
+        readRanges(new S3RangeReader(cogUrl, CogImageReadParam.DEFAULT_HEADER_LENGTH));
     }
 
     @Test
     public void readHttpRanges() {
         String cogUrl = "https://s3-us-west-2.amazonaws.com/landsat-pds/c1/L8/153/075/LC08_L1TP_153075_20190515_20190515_01_RT/LC08_L1TP_153075_20190515_20190515_01_RT_B2.TIF";
-        readRanges(new S3RangeReader(cogUrl, CogTileInfo.DEFAULT_HEADER_LENGTH));
+        readRanges(new S3RangeReader(cogUrl, CogImageReadParam.DEFAULT_HEADER_LENGTH));
     }
 
     public void readRanges(RangeReader rangeReader) {

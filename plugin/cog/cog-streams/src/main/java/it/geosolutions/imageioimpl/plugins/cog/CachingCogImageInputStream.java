@@ -68,33 +68,47 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
 
     public CachingCogImageInputStream(URI uri, RangeReader rangeReader) {
         this.uri = uri;
-        this.rangeReader = rangeReader;
-        initializeHeader();
+        init(rangeReader);
     }
 
+    /**
+     * Directly sets the range reader and reads the header.
+     *
+     * @param rangeReader A `RangeReader` implementation to be used.
+     */
+    @Override
     public void init(RangeReader rangeReader) {
         this.rangeReader = rangeReader;
         initializeHeader();
     }
 
+    /**
+     * Uses the class specified in `CogImageReadParam` to attempt to instantiate a `RangeReader` implementation, then
+     * reads the header.
+     *
+     * @param param An `ImageReadParam` that contains information about which `RangeReader` implementation to use.
+     */
+    @Override
     public void init(CogImageReadParam param) {
         Class<? extends RangeReader> rangeReaderClass = ((CogImageReadParam) param).getRangeReaderClass();
         if (null != rangeReaderClass) {
             try {
-                int headerLength = cogTileInfo == null ? CogTileInfo.DEFAULT_HEADER_LENGTH : cogTileInfo.getHeaderLength();
                 rangeReader = rangeReaderClass.getDeclaredConstructor(URI.class, int.class)
-                        .newInstance(uri, headerLength);
+                        .newInstance(uri,  param.getHeaderLength());
             } catch (Exception e) {
                 LOGGER.severe("Unable to instantiate range reader class " + rangeReaderClass.getCanonicalName());
                 throw new RuntimeException(e);
             }
+        } else {
+            throw new RuntimeException("Range reader class not specified in CogImageReadParam.");
         }
 
         if (rangeReader == null) {
-            return;
+            throw new RuntimeException("Unable to instantiate range reader class "
+                    + rangeReaderClass.getCanonicalName());
         }
 
-        initializeHeader();
+        initializeHeader(param.getHeaderLength());
     }
 
     @Override
@@ -103,14 +117,18 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
     }
 
     protected void initializeHeader() {
+        initializeHeader(CogImageReadParam.DEFAULT_HEADER_LENGTH);
+    }
+
+    protected void initializeHeader(int headerLength) {
+        cogTileInfo = new CogTileInfo(headerLength);
+
         // determine if the header has already been cached
-        if (!CacheManagement.DEFAULT.headerExists(uri.toString())) {
-            CacheManagement.DEFAULT.cacheHeader(uri.toString(), rangeReader.readHeader());
-            cogTileInfo = new CogTileInfo();
-        } else {
-            int headerLength = CacheManagement.DEFAULT.getHeader(uri.toString()).length;
+        if (CacheManagement.DEFAULT.headerExists(uri.toString())) {
+            headerLength = CacheManagement.DEFAULT.getHeader(uri.toString()).length;
             rangeReader.setHeaderLength(headerLength);
-            cogTileInfo = new CogTileInfo(headerLength);
+        } else {
+            CacheManagement.DEFAULT.cacheHeader(uri.toString(), rangeReader.readHeader());
         }
         initialized = true;
     }
@@ -192,7 +210,9 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
     @Override
     public int read(byte[] b, int off, int len) {
         // based on the stream position, determine which tile we are in and fetch the corresponding TileRange
-        TileRange tileRange = cogTileInfo.getTileRange(streamPos);
+        try {
+            TileRange tileRange = cogTileInfo.getTileRange(streamPos);
+
 
         // get the bytes from cache for the tile. need to determine if we're reading from the header or a tile.
         byte[] bytes;
@@ -211,6 +231,10 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
         // copy the bytes from the fetched tile into the destination byte array
         System.arraycopy(bytes, relativeStreamPos, b, 0, len);
         streamPos += len;
+        return len;
+        } catch (Exception e) {
+            LOGGER.severe(e.getMessage());
+        }
         return len;
     }
 

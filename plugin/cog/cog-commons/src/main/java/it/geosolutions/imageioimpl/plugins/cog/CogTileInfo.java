@@ -27,14 +27,9 @@ import java.util.TreeMap;
  */
 public class CogTileInfo {
 
-    protected int headerLength = DEFAULT_HEADER_LENGTH;
+    protected int headerLength;
     protected Map<Integer, TileRange> tileRanges = new TreeMap<>();
     public static final int HEADER_TILE_INDEX = -100;
-    public static final int DEFAULT_HEADER_LENGTH = 16384;
-
-    public CogTileInfo() {
-        addHeaderRange();
-    }
 
     public CogTileInfo(int headerLength) {
         this.headerLength = headerLength;

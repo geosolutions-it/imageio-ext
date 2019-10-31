@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageio.cog;
 
+import it.geosolutions.imageio.plugins.cog.CogImageReadParam;
 import it.geosolutions.imageioimpl.plugins.cog.CogTileInfo;
 import it.geosolutions.imageioimpl.plugins.cog.HttpRangeReader;
 import it.geosolutions.imageioimpl.plugins.cog.RangeReader;
@@ -35,9 +36,9 @@ public class HttpRangeReaderTest {
 
     @Test
     public void readRanges() {
-        RangeReader rangeReader = new HttpRangeReader(cogUrl, CogTileInfo.DEFAULT_HEADER_LENGTH);
+        RangeReader rangeReader = new HttpRangeReader(cogUrl, CogImageReadParam.DEFAULT_HEADER_LENGTH);
         byte[] header = rangeReader.readHeader();
-        Assert.assertEquals(CogTileInfo.DEFAULT_HEADER_LENGTH, header.length);
+        Assert.assertEquals(CogImageReadParam.DEFAULT_HEADER_LENGTH, header.length);
 
         long[] range1 = new long[]{20000, 21000};
         long[] range2 = new long[]{30000, 31000};
