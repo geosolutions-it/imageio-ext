@@ -18,8 +18,8 @@ package it.geosolutions.imageio.cog;
 
 import it.geosolutions.imageio.plugins.cog.CogImageReadParam;
 import it.geosolutions.imageioimpl.plugins.cog.CogTileInfo;
+import it.geosolutions.imageioimpl.plugins.cog.HttpRangeReader;
 import it.geosolutions.imageioimpl.plugins.cog.RangeReader;
-import it.geosolutions.imageioimpl.plugins.cog.S3RangeReader;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -30,37 +30,24 @@ import java.util.Map;
  * 
  * @author joshfix
  */
-public class S3RangeReaderTest {
+public class HttpRangeReaderOnlineTest {
+
+    private static final String cogUrl = "https://s3-us-west-2.amazonaws.com/landsat-pds/c1/L8/153/075/LC08_L1TP_153075_20190515_20190515_01_RT/LC08_L1TP_153075_20190515_20190515_01_RT_B2.TIF";
 
     @Test
-    public void readS3Ranges() {
-        String cogUrl = "s3://landsat-pds/c1/L8/153/075/LC08_L1TP_153075_20190515_20190515_01_RT/LC08_L1TP_153075_20190515_20190515_01_RT_B2.TIF";
-        String region = "us-west-2";
-
-        System.setProperty("iio.s3.aws.region", region);
-        readRanges(new S3RangeReader(cogUrl, CogImageReadParam.DEFAULT_HEADER_LENGTH));
-    }
-
-    @Test
-    public void readHttpRanges() {
-        String cogUrl = "https://s3-us-west-2.amazonaws.com/landsat-pds/c1/L8/153/075/LC08_L1TP_153075_20190515_20190515_01_RT/LC08_L1TP_153075_20190515_20190515_01_RT_B2.TIF";
-        readRanges(new S3RangeReader(cogUrl, CogImageReadParam.DEFAULT_HEADER_LENGTH));
-    }
-
-    public void readRanges(RangeReader rangeReader) {
-        int headerByteLength = 16384;
+    public void readRanges() {
+        RangeReader rangeReader = new HttpRangeReader(cogUrl, CogImageReadParam.DEFAULT_HEADER_LENGTH);
         byte[] header = rangeReader.readHeader();
-        Assert.assertEquals(headerByteLength, header.length);
+        Assert.assertEquals(CogImageReadParam.DEFAULT_HEADER_LENGTH, header.length);
 
         long[] range1 = new long[]{20000, 21000};
         long[] range2 = new long[]{30000, 31000};
-
         Map<Long, byte[]> data = rangeReader.read(range1, range2);
 
         // verify the first range was read
+        boolean nonZeroValueFound = false;
         byte[] range1Bytes = data.get(range1[0]);
         long range1Length = range1[1] - range1[0];
-        boolean nonZeroValueFound = false;
         for (int i = 0; i < range1Length; i++) {
             if (range1Bytes[i] != 0) {
                 nonZeroValueFound = true;
@@ -70,11 +57,11 @@ public class S3RangeReaderTest {
         Assert.assertTrue(nonZeroValueFound);
 
         // verify the second range was read
+        nonZeroValueFound = false;
         byte[] range2Bytes = data.get(range2[0]);
         long range2Length = range2[1] - range2[0];
-        nonZeroValueFound = false;
-        for (long i = 0; i < range2Length; i++) {
-            if (range2Bytes[(int)i] != 0) {
+        for (int i = 0; i < range2Length; i++) {
+            if (range2Bytes[i] != 0) {
                 nonZeroValueFound = true;
                 break;
             }
@@ -82,5 +69,4 @@ public class S3RangeReaderTest {
         Assert.assertTrue(nonZeroValueFound);
 
     }
-
 }

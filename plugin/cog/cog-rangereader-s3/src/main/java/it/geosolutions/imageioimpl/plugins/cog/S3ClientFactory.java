@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageioimpl.plugins.cog;
 
+import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.core.client.config.SdkAdvancedAsyncClientOption;
 import software.amazon.awssdk.regions.Region;
@@ -55,8 +56,9 @@ public class S3ClientFactory {
         if (configProps.getUser() != null || configProps.getPassword() != null) {
             builder.credentialsProvider(() ->
                     AwsBasicCredentials.create(configProps.getUser(), configProps.getPassword()));
+        } else {
+            builder.credentialsProvider(() -> AnonymousCredentialsProvider.create().resolveCredentials());
         }
-
 
         if (configProps.getEndpoint() != null) {
             String endpoint = configProps.getEndpoint();
