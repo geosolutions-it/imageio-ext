@@ -1,6 +1,8 @@
 .project
 .classpath
 .settings
+.idea
+.DS_Store
 target
 *.patch
 *.class

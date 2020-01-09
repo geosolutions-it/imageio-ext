@@ -120,7 +120,7 @@ public class TIFFImageReader extends ImageReader {
      * @author Simone Giannecchini, GeoSoltions S.A.S.
      *
      */
-    private final static class PageInfo {
+    protected final static class PageInfo {
 
         private SoftReference<TIFFImageMetadata> imageMetadata;
 
@@ -314,29 +314,29 @@ public class TIFFImageReader extends ImageReader {
 
     private int magic = -1;
     
-    private Map<Integer, PageInfo> pagesInfo= new HashMap<Integer, PageInfo>();
+    private Map<Integer, PageInfo> pagesInfo = new HashMap<Integer, PageInfo>();
 
     private boolean bigtiff = false;
         
     // The current ImageInputStream source.
-    ImageInputStream stream = null;
+    protected ImageInputStream stream = null;
 
     // True if the file header has been read.
-    boolean gotTiffHeader = false;
+    protected boolean gotTiffHeader = false;
     
     // true if we already have parsed metadata for this element
-    boolean initialized = false;
+    protected boolean initialized = false;
 
-    ImageReadParam imageReadParam = getDefaultReadParam();
+    protected ImageReadParam imageReadParam = getDefaultReadParam();
 
     // Stream metadata, or null.
-    TIFFStreamMetadata streamMetadata = null;
+    protected TIFFStreamMetadata streamMetadata = null;
 
     // The current image index.
-    int currIndex = -1;
+    protected int currIndex = -1;
 
     // Metadata for image at 'currIndex', or null.
-    TIFFImageMetadata imageMetadata = null;
+    protected TIFFImageMetadata imageMetadata = null;
     
     /**
      * A <code>List</code> of <code>Long</code>s indicating the stream positions of the start of the
@@ -351,40 +351,40 @@ public class TIFFImageReader extends ImageReader {
     // Contains a map of Integers to Lists.
     HashMap<Integer, List<ImageTypeSpecifier>> imageTypeMap = new HashMap<Integer, List<ImageTypeSpecifier>>();
 
-    BufferedImage theImage = null;
+    protected BufferedImage theImage = null;
 
-    int width = -1;
-    int height = -1;
-    int numBands = -1;
-    int tileOrStripWidth = -1, tileOrStripHeight = -1;
+    protected int width = -1;
+    protected int height = -1;
+    protected int numBands = -1;
+    protected int tileOrStripWidth = -1, tileOrStripHeight = -1;
 
-    int planarConfiguration = BaselineTIFFTagSet.PLANAR_CONFIGURATION_CHUNKY;
-    
-    int compression;
-    int photometricInterpretation;
-    int samplesPerPixel;
-    int[] sampleFormat;
-    int[] bitsPerSample;
-    int[] extraSamples;
-    char[] colorMap;
+    protected int planarConfiguration = BaselineTIFFTagSet.PLANAR_CONFIGURATION_CHUNKY;
 
-    int sourceXOffset;
-    int sourceYOffset;
-    int srcXSubsampling;
-    int srcYSubsampling;
+    protected int compression;
+    protected int photometricInterpretation;
+    protected int samplesPerPixel;
+    protected int[] sampleFormat;
+    protected int[] bitsPerSample;
+    protected int[] extraSamples;
+    protected char[] colorMap;
 
-    int dstWidth;
-    int dstHeight;
-    int dstMinX;
-    int dstMinY;
-    int dstXOffset;
-    int dstYOffset;
+    protected int sourceXOffset;
+    protected int sourceYOffset;
+    protected int srcXSubsampling;
+    protected int srcYSubsampling;
 
-    int tilesAcross;
-    int tilesDown;
+    protected int dstWidth;
+    protected int dstHeight;
+    protected int dstMinX;
+    protected int dstMinY;
+    protected int dstXOffset;
+    protected int dstYOffset;
 
-    int pixelsRead;
-    int pixelsToRead;
+    protected int tilesAcross;
+    protected int tilesDown;
+
+    protected int pixelsRead;
+    protected int pixelsToRead;
 
 
     private boolean isImageTiled= false;
@@ -973,7 +973,7 @@ public class TIFFImageReader extends ImageReader {
         return BaselineTIFFTagSet.PLANAR_CONFIGURATION_CHUNKY;
     }
 
-    private long getTileOrStripOffset(int tileIndex) throws IIOException {
+    protected long getTileOrStripOffset(int tileIndex) throws IIOException {
         TIFFField f =
             imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_TILE_OFFSETS);
         if (f == null) {
@@ -991,7 +991,7 @@ public class TIFFImageReader extends ImageReader {
         return f.getAsLong(tileIndex);
     }
 
-    private long getTileOrStripByteCount(int tileIndex) throws IOException {
+    protected long getTileOrStripByteCount(int tileIndex) throws IOException {
         TIFFField f =
            imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_TILE_BYTE_COUNTS);
         if (f == null) {
@@ -1031,7 +1031,7 @@ public class TIFFImageReader extends ImageReader {
         return tileOrStripByteCount;
     }
 
-    private int getCompression() {
+    protected int getCompression() {
         TIFFField f =
             imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_COMPRESSION);
         if (f == null) {
@@ -1569,7 +1569,7 @@ public class TIFFImageReader extends ImageReader {
         return num/den;
     }
 
-    private void prepareRead(int imageIndex, ImageReadParam param)
+    protected void prepareRead(int imageIndex, ImageReadParam param)
         throws IOException {
         if (stream == null) {
             throw new IllegalStateException("Input not set!");
