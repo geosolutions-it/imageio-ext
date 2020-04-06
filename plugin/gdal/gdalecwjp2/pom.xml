@@ -4,11 +4,27 @@
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-gdalecwjp2</artifactId>
   <packaging>jar</packaging>
-  <version>1.2.4-SNAPSHOT</version>
+  <version>1.3.3-SNAP</version>
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-gdal-plugin</artifactId>
-    <version>1.2.4-SNAPSHOT</version>
+    <version>1.3.3-SNAP</version>
   </parent>
   <name>Jpeg2000 (ECW) Plugin that internally uses GDAL</name>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <!-- See https://github.com/geosolutions-it/imageio-ext/issues/148 -->
+            <exclude>**/JP2KReadTest.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
 </project>

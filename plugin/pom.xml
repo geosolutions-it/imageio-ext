@@ -7,12 +7,12 @@
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext</artifactId>
-    <version>1.2.4-SNAPSHOT</version>
+    <version>1.3.3-SNAP</version>
   </parent>
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-plugin</artifactId>
   <packaging>pom</packaging>
-  <version>1.2.4-SNAPSHOT</version>
+  <version>1.3.3-SNAP</version>
   <name>GeoSolutions Image I/O-Extensions plugins</name>
   <description>
     Image I/O-Extensions plugin modules.
@@ -48,6 +48,7 @@
         <module>arcgrid</module>
         <module>tiff</module>
         <module>gdal</module>
+        <module>cog</module>
       </modules>
     </profile>
 	<profile>
@@ -60,12 +61,12 @@
       </modules>
     </profile>
     <profile>
-      <id>mat</id>
+      <id>nd</id>
         <activation>
          <property><name>all</name></property>
         </activation>      
       <modules>
-        <module>matlab</module>
+        <module>unidata-netcdf</module>
       </modules>
     </profile> 
     <profile>
@@ -74,14 +75,16 @@
          <property><name>all</name></property>
         </activation>      
       <modules>
-<!--        <module>kakadujp2</module>-->
+        <module>kakadujp2</module>
         <module>arcgrid</module>
         <module>tiff</module>
         <module>gdal</module>
         <module>turbojpeg</module>
-<!--        <module>nitronitf</module>-->
-		<module>png</module>
-       </modules>
+        <module>nitronitf</module>
+	    <module>unidata-netcdf</module>
+	    <module>png</module>
+        <module>cog</module>
+	</modules>
     </profile>
   </profiles>
 </project>

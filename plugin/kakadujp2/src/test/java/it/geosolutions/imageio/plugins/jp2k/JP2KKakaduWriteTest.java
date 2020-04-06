@@ -51,32 +51,31 @@ import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Assume;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import kdu_jni.KduException;
 
 import com.sun.imageio.plugins.bmp.BMPImageReaderSpi;
 
-public class JP2KKakaduWriteTest extends TestCase {
+public class JP2KKakaduWriteTest {
 
     /** The LOGGER for this class. */
     private static final Logger LOGGER = Logger
             .getLogger("it.geosolutions.imageio.plugins.jp2k");
 
-    public JP2KKakaduWriteTest(String name) {
-        super(name);
-    }
-    
     private static boolean isKakaduAvailable;
-    
+    private static int majorVersion;
+
     private static int writeOperations = 0;
 
     private final static double lossLessQuality = 1;
 
     private final static double lossyQuality = 0.125;
 
-    private final static String testPath;
+    private static String testPath;
 
     private final static String FILE_SEPARATOR = System
             .getProperty("file.separator");
@@ -106,13 +105,15 @@ public class JP2KKakaduWriteTest extends TestCase {
         }
     }
 
-    static {
-        try{
-            isKakaduAvailable = KakaduUtilities.isKakaduAvailable();
-        }
-        catch (UnsatisfiedLinkError ule){
-            isKakaduAvailable = false;
-        }
+    private final static String[] files = new String[] { };
+
+//    private final static String inputFileName = testPath;
+
+    private static String outputFileName;
+
+    public static @BeforeClass void beforeClass(){
+        isKakaduAvailable = KakaduUtilities.isKakaduAvailable();
+        majorVersion = KakaduUtilities.getKakaduJniMajorVersion();
         String path = System.getProperty("data.path");
         if (path != null && path.length() > 1) {
             path = path.replace("\\", "/");
@@ -121,25 +122,18 @@ public class JP2KKakaduWriteTest extends TestCase {
                 testPath = path;
             else
                 testPath = path + "/";
-        } else
+        } else {
             testPath = System.getProperty("java.io.tmpdir");
-       
-    }
-
-    private final static String[] files = new String[] { };
-
-//    private final static String inputFileName = testPath;
-
-    private final static String outputFileName = testPath + FILE_SEPARATOR
-            + "out";
-
-    public void testKakaduWriter() throws KduException, FileNotFoundException,
-            IOException {
-        if(!isKakaduAvailable){
-            LOGGER
-            .warning("Kakadu libs not found: test are skipped ");
-            return;
         }
+        outputFileName = testPath + FILE_SEPARATOR + "out";    
+    }
+    
+    public @Before void before() {
+        Assume.assumeTrue("Kakadu libs not found: tests are skipped", isKakaduAvailable);
+    }
+    
+    public @Test void testKakaduWriter() throws KduException, FileNotFoundException,
+            IOException {
         for (String fileName : files) {
 //            final String filePath = inputFileName + fileName;
 //            final File file = new File(filePath);
@@ -212,13 +206,8 @@ public class JP2KKakaduWriteTest extends TestCase {
         }
     }
 
-    public void testKakaduWriterParam() throws KduException,
+    public @Test void testKakaduWriterParam() throws KduException,
             FileNotFoundException, IOException {
-        if(!isKakaduAvailable){
-            LOGGER
-            .warning("Kakadu libs not found: test are skipped ");
-            return;
-        }
         if (files.length==0) {
             LOGGER.warning("No files have been specified. This test will be skipped");
             return;
@@ -333,43 +322,10 @@ public class JP2KKakaduWriteTest extends TestCase {
     }
 
     public static void main(java.lang.String[] args) {
-        junit.textui.TestRunner.run(suite());
         LOGGER.info(writeOperations + " write operations performed");
     }
 
-    public static Test suite() {
-
-
-        TestSuite suite = new TestSuite();
-
-        suite.addTest(new JP2KKakaduWriteTest("testKakaduWriter"));
-
-        suite.addTest(new JP2KKakaduWriteTest("testKakaduWriterParam"));
-
-        suite.addTest(new JP2KKakaduWriteTest("testRGB"));
-
-        suite.addTest(new JP2KKakaduWriteTest("test8BitGray"));
-
-        suite.addTest(new JP2KKakaduWriteTest("test12BitGray"));
-
-        suite.addTest(new JP2KKakaduWriteTest("test16BitGray"));
-
-        suite.addTest(new JP2KKakaduWriteTest("test24BitGray"));
-
-        suite.addTest(new JP2KKakaduWriteTest("testPalettedRGB"));
-
-        suite.addTest(new JP2KKakaduWriteTest("testReducedMemory"));
-        suite.addTest(new JP2KKakaduWriteTest("testOutputStream"));
-
-        return suite;
-    }
-
-    public static void testReducedMemory() throws IOException {
-        if(!isKakaduAvailable){
-            LOGGER
-            .warning("Kakadu libs not found: test are skipped ");
-            return;
-        }
+    public @Test void testReducedMemory() throws IOException {
         System.setProperty(JP2KKakaduImageWriter.MAX_BUFFER_SIZE_KEY, "64K");
         final ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
         ColorModel cm = new ComponentColorModel(cs, new int[] { 16 }, false,
@@ -389,7 +345,7 @@ public class JP2KKakaduWriteTest extends TestCase {
         DataBuffer imageBuffer = new DataBufferUShort(bufferValues, bufferSize);
         BufferedImage bi = new BufferedImage(cm, Raster.createWritableRaster(
                 sm, imageBuffer, null), false, null);
-
+        
         write(outputFileName + "_RM", bi, true, lossLessQuality);
         write(outputFileName + "_RM", bi, false, lossLessQuality);
         write(outputFileName + "_RM", bi, true, lossyQuality);
@@ -397,12 +353,7 @@ public class JP2KKakaduWriteTest extends TestCase {
         LOGGER.info(writeOperations + " write operations performed");
     }
 
-    public static void test8BitGray() throws IOException {
-        if(!isKakaduAvailable){
-            LOGGER
-            .warning("Kakadu libs not found: test are skipped ");
-            return;
-        }
+    public @Test void test8BitGray() throws IOException {
         final ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
         ColorModel cm = new ComponentColorModel(cs, new int[] { 8 }, false,
                 false, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
@@ -432,12 +383,7 @@ public class JP2KKakaduWriteTest extends TestCase {
         LOGGER.info(writeOperations + " write operations performed");
     }
 
-    public static void test12BitGray() throws IOException {
-        if(!isKakaduAvailable){
-            LOGGER
-            .warning("Kakadu libs not found: test are skipped ");
-            return;
-        }
+    public @Test void test12BitGray() throws IOException {
         final ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
         ColorModel cm = new ComponentColorModel(cs, new int[] { 12 }, false,
                 false, Transparency.OPAQUE, DataBuffer.TYPE_USHORT);
@@ -467,12 +413,7 @@ public class JP2KKakaduWriteTest extends TestCase {
         LOGGER.info(writeOperations + " write operations performed");
     }
 
-    public static void test16BitGray() throws IOException {
-        if(!isKakaduAvailable){
-            LOGGER
-            .warning("Kakadu libs not found: test are skipped ");
-            return;
-        }
+    public @Test void test16BitGray() throws IOException {
         final ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
         ColorModel cm = new ComponentColorModel(cs, new int[] { 16 }, false,
                 false, Transparency.OPAQUE, DataBuffer.TYPE_USHORT);
@@ -508,12 +449,7 @@ public class JP2KKakaduWriteTest extends TestCase {
         LOGGER.info(writeOperations + " write operations performed");
     }
 
-    public static void test24BitGray() throws IOException {
-        if(!isKakaduAvailable){
-            LOGGER
-            .warning("Kakadu libs not found: test are skipped ");
-            return;
-        }
+    public @Test void test24BitGray() throws IOException {
         final ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
         ColorModel cm = new ComponentColorModel(cs, new int[] { 24 }, false,
                 false, Transparency.OPAQUE, DataBuffer.TYPE_INT);
@@ -548,13 +484,7 @@ public class JP2KKakaduWriteTest extends TestCase {
         LOGGER.info(writeOperations + " write operations performed");
     }
 
-    public void testOutputStream() throws IOException {
-        
-        if(!isKakaduAvailable){
-            LOGGER
-            .warning("Kakadu libs not found: test are skipped ");
-            return;
-        }
+    public @Test void testOutputStream() throws IOException {
         final File outFile = File.createTempFile("stream", "temp");
         final FileImageOutputStream stream = new FileImageOutputStream (outFile);
         stream.writeBytes("This is an Image Header written before the j2c raw codestream");
@@ -575,12 +505,8 @@ public class JP2KKakaduWriteTest extends TestCase {
         writer.dispose();
         LOGGER.info(writeOperations + " write operations performed");
     }
-    public void testRGB() throws IOException {
-        if(!isKakaduAvailable){
-            LOGGER
-            .warning("Kakadu libs not found: test are skipped ");
-            return;
-        }
+    
+    public @Test void testRGB() throws IOException {
         final File file = TestData.file(this, "RGB24.bmp");
         final ImageReader reader = new BMPImageReaderSpi()
                 .createReaderInstance();
@@ -597,18 +523,13 @@ public class JP2KKakaduWriteTest extends TestCase {
         LOGGER.info(writeOperations + " write operations performed");
     }
 
-    public void testPalettedRGB() throws IOException {
-        if(!isKakaduAvailable){
-            LOGGER
-            .warning("Kakadu libs not found: test are skipped ");
-            return;
-        }
-//        BufferedImage bi = ImageIO.read(TestData.file(this, "paletted.tif"));
-//        write(outputFileName + "_RGB8", bi, true, lossLessQuality);
-//        write(outputFileName + "_RGB8", bi, false, lossLessQuality);
-//        write(outputFileName + "_JAI_RGB8", bi, true, lossLessQuality, true);
-//        write(outputFileName + "_JAI_RGB8", bi, false, lossLessQuality, true);
-//        LOGGER.info(writeOperations + " write operations performed");
+    public @Test void testPalettedRGB() throws IOException {
+        BufferedImage bi = ImageIO.read(TestData.file(this, "paletted.tif"));
+        write(outputFileName + "_RGB8", bi, true, lossLessQuality);
+        write(outputFileName + "_RGB8", bi, false, lossLessQuality);
+        write(outputFileName + "_JAI_RGB8", bi, true, lossLessQuality, true);
+        write(outputFileName + "_JAI_RGB8", bi, false, lossLessQuality, true);
+        LOGGER.info(writeOperations + " write operations performed");
     }
 
     private static void write(String file, final RenderedImage bi,

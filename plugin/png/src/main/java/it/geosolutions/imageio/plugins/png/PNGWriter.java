@@ -20,14 +20,19 @@ import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
 import java.io.OutputStream;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ar.com.hjg.pngj.FilterType;
 import ar.com.hjg.pngj.ImageInfo;
 import ar.com.hjg.pngj.PngWriter;
+import ar.com.hjg.pngj.chunks.ChunksListForWrite;
 import ar.com.hjg.pngj.chunks.PngChunkPLTE;
 import ar.com.hjg.pngj.chunks.PngChunkTRNS;
+import ar.com.hjg.pngj.chunks.PngMetadata;
 
 /**
  * Encodes the image in PNG using the PNGJ library
@@ -40,6 +45,11 @@ public class PNGWriter {
 
     public RenderedImage writePNG(RenderedImage image, OutputStream outStream, float quality,
             FilterType filterType) throws Exception {
+        return writePNG(image, outStream, quality, filterType, null);
+    }
+
+    public RenderedImage writePNG(RenderedImage image, OutputStream outStream, float quality,
+            FilterType filterType, Map<String,String> text) throws Exception {
         
         // compute the compression level similarly to what the Clib code does
         int level = Math.round(9 * (1f - quality));
@@ -60,10 +70,11 @@ public class PNGWriter {
         try {
             pw.setCompLevel(level);
             pw.setFilterType(filterType);
-
+            ChunksListForWrite chunkList = pw.getChunksList();
+            PngMetadata metadata = pw.getMetadata();
             if (indexed) {
                 IndexColorModel icm = (IndexColorModel) colorModel;
-                PngChunkPLTE palette = pw.getMetadata().createPLTEChunk();
+                PngChunkPLTE palette = metadata.createPLTEChunk();
                 int ncolors = icm.getMapSize();
                 palette.setNentries(ncolors);
                 for (int i = 0; i < ncolors; i++) {
@@ -80,8 +91,15 @@ public class PNGWriter {
                         alpha[i] = a;
                     }
                     transparent.setPalletteAlpha(alpha);
-                    pw.getChunksList().queue(transparent);
+                    chunkList.queue(transparent);
 
+                }
+            }
+            if (text != null && !text.isEmpty()) {
+                Iterator<Entry<String, String>> entrySetIterator = text.entrySet().iterator();
+                while (entrySetIterator.hasNext()) {
+                    Entry<String, String> entrySet = entrySetIterator.next();
+                    metadata.setText(entrySet.getKey(), entrySet.getValue(), true, false);
                 }
             }
 
@@ -91,7 +109,6 @@ public class PNGWriter {
             }
             pw.end();
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Failed to encode the PNG", e);
             throw e;
         } finally {
             pw.close();

@@ -2,7 +2,7 @@
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
  *    http://java.net/projects/imageio-ext/
- *    (C) 2016, GeoSolutions
+ *    (C) 2007 - 2016, GeoSolutions
  *    All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,6 +40,11 @@ public class PrivateTIFFTagSet extends TIFFTagSet {
     private static PrivateTIFFTagSet theInstance = null;
 
     /**
+     * Used by GDAL: a XML document providing
+     */
+    public static final int TAG_GDAL_METADATA = 42112;
+
+    /**
      * Used by GDAL: an ASCII encoded nodata value.
      */
     public static final int TAG_GDAL_NODATA = 42113;
@@ -51,11 +56,21 @@ public class PrivateTIFFTagSet extends TIFFTagSet {
                   1 << TIFFTag.TIFF_ASCII);
         }
     }
+
+    static class GDALMetadata extends TIFFTag {
+        public GDALMetadata() {
+            super("GDALMetadata",
+                    TAG_GDAL_METADATA,
+                    1 << TIFFTag.TIFF_ASCII);
+        }
+    }
+    
     private static List<TIFFTag> tags;
 
     private static void initTags() {
         tags = new ArrayList<TIFFTag>(1);
         tags.add(new PrivateTIFFTagSet.GDALNoData());
+        tags.add(new PrivateTIFFTagSet.GDALMetadata());
     }
 
     private PrivateTIFFTagSet() {

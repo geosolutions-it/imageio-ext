@@ -187,9 +187,9 @@ public class NITFImageWriter extends ImageWriter {
             NITFUtilities.setField("OSTAID", header.getOriginStationID(), headerWrapper.getOriginStationId());
             NITFUtilities.setField("FDT", header.getFileDateTime(), headerWrapper.getDateTime());
             NITFUtilities.setField("FTITLE", header.getFileTitle(), headerWrapper.getTitle());
+            NITFUtilities.setField("FSCLAS", header.getClassification(), headerWrapper.getSecurityClassification());
             NITFUtilities.setField("FSCLSY", header.getSecurityGroup().getClassificationSystem(), headerWrapper.getSecurityClassificationSystem());
             NITFUtilities.setField("ENCRYP", header.getEncrypted(), Integer.toString(headerWrapper.getEncrypted()));
-            header.getClassification().setData(headerWrapper.getSecurityClassificationSystem());
             NITFUtilities.setField("FBKGC", header.getBackgroundColor(), headerWrapper.getBackgroundColor());
             NITFUtilities.setField("ONAME", header.getOriginatorName(), headerWrapper.getOriginatorName());
             NITFUtilities.setField("OPHONE", header.getOriginatorPhone(), headerWrapper.getOriginatorPhone());

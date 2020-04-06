@@ -15,8 +15,9 @@
         <extensive.tests>false</extensive.tests>
         <interactive.tests>false</interactive.tests>
         <test.maxHeapSize>512M</test.maxHeapSize>
-        <gdal.version>1.9.2</gdal.version>
         <kakadu.version>5.2.6</kakadu.version>
+        <java.awt.headless>true</java.awt.headless>
+        <gdal.version>2.2.0</gdal.version>
     </properties>
 
     <!-- ======================================================== -->
@@ -25,7 +26,7 @@
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext</artifactId>
     <packaging>pom</packaging>
-    <version>1.2.4-SNAPSHOT</version>
+    <version>1.3.3-SNAP</version>
     <name>GeoSolutions Image I/O-Extensions Library Root Project</name>
 
     <scm>
@@ -38,7 +39,7 @@
     <description>Container for tools and extensions to Image I/O project</description>
     <organization>
         <name>GeoSolutions</name>
-        <url>http://www.geo-solutions.it</url>
+        <url>https://www.geo-solutions.it</url>
     </organization>
     <inceptionYear>2006</inceptionYear>
     <licenses>
@@ -87,6 +88,26 @@
                     <id>geosolutions</id>
                     <url>ftp://demo.geo-solutions.it</url>
                 </repository>
+            </distributionManagement>
+        </profile>
+        <!--..................................-->
+        <!--      GeoSolutions Repository     -->
+        <!--..................................-->
+        <profile>
+            <id>deploysnap</id>
+            <distributionManagement>
+                <repository>
+                    <id>snap-repo-public</id>
+                    <name>Public Maven Repository for SNAP</name>
+                    <url>https://snap-build-server.tilaa.cloud/nexus/repository/snap-maven-releases/</url>
+                    <uniqueVersion>false</uniqueVersion>
+                </repository>
+                <snapshotRepository>
+                    <id>snap-repo-public</id>
+                    <name>Public Maven Snapshot Repository for SNAP</name>
+                    <url>https://snap-build-server.tilaa.cloud/nexus/repository/snap-maven-snapshot/</url>
+                    <uniqueVersion>false</uniqueVersion>
+                </snapshotRepository>
             </distributionManagement>
         </profile>
         <!-- Profiles set on the command-line overwrite default properties. -->
@@ -158,10 +179,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-
+                <version>2.10.4</version>
                 <configuration>
                     <!-- Necessary to enable javadoc to handle J2SE 1.4 features. -->
-                    <source>1.5</source>
+                    <source>1.8</source>
                     <!-- Specifies whether or not the version text is included.-->
                     <version>false</version>
                     <!-- Omit qualifying package name before class names in output.-->
@@ -269,20 +290,12 @@
     <!--..................................-->
     <!--    java.net Maven2 Repository    -->
     <!--..................................-->
-    <distributionManagement>
-        <repository>
-            <id>snap-repo-public</id>
-            <name>Public Maven Repository for SNAP</name>
-            <url>https://snap-build-server.tilaa.cloud/nexus/repository/snap-maven-public/</url>
-            <uniqueVersion>true</uniqueVersion>
-        </repository>
-        <snapshotRepository>
-            <id>snap-repo-public</id>
-            <name>Public Maven Snapshot Repository for SNAP</name>
-            <url>https://snap-build-server.tilaa.cloud/nexus/repository/snap-maven-snapshot/</url>
-            <uniqueVersion>false</uniqueVersion>
-        </snapshotRepository>
-    </distributionManagement>
+    <!-- <distributionManagement>                                             -->
+    <!--  <repository>                                                        -->
+    <!--  <id>java.net-m2-repository</id>                                     -->
+    <!--      <url>java-net:/maven2-repository/trunk/www/repository/</url>    -->
+    <!--    </repository>                                                     -->
+    <!-- </distributionManagement>                                            -->
 
 
     <!-- ======================================================== -->
@@ -323,17 +336,17 @@
     <!--                     Plugin Repositories                  -->
     <!-- ======================================================== -->
     <pluginRepositories>
-<!--        <pluginRepository>-->
-<!--            <id>codehaus.org</id>-->
-<!--            <name>CodeHaus Plugin Snapshots</name>-->
-<!--            <url>http://snapshots.repository.codehaus.org</url>-->
-<!--            <releases>-->
-<!--                <enabled>false</enabled>-->
-<!--            </releases>-->
-<!--            <snapshots>-->
-<!--                <enabled>true</enabled>-->
-<!--            </snapshots>-->
-<!--        </pluginRepository>-->
+        <pluginRepository>
+            <id>codehaus.org</id>
+            <name>CodeHaus Plugin Snapshots</name>
+            <url>http://snapshots.repository.codehaus.org</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
         <pluginRepository>
             <id>snap-repo-public</id>
             <name>Public Maven Repository for SNAP</name>
@@ -347,6 +360,7 @@
                 <checksumPolicy>warn</checksumPolicy>
             </snapshots>
         </pluginRepository>
+
     </pluginRepositories>
 
 
@@ -354,51 +368,44 @@
     <!--                         Repositories                     -->
     <!-- ======================================================== -->
     <repositories>
-<!--        <repository>-->
-<!--            <id>geosolutions</id>-->
-<!--            <name>GeoSolutions libraries repository</name>-->
-<!--            <url>http://maven.geo-solutions.it/</url>-->
-<!--        </repository>-->
-<!--        <repository>-->
-<!--            <id>codehaus</id>-->
-<!--            <name>Codehaus maven repository</name>-->
-<!--            <url>http://repository.codehaus.org/</url>-->
-<!--        </repository>-->
-<!--        <repository>-->
-<!--            <id>jboss</id>-->
-<!--            <name>jboss</name>-->
-<!--            <url>http://repository.jboss.org/maven2/</url>-->
-<!--        </repository>-->
-<!--        <repository>-->
-<!--            <id>codehaus.org</id>-->
-<!--            <name>CodeHaus Snapshots</name>-->
-<!--            <url>http://snapshots.repository.codehaus.org</url>-->
-<!--            <releases>-->
-<!--                <enabled>false</enabled>-->
-<!--            </releases>-->
-<!--            <snapshots>-->
-<!--                <enabled>true</enabled>-->
-<!--            </snapshots>-->
-<!--        </repository>-->
-<!--        <repository>-->
-<!--            <id>osgeo</id>-->
-<!--            <name>Open Source Geospatial Foundation Repository</name>-->
-<!--            <url>http://download.osgeo.org/webdav/geotools/</url>-->
-<!--        </repository>-->
-<!--        <repository>-->
-<!--            <snapshots>-->
-<!--                <enabled>true</enabled>-->
-<!--            </snapshots>-->
-<!--            <id>opengeo</id>-->
-<!--            <name>OpenGeo Maven Repository</name>-->
-<!--            <url>http://repo.opengeo.org</url>-->
-<!--        </repository>-->
-<!--        <repository>-->
-<!--            <id>maven2-repository.dev.java.net</id>-->
-<!--            <name>Java.net Repository for Maven</name>-->
-<!--            <url>http://download.java.net/maven/2/</url>-->
-<!--            <layout>default</layout>-->
-<!--        </repository>-->
+        <repository>
+            <id>central.maven.org</id>
+            <name>Central Maven repository</name>
+            <url>http://central.maven.org/maven2</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>geosolutions</id>
+            <name>GeoSolutions libraries repository</name>
+            <url>https://maven.geo-solutions.it/</url>
+        </repository>
+        <repository>
+            <id>jboss</id>
+            <name>jboss</name>
+            <url>http://repository.jboss.org/maven2/</url>
+        </repository>
+        <repository>
+            <id>osgeo</id>
+            <name>Open Source Geospatial Foundation Repository</name>
+            <url>http://download.osgeo.org/webdav/geotools/</url>
+        </repository>
+        <repository>
+            <!-- Contains snapshot and release (including third-party-dependencies)              -->
+            <!-- Restlet maven Repository (http://maven.restlet.org)                             -->
+            <!-- ucar (https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases) -->
+            <!-- geosolutions (http://maven.geo-solutions.it/)                                   -->
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <id>boundless</id>
+            <name>Boundless Maven Repository</name>
+            <url>https://repo.boundlessgeo.com/main/</url>
+        </repository>
         <repository>
             <id>snap-repo-public</id>
             <name>Public Maven Repository for SNAP</name>
@@ -407,15 +414,6 @@
                 <enabled>true</enabled>
                 <checksumPolicy>warn</checksumPolicy>
             </releases>
-            <snapshots>
-                <enabled>false</enabled>
-                <checksumPolicy>warn</checksumPolicy>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>snap-repo-snapshot</id>
-            <name>Public Maven Snapshot Repository for SNAP</name>
-            <url>https://snap-build-server.tilaa.cloud/nexus/repository/snap-maven-snapshot/</url>
             <snapshots>
                 <enabled>true</enabled>
                 <checksumPolicy>warn</checksumPolicy>
@@ -433,24 +431,43 @@
         <dependencies>
             <!-- Tests or legacy -->
             <dependency>
-                <groupId>javax.media</groupId>
-                <artifactId>jai_core</artifactId>
-                <version>1.1.3</version>
+                <groupId>javax.media.jai</groupId>
+                <artifactId>jai-core-openjdk</artifactId>
+                <version>1.1.4</version>
             </dependency>
             <dependency>
-                <groupId>javax.media</groupId>
-                <artifactId>jai_codec</artifactId>
-                <version>1.1.3</version>
+                <groupId>javax.media.jai</groupId>
+                <artifactId>jai-codec-openjdk</artifactId>
+                <version>1.1.4</version>
             </dependency>
             <dependency>
-                <groupId>javax.media</groupId>
-                <artifactId>jai_imageio</artifactId>
-                <version>1.1</version>
+                <groupId>javax.media.jai</groupId>
+                <artifactId>mlibwrapper-jai-openjdk</artifactId>
+                <version>1.1.4</version>
+            </dependency>
+            <dependency>
+                <!-- This artifact is build by our own. It fixes the vendorName == null! problem.
+                     The issue is known to NetBeans but not fixed yet. https://netbeans.org/bugzilla/show_bug.cgi?id=247795 -->
+                <groupId>com.sun.media</groupId>
+                <artifactId>jai-imageio</artifactId>
+                <version>1.2-SNAP-20150402</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.media</groupId>
+                <artifactId>clibwrapper-jiio</artifactId>
+                <version>1.2-20090918</version>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.11</version>
+                <version>4.12</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>2.28.2</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>it.geosolutions.imageio-ext</groupId>
@@ -494,16 +511,20 @@
     <dependencies>
         <!-- Tests or legacy -->
         <dependency>
-            <groupId>javax.media</groupId>
-            <artifactId>jai_core</artifactId>
+            <groupId>javax.media.jai</groupId>
+            <artifactId>jai-core-openjdk</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.media</groupId>
-            <artifactId>jai_codec</artifactId>
+            <groupId>javax.media.jai</groupId>
+            <artifactId>jai-codec-openjdk</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.media</groupId>
-            <artifactId>jai_imageio</artifactId>
+            <groupId>com.sun.media</groupId>
+            <artifactId>jai-imageio</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.media</groupId>
+            <artifactId>clibwrapper-jiio</artifactId>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -549,14 +570,10 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.6</source>
-                    <!-- The -source argument for the Java compiler. -->
-                    <target>1.6</target>
-                    <!-- The -target argument for the Java compiler. -->
-                    <debug>true</debug>
-                    <!-- Whether to include debugging information.   -->
-                    <encoding>ISO-8859-1</encoding>
-                    <!-- The -encoding argument for the Java compiler. -->
+                    <source>1.8</source>  <!-- The -source argument for the Java compiler. -->
+                    <target>1.8</target>  <!-- The -target argument for the Java compiler. -->
+                    <debug>true</debug>   <!-- Whether to include debugging information.   -->
+                    <encoding>ISO-8859-1</encoding> <!-- The -encoding argument for the Java compiler. -->
                 </configuration>
             </plugin>
             <!-- ======================================================= -->
@@ -571,7 +588,8 @@
                     </includes>
                     <forkMode>once</forkMode>
                     <argLine>-Xmx${test.maxHeapSize} -enableassertions -Dtest.extensive=${extensive.tests}
-                        -Dtest.interactive=${interactive.tests}
+                        -Dtest.interactive=${interactive.tests} -Djava.awt.headless=${java.awt.headless}
+                        -XX:+IgnoreUnrecognizedVMOptions --illegal-access=debug
                     </argLine>
                 </configuration>
             </plugin>
@@ -605,41 +623,40 @@
                     <outputDirectory>${project.build.directory}/release</outputDirectory>
                 </configuration>
             </plugin>
-<!--            <plugin>-->
-<!--                <artifactId>maven-deploy-plugin</artifactId>-->
-<!--            </plugin>-->
         </plugins>
 
         <!-- ======================================================== -->
         <!--              Extensions settings for Deployment          -->
         <!-- ======================================================== -->
-<!--        <extensions>-->
+        <extensions>
 
+            <!--....................................-->
+            <!-- java.net maven2 (using wagon svn)  -->
+            <!--....................................-->
+            <!-- <extension>                             -->
+            <!--  <groupId>org.jvnet.wagon-svn</groupId> -->
+            <!--  <artifactId>wagon-svn</artifactId>     -->
+            <!--  <version>RELEASE</version>             -->
+            <!-- </extension>                            -->
 
-<!--            &lt;!&ndash;.............................................&ndash;&gt;-->
-<!--            &lt;!&ndash;       GeoSolutions (using wagon ftp)       &ndash;&gt;-->
-<!--            &lt;!&ndash;.............................................&ndash;&gt;-->
-<!--            <extension>-->
-<!--                <groupId>org.apache.maven.wagon</groupId>-->
-<!--                <artifactId>wagon-ftp</artifactId>-->
-<!--                <version>1.0-beta-2</version>-->
-<!--            </extension>-->
+            <!--.............................................-->
+            <!--       geo-solutions (using wagon ftp)       -->
+            <!--.............................................-->
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ftp</artifactId>
+                <version>1.0-beta-2</version>
+            </extension>
 
-<!--            &lt;!&ndash;....................................&ndash;&gt;-->
-<!--            &lt;!&ndash;        (using wagon webdav)        &ndash;&gt;-->
-<!--            &lt;!&ndash;....................................&ndash;&gt;-->
-<!--            <extension>-->
-<!--                <groupId>org.apache.maven.wagon</groupId>-->
-<!--                <artifactId>wagon-webdav</artifactId>-->
-<!--                <version>1.0-beta-2</version>-->
-<!--            </extension>-->
-
-<!--            <extension>-->
-<!--                <groupId>org.apache.maven.wagon</groupId>-->
-<!--                <artifactId>wagon-ssh</artifactId>-->
-<!--                <version>1.0-beta-7</version>-->
-<!--            </extension>-->
-<!--        </extensions>-->
+            <!--....................................-->
+            <!--        (using wagon webdav)        -->
+            <!--....................................-->
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-webdav</artifactId>
+                <version>1.0-beta-2</version>
+            </extension>
+        </extensions>
     </build>
 
     <!-- ========================================================== -->

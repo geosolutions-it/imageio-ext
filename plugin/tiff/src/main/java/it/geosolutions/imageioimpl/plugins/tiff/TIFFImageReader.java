@@ -73,6 +73,8 @@
  */
 package it.geosolutions.imageioimpl.plugins.tiff;
 
+import com.sun.media.imageioimpl.common.ImageUtil;
+import com.sun.media.imageioimpl.common.PackageUtil;
 import it.geosolutions.imageio.maskband.DatasetLayout;
 import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
 import it.geosolutions.imageio.plugins.tiff.PrivateTIFFTagSet;
@@ -81,45 +83,34 @@ import it.geosolutions.imageio.plugins.tiff.TIFFDecompressor;
 import it.geosolutions.imageio.plugins.tiff.TIFFField;
 import it.geosolutions.imageio.plugins.tiff.TIFFImageReadParam;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
+import it.geosolutions.imageioimpl.plugins.tiff.gdal.GDALMetadata;
+import it.geosolutions.imageioimpl.plugins.tiff.gdal.GDALMetadataParser;
 
-import java.awt.Point;
-import java.awt.Rectangle;
+import org.w3c.dom.Node;
+
+import javax.imageio.*;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.stream.ImageInputStream;
+import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_ColorSpace;
 import java.awt.color.ICC_Profile;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
-import java.awt.image.Raster;
-import java.awt.image.RenderedImage;
-import java.awt.image.SampleModel;
+import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.nio.ByteOrder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-
-import javax.imageio.IIOException;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReadParam;
-import javax.imageio.ImageReader;
-import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.spi.ImageReaderSpi;
-import javax.imageio.stream.ImageInputStream;
-
-import org.w3c.dom.Node;
-
-import com.sun.media.imageioimpl.common.ImageUtil;
-import com.sun.media.imageioimpl.common.PackageUtil;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class TIFFImageReader extends ImageReader {
-    
+
+    private final static Logger LOGGER = Logger.getLogger(TIFFImageReader.class.toString());
+
     /**
      * This class can be used to cache basic information about a tiff page.
      * <p>
@@ -129,7 +120,7 @@ public class TIFFImageReader extends ImageReader {
      * @author Simone Giannecchini, GeoSoltions S.A.S.
      *
      */
-    private final static class PageInfo {
+    protected final static class PageInfo {
 
         private SoftReference<TIFFImageMetadata> imageMetadata;
 
@@ -150,7 +141,9 @@ public class TIFFImageReader extends ImageReader {
                 int samplesPerPixel, 
                 int[] sampleFormat, 
                 int[] extraSamples,
-                Double noData) {
+                Double noData,
+                Double[] offsets,
+                Double[] scales) {
             this.imageMetadata = new SoftReference<TIFFImageMetadata>(imageMetadata);
             this.bigtiff = bigtiff;
             this.bitsPerSample = bitsPerSample;
@@ -168,6 +161,8 @@ public class TIFFImageReader extends ImageReader {
             this.sampleFormat = sampleFormat;
             this.extraSamples = extraSamples;
             this.noData = noData;
+            this.offsets = offsets;
+            this.scales = scales;
         }
 
         /* (non-Javadoc)
@@ -193,6 +188,8 @@ public class TIFFImageReader extends ImageReader {
             result = prime * result + tileOrStripHeight;
             result = prime * result + tileOrStripWidth;
             result = prime * result + width;
+            result = prime * result + Arrays.hashCode(offsets);
+            result = prime * result + Arrays.hashCode(scales);
             return result;
         }
 
@@ -243,10 +240,13 @@ public class TIFFImageReader extends ImageReader {
                 return false;
             if (width != other.width)
                 return false;
+            if (!Arrays.equals(offsets, other.offsets))
+                return false;
+            if (!Arrays.equals(scales, other.scales))
+                return false;
+
             return true;
         }
-
-        
 
         /* (non-Javadoc)
          * @see java.lang.Object#toString()
@@ -262,7 +262,10 @@ public class TIFFImageReader extends ImageReader {
                     + ", sampleFormat=" + Arrays.toString(sampleFormat) + ", samplesPerPixel="
                     + samplesPerPixel + ", tileOrStripHeight=" + tileOrStripHeight
                     + ", tileOrStripWidth=" + tileOrStripWidth + ", width=" + width 
-                    + ", noData=" + noData + "]";
+                    + ", noData=" + noData
+                    + ", offsets=" + Arrays.toString(offsets)
+                    + ", scales=" + Arrays.toString(scales)
+                    + "]";
         }
 
         private boolean bigtiff = false;
@@ -294,7 +297,11 @@ public class TIFFImageReader extends ImageReader {
         private int[] extraSamples;
 
         private Double noData = null; //Using a Double to allow null value.
-     
+
+        private Double[] scales;
+
+        private Double[] offsets;
+
     }
 
     private static final boolean DEBUG = false; // XXX 'false' for release!!!
@@ -307,29 +314,29 @@ public class TIFFImageReader extends ImageReader {
 
     private int magic = -1;
     
-    private Map<Integer, PageInfo> pagesInfo= new HashMap<Integer, PageInfo>();
+    private Map<Integer, PageInfo> pagesInfo = new HashMap<Integer, PageInfo>();
 
     private boolean bigtiff = false;
         
     // The current ImageInputStream source.
-    ImageInputStream stream = null;
+    protected ImageInputStream stream = null;
 
     // True if the file header has been read.
-    boolean gotTiffHeader = false;
+    protected boolean gotTiffHeader = false;
     
     // true if we already have parsed metadata for this element
-    boolean initialized = false;
+    protected boolean initialized = false;
 
-    ImageReadParam imageReadParam = getDefaultReadParam();
+    protected ImageReadParam imageReadParam = getDefaultReadParam();
 
     // Stream metadata, or null.
-    TIFFStreamMetadata streamMetadata = null;
+    protected TIFFStreamMetadata streamMetadata = null;
 
     // The current image index.
-    int currIndex = -1;
+    protected int currIndex = -1;
 
     // Metadata for image at 'currIndex', or null.
-    TIFFImageMetadata imageMetadata = null;
+    protected TIFFImageMetadata imageMetadata = null;
     
     /**
      * A <code>List</code> of <code>Long</code>s indicating the stream positions of the start of the
@@ -344,45 +351,49 @@ public class TIFFImageReader extends ImageReader {
     // Contains a map of Integers to Lists.
     HashMap<Integer, List<ImageTypeSpecifier>> imageTypeMap = new HashMap<Integer, List<ImageTypeSpecifier>>();
 
-    BufferedImage theImage = null;
+    protected BufferedImage theImage = null;
 
-    int width = -1;
-    int height = -1;
-    int numBands = -1;
-    int tileOrStripWidth = -1, tileOrStripHeight = -1;
+    protected int width = -1;
+    protected int height = -1;
+    protected int numBands = -1;
+    protected int tileOrStripWidth = -1, tileOrStripHeight = -1;
 
-    int planarConfiguration = BaselineTIFFTagSet.PLANAR_CONFIGURATION_CHUNKY;
-    
-    int compression;
-    int photometricInterpretation;
-    int samplesPerPixel;
-    int[] sampleFormat;
-    int[] bitsPerSample;
-    int[] extraSamples;
-    char[] colorMap;
+    protected int planarConfiguration = BaselineTIFFTagSet.PLANAR_CONFIGURATION_CHUNKY;
 
-    int sourceXOffset;
-    int sourceYOffset;
-    int srcXSubsampling;
-    int srcYSubsampling;
+    protected int compression;
+    protected int photometricInterpretation;
+    protected int samplesPerPixel;
+    protected int[] sampleFormat;
+    protected int[] bitsPerSample;
+    protected int[] extraSamples;
+    protected char[] colorMap;
 
-    int dstWidth;
-    int dstHeight;
-    int dstMinX;
-    int dstMinY;
-    int dstXOffset;
-    int dstYOffset;
+    protected int sourceXOffset;
+    protected int sourceYOffset;
+    protected int srcXSubsampling;
+    protected int srcYSubsampling;
 
-    int tilesAcross;
-    int tilesDown;
+    protected int dstWidth;
+    protected int dstHeight;
+    protected int dstMinX;
+    protected int dstMinY;
+    protected int dstXOffset;
+    protected int dstYOffset;
 
-    int pixelsRead;
-    int pixelsToRead;
+    protected int tilesAcross;
+    protected int tilesDown;
+
+    protected int pixelsRead;
+    protected int pixelsToRead;
 
 
     private boolean isImageTiled= false;
 
     protected Double noData = null;
+
+    private Double[] scales;
+
+    private Double[] offsets;
 
     // BAND MASK RELATED FIELDS
     /** {@link DatasetLayout} implementation containing info about overviews and masks*/
@@ -416,7 +427,7 @@ public class TIFFImageReader extends ImageReader {
             }
             this.stream = (ImageInputStream)input;
             // Check for external masks/overviews
-            if (input instanceof FileImageInputStreamExtImpl) {
+            if (!ImageIOUtilities.isSkipExternalFilesLookup() && input instanceof FileImageInputStreamExtImpl) {
 
                 FileImageInputStreamExtImpl stream = (FileImageInputStreamExtImpl) input;
                 // Getting File path
@@ -864,7 +875,7 @@ public class TIFFImageReader extends ImageReader {
 
             this.imageMetadata = new TIFFImageMetadata(tagSets);
             imageMetadata.initializeFromStream(stream, ignoreMetadata, bigtiff);
-            // we got to reinitialized!!!
+            // we got to reinitialize!!!
             initialized = false;
         } catch (IIOException iioe) {
             throw iioe;
@@ -962,7 +973,7 @@ public class TIFFImageReader extends ImageReader {
         return BaselineTIFFTagSet.PLANAR_CONFIGURATION_CHUNKY;
     }
 
-    private long getTileOrStripOffset(int tileIndex) throws IIOException {
+    protected long getTileOrStripOffset(int tileIndex) throws IIOException {
         TIFFField f =
             imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_TILE_OFFSETS);
         if (f == null) {
@@ -980,7 +991,7 @@ public class TIFFImageReader extends ImageReader {
         return f.getAsLong(tileIndex);
     }
 
-    private long getTileOrStripByteCount(int tileIndex) throws IOException {
+    protected long getTileOrStripByteCount(int tileIndex) throws IOException {
         TIFFField f =
            imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_TILE_BYTE_COUNTS);
         if (f == null) {
@@ -1020,7 +1031,7 @@ public class TIFFImageReader extends ImageReader {
         return tileOrStripByteCount;
     }
 
-    private int getCompression() {
+    protected int getCompression() {
         TIFFField f =
             imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_COMPRESSION);
         if (f == null) {
@@ -1280,6 +1291,28 @@ public class TIFFImageReader extends ImageReader {
             }
         }
 
+        // scales and offsets, if any
+        f = imageMetadata.getTIFFField(PrivateTIFFTagSet.TAG_GDAL_METADATA);
+        this.offsets = null;
+        this.scales = null;
+        if (f != null) {
+            // guard with try/catch to avoid regressions on upgrade (e.g., files that used to
+            // read fine that fail to read after an upgrade)
+            try {
+                String xml = f.getAsString(0);
+                GDALMetadata gdalMetadata = GDALMetadataParser.parse(xml);
+                // parse both before assigning to fields, to avoid partially setup data structure
+                Double[] offsets = gdalMetadata.getOffsets(numBands);
+                Double[] scales = gdalMetadata.getScales(numBands);
+                this.offsets = offsets;
+                this.scales = scales;
+            } catch(Exception e) {
+                if (LOGGER.isLoggable(Level.FINE)) {
+                    LOGGER.log(Level.FINE, "Skipping GDAL metadata parsing due to errors", e);
+                }
+            }
+        }
+        
         // signal that this image is initialized
         initialized = true;
         
@@ -1303,7 +1336,9 @@ public class TIFFImageReader extends ImageReader {
                         samplesPerPixel,
                         sampleFormat,
                         extraSamples,
-                        noData));
+                        noData,
+                        offsets,
+                        scales));
 
     }
 
@@ -1410,6 +1445,13 @@ public class TIFFImageReader extends ImageReader {
         Node root =
             imageMetadata.getAsTree(TIFFImageMetadata.nativeMetadataFormatName);
         im.setFromTree(TIFFImageMetadata.nativeMetadataFormatName, root);
+        if (noData != null) {
+            im.setNoData(new double[] {noData, noData});
+        }
+        if (scales != null && offsets != null) {
+            im.setScales(scales);
+            im.setOffsets(offsets);
+        }
         return im;
     }
 
@@ -1527,7 +1569,7 @@ public class TIFFImageReader extends ImageReader {
         return num/den;
     }
 
-    private void prepareRead(int imageIndex, ImageReadParam param)
+    protected void prepareRead(int imageIndex, ImageReadParam param)
         throws IOException {
         if (stream == null) {
             throw new IllegalStateException("Input not set!");
@@ -1736,9 +1778,11 @@ public class TIFFImageReader extends ImageReader {
     public BufferedImage read(int imageIndex, ImageReadParam param)
         throws IOException {
         prepareRead(imageIndex, param);
+
+        // prepare for reading
         this.theImage = getDestination(param,
                                        getImageTypes(imageIndex),
-                                       width, height);
+                                       width, height, noData);
 
         srcXSubsampling = imageReadParam.getSourceXSubsampling();
         srcYSubsampling = imageReadParam.getSourceYSubsampling();
@@ -1980,9 +2024,7 @@ public class TIFFImageReader extends ImageReader {
             int[] db = new int[1];
             for (int tj = minTileY; tj <= maxTileY; tj++) {
                 for (int ti = minTileX; ti <= maxTileX; ti++) {
-                    // --> sourceBands.length may be less than numBands --> ArrayIndexOutOfBoundsException
-                    // Old buggy code: for (int band = 0; band < numBands; band++) {
-                    for (int band = 0; band < sourceBands.length; band++) {
+                    for (int band = 0; band < numBands; band++) {
                         sb[0] = sourceBands[band];
                         decompressor.setSourceBands(sb);
                         db[0] = destinationBands[band];
@@ -1997,7 +2039,7 @@ public class TIFFImageReader extends ImageReader {
                             break;
                         }
 
-                        decodeTile(ti, tj, sb [0]);
+                        decodeTile(ti, tj, band);
                     }
 
                     if(isAbortRequested) break;
@@ -2074,7 +2116,7 @@ public class TIFFImageReader extends ImageReader {
     
     protected static BufferedImage getDestination(ImageReadParam param,
                                                   Iterator<ImageTypeSpecifier> imageTypes,
-                                                  int width, int height)
+                                                  int width, int height, Double noData)
             throws IIOException {
         if (imageTypes == null || !imageTypes.hasNext()) {
             throw new IllegalArgumentException("imageTypes null or empty!");
@@ -2137,8 +2179,15 @@ public class TIFFImageReader extends ImageReader {
             throw new IllegalArgumentException
                 ("width*height > Integer.MAX_VALUE!");
         }
-        
-        return imageType.createBufferedImage(destWidth, destHeight);
+
+        SampleModel sampleModel = imageType.getSampleModel(destWidth, destHeight);
+        ColorModel colorModel = imageType.getColorModel();
+        WritableRaster raster = Raster.createWritableRaster(sampleModel,  new Point(0, 0));
+        Hashtable properties = new Hashtable();
+        if ( noData != null ) {
+            properties.put("GC_NODATA", noData);
+        }
+        return new BufferedImage(colorModel, raster, colorModel.isAlphaPremultiplied(), properties);
     }
     
     @Override
@@ -2156,4 +2205,5 @@ public class TIFFImageReader extends ImageReader {
         this.imageReadParam = null;
         this.stream = null;
     }
+
 }

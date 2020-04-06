@@ -145,6 +145,9 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     /** Array to store the color interpretation for each band */
     private int[] colorInterpretations;
 
+    /** The nodata range for this reader, if any (may be null) */
+    private double[] noData;
+
     /**
      * Private constructor
      */
@@ -453,6 +456,21 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
         return sampleModel;
     }
 
+    /**
+     * Returns the data for this dataset, as a range. May be <code>null</code>
+     */
+    public double[] getNoData() {
+        return noData;
+    }
+
+    /**
+     * Sets the nodata for this dataset. May be <code>null</code>
+     * @param noData
+     */
+    public void setNoData(double[] noData) {
+        this.noData = noData;
+    }
+
     // ////////////////////////////////////////////////////////////////////////
     //
     // Referencing
@@ -493,7 +511,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     // 
     // ////////////////////////////////////////////////////////////////////////
     public Double[] getMaximums() {
-        return (Double[]) maximums.clone();
+        return maximums == null ? null : maximums.clone();
     }
 
     protected void setMaximums(Double[] maximums) {
@@ -503,7 +521,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     }
 
     public Double[] getMinimums() {
-        return (Double[]) minimums.clone();
+        return minimums == null ? null : minimums.clone();
     }
 
     protected void setMinimums(Double[] minimums) {
@@ -513,7 +531,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     }
 
     public Double[] getNoDataValues() {
-        return (Double[]) noDataValues.clone();
+        return noDataValues == null ? null : noDataValues.clone();
     }
 
     protected void setNoDataValues(Double[] noDataValues) {
@@ -523,27 +541,27 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     }
 
     public Double[] getScales() {
-        return (Double[]) scales.clone();
+        return scales == null ? null : scales.clone();
     }
 
-    protected void setScales(Double[] scales) {
+    public void setScales(Double[] scales) {
         if (this.scales!=null)
             throw new UnsupportedOperationException("scales have already been defined");
         this.scales = scales;
     }
 
     public Double[] getOffsets() {
-        return (Double[]) offsets.clone();
+        return offsets == null ? null : offsets.clone();
     }
 
-    protected void setOffsets(final Double[] offsets) {
+    public void setOffsets(final Double[] offsets) {
         if (this.offsets!=null)
             throw new UnsupportedOperationException("offsets have already been defined");
         this.offsets = offsets;
     }
 
     public int[] getNumOverviews() {
-        return (int[]) numOverviews.clone();
+        return numOverviews == null ? null : numOverviews.clone();
     }
 
     protected void setNumOverviews(final int[] numOverviews) {
@@ -776,4 +794,5 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
             throw new UnsupportedOperationException("colorInterpretations have already been defined");
         this.colorInterpretations = colorInterpretations;
     }
+
 }

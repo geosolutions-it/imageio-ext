@@ -474,17 +474,14 @@ public class TJDecompressor {
    * Free the native structures associated with this decompressor instance.
    */
   public void close() throws Exception {
+    this.jpegBuf = null;
     destroy();
   }
 
   protected void finalize() throws Throwable {
     try {
       close();
-    }
-    catch(Exception e) {}
-    finally {
-      super.finalize();
-    }
+    } catch(Exception e) {}
   };
 
   private native void init() throws Exception;

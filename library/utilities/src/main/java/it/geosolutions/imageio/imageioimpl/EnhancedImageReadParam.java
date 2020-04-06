@@ -23,22 +23,34 @@ import java.awt.Rectangle;
 import javax.imageio.ImageReadParam;
 
 public class EnhancedImageReadParam extends ImageReadParam implements Cloneable{
-	
-	protected Rectangle destinationRegion;
-	
-	public Rectangle getDestinationRegion() {
-		return destinationRegion;
-	}
 
-	public void setDestinationRegion (final Rectangle destinationRegion){
-		this.destinationRegion = (Rectangle)destinationRegion.clone();
-	}
-	
-	/**
+    // the bands parameter define the order and which bands should be returned
+    // with respect to standard ImageReadParam's sourceBands and destinationBands
+    // it allows duplicated entries
+    protected int[] bands;
+
+    protected Rectangle destinationRegion;
+
+    public Rectangle getDestinationRegion() {
+        return destinationRegion;
+    }
+
+    public void setDestinationRegion(final Rectangle destinationRegion) {
+        this.destinationRegion = (Rectangle) destinationRegion.clone();
+    }
+
+    public int[] getBands() {
+        return bands;
+    }
+
+    public void setBands(int[] bands) {
+        this.bands = bands;
+    }
+
+    /**
      * Performs a narrow clone of this {@link EnhancedImageReadParam}.
      * 
-     * @param param
-     *                the {@link EnhancedImageReadParam} instance containing the clone.
+     * @param param the {@link EnhancedImageReadParam} instance containing the clone.
      * @return the narrow clone of this {@link ImageReadParam}.
      */
     protected Object narrowClone(EnhancedImageReadParam param) {
@@ -46,6 +58,9 @@ public class EnhancedImageReadParam extends ImageReadParam implements Cloneable{
         int[] destBands = this.getDestinationBands();
         if (destBands != null)
             param.setDestinationBands((int[]) destBands.clone());
+        int[] bands = this.getBands();
+        if (bands != null)
+            param.setBands((int[]) bands.clone());
         Point p = this.getDestinationOffset();
         if (p != null) {
             param.setDestinationOffset((Point) p.clone());
@@ -79,7 +94,7 @@ public class EnhancedImageReadParam extends ImageReadParam implements Cloneable{
         }
         return param;
     }
-    
+
     public Object clone() throws CloneNotSupportedException {
         EnhancedImageReadParam param = new EnhancedImageReadParam();
         return narrowClone(param);

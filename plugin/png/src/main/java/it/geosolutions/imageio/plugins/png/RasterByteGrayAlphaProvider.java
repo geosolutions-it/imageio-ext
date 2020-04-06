@@ -27,31 +27,42 @@ import java.awt.image.Raster;
  */
 public final class RasterByteGrayAlphaProvider extends AbstractScanlineProvider {
 
+    final static int[] PIXEL_STRIDES = new int[]{2};
+
     final byte[] bytes;
 
     boolean alphaFirst;
 
+    int[] bandOffsets;
+
+    int pixelStride;
+
+    int numBands;
+
     public RasterByteGrayAlphaProvider(Raster raster) {
-        super(raster, 8, raster.getWidth() * 2);
+        super(raster, 8, raster.getWidth() * computePixelStride(raster, PIXEL_STRIDES));
         this.bytes = ((DataBufferByte) raster.getDataBuffer()).getData();
-        int[] bandOffsets = ((ComponentSampleModel) raster.getSampleModel()).getBandOffsets();
+        ComponentSampleModel sm = (ComponentSampleModel) raster.getSampleModel();
+        this.bandOffsets = sm.getBandOffsets();
+        this.numBands = sm.getNumBands();
+        this.pixelStride = sm.getPixelStride();
         this.alphaFirst = bandOffsets[0] != 0;
     }
 
-    
     public void next(final byte[] row, final int offset, final int length) {
         int bytesIdx = cursor.next();
-        if (alphaFirst) {
+        if (!alphaFirst && (numBands == pixelStride)) {
+            System.arraycopy(bytes, bytesIdx, row, offset, length);
+        } else {
             int i = offset;
             final int max = offset + length;
             while (i < max) {
-                final byte a = bytes[bytesIdx++];
-                final byte g = bytes[bytesIdx++];
-                row[i++] = g;
-                row[i++] = a;
+                for (int j = 0; j < numBands; j++) {
+                    row[i + j] = bytes[bytesIdx + bandOffsets[j]];
+                }
+                bytesIdx += pixelStride;
+                i += numBands;
             }
-        } else {
-            System.arraycopy(bytes, bytesIdx, row, offset, length);
         }
     }
 

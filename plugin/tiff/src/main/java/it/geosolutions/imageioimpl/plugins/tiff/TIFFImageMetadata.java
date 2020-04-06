@@ -73,6 +73,7 @@
  */
 package it.geosolutions.imageioimpl.plugins.tiff;
 
+import it.geosolutions.imageio.core.CoreCommonImageMetadata;
 import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
 import it.geosolutions.imageio.plugins.tiff.EXIFParentTIFFTagSet;
 import it.geosolutions.imageio.plugins.tiff.TIFFField;
@@ -102,7 +103,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
-public class TIFFImageMetadata extends IIOMetadata {
+public class TIFFImageMetadata extends CoreCommonImageMetadata {
 
     // package scope
 

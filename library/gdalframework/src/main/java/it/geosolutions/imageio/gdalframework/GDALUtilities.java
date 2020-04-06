@@ -620,12 +620,33 @@ public final class GDALUtilities {
                     return;
                 }
                 try {
-                    System.loadLibrary("gdaljni");
+                    try {
+                        // GDAL version >= 2.3.0
+                        System.loadLibrary("gdalalljni");
+                    } catch (UnsatisfiedLinkError e1) {
+                        if (LOGGER.isLoggable(Level.FINE)) {
+                            LOGGER.log(Level.FINE,"Failed to load the GDAL native libs from \"gdalalljni\". " +
+                                    "Falling back to \"gdaljni\".\n" +
+                                    e1.toString());
+                        }
+                        System.loadLibrary("gdaljni");
+                    }
                     gdal.AllRegister();
                     final String versionInfo = gdal.VersionInfo("RELEASE_NAME");
                     if (versionInfo != null && versionInfo.trim().length() > 0) {
                         if (LOGGER.isLoggable(Level.INFO))
                             LOGGER.info("GDAL Native Library loaded (version: " + versionInfo + ")");
+                    }
+
+                    if (LOGGER.isLoggable(Level.FINE)) {
+                        int driverCount = gdal.GetDriverCount();
+                        List<String> drivers = new ArrayList<>();
+                        for (int i = 0; i < driverCount; i++) {
+                            Driver driver = gdal.GetDriver(i);
+                            drivers.add(driver.getShortName());
+                            driver.delete();
+                        }
+                        LOGGER.fine("Formats available in GDAL (not all exposed by imageio-ext): " +  drivers);
                     }
 
                     // //
@@ -639,11 +660,11 @@ public final class GDALUtilities {
                         gdal.PushErrorHandler("CPLQuietErrorHandler");
                     }
                     GDALUtilities.available = true;
-                } catch (UnsatisfiedLinkError e) {
+                } catch (UnsatisfiedLinkError e2) {
                     if (LOGGER.isLoggable(Level.WARNING)) {
                         LOGGER.warning("Failed to load the GDAL native libs. This is not a problem "
-                        		+ "unless you need to use the GDAL plugins: they won't be enabled.\n" 
-                        		+ e.toString());
+                                    + "unless you need to use the GDAL plugins: they won't be enabled.\n" 
+                                    + e2.toString());
                     }
                     GDALUtilities.available = false;
                 } finally {

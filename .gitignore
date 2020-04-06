@@ -1,9 +1,10 @@
-.svn
-.classpath
 .project
+.classpath
 .settings
-*.iml
 .idea
-trace.db
-*/target/*
-target/
+.DS_Store
+target
+*.patch
+*.class
+*.pyc
+*.iml

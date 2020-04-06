@@ -4,12 +4,12 @@
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-library</artifactId>
-    <version>1.2.4-SNAPSHOT</version>
+    <version>1.3.3-SNAP</version>
   </parent>
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-geocore</artifactId>
   <packaging>jar</packaging>
-  <version>1.2.4-SNAPSHOT</version>
+  <version>1.3.3-SNAP</version>
   <name>Image I/O-Extensions - GeoCore</name>
   <dependencies>
     <dependency>
@@ -17,40 +17,43 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
-<!--    <dependency>-->
-<!--      <groupId>javax.xml.bind</groupId>-->
-<!--      <artifactId>jaxb-api</artifactId>-->
-<!--      <version>2.3.0</version>-->
-<!--      <scope>test</scope>-->
-<!--    </dependency>-->
+    <dependency>
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jaxb-api</artifactId>
+      <version>2.3.0</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-utilities</artifactId>
+      <version>${project.version}</version>
     </dependency>  
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-streams</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-test-data</artifactId>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
-<!--    <dependency>-->
-<!--      <groupId>javax.xml.bind</groupId>-->
-<!--      <artifactId>jaxb-api</artifactId>-->
-<!--      <version>2.4.0-b180830.0359</version>-->
-<!--    </dependency>-->
-<!--    <dependency>-->
-<!--      <groupId>org.glassfish.jaxb</groupId>-->
-<!--      <artifactId>jaxb-runtime</artifactId>-->
-<!--      <version>2.4.0-b180830.0438</version>-->
-<!--      <scope>runtime</scope>-->
-<!--    </dependency>-->
-<!--    <dependency>-->
-<!--      <groupId>javax.activation</groupId>-->
-<!--      <artifactId>javax.activation-api</artifactId>-->
-<!--      <version>1.2.0</version>-->
-<!--    </dependency>-->
+    <dependency>
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jaxb-api</artifactId>
+      <version>2.4.0-b180830.0359</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <version>2.4.0-b180830.0438</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.activation</groupId>
+      <artifactId>javax.activation-api</artifactId>
+      <version>1.2.0</version>
+    </dependency>
   </dependencies>
 </project>

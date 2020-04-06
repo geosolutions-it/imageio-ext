@@ -16,6 +16,9 @@
  */
 package it.geosolutions.imageio.plugins.jp2k.box;
 
+import it.geosolutions.imageio.plugins.jp2k.JP2KBox;
+import it.geosolutions.util.KakaduUtilities;
+
 import javax.imageio.metadata.IIOMetadataNode;
 
 /**
@@ -34,9 +37,9 @@ public class LabelBoxMetadataNode extends BaseJP2KBoxMetadataNode {
         return text;
     }
 
-    LabelBoxMetadataNode(final LabelBox box) {
+    public LabelBoxMetadataNode(final JP2KBox box) {
         super(box);
-        text = box.getText();
+        text = KakaduUtilities.readTerminatedString(box.getContent());
         try {
             IIOMetadataNode child = new IIOMetadataNode("text");
             child.setNodeValue(text);

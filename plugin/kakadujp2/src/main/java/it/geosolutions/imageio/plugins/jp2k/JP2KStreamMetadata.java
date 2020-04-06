@@ -21,6 +21,8 @@ import it.geosolutions.imageio.plugins.jp2k.box.ASOCBoxMetadataNode;
 import it.geosolutions.imageio.plugins.jp2k.box.BoxUtilities;
 import it.geosolutions.imageio.plugins.jp2k.box.ContiguousCodestreamBox;
 import it.geosolutions.imageio.plugins.jp2k.box.JP2KFileBox;
+import it.geosolutions.imageio.plugins.jp2k.box.LabelBox;
+import it.geosolutions.imageio.plugins.jp2k.box.LabelBoxMetadataNode;
 import it.geosolutions.imageio.plugins.jp2k.box.UUIDBox;
 import it.geosolutions.imageio.plugins.jp2k.box.UUIDBoxMetadataNode;
 import it.geosolutions.imageio.plugins.jp2k.box.XMLBox;
@@ -115,6 +117,9 @@ public class JP2KStreamMetadata extends IIOMetadata {
             break;
         case ASOCBox.BOX_TYPE:
             mdNode = new ASOCBoxMetadataNode(node);
+            break;
+        case LabelBox.BOX_TYPE:
+            mdNode = new LabelBoxMetadataNode(node);
             break;
         case JP2KFileBox.BOX_TYPE:
             mdNode = node.getNativeNode();

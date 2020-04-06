@@ -985,6 +985,7 @@ public abstract class TIFFDecompressor {
                                                         false);
         }
 
+        boolean rgb_unspecified = false;
         // 8-bit RGBA
         if (samplesPerPixel == 4 &&
             bitsPerSample[0] == 8 &&
@@ -999,27 +1000,36 @@ public abstract class TIFFDecompressor {
             int dataType = DataBuffer.TYPE_BYTE;
 
             ColorSpace theColorSpace;
-            boolean hasAlpha;
+            boolean hasAlpha = false;
             boolean alphaPremultiplied = false;
-            if(photometricInterpretation ==
+            if (photometricInterpretation ==
                BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_CMYK) {
                 theColorSpace = SimpleCMYKColorSpace.getInstance();
-                hasAlpha = false;
             } else {
                 theColorSpace = rgb;
-                hasAlpha = true;
-                if (extraSamples != null &&
-                    extraSamples[0] ==
-                    BaselineTIFFTagSet.EXTRA_SAMPLES_ASSOCIATED_ALPHA) {
-                    alphaPremultiplied = true;
+                if (extraSamples != null) {
+                	if (extraSamples[0] ==
+                    BaselineTIFFTagSet.EXTRA_SAMPLES_ASSOCIATED_ALPHA || 
+                    extraSamples[0] == BaselineTIFFTagSet.EXTRA_SAMPLES_UNASSOCIATED_ALPHA) {
+                    hasAlpha = true;
+                	}
+                	if (extraSamples[0] == BaselineTIFFTagSet.EXTRA_SAMPLES_ASSOCIATED_ALPHA) {
+                		alphaPremultiplied = true;
+                	}
+                	if (extraSamples[0] == BaselineTIFFTagSet.EXTRA_SAMPLES_UNSPECIFIED) {
+                		rgb_unspecified = true;
+                	}
                 }
+
             }
 
-            return ImageTypeSpecifier.createInterleaved(theColorSpace,
+            if (!rgb_unspecified) {
+            	return ImageTypeSpecifier.createInterleaved(theColorSpace,
                                                         bandOffsets,
                                                         dataType,
                                                         hasAlpha,
                                                         alphaPremultiplied);
+            }
         }
 
         // 16-bit RGB
@@ -1172,12 +1182,12 @@ public abstract class TIFFDecompressor {
                     break;
                     
                 case 64:
-                    if(sampleFormat[0] ==
-                       BaselineTIFFTagSet.SAMPLE_FORMAT_FLOATING_POINT) {
+                    //if(sampleFormat[0] ==
+                    //   BaselineTIFFTagSet.SAMPLE_FORMAT_FLOATING_POINT) {
                         dataType = DataBuffer.TYPE_DOUBLE;
-                    }
-                    else
-                    	throw new IllegalStateException("Unsupported sample format for 64 bits data.");
+                    //}
+                    //else
+                    //	throw new IllegalStateException("Unsupported sample format for 64 bits data.");
                     isDataTypeSet = true;
                     break;                    
                 }
@@ -1975,7 +1985,7 @@ public abstract class TIFFDecompressor {
             }
             else {
                 its = ImageTypeSpecifier.createInterleaved(csGray,
-                                                     sourceBands,
+                                                     new int[] {0},
                                                      dataType,
                                                      false,
                                                      false);
