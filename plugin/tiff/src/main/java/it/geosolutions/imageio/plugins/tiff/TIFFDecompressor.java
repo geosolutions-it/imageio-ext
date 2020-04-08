@@ -1007,6 +1007,7 @@ public abstract class TIFFDecompressor {
                 theColorSpace = SimpleCMYKColorSpace.getInstance();
             } else {
                 theColorSpace = rgb;
+                hasAlpha = true;
                 if (extraSamples != null) {
                 	if (extraSamples[0] ==
                     BaselineTIFFTagSet.EXTRA_SAMPLES_ASSOCIATED_ALPHA || 
