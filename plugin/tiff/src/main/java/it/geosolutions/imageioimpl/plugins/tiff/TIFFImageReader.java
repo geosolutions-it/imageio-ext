@@ -86,24 +86,39 @@ import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.imageioimpl.plugins.tiff.gdal.GDALMetadata;
 import it.geosolutions.imageioimpl.plugins.tiff.gdal.GDALMetadataParser;
-
 import org.w3c.dom.Node;
 
-import javax.imageio.*;
+import javax.imageio.IIOException;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
-import java.awt.*;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_ColorSpace;
 import java.awt.color.ICC_Profile;
-import java.awt.image.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.nio.ByteOrder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -402,15 +417,34 @@ public class TIFFImageReader extends ImageReader {
     /** External File containing TIFF masks*/
     private File externalMask;
 
-    /** External File containing TIFF Overviews*/
+    /**
+     * External File containing TIFF Overviews
+     */
     private File externalOverviews;
 
-    /** External File containing TIFF masks overviews*/
+    /**
+     * External File containing TIFF masks overviews
+     */
     private File maskOverviews;
 
     public TIFFImageReader(ImageReaderSpi originatingProvider) {
         super(originatingProvider);
     }
+
+    protected boolean isLsb() {
+        boolean isLsb = false;
+        if (null != imageMetadata) {
+            // Get the fillOrder field.
+            TIFFField fillOrderField =
+                    imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_FILL_ORDER);
+
+            if (fillOrderField != null && fillOrderField.getAsInt(0) == 2) {
+                isLsb = true;
+            }
+        }
+        return isLsb;
+    }
+
 
     public void setInput(Object input,
                          boolean seekForwardOnly,

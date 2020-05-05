@@ -171,10 +171,12 @@ public class TIFFNullDecompressor extends TIFFDecompressor {
     }
 
     public void decode() throws IOException {
-        super.decode();
+        synchronized (this) {
+            super.decode();
+        }
 
         // Reset state.
-        if(isReadActiveOnly) {
+        if (isReadActiveOnly) {
             // Restore original source region values.
             srcMinX = originalSrcMinX;
             srcMinY = originalSrcMinY;

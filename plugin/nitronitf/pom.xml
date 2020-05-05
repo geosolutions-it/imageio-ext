@@ -5,7 +5,7 @@
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-nitf</artifactId>
     <packaging>jar</packaging>
-    <version>1.3.3.1-SNAP</version>
+    <version>1.3.3.2-SNAP</version>
     <inceptionYear>2004</inceptionYear>
     <name>NITF plugin that internally uses NITRO</name>
     <url>http://nitro-nitf.sourceforge.net/</url>
@@ -14,7 +14,7 @@
     <parent>
       <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-plugin</artifactId>
-      <version>1.3.3.1-SNAP</version>
+        <version>1.3.3.2-SNAP</version>
     </parent>
     <licenses>
         <license>
