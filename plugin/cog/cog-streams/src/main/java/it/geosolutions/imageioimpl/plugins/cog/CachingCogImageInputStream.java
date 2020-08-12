@@ -177,6 +177,8 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
 
         // read all they byte ranges for tiles that are not in cache
         LOGGER.fine("Submitting " + ranges.size() + " range request(s)");
+        // Update the headerLength
+        rangeReader.setHeaderLength(cogTileInfo.getHeaderLength());
         Map<Long, byte[]> data = rangeReader.read(ranges);
 
         // cache the bytes for each tile
