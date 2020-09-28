@@ -86,7 +86,8 @@ public class S3ConfigurationProperties {
         String scheme = uri.getScheme().toLowerCase();
         if (scheme.startsWith("http")) {
             String host = uri.getHost();
-            if (host.toLowerCase().startsWith("s3-") && host.contains(".")) {
+            String hostLowerCase = host.toLowerCase();
+            if ((hostLowerCase.startsWith("s3-") || hostLowerCase.startsWith("s3."))  && host.contains(".")) {
                 region = host.substring(3).split("\\.")[0];
             }
         }

@@ -62,6 +62,14 @@ public abstract class AbstractRangeReader implements RangeReader {
                     // add a new range that starts at the end of the header range
                     long[] newRange = new long[]{headerLength - 1, ranges[i][1]};
 
+                    // Adjust the data's header size in case the related range have been adjusted
+                    byte[] headersData = data.get(0L);
+                    if (headersData != null && headerLength < headersData.length) {
+                        byte[] newHeader = new byte[headerLength];
+                        System.arraycopy(headersData, 0, newHeader, 0, headerLength);
+                        data.put(0L, newHeader);
+                    }
+
                     newRanges.add(newRange);
                     LOGGER.fine("Modified range " + ranges[i][0] + "-" + ranges[i][1]
                             + " to " + headerLength + "-" + ranges[i][1] + " as it overlaps with data previously"
@@ -90,5 +98,5 @@ public abstract class AbstractRangeReader implements RangeReader {
     public int getHeaderLength() {
         return headerLength;
     }
-
 }
+
