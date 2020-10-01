@@ -32,6 +32,119 @@ import java.util.logging.Logger;
  */
 public class S3ConfigurationProperties {
 
+    private final static String S3_DOT = "s3.";
+
+    /** Some Old Regions support S3 dash Region endpoints, using a dash instead of a dot */
+    private final static String S3_DASH = "s3-";
+
+    /** Virtual-Hosted-Styles URL pieces */
+    private final static String S3_DOT_VH = "." + S3_DOT;
+
+    private final static String S3_DASH_VH = "." + S3_DASH;
+
+    private final static String AMAZON_AWS = ".amazonaws.com";
+
+    /**
+     * Some more info on different types of supported URLs and old regions syntax:
+     * https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html
+     */
+
+    static abstract class S3URIParser {
+        protected String region;
+
+        protected String bucket;
+
+        protected String key;
+
+        protected String scheme;
+
+        protected String host;
+
+        protected URI uri;
+
+        S3URIParser(URI uri, String defaultRegion) {
+            this.uri = uri;
+            this.region = defaultRegion;
+            scheme = uri.getScheme().toLowerCase();
+            host = uri.getHost();
+        }
+    }
+
+    /**
+     * A Parser dealing with path-style URLs
+     *
+     * http://s3.aws-region.amazonaws.com/bucket (S3 dot Regions)
+     * http://s3-aws-region.amazonaws.com/bucket (S3 dash Regions)
+     */
+    class HTTPPathStyleParser extends S3ConfigurationProperties.S3URIParser {
+
+        private final boolean isOldDashRegion;
+
+        HTTPPathStyleParser(URI uri, String defaultRegion, boolean isOldDashRegion) {
+            super(uri, defaultRegion);
+            this.isOldDashRegion = isOldDashRegion;
+            String hostRegion = host.substring(S3_DASH.length()).split("\\.")[0];
+            if (hostRegion != null) region = hostRegion;
+            String path = uri.getPath();
+            path = path.startsWith("/") ? path.substring(1) : path;
+            bucket = path.split("/")[0];
+            key = path.substring(bucket.length() + 1);
+        }
+    }
+
+    /**
+     * A Parser dealing with virtual-hosted-style URL
+     *
+     * http://bucket.s3.aws-region.amazonaws.com (S3 dot region)
+     * http://bucket.s3-aws-region.amazonaws.com (S3 dash region)
+     */
+    class HTTPVirtualHostedStyleParser extends S3ConfigurationProperties.S3URIParser {
+
+        private final boolean isOldDashRegion;
+
+        HTTPVirtualHostedStyleParser(URI uri, String defaultRegion, boolean isOldDashRegion) {
+            super(uri, defaultRegion);
+            this.isOldDashRegion = isOldDashRegion;
+            int domainIndex = host.indexOf(AMAZON_AWS);
+            String s3Prefix = isOldDashRegion ? S3_DASH_VH : S3_DOT_VH;
+            int s3Index = host.indexOf(s3Prefix);
+            bucket = host.substring(0, s3Index);
+            String hostRegion = host.substring(bucket.length() + s3Prefix.length(), domainIndex);
+            if (hostRegion != null) region = hostRegion;
+            String path = uri.getPath();
+            path = path.startsWith("/") ? path.substring(1) : path;
+            key = path;
+        }
+    }
+
+    /**
+     * A Parser dealing with S3 URLs
+     *
+     * s3://bucket/key?region=us-west-2 (Region as query param)
+     * s3://bucket/key
+     */
+    class S3Parser extends S3ConfigurationProperties.S3URIParser {
+
+        S3Parser(URI uri, String defaultRegion) {
+            super(uri, defaultRegion);
+            String path = uri.getPath();
+            path = path.startsWith("/") ? path.substring(1) : path;
+            bucket = uri.getHost();
+            key = path;
+            String queryRegion = null;
+            for (Map.Entry<String, List<String>> entry : splitQuery(uri).entrySet()) {
+                if (entry.getKey().equalsIgnoreCase("region")) {
+                    List<String> regions = entry.getValue();
+                    if (regions != null && regions.size() > 0) {
+                        queryRegion = regions.get(0);
+                    }
+                }
+            }
+
+            if (queryRegion != null) region = queryRegion;
+        }
+    }
+
     private String user;
     private String password;
     private String endpoint;
@@ -82,27 +195,25 @@ public class S3ConfigurationProperties {
             password = userPassArray[1];
         }
 
-        // if protocol is http, get the region from the host
+        S3URIParser parser = null;
         String scheme = uri.getScheme().toLowerCase();
+        // if protocol is http, get the region from the host
         if (scheme.startsWith("http")) {
             String host = uri.getHost();
-            if (host.toLowerCase().startsWith("s3-") && host.contains(".")) {
-                region = host.substring(3).split("\\.")[0];
+            String hostLowerCase = host.toLowerCase();
+            if ((hostLowerCase.startsWith(S3_DASH) || hostLowerCase.startsWith(S3_DOT))  && host.contains(".")) {
+                parser = new HTTPPathStyleParser(uri, region, hostLowerCase.startsWith(S3_DASH));
+            } else if (hostLowerCase.contains(S3_DASH_VH) || hostLowerCase.contains(S3_DOT_VH)) {
+                parser = new HTTPVirtualHostedStyleParser(uri, region, hostLowerCase.contains(S3_DASH_VH));
             }
+        } else if (scheme.startsWith("s3")) {
+            parser = new S3Parser(uri, region);
         }
 
-        // if region is null, try to get the region from a URL parameter
-        if (region == null) {
-            for (Map.Entry<String, List<String>> entry : splitQuery(uri).entrySet()) {
-                if (entry.getKey().equalsIgnoreCase("region")) {
-                    List<String> regions = entry.getValue();
-                    if (regions != null && regions.size() > 0) {
-                        region = regions.get(0);
-                    }
-                }
-            }
+        if (parser == null) {
+            throw new RuntimeException("Unable to parse the specified URI: " + uri);
         }
-
+        region = parser.region;
         // if region is null,
         if (region == null) {
             throw new RuntimeException("No region info found for alias " + this.alias
@@ -110,10 +221,8 @@ public class S3ConfigurationProperties {
                     + "' or system property '" + PropertyLocator.convertEnvVarToProperty(AWS_S3_REGION_KEY) + "'");
         }
 
-        String path = uri.getPath();
-        path = path.startsWith("/") ? path.substring(1) : path;
-        bucket = scheme.startsWith("http") ? path.split("/")[0] : uri.getHost();
-        key = scheme.startsWith("http") ? path.substring(bucket.length() + 1) : path;
+        bucket = parser.bucket;
+        key = parser.key;
         filename = nameFromKey(key);
     }
 

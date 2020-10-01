@@ -35,6 +35,9 @@ import static software.amazon.awssdk.core.async.AsyncResponseTransformer.toBytes
 /**
  * Reads URIs from S3 with the format
  * https://s3-<region>.amazonaws.com/<bucket>/<key>
+ * https://s3.<region>.amazonaws.com/<bucket>/<key>
+ * https://<bucket>.s3-<region>.amazonaws.com/<key>
+ * https://<bucket>.s3.<region>.amazonaws.com/<key>
  * or
  * s3://<bucket>/<key>
  * For the latter, the region must be set via environment variables, system properties or be provided via the URL
