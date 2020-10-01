@@ -43,7 +43,6 @@ import static it.geosolutions.imageioimpl.plugins.cog.CogTileInfo.HEADER_TILE_IN
 public class DefaultCogImageInputStream extends ImageInputStreamImpl implements CogImageInputStream {
 
     private boolean initialized = false;
-
     protected URI uri;
     protected CogTileInfo cogTileInfo;
     protected RangeReader rangeReader;
@@ -70,7 +69,6 @@ public class DefaultCogImageInputStream extends ImageInputStreamImpl implements 
     public DefaultCogImageInputStream(URI uri, RangeReader rangeReader) {
         this.uri = uri;
         init(rangeReader);
-        initializeHeader();
     }
 
     /**
@@ -81,7 +79,7 @@ public class DefaultCogImageInputStream extends ImageInputStreamImpl implements 
     @Override
     public void init(RangeReader rangeReader) {
         this.rangeReader = rangeReader;
-        initializeHeader();
+        initializeHeader(rangeReader.getHeaderLength());
     }
 
     /**
@@ -146,6 +144,7 @@ public class DefaultCogImageInputStream extends ImageInputStreamImpl implements 
             }
             contiguousRangeComposer.addTileRange(tileRange.getStart(), tileRange.getEnd());
         });
+        rangeReader.setHeaderLength(cogTileInfo.getHeaderLength());
 
         // read all of the ranges asynchronously
         Set<long[]> ranges = contiguousRangeComposer.getRanges();
@@ -170,14 +169,14 @@ public class DefaultCogImageInputStream extends ImageInputStreamImpl implements 
         byte[] contiguousRange = null;
         long rangeStart = -1L;
 
-        // find they byte array in the data map corresponding to the current request
-        long absoluteOffset = streamPos + off;
+        // find the byte array in the data map corresponding to the current request
         for (Map.Entry<Long, byte[]> entry : data.entrySet()) {
             long start = entry.getKey();
             long end = entry.getKey() + entry.getValue().length;
-            if (absoluteOffset >= start && absoluteOffset < end) {
+            if (streamPos >= start && streamPos + len <= end) {
                 contiguousRange = entry.getValue();
                 rangeStart = entry.getKey();
+                break;
             }
         }
 
@@ -189,12 +188,18 @@ public class DefaultCogImageInputStream extends ImageInputStreamImpl implements 
             throw new IOException("No COG data available for the requested byte location.");
         }
 
-        int relativeStreamPos = (int)(streamPos - rangeStart) + off;
+        int relativeStreamPos = (int)(streamPos - rangeStart);
 
         // copy the bytes from the fetched tile into the destination byte array
-        System.arraycopy(contiguousRange, relativeStreamPos, b, 0, len);
+        System.arraycopy(contiguousRange, relativeStreamPos, b, off, len);
         streamPos += len;
         return len;
     }
 
+    public void close() throws IOException {
+        super.close();
+        if (data != null && !data.isEmpty()) {
+            data.clear();
+        }
+    }
 }

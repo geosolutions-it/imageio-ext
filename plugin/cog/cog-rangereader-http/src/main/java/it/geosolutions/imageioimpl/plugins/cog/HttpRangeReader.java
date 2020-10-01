@@ -68,7 +68,7 @@ public class HttpRangeReader extends AbstractRangeReader {
         LOGGER.fine("Reading header");
         Request.Builder requestBuilder = new Request.Builder()
                 .url(uri.toString())
-                .header("range", "bytes=" + 0 + "-" + (headerLength - 1));
+                .header("range", "bytes=0-" + (headerLength - 1));
 
         if (credentials != null) {
             requestBuilder.header("Authorization", credentials);
@@ -103,7 +103,7 @@ public class HttpRangeReader extends AbstractRangeReader {
             return data;
         }
 
-        Instant start = Instant.now();
+       Instant start = Instant.now();
        List<AsyncHttpCallback> callbacks = new ArrayList<>(ranges.length);
 
         for (int i = 0; i < ranges.length; i++) {

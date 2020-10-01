@@ -17,10 +17,10 @@
 package it.geosolutions.imageioimpl.plugins.cog;
 
 import com.sun.media.imageioimpl.common.PackageUtil;
-import it.geosolutions.imageio.plugins.cog.CogImageReadParam;
 import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
 
 import javax.imageio.ImageReader;
+import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageInputStream;
 import java.io.IOException;
 import java.util.Locale;
@@ -76,6 +76,16 @@ public class CogImageReaderSpi extends TIFFImageReaderSpi {
                                 (b[0] == (byte) 0x4d && b[1] == (byte) 0x4d &&
                                         b[2] == (byte) 0x00 && b[3] == (byte) 0x2b))
         );
+    }
+
+    @Override
+    public void onRegistration(ServiceRegistry registry, Class category) {
+        // Override the onRegistration so that we can have COG reader and
+        // TIFF ImageReader coexist
+        if (registered) {
+            return;
+        }
+        registered = true;
     }
 
 }
