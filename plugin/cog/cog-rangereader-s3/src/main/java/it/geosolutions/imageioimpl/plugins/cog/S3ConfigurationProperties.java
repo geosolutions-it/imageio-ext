@@ -140,8 +140,6 @@ public class S3ConfigurationProperties {
                     }
                 }
             }
-
-            if (queryRegion != null) region = queryRegion;
         }
     }
 
