@@ -19,10 +19,10 @@ package it.geosolutions.imageioimpl.plugins.cog;
 import it.geosolutions.imageio.plugins.cog.CogImageReadParam;
 import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
 import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReader;
-import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageWriter;
 
 import javax.imageio.ImageReadParam;
 import javax.imageio.spi.ImageReaderSpi;
+import javax.media.jai.PlanarImage;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -64,9 +64,12 @@ public class CogImageReader extends TIFFImageReader {
                     + " a valid RangeReader implementation class in the CogImageReadParam.");
         }
 
-        LOGGER.fine("Reading pixels at offset (" + param.getSourceRegion().getX() + ", "
-                + param.getSourceRegion().getY() + ") with a width of " + param.getSourceRegion().getWidth()
-                + "px and height of " + param.getSourceRegion().getHeight() + "px");
+        Rectangle sourceRegion = param.getSourceRegion();
+        if (sourceRegion != null) {
+            LOGGER.fine("Reading pixels at offset (" + sourceRegion.getX() + ", "
+                    + sourceRegion.getY() + ") with a width of " + sourceRegion.getWidth()
+                    + "px and height of " + sourceRegion.getHeight() + "px");
+        }
 
         // prepare for reading
         prepareRead(imageIndex, param);
@@ -81,10 +84,10 @@ public class CogImageReader extends TIFFImageReader {
         tilesDown = (height + tileOrStripHeight - 1) / tileOrStripHeight;
 
         // Compute bounds on the tile indices for this source region.
-        int minTileX = TIFFImageWriter.XToTileX(srcRegion.x, 0, tileOrStripWidth);
-        int minTileY = TIFFImageWriter.YToTileY(srcRegion.y, 0, tileOrStripHeight);
-        int maxTileX = TIFFImageWriter.XToTileX(srcRegion.x + srcRegion.width - 1, 0, tileOrStripWidth);
-        int maxTileY = TIFFImageWriter.YToTileY(srcRegion.y + srcRegion.height - 1, 0, tileOrStripHeight);
+        int minTileX = PlanarImage.XToTileX(srcRegion.x, 0, tileOrStripWidth);
+        int minTileY = PlanarImage.YToTileY(srcRegion.y, 0, tileOrStripHeight);
+        int maxTileX = PlanarImage.XToTileX(srcRegion.x + srcRegion.width - 1, 0, tileOrStripWidth);
+        int maxTileY = PlanarImage.YToTileY(srcRegion.y + srcRegion.height - 1, 0, tileOrStripHeight);
 
         LOGGER.fine("Reading tiles (" + minTileX + "," + minTileY + ") - (" + maxTileX + "," + maxTileY + ")");
 

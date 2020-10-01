@@ -17,7 +17,6 @@
 package it.geosolutions.imageio.cog;
 
 import it.geosolutions.imageio.plugins.cog.CogImageReadParam;
-import it.geosolutions.imageioimpl.plugins.cog.CogTileInfo;
 import it.geosolutions.imageioimpl.plugins.cog.RangeReader;
 import it.geosolutions.imageioimpl.plugins.cog.S3RangeReader;
 import org.junit.Assert;

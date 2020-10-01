@@ -98,7 +98,7 @@ public class TIFFImageReaderSpi extends ImageReaderSpi {
 
     protected String[] writerSpiNames;
 
-    private boolean registered = false;
+    protected boolean registered = false;
 
     public TIFFImageReaderSpi() {
         this("it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReader",

@@ -168,6 +168,7 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
                 contiguousRangeComposer.addTileRange(tileRange.getStart(), tileRange.getEnd());
             }
         });
+        rangeReader.setHeaderLength(cogTileInfo.getHeaderLength());
 
         // get the ranges for the tiles that are not already cached.  if there are none, simply return
         Set<long[]> ranges = contiguousRangeComposer.getRanges();
@@ -178,7 +179,6 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
         // read all they byte ranges for tiles that are not in cache
         LOGGER.fine("Submitting " + ranges.size() + " range request(s)");
         // Update the headerLength
-        rangeReader.setHeaderLength(cogTileInfo.getHeaderLength());
         Map<Long, byte[]> data = rangeReader.read(ranges);
 
         // cache the bytes for each tile
@@ -226,12 +226,11 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
         }
 
         // translate the overall stream position to the stream position of the fetched tile
-        int relativeStreamPos = (int) (streamPos - tileRange.getStart() + off);
+        int relativeStreamPos = (int) (streamPos - tileRange.getStart());
 
         // copy the bytes from the fetched tile into the destination byte array
-        System.arraycopy(bytes, relativeStreamPos, b, 0, len);
+        System.arraycopy(bytes, relativeStreamPos, b, off, len);
         streamPos += len;
         return len;
     }
-
 }
