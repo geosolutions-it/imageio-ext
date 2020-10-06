@@ -16,19 +16,23 @@
  */
 package it.geosolutions.imageio.core;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageInputStreamSpi;
 import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.stream.ImageInputStream;
+import java.io.IOException;
 
 /**
- * An object containing elementary objects for a reading access on a source:
+ * A provider containing SPIs to get reading access on a source:
  * a provided SPI to get an ImageReader as well as a provided SPI to get
  * an ImageInputStream on top of that source.
  */
-public class ReadingAccessObject {
+public class SourceSPIProvider {
 
     private ImageReaderSpi readerSpi;
     private ImageInputStreamSpi streamSpi;
-    private String source;
+    private Object source;
 
     public ImageInputStreamSpi getStreamSpi() {
         return streamSpi;
@@ -46,18 +50,30 @@ public class ReadingAccessObject {
         this.readerSpi = readerSpi;
     }
 
-    public String getSource() {
+    public Object getSource() {
         return source;
     }
 
-    public void setSource(String source) {
+    public void setSource(Object source) {
         this.source = source;
     }
 
-    public ReadingAccessObject(
-            String source, ImageReaderSpi readerSpi, ImageInputStreamSpi streamSpi) {
+    public SourceSPIProvider(
+            Object source, ImageReaderSpi readerSpi, ImageInputStreamSpi streamSpi) {
         this.readerSpi = readerSpi;
         this.streamSpi = streamSpi;
         this.source = source;
+    }
+
+
+    public ImageReader getReader() throws IOException {
+        return readerSpi.createReaderInstance();
+    }
+
+    public ImageInputStream getStream() throws IOException {
+        return streamSpi.createInputStreamInstance(
+                        source,
+                        ImageIO.getUseCache(),
+                        ImageIO.getCacheDirectory());
     }
 }
