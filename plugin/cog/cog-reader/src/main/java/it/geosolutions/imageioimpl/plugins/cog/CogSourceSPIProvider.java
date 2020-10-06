@@ -22,14 +22,14 @@ import java.net.URI;
 import javax.imageio.spi.ImageInputStreamSpi;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
-import it.geosolutions.imageio.core.ReadingAccessObject;
+import it.geosolutions.imageio.core.SourceSPIProvider;
 import it.geosolutions.imageio.plugins.cog.CogImageReadParam;
 
 /**
- * A @{@link ReadingAccessObject}  subclass containing additional
+ * A @{@link SourceSPIProvider}  subclass containing additional
  * elements for the COG Implementation
  */
-public class CogReadingAccessObject extends ReadingAccessObject {
+public class CogSourceSPIProvider extends SourceSPIProvider {
 
     /** A cogUri version of the source */
     private CogUri cogUri;
@@ -37,12 +37,12 @@ public class CogReadingAccessObject extends ReadingAccessObject {
     /** The full classname of the RangeReader implementation */
     private String rangeReaderClassname;
 
-    public CogReadingAccessObject(
+    public CogSourceSPIProvider(
             CogUri cogUri,
             ImageReaderSpi readerSpi,
             ImageInputStreamSpi streamSpi,
             String rangeReader) {
-        super(cogUri.getUri().toString(), readerSpi, streamSpi);
+        super(cogUri, readerSpi, streamSpi);
         this.cogUri = cogUri;
         this.rangeReaderClassname = rangeReader;
     }
@@ -59,7 +59,8 @@ public class CogReadingAccessObject extends ReadingAccessObject {
      * Get an initialized COG stream: The Header will be read before
      * returning the stream back to the caller.
      */
-    public ImageInputStream getInitializedCogInputStream() throws IOException {
+    @Override
+    public ImageInputStream getStream() throws IOException {
         CogUri uri = getCogUri();
         CogImageInputStream inStream =
                 (CogImageInputStream)
