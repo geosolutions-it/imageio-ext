@@ -37,10 +37,12 @@
                 <dependency>
                     <groupId>it.geosolutions.imageio-ext</groupId>
                     <artifactId>imageio-ext-cog-rangereader-http</artifactId>
+                    <scope>test</scope>
                 </dependency>
                 <dependency>
                     <groupId>it.geosolutions.imageio-ext</groupId>
                     <artifactId>imageio-ext-cog-rangereader-s3</artifactId>
+                    <scope>test</scope>
                 </dependency>
             </dependencies>
         </profile>
@@ -54,6 +56,7 @@
                 <dependency>
                     <groupId>it.geosolutions.imageio-ext</groupId>
                     <artifactId>imageio-ext-cog-rangereader-http</artifactId>
+                    <scope>test</scope>
                 </dependency>
             </dependencies>
         </profile>
@@ -67,6 +70,7 @@
                 <dependency>
                     <groupId>it.geosolutions.imageio-ext</groupId>
                     <artifactId>imageio-ext-cog-rangereader-s3</artifactId>
+                    <scope>test</scope>
                 </dependency>
             </dependencies>
         </profile>
@@ -83,10 +87,12 @@
                 <dependency>
                     <groupId>it.geosolutions.imageio-ext</groupId>
                     <artifactId>imageio-ext-cog-rangereader-http</artifactId>
+                    <scope>test</scope>
                 </dependency>
                 <dependency>
                     <groupId>it.geosolutions.imageio-ext</groupId>
                     <artifactId>imageio-ext-cog-rangereader-s3</artifactId>
+                    <scope>test</scope>
                 </dependency>
             </dependencies>
         </profile>
