@@ -21,7 +21,11 @@ import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageInputStreamSpi;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 
 /**
  * A provider containing SPIs to get reading access on a source:
@@ -58,6 +62,24 @@ public class SourceSPIProvider {
         this.source = source;
     }
 
+    /**
+     * Return a URL representation of the source, returning null
+     * when no URL representation can be obtained
+     */
+    public URL getSourceUrl() throws MalformedURLException {
+        if (source instanceof URL) {
+            return (URL) source;
+        } else if (source instanceof String) {
+            return new URL((String)source);
+        } else if (source instanceof File) {
+            return fileToUrl((File) source);
+        } else if (source instanceof URI) {
+            return ((URI) source).toURL();
+        } else {
+            return null;
+        }
+    }
+
     public SourceSPIProvider(
             Object source, ImageReaderSpi readerSpi, ImageInputStreamSpi streamSpi) {
         this.readerSpi = readerSpi;
@@ -75,5 +97,28 @@ public class SourceSPIProvider {
                         source,
                         ImageIO.getUseCache(),
                         ImageIO.getCacheDirectory());
+    }
+
+    public static URL fileToUrl(File file) {
+        try {
+            // URI.toString() and thus URI.toURL() do not
+            // percent-encode non-ASCII characters [GEOT-5737]
+            String string = file.toURI().toASCIIString();
+            if (string.contains("+")) {
+                // this represents an invalid URL created using either
+                // file.toURL(); or
+                // file.toURI().toURL() on a specific version of Java 5 on Mac
+                string = string.replace("+", "%2B");
+            }
+            if (string.contains(" ")) {
+                // this represents an invalid URL created using either
+                // file.toURL(); or
+                // file.toURI().toURL() on a specific version of Java 5 on Mac
+                string = string.replace(" ", "%20");
+            }
+            return new URL(string);
+        } catch (MalformedURLException e) {
+            return null;
+        }
     }
 }

@@ -18,7 +18,9 @@ package it.geosolutions.imageioimpl.plugins.cog;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import javax.imageio.spi.ImageInputStreamSpi;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
@@ -53,6 +55,11 @@ public class CogSourceSPIProvider extends SourceSPIProvider {
 
     public CogUri getCogUri() {
         return cogUri;
+    }
+
+    @Override
+    public URL getSourceUrl() throws MalformedURLException {
+        return cogUri.getUri().toURL();
     }
 
     /**
