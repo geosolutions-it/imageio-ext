@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageioimpl.plugins.cog;
 
+import it.geosolutions.imageio.core.BasicAuthURI;
+
 import javax.imageio.spi.ImageInputStreamSpi;
 import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageInputStream;
@@ -36,7 +38,7 @@ public class CogImageInputStreamSpi extends ImageInputStreamSpi {
 
     private static final String vendorName = "GeoSolutions";
     private static final String version = "1.0";
-    private static final Class<CogUri> inputClass = CogUri.class;
+    private static final Class<BasicAuthURI> inputClass = BasicAuthURI.class;
 
     public CogImageInputStreamSpi() {
         super(vendorName, version, inputClass);
@@ -44,16 +46,16 @@ public class CogImageInputStreamSpi extends ImageInputStreamSpi {
 
     @Override
     public ImageInputStream createInputStreamInstance(Object input, boolean useCache, File cacheDir) throws IOException {
-        if (input instanceof CogUri) {
-            return ((CogUri) input).isUseCache()
-                    ? new CachingCogImageInputStream((CogUri) input)
-                    : new DefaultCogImageInputStream((CogUri) input);
+        if (input instanceof BasicAuthURI) {
+            return ((BasicAuthURI) input).isUseCache()
+                    ? new CachingCogImageInputStream((BasicAuthURI) input)
+                    : new DefaultCogImageInputStream((BasicAuthURI) input);
         }
 
         if (input instanceof String || input instanceof URL || input instanceof URI) {
             return useCache
-                    ? new CachingCogImageInputStream(new CogUri(input.toString()))
-                    : new DefaultCogImageInputStream(new CogUri(input.toString()).useCache(false));
+                    ? new CachingCogImageInputStream(new BasicAuthURI(input.toString()))
+                    : new DefaultCogImageInputStream(new BasicAuthURI(input.toString()).useCache(false));
         }
         throw new IOException("Invalid input.");
     }

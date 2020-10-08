@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageioimpl.plugins.cog;
 
+import it.geosolutions.imageio.core.BasicAuthURI;
 import it.geosolutions.imageio.plugins.cog.CogImageReadParam;
 
 import javax.imageio.stream.ImageInputStreamImpl;
@@ -62,7 +63,7 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
         this(url.toString());
     }
 
-    public CachingCogImageInputStream(CogUri cogUri) {
+    public CachingCogImageInputStream(BasicAuthURI cogUri) {
         this.uri = cogUri.getUri();
     }
 

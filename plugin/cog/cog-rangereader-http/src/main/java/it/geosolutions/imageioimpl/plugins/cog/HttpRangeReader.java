@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageioimpl.plugins.cog;
 
+import it.geosolutions.imageio.core.BasicAuthURI;
 import okhttp3.*;
 
 import java.io.IOException;
@@ -51,16 +52,19 @@ public class HttpRangeReader extends AbstractRangeReader {
     }
 
     public HttpRangeReader(URI uri, int headerLength) {
-        super(uri, headerLength);
+        this (new BasicAuthURI(uri), headerLength);
+    }
 
-        if (uri.getUserInfo() != null && !uri.getUserInfo().isEmpty()) {
-            String[] userPassArray = uri.getUserInfo().split(":");
-            final String user = userPassArray[0];
-            final String password = userPassArray.length == 2 ? userPassArray[1] : null;
-            credentials = Credentials.basic(user, password);
+    public HttpRangeReader(BasicAuthURI uri, int headerLength) {
+        super(uri, headerLength);
+        if (uri.getUser() != null && uri.getPassword() != null) {
+            credentials = Credentials.basic(uri.getUser(), uri.getPassword());
         }
 
         client = HttpClientFactory.getClient();
+
+
+
     }
 
     @Override
