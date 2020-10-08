@@ -17,6 +17,8 @@
 package it.geosolutions.imageioimpl.plugins.cog;
 
 
+import it.geosolutions.imageio.core.BasicAuthURI;
+
 import java.net.URI;
 import java.net.URLDecoder;
 import java.util.*;
@@ -166,7 +168,7 @@ public class S3ConfigurationProperties {
 
     private final static Logger LOGGER = Logger.getLogger(S3ConfigurationProperties.class.getName());
 
-    public S3ConfigurationProperties(String alias, URI uri) {
+    public S3ConfigurationProperties(String alias, BasicAuthURI cogUri) {
         this.alias = alias.toUpperCase();
         AWS_S3_USER_KEY = "IIO_" + this.alias + "_AWS_USER";
         AWS_S3_PASSWORD_KEY = "IIO_" + this.alias + "_AWS_PASSWORD";
@@ -187,14 +189,13 @@ public class S3ConfigurationProperties {
         keepAliveTime = Integer.parseInt(
                 PropertyLocator.getEnvironmentValue(AWS_S3_KEEP_ALIVE_TIME, "10"));
 
-        String userPass = uri.getUserInfo();
-        if (userPass != null && !userPass.isEmpty()) {
-            String[] userPassArray = userPass.split(":");
-            user = userPassArray[0];
-            password = userPassArray[1];
+        if (cogUri.getUser() != null && cogUri.getPassword()!= null) {
+            user = cogUri.getUser();
+            password = cogUri.getPassword();
         }
 
         S3URIParser parser = null;
+        URI uri = cogUri.getUri();
         String scheme = uri.getScheme().toLowerCase();
         // if protocol is http, get the region from the host
         if (scheme.startsWith("http")) {

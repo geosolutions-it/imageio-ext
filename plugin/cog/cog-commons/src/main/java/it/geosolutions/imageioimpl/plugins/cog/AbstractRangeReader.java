@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageioimpl.plugins.cog;
 
+import it.geosolutions.imageio.core.BasicAuthURI;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,14 +31,17 @@ import java.util.logging.Logger;
  */
 public abstract class AbstractRangeReader implements RangeReader {
 
+    protected BasicAuthURI authUri;
     protected URI uri;
     protected Map<Long, byte[]> data = new HashMap<>();
     protected int headerLength;
 
     private final static Logger LOGGER = Logger.getLogger(AbstractRangeReader.class.getName());
 
-    public AbstractRangeReader(URI uri, int headerLength) {
-        this.uri = uri;
+    public AbstractRangeReader(BasicAuthURI authUri, int headerLength) {
+        this.authUri = authUri;
+        // store the underlying uri too to avoid several getUri() calls around on the code
+        this.uri = authUri.getUri();
         this.headerLength = headerLength;
     }
 

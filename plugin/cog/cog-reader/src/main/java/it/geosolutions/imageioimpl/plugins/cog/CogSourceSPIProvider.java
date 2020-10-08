@@ -24,6 +24,8 @@ import java.net.URL;
 import javax.imageio.spi.ImageInputStreamSpi;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
+
+import it.geosolutions.imageio.core.BasicAuthURI;
 import it.geosolutions.imageio.core.SourceSPIProvider;
 import it.geosolutions.imageio.plugins.cog.CogImageReadParam;
 
@@ -33,14 +35,14 @@ import it.geosolutions.imageio.plugins.cog.CogImageReadParam;
  */
 public class CogSourceSPIProvider extends SourceSPIProvider {
 
-    /** A cogUri version of the source */
-    private CogUri cogUri;
+    /** The CogUri version of the source */
+    private BasicAuthURI cogUri;
 
     /** The full classname of the RangeReader implementation */
     private String rangeReaderClassname;
 
     public CogSourceSPIProvider(
-            CogUri cogUri,
+            BasicAuthURI cogUri,
             ImageReaderSpi readerSpi,
             ImageInputStreamSpi streamSpi,
             String rangeReader) {
@@ -53,7 +55,7 @@ public class CogSourceSPIProvider extends SourceSPIProvider {
         return rangeReaderClassname;
     }
 
-    public CogUri getCogUri() {
+    public BasicAuthURI getCogUri() {
         return cogUri;
     }
 
@@ -68,7 +70,7 @@ public class CogSourceSPIProvider extends SourceSPIProvider {
      */
     @Override
     public ImageInputStream getStream() throws IOException {
-        CogUri uri = getCogUri();
+        BasicAuthURI uri = getCogUri();
         CogImageInputStream inStream =
                 (CogImageInputStream)
                         ((CogImageInputStreamSpi) getStreamSpi())

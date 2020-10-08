@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageioimpl.plugins.cog;
 
+import it.geosolutions.imageio.core.BasicAuthURI;
 import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.core.async.AsyncResponseTransformer;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
@@ -65,8 +66,12 @@ public class S3RangeReader extends AbstractRangeReader {
     }
 
     public S3RangeReader(URI uri, int headerLength) {
+        this(new BasicAuthURI(uri), headerLength);
+    }
+
+    public S3RangeReader(BasicAuthURI uri, int headerLength) {
         super(uri, headerLength);
-        configProps = new S3ConfigurationProperties(uri.getScheme(), uri);
+        configProps = new S3ConfigurationProperties(uri.getUri().getScheme(), uri);
         client = S3ClientFactory.getS3Client(configProps);
     }
 

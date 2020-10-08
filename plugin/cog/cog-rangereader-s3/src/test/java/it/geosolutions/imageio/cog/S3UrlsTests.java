@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageio.cog;
 
+import it.geosolutions.imageio.core.BasicAuthURI;
 import it.geosolutions.imageioimpl.plugins.cog.S3ConfigurationProperties;
 import org.junit.Assert;
 import org.junit.Test;
@@ -28,7 +29,7 @@ public class S3UrlsTests {
     @Test
     public void testVirtualHostedStyle() {
         S3ConfigurationProperties config = new S3ConfigurationProperties("ALIAS",
-                URI.create("http://my-bucket.s3.eu-central-1.amazonaws.com/sampleFiles/myfile.jpeg"));
+                new BasicAuthURI("http://my-bucket.s3.eu-central-1.amazonaws.com/sampleFiles/myfile.jpeg"));
         Assert.assertEquals("my-bucket", config.getBucket());
         Assert.assertEquals("eu-central-1", config.getRegion());
         Assert.assertEquals("sampleFiles/myfile.jpeg", config.getKey());
@@ -38,7 +39,7 @@ public class S3UrlsTests {
     @Test
     public void testVirtualHostedStyleOldRegion() {
         S3ConfigurationProperties config = new S3ConfigurationProperties("ALIAS",
-                URI.create("http://my-bucket.s3-us-west-2.amazonaws.com/sampleFiles/myfile.jpeg"));
+                new BasicAuthURI("http://my-bucket.s3-us-west-2.amazonaws.com/sampleFiles/myfile.jpeg"));
         Assert.assertEquals("my-bucket", config.getBucket());
         Assert.assertEquals("us-west-2", config.getRegion());
         Assert.assertEquals("sampleFiles/myfile.jpeg", config.getKey());
@@ -48,7 +49,7 @@ public class S3UrlsTests {
     @Test
     public void testPathStyleOldRegion() {
         S3ConfigurationProperties config = new S3ConfigurationProperties("ALIAS",
-                URI.create("http://s3-us-west-2.amazonaws.com/my-bucket/sampleFiles/myfile.jpeg"));
+                new BasicAuthURI("http://s3-us-west-2.amazonaws.com/my-bucket/sampleFiles/myfile.jpeg"));
         Assert.assertEquals("my-bucket", config.getBucket());
         Assert.assertEquals("us-west-2", config.getRegion());
         Assert.assertEquals("sampleFiles/myfile.jpeg", config.getKey());
@@ -58,7 +59,7 @@ public class S3UrlsTests {
     @Test
     public void testPathStyle() {
         S3ConfigurationProperties config = new S3ConfigurationProperties("ALIAS",
-                URI.create("http://s3.eu-central-1.amazonaws.com/my-bucket/sampleFiles/myfile.jpeg"));
+                new BasicAuthURI("http://s3.eu-central-1.amazonaws.com/my-bucket/sampleFiles/myfile.jpeg"));
         Assert.assertEquals("my-bucket", config.getBucket());
         Assert.assertEquals("eu-central-1", config.getRegion());
         Assert.assertEquals("sampleFiles/myfile.jpeg", config.getKey());
@@ -77,7 +78,7 @@ public class S3UrlsTests {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
 
-        S3ConfigurationProperties config = new S3ConfigurationProperties("ALIAS", queryUri);
+        S3ConfigurationProperties config = new S3ConfigurationProperties("ALIAS", new BasicAuthURI(queryUri));
         Assert.assertEquals("landsat-pds", config.getBucket());
         Assert.assertEquals("us-west-2", config.getRegion());
         Assert.assertEquals("c1/L8/153/075/LC08_L1TP_153075_20190515_20190515_01_RT/LC08_L1TP_153075_20190515_20190515_01_RT_B2.TIF", config.getKey());
