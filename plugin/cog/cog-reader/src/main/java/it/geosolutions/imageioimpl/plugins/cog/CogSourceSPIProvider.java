@@ -19,8 +19,9 @@ package it.geosolutions.imageioimpl.plugins.cog;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.spi.ImageInputStreamSpi;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
@@ -34,6 +35,8 @@ import it.geosolutions.imageio.plugins.cog.CogImageReadParam;
  * elements for the COG Implementation
  */
 public class CogSourceSPIProvider extends SourceSPIProvider {
+
+    private final static Logger LOGGER = Logger.getLogger(CogSourceSPIProvider.class.getName());
 
     /** The CogUri version of the source */
     private BasicAuthURI cogUri;
@@ -75,7 +78,7 @@ public class CogSourceSPIProvider extends SourceSPIProvider {
                 (CogImageInputStream)
                         ((CogImageInputStreamSpi) getStreamSpi())
                                 .createInputStreamInstance(uri, uri.isUseCache(), null);
-        RangeReader rangeReader = createRangeReaderInstance(rangeReaderClassname, uri.getUri(), CogImageReadParam.DEFAULT_HEADER_LENGTH);
+        RangeReader rangeReader = createRangeReaderInstance(rangeReaderClassname, uri, CogImageReadParam.DEFAULT_HEADER_LENGTH);
         inStream.init(rangeReader);
         return inStream;
     }
@@ -89,16 +92,20 @@ public class CogSourceSPIProvider extends SourceSPIProvider {
      * @param headerLength the headerLength
      * @return a RangeReader instance
      */
-    public static RangeReader createRangeReaderInstance(String className, URI uri, int headerLength) {
+    public static RangeReader createRangeReaderInstance(String className, BasicAuthURI uri, int headerLength) {
         RangeReader rangeReader = null;
         if (className != null) {
             try {
                 final Class<?> clazz = Class.forName(className);
-                Constructor constructor = clazz.getConstructor(new Class[] {URI.class, int.class});
+                Constructor constructor = clazz.getConstructor(new Class[] {BasicAuthURI.class, int.class});
                 rangeReader =
                         (RangeReader)
                                 constructor.newInstance(uri, headerLength);
             } catch (Exception e) {
+                if (LOGGER.isLoggable(Level.WARNING)) {
+                    LOGGER.warning("Unable to create a RangeReader of type " + className + " on uri: " +
+                            uri.getUri().getPath() + " due to " + e.getLocalizedMessage());
+                }
                 rangeReader = null;
             }
         }
