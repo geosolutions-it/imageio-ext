@@ -104,7 +104,7 @@ public class CogSourceSPIProvider extends SourceSPIProvider {
             } catch (Exception e) {
                 if (LOGGER.isLoggable(Level.WARNING)) {
                     LOGGER.warning("Unable to create a RangeReader of type " + className + " on uri: " +
-                            uri.getUri().getPath() + " due to " + e.getLocalizedMessage());
+                            uri.getUri().getPath() + " due to " + e.toString());
                 }
                 rangeReader = null;
             }
