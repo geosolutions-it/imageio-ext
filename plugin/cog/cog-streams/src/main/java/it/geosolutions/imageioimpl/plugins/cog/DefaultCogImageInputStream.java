@@ -18,12 +18,12 @@ package it.geosolutions.imageioimpl.plugins.cog;
 
 import it.geosolutions.imageio.core.BasicAuthURI;
 import it.geosolutions.imageio.plugins.cog.CogImageReadParam;
+import it.geosolutions.imageio.utilities.SoftValueHashMap;
 
 import javax.imageio.stream.ImageInputStreamImpl;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -45,9 +45,10 @@ public class DefaultCogImageInputStream extends ImageInputStreamImpl implements 
 
     private boolean initialized = false;
     protected URI uri;
-    protected CogTileInfo cogTileInfo;
+    protected CogTileInfo header;
     protected RangeReader rangeReader;
-    protected Map<Long, byte[]> data;
+    protected Map <Long, byte[]> data;
+
 
     private final static Logger LOGGER = Logger.getLogger(DefaultCogImageInputStream.class.getName());
 
@@ -118,8 +119,8 @@ public class DefaultCogImageInputStream extends ImageInputStreamImpl implements 
     }
 
     protected void initializeHeader(int headerLength) {
-        cogTileInfo = new CogTileInfo(headerLength);
-        data = new HashMap<>();
+        header = new CogTileInfo(headerLength);
+        data = new SoftValueHashMap<>(0);
         data.put(0L, rangeReader.readHeader());
         initialized = true;
     }
@@ -130,12 +131,12 @@ public class DefaultCogImageInputStream extends ImageInputStreamImpl implements 
     }
 
     @Override
-    public CogTileInfo getCogTileInfo() {
-        return cogTileInfo;
+    public CogTileInfo getHeader() {
+        return header;
     }
 
     @Override
-    public void readRanges() {
+    public void readRanges(CogTileInfo cogTileInfo) {
         // read data with the RangeReader and set the byte order and pointer on the new input stream
         ContiguousRangeComposer contiguousRangeComposer = new ContiguousRangeComposer(0, cogTileInfo.getHeaderLength() - 1);
 
@@ -183,10 +184,23 @@ public class DefaultCogImageInputStream extends ImageInputStreamImpl implements 
 
         // this should never happen -- we should have read all bytes from all tiles in the request envelope
         if (contiguousRange == null || rangeStart == -1L) {
-            LOGGER.severe("The requested offset is not present in the available data.  Requested offset: " + off
-                    + " - requested length: " + len
-                    + " - streamPos: " + streamPos);
-            throw new IOException("No COG data available for the requested byte location.");
+
+            // On some not optimized COG BigTiff, the TileOffset / TileBytes are inside the header
+            // which might be way greater than 16K (even 700K). Let's fetch it
+            if (data.size() == 1 && streamPos + len >= data.get(0L).length) {
+                while (streamPos + len >= data.get(0L).length) {
+                    data.put(0L, rangeReader.fetchHeader());
+                }
+
+                contiguousRange = data.get(0L);
+                header.setHeaderLength(contiguousRange.length);
+                rangeStart = 0;
+            } else {
+                LOGGER.severe("The requested offset is not present in the available data.  Requested offset: " + off
+                        + " - requested length: " + len
+                        + " - streamPos: " + streamPos);
+                throw new IOException("No COG data available for the requested byte location.");
+            }
         }
 
         int relativeStreamPos = (int)(streamPos - rangeStart);

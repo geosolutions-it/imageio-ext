@@ -99,6 +99,14 @@ public class SourceSPIProvider {
                         ImageIO.getCacheDirectory());
     }
 
+    /**
+     * Return a compatible SourceProvider (same readerSPI, same streamSPI)
+     * for a different URL
+     */
+    public SourceSPIProvider getCompatibleSourceProvider (URL url) {
+        return new SourceSPIProvider(url, readerSpi, streamSpi);
+    }
+
     public static URL fileToUrl(File file) {
         try {
             // URI.toString() and thus URI.toURL() do not

@@ -32,37 +32,55 @@ import java.util.logging.Logger;
  */
 public class AsyncHttpCallback implements Callback {
 
-    private boolean done = false;
+    enum Status {
+        DONE,
+        FAILED,
+        IN_PROGRESS;
+    }
+
+    private Status status = Status.IN_PROGRESS;
     private long startPosition;
+    private long endPosition;
     private byte[] bytes;
     private final static Logger LOGGER = Logger.getLogger(AsyncHttpCallback.class.getName());
 
     @Override
     public void onFailure(@NotNull Call call, @NotNull IOException e) {
         LOGGER.severe("Error executing HTTP request. " + e);
+        status = Status.FAILED;
     }
 
     @Override
     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-        bytes = response.body().bytes();
-        done = true;
+        try {
+            bytes = response.body().bytes();
+            status = Status.DONE;
+        } catch (IOException ioe) {
+            status = Status.FAILED;
+            throw ioe;
+        }
     }
 
-    public boolean isDone() {
-        return done;
+    public Status getStatus() {
+        return status;
     }
 
-    public void setStartPosition(long startPosition) {
-        this.startPosition = startPosition;
+    public void resetStatus() {
+        status = Status.IN_PROGRESS;
+    }
+
+    public AsyncHttpCallback initRange(long[] range) {
+        startPosition = range[0];
+        endPosition = range[1];
+        return this;
     }
 
     public long getStartPosition() {
         return startPosition;
     }
 
-    public AsyncHttpCallback startPosition(long startPosition) {
-        setStartPosition(startPosition);
-        return this;
+    public long getEndPosition() {
+        return endPosition;
     }
 
     public byte[] getBytes() {

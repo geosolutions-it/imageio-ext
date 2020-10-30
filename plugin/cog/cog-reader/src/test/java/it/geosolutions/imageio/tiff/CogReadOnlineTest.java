@@ -37,7 +37,6 @@ public class CogReadOnlineTest {
 
     private static final String cogUrl2 = "https://s3-us-west-2.amazonaws.com/landsat-pds/c1/L8/153/075/LC08_L1TP_153075_20190515_20190515_01_RT/LC08_L1TP_153075_20190515_20190515_01_RT_B2.TIF";
 
-
     /**
      * Read the first tiles of the stream
      */
@@ -123,6 +122,46 @@ public class CogReadOnlineTest {
         Assert.assertEquals(512, cogImage.getWidth());
         Assert.assertEquals(256, cogImage.getHeight());
     }
+
+    /**
+     * Read a COG with Header not contained in a single read.
+     */
+    @Test
+    public void testFetchHeader() throws IOException {
+        DefaultCogImageInputStream cogStream = new DefaultCogImageInputStream(cogUrl2);
+        CogImageReader reader = new CogImageReader(new CogImageReaderSpi());
+        reader.setInput(cogStream);
+
+        CogImageReadParam param = new CogImageReadParam();
+        param.setRangeReaderClass(HttpRangeReader.class);
+        param.setHeaderLength(1024);
+        int x = 1000;
+        int y = 1000;
+        int width = 1000;
+        int height = 1000;
+
+        param.setSourceRegion(new Rectangle(x, y, width, height));
+        BufferedImage cogImage = reader.read(0, param);
+
+        Assert.assertEquals(width, cogImage.getWidth());
+        Assert.assertEquals(height, cogImage.getHeight());
+
+        // Redo-it
+        cogStream = new DefaultCogImageInputStream(cogUrl2);
+        reader = new CogImageReader(new CogImageReaderSpi());
+        reader.setInput(cogStream);
+
+        param = new CogImageReadParam();
+        param.setRangeReaderClass(HttpRangeReader.class);
+        param.setHeaderLength(1024);
+        param.setSourceRegion(new Rectangle(x, y, width, height));
+        cogImage = reader.read(0, param);
+
+        Assert.assertEquals(width, cogImage.getWidth());
+        Assert.assertEquals(height, cogImage.getHeight());
+    }
+
+
 
     @Test
     public void readCogCaching() throws IOException {

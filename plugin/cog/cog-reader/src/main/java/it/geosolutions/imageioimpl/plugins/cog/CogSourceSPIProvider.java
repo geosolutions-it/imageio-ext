@@ -111,4 +111,19 @@ public class CogSourceSPIProvider extends SourceSPIProvider {
         }
         return rangeReader;
     }
+
+
+
+    /**
+     * Return a compatible SourceProvider (same readerSPI, same streamSPI, same rangeReader,
+     * same credentials) for a different URL
+     */
+    @Override
+    public CogSourceSPIProvider getCompatibleSourceProvider (URL url) {
+        BasicAuthURI sourceURI = getCogUri();
+        BasicAuthURI newSourceUri = new BasicAuthURI(url, sourceURI.isUseCache());
+        newSourceUri.setPassword(sourceURI.getPassword());
+        newSourceUri.setUser(sourceURI.getUser());
+        return new CogSourceSPIProvider(newSourceUri, getReaderSpi(), getStreamSpi(), rangeReaderClassname);
+    }
 }

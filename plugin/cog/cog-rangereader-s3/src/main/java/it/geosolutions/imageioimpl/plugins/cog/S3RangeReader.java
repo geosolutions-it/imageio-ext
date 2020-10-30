@@ -76,18 +76,27 @@ public class S3RangeReader extends AbstractRangeReader {
     }
 
     @Override
-    public byte[] readHeader() {
-        GetObjectRequest headerRequest = GetObjectRequest.builder()
-                .bucket(configProps.getBucket())
-                .key(configProps.getKey())
-
-                .range("bytes=0-" + (headerLength - 1))
-                .build();
+    public byte[] fetchHeader() {
+        byte[] currentHeader = data.get(0L);
+        if ( currentHeader != null) {
+            headerOffset = currentHeader.length;
+        }
+        GetObjectRequest headerRequest = buildRequest();
         try {
             ResponseBytes<GetObjectResponse> responseBytes = client.getObject(headerRequest, toBytes()).get();
-            byte[] bytes = responseBytes.asByteArray();
-            data.put(0L, bytes);
-            return bytes;
+
+            // get the header bytes
+            byte[] headerBytes = responseBytes.asByteArray();
+            if (headerOffset != 0) {
+                byte [] oldHeader = data.get(0L);
+                byte [] newHeader = new byte[headerBytes.length + oldHeader.length];
+                System.arraycopy(oldHeader, 0, newHeader, 0, oldHeader.length);
+                System.arraycopy(headerBytes, 0, newHeader, oldHeader.length, headerBytes.length);
+                headerBytes = newHeader;
+            }
+
+            data.put(0L, headerBytes);
+            return headerBytes;
         } catch (Exception e) {
             LOGGER.severe("Error reading header for " + uri);
             throw new RuntimeException(e);
@@ -99,6 +108,36 @@ public class S3RangeReader extends AbstractRangeReader {
         return read(ranges.toArray(new long[][]{}));
     }
 
+    @Override
+    public byte[] readHeader() {
+        LOGGER.fine("reading header");
+        byte[] currentHeader  = HEADERS_CACHE.get(uri.toString());
+
+        if (currentHeader != null) {
+            return currentHeader;
+        }
+        GetObjectRequest headerRequest = buildRequest();
+        try {
+            ResponseBytes<GetObjectResponse> responseBytes = client.getObject(headerRequest, toBytes()).get();
+
+            // get the header bytes
+            byte[] headerBytes = responseBytes.asByteArray();
+            data.put(0L, headerBytes);
+            HEADERS_CACHE.put(uri.toString(), headerBytes);
+            return headerBytes;
+        } catch (Exception e) {
+            LOGGER.severe("Error reading header for " + uri);
+            throw new RuntimeException(e);
+        }
+    }
+
+    private GetObjectRequest buildRequest() {
+        return GetObjectRequest.builder()
+                .bucket(configProps.getBucket())
+                .key(configProps.getKey())
+                .range("bytes="+ headerOffset +"-" + (headerOffset + headerLength - 1))
+                .build();
+    }
 
     @Override
     public Map<Long, byte[]> read(long[]... ranges) {
@@ -107,29 +146,45 @@ public class S3RangeReader extends AbstractRangeReader {
         Instant start = Instant.now();
         Map<Long, CompletableFuture<ResponseBytes<GetObjectResponse>>> downloads = new HashMap<>(ranges.length);
 
+        Map<Long, byte[]> values = new HashMap<>();
+        int missingRanges[] = new int[ranges.length];
+        int missing = 0;
         for (int i = 0; i < ranges.length; i++) {
-            GetObjectRequest request = GetObjectRequest.builder()
-                    .bucket(configProps.getBucket())
-                    .key(configProps.getKey())
-                    .range("bytes=" + ranges[i][0] + "-" + ranges[i][1])
-                    .build();
-            CompletableFuture<ResponseBytes<GetObjectResponse>> futureGet =
-                    client.getObject(request, AsyncResponseTransformer.toBytes());
-            downloads.put(ranges[i][0], futureGet);
+            byte[] dataRange = data.get(ranges[i]);
+            // Check for available data.
+            if (dataRange == null) {
+                GetObjectRequest request = GetObjectRequest.builder()
+                        .bucket(configProps.getBucket())
+                        .key(configProps.getKey())
+                        .range("bytes=" + ranges[i][0] + "-" + ranges[i][1])
+                        .build();
+                CompletableFuture<ResponseBytes<GetObjectResponse>> futureGet =
+                        client.getObject(request, AsyncResponseTransformer.toBytes());
+                downloads.put(ranges[i][0], futureGet);
+                // Mark the range as missing
+                missingRanges[missing++] = i;
+            } else {
+                values.put(ranges[i][0], dataRange);
+            }
         }
 
-        awaitCompletion(downloads);
+        awaitCompletion(values, downloads);
         Instant end = Instant.now();
         LOGGER.fine("Time to read all ranges: " + Duration.between(start, end));
-        return data;
+        for (int k = 0; k < missing; k++) {
+            long range = ranges[missingRanges[k]][0];
+            data.put(range, values.get(range));
+        }
+        return values;
     }
 
     /**
      * Blocks until all ranges have been read and written to the ByteBuffer
      *
+     * @param data
      * @param downloads
      */
-    protected void awaitCompletion(Map<Long, CompletableFuture<ResponseBytes<GetObjectResponse>>> downloads) {
+    protected void awaitCompletion(Map<Long, byte[]> data, Map<Long, CompletableFuture<ResponseBytes<GetObjectResponse>>> downloads) {
         boolean stillWaiting = true;
         List<Long> completed = new ArrayList<>(downloads.size());
         while (stillWaiting) {

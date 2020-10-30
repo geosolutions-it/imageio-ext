@@ -39,14 +39,14 @@ public interface CogImageInputStream extends ImageInputStream {
     /**
      * Instructs the input stream to read the ranges for the requested tiles.
      */
-    void readRanges();
+    void readRanges(CogTileInfo cogTileInfo);
 
     /**
      * Makes available the `CogTileInfo` object, responsible for holding all location information for requested tiles.
      *
      * @return The CogTileInfo instance
      */
-    CogTileInfo getCogTileInfo();
+    CogTileInfo getHeader();
 
     /**
      * Initializes the stream and reads the COG header.
