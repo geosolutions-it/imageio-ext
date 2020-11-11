@@ -91,7 +91,8 @@ public class CogImageReader extends TIFFImageReader {
 
         LOGGER.fine("Reading tiles (" + minTileX + "," + minTileY + ") - (" + maxTileX + "," + maxTileY + ")");
 
-        CogTileInfo cogTileInfo = ((CogImageInputStream)stream).getCogTileInfo();
+        CogTileInfo cogTileInfoHeader = ((CogImageInputStream)stream).getHeader();
+        CogTileInfo cogTileInfo = new CogTileInfo(cogTileInfoHeader.getHeaderLength());
 
         // loops through each requested tile and complies information about each tile offset and byte length
         if (planarConfiguration == BaselineTIFFTagSet.PLANAR_CONFIGURATION_PLANAR) {
@@ -115,9 +116,9 @@ public class CogImageReader extends TIFFImageReader {
                 }
             }
         }
-
+        cogTileInfoHeader.setHeaderLength(cogTileInfo.getHeaderLength());
         // read the ranges and cache them in the image input stream delegate
-        ((CogImageInputStream) stream).readRanges();
+        ((CogImageInputStream) stream).readRanges(cogTileInfo);
 
         // At this point, the CogImageInputStream has fetched and cached all of the bytes from the requested tiles.
         // Now we proceed with the legacy TIFFImageReader code.

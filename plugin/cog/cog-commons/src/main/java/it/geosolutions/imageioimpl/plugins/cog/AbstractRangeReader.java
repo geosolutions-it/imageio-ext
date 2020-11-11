@@ -17,6 +17,7 @@
 package it.geosolutions.imageioimpl.plugins.cog;
 
 import it.geosolutions.imageio.core.BasicAuthURI;
+import it.geosolutions.imageio.utilities.SoftValueHashMap;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -31,10 +32,18 @@ import java.util.logging.Logger;
  */
 public abstract class AbstractRangeReader implements RangeReader {
 
+    /**
+     * Streams (and rangeReader too) get repeatedly initialized on the same URI.
+     * Let's cache the header since some COG datasets might have long
+     * tileBytes/tileCount TAG which slow down the repeated accesses.
+     */
+    protected final static Map<String, byte[]> HEADERS_CACHE = new SoftValueHashMap<>();
+
     protected BasicAuthURI authUri;
     protected URI uri;
-    protected Map<Long, byte[]> data = new HashMap<>();
+    protected SoftValueHashMap<Long, byte[]> data = new SoftValueHashMap<>(0);
     protected int headerLength;
+    protected int headerOffset = 0;
 
     private final static Logger LOGGER = Logger.getLogger(AbstractRangeReader.class.getName());
 
@@ -55,29 +64,31 @@ public abstract class AbstractRangeReader implements RangeReader {
         boolean modified = false;
         List<long[]> newRanges = new ArrayList<>();
         for (int i = 0; i < ranges.length; i++) {
-            if (ranges[i][0] < headerLength - 1) {
+            int dataLength = headerLength;
+            if (ranges[i][0] < dataLength - 1) {
                 // this range starts inside of what we already read for the header
                 modified = true;
-                if (ranges[i][1] <= headerLength - 1) {
+                if (ranges[i][1] <= dataLength - 1) {
                     // this range is fully inside the header which was already read; discard this range
                     LOGGER.fine("Removed range " + ranges[i][0] + "-" + ranges[i][1] + " as it lies fully within"
                             + " the data already read in the header request");
                 } else {
                     // this range starts inside the header range, but ends outside of it.
                     // add a new range that starts at the end of the header range
-                    long[] newRange = new long[]{headerLength - 1, ranges[i][1]};
+                    long[] newRange = new long[]{dataLength - 1, ranges[i][1]};
 
                     // Adjust the data's header size in case the related range have been adjusted
                     byte[] headersData = data.get(0L);
-                    if (headersData != null && headerLength < headersData.length) {
-                        byte[] newHeader = new byte[headerLength];
-                        System.arraycopy(headersData, 0, newHeader, 0, headerLength);
+                    if (headersData != null && dataLength < headersData.length) {
+                        byte[] newHeader = new byte[dataLength];
+                        System.arraycopy(headersData, 0, newHeader, 0, dataLength);
                         data.put(0L, newHeader);
+                        HEADERS_CACHE.put(uri.toString(), newHeader);
                     }
 
                     newRanges.add(newRange);
                     LOGGER.fine("Modified range " + ranges[i][0] + "-" + ranges[i][1]
-                            + " to " + headerLength + "-" + ranges[i][1] + " as it overlaps with data previously"
+                            + " to " + dataLength + "-" + ranges[i][1] + " as it overlaps with data previously"
                             + " read in the header request");
                 }
             } else {
@@ -101,7 +112,7 @@ public abstract class AbstractRangeReader implements RangeReader {
 
     @Override
     public int getHeaderLength() {
-        return headerLength;
+        return headerOffset + headerLength;
     }
 }
 

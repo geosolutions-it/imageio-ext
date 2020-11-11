@@ -62,9 +62,16 @@ public interface RangeReader {
     Map<Long, byte[]> read(Collection<long[]> ranges);
 
     /**
-     * Reads the COG header given the provided header length.
+     * read the first piece of a COG header given the provided header length.
      *
      * @return They byte data of the header
      */
     byte[] readHeader();
+
+    /**
+     * fetch the COG header given the provided header length.
+     *
+     * @return They byte data of the header
+     */
+    byte[] fetchHeader();
 }

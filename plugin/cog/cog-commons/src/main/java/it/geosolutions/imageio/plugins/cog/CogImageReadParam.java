@@ -30,7 +30,18 @@ public class CogImageReadParam extends TIFFImageReadParam {
     protected int headerLength = DEFAULT_HEADER_LENGTH;
     protected Class<? extends RangeReader> rangeReaderClass;
 
-    public static final int DEFAULT_HEADER_LENGTH = 16384;
+    public static final String DEFAULT_COG_HEADER_LENGTH_KEY = "it.geosolutions.cog.default.header.length";
+
+    public static final int DEFAULT_HEADER_LENGTH;
+
+    static {
+        final String defaultHeaderLength= System.getProperty(DEFAULT_COG_HEADER_LENGTH_KEY);
+        if (defaultHeaderLength != null) {
+            DEFAULT_HEADER_LENGTH = Integer.parseInt(defaultHeaderLength);
+        } else {
+            DEFAULT_HEADER_LENGTH = 16384;
+        }
+    }
 
     public CogImageReadParam() {
         super();

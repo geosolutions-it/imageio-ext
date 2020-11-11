@@ -47,7 +47,7 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
 
     protected URI uri;
     protected RangeReader rangeReader;
-    protected CogTileInfo cogTileInfo;
+    protected CogTileInfo header;
 
     private final static Logger LOGGER = Logger.getLogger(CachingCogImageInputStream.class.getName());
 
@@ -122,21 +122,21 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
     }
 
     protected void initializeHeader(int headerLength) {
-        cogTileInfo = new CogTileInfo(headerLength);
+        header = new CogTileInfo(headerLength);
 
         // determine if the header has already been cached
         if (CacheManagement.DEFAULT.headerExists(uri.toString())) {
             headerLength = CacheManagement.DEFAULT.getHeader(uri.toString()).length;
             rangeReader.setHeaderLength(headerLength);
         } else {
-            CacheManagement.DEFAULT.cacheHeader(uri.toString(), rangeReader.readHeader());
+            CacheManagement.DEFAULT.cacheHeader(uri.toString(), rangeReader.fetchHeader());
         }
         initialized = true;
     }
 
     @Override
-    public CogTileInfo getCogTileInfo() {
-        return cogTileInfo;
+    public CogTileInfo getHeader() {
+        return header;
     }
 
     /**
@@ -153,7 +153,7 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
      * There are likely lots of optimizations to be made in here.
      */
     @Override
-    public void readRanges() {
+    public void readRanges(CogTileInfo cogTileInfo) {
         // instantiate the range builder
         ContiguousRangeComposer contiguousRangeComposer =
                 new ContiguousRangeComposer(0, cogTileInfo.getHeaderLength() - 1);
@@ -213,7 +213,9 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
     @Override
     public int read(byte[] b, int off, int len) {
         // based on the stream position, determine which tile we are in and fetch the corresponding TileRange
-        TileRange tileRange = cogTileInfo.getTileRange(streamPos);
+        // TODO: CachingCogImageInputStream never worked very well.
+        //  We need to update this section too, when fixing the related ticket
+        TileRange tileRange = header.getTileRange(streamPos);
 
         // get the bytes from cache for the tile. need to determine if we're reading from the header or a tile.
         byte[] bytes;
