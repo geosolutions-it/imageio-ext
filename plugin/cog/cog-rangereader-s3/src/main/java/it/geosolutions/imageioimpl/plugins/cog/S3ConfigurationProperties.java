@@ -111,8 +111,10 @@ public class S3ConfigurationProperties {
             String s3Prefix = isOldDashRegion ? S3_DASH_VH : S3_DOT_VH;
             int s3Index = host.indexOf(s3Prefix);
             bucket = host.substring(0, s3Index);
-            String hostRegion = host.substring(bucket.length() + s3Prefix.length(), domainIndex);
-            if (hostRegion != null) region = hostRegion;
+            if (bucket.length() + s3Prefix.length() < domainIndex) {
+                String hostRegion = host.substring(bucket.length() + s3Prefix.length(), domainIndex);
+                if (hostRegion != null) region = hostRegion;
+            }
             String path = uri.getPath();
             path = path.startsWith("/") ? path.substring(1) : path;
             key = path;

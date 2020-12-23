@@ -114,5 +114,9 @@ public abstract class AbstractRangeReader implements RangeReader {
     public int getHeaderLength() {
         return headerOffset + headerLength;
     }
+
+    public static void invalidateCache() {
+        HEADERS_CACHE.clear();
+    }
 }
 
