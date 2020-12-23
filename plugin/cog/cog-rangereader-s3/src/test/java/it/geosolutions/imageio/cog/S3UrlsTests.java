@@ -37,6 +37,17 @@ public class S3UrlsTests {
     }
 
     @Test
+    public void testVirtualHostedStyleNoRegion() {
+        System.setProperty("iio.alias.aws.region","eu-central-1");
+        S3ConfigurationProperties config = new S3ConfigurationProperties("ALIAS",
+                new BasicAuthURI("http://my-bucket.s3.amazonaws.com/sampleFiles/myfile.jpeg"));
+        Assert.assertEquals("my-bucket", config.getBucket());
+        Assert.assertEquals("eu-central-1", config.getRegion());
+        Assert.assertEquals("sampleFiles/myfile.jpeg", config.getKey());
+        Assert.assertEquals("myfile.jpeg", config.getFilename());
+    }
+
+    @Test
     public void testVirtualHostedStyleOldRegion() {
         S3ConfigurationProperties config = new S3ConfigurationProperties("ALIAS",
                 new BasicAuthURI("http://my-bucket.s3-us-west-2.amazonaws.com/sampleFiles/myfile.jpeg"));
