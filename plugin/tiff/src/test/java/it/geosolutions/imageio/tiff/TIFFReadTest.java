@@ -20,6 +20,7 @@ import static org.junit.Assume.assumeTrue;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
+import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.io.File;
@@ -642,6 +643,65 @@ public class TIFFReadTest extends Assert {
     }
 
     @Test
+    public void readDeflatePredictor2On32BitsInt() throws IOException {
+        // This image has been created from test.tif using the command:
+        //  gdal_translate -OT UInt32 -co COMPRESS=DEFLATE -co PREDICTOR=2 test.tif deflate32_p2.tif
+        assertImagesEqual(readTiff("test.tif"), readTiff("deflate32_p2.tif"));
+    }
+
+    @Test
+    public void readDeflatePredictor2On32BitsIntBigEndian() throws IOException {
+        // This image has been created from test.tif using the command:
+        // gdal_translate -ot UInt32 -co COMPRESS=DEFLATE -co PREDICTOR=2 test.tif 
+        //                --config GDAL_TIFF_ENDIANNESS BIG deflate32_p2_bigendian.tif  
+        assertImagesEqual(readTiff("test.tif"), readTiff("deflate32_p2_bigendian.tif"));
+    }
+
+    @Test
+    public void reaLzwPredictor2On32BitsInt() throws IOException {
+        // This image has been created from test.tif using the command:
+        // gdal_translate -OT UInt32 -co COMPRESS=LZW -co PREDICTOR=2 test.tif lzw32_p2.tif
+        assertImagesEqual(readTiff("test.tif"), readTiff("lzw32_p2.tif"));
+    }
+
+    @Test
+    public void readLzwPredictor2On32BitsIntBigEndian() throws IOException {
+        // This image has been created from test.tif using the command:
+        // gdal_translate -ot UInt32 -co COMPRESS=LZW -co PREDICTOR=2 test.tif --config GDAL_TIFF_ENDIANNESS BIG lzw32_p2_bigendian.tif  
+        assertImagesEqual(readTiff("test.tif"), readTiff("lzw32_p2_bigendian.tif"));
+    }
+
+    @Test
+    public void readDeflatePredictor2On32BitsFloat() throws IOException {
+        // This image has been created from test.tif using the command:
+        // gdal_translate -ot Float32 -co COMPRESS=DEFLATE -co PREDICTOR=2 test.tif deflate32f_p2.tif  
+        assertImagesEqual(readTiff("test.tif"), readTiff("deflate32f_p2.tif"));
+    }
+
+    @Test
+    public void readDeflatePredictor2On32BitsFloatBigEndian() throws IOException {
+        // This image has been created from test.tif using the command:
+        // gdal_translate -ot Float32 -co COMPRESS=DEFLATE -co PREDICTOR=2 --config
+        // GDAL_TIFF_ENDIANNESS BIG test.tif deflate32f_p2_bigendian.tif
+        assertImagesEqual(readTiff("test.tif"), readTiff("deflate32f_p2_bigendian.tif"));
+    }
+
+    @Test
+    public void readLzwPredictor2On32BitsFloat() throws IOException {
+        // This image has been created from test.tif using the command:
+        // gdal_translate -ot Float32 -co COMPRESS=LZW -co PREDICTOR=2 test.tif lzw32f_p2.tif  
+        assertImagesEqual(readTiff("test.tif"), readTiff("lzw32f_p2.tif"));
+    }
+
+    @Test
+    public void readLzwPredictor2On32BitsFloatBigEndian() throws IOException {
+        // This image has been created from test.tif using the command:
+        // gdal_translate -ot Float32 -co COMPRESS=LZW -co PREDICTOR=2 --config
+        // GDAL_TIFF_ENDIANNESS BIG test.tif lzw32f_p2_bigendian.tif
+        assertImagesEqual(readTiff("test.tif"), readTiff("lzw32f_p2_bigendian.tif"));
+    }
+
+    @Test
     public void readDeflateWithFloatingPointPredictor() throws IOException {
         // This image has been created from test.tif using the command:
         // gdal_translate -ot Float32 -co COMPRESS=DEFLATE -co PREDICTOR=3 test.tif deflate_predictor_3.tif
@@ -655,14 +715,19 @@ public class TIFFReadTest extends Assert {
         int h = expected.getRaster().getHeight();
         assertArrayEquals(
                 "Rasters are different",
-                toByteArray(expected.getRaster().getDataElements(0, 0, w, h, null)),
-                toByteArray(actual.getRaster().getDataElements(0, 0, w, h, null)));
+                toByteArray(expected.getSampleModel().getDataType(), expected.getRaster().getDataElements(0, 0, w, h, null)),
+                toByteArray(actual.getSampleModel().getDataType(), actual.getRaster().getDataElements(0, 0, w, h, null)));
     }
 
-    private byte[] toByteArray(Object arr) {
-        byte[] result = new byte[Array.getLength(arr)];
+    private int[] toByteArray(int dataType, Object arr) {
+        int[] result = new int[Array.getLength(arr)];
         for (int i = 0; i < result.length; i++) {
-            result[i] = ((Number) Array.get(arr, i)).byteValue();
+            Number value = (Number) Array.get(arr, i);
+            if (dataType == DataBuffer.TYPE_BYTE) {
+                result[i] = value.byteValue() & 0xFF;
+            } else {
+                result[i] = value.intValue();
+            }
         }
         return result;
     }
