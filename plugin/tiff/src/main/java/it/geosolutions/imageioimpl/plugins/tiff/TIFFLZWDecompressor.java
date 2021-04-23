@@ -136,7 +136,7 @@ public class TIFFLZWDecompressor extends TIFFDecompressor {
             BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING) {
             int len = bitsPerSample.length;
             final int bps=bitsPerSample[0];
-            if (bps != 8 && bps != 16) {
+            if (bps != 8 && bps != 16 && bps != 32) {
                 throw new IIOException
                     (bps + "-bit samples "+
                      "are not supported for Horizontal "+
@@ -272,6 +272,43 @@ public class TIFFLZWDecompressor extends TIFFDecompressor {
                     }
                 }
             }
+            else if(bitsPerSample[0]==32) {
+                if (stream.getByteOrder() == ByteOrder.LITTLE_ENDIAN) {
+                    for (int j = 0; j < srcHeight; j++) {
+                        int count = dstOffset + samplesPerPixel * (j * srcWidth + 1) * 4;
+                        int prevBase = count - samplesPerPixel * 4;
+                        int prev = readIntegerFromBuffer(dstData, prevBase, prevBase + 1, prevBase + 2, prevBase + 3);
+                        for (int i = samplesPerPixel; i < srcWidth * samplesPerPixel; i++) {
+                            int curr = readIntegerFromBuffer(dstData, count, count + 1, count + 2, count + 3);
+                            int sum = curr + prev;
+                            dstData[count] = (byte) (sum & 0xFF);
+                            dstData[count + 1] = (byte) ((sum >> 8) & 0xFF);
+                            dstData[count + 2] = (byte) ((sum >> 16) & 0xFF);
+                            dstData[count + 3] = (byte) ((sum >> 24) & 0xFF) ;
+                            count += 4;
+                            prev = sum;
+                        }
+                    }
+                }
+                else
+                {
+                    for (int j = 0; j < srcHeight; j++) {
+                        int count = dstOffset + samplesPerPixel * (j * srcWidth + 1) * 4;
+                        int prevBase = count - samplesPerPixel * 4;
+                        int prev = readIntegerFromBuffer(dstData, prevBase + 3, prevBase + 2, prevBase +1, prevBase);
+                        for (int i = samplesPerPixel; i < srcWidth * samplesPerPixel; i++) {
+                            int curr = readIntegerFromBuffer(dstData, count + 3, count + 2, count +1, count);
+                            int sum = curr + prev;
+                            dstData[count + 3] = (byte) (sum & 0xFF);
+                            dstData[count + 2] = (byte) (sum >> 8 & 0xFF);
+                            dstData[count + 1] = (byte) (sum >> 16 & 0xFF);
+                            dstData[count] = (byte) (sum >> 24 & 0xFF);
+                            count += 4;
+                            prev = sum;
+                        }
+                    }
+                }
+            }
             else throw new IIOException("Unexpected branch of Horizontal differencing Predictor, bps="+bitsPerSample[0]);
         }
 
@@ -382,5 +419,13 @@ public class TIFFLZWDecompressor extends TIFFDecompressor {
             return 257;
         }
     }
+
+    private final int readIntegerFromBuffer(byte[] buf, int offset1, int offset2, int offset3, int offset4) {
+        return (buf[offset1] & 0xFF)
+                | ((buf[offset2] & 0xFF) << 8)
+                | ((buf[offset3] & 0xFF) << 16)
+                | ((buf[offset4] & 0xFF) << 24);
+    }
+
 }
 

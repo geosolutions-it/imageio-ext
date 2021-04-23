@@ -73,9 +73,6 @@
  */
 package it.geosolutions.imageioimpl.plugins.tiff;
 
-import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
-import it.geosolutions.imageio.plugins.tiff.TIFFDecompressor;
-
 import java.io.IOException;
 import java.nio.ByteOrder;
 import java.util.Arrays;
@@ -83,6 +80,9 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
 import javax.imageio.IIOException;
+
+import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
+import it.geosolutions.imageio.plugins.tiff.TIFFDecompressor;
 
 public class TIFFDeflateDecompressor extends TIFFDecompressor {
 
@@ -116,7 +116,7 @@ public class TIFFDeflateDecompressor extends TIFFDecompressor {
         if (predictor == BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING) {
             int len = bitsPerSample.length;
             final int bps = bitsPerSample[0];
-            if (bps != 8 && bps != 16) {
+            if (bps != 8 && bps != 16 && bps != 32) {
                 throw new IIOException
                     (bps + "-bit samples " +
                      "are not supported for Horizontal " +
@@ -205,8 +205,8 @@ public class TIFFDeflateDecompressor extends TIFFDecompressor {
                     for (int j = 0; j < srcHeight; j++) {
                         int count = dstOffset + samplesPerPixel * (j * srcWidth + 1) * 2;
                         for (int i = samplesPerPixel; i < srcWidth * samplesPerPixel; i++) {
-                            int curr=(((int)buf[count]) & 0xFF) + (buf[count+1]<<8);
-                            int prev=(((int)buf[count-samplesPerPixel*2]) & 0xFF)+(buf[count+1-samplesPerPixel*2]<<8);
+                            int curr=(((int)buf[count]) & 0xFF) | (buf[count+1]<<8);
+                            int prev=(((int)buf[count-samplesPerPixel*2]) & 0xFF) | (buf[count+1-samplesPerPixel*2]<<8);
                             curr+=prev;
                             buf[count]=(byte)curr;
                             buf[count+1]=(byte)(curr>>8);
@@ -219,12 +219,49 @@ public class TIFFDeflateDecompressor extends TIFFDecompressor {
                     for (int j = 0; j < srcHeight; j++) {
                         int count = dstOffset + samplesPerPixel * (j * srcWidth + 1) * 2;
                         for (int i = samplesPerPixel; i < srcWidth * samplesPerPixel; i++) {
-                            int curr=(((int)buf[count+1]) & 0xFF) + (buf[count]<<8);
-                            int prev=(((int)buf[count+1-samplesPerPixel*2]) & 0xFF)+(buf[count-samplesPerPixel*2]<<8);
+                            int curr=(((int)buf[count+1]) & 0xFF) | (buf[count]<<8);
+                            int prev=(((int)buf[count+1-samplesPerPixel*2]) & 0xFF) | (buf[count-samplesPerPixel*2]<<8);
                             curr+=prev;
                             buf[count+1]=(byte)curr;
                             buf[count]=(byte)(curr>>8);
                             count+=2;
+                        }
+                    }
+                }
+            }
+            else if(bitsPerSample[0]==32) {
+                if (stream.getByteOrder() == ByteOrder.LITTLE_ENDIAN) {
+                    for (int j = 0; j < srcHeight; j++) {
+                        int count = dstOffset + samplesPerPixel * (j * srcWidth + 1) * 4;
+                        int pbase = count - samplesPerPixel * 4;
+                        int prev = readIntegerFromBuffer(buf, pbase, pbase + 1, pbase + 2, pbase + 3);
+                        for (int i = samplesPerPixel; i < srcWidth * samplesPerPixel; i++) {
+                            int curr = readIntegerFromBuffer(buf, count, count +1, count +2, count + 3);
+                            int sum = curr + prev;
+                            buf[count] = (byte) (sum & 0xFF);
+                            buf[count + 1] = (byte) ((sum >> 8) & 0xFF);
+                            buf[count + 2] = (byte) ((sum >> 16) & 0xFF);
+                            buf[count + 3] = (byte) ((sum >> 24) & 0xFF) ;
+                            count += 4;
+                            prev = sum;
+                        }
+                    }
+                }
+                else
+                {
+                    for (int j = 0; j < srcHeight; j++) {
+                        int count = dstOffset + samplesPerPixel * (j * srcWidth + 1) * 4;
+                        int pbase = count - samplesPerPixel * 4;
+                        int prev = readIntegerFromBuffer(buf, pbase + 3, pbase + 2, pbase + 1, pbase);
+                        for (int i = samplesPerPixel; i < srcWidth * samplesPerPixel; i++) {
+                            int curr = readIntegerFromBuffer(buf, count + 3, count + 2, count + 1, count);
+                            int sum = curr + prev;
+                            buf[count + 3] = (byte) (sum & 0xFF);
+                            buf[count + 2] = (byte) (sum >> 8 & 0xFF);
+                            buf[count + 1] = (byte) (sum >> 16 & 0xFF);
+                            buf[count] = (byte) (sum >> 24 & 0xFF);
+                            count += 4;
+                            prev = sum;
                         }
                     }
                 }
@@ -276,5 +313,12 @@ public class TIFFDeflateDecompressor extends TIFFDecompressor {
                 dstOffset += scanlineStride;
             }
         }
+    }
+
+    private final int readIntegerFromBuffer(byte[] buf, int offset1, int offset2, int offset3, int offset4) {
+        return (buf[offset1] & 0xFF)
+                | ((buf[offset2] & 0xFF) << 8)
+                | ((buf[offset3] & 0xFF) << 16)
+                | ((buf[offset4] & 0xFF) << 24);
     }
 }
