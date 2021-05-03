@@ -39,7 +39,7 @@ Here below you can find links with useful information for working with ImageIO-E
 * [Documentation](https://github.com/geosolutions-it/imageio-ext/wiki/Documentation)
 * [Releases](https://github.com/geosolutions-it/imageio-ext/wiki/Releases)
 * [Working with Maven](https://github.com/geosolutions-it/imageio-ext/wiki/Working-with-Maven)
-* [Continuos Build] (https://github.com/geosolutions-it/imageio-ext/wiki/ContinuosIntegration)
+* [Continuous Build](https://github.com/geosolutions-it/imageio-ext/wiki/ContinuosIntegration)
 
 # Important Notice
 **In case you want to enable ECW Decode support, it is mandatory you agree with the ECW Eula. Moreover if you want to support ECW Decode in a Server application you need to BUY a license from ERDAS.**
