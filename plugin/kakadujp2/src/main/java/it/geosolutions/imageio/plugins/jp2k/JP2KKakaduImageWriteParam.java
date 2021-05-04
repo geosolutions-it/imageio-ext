@@ -1,7 +1,6 @@
 /* JP2K Kakadu Image Writer V. 1.0 
  * 
- * (c) 2008 Quality Nighthawk Teleradiology Group, Inc.
- * Contact: info@qualitynighthawk.com
+ * (c) 2008, 2018 OnePacs, LLC, info@onepacs.com
  *
  * Produced by GeoSolutions, Eng. Daniele Romagnoli and Eng. Simone Giannecchini
  * GeoSolutions S.A.S. ---  Via Carignoni 51, 55041 Camaiore (LU) Italy
