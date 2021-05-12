@@ -16,7 +16,9 @@
  */
 package it.geosolutions.imageio.stream;
 
+import it.geosolutions.imageio.stream.output.FileImageOutputStreamExtImpl;
 import it.geosolutions.imageio.stream.output.ImageOutputStreamAdapter;
+import it.geosolutions.io.output.adapter.OutputStreamAdapter;
 import it.geosolutions.resources.TestData;
 
 import java.awt.image.BufferedImage;
@@ -28,6 +30,8 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
+import javax.imageio.stream.FileImageInputStream;
+import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import javax.media.jai.JAI;
 
@@ -154,8 +158,25 @@ public class ImageOutputStreamTest {
             }
 
         }
+    }
 
 
-
+    @Test
+    public void testOutputStreamAdapter() throws IOException {
+        File temp = TestData.temp(this, "test.tmp",true);
+        ImageOutputStream ios = new FileImageOutputStreamExtImpl(temp);
+        String test = "test";
+        byte[] testBytes = test.getBytes();
+        try (OutputStreamAdapter os = new OutputStreamAdapter(ios)) {
+            Assert.assertEquals(ios, os.getWrappedStream());
+            os.write(testBytes);
+            os.flush();
+        }
+        try (ImageInputStream is = new FileImageInputStream(temp)) {
+            byte[] b = new byte[test.length()];
+            is.read(b);
+            Assert.assertArrayEquals("Written and read bytes do not match",
+                    testBytes, b);
+        }
     }
 }

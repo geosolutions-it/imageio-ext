@@ -60,6 +60,9 @@ public final class InputStreamAdapter extends InputStream {
         return stream.skipBytes(n);
     }
 
+    /**
+     * Return the underlying {@link ImageInputStream}
+     */
     public ImageInputStream getWrappedStream() {
         return stream;
     }

@@ -65,4 +65,11 @@ public final class OutputStreamAdapter extends OutputStream {
     public void write(int b) throws IOException {
         stream.write(b);
     }
+
+    /**
+     * Return the underlying {@link ImageOutputStream}
+     */
+    public ImageOutputStream getWrappedStream() {
+        return stream;
+    }
 }
