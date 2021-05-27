@@ -76,18 +76,33 @@ package it.geosolutions.imageioimpl.plugins.tiff;
 
 import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
 import it.geosolutions.imageio.plugins.tiff.TIFFCompressor;
+import me.steinborn.libdeflate.CompressionType;
+import me.steinborn.libdeflate.LibdeflateCompressor;
 
 import java.io.IOException;
 import java.util.zip.Deflater;
 import javax.imageio.ImageWriteParam;
+import javax.swing.plaf.multi.MultiSeparatorUI;
 
 /**
  * Compressor superclass for Deflate and ZLib compression.
  */
 public class TIFFDeflater extends TIFFCompressor {
 
+    final static boolean useLibDeflate = Boolean.getBoolean("useLibDeflate");
+
+    final static int DEFLATE_LEVEL = Integer.getInteger("deflateLevel");
+
+    static {
+        System.out.println("USELIBDEFLATE: " + useLibDeflate);
+        System.out.println("DEFLATE_LEVEL" + DEFLATE_LEVEL);
+    }
+
     Deflater deflater;
+    LibdeflateCompressor compressor;
     int predictor;
+    int deflateLevel;
+    CompressionType compressionType = me.steinborn.libdeflate.CompressionType.ZLIB;
 
     public TIFFDeflater(String compressionType,
                         int compressionTagValue,
@@ -98,7 +113,6 @@ public class TIFFDeflater extends TIFFCompressor {
 	this.predictor = predictorValue;
 
         // Set the deflate level.
-        int deflateLevel;
         if(param != null &&
            param.getCompressionMode() == ImageWriteParam.MODE_EXPLICIT) {
             float quality = param.getCompressionQuality();
@@ -106,14 +120,19 @@ public class TIFFDeflater extends TIFFCompressor {
         } else {
             deflateLevel = Deflater.DEFAULT_COMPRESSION;
         }
-
-        this.deflater = new Deflater(deflateLevel);
+        deflateLevel = DEFLATE_LEVEL;
+        if (!useLibDeflate) {
+            this.deflater = new Deflater(deflateLevel);
+        }
     }
 
     public int encode(byte[] b, int off,
                       int width, int height,
                       int[] bitsPerSample,
                       int scanlineStride) throws IOException {
+        if (useLibDeflate) {
+            this.compressor = new LibdeflateCompressor(deflateLevel);
+        }
 
         int inputSize = height*scanlineStride;
         int blocks = (inputSize + 32767)/32768;
@@ -141,29 +160,51 @@ public class TIFFDeflater extends TIFFCompressor {
                     rowBuf[j] -= rowBuf[j - samplesPerPixel];
                 }
 
-                deflater.setInput(rowBuf);
-                if(i == maxRow) {
-                    deflater.finish();
+                if (!useLibDeflate) {
+                    deflater.setInput(rowBuf);
+                    if (i == maxRow) {
+                        deflater.finish();
+                    }
                 }
 
                 int numBytes = 0;
-                while((numBytes = deflater.deflate(compData,
-                                                   numCompressedBytes,
-                                                   compData.length -
-                                                   numCompressedBytes)) != 0) {
+                if (useLibDeflate) {
+                while((numBytes =
+
+                        compressor.compress(rowBuf,0, bytesPerRow, compData,
+                                numCompressedBytes, compData.length - numCompressedBytes,
+                                compressionType))!=0) {
+
                     numCompressedBytes += numBytes;
+                }
+                }
+                else {
+                    while ((numBytes =
+
+                            deflater.deflate(compData,
+                                    numCompressedBytes,
+                                    compData.length -
+                                            numCompressedBytes)) != 0) {
+                        numCompressedBytes += numBytes;
+                    }
                 }
 
                 off += scanlineStride;
             }
         } else {
-            deflater.setInput(b, off, height*scanlineStride);
-            deflater.finish();
-
-            numCompressedBytes = deflater.deflate(compData);
+            if (!useLibDeflate) {
+                deflater.setInput(b, off, height * scanlineStride);
+                deflater.finish();
+                numCompressedBytes = deflater.deflate(compData);
+            }else {
+                numCompressedBytes = compressor.compress(b, compData, compressionType);
+            }
         }
-
-        deflater.reset();
+        if (useLibDeflate) {
+            compressor.close();
+        } else {
+            deflater.reset();
+        }
 
         stream.write(compData, 0, numCompressedBytes);
 

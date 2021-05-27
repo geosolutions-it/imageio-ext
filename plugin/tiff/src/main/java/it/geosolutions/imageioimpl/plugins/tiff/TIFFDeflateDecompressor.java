@@ -73,7 +73,13 @@
  */
 package it.geosolutions.imageioimpl.plugins.tiff;
 
+import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
+import it.geosolutions.imageio.plugins.tiff.TIFFDecompressor;
+import me.steinborn.libdeflate.CompressionType;
+import me.steinborn.libdeflate.LibdeflateDecompressor;
+
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.zip.DataFormatException;
@@ -86,13 +92,17 @@ import it.geosolutions.imageio.plugins.tiff.TIFFDecompressor;
 
 public class TIFFDeflateDecompressor extends TIFFDecompressor {
 
-    private static final boolean DEBUG = false;
+    boolean useLibDeflate = Boolean.getBoolean("useLibDeflateRead");
 
+    private static final boolean DEBUG = false;
+    LibdeflateDecompressor decompressor = null;
     Inflater inflater = null;
     int predictor;
 
     public TIFFDeflateDecompressor(int predictor) throws IIOException {
-        inflater = new Inflater();
+        if (!useLibDeflate) {
+            inflater = new Inflater();
+        }
 
         if (predictor != BaselineTIFFTagSet.PREDICTOR_NONE &&
             predictor != BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING &&
@@ -176,19 +186,34 @@ public class TIFFDeflateDecompressor extends TIFFDecompressor {
             bufOffset = 0;
         }
 
-        // Set the input to the Inflater.
-        inflater.setInput(srcData);
+        if (!useLibDeflate) {
+            // Set the input to the Inflater.
+            inflater.setInput(srcData);
 
-        // Inflate the data.
-        try {
-            inflater.inflate(buf, bufOffset, bytesPerRow*srcHeight);
-        } catch(DataFormatException dfe) {
-            throw new IIOException(I18N.getString("TIFFDeflateDecompressor0"),
-                                   dfe);
+            // Inflate the data.
+            try {
+                inflater.inflate(buf, bufOffset, bytesPerRow * srcHeight);
+            } catch (DataFormatException dfe) {
+                throw new IIOException(I18N.getString("TIFFDeflateDecompressor0"),
+                        dfe);
+            }
+
+            // Reset the Inflater.
+            inflater.reset();
+        } else {
+            decompressor = new LibdeflateDecompressor();
+            try {
+                decompressor.decompress(srcData, 0,
+                        byteCount,
+                        buf, bufOffset, CompressionType.ZLIB,
+                        bytesPerRow*srcHeight);
+
+            } catch (DataFormatException dfe) {
+                throw new IIOException(I18N.getString("TIFFDeflateDecompressor0"),
+                        dfe);
+            }
+            decompressor.close();
         }
-
-        // Reset the Inflater.
-        inflater.reset();
 
         if (predictor == BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING) {
             if (bitsPerSample[0] == 8) {

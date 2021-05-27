@@ -262,4 +262,35 @@ public class TIFFWriteTest extends Assert {
         
         reader.dispose();
     }
+
+    @Test
+    public void testWriteDeflate() throws IOException {
+//        JAI.getDefaultInstance().getTileCache().setMemoryCapacity(512*1024*1024);
+//        final TCTool tc= new TCTool((SunTileCache)JAI.getDefaultInstance().getTileCache());
+            final File inputFile = new File("/home/dromagnoli/work/data/rgb.tif");
+            final File outputFile = new File("/home/dromagnoli/work/data/rgbout.tif");
+        TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi()
+                .createReaderInstance();
+        reader.setInput(new FileImageInputStream(inputFile));
+
+        BufferedImage image = reader.read(0, null);
+        final TIFFImageWriter writer= (TIFFImageWriter) new TIFFImageWriterSpi().createWriterInstance();
+        final ImageWriteParam writeParam= new TIFFImageWriteParam(Locale.getDefault());
+        writeParam.setTilingMode(ImageWriteParam.MODE_EXPLICIT);
+        writeParam.setTiling(512, 512,0,0);
+        writeParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+        writeParam.setCompressionType("Deflate");
+        writeParam.setCompressionQuality(0.6f);
+        writer.setOutput(new FileImageOutputStream(outputFile));
+        writer.write(null,new IIOImage(image, null,null),writeParam);
+        writer.dispose();
+        reader.reset();
+        reader.setInput(new FileImageInputStream(outputFile));
+        image = reader.read(0);
+        Assert.assertEquals(10, image.getWidth());
+        Assert.assertEquals(10, image.getHeight());
+        image.flush();
+        reader.dispose();
+
+    }
 }
