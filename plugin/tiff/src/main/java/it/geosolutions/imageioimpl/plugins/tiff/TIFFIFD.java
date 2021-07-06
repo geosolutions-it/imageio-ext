@@ -470,7 +470,7 @@ public class TIFFIFD extends TIFFDirectory {
                 TIFFIFD subIFD = new TIFFIFD(tagSets);
 
                 // XXX Use same ignore policy for sub-IFD fields?
-                subIFD.initialize(stream, ignoreUnknownFields);
+                subIFD.initialize(stream, ignoreUnknownFields, isBTIFF);
                 obj = subIFD;
                 stream.reset();
             }
