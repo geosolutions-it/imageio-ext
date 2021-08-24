@@ -49,6 +49,11 @@ public class PrivateTIFFTagSet extends TIFFTagSet {
      */
     public static final int TAG_GDAL_NODATA = 42113;
 
+    /**
+     * Used by ZSTD
+     */
+    public static final int TAG_ZSTD = 50000;
+
     static class GDALNoData extends TIFFTag {
         public GDALNoData () {
             super("GDALNoDataTag",

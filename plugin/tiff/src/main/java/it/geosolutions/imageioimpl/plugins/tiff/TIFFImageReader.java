@@ -1935,7 +1935,12 @@ public class TIFFImageReader extends ImageReader {
                 }
                 this.decompressor = new TIFFOldJPEGDecompressor();
                 //throw new IIOException("Old-style JPEG not supported!");
-            } else {
+            } else if (compression == PrivateTIFFTagSet.TAG_ZSTD) {
+                this.decompressor = new TIFFZSTDDecompressor();
+            }
+
+
+            else {
                 throw new IIOException
                     ("Unsupported compression type (tag number = "+
                      compression+")!");
