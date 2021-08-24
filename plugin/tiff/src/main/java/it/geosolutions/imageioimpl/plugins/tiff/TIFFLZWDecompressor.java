@@ -419,13 +419,5 @@ public class TIFFLZWDecompressor extends TIFFDecompressor {
             return 257;
         }
     }
-
-    private final int readIntegerFromBuffer(byte[] buf, int offset1, int offset2, int offset3, int offset4) {
-        return (buf[offset1] & 0xFF)
-                | ((buf[offset2] & 0xFF) << 8)
-                | ((buf[offset3] & 0xFF) << 16)
-                | ((buf[offset4] & 0xFF) << 24);
-    }
-
 }
 

@@ -708,7 +708,35 @@ public class TIFFReadTest extends Assert {
         assertImagesEqual(readTiff("test.tif"), readTiff("deflate_predictor_3.tif"));
     }
 
-    private void assertImagesEqual(BufferedImage expected, BufferedImage actual) {
+    @Test
+    public void readZSTDOn16BitsInteger() throws IOException {
+        // This image has been created from test.tif using the command:
+        // gdal_translate -ot UInt16 -co COMPRESS=ZSTD test.tif zstd.tif
+        assertImagesEqual(readTiff("test.tif"), readTiff("zstd.tif"));
+    }
+
+    @Test
+    public void readZSTDPredictor2On32BitsInteger() throws IOException {
+        // This image has been created from test.tif using the command:
+        // gdal_translate -ot UInt32 -co COMPRESS=ZSTD -co PREDICTOR=2 test.tif zstd_p2.tif
+        assertImagesEqual(readTiff("test.tif"), readTiff("zstd_p2.tif"));
+    }
+
+    @Test
+    public void readZSTDPredictor3On32BitsFloat() throws IOException {
+        // This image has been created from test.tif using the command:
+        // gdal_translate -ot Float32 -co COMPRESS=ZSTD -CO PREDICTOR=3 test.tif zstd_p3.tif
+        assertImagesEqual(readTiff("test.tif"), readTiff("zstd_p3.tif"));
+    }
+
+    @Test
+    public void readZSTDOnRGB() throws IOException {
+        // This image has been created from sampleRGBA.tif using the command:
+        // gdal_translate -co COMPRESS=ZSTD sampleRGBA.tif zstd_rgba.tif
+        assertImagesEqual(readTiff("sampleRGBA.tif"), readTiff("zstd_rgba.tif"));
+    }
+
+    static void assertImagesEqual(BufferedImage expected, BufferedImage actual) {
         assertEquals("Widths are different", expected.getWidth(), actual.getWidth());
         assertEquals("Heights are different", expected.getHeight(), actual.getHeight());
         int w = expected.getRaster().getWidth();
@@ -719,7 +747,7 @@ public class TIFFReadTest extends Assert {
                 toByteArray(actual.getSampleModel().getDataType(), actual.getRaster().getDataElements(0, 0, w, h, null)));
     }
 
-    private int[] toByteArray(int dataType, Object arr) {
+    static int[] toByteArray(int dataType, Object arr) {
         int[] result = new int[Array.getLength(arr)];
         for (int i = 0; i < result.length; i++) {
             Number value = (Number) Array.get(arr, i);
@@ -734,6 +762,10 @@ public class TIFFReadTest extends Assert {
 
     private BufferedImage readTiff(String filename) throws IOException {
         final File file = TestData.file(this, filename);
+        return readTiff(file);
+    }
+
+    static BufferedImage readTiff(File file) throws IOException {
 
         final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi()
                 .createReaderInstance();

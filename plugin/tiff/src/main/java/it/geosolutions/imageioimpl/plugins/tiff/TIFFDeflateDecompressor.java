@@ -112,51 +112,9 @@ public class TIFFDeflateDecompressor extends TIFFDecompressor {
                                        int bitsPerPixel,
                                        int scanlineStride) throws IOException {
 
-        // Check bitsPerSample.
-        if (predictor == BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING) {
-            int len = bitsPerSample.length;
-            final int bps = bitsPerSample[0];
-            if (bps != 8 && bps != 16 && bps != 32) {
-                throw new IIOException
-                    (bps + "-bit samples " +
-                     "are not supported for Horizontal " +
-                     "differencing Predictor");
-            }
-            for (int i = 0; i < len; i++) {
-                if (bitsPerSample[i] != bps) {
-                    throw new IIOException
-                        ("Varying sample width is not " +
-                         "supported for Horizontal " +
-                         "differencing Predictor (first: " +
-                         bps + ", unexpected:" + bitsPerSample[i] + ")");
-                }
-            }
-        } else if (predictor == BaselineTIFFTagSet.PREDICTOR_FLOATING_POINT) {
-            int len = bitsPerSample.length;
-            final int bps = bitsPerSample[0];
-            if (bps != 16 && bps != 24 && bps != 32 && bps != 64) {
-                throw new IIOException
-                    (bps + "-bit samples " +
-                     "are not supported for Floating " +
-                     "point Predictor");
-            }
-            for (int i = 0; i < len; i++) {
-                if (bitsPerSample[i] != bps) {
-                    throw new IIOException
-                        ("Varying sample width is not " +
-                         "supported for Floating " +
-                         "point Predictor (first: " +
-                         bps + ", unexpected:" + bitsPerSample[i] + ")");
-                }
-            }
-            for (int sf : sampleFormat) {
-                if (sf != BaselineTIFFTagSet.SAMPLE_FORMAT_FLOATING_POINT) {
-                    throw new IIOException
-                        ("Floating point Predictor not supported" +
-                         "with " + sf + " data format");
-                }
-            }
-        }
+        PredictorDecompressor predictorDecompressor = new PredictorDecompressor(
+                predictor, bitsPerSample, sampleFormat, samplesPerPixel, stream.getByteOrder());
+        predictorDecompressor.validate();
 
         // Seek to current tile data offset.
         stream.seek(offset);
@@ -189,118 +147,7 @@ public class TIFFDeflateDecompressor extends TIFFDecompressor {
 
         // Reset the Inflater.
         inflater.reset();
-
-        if (predictor == BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING) {
-            if (bitsPerSample[0] == 8) {
-                for (int j = 0; j < srcHeight; j++) {
-                    int count = bufOffset + samplesPerPixel * (j * srcWidth + 1);
-                    for (int i = samplesPerPixel; i < srcWidth * samplesPerPixel; i++) {
-                        buf[count] += buf[count - samplesPerPixel];
-                        count++;
-                    }
-                }
-            }
-            else if(bitsPerSample[0]==16) {
-                if (stream.getByteOrder() == ByteOrder.LITTLE_ENDIAN) {
-                    for (int j = 0; j < srcHeight; j++) {
-                        int count = dstOffset + samplesPerPixel * (j * srcWidth + 1) * 2;
-                        for (int i = samplesPerPixel; i < srcWidth * samplesPerPixel; i++) {
-                            int curr=(((int)buf[count]) & 0xFF) | (buf[count+1]<<8);
-                            int prev=(((int)buf[count-samplesPerPixel*2]) & 0xFF) | (buf[count+1-samplesPerPixel*2]<<8);
-                            curr+=prev;
-                            buf[count]=(byte)curr;
-                            buf[count+1]=(byte)(curr>>8);
-                            count+=2;
-                        }
-                    }
-                }
-                else
-                {
-                    for (int j = 0; j < srcHeight; j++) {
-                        int count = dstOffset + samplesPerPixel * (j * srcWidth + 1) * 2;
-                        for (int i = samplesPerPixel; i < srcWidth * samplesPerPixel; i++) {
-                            int curr=(((int)buf[count+1]) & 0xFF) | (buf[count]<<8);
-                            int prev=(((int)buf[count+1-samplesPerPixel*2]) & 0xFF) | (buf[count-samplesPerPixel*2]<<8);
-                            curr+=prev;
-                            buf[count+1]=(byte)curr;
-                            buf[count]=(byte)(curr>>8);
-                            count+=2;
-                        }
-                    }
-                }
-            }
-            else if(bitsPerSample[0]==32) {
-                if (stream.getByteOrder() == ByteOrder.LITTLE_ENDIAN) {
-                    for (int j = 0; j < srcHeight; j++) {
-                        int count = dstOffset + samplesPerPixel * (j * srcWidth + 1) * 4;
-                        int pbase = count - samplesPerPixel * 4;
-                        int prev = readIntegerFromBuffer(buf, pbase, pbase + 1, pbase + 2, pbase + 3);
-                        for (int i = samplesPerPixel; i < srcWidth * samplesPerPixel; i++) {
-                            int curr = readIntegerFromBuffer(buf, count, count +1, count +2, count + 3);
-                            int sum = curr + prev;
-                            buf[count] = (byte) (sum & 0xFF);
-                            buf[count + 1] = (byte) ((sum >> 8) & 0xFF);
-                            buf[count + 2] = (byte) ((sum >> 16) & 0xFF);
-                            buf[count + 3] = (byte) ((sum >> 24) & 0xFF) ;
-                            count += 4;
-                            prev = sum;
-                        }
-                    }
-                }
-                else
-                {
-                    for (int j = 0; j < srcHeight; j++) {
-                        int count = dstOffset + samplesPerPixel * (j * srcWidth + 1) * 4;
-                        int pbase = count - samplesPerPixel * 4;
-                        int prev = readIntegerFromBuffer(buf, pbase + 3, pbase + 2, pbase + 1, pbase);
-                        for (int i = samplesPerPixel; i < srcWidth * samplesPerPixel; i++) {
-                            int curr = readIntegerFromBuffer(buf, count + 3, count + 2, count + 1, count);
-                            int sum = curr + prev;
-                            buf[count + 3] = (byte) (sum & 0xFF);
-                            buf[count + 2] = (byte) (sum >> 8 & 0xFF);
-                            buf[count + 1] = (byte) (sum >> 16 & 0xFF);
-                            buf[count] = (byte) (sum >> 24 & 0xFF);
-                            count += 4;
-                            prev = sum;
-                        }
-                    }
-                }
-            }
-            else throw new IIOException("Unexpected branch of Horizontal differencing Predictor, bps="+bitsPerSample[0]);
-        } else if (predictor == BaselineTIFFTagSet.PREDICTOR_FLOATING_POINT) {
-            int bytesPerSample = bitsPerSample[0] / 8;
-            if (bytesPerRow % (bytesPerSample * samplesPerPixel) != 0) {
-                throw new IIOException
-                    ("The number of bytes in a row (" + bytesPerRow + ") is not divisible" +
-                     "by the number of bytes per pixel (" + bytesPerSample * samplesPerPixel + ")");
-            }
-
-            for (int j = 0; j < srcHeight; j++) {
-                int offset = bufOffset + j * bytesPerRow;
-                int count = offset + samplesPerPixel;
-                for (int i = samplesPerPixel; i < bytesPerRow; i++) {
-                    buf[count] += buf[count - samplesPerPixel];
-                    count++;
-                }
-
-                // Reorder the semi-BigEndian bytes.
-                byte[] tmp = Arrays.copyOfRange(buf, offset, offset + bytesPerRow);
-                int samplesPerRow = srcWidth * samplesPerPixel;
-                if (stream.getByteOrder() == ByteOrder.BIG_ENDIAN) {
-                    for (int i = 0; i < samplesPerRow; i++) {
-                        for (int k = 0; k < bytesPerSample; k++) {
-                            buf[offset + i * bytesPerSample + k] = tmp[k * samplesPerRow + i];
-                        }
-                    }
-                } else {
-                    for (int i = 0; i < samplesPerRow; i++) {
-                        for (int k = 0; k < bytesPerSample; k++) {
-                            buf[offset + i * bytesPerSample + k] = tmp[(bytesPerSample - k - 1) * samplesPerRow + i];
-                        }
-                    }
-                }
-            }
-        }
+        predictorDecompressor.decompress(buf, bufOffset, dstOffset, srcHeight, srcWidth, bytesPerRow);
 
         if(bytesPerRow != scanlineStride) {
             if(DEBUG) {
@@ -313,12 +160,5 @@ public class TIFFDeflateDecompressor extends TIFFDecompressor {
                 dstOffset += scanlineStride;
             }
         }
-    }
-
-    private final int readIntegerFromBuffer(byte[] buf, int offset1, int offset2, int offset3, int offset4) {
-        return (buf[offset1] & 0xFF)
-                | ((buf[offset2] & 0xFF) << 8)
-                | ((buf[offset3] & 0xFF) << 16)
-                | ((buf[offset4] & 0xFF) << 24);
     }
 }
