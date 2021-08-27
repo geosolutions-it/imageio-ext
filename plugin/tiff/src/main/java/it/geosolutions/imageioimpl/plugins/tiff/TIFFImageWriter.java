@@ -76,6 +76,7 @@ package it.geosolutions.imageioimpl.plugins.tiff;
 import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
 import it.geosolutions.imageio.plugins.tiff.EXIFParentTIFFTagSet;
 import it.geosolutions.imageio.plugins.tiff.EXIFTIFFTagSet;
+import it.geosolutions.imageio.plugins.tiff.PrivateTIFFTagSet;
 import it.geosolutions.imageio.plugins.tiff.TIFFColorConverter;
 import it.geosolutions.imageio.plugins.tiff.TIFFCompressor;
 import it.geosolutions.imageio.plugins.tiff.TIFFField;
@@ -89,7 +90,6 @@ import java.awt.color.ColorSpace;
 import java.awt.color.ICC_ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
 import java.awt.image.ComponentSampleModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
@@ -172,7 +172,8 @@ public class TIFFImageWriter extends ImageWriter {
         "ZLib",
         "PackBits",
         "Deflate",
-        EXIF_JPEG_COMPRESSION_TYPE
+        EXIF_JPEG_COMPRESSION_TYPE,
+        "ZSTD"
     };
 
     //
@@ -194,7 +195,8 @@ public class TIFFImageWriter extends ImageWriter {
         "ZLib",
         "PackBits",
         "Deflate",
-        EXIF_JPEG_COMPRESSION_TYPE
+        EXIF_JPEG_COMPRESSION_TYPE,
+            "ZSTD"
     };
 
     /**
@@ -210,7 +212,8 @@ public class TIFFImageWriter extends ImageWriter {
         true,  // ZLib
         true,  // PackBits
         true,  // DEFLATE
-        false  // EXIF JPEG
+        false, // EXIF JPEG
+        true   // ZSTD
     };
 
     /**
@@ -227,6 +230,7 @@ public class TIFFImageWriter extends ImageWriter {
         BaselineTIFFTagSet.COMPRESSION_PACKBITS,
         BaselineTIFFTagSet.COMPRESSION_DEFLATE,
         BaselineTIFFTagSet.COMPRESSION_OLD_JPEG, // EXIF JPEG
+        PrivateTIFFTagSet.COMPRESSION_ZSTD
     };
 
     ImageOutputStream stream;
@@ -1019,6 +1023,9 @@ public class TIFFImageWriter extends ImageWriter {
             } else if (compression ==
                        BaselineTIFFTagSet.COMPRESSION_DEFLATE) {
                 compressor = new TIFFDeflateCompressor(param, predictor);
+            } else if (compression ==
+                    PrivateTIFFTagSet.COMPRESSION_ZSTD) {
+                compressor = new TIFFZSTDCompressor(param, predictor);
             } else {
                 // Determine inverse fill setting.
                 f = rootIFD.getTIFFField(BaselineTIFFTagSet.TAG_FILL_ORDER);

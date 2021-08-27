@@ -262,4 +262,26 @@ public class TIFFWriteTest extends Assert {
         
         reader.dispose();
     }
+
+
+
+    @Test
+    public void writeZSTD() throws IOException {
+
+        final File inputFile =TestData.file(this, "test.tif");
+        final File outputFile = TestData.temp(this, "testw.tif",true);
+        TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi()
+                .createReaderInstance();
+        reader.setInput(new FileImageInputStream(inputFile));
+
+        BufferedImage image = reader.read(0);
+        final TIFFImageWriter writer= (TIFFImageWriter) new TIFFImageWriterSpi().createWriterInstance();
+        final ImageWriteParam writeParam= new TIFFImageWriteParam(Locale.getDefault());
+        writeParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+        writeParam.setCompressionType("ZSTD");
+        writer.setOutput(new FileImageOutputStream(outputFile));
+        writer.write(image);
+        writer.dispose();
+        TIFFReadTest.assertImagesEqual(image, TIFFReadTest.readTiff(outputFile));
+    }
 }
