@@ -31,7 +31,7 @@ import java.io.IOException;
  * @author joshfix
  * Created on 2019-08-22
  */
-public class CogReadOnlineTest {
+public class CogHTTPReadOnlineTest {
 
     private static final String cogUrl = "https://gs-cog.s3.eu-central-1.amazonaws.com/land_topo_cog_jpeg_8192.tif";
 

@@ -16,6 +16,9 @@
  */
 package it.geosolutions.imageioimpl.plugins.cog;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
 
@@ -26,6 +29,13 @@ import java.util.Map;
  * Created on 10/22/19
  */
 public interface RangeReader {
+
+    /**
+     * Returns a URL representing the source of the reader, 
+     * eventually transforming it in a form that can still be read,
+     * but uses a protocol compatible with the URL class.
+     */
+    URL getURL() throws MalformedURLException;
 
     /**
      * Sets the length of the header to be read.
