@@ -24,6 +24,7 @@ import com.google.cloud.storage.StorageOptions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import it.geosolutions.imageio.core.ExtCaches;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -101,6 +102,14 @@ class BlobCache {
             });
 
     static final Storage DEFAULT_STORAGE = StorageOptions.getDefaultInstance().getService();
+
+    static {
+        ExtCaches.addListener(() -> {
+            STORAGE_CACHE.invalidateAll();
+            BLOB_CACHE.invalidateAll();
+
+        });
+    }
 
     static Blob getBlob(String auth, BlobId blobId) {
         try {

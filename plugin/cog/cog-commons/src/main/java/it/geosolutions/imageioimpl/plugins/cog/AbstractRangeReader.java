@@ -17,6 +17,7 @@
 package it.geosolutions.imageioimpl.plugins.cog;
 
 import it.geosolutions.imageio.core.BasicAuthURI;
+import it.geosolutions.imageio.core.ExtCaches;
 import it.geosolutions.imageio.utilities.SoftValueHashMap;
 
 import java.net.MalformedURLException;
@@ -39,6 +40,10 @@ public abstract class AbstractRangeReader implements RangeReader {
      * tileBytes/tileCount TAG which slow down the repeated accesses.
      */
     protected final static Map<String, byte[]> HEADERS_CACHE = new SoftValueHashMap<>();
+    
+    static {
+        ExtCaches.addListener(() -> HEADERS_CACHE.clear());
+    }
 
     protected BasicAuthURI authUri;
     protected URI uri;
