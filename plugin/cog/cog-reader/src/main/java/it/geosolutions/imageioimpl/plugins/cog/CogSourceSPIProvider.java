@@ -43,6 +43,8 @@ public class CogSourceSPIProvider extends SourceSPIProvider {
 
     /** The full classname of the RangeReader implementation */
     private String rangeReaderClassname;
+    
+    private volatile URL cogURL; 
 
     public CogSourceSPIProvider(
             BasicAuthURI cogUri,
@@ -64,7 +66,18 @@ public class CogSourceSPIProvider extends SourceSPIProvider {
 
     @Override
     public URL getSourceUrl() throws MalformedURLException {
-        return cogUri.getUri().toURL();
+        if (cogURL == null) {
+            synchronized (this) {
+                if (cogURL == null) {
+                    RangeReader reader = createRangeReaderInstance(rangeReaderClassname, cogUri,
+                            CogImageReadParam.DEFAULT_HEADER_LENGTH);
+                    if (reader == null) return super.getSourceUrl();
+                    cogURL = reader.getURL();            
+                }
+            }
+        }
+        return cogURL;
+        
     }
 
     /**
@@ -79,6 +92,7 @@ public class CogSourceSPIProvider extends SourceSPIProvider {
                         ((CogImageInputStreamSpi) getStreamSpi())
                                 .createInputStreamInstance(uri, uri.isUseCache(), null);
         RangeReader rangeReader = createRangeReaderInstance(rangeReaderClassname, uri, CogImageReadParam.DEFAULT_HEADER_LENGTH);
+        if (rangeReader == null) return null;
         inStream.init(rangeReader);
         return inStream;
     }

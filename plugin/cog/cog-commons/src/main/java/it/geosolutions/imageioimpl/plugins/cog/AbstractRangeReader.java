@@ -17,11 +17,13 @@
 package it.geosolutions.imageioimpl.plugins.cog;
 
 import it.geosolutions.imageio.core.BasicAuthURI;
+import it.geosolutions.imageio.core.ExtCaches;
 import it.geosolutions.imageio.utilities.SoftValueHashMap;
 
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -38,6 +40,10 @@ public abstract class AbstractRangeReader implements RangeReader {
      * tileBytes/tileCount TAG which slow down the repeated accesses.
      */
     protected final static Map<String, byte[]> HEADERS_CACHE = new SoftValueHashMap<>();
+    
+    static {
+        ExtCaches.addListener(() -> HEADERS_CACHE.clear());
+    }
 
     protected BasicAuthURI authUri;
     protected URI uri;
@@ -54,8 +60,19 @@ public abstract class AbstractRangeReader implements RangeReader {
         this.headerLength = headerLength;
     }
 
+
     /**
-     * Prevents making new range requests for image data that overlap with the header range that has already been read
+     * By default, the implementation just
+     * calls {@link URI#toURL()}, subclass should override to handle their specific protocol.
+     */
+    @Override
+    public URL getURL() throws MalformedURLException {
+        return uri.toURL();
+    }
+
+    /**
+     * Prevents making new range requests for image data that overlap with the header range that
+     * has already been read
      *
      * @param ranges
      * @return
@@ -69,8 +86,10 @@ public abstract class AbstractRangeReader implements RangeReader {
                 // this range starts inside of what we already read for the header
                 modified = true;
                 if (ranges[i][1] <= dataLength - 1) {
-                    // this range is fully inside the header which was already read; discard this range
-                    LOGGER.fine("Removed range " + ranges[i][0] + "-" + ranges[i][1] + " as it lies fully within"
+                    // this range is fully inside the header which was already read; discard this
+                    // range
+                    LOGGER.fine("Removed range " + ranges[i][0] + "-" + ranges[i][1] + " as it " +
+                            "lies fully within"
                             + " the data already read in the header request");
                 } else {
                     // this range starts inside the header range, but ends outside of it.
@@ -88,7 +107,8 @@ public abstract class AbstractRangeReader implements RangeReader {
 
                     newRanges.add(newRange);
                     LOGGER.fine("Modified range " + ranges[i][0] + "-" + ranges[i][1]
-                            + " to " + dataLength + "-" + ranges[i][1] + " as it overlaps with data previously"
+                            + " to " + dataLength + "-" + ranges[i][1] + " as it overlaps with " +
+                            "data previously"
                             + " read in the header request");
                 }
             } else {
