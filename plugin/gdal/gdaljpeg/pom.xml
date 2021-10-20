@@ -4,11 +4,11 @@
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-gdaljpeg</artifactId>
   <packaging>jar</packaging>
-  <version>1.3.11</version>
+  <version>1.3-SNAPSHOT</version>
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-gdal-plugin</artifactId>
-    <version>1.3.11</version>
+    <version>1.3-SNAPSHOT</version>
   </parent>
   <name>JPEG Plugin that internally uses GDAL</name>
 </project>
