@@ -347,15 +347,8 @@
   <!-- ======================================================== -->
   <!--                         Repositories                     -->
   <!-- ======================================================== -->
-  <repositories>
-     <repository>
-      <id>central.maven.org</id>
-      <name>Central Maven repository</name>
-      <url>http://central.maven.org/maven2</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
+  <repositories> 
+     <!-- Maven Central is assumed -->
     <repository>
       <id>geosolutions</id>
       <name>GeoSolutions libraries repository</name>
