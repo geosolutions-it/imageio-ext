@@ -610,8 +610,58 @@ public final class GDALUtilities {
         return available;
     }
 
+/**
+     * This will ensure that java has loaded the GDAL library (<code>gdalalljni</code> or <code>gdaljni</code>).
+     * 
+     * <ul>
+     * <li>GDAL 3+ -- GDAL.jar will automatically load the library (nothing for us to do)</li>
+     * <li>GDAL 2.3+ -- load "gdalalljni" lib</li>
+     * <li>GDAL <2.3 -- load "gdaljni" lib</li>
+     * </ul>
+     * <p>
+     * Use <code>java -XshowSettings:properties<code> to check <code>java.library.path</code>.
+     * On linux, you will probably need to set <code>LD_LIBRARY_PATH</code>.
+     */
+    private static void ensureGDALLibraryLoaded() {
+        // Called from synchronized block in loadGDAL
+        try {
+            gdal.AllRegister(); //will throw if library not already present
+            if (gdal.GetDriverCount() > 0){
+                //at least one driver was recognized
+                LOGGER.log(Level.FINE,"ensureGDALLibraryLoaded: library is already loaded.");
+                return;
+            }
+        } catch (Throwable ignore) {
+            // Just checking if load library has already been called
+            // nothing to do - will fix next by trying to load library
+        }
+        try {
+            // GDAL version >= 2.3.0
+            System.loadLibrary("gdalalljni");
+            LOGGER.log(Level.FINE,"ensureGDALLibraryLoaded: library 'gdalalljni' loaded.");
+            return;
+        } catch (UnsatisfiedLinkError e1) {
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.log(Level.FINE, "Failed to load the GDAL native libs from \"gdalalljni\". " +
+                        "Falling back to \"gdaljni\".\n" +
+                        e1.toString());
+            }
+            try {
+                System.loadLibrary("gdaljni");
+                LOGGER.log(Level.FINE, "ensureGDALLibraryLoaded: library 'gdaljni' loaded.");
+                return;
+            } catch (UnsatisfiedLinkError e2) {
+                LOGGER.log(Level.FINE,"ensureGDALLibraryLoaded: could not load 'gdalalljni' or 'gdaljni' .");
+                // loadGDAL() will throw later when gdal is accessed
+            }
+        }
+    }
+    
     /**
      * Forces loading of GDAL libs.
+     * <p>
+     * Successful load recorded in GDALUtilities.available
+     * </p>
      */
     public static void loadGDAL() {
         if (init == false) {
@@ -620,17 +670,7 @@ public final class GDALUtilities {
                     return;
                 }
                 try {
-                    try {
-                        // GDAL version >= 2.3.0
-                        System.loadLibrary("gdalalljni");
-                    } catch (UnsatisfiedLinkError e1) {
-                        if (LOGGER.isLoggable(Level.FINE)) {
-                            LOGGER.log(Level.FINE,"Failed to load the GDAL native libs from \"gdalalljni\". " +
-                                    "Falling back to \"gdaljni\".\n" +
-                                    e1.toString());
-                        }
-                        System.loadLibrary("gdaljni");
-                    }
+                    ensureGDALLibraryLoaded();
                     gdal.AllRegister();
                     final String versionInfo = gdal.VersionInfo("RELEASE_NAME");
                     if (versionInfo != null && versionInfo.trim().length() > 0) {
