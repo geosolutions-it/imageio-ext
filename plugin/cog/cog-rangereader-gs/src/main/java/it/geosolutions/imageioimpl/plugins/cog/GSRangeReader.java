@@ -140,8 +140,8 @@ public class GSRangeReader extends AbstractRangeReader {
             buffer.get(bytes, 0, bytesRead);
             return bytes;
         } catch (Exception e) {
-            LOGGER.severe("Error reading range, offset " + readOffset + ", length " + readLength);
-            throw new RuntimeException(e);
+            // don't log here, let upstreams handle it instead
+            throw new RuntimeException("Error reading range, offset " + readOffset + ", length " + readLength, e);
         }
     }
 
