@@ -610,7 +610,7 @@ public final class GDALUtilities {
         return available;
     }
 
-/**
+    /**
      * This will ensure that java has loaded the GDAL library (<code>gdalalljni</code> or <code>gdaljni</code>).
      * 
      * <ul>
