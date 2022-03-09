@@ -628,33 +628,33 @@ public final class GDALUtilities {
             gdal.AllRegister(); //will throw if library not already present
             if (gdal.GetDriverCount() > 0){
                 //at least one driver was recognized
-                LOGGER.log(Level.FINE,"ensureGDALLibraryLoaded: library is already loaded.");
+                LOGGER.log(Level.FINE,"ensureGDALLibraryLoaded: confirmed library is loaded and available.");
                 return;
             }
         } catch (Throwable ignore) {
             // Just checking if load library has already been called
             // nothing to do - will fix next by trying to load library
         }
+        // GDAL version >= 2.3.0
         try {
-            // GDAL version >= 2.3.0
             System.loadLibrary("gdalalljni");
             LOGGER.log(Level.FINE,"ensureGDALLibraryLoaded: library 'gdalalljni' loaded.");
             return;
         } catch (UnsatisfiedLinkError e1) {
             if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.log(Level.FINE, "Failed to load the GDAL native libs from \"gdalalljni\". " +
-                        "Falling back to \"gdaljni\".\n" +
-                        e1.toString());
-            }
-            try {
-                System.loadLibrary("gdaljni");
-                LOGGER.log(Level.FINE, "ensureGDALLibraryLoaded: library 'gdaljni' loaded.");
-                return;
-            } catch (UnsatisfiedLinkError e2) {
-                LOGGER.log(Level.FINE,"ensureGDALLibraryLoaded: could not load 'gdalalljni' or 'gdaljni' .");
-                // loadGDAL() will throw later when gdal is accessed
+                LOGGER.log(Level.FINE, "Failed to load the GDAL native libs from 'gdalalljni': " + e1.toString());
             }
         }
+        try {
+            System.loadLibrary("gdaljni");
+            LOGGER.log(Level.FINE, "ensureGDALLibraryLoaded: library 'gdaljni' loaded.");
+            return;
+        } catch (UnsatisfiedLinkError e2) {
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.log(Level.FINE,"ensureGDALLibraryLoaded: could not load 'gdalalljni' or 'gdaljni':" + e2.toString());
+            }
+        }
+        // loadGDAL() will throw later when gdal is accessed
     }
     
     /**
