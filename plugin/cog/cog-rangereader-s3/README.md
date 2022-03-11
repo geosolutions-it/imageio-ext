@@ -1,4 +1,4 @@
-# Azure RangeReader
+# AWS S3 RangeReader
 
 The AWS S3 RangeReader implementation allows users to read COGs from Amazon's S3 storage service.  It supports both 
 `http` and `s3` style URLs with the following syntax:
