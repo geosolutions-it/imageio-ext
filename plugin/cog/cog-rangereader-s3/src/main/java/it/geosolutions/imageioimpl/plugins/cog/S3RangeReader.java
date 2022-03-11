@@ -23,6 +23,7 @@ import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.time.Duration;
@@ -208,6 +209,20 @@ public class S3RangeReader extends AbstractRangeReader {
             }
             stillWaiting = !allDone;
         }
+    }
+
+    @Override
+    public URL getURL() throws MalformedURLException {
+        String scheme = uri.getScheme().toLowerCase();
+        if (scheme.startsWith("s3")) {
+            return new URL("https://"
+            + configProps.getBucket()
+                    + S3ConfigurationProperties.S3_DOT_VH
+                    + configProps.getRegion()
+                    + S3ConfigurationProperties.AMAZON_AWS
+                    + "/" + configProps.getFilename());
+        }
+        return super.getURL();
     }
 
 }
