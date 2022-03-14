@@ -40,11 +40,11 @@ public class S3ConfigurationProperties {
     private final static String S3_DASH = "s3-";
 
     /** Virtual-Hosted-Styles URL pieces */
-    private final static String S3_DOT_VH = "." + S3_DOT;
+    final static String S3_DOT_VH = "." + S3_DOT;
 
     private final static String S3_DASH_VH = "." + S3_DASH;
 
-    private final static String AMAZON_AWS = ".amazonaws.com";
+    final static String AMAZON_AWS = ".amazonaws.com";
 
     /**
      * Some more info on different types of supported URLs and old regions syntax:
