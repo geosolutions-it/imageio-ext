@@ -43,9 +43,11 @@
       <id>base</id>
         <activation>
          <property><name>all</name></property>
+         <activeByDefault>true</activeByDefault>
         </activation>      
        <modules>
         <module>arcgrid</module>
+        <module>libdeflate</module>
         <module>tiff</module>
         <module>gdal</module>
         <module>cog</module>
@@ -81,9 +83,10 @@
         <module>gdal</module>
         <module>turbojpeg</module>
         <module>nitronitf</module>
-	    <module>unidata-netcdf</module>
-	    <module>png</module>
+        <module>unidata-netcdf</module>
+	<module>png</module>
         <module>cog</module>
+        <module>libdeflate</module>
 	</modules>
     </profile>
   </profiles>
