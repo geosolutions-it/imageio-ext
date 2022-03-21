@@ -34,6 +34,16 @@
     	<version>${project.version}</version>
     	<scope>test</scope>
     </dependency>
-        
+    <dependency>
+      <groupId>io.airlift</groupId>
+      <artifactId>aircompressor</artifactId>
+      <version>0.20</version>
+    </dependency>
+      <dependency>
+          <groupId>it.geosolutions.imageio-ext</groupId>
+          <artifactId>imageio-ext-libdeflate</artifactId>
+          <version>${project.version}</version>
+          <scope>test</scope>
+      </dependency>
   </dependencies>
 </project>

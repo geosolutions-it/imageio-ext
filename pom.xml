@@ -19,6 +19,7 @@
     <kakadu.version>5.2.6</kakadu.version>
     <java.awt.headless>true</java.awt.headless>
     <gdal.version>2.2.0</gdal.version>  
+    <libdeflate.java.version>0.1.0-SNAPSHOT</libdeflate.java.version>
   </properties>
 
   <!-- ======================================================== -->
@@ -456,7 +457,11 @@
       <artifactId>imageio-ext-utilities</artifactId>
       <version>${project.version}</version>
      </dependency>
-
+     <dependency>
+      <groupId>me.steinborn</groupId>
+      <artifactId>libdeflate-java-core</artifactId>
+      <version>${libdeflate.java.version}</version>
+     </dependency>
     </dependencies>
   </dependencyManagement>
   
