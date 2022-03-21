@@ -19,6 +19,7 @@
     <java.awt.headless>true</java.awt.headless>
     <gdal.version>3.2.0</gdal.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <libdeflate.java.version>0.1.0-SNAPSHOT</libdeflate.java.version>
   </properties>
 
   <!-- ======================================================== -->
@@ -431,7 +432,11 @@
       <artifactId>imageio-ext-utilities</artifactId>
       <version>${project.version}</version>
      </dependency>
-
+     <dependency>
+      <groupId>me.steinborn</groupId>
+      <artifactId>libdeflate-java-core</artifactId>
+      <version>${libdeflate.java.version}</version>
+     </dependency>
     </dependencies>
   </dependencyManagement>
   
