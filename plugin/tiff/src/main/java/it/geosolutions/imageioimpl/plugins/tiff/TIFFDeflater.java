@@ -74,6 +74,9 @@
 package it.geosolutions.imageioimpl.plugins.tiff;
 
 
+import it.geosolutions.imageio.compression.CompressionType;
+import it.geosolutions.imageio.compression.Compressor;
+import it.geosolutions.imageio.compression.CompressionFinder;
 import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
 import it.geosolutions.imageio.plugins.tiff.TIFFCompressor;
 
@@ -85,8 +88,8 @@ import javax.imageio.ImageWriteParam;
  * Compressor superclass for Deflate and ZLib compression.
  */
 public class TIFFDeflater extends TIFFCompressor {
+    Compressor deflateCompressor;
 
-    Deflater deflater;
     int predictor;
 
     public TIFFDeflater(String compressionType,
@@ -99,15 +102,15 @@ public class TIFFDeflater extends TIFFCompressor {
 
         // Set the deflate level.
         int deflateLevel;
-        if(param != null &&
+        if (param != null &&
            param.getCompressionMode() == ImageWriteParam.MODE_EXPLICIT) {
             float quality = param.getCompressionQuality();
             deflateLevel = (int)(1 + 8*quality);
         } else {
             deflateLevel = Deflater.DEFAULT_COMPRESSION;
         }
+        deflateCompressor = CompressionFinder.getCompressor(deflateLevel, CompressionType.DEFLATE);
 
-        this.deflater = new Deflater(deflateLevel);
     }
 
     public int encode(byte[] b, int off,
@@ -141,30 +144,26 @@ public class TIFFDeflater extends TIFFCompressor {
                     rowBuf[j] -= rowBuf[j - samplesPerPixel];
                 }
 
-                deflater.setInput(rowBuf);
-                if(i == maxRow) {
-                    deflater.finish();
-                }
-
                 int numBytes = 0;
-                while((numBytes = deflater.deflate(compData,
-                                                   numCompressedBytes,
-                                                   compData.length -
-                                                   numCompressedBytes)) != 0) {
+
+                deflateCompressor.setInput(rowBuf);
+                if (i == maxRow) {
+                    deflateCompressor.finish();
+                }
+                while((numBytes = deflateCompressor.compress(
+                        compData, 0, rowBuf.length,
+                        numCompressedBytes, compData.length - numCompressedBytes)) != 0) {
                     numCompressedBytes += numBytes;
                 }
-
                 off += scanlineStride;
             }
         } else {
-            deflater.setInput(b, off, height*scanlineStride);
-            deflater.finish();
-
-            numCompressedBytes = deflater.deflate(compData);
+            deflateCompressor.setInput(b);
+            deflateCompressor.finish();
+            numCompressedBytes =
+                    deflateCompressor.compress(compData, off, height*scanlineStride, 0, compData.length);
         }
-
-        deflater.reset();
-
+        deflateCompressor.done();
         stream.write(compData, 0, numCompressedBytes);
 
         return numCompressedBytes;
