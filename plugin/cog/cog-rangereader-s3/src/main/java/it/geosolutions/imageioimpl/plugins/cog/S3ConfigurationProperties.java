@@ -234,9 +234,13 @@ public class S3ConfigurationProperties {
     }
 
     public static Map<String, List<String>> splitQuery(URI uri)  {
+        String query = uri.getQuery();
+        if (query == null || query.isEmpty()) {
+            return Collections.emptyMap();
+        }
         try {
             final Map<String, List<String>> query_pairs = new LinkedHashMap<>();
-            final String[] pairs = uri.getQuery().split("&");
+            final String[] pairs = query.split("&");
             for (String pair : pairs) {
                 final int idx = pair.indexOf("=");
                 final String key = idx > 0 ? URLDecoder.decode(pair.substring(0, idx), "UTF-8") : pair;
