@@ -16,13 +16,19 @@
  */
 package it.geosolutions.imageio.cog;
 
+import it.geosolutions.imageio.core.BasicAuthURI;
 import it.geosolutions.imageio.plugins.cog.CogImageReadParam;
 import it.geosolutions.imageioimpl.plugins.cog.RangeReader;
+import it.geosolutions.imageioimpl.plugins.cog.S3ConfigurationProperties;
 import it.geosolutions.imageioimpl.plugins.cog.S3RangeReader;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Testing HTTP range reading capabilities.
@@ -41,6 +47,25 @@ public class S3RangeReaderOnlineTest {
     }
 
     @Test
+    public void s3RangeGetURL() throws MalformedURLException {
+        String bucket = "landsat-pds";
+        String file = "c1/L8/153/075/LC08_L1TP_153075_20190515_20190515_01_RT/LC08_L1TP_153075_20190515_20190515_01_RT_B2.TIF";
+        String cogUrl = "s3://" + bucket + "/" + file;
+        String region = "us-west-2";
+
+        System.setProperty("iio.s3.aws.region", region);
+        S3RangeReader reader = new S3RangeReader(cogUrl, CogImageReadParam.DEFAULT_HEADER_LENGTH);
+
+        //s3:// isn't recognized as a known protocol so a real URL can't be built on top of it.
+        //Let's check that we can get a valid URL anyway (translating it to http protocol).
+        URL url = reader.getURL();
+        BasicAuthURI uri = new BasicAuthURI(url);
+        S3ConfigurationProperties configurationProperties = new S3ConfigurationProperties(uri.getUri().getScheme(), uri);
+        assertEquals(region, configurationProperties.getRegion());
+        assertEquals(bucket, configurationProperties.getBucket());
+    }
+
+    @Test
     public void readHttpRanges() {
         String cogUrl = "https://s3-us-west-2.amazonaws.com/landsat-pds/c1/L8/153/075/LC08_L1TP_153075_20190515_20190515_01_RT/LC08_L1TP_153075_20190515_20190515_01_RT_B2.TIF";
         readRanges(new S3RangeReader(cogUrl, CogImageReadParam.DEFAULT_HEADER_LENGTH));
@@ -49,7 +74,7 @@ public class S3RangeReaderOnlineTest {
     public void readRanges(RangeReader rangeReader) {
         int headerByteLength = 16384;
         byte[] header = rangeReader.readHeader();
-        Assert.assertEquals(headerByteLength, header.length);
+        assertEquals(headerByteLength, header.length);
 
         long[] range1 = new long[]{20000, 21000};
         long[] range2 = new long[]{30000, 31000};
