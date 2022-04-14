@@ -19,7 +19,7 @@
     <java.awt.headless>true</java.awt.headless>
     <gdal.version>2.2.0</gdal.version>  
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <libdeflate.java.version>0.1.0-SNAPSHOT</libdeflate.java.version>
+    <libdeflate.java.version>0.1.0-beta</libdeflate.java.version>
   </properties>
 
   <!-- ======================================================== -->

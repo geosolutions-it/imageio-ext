@@ -64,6 +64,7 @@ public abstract class AbstractCompressionSpi implements CompressionPrioritySpi, 
     }
 
     public void setPriority(int priority) {
+        initialized = this.priority == priority;
         this.priority = priority;
     }
 
