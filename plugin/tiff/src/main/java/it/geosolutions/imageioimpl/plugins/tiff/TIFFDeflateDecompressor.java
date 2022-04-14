@@ -78,6 +78,8 @@ import it.geosolutions.imageio.compression.CompressionFinder;
 import it.geosolutions.imageio.compression.Decompressor;
 
 import java.io.IOException;
+import java.nio.ByteOrder;
+import java.util.Arrays;
 import java.util.zip.DataFormatException;
 
 import javax.imageio.IIOException;
@@ -184,9 +186,6 @@ public class TIFFDeflateDecompressor extends TIFFDecompressor {
         } finally {
             deflateDecompressor.done();
         }
-
-        // Reset the Inflater.
-        inflater.reset();
 
         if (predictor == BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING) {
             if (bitsPerSample[0] == 8) {
@@ -299,7 +298,6 @@ public class TIFFDeflateDecompressor extends TIFFDecompressor {
                 }
             }
         }
-       predictorDecompressor.decompress(buf, bufOffset, dstOffset, srcHeight, srcWidth, bytesPerRow);
 
         if(bytesPerRow != scanlineStride) {
             if(DEBUG) {
