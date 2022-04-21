@@ -51,7 +51,7 @@ public class CompressionFinder {
 
         Iterator<CompressorSpi> iterator;
         try {
-            iterator = compressionRegistry.getServiceProviders(CompressorSpi.class, true);
+            iterator = compressionRegistry.getSPIs(CompressorSpi.class, true);
         } catch (IllegalArgumentException var6) {
             return null;
         }
@@ -78,7 +78,7 @@ public class CompressionFinder {
 
         Iterator<DecompressorSpi> iterator;
         try {
-            iterator = compressionRegistry.getServiceProviders(DecompressorSpi.class, true);
+            iterator = compressionRegistry.getSPIs(DecompressorSpi.class, true);
         } catch (IllegalArgumentException var6) {
             return null;
         }

@@ -31,27 +31,25 @@ package it.geosolutions.imageio.compression;
 
 import sun.awt.AppContext;
 
-import javax.imageio.spi.ServiceRegistry;
-import java.util.Iterator;
-import java.util.ServiceConfigurationError;
-import java.util.ServiceLoader;
-import java.util.Vector;
+import it.geosolutions.imageio.registry.ImageIOEXTRegistry;
+
+import java.util.*;
 
 /**
  * A Registry for CompressorSpi, DecompressorSpi registering SPIs found on the classpath
  */
-public class CompressionRegistry extends ServiceRegistry {
+public class CompressionRegistry extends ImageIOEXTRegistry {
 
-    private static final Vector INITIAL_CATEGORIES = new Vector(2);
+    private static final List<Class<?>> INITIAL_TYPES = new ArrayList(2);
 
     public CompressionRegistry() {
-        super(INITIAL_CATEGORIES.iterator());
-        this.registerApplicationClasspathSpis();
+        super(INITIAL_TYPES.iterator());
+        registerApplicationClasspathSpis();
     }
 
     static {
-        INITIAL_CATEGORIES.add(CompressorSpi.class);
-        INITIAL_CATEGORIES.add(DecompressorSpi.class);
+        INITIAL_TYPES.add(CompressorSpi.class);
+        INITIAL_TYPES.add(DecompressorSpi.class);
     }
 
     public static CompressionRegistry getDefaultInstance() {
@@ -67,7 +65,7 @@ public class CompressionRegistry extends ServiceRegistry {
 
     public void registerApplicationClasspathSpis() {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        Iterator categories = this.getCategories();
+        Iterator categories = this.getSubTypes();
 
         while(categories.hasNext()) {
             Class _class = (Class)categories.next();
@@ -76,7 +74,7 @@ public class CompressionRegistry extends ServiceRegistry {
             while(iterator.hasNext()) {
                 try {
                     CompressionPrioritySpi spi = (CompressionPrioritySpi)iterator.next();
-                    this.registerServiceProvider(spi);
+                    this.registerSPI(spi);
                 } catch (ServiceConfigurationError sce) {
                     if (System.getSecurityManager() == null) {
                         throw sce;

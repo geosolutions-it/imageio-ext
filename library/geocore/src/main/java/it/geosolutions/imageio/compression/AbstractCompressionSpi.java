@@ -29,8 +29,9 @@
  */
 package it.geosolutions.imageio.compression;
 
-import javax.imageio.spi.RegisterableService;
-import javax.imageio.spi.ServiceRegistry;
+import it.geosolutions.imageio.registry.RegisterablePlugin;
+import it.geosolutions.imageio.registry.ImageIOEXTRegistry;
+
 import java.util.Iterator;
 import java.util.Set;
 
@@ -40,7 +41,7 @@ import java.util.Set;
  * Subclasses can set priorities so you can have multiple SPIs for the same compression type
  * and decide which one should be used based on priority.
  */
-public abstract class AbstractCompressionSpi implements CompressionPrioritySpi, RegisterableService {
+public abstract class AbstractCompressionSpi implements CompressionPrioritySpi, RegisterablePlugin {
 
     protected boolean initialized;
 
@@ -76,35 +77,33 @@ public abstract class AbstractCompressionSpi implements CompressionPrioritySpi, 
         return true;
     }
 
-    @Override
-    public void onRegistration(ServiceRegistry serviceRegistry, Class<?> aClass) {
+    public void onRegistration(ImageIOEXTRegistry imageIOEXTRegistry, Class<?> aClass) {
         if (initialized) {
             return;
         }
 
         initialized = true;
         if (!isEnabled()) {
-            serviceRegistry.deregisterServiceProvider(this);
+            imageIOEXTRegistry.deregisterSPI(this);
             return;
         }
 
-        Iterator<?> spis = serviceRegistry.getServiceProviders(aClass, false);
+        Iterator<?> spis = imageIOEXTRegistry.getSPIs(aClass, false);
         while (spis.hasNext()) {
             Object spi = spis.next();
             if (spi != this && spi instanceof AbstractCompressionSpi) {
                 AbstractCompressionSpi cpspi = (AbstractCompressionSpi) spi;
                 int compare = cpspi.getPriority();
                 if (getPriority() > compare) {
-                    serviceRegistry.setOrdering((Class) aClass, this, spi);
+                    imageIOEXTRegistry.setOrder((Class) aClass, this, spi);
                 } else {
-                    serviceRegistry.setOrdering((Class) aClass, spi, this);
+                    imageIOEXTRegistry.setOrder((Class) aClass, spi, this);
                 }
             }
         }
     }
 
-    @Override
-    public void onDeregistration(ServiceRegistry serviceRegistry, Class<?> aClass) {
+    public void onDeregistration(ImageIOEXTRegistry imageIOEXTRegistry, Class<?> aClass) {
         // do nothing
     }
 
