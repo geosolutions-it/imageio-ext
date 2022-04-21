@@ -68,27 +68,32 @@ public class TIFFSPICompressionTest extends Assert {
     @BeforeClass
     public static void arrangePriorities() {
         // We are setting higher priority for libdeflate compressor
-        Iterator<CompressorSpi> cSpis = CompressionRegistry.getDefaultInstance().getServiceProviders(CompressorSpi.class, true);
+        CompressionRegistry registryInstance = CompressionRegistry.getDefaultInstance();
+
+        Iterator<CompressorSpi> cSpis = registryInstance.getSPIs(CompressorSpi.class, true);
         while(cSpis.hasNext()) {
             CompressorSpi spi = cSpis.next();
             if (spi instanceof LibDeflateCompressorSpi) {
-                ((LibDeflateCompressorSpi) spi).setPriority(90);
+                LibDeflateCompressorSpi compSpi = ((LibDeflateCompressorSpi) spi);
+                compSpi.setPriority(90);
+                compSpi.onRegistration(registryInstance, CompressorSpi.class);
+
                 break;
             }
         }
 
-        // We are setting lower priority for libdeflate compressor
-        Iterator<DecompressorSpi> dSpis = CompressionRegistry.getDefaultInstance().getServiceProviders(DecompressorSpi.class, true);
+        // We are setting lower priority for libdeflate decompressor
+        Iterator<DecompressorSpi> dSpis = registryInstance.getSPIs(DecompressorSpi.class, true);
         while(dSpis.hasNext()) {
             DecompressorSpi spi = dSpis.next();
             if (spi instanceof LibDeflateDecompressorSpi) {
                 ((LibDeflateDecompressorSpi) spi).setPriority(20);
+                LibDeflateDecompressorSpi decompSpi = (LibDeflateDecompressorSpi) spi;
+                decompSpi.setPriority(20);
+                decompSpi.onRegistration(registryInstance, DecompressorSpi.class);
                 break;
             }
         }
-
-        // Adjust order after priorities has changed
-        CompressionFinder.scanForPlugins();
     }
 
     @Test
