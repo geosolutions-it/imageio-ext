@@ -29,8 +29,6 @@
  */
 package it.geosolutions.imageio.compression;
 
-import sun.awt.AppContext;
-
 import it.geosolutions.imageio.registry.ImageIOEXTRegistry;
 
 import java.util.*;
@@ -42,6 +40,8 @@ public class CompressionRegistry extends ImageIOEXTRegistry {
 
     private static final List<Class<?>> INITIAL_TYPES = new ArrayList(2);
 
+    private final static CompressionRegistry DEFAULT_INSTANCE;
+
     public CompressionRegistry() {
         super(INITIAL_TYPES.iterator());
         registerApplicationClasspathSpis();
@@ -50,17 +50,11 @@ public class CompressionRegistry extends ImageIOEXTRegistry {
     static {
         INITIAL_TYPES.add(CompressorSpi.class);
         INITIAL_TYPES.add(DecompressorSpi.class);
+        DEFAULT_INSTANCE = new CompressionRegistry();
     }
 
     public static CompressionRegistry getDefaultInstance() {
-        AppContext ctx = AppContext.getAppContext();
-        CompressionRegistry reg = (CompressionRegistry)ctx.get(CompressionRegistry.class);
-        if (reg == null) {
-            reg = new CompressionRegistry();
-            ctx.put(CompressionRegistry.class, reg);
-        }
-
-        return reg;
+        return DEFAULT_INSTANCE;
     }
 
     public void registerApplicationClasspathSpis() {
