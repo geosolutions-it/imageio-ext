@@ -73,11 +73,12 @@
  */
 package it.geosolutions.imageioimpl.plugins.tiff;
 
+import it.geosolutions.imageio.compression.CompressionType;
+import it.geosolutions.imageio.compression.CompressionFinder;
+import it.geosolutions.imageio.compression.Decompressor;
+
 import java.io.IOException;
-import java.nio.ByteOrder;
-import java.util.Arrays;
 import java.util.zip.DataFormatException;
-import java.util.zip.Inflater;
 
 import javax.imageio.IIOException;
 
@@ -87,13 +88,10 @@ import it.geosolutions.imageio.plugins.tiff.TIFFDecompressor;
 public class TIFFDeflateDecompressor extends TIFFDecompressor {
 
     private static final boolean DEBUG = false;
-
-    Inflater inflater = null;
     int predictor;
+    Decompressor deflateDecompressor;
 
     public TIFFDeflateDecompressor(int predictor) throws IIOException {
-        inflater = new Inflater();
-
         if (predictor != BaselineTIFFTagSet.PREDICTOR_NONE &&
             predictor != BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING &&
             predictor != BaselineTIFFTagSet.PREDICTOR_FLOATING_POINT) {
@@ -105,6 +103,7 @@ public class TIFFDeflateDecompressor extends TIFFDecompressor {
         }
 
         this.predictor = predictor;
+        deflateDecompressor = CompressionFinder.getDecompressor(CompressionType.DEFLATE);
     }
 
     public synchronized void decodeRaw(byte[] b,
@@ -134,20 +133,16 @@ public class TIFFDeflateDecompressor extends TIFFDecompressor {
             bufOffset = 0;
         }
 
-        // Set the input to the Inflater.
-        inflater.setInput(srcData);
-
-        // Inflate the data.
+        deflateDecompressor.setInput(srcData);
         try {
-            inflater.inflate(buf, bufOffset, bytesPerRow*srcHeight);
-        } catch(DataFormatException dfe) {
+            deflateDecompressor.decompress(buf, bufOffset, bytesPerRow*srcHeight);
+        } catch (DataFormatException dfe) {
             throw new IIOException(I18N.getString("TIFFDeflateDecompressor0"),
-                                   dfe);
+                    dfe);
+        } finally {
+            deflateDecompressor.done();
         }
-
-        // Reset the Inflater.
-        inflater.reset();
-        predictorDecompressor.decompress(buf, bufOffset, dstOffset, srcHeight, srcWidth, bytesPerRow);
+       predictorDecompressor.decompress(buf, bufOffset, dstOffset, srcHeight, srcWidth, bytesPerRow);
 
         if(bytesPerRow != scanlineStride) {
             if(DEBUG) {
