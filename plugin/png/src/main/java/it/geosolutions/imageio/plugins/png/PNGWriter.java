@@ -1,7 +1,7 @@
 /*
  *    ImageI/O-Ext - OpenSource Java Image translation Library
  *    http://www.geo-solutions.it/
- *    http://java.net/projects/imageio-ext/
+ *    https://github.com/geosolutions-it/imageio-ext
  *    (C) 2007 - 2014, GeoSolutions
  *
  *    This library is free software; you can redistribute it and/or
