@@ -73,6 +73,8 @@
  */
 package it.geosolutions.imageio.plugins.tiff;
 
+import it.geosolutions.imageio.imageioimpl.EnhancedImageReadParam;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -108,7 +110,7 @@ import javax.imageio.ImageReadParam;
  * <code>read</code> method may be called with the
  * <code>ImageReadParam</code> set.
  */
-public class TIFFImageReadParam extends ImageReadParam {
+public class TIFFImageReadParam extends EnhancedImageReadParam {
 
     List allowedTagSets = new ArrayList(5);
 

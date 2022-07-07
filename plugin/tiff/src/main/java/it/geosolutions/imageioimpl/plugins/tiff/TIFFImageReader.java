@@ -73,8 +73,10 @@
  */
 package it.geosolutions.imageioimpl.plugins.tiff;
 
+import com.sun.media.imageioimpl.common.BogusColorSpace;
 import com.sun.media.imageioimpl.common.ImageUtil;
 import com.sun.media.imageioimpl.common.PackageUtil;
+import it.geosolutions.imageio.imageioimpl.EnhancedImageReadParam;
 import it.geosolutions.imageio.maskband.DatasetLayout;
 import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
 import it.geosolutions.imageio.plugins.tiff.PrivateTIFFTagSet;
@@ -93,6 +95,7 @@ import javax.imageio.*;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
+import javax.media.jai.RasterFactory;
 import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_ColorSpace;
@@ -106,6 +109,7 @@ import java.util.*;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.IntStream;
 
 public class TIFFImageReader extends ImageReader {
 
@@ -1548,8 +1552,8 @@ public class TIFFImageReader extends ImageReader {
         throw new UnsupportedOperationException();
     }
 
-    private int[] sourceBands;
-    private int[] destinationBands;
+    protected int[] sourceBands;
+    protected int[] destinationBands;
 
     private TIFFDecompressor decompressor;
 
@@ -1584,35 +1588,52 @@ public class TIFFImageReader extends ImageReader {
 
         // ensure everything is initialized
         seekToImage(imageIndex);
-
-        this.sourceBands = param.getSourceBands();
-        if (sourceBands == null) {
-            sourceBands = new int[numBands];
-            for (int i = 0; i < numBands; i++) {
-                sourceBands[i] = i;
+        
+        // see if band selection with enhanced read param has been performed (allows for duplicate bands)
+        ImageTypeSpecifier theImageType = null;
+        if (param instanceof EnhancedImageReadParam) {
+            EnhancedImageReadParam ep = (EnhancedImageReadParam) param;
+            if (ep.getSourceBands() == null && ep.getBands() != null) {
+                this.sourceBands = ep.getBands();
+                this.destinationBands = IntStream.range(0, sourceBands.length).toArray();
+                theImageType = getBandSelectedImageType(sourceBands.length, getImageTypes(imageIndex));
             }
         }
 
-        // Initialize the destination image
-        Iterator<ImageTypeSpecifier> imageTypes = getImageTypes(imageIndex);
-        ImageTypeSpecifier theImageType =
-            ImageUtil.getDestinationType(param, imageTypes);
+        // otherwise go through the classic path
+        if (theImageType == null) {
+            this.sourceBands = param.getSourceBands();
+            if (sourceBands == null) {
+                sourceBands = new int[numBands];
+                for (int i = 0; i < numBands; i++) {
+                    sourceBands[i] = i;
+                }
+            }
 
-        int destNumBands = theImageType.getSampleModel().getNumBands();
+            // Initialize the destination image
+            if (theImageType == null) {
+                Iterator<ImageTypeSpecifier> imageTypes = getImageTypes(imageIndex);
+                theImageType = param.getDestinationType() != null ?
+                        param.getDestinationType() :
+                        ImageUtil.getDestinationType(param, imageTypes);
+            }
 
-        this.destinationBands = param.getDestinationBands();
-        if (destinationBands == null) {
-            destinationBands = new int[destNumBands];
-            for (int i = 0; i < destNumBands; i++) {
-                destinationBands[i] = i;
+            this.destinationBands = param.getDestinationBands();
+            if (destinationBands == null) {
+                int destNumBands = theImageType.getSampleModel().getNumBands();
+                destinationBands = new int[destNumBands];
+                for (int i = 0; i < destNumBands; i++) {
+                    destinationBands[i] = i;
+                }
+            }
+
+            if (sourceBands.length != destinationBands.length) {
+                throw new IllegalArgumentException(
+                        "sourceBands.length != destinationBands.length");
             }
         }
 
-        if (sourceBands.length != destinationBands.length) {
-            throw new IllegalArgumentException(
-                              "sourceBands.length != destinationBands.length");
-        }
-
+        // sanity check
         for (int i = 0; i < sourceBands.length; i++) {
             int sb = sourceBands[i];
             if (sb < 0 || sb >= numBands) {
@@ -1620,11 +1641,21 @@ public class TIFFImageReader extends ImageReader {
                                                   "Source band out of range!");
             }
             int db = destinationBands[i];
-            if (db < 0 || db >= destNumBands) {
+            if (db < 0 || db >= theImageType.getSampleModel().getNumBands()) {
                 throw new IllegalArgumentException(
                                              "Destination band out of range!");
             }
         }
+    }
+
+    private static ImageTypeSpecifier getBandSelectedImageType(int numBands, Iterator<ImageTypeSpecifier> imageTypes) throws IIOException {
+        ImageTypeSpecifier theImageType;
+        Object o = imageTypes.next();
+        if (!(o instanceof ImageTypeSpecifier)) {
+            throw new IllegalArgumentException("Non-ImageTypeSpecifier retrieved from imageTypes!");
+        }
+        ImageTypeSpecifier its = (ImageTypeSpecifier) o;
+        return ImageIOUtilities.getBandSelectedType(numBands, its.getSampleModel());
     }
 
     public RenderedImage readAsRenderedImage(int imageIndex,
@@ -2034,7 +2065,7 @@ public class TIFFImageReader extends ImageReader {
             int[] db = new int[1];
             for (int tj = minTileY; tj <= maxTileY; tj++) {
                 for (int ti = minTileX; ti <= maxTileX; ti++) {
-                    for (int band = 0; band < numBands; band++) {
+                    for (int band = 0; band < sourceBands.length; band++) {
                         sb[0] = sourceBands[band];
                         decompressor.setSourceBands(sb);
                         db[0] = destinationBands[band];
@@ -2049,7 +2080,7 @@ public class TIFFImageReader extends ImageReader {
                             break;
                         }
 
-                        decodeTile(ti, tj, band);
+                        decodeTile(ti, tj, sb[0]);
                     }
 
                     if(isAbortRequested) break;
@@ -2149,28 +2180,18 @@ public class TIFFImageReader extends ImageReader {
 
         // No info from param, use fallback image type
         if (imageType == null) {
-            Object o = imageTypes.next();
-            if (!(o instanceof ImageTypeSpecifier)) {
-                throw new IllegalArgumentException
-                    ("Non-ImageTypeSpecifier retrieved from imageTypes!");
-            }
-            imageType = (ImageTypeSpecifier)o;
-        } else {
-            boolean foundIt = false;
-            while (imageTypes.hasNext()) {
-                ImageTypeSpecifier type =
-                    imageTypes.next();
-                if (type.equals(imageType)) {
-                    foundIt = true;
-                    break;
+            if (param instanceof EnhancedImageReadParam && ((EnhancedImageReadParam) param).getBands() != null) {
+                int numBands = ((EnhancedImageReadParam) param).getBands().length;
+                imageType = getBandSelectedImageType(numBands, imageTypes);
+            } else {
+                Object o = imageTypes.next();
+                if (!(o instanceof ImageTypeSpecifier)) {
+                    throw new IllegalArgumentException
+                            ("Non-ImageTypeSpecifier retrieved from imageTypes!");
                 }
+                imageType = (ImageTypeSpecifier) o;
             }
-
-            if (!foundIt) {
-                throw new IIOException
-                    ("Destination type from ImageReadParam does not match!");
-            }
-        }
+        } 
 
         Rectangle srcRegion = new Rectangle(0,0,0,0);
         Rectangle destRegion = new Rectangle(0,0,0,0);

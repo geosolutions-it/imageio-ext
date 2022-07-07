@@ -2251,7 +2251,7 @@ public abstract class TIFFDecompressor {
         int numBands = destinationBands.length;
         int[] destBitsPerSample = null;
         if(planar) {
-            int totalNumBands = bitsPerSample.length;
+            int totalNumBands = image.getSampleModel().getNumBands();
             destBitsPerSample = new int[totalNumBands];
             int dbps = image.getSampleModel().getSampleSize(0);
             for(int b = 0; b < totalNumBands; b++) {
@@ -2263,7 +2263,7 @@ public abstract class TIFFDecompressor {
 
         // Make sure that the image is not CMYK (separated) or does not have
         // bits per sample of 1, 2, or 4 before trying adjust.
-        if(photometricInterpretation !=
+        if(!planar && photometricInterpretation !=
            BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_CMYK || 
            bitsPerSample[0] != 1 && bitsPerSample[0] != 2 &&
            bitsPerSample[0] != 4) {

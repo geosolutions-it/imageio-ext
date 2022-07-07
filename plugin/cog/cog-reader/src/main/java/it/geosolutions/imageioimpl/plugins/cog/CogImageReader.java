@@ -96,10 +96,11 @@ public class CogImageReader extends TIFFImageReader {
 
         // loops through each requested tile and complies information about each tile offset and byte length
         if (planarConfiguration == BaselineTIFFTagSet.PLANAR_CONFIGURATION_PLANAR) {
-            for (int tileY = minTileY; tileY <= maxTileY; tileY++) {
-                for (int tileX = minTileX; tileX <= maxTileX; tileX++) {
-                    for (int band = 0; band < numBands; band++) {
-                        int tileIndex = band * tilesAcross * tilesDown;
+            for (int band = 0; band < sourceBands.length; band++) {
+                int tileBase = sourceBands[band] * tilesAcross * tilesDown;
+                for (int tileY = minTileY; tileY <= maxTileY; tileY++) {
+                    for (int tileX = minTileX; tileX <= maxTileX; tileX++) {
+                        int tileIndex = tileBase + tileY * tilesAcross + tileX;
                         long offset = getTileOrStripOffset(tileIndex);
                         long byteLength = getTileOrStripByteCount(tileIndex);
                         cogTileInfo.addTileRange(tileIndex, offset, byteLength);

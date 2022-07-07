@@ -35,7 +35,7 @@ public class CogHTTPReadOnlineTest {
 
     private static final String cogUrl = "https://gs-cog.s3.eu-central-1.amazonaws.com/land_topo_cog_jpeg_8192.tif";
 
-    private static final String cogUrl2 = "https://s3-us-west-2.amazonaws.com/landsat-pds/c1/L8/153/075/LC08_L1TP_153075_20190515_20190515_01_RT/LC08_L1TP_153075_20190515_20190515_01_RT_B2.TIF";
+    private static final String cogUrl2 = "https://s3-us-west-2.amazonaws.com/sentinel-cogs/sentinel-s2-l2a-cogs/5/C/MK/2018/10/S2B_5CMK_20181020_0_L2A/B01.tif";
 
     /**
      * Read the first tiles of the stream
@@ -48,8 +48,8 @@ public class CogHTTPReadOnlineTest {
 
         int x = 0;
         int y = 0;
-        int width = 2000;
-        int height = 2000;
+        int width = 1830;
+        int height = 1830;
 
         CogImageReadParam param = new CogImageReadParam();
         param.setSourceRegion(new Rectangle(x, y, width, height));
@@ -71,8 +71,8 @@ public class CogHTTPReadOnlineTest {
 
         int x = 1000;
         int y = 1000;
-        int width = 1000;
-        int height = 1000;
+        int width = 830;
+        int height = 830;
 
         CogImageReadParam param = new CogImageReadParam();
         param.setSourceRegion(new Rectangle(x, y, width, height));
@@ -137,8 +137,8 @@ public class CogHTTPReadOnlineTest {
         param.setHeaderLength(1024);
         int x = 1000;
         int y = 1000;
-        int width = 1000;
-        int height = 1000;
+        int width = 830;
+        int height = 830;
 
         param.setSourceRegion(new Rectangle(x, y, width, height));
         BufferedImage cogImage = reader.read(0, param);
@@ -161,22 +161,21 @@ public class CogHTTPReadOnlineTest {
         Assert.assertEquals(height, cogImage.getHeight());
     }
 
-
-
     @Test
     public void readCogCaching() throws IOException {
-        CachingCogImageInputStream cogStream = new CachingCogImageInputStream(cogUrl2);
+        DefaultCogImageInputStream cogStream = new DefaultCogImageInputStream(cogUrl2);
         CogImageReader reader = new CogImageReader(new CogImageReaderSpi());
         reader.setInput(cogStream);
 
+        CogImageReadParam param = new CogImageReadParam();
+        param.setRangeReaderClass(HttpRangeReader.class);
+        param.setHeaderLength(1024);
         int x = 1000;
         int y = 1000;
-        int width = 2000;
-        int height = 2000;
+        int width = 830;
+        int height = 830;
 
-        CogImageReadParam param = new CogImageReadParam();
         param.setSourceRegion(new Rectangle(x, y, width, height));
-        param.setRangeReaderClass(HttpRangeReader.class);
         BufferedImage cogImage = reader.read(0, param);
 
         Assert.assertEquals(width, cogImage.getWidth());
