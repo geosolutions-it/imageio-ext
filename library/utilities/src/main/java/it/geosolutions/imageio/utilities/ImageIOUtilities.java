@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.imageio.ImageReader;
+import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageReaderWriterSpi;
@@ -964,5 +965,22 @@ public class ImageIOUtilities {
 
     public static boolean isSkipExternalFilesLookup() {
         return SKIP_EXTERNAL_FILES_LOOKUP;
+    }
+
+    /**
+     * Returns a {@link ImageTypeSpecifier} usable for the given number of bands, and compatible
+     * wtih a base image type (will reuse the data type and sample model width/height)
+     */
+    public static ImageTypeSpecifier getBandSelectedType(int numBands, SampleModel sm) {
+        ColorModel cmDestination =
+                new ComponentColorModel(
+                        new BogusColorSpace(numBands),
+                        false,
+                        false,
+                        Transparency.OPAQUE,
+                        sm.getDataType());
+        SampleModel smDestination = RasterFactory.createComponentSampleModel(sm,
+                sm.getDataType(), sm.getWidth(), sm.getHeight(), numBands);
+        return new ImageTypeSpecifier(cmDestination, smDestination);
     }
 }
