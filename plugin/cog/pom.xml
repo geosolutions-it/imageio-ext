@@ -27,6 +27,7 @@
         <module>cog-rangereader-http</module>
         <module>cog-rangereader-s3</module>
         <module>cog-rangereader-gs</module>
+        <module>cog-rangereader-azure</module>
     </modules>
 
     <dependencyManagement>
@@ -54,6 +55,11 @@
             <dependency>
                 <groupId>it.geosolutions.imageio-ext</groupId>
                 <artifactId>imageio-ext-cog-rangereader-gs</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>it.geosolutions.imageio-ext</groupId>
+                <artifactId>imageio-ext-cog-rangereader-azure</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
