@@ -37,29 +37,38 @@ import static org.junit.Assert.assertEquals;
  */
 public class S3RangeReaderOnlineTest {
 
+    private static String cogUrl = "https://s3-us-west-2.amazonaws.com/sentinel-cogs/sentinel-s2-l2a-cogs/5/C/MK/2018/10/S2B_5CMK_20181020_0_L2A/B01.tif";
+
+    private static BasicAuthURI uri;
+    static {
+        uri = new BasicAuthURI(cogUrl);
+        uri.setPassword("");
+        uri.setUser("");
+    }
+
     @Test
     public void readS3Ranges() {
-        String cogUrl = "s3://landsat-pds/c1/L8/153/075/LC08_L1TP_153075_20190515_20190515_01_RT/LC08_L1TP_153075_20190515_20190515_01_RT_B2.TIF";
         String region = "us-west-2";
-
         System.setProperty("iio.s3.aws.region", region);
-        readRanges(new S3RangeReader(cogUrl, CogImageReadParam.DEFAULT_HEADER_LENGTH));
+        readRanges(new S3RangeReader(uri, CogImageReadParam.DEFAULT_HEADER_LENGTH));
     }
 
     @Test
     public void s3RangeGetURL() throws MalformedURLException {
-        String bucket = "landsat-pds";
-        String file = "c1/L8/153/075/LC08_L1TP_153075_20190515_20190515_01_RT/LC08_L1TP_153075_20190515_20190515_01_RT_B2.TIF";
+        String bucket = "sentinel-cogs";
+        String file = "sentinel-s2-l2a-cogs/5/C/MK/2018/10/S2B_5CMK_20181020_0_L2A/B01.tif";
         String cogUrl = "s3://" + bucket + "/" + file;
         String region = "us-west-2";
-
+        BasicAuthURI s3uri = new BasicAuthURI(cogUrl);
+        s3uri.setPassword("");
+        s3uri.setUser("");
         System.setProperty("iio.s3.aws.region", region);
-        S3RangeReader reader = new S3RangeReader(cogUrl, CogImageReadParam.DEFAULT_HEADER_LENGTH);
+
+        S3RangeReader reader = new S3RangeReader(s3uri, CogImageReadParam.DEFAULT_HEADER_LENGTH);
 
         //s3:// isn't recognized as a known protocol so a real URL can't be built on top of it.
         //Let's check that we can get a valid URL anyway (translating it to http protocol).
         URL url = reader.getURL();
-        BasicAuthURI uri = new BasicAuthURI(url);
         S3ConfigurationProperties configurationProperties = new S3ConfigurationProperties(uri.getUri().getScheme(), uri);
         assertEquals(region, configurationProperties.getRegion());
         assertEquals(bucket, configurationProperties.getBucket());
@@ -67,8 +76,7 @@ public class S3RangeReaderOnlineTest {
 
     @Test
     public void readHttpRanges() {
-        String cogUrl = "https://s3-us-west-2.amazonaws.com/landsat-pds/c1/L8/153/075/LC08_L1TP_153075_20190515_20190515_01_RT/LC08_L1TP_153075_20190515_20190515_01_RT_B2.TIF";
-        readRanges(new S3RangeReader(cogUrl, CogImageReadParam.DEFAULT_HEADER_LENGTH));
+        readRanges(new S3RangeReader(uri, CogImageReadParam.DEFAULT_HEADER_LENGTH));
     }
 
     public void readRanges(RangeReader rangeReader) {

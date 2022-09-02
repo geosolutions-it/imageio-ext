@@ -59,9 +59,9 @@ public class S3ClientFactory {
         if (user != null && password != null) {
             if ("".equals(user) && "".equals(password)) {
                 builder.credentialsProvider(() -> AnonymousCredentialsProvider.create().resolveCredentials());
+            } else {
+                builder.credentialsProvider(() -> AwsBasicCredentials.create(user, password));
             }
-            builder.credentialsProvider(() ->
-                    AwsBasicCredentials.create(configProps.getUser(), configProps.getPassword()));
         } else {
             builder.credentialsProvider(() -> DefaultCredentialsProvider.create().resolveCredentials());
         }
