@@ -44,6 +44,16 @@
                     <artifactId>imageio-ext-cog-rangereader-s3</artifactId>
                     <scope>test</scope>
                 </dependency>
+                <dependency>
+                    <groupId>it.geosolutions.imageio-ext</groupId>
+                    <artifactId>imageio-ext-cog-rangereader-gs</artifactId>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>it.geosolutions.imageio-ext</groupId>
+                    <artifactId>imageio-ext-cog-rangereader-azure</artifactId>
+                    <scope>test</scope>
+                </dependency>
             </dependencies>
         </profile>
 
@@ -76,6 +86,20 @@
         </profile>
 
         <profile>
+            <id>cog-azure</id>
+            <properties>
+                <jar.finalName>${project.artifactId}-azure-${project.version}</jar.finalName>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>it.geosolutions.imageio-ext</groupId>
+                    <artifactId>imageio-ext-cog-rangereader-azure</artifactId>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
             <id>cog-all</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -97,6 +121,11 @@
                 <dependency>
                     <groupId>it.geosolutions.imageio-ext</groupId>
                     <artifactId>imageio-ext-cog-rangereader-gs</artifactId>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>it.geosolutions.imageio-ext</groupId>
+                    <artifactId>imageio-ext-cog-rangereader-azure</artifactId>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
