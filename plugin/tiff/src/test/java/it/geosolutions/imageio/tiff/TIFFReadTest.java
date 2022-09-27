@@ -866,6 +866,44 @@ public class TIFFReadTest extends Assert {
         }
     }
 
+    @Test
+    public void readWithNegativeInfinityNoData() throws IOException {
+        final File file = TestData.file(this, "float32_neg_infinity_nodata.tif");
+        final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi()
+                .createReaderInstance();
+
+        FileImageInputStream inputStream = new FileImageInputStream(file);
+        try {
+            reader.setInput(inputStream);
+            IIOMetadata metadata = reader.getImageMetadata(0);
+            Node rootNode = metadata.getAsTree(metadata.getNativeMetadataFormatName());
+            double noDataValue = getNoDataValue(rootNode);
+            assertEquals(Double.NEGATIVE_INFINITY, noDataValue, 0D);
+
+            // get it from the core common metadata too
+            CoreCommonImageMetadata ccm = (CoreCommonImageMetadata) metadata;
+            double[] noDataArray = ccm.getNoData();
+            assertNotNull(noDataArray);
+            assertEquals(noDataArray[0], noDataValue, 0d);
+            assertEquals(noDataArray[1], noDataValue, 0d);
+
+        } catch (Exception e) {
+            // If an exception occurred the logger catch the exception and print
+            // the message
+            logger.log(Level.SEVERE, e.getMessage(), e);
+        } finally {
+
+            if (inputStream != null) {
+                inputStream.flush();
+                inputStream.close();
+            }
+
+            if (reader != null) {
+                reader.dispose();
+            }
+        }
+    }
+
     private void readExtraSample(String inputFile, boolean hasAlpha, String description, int value) throws IOException {
         final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi()
                 .createReaderInstance();
@@ -920,6 +958,10 @@ public class TIFFReadTest extends Assert {
         try {
             if ("nan".equalsIgnoreCase(noData)) {
                 return Double.NaN;
+            } else if ("inf".equalsIgnoreCase(noData)) {
+                return Double.POSITIVE_INFINITY;
+            } else if ("-inf".equalsIgnoreCase(noData)) {
+                return Double.NEGATIVE_INFINITY;
             }
             return Double.parseDouble(noData);
         } catch (NumberFormatException nfe) {
