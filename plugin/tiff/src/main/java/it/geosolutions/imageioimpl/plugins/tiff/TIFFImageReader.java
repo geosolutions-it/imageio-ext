@@ -1290,6 +1290,10 @@ public class TIFFImageReader extends ImageReader {
             String value = f.getAsString(0);
             if ("nan".equalsIgnoreCase(value)) {
                 noData = Double.NaN;
+            } else if("inf".equalsIgnoreCase(value)) {
+                noData = Double.POSITIVE_INFINITY;
+            } else if("-inf".equalsIgnoreCase(value)) {
+                noData = Double.NEGATIVE_INFINITY;
             } else {
                 noData = Double.parseDouble(value);
             }
