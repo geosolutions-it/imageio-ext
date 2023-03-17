@@ -21,6 +21,7 @@ import okhttp3.Dispatcher;
 import okhttp3.OkHttpClient;
 
 import java.util.concurrent.TimeUnit;
+import java.net.Proxy;
 
 /**
  *  Utility class to assist building OkHttp client.  OkHttp clients should be singletons and re-used.
@@ -49,6 +50,11 @@ public class HttpClientFactory {
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
                 .dispatcher(dispatcher)
                 .connectionPool(connectionPool);
+
+        Proxy proxy = configProps.getHttpProxy();
+        if(proxy != null) {
+            clientBuilder.proxy(proxy);
+        }
 
         client = clientBuilder.build();
         return client;
