@@ -386,7 +386,7 @@ public class KakaduUtilities {
      */
     private static int parseMajorVersion(String versionString) {
         String majorString = versionString.substring(0, versionString.indexOf('.'));
-        majorString = majorString.replaceAll("v", "");
+        majorString = majorString.replaceAll("vs?", "");
         int majorVersion = Integer.parseInt(majorString);
         return majorVersion;
     }
