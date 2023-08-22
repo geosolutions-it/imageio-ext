@@ -167,6 +167,9 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
             TileCacheEntryKey key = new TileCacheEntryKey(uri.toString(), tileIndex);
             if (!CacheManagement.DEFAULT.keyExists(key)) {
                 contiguousRangeComposer.addTileRange(tileRange.getStart(), tileRange.getEnd());
+            } else {
+                // the tile is in the cache, lets store that info so that we can find it on read(...)
+                header.addTileRange(tileRange.getIndex(), tileRange.getStart(), tileRange.getByteLength());
             }
         });
         rangeReader.setHeaderLength(cogTileInfo.getHeaderLength());
@@ -198,6 +201,8 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
                     byte[] tileBytes = Arrays
                             .copyOfRange(contiguousBytes, (int) relativeOffset, (int) tileRange.getEnd());
                     CacheManagement.DEFAULT.cacheTile(key, tileBytes);
+                    // we need to add the fetched tile, otherwise header.getTileRange() will return null witch will cause a NullPointerException in read(...)
+                    header.addTileRange(tileRange.getIndex(), tileRange.getStart(), tileRange.getByteLength());
                 }
             }
         });
