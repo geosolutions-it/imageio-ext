@@ -163,7 +163,7 @@ public class CogHTTPReadOnlineTest {
 
     @Test
     public void readCogCaching() throws IOException {
-        DefaultCogImageInputStream cogStream = new DefaultCogImageInputStream(cogUrl2);
+        CachingCogImageInputStream cogStream = new CachingCogImageInputStream(cogUrl2);
         CogImageReader reader = new CogImageReader(new CogImageReaderSpi());
         reader.setInput(cogStream);
 
