@@ -93,14 +93,6 @@ public class CachingCogImageInputStream extends DefaultCogImageInputStream imple
      * TIFFImageReader will read and decode the requested region of the GeoTIFF tile by tile.  Because of this, we will
      * not arbitrarily store fixed-length byte chunks in cache, but instead create a cache entry for all the bytes for
      * each tile.
-     * <p>
-     * The first step is to loop through the tile ranges from CogTileInfo and determine which tiles are already cached.
-     * Tile ranges that are not in cache are submitted to RangeBuilder to build contiguous ranges to be read via HTTP.
-     * <p>
-     * Once the contiguous ranges have been read, we obtain the full image-length byte array from the RangeReader.  Then
-     * loop through each of the requested tile ranges from CogTileInfo and cache the bytes.
-     * <p>
-     * There are likely lots of optimizations to be made in here.
      */
     @Override
     public void readRanges(CogTileInfo cogTileInfo) {
