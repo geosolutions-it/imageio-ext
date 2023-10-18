@@ -61,6 +61,11 @@ public class MrSIDIIOImageMetadata extends GDALCommonIIOImageMetadata {
         super(datasetName, mrsidImageMetadataName,
                 mrsidImageMetadataFormatClassName);
     }
+
+    public MrSIDIIOImageMetadata(final Dataset dataset, String datasetName, boolean initializationRequired) {
+        super(dataset, datasetName, initializationRequired, mrsidImageMetadataName,
+                mrsidImageMetadataFormatClassName);
+    }
     
     /**
      * <code>MrSIDIIOImageMetadata</code> constructor.
