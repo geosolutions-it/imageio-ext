@@ -39,14 +39,26 @@ import java.util.logging.Logger;
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 
+import it.geosolutions.imageio.pam.PAMDataset;
+import it.geosolutions.imageio.pam.PAMDataset.PAMRasterBand.FieldDefn;
+import it.geosolutions.imageio.pam.PAMDataset.PAMRasterBand.FieldType;
+import it.geosolutions.imageio.pam.PAMDataset.PAMRasterBand.GDALRasterAttributeTable;
+import it.geosolutions.imageio.pam.PAMDataset.PAMRasterBand.Histograms;
+import it.geosolutions.imageio.pam.PAMDataset.PAMRasterBand.Histograms.HistItem;
+import it.geosolutions.imageio.pam.PAMDataset.PAMRasterBand.Metadata;
+import it.geosolutions.imageio.pam.PAMDataset.PAMRasterBand.Row;
 import org.gdal.gdal.Band;
 import org.gdal.gdal.ColorTable;
 import org.gdal.gdal.Dataset;
 import org.gdal.gdal.Driver;
+import org.gdal.gdal.InfoOptions;
+import org.gdal.gdal.RasterAttributeTable;
 import org.gdal.gdal.gdal;
 import org.gdal.gdalconst.gdalconst;
 import org.gdal.gdalconst.gdalconstConstants;
 import org.w3c.dom.Node;
+
+import static it.geosolutions.imageio.pam.PAMDataset.PAMRasterBand.FieldUsage.fromValue;
 
 /**
  * Class needed to store all available information of a GDAL Dataset with the
@@ -68,6 +80,7 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
      * domain, the ImageStructure domain, as well as any xml prefixed domain)
      */
     Map<String, Map<String, String>> gdalDomainMetadataMap;
+    private PAMDataset pamDataSet;
 
     /**
      * <code>GDALCommonIIOImageMetadata</code> constructor. Firstly, it
@@ -248,6 +261,79 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
         setProjection(dataset.GetProjection());
         setGcpProjection(dataset.GetGCPProjection());
         setGcpNumber(dataset.GetGCPCount());
+        setPamDataset(dataset);
+    }
+    public PAMDataset getPamDataset() {
+        return pamDataSet;
+    }
+
+    /**
+     * Creates a PAMDataset object form internal metadata, rather than from an auxiliary xml file.
+     * @param dataset
+     */
+    private void setPamDataset(Dataset dataset) {
+        PAMDataset pd = new PAMDataset();
+
+        int bandCount = dataset.getRasterCount();
+        for (int b = 1; b <= bandCount; b++) {
+            Band band = dataset.GetRasterBand(b);
+            PAMDataset.PAMRasterBand pdBand = new PAMDataset.PAMRasterBand();
+            pdBand.setBand(b);
+            double min[] = new double[1];
+            double max[] = new double[1];
+            double mean[] = new double[1];
+            double stddev[] = new double[1];
+            // grab stats if available, but don't force creation
+            if (band.GetStatistics(false, false, min, max, mean, stddev) != gdalconstConstants.CE_None) {
+                Metadata metadata = new Metadata();
+                List<Metadata.MDI> mdis = metadata.getMDI();
+                mdis.add(createMDI("STATISTICS_MINIMUM", min[0]));
+                mdis.add(createMDI("STATISTICS_MAXIMUM", max[0]));
+                mdis.add(createMDI("STATISTICS_MEAN", mean[0]));
+                mdis.add(createMDI("STATISTICS_STDDEV", stddev[0]));
+                pdBand.setMetadata(metadata);
+            }
+            setupRasterAttributeTable(band, pdBand);
+            band.delete();
+            pd.getPAMRasterBand().add(pdBand);
+        }
+        this.pamDataSet = pd;
+    }
+
+    private static void setupRasterAttributeTable(Band band, PAMDataset.PAMRasterBand pdBand) {
+        RasterAttributeTable rat = band.GetDefaultRAT();
+        if (rat != null) {
+            GDALRasterAttributeTable pdRAT = new GDALRasterAttributeTable();
+            List<FieldDefn> fields = pdRAT.getFieldDefn();
+            int columns = rat.GetColumnCount();
+            for (int i = 0; i < columns; i++) {
+                FieldDefn field = new FieldDefn();
+                field.setIndex(i);
+                field.setName(rat.GetNameOfCol(i));
+                field.setType(FieldType.fromValue(rat.GetTypeOfCol(i)));
+                field.setUsage(fromValue(rat.GetUsageOfCol(i)));
+                fields.add(field);
+            }
+            List<Row> pdRows = pdRAT.getRow();
+            int rows = rat.GetRowCount();
+            for (int r = 0; r < rows; r++) {
+                Row row = new Row();
+                List<String> values = row.getF();
+                for (int c = 0; c < columns; c++) {
+                    values.add(rat.GetValueAsString(r, c));
+                }
+                pdRows.add(row);
+            }
+            pdBand.setGdalRasterAttributeTable(pdRAT);
+            rat.delete();
+        }
+    }
+
+    private Metadata.MDI createMDI(String key, Object value) {
+        Metadata.MDI mdi = new Metadata.MDI();
+        mdi.setKey(key);
+        mdi.setValue(String.valueOf(value));
+        return mdi;
     }
 
     /**
