@@ -103,7 +103,7 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
      */
     public GDALCommonIIOImageMetadata(String sDatasetName, String formatName,
             String formatClassName) {
-        this(GDALUtilities.acquireDataSet(sDatasetName, gdalconst.GA_ReadOnly), sDatasetName, formatName, formatClassName);
+        this(GDALUtilities.acquireDataSet(sDatasetName, gdalconst.GA_ReadOnly), sDatasetName, true, formatName, formatClassName, true);
     }
 
     /**
@@ -125,6 +125,14 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
     public GDALCommonIIOImageMetadata(Dataset dataset, String name,
             final boolean initializationRequired, final String formatName,
             final String formatClassName) {
+        this(dataset, name, initializationRequired, formatName, formatClassName, false);
+    }
+        
+    private GDALCommonIIOImageMetadata(Dataset dataset, String name,
+        final boolean initializationRequired, final String formatName,
+        final String formatClassName,
+        boolean closeDataset) {    
+        
         super(false, formatName, formatClassName, null, null);
         setDatasetName(name);
         if (dataset == null)
@@ -175,15 +183,14 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
                         LOGGER.log(Level.FINEST, e.getLocalizedMessage(), e);
                 }
             }
-            if (initializationRequired) {
-                if (dataset != null)
-                    try {
-                        // Closing the dataset
-                        GDALUtilities.closeDataSet(dataset);
-                    } catch (Throwable e) {
-                        if (LOGGER.isLoggable(Level.FINEST))
-                            LOGGER.log(Level.FINEST, e.getLocalizedMessage(), e);
-                    }
+            if (closeDataset && dataset != null) {
+                try {
+                    // Closing the dataset
+                    GDALUtilities.closeDataSet(dataset);
+                } catch (Throwable e) {
+                    if (LOGGER.isLoggable(Level.FINEST))
+                        LOGGER.log(Level.FINEST, e.getLocalizedMessage(), e);
+                }
             }
 
         }
