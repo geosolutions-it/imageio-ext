@@ -8,15 +8,20 @@
 
 package it.geosolutions.imageio.pam;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
@@ -62,6 +67,63 @@ import javax.xml.bind.annotation.XmlValue;
  *                       &lt;/complexContent>
  *                     &lt;/complexType>
  *                   &lt;/element>
+ *                   &lt;GDALRasterAttributeTable tableType="thematic">
+ *                     &lt;FieldDefn index="0">
+ *                       &lt;Name>con_min&lt;/Name>
+ *                       &lt;Type>1&lt;/Type>
+ *                       &lt;Usage>3&lt;/Usage>
+ *                     &lt;/FieldDefn>
+ *                     &lt;FieldDefn index="1">
+ *                       &lt;Name>con_max&lt;/Name>
+ *                       &lt;Type>1&lt;/Type>
+ *                       &lt;Usage>4&lt;/Usage>
+ *                     &lt;/FieldDefn>
+ *                     &lt;FieldDefn index="2">
+ *                       &lt;Name>test&lt;/Name>
+ *                       &lt;Type>2&lt;/Type>
+ *                       &lt;Usage>0&lt;/Usage>
+ *                     &lt;/FieldDefn>
+ *                     &lt;Row index="0">
+ *                       &lt;F>1.000000023841858&lt;/F>
+ *                       &lt;F>1.200000023841858&lt;/F>
+ *                       &lt;F>green&lt;/F>
+ *                     &lt;/Row>
+ *                     &lt;Row index="1">
+ *                       &lt;F>1.4&lt;/F>
+ *                       &lt;F>1.6&lt;/F>
+ *                       &lt;F>white&lt;/F>
+ *                     &lt;/Row>
+ *                     &lt;Row index="2">
+ *                       &lt;F>2.4&lt;/F>
+ *                       &lt;F>2.6&lt;/F>
+ *                       &lt;F>gold&lt;/F>
+ *                     &lt;/Row>
+ *                     &lt;Row index="3">
+ *                       &lt;F>5.099999809265137&lt;/F>
+ *                       &lt;F>5.299999809265136&lt;/F>
+ *                       &lt;F>blue&lt;/F>
+ *                     &lt;/Row>
+ *                     &lt;Row index="4">
+ *                       &lt;F>7.200000190734864&lt;/F>
+ *                       &lt;F>7.400000190734863&lt;/F>
+ *                       &lt;F>red&lt;/F>
+ *                     &lt;/Row>
+ *                     &lt;Row index="5">
+ *                       &lt;F>9.000000381469727&lt;/F>
+ *                       &lt;F>9.200000381469726&lt;/F>
+ *                       &lt;F>orange&lt;/F>
+ *                     &lt;/Row>
+ *                     &lt;Row index="6">
+ *                       &lt;F>11.00000038146973&lt;/F>
+ *                       &lt;F>11.20000038146973&lt;/F>
+ *                       &lt;F>black&lt;/F>
+ *                     &lt;/Row>
+ *                     &lt;Row index="7">
+ *                       &lt;F>12.09999980926514&lt;/F>
+ *                       &lt;F>12.29999980926514&lt;/F>
+ *                       &lt;F>purple&lt;/F>
+ *                     &lt;/Row>
+ *                   &lt;/GDALRasterAttributeTable>                   
  *                   &lt;element name="Metadata">
  *                     &lt;complexType>
  *                       &lt;complexContent>
@@ -92,15 +154,13 @@ import javax.xml.bind.annotation.XmlValue;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "pamRasterBand"
 })
 @XmlRootElement(name = "PAMDataset")
-public class PAMDataset {
+public class PAMDataset implements Serializable {
 
     @XmlElement(name = "PAMRasterBand", required = true)
     protected List<PAMDataset.PAMRasterBand> pamRasterBand;
@@ -202,12 +262,15 @@ public class PAMDataset {
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
         "histograms",
-        "metadata"
+        "gdalRasterAttributeTable",
+            "metadata"
     })
-    public static class PAMRasterBand {
+    public static class PAMRasterBand implements Serializable {
 
         @XmlElement(name = "Histograms", required = true)
         protected PAMDataset.PAMRasterBand.Histograms histograms;
+        @XmlElement(name = "GDALRasterAttributeTable", required = false)
+        protected GDALRasterAttributeTable gdalRasterAttributeTable;
         @XmlElement(name = "Metadata", required = true)
         protected PAMDataset.PAMRasterBand.Metadata metadata;
         @XmlAttribute
@@ -285,6 +348,17 @@ public class PAMDataset {
             this.band = value;
         }
 
+        /**
+         * Returns the GDAL raster attribute table, if available.
+         * @return
+         */
+        public GDALRasterAttributeTable getGdalRasterAttributeTable() {
+            return gdalRasterAttributeTable;
+        }
+
+        public void setGdalRasterAttributeTable(GDALRasterAttributeTable gdalRasterAttributeTable) {
+            this.gdalRasterAttributeTable = gdalRasterAttributeTable;
+        }
 
         /**
          * <p>Java class for anonymous complex type.
@@ -652,6 +726,403 @@ public class PAMDataset {
                     this.value = value;
                 }
 
+            }
+
+        }
+
+        @XmlEnum(Integer.class)
+        public static enum FieldType {
+            @XmlEnumValue("0") Integer,
+            @XmlEnumValue("1") Real,
+            @XmlEnumValue("2") String;
+            
+            public static FieldType fromValue(int value) {
+                for (FieldType c: FieldType.values()) {
+                    if (c.ordinal() == value) {
+                        return c;
+                    }
+                }
+                throw new IllegalArgumentException("Could not find type " + value);
+            }
+        }
+
+
+            @XmlEnum(Integer.class)
+        public static enum FieldUsage {
+            /** General purpose field. */
+            @XmlEnumValue("0") Generic,
+            /** Histogram pixel count */
+            @XmlEnumValue("1") PixelCount,
+            /** Class name */
+            @XmlEnumValue("2") Name,
+            /** Class range minimum */
+            @XmlEnumValue("3") Min,
+            /** Class range maximum */
+            @XmlEnumValue("4") Max,
+            /** Class value (min=max) */
+            @XmlEnumValue("5") MinMax,
+            /** Red class color (0-255) */
+            @XmlEnumValue("6") Red,
+            /** Green class color (0-255) */
+            @XmlEnumValue("7") Green,
+            /** Blue class color (0-255) */
+            @XmlEnumValue("8") Blue,
+            /** Alpha (0=transparent,255=opaque)*/
+            @XmlEnumValue("9") Alpha,
+            /** Color Range Red Minimum */
+            @XmlEnumValue("10") RedMin,
+            /** Color Range Green Minimum */
+            @XmlEnumValue("11") GreenMin,
+            /** Color Range Blue Minimum */
+            @XmlEnumValue("12") BlueMin,
+            /** Color Range Alpha Minimum */
+            @XmlEnumValue("13") AlphaMin,
+            /** Color Range Red Maximum */
+            @XmlEnumValue("14") RedMax,
+            /** Color Range Green Maximum */
+            @XmlEnumValue("15") GreenMax,
+            /** Color Range Blue Maximum */
+            @XmlEnumValue("16") BlueMax,
+            /** Color Range Alpha Maximum */
+            @XmlEnumValue("17") AlphaMax;
+            public static FieldUsage fromValue(int value) {
+            for (FieldUsage c: FieldUsage.values()) {
+                if (c.ordinal() == value) {
+                    return c;
+                }
+            }
+            throw new IllegalArgumentException("Could not find usage " + value);
+            }
+        }
+
+        /**
+         * <p>Java class for FieldDefnType complex type.
+         *
+         * <p>The following schema fragment specifies the expected content contained within this class.
+         *
+         * <pre>
+         * &lt;complexType name="FieldDefnType">
+         *   &lt;complexContent>
+         *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+         *       &lt;sequence>
+         *         &lt;element name="Name" type="{http://www.w3.org/2001/XMLSchema}string"/>
+         *         &lt;element name="Type" type="{http://www.w3.org/2001/XMLSchema}unsignedInt"/>
+         *         &lt;element name="Usage" type="{http://www.w3.org/2001/XMLSchema}unsignedInt"/>
+         *       &lt;/sequence>
+         *       &lt;attribute name="index" use="required" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" />
+         *     &lt;/restriction>
+         *   &lt;/complexContent>
+         * &lt;/complexType>
+         * </pre>
+         *
+         *
+         */
+        @XmlAccessorType(XmlAccessType.FIELD)
+        @XmlType(name = "FieldDefnType", propOrder = {
+                "name",
+                "type",
+                "usage"
+        })
+        public static class FieldDefn implements Serializable {
+
+            @XmlElement(name = "Name", required = true)
+            protected String name;
+            @XmlElement(name = "Type")
+            @XmlSchemaType(name = "unsignedInt")
+            protected FieldType type;
+            @XmlElement(name = "Usage")
+            @XmlSchemaType(name = "unsignedInt")
+            protected FieldUsage usage;
+            @XmlAttribute(name = "index", required = true)
+            @XmlSchemaType(name = "unsignedInt")
+            protected int index;
+
+            /**
+             * Gets the value of the name property.
+             *
+             * @return
+             *     possible object is
+             *     {@link String }
+             *
+             */
+            public String getName() {
+                return name;
+            }
+
+            /**
+             * Sets the value of the name property.
+             *
+             * @param value
+             *     allowed object is
+             *     {@link String }
+             *
+             */
+            public void setName(String value) {
+                this.name = value;
+            }
+
+            /**
+             * Gets the value of the type property.
+             *
+             */
+            public FieldType getType() {
+                return type;
+            }
+
+            /**
+             * Sets the value of the type property.
+             *
+             */
+            public void setType(FieldType value) {
+                this.type = value;
+            }
+
+            /**
+             * Gets the value of the usage property.
+             *
+             */
+            public FieldUsage getUsage() {
+                return usage;
+            }
+
+            /**
+             * Sets the value of the usage property.
+             *
+             */
+            public void setUsage(FieldUsage value) {
+                this.usage = value;
+            }
+
+            /**
+             * Gets the value of the index property.
+             *
+             */
+            public int getIndex() {
+                return index;
+            }
+
+            /**
+             * Sets the value of the index property.
+             *
+             */
+            public void setIndex(int value) {
+                this.index = value;
+            }
+
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) return true;
+                if (o == null || getClass() != o.getClass()) return false;
+                FieldDefn fieldDefn = (FieldDefn) o;
+                return index == fieldDefn.index && Objects.equals(name, fieldDefn.name) && type == fieldDefn.type && usage == fieldDefn.usage;
+            }
+
+            @Override
+            public int hashCode() {
+                return Objects.hash(name, type, usage, index);
+            }
+
+            @Override
+            public String toString() {
+                return "FieldDefn{" +
+                        "name='" + name + '\'' +
+                        ", type=" + type +
+                        ", usage=" + usage +
+                        ", index=" + index +
+                        '}';
+            }
+        }
+
+
+        /**
+         * <p>Java class for RowType complex type.
+         *
+         * <p>The following schema fragment specifies the expected content contained within this class.
+         *
+         * <pre>
+         * &lt;complexType name="RowType">
+         *   &lt;complexContent>
+         *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+         *       &lt;sequence>
+         *         &lt;element name="F" type="{http://www.w3.org/2001/XMLSchema}anyType" maxOccurs="unbounded" minOccurs="0"/>
+         *       &lt;/sequence>
+         *       &lt;attribute name="index" use="required" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" />
+         *     &lt;/restriction>
+         *   &lt;/complexContent>
+         * &lt;/complexType>
+         * </pre>
+         *
+         *
+         */
+        @XmlAccessorType(XmlAccessType.FIELD)
+        @XmlType(name = "RowType", propOrder = {
+                "f"
+        })
+        public static class Row implements Serializable {
+
+            @XmlElement(name = "F")
+            protected List<String> f;
+            @XmlAttribute(name = "index", required = true)
+            @XmlSchemaType(name = "unsignedInt")
+            protected int index;
+
+            /**
+             * Gets the value of the f property.
+             *
+             * <p>
+             * This accessor method returns a reference to the live list,
+             * not a snapshot. Therefore any modification you make to the
+             * returned list will be present inside the JAXB object.
+             * This is why there is not a <CODE>set</CODE> method for the f property.
+             *
+             * <p>
+             * For example, to add a new item, do as follows:
+             * <pre>
+             *    getF().add(newItem);
+             * </pre>
+             *
+             *
+             * <p>
+             * Objects of the following type(s) are allowed in the list
+             * {@link Object }
+             *
+             *
+             */
+            public List<String> getF() {
+                if (f == null) {
+                    f = new ArrayList<>();
+                }
+                return this.f;
+            }
+
+            /**
+             * Gets the value of the index property.
+             *
+             */
+            public int getIndex() {
+                return index;
+            }
+
+            /**
+             * Sets the value of the index property.
+             *
+             */
+            public void setIndex(int value) {
+                this.index = value;
+            }
+
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) return true;
+                if (o == null || getClass() != o.getClass()) return false;
+                Row row = (Row) o;
+                return index == row.index && Objects.equals(f, row.f);
+            }
+
+            @Override
+            public int hashCode() {
+                return Objects.hash(f, index);
+            }
+
+            @Override
+            public String toString() {
+                return "Row{" +
+                        "f=" + f +
+                        ", index=" + index +
+                        '}';
+            }
+        }
+
+        /**
+         * <p>Java class for GDALRasterAttributeTableType complex type.
+         *
+         * <p>The following schema fragment specifies the expected content contained within this class.
+         *
+         * <pre>
+         * &lt;complexType name="GDALRasterAttributeTableType">
+         *   &lt;complexContent>
+         *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+         *       &lt;sequence>
+         *         &lt;element name="FieldDefn" type="{}FieldDefnType" maxOccurs="unbounded" minOccurs="0"/>
+         *         &lt;element name="Row" type="{}RowType" maxOccurs="unbounded" minOccurs="0"/>
+         *       &lt;/sequence>
+         *     &lt;/restriction>
+         *   &lt;/complexContent>
+         * &lt;/complexType>
+         * </pre>
+         *
+         *
+         */
+        @XmlAccessorType(XmlAccessType.FIELD)
+        @XmlType(name = "GDALRasterAttributeTableType", propOrder = {
+                "fieldDefn",
+                "row"
+        })
+        public static class GDALRasterAttributeTable implements Serializable {
+
+            @XmlElement(name = "FieldDefn")
+            protected List<FieldDefn> fieldDefn;
+            @XmlElement(name = "Row")
+            protected List<Row> row;
+
+            /**
+             * Gets the value of the fieldDefn property.
+             *
+             * <p>
+             * This accessor method returns a reference to the live list,
+             * not a snapshot. Therefore any modification you make to the
+             * returned list will be present inside the JAXB object.
+             * This is why there is not a <CODE>set</CODE> method for the fieldDefn property.
+             *
+             * <p>
+             * For example, to add a new item, do as follows:
+             * <pre>
+             *    getFieldDefn().add(newItem);
+             * </pre>
+             *
+             *
+             * <p>
+             * Objects of the following type(s) are allowed in the list
+             * {@link FieldDefn }
+             *
+             *
+             */
+            public List<FieldDefn> getFieldDefn() {
+                if (fieldDefn == null) {
+                    fieldDefn = new ArrayList<FieldDefn>();
+                }
+                return this.fieldDefn;
+            }
+
+            /**
+             * Gets the value of the row property.
+             *
+             * <p>
+             * This accessor method returns a reference to the live list,
+             * not a snapshot. Therefore any modification you make to the
+             * returned list will be present inside the JAXB object.
+             * This is why there is not a <CODE>set</CODE> method for the row property.
+             *
+             * <p>
+             * For example, to add a new item, do as follows:
+             * <pre>
+             *    getRow().add(newItem);
+             * </pre>
+             *
+             *
+             * <p>
+             * Objects of the following type(s) are allowed in the list
+             * {@link Row }
+             *
+             *
+             */
+            public List<Row> getRow() {
+                if (row == null) {
+                    row = new ArrayList<Row>();
+                }
+                return this.row;
             }
 
         }
