@@ -1,7 +1,12 @@
 package it.geosolutions.imageio.pam;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import it.geosolutions.imageio.pam.PAMDataset.PAMRasterBand;
+import it.geosolutions.imageio.pam.PAMDataset.PAMRasterBand.FieldType;
+import it.geosolutions.imageio.pam.PAMDataset.PAMRasterBand.FieldUsage;
+import it.geosolutions.imageio.pam.PAMDataset.PAMRasterBand.GDALRasterAttributeTable;
 import it.geosolutions.imageio.pam.PAMDataset.PAMRasterBand.Histograms;
 import it.geosolutions.imageio.pam.PAMDataset.PAMRasterBand.Histograms.HistItem;
 import it.geosolutions.imageio.pam.PAMDataset.PAMRasterBand.Metadata;
@@ -55,5 +60,49 @@ public class PAMParserTest {
         assertEquals(75.8095684, Double.parseDouble(metadataItems.get(3).getValue()), DELTA);
         assertEquals("STATISTICS_STDDEV", metadataItems.get(4).getKey());
         assertEquals(65.7914086, Double.parseDouble(metadataItems.get(4).getValue()), DELTA);
+    }
+
+    @Test
+    public void testRasterAttributeTable() throws Exception {
+        // Getting a parser
+        final PAMParser parser = PAMParser.getInstance();
+        final File sampleFile = TestData.file(this, "pam_rat.aux.xml");
+
+        // Parsing the PAMDataset
+        final PAMDataset dataset = parser.parsePAM(sampleFile);
+        final List<PAMRasterBand> bands = dataset.getPAMRasterBand();
+        assertEquals(1, bands.size());
+
+        // Scan the first band
+        final PAMRasterBand band = bands.get(0);
+        assertEquals(1, (int) band.getBand());
+        
+        // Get the Raster Attribute Table
+        GDALRasterAttributeTable rat = band.getGdalRasterAttributeTable();
+        assertNotNull(rat);
+        
+        // Check each field
+        List<PAMRasterBand.FieldDefn> fields = rat.getFieldDefn();
+        assertEquals(3, fields.size());
+        assertField(fields.get(0), "con_min" , FieldType.Real, FieldUsage.Min);
+        assertField(fields.get(1), "con_max" , FieldType.Real, FieldUsage.Max);
+        assertField(fields.get(2), "test" , FieldType.String, FieldUsage.Generic);
+        
+        // Check rows
+        List<PAMRasterBand.Row> rows = rat.getRow();
+        assertEquals(8, rows.size());
+        
+        // one sample row
+        PAMRasterBand.Row row = rows.get(1);
+        List<String> fieldValues = row.getF();
+        assertEquals("1.4", fieldValues.get(0));
+        assertEquals("1.6", fieldValues.get(1));
+        assertEquals("white", fieldValues.get(2));
+    }
+
+    private void assertField(PAMRasterBand.FieldDefn fieldDefn, String name, FieldType type, FieldUsage usage) {
+        assertEquals(name, fieldDefn.getName());
+        assertEquals(type, fieldDefn.getType());
+        assertEquals(usage, fieldDefn.getUsage());
     }
 }
