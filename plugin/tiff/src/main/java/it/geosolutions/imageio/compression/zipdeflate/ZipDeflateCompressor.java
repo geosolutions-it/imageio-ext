@@ -62,6 +62,6 @@ public class ZipDeflateCompressor implements Compressor {
 
     @Override
     public void done() {
-        deflater.reset();
+        deflater.end();
     }
 }
