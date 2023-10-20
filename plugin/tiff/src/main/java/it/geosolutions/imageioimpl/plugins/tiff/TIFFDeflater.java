@@ -163,9 +163,15 @@ public class TIFFDeflater extends TIFFCompressor {
             numCompressedBytes =
                     deflateCompressor.compress(compData, off, height*scanlineStride, 0, compData.length);
         }
-        deflateCompressor.done();
         stream.write(compData, 0, numCompressedBytes);
 
         return numCompressedBytes;
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        deflateCompressor.done();
+        deflateCompressor = null;
     }
 }
