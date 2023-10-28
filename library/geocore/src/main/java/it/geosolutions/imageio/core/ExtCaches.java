@@ -16,7 +16,11 @@
  */
 package it.geosolutions.imageio.core;
 
+import it.geosolutions.imageio.utilities.SoftValueHashMap;
+
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,7 +40,16 @@ public class ExtCaches {
         void clean();
     }
 
+    /**
+     * Listener that will be called back when the {@link ExtCaches#cleanForResource(String resourceIdentifier)} method
+     * is called with a matching resource identifier.
+     */
+    public interface ResourceListener {
+        void clean(String resourceIdentifier);
+    }
+
     private static List<Listener> LISTENERS = new CopyOnWriteArrayList<>();
+    private static SoftValueHashMap<String, ResourceListener> RESOURCE_LISTENERS = new SoftValueHashMap<>();
 
     /**
      * Cleans ImageI/O-Ext caches
@@ -52,14 +65,43 @@ public class ExtCaches {
     }
 
     /**
-     * Adds a clean even listener
+     * Disposes of all resources connected with a given resource URI and removes the
+     * corresponding {@link ResourceListener} afterward.
+     */
+    public static void cleanForResource(String resourceIdentifier) {
+        ResourceListener listener = RESOURCE_LISTENERS.remove(resourceIdentifier);
+        if (listener != null) {
+            try {
+                listener.clean(resourceIdentifier);
+            } catch (Exception e) {
+                LOGGER.log(
+                    Level.WARNING,
+                    "Clean up invocation failed listener for resource '" + resourceIdentifier + "': " + listener,
+                    e
+                );
+            }
+        }
+    }
+
+    /**
+     * Adds a clean event listener
      */
     public static void addListener(Listener listener) {
+        LOGGER.log(Level.FINE, "Adding or updating listener " + listener);
         LISTENERS.add(listener);
     }
 
     /**
-     * Removes a clean even listener
+     * Adds or updates the resource listener for a given resource id. The listener will be invoked when
+     * {@link ExtCaches#cleanForResource(String resourceIdentifier)} is called with a matching resourceId.
+     */
+    public static void addOrUpdateResourceListener(String resourceId, ResourceListener listener) {
+        LOGGER.log(Level.FINE, "Adding or updating resource listener for " + resourceId);
+        RESOURCE_LISTENERS.put(resourceId, listener);
+    }
+
+    /**
+     * Removes a clean event listener
      *
      * @param listener The listener to remove
      * @return true if the listener was removed, false if it was not found among those registered

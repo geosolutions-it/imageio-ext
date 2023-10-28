@@ -42,7 +42,7 @@ public abstract class AbstractRangeReader implements RangeReader {
     protected final static Map<String, byte[]> HEADERS_CACHE = new SoftValueHashMap<>();
     
     static {
-        ExtCaches.addListener(() -> HEADERS_CACHE.clear());
+        ExtCaches.addListener(HEADERS_CACHE::clear);
     }
 
     protected BasicAuthURI authUri;
@@ -58,6 +58,8 @@ public abstract class AbstractRangeReader implements RangeReader {
         // store the underlying uri too to avoid several getUri() calls around on the code
         this.uri = authUri.getUri();
         this.headerLength = headerLength;
+        // add a listener for disposal of that URI so that we can free resources in the HEADERS_CACHE
+        ExtCaches.addOrUpdateResourceListener(uri.toString(), (uri) -> HEADERS_CACHE.remove(uri));
     }
 
 
