@@ -403,6 +403,10 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
 	
 	        // scanning bands
 	        final Double tempD[] = new Double[1];
+	        final double[] min = new double[1];
+	        final double[] max = new double[1];
+	        final double[] mean = new double[1];
+	        final double[] stddev = new double[1];
 	        final int bandsOffset[] = new int[numBands];
 	        for (int band = 0; band < numBands; band++) {
 	            /* Bands are not 0-base indexed, so we must add 1 */
@@ -417,10 +421,12 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
 		            offsets[band] = tempD[0];
 		            pBand.GetScale(tempD);
 		            scales[band] = tempD[0];
-		            pBand.GetMinimum(tempD);
-		            minimums[band] = tempD[0];
-		            pBand.GetMaximum(tempD);
-		            maximums[band] = tempD[0];
+		            // GetStatistics allow to fetch the stats only if it's quick to compute without
+		            // having to scan all data, unlike GetMinimium/GetMaximum, where computation is forced
+		            if (gdalconst.CE_None == pBand.GetStatistics(false, false, min, max, mean, stddev)) {
+		                minimums[band] = min[0];
+		                maximums[band] = max[0];
+		            }
 		            colorInterpretations[band] = pBand.GetRasterColorInterpretation();
 		            numOverviews[band] = pBand.GetOverviewCount();
 		            bandsOffset[band] = band;
