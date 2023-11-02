@@ -4,12 +4,12 @@
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-netcdf-plugin</artifactId>
-    <version>1.4-SNAPSHOT</version>
+    <version>1.4.9</version>
   </parent>
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-grib1</artifactId>
   <packaging>jar</packaging>
-  <version>1.4-SNAPSHOT</version>
+  <version>1.4.9</version>
   <name>GRIB1 - Direct Plugin</name>
   
   <dependencies>
