@@ -868,9 +868,16 @@ public class TIFFField implements Comparable {
                 idata[i] = (int)sdata[i];
             }
             return idata;
+        } else if (data instanceof byte[]) {
+            byte[] bdata = (byte[])data;
+            int[] idata = new int[bdata.length];
+            for (int i = 0; i < bdata.length; i++) {
+                idata[i] = (int)(bdata[i] & 0xff);
+            }
+            return idata;
         } else {
             throw new ClassCastException(
-                                        "Data not char[], short[], or int[]!");
+                                        "Data not char[], short[], int[] or byte[]!");
         }
     }
 
