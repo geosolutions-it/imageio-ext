@@ -34,7 +34,7 @@ public final class RasterShortABGRProvider extends AbstractScanlineProvider {
     final boolean hasAlpha;
 
     public RasterShortABGRProvider(Raster raster, boolean hasAlpha) {
-        super(raster, 16, (hasAlpha ? 8 : 6) * raster.getWidth());
+        super(raster, 16, (hasAlpha ? 8 : 6) * raster.getWidth(), hasAlpha ? 4 : 3);
         this.hasAlpha = hasAlpha;
         shorts = ((DataBufferUShort) raster.getDataBuffer()).getData();
         bgrOrder = ((ComponentSampleModel) raster.getSampleModel()).getBandOffsets()[0] != 0;

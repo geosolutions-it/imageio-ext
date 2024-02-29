@@ -31,13 +31,13 @@ public final class RasterByteSingleBandProvider extends AbstractScanlineProvider
     final byte[] bytes;
 
     public RasterByteSingleBandProvider(Raster raster, int bitDepth, int scanlineLength) {
-        super(raster, bitDepth, scanlineLength);
+        super(raster, bitDepth, scanlineLength, bitDepth / 8);
         this.bytes = ((DataBufferByte) raster.getDataBuffer()).getData();
     }
 
     public RasterByteSingleBandProvider(Raster raster, int bitDepth, int scanlineLength,
             IndexColorModel palette) {
-        super(raster, bitDepth, scanlineLength, palette);
+        super(raster, bitDepth, scanlineLength, bitDepth / 8, palette);
         this.bytes = ((DataBufferByte) raster.getDataBuffer()).getData();
     }
 

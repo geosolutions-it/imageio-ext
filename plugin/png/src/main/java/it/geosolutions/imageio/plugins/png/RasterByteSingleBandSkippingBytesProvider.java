@@ -40,7 +40,7 @@ public final class RasterByteSingleBandSkippingBytesProvider extends AbstractSca
     int numBands;
 
     public RasterByteSingleBandSkippingBytesProvider(Raster raster) {
-        super(raster, 8, raster.getWidth() * computePixelStride(raster, PIXEL_STRIDES));
+        super(raster, 8, raster.getWidth() * computePixelStride(raster, PIXEL_STRIDES), computePixelStride(raster, PIXEL_STRIDES));
         PixelInterleavedSampleModel sm = (PixelInterleavedSampleModel) raster.getSampleModel();
         this.bytes = ((DataBufferByte) raster.getDataBuffer()).getData();
         this.pixelStride = sm.getPixelStride();

@@ -17,11 +17,13 @@
 package it.geosolutions.imageio.plugins.png;
 
 import java.awt.image.ComponentSampleModel;
+import java.awt.image.MultiPixelPackedSampleModel;
 import java.awt.image.Raster;
+import java.awt.image.SinglePixelPackedSampleModel;
 
 /**
  * A helper class that supports the scanline provider in navigating the structure of a Java image
- * 
+ *
  * @author Andrea Aime - GeoSolutions
  */
 final class ScanlineCursor {
@@ -32,18 +34,29 @@ final class ScanlineCursor {
 
     int position;
 
-    public ScanlineCursor(Raster raster) {
+    public ScanlineCursor(Raster raster, int pixelStride) {
         // the data buffer can have lines that are longer than width * bytes per pixel, can have
         // extra at the end
         this.scanlineStride = getScanlineStride(raster);
         // the data buffer itself could be longer
         this.position = raster.getDataBuffer().getOffset();
         this.maxPosition = raster.getDataBuffer().getSize();
+
+        // Translate the cursor to the correct row if the raster uses a y-translation
+        // (which happens in the case of a sub-image sharing the same data buffer as its parent)
+        int rowTranslate = raster.getSampleModelTranslateY() * scanlineStride;
+        this.position -= rowTranslate;
+
+        // Translate the cursor to the correct pixel if the raster uses an x-translation
+        // (which happens in the case of a sub-image sharing the same data buffer as its parent)
+        int pixelTranslate = raster.getSampleModelTranslateX() * pixelStride;
+        this.position -= pixelTranslate;
+
     }
 
     /**
      * Returns the initial position of the current line, and moves to the next
-     * 
+     *
      * @return
      */
     public int next() {
@@ -59,7 +72,7 @@ final class ScanlineCursor {
 
     /**
      * Gets the scanline stride for the given raster
-     * 
+     *
      * @param raster
      * @return
      */
@@ -67,6 +80,12 @@ final class ScanlineCursor {
         if (raster.getSampleModel() instanceof ComponentSampleModel) {
             ComponentSampleModel csm = ((ComponentSampleModel) raster.getSampleModel());
             return csm.getScanlineStride();
+        } else if (raster.getSampleModel() instanceof SinglePixelPackedSampleModel) {
+            SinglePixelPackedSampleModel sampleModel = ((SinglePixelPackedSampleModel) raster.getSampleModel());
+            return sampleModel.getScanlineStride();
+        } else if (raster.getSampleModel() instanceof MultiPixelPackedSampleModel) {
+            MultiPixelPackedSampleModel sampleModel = ((MultiPixelPackedSampleModel) raster.getSampleModel());
+            return sampleModel.getScanlineStride();
         } else {
             return raster.getDataBuffer().getSize() / raster.getHeight();
         }

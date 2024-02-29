@@ -32,7 +32,7 @@ public final class RasterShortGrayAlphaProvider extends AbstractScanlineProvider
     final boolean alphaFirst;
 
     public RasterShortGrayAlphaProvider(Raster raster) {
-        super(raster, 16, raster.getWidth() * 4);
+        super(raster, 16, raster.getWidth() * 4, 2);
         this.shorts = ((DataBufferUShort) raster.getDataBuffer()).getData();
         int[] bandOffsets = ((PixelInterleavedSampleModel) raster.getSampleModel()).getBandOffsets();
         this.alphaFirst = bandOffsets[0] != 0;

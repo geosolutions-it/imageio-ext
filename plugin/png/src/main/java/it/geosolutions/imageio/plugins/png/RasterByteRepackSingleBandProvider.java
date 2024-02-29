@@ -30,13 +30,13 @@ public final class RasterByteRepackSingleBandProvider extends AbstractScanlinePr
     final byte[] bytes;
 
     public RasterByteRepackSingleBandProvider(Raster raster, int bitDepth, int scanlineLength) {
-        super(raster, bitDepth, scanlineLength);
+        super(raster, bitDepth, scanlineLength,  8 / bitDepth);
         this.bytes = ((DataBufferByte) raster.getDataBuffer()).getData();
     }
 
     public RasterByteRepackSingleBandProvider(Raster raster, int bitDepth, int scanlineLength,
             IndexColorModel palette) {
-        super(raster, bitDepth, scanlineLength, palette);
+        super(raster, bitDepth, scanlineLength, 8 / bitDepth, palette);
         this.bytes = ((DataBufferByte) raster.getDataBuffer()).getData();
     }
 

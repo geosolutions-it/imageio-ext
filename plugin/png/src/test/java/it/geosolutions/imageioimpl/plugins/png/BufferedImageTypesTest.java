@@ -94,4 +94,28 @@ public class BufferedImageTypesTest {
         }
     }
 
+    @Test
+    public void compareSubImage() throws Exception {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        float quality = 4f/9 - 1;
+        BufferedImage subImage = image.getSubimage(100, 100, 100, 100);
+
+        ImageIO.write(subImage, "PNG", new File("./target/" + name + "_expected.png"));
+
+        new PNGWriter().writePNG(subImage, bos, -quality, FilterType.FILTER_NONE);
+        ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+        BufferedImage readBack = ImageIO.read(bis);
+
+        boolean success = false;
+        try {
+            ImageAssert.assertImagesEqual(subImage, readBack);
+            success = true;
+        } finally {
+            if(!success) {
+                ImageIO.write(subImage, "PNG", new File("./target/" + name + "_expected.png"));
+                ImageIO.write(readBack, "PNG", new File("./target/" + name + "_actual.png"));
+            }
+        }
+    }
+
 }
