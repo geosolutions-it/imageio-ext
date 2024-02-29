@@ -16,18 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.png;
 
-import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.DirectColorModel;
-import java.awt.image.IndexColorModel;
-import java.awt.image.MultiPixelPackedSampleModel;
-import java.awt.image.PixelInterleavedSampleModel;
-import java.awt.image.Raster;
-import java.awt.image.RenderedImage;
-import java.awt.image.SampleModel;
+import java.awt.image.*;
 
 /**
  * Wraps a {@link RenderedImage} into a scaline provider optimized to turn its pixels into PNG
@@ -44,11 +33,6 @@ public class ScanlineProviderFactory {
         Raster raster;
         if (image instanceof BufferedImage) {
             raster = ((BufferedImage) image).getRaster();
-            // in case the raster has a parent, this is likely a subimage, we have to force
-            // a copy of the raster to get a data buffer we can scroll over without issues
-            if (raster.getParent() != null) {
-                raster = image.getData(new Rectangle(0, 0, raster.getWidth(), raster.getHeight()));
-            }
         } else {
             // TODO: we could build a tile oriented reader that fetches tiles in parallel here
             raster = image.getData();

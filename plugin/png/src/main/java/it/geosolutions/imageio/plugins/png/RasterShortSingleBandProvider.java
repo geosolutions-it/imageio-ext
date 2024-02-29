@@ -30,12 +30,12 @@ public final class RasterShortSingleBandProvider extends AbstractScanlineProvide
     final short[] shorts;
 
     public RasterShortSingleBandProvider(Raster raster) {
-        super(raster, 16, raster.getWidth() * 2);
+        super(raster, 16, raster.getWidth() * 2, 1);
         this.shorts = ((DataBufferUShort) raster.getDataBuffer()).getData();
     }
     
     public RasterShortSingleBandProvider(Raster raster, int bidDepth, int scanlineLength, IndexColorModel palette) {
-        super(raster, bidDepth, scanlineLength, palette);
+        super(raster, bidDepth, scanlineLength, 1, palette);
         this.shorts = ((DataBufferUShort) raster.getDataBuffer()).getData();
     }
 

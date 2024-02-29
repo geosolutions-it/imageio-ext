@@ -41,20 +41,20 @@ public abstract class AbstractScanlineProvider implements ScanlineProvider {
     
     protected int currentRow = 0;
 
-    public AbstractScanlineProvider(Raster raster, int bitDepth, int scanlineLength) {
-        this(raster, (byte) bitDepth, scanlineLength, null);
+    public AbstractScanlineProvider(Raster raster, int bitDepth, int scanlineLength, int pixelStride) {
+        this(raster, (byte) bitDepth, scanlineLength, pixelStride, null);
     }
     
-    public AbstractScanlineProvider(Raster raster, int bitDepth, int scanlineLength, IndexColorModel palette) {
-        this(raster, (byte) bitDepth, scanlineLength, palette);
+    public AbstractScanlineProvider(Raster raster, int bitDepth, int scanlineLength, int pixelStride, IndexColorModel palette) {
+        this(raster, (byte) bitDepth, scanlineLength, pixelStride, palette);
     }
     
-    protected AbstractScanlineProvider(Raster raster, byte bitDepth, int scanlineLength, IndexColorModel palette) {
+    protected AbstractScanlineProvider(Raster raster, byte bitDepth, int scanlineLength, int pixelStride, IndexColorModel palette) {
         this.width = raster.getWidth();
         this.height = raster.getHeight();
         this.bitDepth = bitDepth;
         this.palette = palette;
-        this.cursor = new ScanlineCursor(raster);
+        this.cursor = new ScanlineCursor(raster, pixelStride);
         this.scanlineLength = scanlineLength;
     }
 
