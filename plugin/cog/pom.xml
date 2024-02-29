@@ -14,8 +14,8 @@
     <name>cog</name>
 
     <properties>
-        <okhttp.version>4.2.0</okhttp.version>
-        <aws.version>2.20.73</aws.version>
+        <okhttp.version>4.12.0</okhttp.version>
+        <aws.version>2.24.12</aws.version>
         <ehcache.version>3.4.0</ehcache.version>
         <online.skip.pattern>**/*OnlineTest.java</online.skip.pattern>
     </properties>
