@@ -34,7 +34,7 @@ public final class RasterIntABGRProvider extends AbstractScanlineProvider {
     final boolean hasAlpha;
 
     public RasterIntABGRProvider(Raster raster, boolean hasAlpha) {
-        super(raster, 8, raster.getWidth() * (hasAlpha ? 4 : 3));
+        super(raster, 8, raster.getWidth() * (hasAlpha ? 4 : 3), 1);
         this.pixels = ((DataBufferInt) raster.getDataBuffer()).getData();
         this.hasAlpha = hasAlpha;
         if (hasAlpha) {

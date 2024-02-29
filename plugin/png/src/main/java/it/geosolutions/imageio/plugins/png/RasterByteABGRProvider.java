@@ -36,7 +36,7 @@ public final class RasterByteABGRProvider extends AbstractScanlineProvider {
     final int numBands;
 
     public RasterByteABGRProvider(Raster raster, boolean hasAlpha) {
-        super(raster, 8, raster.getWidth() * (computePixelStride(raster, PIXEL_STRIDES, hasAlpha)));
+        super(raster, 8, raster.getWidth() * (computePixelStride(raster, PIXEL_STRIDES, hasAlpha)), computePixelStride(raster, PIXEL_STRIDES, hasAlpha));
         this.hasAlpha = hasAlpha;
         this.bytes = ((DataBufferByte) raster.getDataBuffer()).getData();
         ComponentSampleModel sm = (ComponentSampleModel) raster.getSampleModel();

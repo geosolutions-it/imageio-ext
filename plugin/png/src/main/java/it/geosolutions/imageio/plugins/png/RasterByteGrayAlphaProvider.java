@@ -40,7 +40,7 @@ public final class RasterByteGrayAlphaProvider extends AbstractScanlineProvider 
     int numBands;
 
     public RasterByteGrayAlphaProvider(Raster raster) {
-        super(raster, 8, raster.getWidth() * computePixelStride(raster, PIXEL_STRIDES));
+        super(raster, 8, raster.getWidth() * computePixelStride(raster, PIXEL_STRIDES), computePixelStride(raster, PIXEL_STRIDES));
         this.bytes = ((DataBufferByte) raster.getDataBuffer()).getData();
         ComponentSampleModel sm = (ComponentSampleModel) raster.getSampleModel();
         this.bandOffsets = sm.getBandOffsets();
@@ -65,5 +65,4 @@ public final class RasterByteGrayAlphaProvider extends AbstractScanlineProvider 
             }
         }
     }
-
 }
