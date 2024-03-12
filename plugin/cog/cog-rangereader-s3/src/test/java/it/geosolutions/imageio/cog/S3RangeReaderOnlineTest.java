@@ -69,9 +69,11 @@ public class S3RangeReaderOnlineTest {
         //s3:// isn't recognized as a known protocol so a real URL can't be built on top of it.
         //Let's check that we can get a valid URL anyway (translating it to http protocol).
         URL url = reader.getURL();
+        BasicAuthURI uri = new BasicAuthURI(url);
         S3ConfigurationProperties configurationProperties = new S3ConfigurationProperties(uri.getUri().getScheme(), uri);
         assertEquals(region, configurationProperties.getRegion());
         assertEquals(bucket, configurationProperties.getBucket());
+        assertEquals(file, configurationProperties.getKey());
     }
 
     @Test
