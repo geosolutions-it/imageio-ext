@@ -142,7 +142,7 @@ public abstract class GDALImageReader extends ImageReader {
             }
 
             // Add a new GDALCommonIIOImageMetadata to the HashMap
-            final GDALCommonIIOImageMetadata datasetMetadataNew = createDatasetMetadata(datasetName);
+            final GDALCommonIIOImageMetadata datasetMetadataNew = createDatasetMetadata(ds, datasetName, true);
             retVal = datasetMetadataMap.put(datasetName, datasetMetadataNew);
             if (retVal == null) {
                 retVal = datasetMetadataNew;
@@ -226,15 +226,8 @@ public abstract class GDALImageReader extends ImageReader {
      * @param datasetName
      *                the name of the dataset
      */
-    protected GDALCommonIIOImageMetadata createDatasetMetadata(final String datasetName) {
-        return new GDALCommonIIOImageMetadata(datasetName);
-    }
-    /**
-     * Build a proper {@link GDALCommonIIOImageMetadata} given an input dataset
-     * as well as the file name containing such a dataset.
-     */
-    protected GDALCommonIIOImageMetadata createDatasetMetadata(final Dataset mainDataset, String mainDatasetFileName) {
-        return new GDALCommonIIOImageMetadata(mainDataset, mainDatasetFileName, false);
+    protected GDALCommonIIOImageMetadata createDatasetMetadata(final Dataset ds, final String datasetName, boolean initializationRequired) {
+		return new GDALCommonIIOImageMetadata(ds, datasetName, initializationRequired);
     }
 
     /**
@@ -735,7 +728,6 @@ public abstract class GDALImageReader extends ImageReader {
                 nSubdatasets = 1;
                 datasetNames = new String[1];
                 datasetNames[0] = mainDatasetName;
-                datasetMetadataMap.put(datasetNames[0], this.createDatasetMetadata(mainDatasetName));
                 
             } else {
                 datasetNames = new String[nSubdatasets + 1];
@@ -745,7 +737,6 @@ public abstract class GDALImageReader extends ImageReader {
                     datasetNames[i] = subdatasetName.substring(nameStartAt);
                 }
                 datasetNames[nSubdatasets] = mainDatasetName;
-                datasetMetadataMap.put(datasetNames[nSubdatasets], createDatasetMetadata(mainDataSet, datasetNames[nSubdatasets]));
             }     
             // clean list
             subdatasets.clear();

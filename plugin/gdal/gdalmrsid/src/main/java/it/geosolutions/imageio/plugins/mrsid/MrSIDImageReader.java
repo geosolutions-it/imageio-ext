@@ -39,8 +39,8 @@ public class MrSIDImageReader extends GDALImageReader {
 
 
     @Override
-    protected GDALCommonIIOImageMetadata createDatasetMetadata(Dataset mainDataset, String mainDatasetFileName) {
-        return new MrSIDIIOImageMetadata(mainDataset, mainDatasetFileName);
+    protected GDALCommonIIOImageMetadata createDatasetMetadata(Dataset ds, String datasetName, boolean initializationRequired) {
+        return new MrSIDIIOImageMetadata(ds, datasetName, initializationRequired);
     }
 
     /**
