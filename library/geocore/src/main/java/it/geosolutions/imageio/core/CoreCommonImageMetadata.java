@@ -19,6 +19,7 @@ package it.geosolutions.imageio.core;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.SampleModel;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -144,9 +145,6 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
 
     /** Array to store the color interpretation for each band */
     private int[] colorInterpretations;
-
-    /** The nodata range for this reader, if any (may be null) */
-    private double[] noData;
 
     /**
      * Private constructor
@@ -458,17 +456,22 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
 
     /**
      * Returns the data for this dataset, as a range. May be <code>null</code>
+     * @deprecated Use {@link #getNoDataValues()}
      */
+    @Deprecated
     public double[] getNoData() {
-        return noData;
+        if (noDataValues != null)
+            return Arrays.stream(noDataValues).mapToDouble(d -> d == null ? Double.NaN : d).toArray();
+        return null;
     }
 
     /**
      * Sets the nodata for this dataset. May be <code>null</code>
      * @param noData
+     * @deprecated Use {@link #setNoDataValues(Double[])}
      */
     public void setNoData(double[] noData) {
-        this.noData = noData;
+        this.noDataValues = Arrays.stream(noData).boxed().toArray(Double[]::new);
     }
 
     // ////////////////////////////////////////////////////////////////////////
@@ -534,7 +537,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
         return noDataValues == null ? null : noDataValues.clone();
     }
 
-    protected void setNoDataValues(Double[] noDataValues) {
+    public void setNoDataValues(Double[] noDataValues) {
         if (this.noDataValues!=null)
             throw new UnsupportedOperationException("noDataValues have already been defined");
         this.noDataValues = noDataValues;
