@@ -1454,7 +1454,7 @@ public class TIFFImageReader extends ImageReader {
             imageMetadata.getAsTree(TIFFImageMetadata.nativeMetadataFormatName);
         im.setFromTree(TIFFImageMetadata.nativeMetadataFormatName, root);
         if (noData != null) {
-            im.setNoData(new double[] {noData, noData});
+            im.setNoDataValues(new Double[] {noData, noData});
         }
         if (scales != null && offsets != null) {
             im.setScales(scales);
