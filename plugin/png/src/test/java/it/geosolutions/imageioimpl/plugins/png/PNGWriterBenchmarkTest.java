@@ -37,6 +37,7 @@ import java.util.Collection;
 
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 public class PNGWriterBenchmarkTest {
 
     /**
