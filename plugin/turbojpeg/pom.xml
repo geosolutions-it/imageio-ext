@@ -5,12 +5,12 @@
     <parent>
         <groupId>it.geosolutions.imageio-ext</groupId>
         <artifactId>imageio-ext-plugin</artifactId>
-        <version>1.4.11</version>
+        <version>1.4-SNAPSHOT</version>
     </parent>
         
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-turbojpeg</artifactId>
-    <version>1.4.11</version>
+    <version>1.4-SNAPSHOT</version>
 
     <packaging>jar</packaging>
 
