@@ -68,8 +68,8 @@ public class CacheConfig {
     private static String xmlConfigPath;
 
     public CacheConfig() {
-        useDiskCache = Boolean.getBoolean(getEnvironmentValue(COG_CACHING_USE_DISK, "false"));
-        useOffHeapCache = Boolean.getBoolean(getEnvironmentValue(COG_CACHING_USE_OFF_HEAP, "false"));
+        useDiskCache = Boolean.parseBoolean(getEnvironmentValue(COG_CACHING_USE_DISK, "false"));
+        useOffHeapCache = Boolean.parseBoolean(getEnvironmentValue(COG_CACHING_USE_OFF_HEAP, "false"));
         diskCacheSize = Integer.parseInt(
                 getEnvironmentValue(COG_CACHING_DISK_CACHE_SIZE, Integer.toString(500 * MEBIBYTE_IN_BYTES)));
         offHeapSize = Integer.parseInt(

@@ -163,7 +163,7 @@ public class CogHTTPReadOnlineTest {
 
     @Test
     public void readCogCaching() throws IOException {
-        DefaultCogImageInputStream cogStream = new DefaultCogImageInputStream(cogUrl2);
+        CachingCogImageInputStream cogStream = new CachingCogImageInputStream(cogUrl2);
         CogImageReader reader = new CogImageReader(new CogImageReaderSpi());
         reader.setInput(cogStream);
 
@@ -180,6 +180,73 @@ public class CogHTTPReadOnlineTest {
 
         Assert.assertEquals(width, cogImage.getWidth());
         Assert.assertEquals(height, cogImage.getHeight());
+    }
+
+
+    @Test
+    public void readCogWithCaching_whenReusingCachedTiles_expectNoException() throws IOException {
+        CachingCogImageInputStream cogStream = new CachingCogImageInputStream(cogUrl2);
+        CogImageReader reader = new CogImageReader(new CogImageReaderSpi());
+        reader.setInput(cogStream);
+
+        CogImageReadParam param = new CogImageReadParam();
+        param.setRangeReaderClass(HttpRangeReader.class);
+        param.setHeaderLength(1024);
+        int x = 128;
+        int y = 128;
+        int width = 256;
+        int height = 256;
+
+        param.setSourceRegion(new Rectangle(x, y, width, height));
+        BufferedImage cogImage1 = reader.read(0, param);
+
+        CachingCogImageInputStream cogStream2 = new CachingCogImageInputStream(cogUrl2);
+        CogImageReader reader2 = new CogImageReader(new CogImageReaderSpi());
+        reader2.setInput(cogStream2);
+
+        CogImageReadParam param2 = new CogImageReadParam();
+        param2.setRangeReaderClass(HttpRangeReader.class);
+        param2.setHeaderLength(1024);
+
+        param2.setSourceRegion(new Rectangle(x, y, width, height));
+        BufferedImage cogImage2 = reader2.read(0, param2);
+
+        Assert.assertEquals(cogImage1.getWidth(), cogImage2.getWidth());
+        Assert.assertTrue("code above will fail, but should not",true);
+    }
+
+    @Test
+    public void readCogWithCaching_whenTilesPartlyCached_expectNoException() throws IOException {
+        CachingCogImageInputStream cogStream = new CachingCogImageInputStream(cogUrl2);
+        CogImageReader reader = new CogImageReader(new CogImageReaderSpi());
+        reader.setInput(cogStream);
+
+        CogImageReadParam param = new CogImageReadParam();
+        param.setRangeReaderClass(HttpRangeReader.class);
+        param.setHeaderLength(1024);
+        int x = 128;
+        int y = 128;
+        int width = 256;
+        int height = 256;
+
+        param.setSourceRegion(new Rectangle(x, y, width, height));
+        BufferedImage cogImage1 = reader.read(0, param);
+
+        CachingCogImageInputStream cogStream2 = new CachingCogImageInputStream(cogUrl2);
+        CogImageReader reader2 = new CogImageReader(new CogImageReaderSpi());
+        reader2.setInput(cogStream2);
+
+        CogImageReadParam param2 = new CogImageReadParam();
+        param2.setRangeReaderClass(HttpRangeReader.class);
+        param2.setHeaderLength(1024);
+        int x2 = x + width;
+        int y2 = y + height;
+
+        param2.setSourceRegion(new Rectangle(x2, y2, width, height));
+        BufferedImage cogImage2 = reader2.read(0, param2);
+
+        Assert.assertEquals(cogImage1.getWidth(), cogImage2.getWidth());
+        Assert.assertTrue("code above will fail, but should not",true);
     }
 
 }
