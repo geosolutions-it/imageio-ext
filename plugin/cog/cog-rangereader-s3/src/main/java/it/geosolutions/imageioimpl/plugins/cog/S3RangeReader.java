@@ -220,7 +220,7 @@ public class S3RangeReader extends AbstractRangeReader {
                     + S3ConfigurationProperties.S3_DOT_VH
                     + configProps.getRegion()
                     + S3ConfigurationProperties.AMAZON_AWS
-                    + "/" + configProps.getFilename());
+                    + "/" + configProps.getKey());
         }
         return super.getURL();
     }
