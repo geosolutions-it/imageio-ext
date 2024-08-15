@@ -702,6 +702,13 @@ public class TIFFReadTest extends Assert {
     }
 
     @Test
+    public void readLZWPredictor3On32BitsFloat() throws IOException {
+        // This image has been created from test.tif using the command:
+        // gdal_translate -ot Float32 -co COMPRESS=LZW -CO PREDICTOR=3 test.tif lzw32f_p3.tif
+        assertImagesEqual(readTiff("test.tif"), readTiff("lzw32f_p3.tif"));
+    }
+
+    @Test
     public void readDeflateWithFloatingPointPredictor() throws IOException {
         // This image has been created from test.tif using the command:
         // gdal_translate -ot Float32 -co COMPRESS=DEFLATE -co PREDICTOR=3 test.tif deflate_predictor_3.tif

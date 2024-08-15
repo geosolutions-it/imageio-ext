@@ -75,13 +75,9 @@ package it.geosolutions.imageioimpl.plugins.tiff;
 
 import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
 import it.geosolutions.imageio.plugins.tiff.TIFFDecompressor;
-import it.geosolutions.imageio.plugins.tiff.TIFFTag;
 
-import java.awt.Rectangle;
 import java.io.IOException;
-import java.nio.ByteOrder;
 import javax.imageio.IIOException;
-import javax.imageio.ImageReader;
 
 
 public class TIFFLZWDecompressor extends TIFFDecompressor {
@@ -113,8 +109,8 @@ public class TIFFLZWDecompressor extends TIFFDecompressor {
         super();
 
         if (predictor != BaselineTIFFTagSet.PREDICTOR_NONE && 
-            predictor != 
-            BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING) {
+            predictor != BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING &&
+            predictor != BaselineTIFFTagSet.PREDICTOR_FLOATING_POINT) {
             throw new IIOException("Illegal value for Predictor in " +
                                    "TIFF file");
         }
@@ -130,29 +126,6 @@ public class TIFFLZWDecompressor extends TIFFDecompressor {
                           int dstOffset,
                           int bitsPerPixel,
                           int scanlineStride) throws IOException {
-
-        // Check bitsPerSample.
-        if (predictor == 
-            BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING) {
-            int len = bitsPerSample.length;
-            final int bps=bitsPerSample[0];
-            if (bps != 8 && bps != 16 && bps != 32) {
-                throw new IIOException
-                    (bps + "-bit samples "+
-                     "are not supported for Horizontal "+
-                     "differencing Predictor");
-            }
-            for(int i=1;i<len;i++) {
-                if(bitsPerSample[i]!=bps) {
-                    throw new IIOException
-                        ("Varying sample width is not "+
-                         "supported for Horizontal "+
-                         "differencing Predictor (first: "+
-                         bps+", unexpected:"+bitsPerSample[i]+")");
-                }
-            }
-        }
-
         stream.seek(offset);
 
         byte[] sdata = new byte[byteCount];
@@ -169,7 +142,7 @@ public class TIFFLZWDecompressor extends TIFFDecompressor {
             bufOffset = 0;
         }
 
-        int numBytesDecoded = decode(sdata, 0, buf, bufOffset);
+        int numBytesDecoded = decode(sdata, 0, buf, bufOffset, bytesPerRow);
 
         if(bytesPerRow != scanlineStride) {
             if(DEBUG) {
@@ -185,12 +158,17 @@ public class TIFFLZWDecompressor extends TIFFDecompressor {
     }
 
     public int decode(byte[] sdata, int srcOffset,
-                      byte[] ddata, int dstOffset)
+                      byte[] ddata, int dstOffset,
+                      int bytesPerRow)
         throws IOException {
         if (sdata[0] == (byte)0x00 && sdata[1] == (byte)0x01) {
             throw new IIOException
                 ("TIFF 5.0-style LZW compression is not supported!");
         }
+
+        PredictorDecompressor predictorDecompressor = new PredictorDecompressor(
+                predictor, bitsPerSample, sampleFormat, samplesPerPixel, stream.getByteOrder());
+        predictorDecompressor.validate();
 
         this.srcData = sdata;
         this.dstData = ddata;
@@ -233,84 +211,7 @@ public class TIFFLZWDecompressor extends TIFFDecompressor {
 	    }
 	}
 
-        if (predictor == BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING) {
-            if(bitsPerSample[0]==8) {
-                for (int j = 0; j < srcHeight; j++) {
-                    int count = dstOffset + samplesPerPixel * (j * srcWidth + 1);
-                    for (int i = samplesPerPixel; i < srcWidth * samplesPerPixel; i++) {
-                        dstData[count] += dstData[count - samplesPerPixel];
-                        count++;
-                    }
-                }
-            }
-            else if(bitsPerSample[0]==16) {
-                if(stream.getByteOrder()==ByteOrder.LITTLE_ENDIAN) {
-                    for (int j = 0; j < srcHeight; j++) {
-                        int count = dstOffset + samplesPerPixel * (j * srcWidth + 1) * 2;
-                        for (int i = samplesPerPixel; i < srcWidth * samplesPerPixel; i++) {
-                            int curr=(((int)dstData[count]) & 0xFF) + (dstData[count+1]<<8);
-                            int prev=(((int)dstData[count-samplesPerPixel*2]) & 0xFF)+(dstData[count+1-samplesPerPixel*2]<<8);
-                            curr+=prev;
-                            dstData[count]=(byte)curr;
-                            dstData[count+1]=(byte)(curr>>8);
-                            count+=2;
-                        }
-                    }
-                }
-                else
-                {
-                    for (int j = 0; j < srcHeight; j++) {
-                        int count = dstOffset + samplesPerPixel * (j * srcWidth + 1) * 2;
-                        for (int i = samplesPerPixel; i < srcWidth * samplesPerPixel; i++) {
-                            int curr=(((int)dstData[count+1]) & 0xFF) + (dstData[count]<<8);
-                            int prev=(((int)dstData[count+1-samplesPerPixel*2]) & 0xFF)+(dstData[count-samplesPerPixel*2]<<8);
-                            curr+=prev;
-                            dstData[count+1]=(byte)curr;
-                            dstData[count]=(byte)(curr>>8);
-                            count+=2;
-                        }
-                    }
-                }
-            }
-            else if(bitsPerSample[0]==32) {
-                if (stream.getByteOrder() == ByteOrder.LITTLE_ENDIAN) {
-                    for (int j = 0; j < srcHeight; j++) {
-                        int count = dstOffset + samplesPerPixel * (j * srcWidth + 1) * 4;
-                        int prevBase = count - samplesPerPixel * 4;
-                        int prev = readIntegerFromBuffer(dstData, prevBase, prevBase + 1, prevBase + 2, prevBase + 3);
-                        for (int i = samplesPerPixel; i < srcWidth * samplesPerPixel; i++) {
-                            int curr = readIntegerFromBuffer(dstData, count, count + 1, count + 2, count + 3);
-                            int sum = curr + prev;
-                            dstData[count] = (byte) (sum & 0xFF);
-                            dstData[count + 1] = (byte) ((sum >> 8) & 0xFF);
-                            dstData[count + 2] = (byte) ((sum >> 16) & 0xFF);
-                            dstData[count + 3] = (byte) ((sum >> 24) & 0xFF) ;
-                            count += 4;
-                            prev = sum;
-                        }
-                    }
-                }
-                else
-                {
-                    for (int j = 0; j < srcHeight; j++) {
-                        int count = dstOffset + samplesPerPixel * (j * srcWidth + 1) * 4;
-                        int prevBase = count - samplesPerPixel * 4;
-                        int prev = readIntegerFromBuffer(dstData, prevBase + 3, prevBase + 2, prevBase +1, prevBase);
-                        for (int i = samplesPerPixel; i < srcWidth * samplesPerPixel; i++) {
-                            int curr = readIntegerFromBuffer(dstData, count + 3, count + 2, count +1, count);
-                            int sum = curr + prev;
-                            dstData[count + 3] = (byte) (sum & 0xFF);
-                            dstData[count + 2] = (byte) (sum >> 8 & 0xFF);
-                            dstData[count + 1] = (byte) (sum >> 16 & 0xFF);
-                            dstData[count] = (byte) (sum >> 24 & 0xFF);
-                            count += 4;
-                            prev = sum;
-                        }
-                    }
-                }
-            }
-            else throw new IIOException("Unexpected branch of Horizontal differencing Predictor, bps="+bitsPerSample[0]);
-        }
+        predictorDecompressor.decompress(dstData, srcOffset, dstOffset, srcHeight, srcWidth, bytesPerRow);
 
         return dstIndex - dstOffset;
     }
