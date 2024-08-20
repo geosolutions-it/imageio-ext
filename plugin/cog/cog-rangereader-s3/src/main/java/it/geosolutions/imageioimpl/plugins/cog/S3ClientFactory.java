@@ -83,6 +83,8 @@ public class S3ClientFactory {
                 getExecutor(configProps)
         ));
 
+        builder.forcePathStyle(configProps.getForcePathStyle());
+
         S3AsyncClient s3AsyncClient = builder.build();
         s3AsyncClients.put(region, s3AsyncClient);
         return s3AsyncClient;
