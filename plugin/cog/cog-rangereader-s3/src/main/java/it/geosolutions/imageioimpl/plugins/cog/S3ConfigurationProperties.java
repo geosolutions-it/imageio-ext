@@ -159,6 +159,7 @@ public class S3ConfigurationProperties {
     private int corePoolSize;
     private int maxPoolSize;
     private int keepAliveTime;
+    private boolean forcePathStyle;
 
     public final String AWS_S3_USER_KEY;
     public final String AWS_S3_PASSWORD_KEY;
@@ -167,6 +168,7 @@ public class S3ConfigurationProperties {
     public final String AWS_S3_CORE_POOL_SIZE_KEY;
     public final String AWS_S3_MAX_POOL_SIZE_KEY;
     public final String AWS_S3_KEEP_ALIVE_TIME;
+    public final String AWS_S3_FORCE_PATH_STYLE;
 
     private final static Logger LOGGER = Logger.getLogger(S3ConfigurationProperties.class.getName());
 
@@ -179,6 +181,7 @@ public class S3ConfigurationProperties {
         AWS_S3_CORE_POOL_SIZE_KEY = "IIO_" + this.alias + "_AWS_CORE_POOL_SIZE";
         AWS_S3_MAX_POOL_SIZE_KEY = "IIO_" + this.alias + "_AWS_MAX_POOL_SIZE";
         AWS_S3_KEEP_ALIVE_TIME = "IIO_" + this.alias + "_AWS_KEEP_ALIVE_TIME";
+        AWS_S3_FORCE_PATH_STYLE = "IIO_" + this.alias + "_AWS_FORCE_PATH_STYLE";
 
         user = PropertyLocator.getEnvironmentValue(AWS_S3_USER_KEY, null);
         password = PropertyLocator.getEnvironmentValue(AWS_S3_PASSWORD_KEY, null);
@@ -190,6 +193,8 @@ public class S3ConfigurationProperties {
                 PropertyLocator.getEnvironmentValue(AWS_S3_MAX_POOL_SIZE_KEY, "128"));
         keepAliveTime = Integer.parseInt(
                 PropertyLocator.getEnvironmentValue(AWS_S3_KEEP_ALIVE_TIME, "10"));
+        forcePathStyle = Boolean.parseBoolean(
+                PropertyLocator.getEnvironmentValue(AWS_S3_FORCE_PATH_STYLE, "false"));
 
         if (cogUri.getUser() != null && cogUri.getPassword()!= null) {
             user = cogUri.getUser();
@@ -299,5 +304,9 @@ public class S3ConfigurationProperties {
 
     public int getKeepAliveTime() {
         return keepAliveTime;
+    }
+
+    public boolean getForcePathStyle() {
+        return forcePathStyle;
     }
 }
