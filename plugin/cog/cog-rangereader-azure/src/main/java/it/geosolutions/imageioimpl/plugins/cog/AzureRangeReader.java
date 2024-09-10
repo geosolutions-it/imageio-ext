@@ -16,22 +16,24 @@
  */
 package it.geosolutions.imageioimpl.plugins.cog;
 
-import com.microsoft.azure.storage.blob.BlobRange;
-import com.microsoft.azure.storage.blob.BlobURLParts;
-import com.microsoft.azure.storage.blob.URLParser;
-import it.geosolutions.imageio.core.BasicAuthURI;
-
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.net.UnknownHostException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+
+import com.azure.storage.blob.BlobUrlParts;
+import com.azure.storage.blob.models.BlobRange;
+
+import it.geosolutions.imageio.core.BasicAuthURI;
 
 
 /**
@@ -45,7 +47,7 @@ public class AzureRangeReader extends AbstractRangeReader {
 
     private static final int CORE_POOL_SIZE = Integer.getInteger("azure.reader.core.poolsize", 64);
     private static final int MAX_POOL_SIZE = Integer.getInteger("azure.reader.max.poolsize", 128);
-    private static final int THREAD_TIMEOUT = Integer.getInteger("azure.reader.timeout.ms", 10000);
+    private static final int THREAD_TIMEOUT = Integer.getInteger("azure.reader.timeout.ms", 10_000);
 
     static final ThreadPoolExecutor EXECUTORS;
 
@@ -78,12 +80,11 @@ public class AzureRangeReader extends AbstractRangeReader {
     }
 
     public String getBlobKey(URI uri) {
-        BlobURLParts parts = null;
         String path = uri.toASCIIString();
         try {
-            parts = URLParser.parse(uri.toURL());
-            return parts.blobName();
-        } catch (UnknownHostException| MalformedURLException e) {
+            BlobUrlParts parts = BlobUrlParts.parse(uri.toURL());
+            return parts.getBlobName();
+        } catch (IllegalStateException | MalformedURLException e) {
             throw new RuntimeException("Unable to parse the provided uri " +
                     path + "due to " + e.getLocalizedMessage());
         }
@@ -116,7 +117,7 @@ public class AzureRangeReader extends AbstractRangeReader {
     }
 
     private BlobRange buildRange(long rangeStart, long rangeLength) {
-        return new BlobRange().withOffset(rangeStart).withCount(rangeLength);
+        return new BlobRange(rangeStart, rangeLength);
     }
 
     @Override

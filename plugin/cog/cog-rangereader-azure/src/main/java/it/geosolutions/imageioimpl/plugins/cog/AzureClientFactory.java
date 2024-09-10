@@ -26,29 +26,24 @@ import java.util.Map;
  * Azure clients should be singletons and re-used.
  */
 public class AzureClientFactory {
+    private static final Map<String, AzureClient> asyncClients = new SoftValueHashMap<>();
+
+    static {
+        ExtCaches.addListener(()->{
+        	synchronized (asyncClients) {
+            	asyncClients.clear();
+			}
+        });
+    }
 
     private AzureClientFactory() {
     }
 
-    private static Map<String, AzureClient> asyncClients = new SoftValueHashMap<>();
-
     public static AzureClient getClient(AzureConfigurationProperties configProps) {
 
         String container = configProps.getContainer();
-        if (asyncClients.containsKey(container)) {
-            return asyncClients.get(container);
-        }
-        AzureClient azureClient = new AzureClient(configProps);
-
-        asyncClients.put(container, azureClient);
-        return azureClient;
+        synchronized (asyncClients) {
+            return asyncClients.computeIfAbsent(container, c->new AzureClient(configProps));
+		}
     }
-
-    static {
-        ExtCaches.addListener(() -> {
-            asyncClients.clear();
-
-        });
-    }
-
 }

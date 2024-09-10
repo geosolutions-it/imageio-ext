@@ -26,10 +26,8 @@
             <artifactId>imageio-ext-cog-commons</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.microsoft.azure</groupId>
+            <groupId>com.azure</groupId>
             <artifactId>azure-storage-blob</artifactId>
-            <version>11.0.0</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
