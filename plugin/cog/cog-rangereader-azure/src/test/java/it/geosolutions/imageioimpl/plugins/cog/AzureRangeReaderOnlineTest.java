@@ -14,20 +14,43 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package it.geosolutions.imageio.cog;
+package it.geosolutions.imageioimpl.plugins.cog;
 
-import it.geosolutions.imageioimpl.plugins.cog.AzureRangeReader;
-import it.geosolutions.imageioimpl.plugins.cog.RangeReader;
 import org.junit.Assert;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 import java.util.Map;
 
 public class AzureRangeReaderOnlineTest {
 
+    private String cogUrl = "https://cogtestdata.blob.core.windows.net/cogtestdata/land_topo_cog_jpeg_1024.tif";
+
     @Test
     public void readAzureRanges() {
-        String cogUrl = "https://cogtestdata.blob.core.windows.net/cogtestdata/land_topo_cog_jpeg_1024.tif";
         readRanges(new AzureRangeReader(cogUrl, 4096));
+    }
+
+    @Test
+    public void readCache() {
+        AzureRangeReader reader = new AzureRangeReader(cogUrl, 4096);
+        reader = spy(reader);
+
+        long[] range1 = new long[]{20000, 21000};
+
+        Map<Long, byte[]> data1 = reader.read(range1);
+        Map<Long, byte[]> data2 = reader.read(range1);
+
+        int length = (int) (range1[1] - range1[0]) + 1;
+        verify(reader, times(1)).readInternal(20000, length);
+
+        assertNotNull(data1.get(range1[0]));
+        assertEquals(data1.get(range1[0]), data2.get(range1[0]));
     }
 
     public void readRanges(RangeReader rangeReader) {

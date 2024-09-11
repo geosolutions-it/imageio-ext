@@ -26,7 +26,6 @@ import java.net.URI;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -149,38 +148,39 @@ public class AzureRangeReader extends AbstractRangeReader {
     @Override
     public Map<Long, byte[]> read(long[]... ranges) {
         ranges = reconcileRanges(ranges);
-        Map<Long, CompletableFuture<byte[]>> downloads = new HashMap<>(ranges.length);
 
         Map<Long, byte[]> values = new ConcurrentHashMap<>();
         List<Future<?>> futures = new ArrayList<>();
         for (int i = 0; i < ranges.length; i++) {
             long[] range = ranges[i];
-            final byte[] dataRange = data.get(range);
+            final long rangeStart = range[0];
+            final byte[] dataRange = data.get(rangeStart);
             // Check for available data.
             if (dataRange == null) {
                 Future<?> future = EXECUTORS.submit(() -> {
-                    int length = (int) (range[1] - range[0]) + 1;
-                    byte[] bytes = readInternal(range[0], length);
-                    data.put(range[0], bytes);
-                    values.put(range[0], bytes);
+                    final long rangeEnd = range[1];
+                    int length = (int) (rangeEnd - rangeStart) + 1;
+                    byte[] bytes = readInternal(rangeStart, length);
+                    data.put(rangeStart, bytes);
+                    values.put(rangeStart, bytes);
                 });
                 futures.add(future);
             } else {
-                values.put(range[0], dataRange);
+                values.put(rangeStart, dataRange);
             }
         }
         for (Future<?> future : futures) {
             try {
                 future.get();
             } catch (Exception e) {
-                throw new RuntimeException("Failed to read data from Google Storage", e);
+                throw new RuntimeException("Failed to read data from Azure Blob Storage", e);
             }
         }
 
         return values;
     }
 
-    private byte[] readInternal(long readOffset, int readLength) {
+    byte[] readInternal(long readOffset, int readLength) {
         BlobRange range = buildRange(readOffset, readLength);
         return client.getBytes(blobKey, range);
     }

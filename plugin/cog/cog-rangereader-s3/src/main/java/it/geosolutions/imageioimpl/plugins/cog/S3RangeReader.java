@@ -151,21 +151,18 @@ public class S3RangeReader extends AbstractRangeReader {
         int missingRanges[] = new int[ranges.length];
         int missing = 0;
         for (int i = 0; i < ranges.length; i++) {
-            byte[] dataRange = data.get(ranges[i]);
+            final long[] range = ranges[i];
+            final long rangeStart = range[0];
+            byte[] dataRange = data.get(rangeStart);
             // Check for available data.
             if (dataRange == null) {
-                GetObjectRequest request = GetObjectRequest.builder()
-                        .bucket(configProps.getBucket())
-                        .key(configProps.getKey())
-                        .range("bytes=" + ranges[i][0] + "-" + ranges[i][1])
-                        .build();
-                CompletableFuture<ResponseBytes<GetObjectResponse>> futureGet =
-                        client.getObject(request, AsyncResponseTransformer.toBytes());
-                downloads.put(ranges[i][0], futureGet);
+                long rangeEnd = range[1];
+                CompletableFuture<ResponseBytes<GetObjectResponse>> futureGet = readAsync(rangeStart, rangeEnd);
+                downloads.put(rangeStart, futureGet);
                 // Mark the range as missing
                 missingRanges[missing++] = i;
             } else {
-                values.put(ranges[i][0], dataRange);
+                values.put(rangeStart, dataRange);
             }
         }
 
@@ -177,6 +174,15 @@ public class S3RangeReader extends AbstractRangeReader {
             data.put(range, values.get(range));
         }
         return values;
+    }
+
+    CompletableFuture<ResponseBytes<GetObjectResponse>> readAsync(final long rangeStart, long rangeEnd) {
+        GetObjectRequest request = GetObjectRequest.builder()
+                .bucket(configProps.getBucket())
+                .key(configProps.getKey())
+                .range("bytes=" + rangeStart + "-" + rangeEnd)
+                .build();
+        return client.getObject(request, AsyncResponseTransformer.toBytes());
     }
 
     /**

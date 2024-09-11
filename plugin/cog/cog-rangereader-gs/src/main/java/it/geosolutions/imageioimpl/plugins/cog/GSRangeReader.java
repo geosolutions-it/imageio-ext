@@ -130,7 +130,7 @@ public class GSRangeReader extends AbstractRangeReader {
         return headerBytes;
     }
 
-    private byte[] readInternal(long readOffset, int readLength) {
+    byte[] readInternal(long readOffset, int readLength) {
         try (ReadChannel channel = getBlob().reader()) {
             ByteBuffer buffer = ByteBuffer.allocate(readLength);
             channel.seek(readOffset);
@@ -182,25 +182,24 @@ public class GSRangeReader extends AbstractRangeReader {
     public Map<Long, byte[]> read(long[]... ranges) {
         ranges = reconcileRanges(ranges);
 
-        Instant start = Instant.now();
-        Map<Long, CompletableFuture<byte[]>> downloads = new HashMap<>(ranges.length);
-
         Map<Long, byte[]> values = new ConcurrentHashMap<>();
         List<Future<?>> futures = new ArrayList<>();
         for (int i = 0; i < ranges.length; i++) {
             long[] range = ranges[i];
-            final byte[] dataRange = data.get(range);
+            final long rangeStart = range[0];
+            final byte[] dataRange = data.get(rangeStart);
             // Check for available data.
             if (dataRange == null) {
                 Future<?> future = EXECUTORS.submit(() -> {
-                    int length = (int) (range[1] - range[0]) + 1;
-                    byte[] bytes = readInternal(range[0], length);
-                    data.put(range[0], bytes);
-                    values.put(range[0], bytes);
+                    final long rangeEnd = range[1];
+                    int length = (int) (rangeEnd - rangeStart) + 1;
+                    byte[] bytes = readInternal(rangeStart, length);
+                    data.put(rangeStart, bytes);
+                    values.put(rangeStart, bytes);
                 });
                 futures.add(future);
             } else {
-                values.put(range[0], dataRange);
+                values.put(rangeStart, dataRange);
             }
         }
         for (Future<?> future : futures) {
