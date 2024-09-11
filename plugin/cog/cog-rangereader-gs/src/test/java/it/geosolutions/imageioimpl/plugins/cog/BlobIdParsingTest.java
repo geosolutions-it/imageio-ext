@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package it.geosolutions.imageio.cog;
+package it.geosolutions.imageioimpl.plugins.cog;
 
 import com.google.cloud.storage.BlobId;
 import it.geosolutions.imageioimpl.plugins.cog.GSRangeReader;

@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package it.geosolutions.imageio.cog;
+package it.geosolutions.imageioimpl.plugins.cog;
 
 import it.geosolutions.imageio.core.BasicAuthURI;
 import it.geosolutions.imageio.plugins.cog.CogImageReadParam;
@@ -29,6 +29,10 @@ import java.net.URL;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
  * Testing HTTP range reading capabilities.
@@ -77,6 +81,23 @@ public class S3RangeReaderOnlineTest {
     @Test
     public void readHttpRanges() {
         readRanges(new S3RangeReader(uri, CogImageReadParam.DEFAULT_HEADER_LENGTH));
+    }
+
+    @Test
+    public void readCache() {
+        S3RangeReader reader = new S3RangeReader(uri, CogImageReadParam.DEFAULT_HEADER_LENGTH);
+
+        reader = spy(reader);
+        
+        long[] range1 = new long[]{20000, 21000};
+
+        Map<Long, byte[]> data1 = reader.read(range1);
+        Map<Long, byte[]> data2 = reader.read(range1);
+        
+        verify(reader, times(1)).readAsync(20000, 21000);
+        
+        assertNotNull(data1.get(range1[0]));
+        assertEquals(data1.get(range1[0]), data2.get(range1[0]));
     }
 
     public void readRanges(RangeReader rangeReader) {
