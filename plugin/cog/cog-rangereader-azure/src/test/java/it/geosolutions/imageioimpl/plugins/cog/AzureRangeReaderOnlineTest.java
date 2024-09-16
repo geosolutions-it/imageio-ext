@@ -16,9 +16,6 @@
  */
 package it.geosolutions.imageioimpl.plugins.cog;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.spy;
@@ -26,6 +23,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.Map;
+
+import org.junit.Assert;
+import org.junit.Test;
 
 public class AzureRangeReaderOnlineTest {
 

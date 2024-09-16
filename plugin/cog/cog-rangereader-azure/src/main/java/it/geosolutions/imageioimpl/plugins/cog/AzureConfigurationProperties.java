@@ -16,13 +16,12 @@
  */
 package it.geosolutions.imageioimpl.plugins.cog;
 
-import com.microsoft.azure.storage.blob.BlobURLParts;
-import com.microsoft.azure.storage.blob.URLParser;
-import it.geosolutions.imageio.core.BasicAuthURI;
-
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.UnknownHostException;
+
+import com.azure.storage.blob.BlobUrlParts;
+
+import it.geosolutions.imageio.core.BasicAuthURI;
 
 /**
  * Helps locate configuration properties in system/environment for use in building Azure client.
@@ -40,7 +39,7 @@ public class AzureConfigurationProperties {
     private String accountName;
     private String accountKey;
     private Integer maxConnections = 64;
-    private Boolean useHTTPS = Boolean.TRUE;
+    private boolean useHTTPS = true;
     private String serviceURL = null;
 
     AzureConfigurationProperties(BasicAuthURI cogUri) {
@@ -52,33 +51,32 @@ public class AzureConfigurationProperties {
 
         if (path.startsWith("https")) {
             // replace for quicker finding
-            path = path.replace("https", "http");
+            path = path.replaceFirst("https", "http");
             useHTTPS = true;
         }
 
-        BlobURLParts parts = null;
         try {
-            parts = URLParser.parse(uri.toURL());
-            container = parts.containerName();
-            String blobName = parts.blobName();
+            BlobUrlParts parts = BlobUrlParts.parse(uri.toURL());
+            container = parts.getBlobContainerName();
+            String blobName = parts.getBlobName();
             int lastIndex = blobName.lastIndexOf("/");
             if (lastIndex > 0) {
                 prefix = blobName.substring(0, lastIndex);
             }
-            String host = parts.host();
+            String host = parts.getHost();
             int blobcoreIdx = host.indexOf("." + AzureClient.AZURE_URL_BASE);
             if (blobcoreIdx > 0) {
                 accountName = host.substring(0, blobcoreIdx);
             }
 
-        } catch (UnknownHostException| MalformedURLException e) {
+        } catch (IllegalStateException| MalformedURLException e) {
             throw new RuntimeException("Unable to parse the provided uri " + path + "due to " + e.getLocalizedMessage());
         }
 
-        if (container == null) {
+        if (container == null) {//REVISIT: dead code
             container = PropertyLocator.getEnvironmentValue(AZURE_ACCOUNT_CONTAINER, null);
         }
-        if (prefix == null) {
+        if (prefix == null) {//REVISIT: dead code
             prefix = PropertyLocator.getEnvironmentValue(AZURE_ACCOUNT_PREFIX, null);
         }
         if (cogUri.getUser() != null && cogUri.getPassword()!= null) {
@@ -86,13 +84,13 @@ public class AzureConfigurationProperties {
             accountKey = cogUri.getPassword();
         }
 
-        if (accountName == null) {
+        if (accountName == null) {//REVISIT: dead code
             accountName = PropertyLocator.getEnvironmentValue(AZURE_ACCOUNT_NAME, null);
         }
         if (accountKey == null) {
             accountKey = PropertyLocator.getEnvironmentValue(AZURE_ACCOUNT_KEY, null);
         }
-        if (maxConnections == null) {
+        if (maxConnections == null) {//REVISIT: dead code
             maxConnections = Integer.parseInt(PropertyLocator.getEnvironmentValue(AZURE_MAX_CONNECTIONS, "5"));
         }
 
@@ -138,11 +136,11 @@ public class AzureConfigurationProperties {
         this.maxConnections = maxConnections;
     }
 
-    public Boolean isUseHTTPS() {
+    public boolean isUseHTTPS() {
         return useHTTPS;
     }
 
-    public void setUseHTTPS(Boolean useHTTPS) {
+    public void setUseHTTPS(boolean useHTTPS) {
         this.useHTTPS = useHTTPS;
     }
 
