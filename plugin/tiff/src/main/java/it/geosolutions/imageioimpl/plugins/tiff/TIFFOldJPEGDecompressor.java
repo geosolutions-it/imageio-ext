@@ -690,11 +690,6 @@ public class TIFFOldJPEGDecompressor extends TIFFJPEGDecompressor {
         JPEGReader.read(0, JPEGParam);
     }
 
-    protected void finalize() throws Throwable {
-        super.finalize();
-        dispose();
-    }
-    
     @Override
     public void dispose() {
         super.dispose();
