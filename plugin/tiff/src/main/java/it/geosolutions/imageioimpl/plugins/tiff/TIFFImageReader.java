@@ -355,8 +355,6 @@ public class TIFFImageReader extends ImageReader {
     // Contains a map of Integers to Lists.
     HashMap<Integer, List<ImageTypeSpecifier>> imageTypeMap = new HashMap<Integer, List<ImageTypeSpecifier>>();
 
-    protected BufferedImage theImage = null;
-
     protected int width = -1;
     protected int height = -1;
     protected int numBands = -1;
@@ -1555,8 +1553,6 @@ public class TIFFImageReader extends ImageReader {
     protected int[] sourceBands;
     protected int[] destinationBands;
 
-    private TIFFDecompressor decompressor;
-
     // floor(num/den)
     private static int ifloor(int num, int den) {
         if (num < 0) {
@@ -1666,7 +1662,7 @@ public class TIFFImageReader extends ImageReader {
                                      width, height);
     }
 
-    private void decodeTile(int ti, int tj, int band) throws IOException {
+    private void decodeTile(BufferedImage theImage, TIFFDecompressor decompressor, int ti, int tj, int band) throws IOException {
         if(DEBUG) {
             System.out.println("decodeTile("+ti+","+tj+","+band+")");
         }
@@ -1796,7 +1792,7 @@ public class TIFFImageReader extends ImageReader {
         stream.reset();
     }
 
-    private void reportProgress() {
+    private void reportProgress(BufferedImage theImage) {
         // Report image progress/update to listeners after each tile
         pixelsRead += dstWidth*dstHeight;
         processImageProgress(100.0f*pixelsRead/pixelsToRead);
@@ -1811,7 +1807,7 @@ public class TIFFImageReader extends ImageReader {
         prepareRead(imageIndex, param);
 
         // prepare for reading
-        this.theImage = getDestination(param,
+        BufferedImage theImage = getDestination(param,
                                        getImageTypes(imageIndex),
                                        width, height, noData);
 
@@ -1845,126 +1841,236 @@ public class TIFFImageReader extends ImageReader {
 
         // Attempt to get decompressor and color converted from the read param
         
-        TIFFColorConverter colorConverter = null;
+        TIFFDecompressor decompressor = null;
+            try {
+                decompressor = getDecompressor(theImage);
+                TIFFColorConverter colorConverter = getColorConverter(theImage, decompressor);
+
+                decompressor.setReader(this);
+                decompressor.setMetadata(imageMetadata);
+                decompressor.setImage(theImage);
+
+                decompressor.setPhotometricInterpretation(photometricInterpretation);
+                decompressor.setCompression(compression);
+                decompressor.setSamplesPerPixel(samplesPerPixel);
+                decompressor.setBitsPerSample(bitsPerSample);
+                decompressor.setSampleFormat(sampleFormat);
+                decompressor.setExtraSamples(extraSamples);
+                decompressor.setColorMap(colorMap);
+
+                decompressor.setColorConverter(colorConverter);
+
+                decompressor.setSourceXOffset(sourceXOffset);
+                decompressor.setSourceYOffset(sourceYOffset);
+                decompressor.setSubsampleX(srcXSubsampling);
+                decompressor.setSubsampleY(srcYSubsampling);
+
+                decompressor.setDstXOffset(dstXOffset);
+                decompressor.setDstYOffset(dstYOffset);
+
+                decompressor.setSourceBands(sourceBands);
+                decompressor.setDestinationBands(destinationBands);
+
+                // Compute bounds on the tile indices for this source region.
+                int minTileX =
+                        TIFFImageWriter.XToTileX(srcRegion.x, 0, tileOrStripWidth);
+                int minTileY =
+                        TIFFImageWriter.YToTileY(srcRegion.y, 0, tileOrStripHeight);
+                int maxTileX =
+                        TIFFImageWriter.XToTileX(srcRegion.x + srcRegion.width - 1,
+                                0, tileOrStripWidth);
+                int maxTileY =
+                        TIFFImageWriter.YToTileY(srcRegion.y + srcRegion.height - 1,
+                                0, tileOrStripHeight);
+
+                boolean isAbortRequested = false;
+                if (planarConfiguration ==
+                        BaselineTIFFTagSet.PLANAR_CONFIGURATION_PLANAR) {
+
+                    decompressor.setPlanar(true);
+
+                    int[] sb = new int[1];
+                    int[] db = new int[1];
+                    for (int tj = minTileY; tj <= maxTileY; tj++) {
+                        for (int ti = minTileX; ti <= maxTileX; ti++) {
+                            for (int band = 0; band < sourceBands.length; band++) {
+                                sb[0] = sourceBands[band];
+                                decompressor.setSourceBands(sb);
+                                db[0] = destinationBands[band];
+                                decompressor.setDestinationBands(db);
+                                //XXX decompressor.beginDecoding();
+
+                                // The method abortRequested() is synchronized
+                                // so check it only once per loop just before
+                                // doing any actual decoding.
+                                if (abortRequested()) {
+                                    isAbortRequested = true;
+                                    break;
+                                }
+
+                                decodeTile(theImage, decompressor, ti, tj, sb[0]);
+                            }
+
+                            if (isAbortRequested) break;
+
+                            reportProgress(theImage);
+                        }
+
+                        if (isAbortRequested) break;
+                    }
+                } else {
+                    //XXX decompressor.beginDecoding();
+
+                    for (int tj = minTileY; tj <= maxTileY; tj++) {
+                        for (int ti = minTileX; ti <= maxTileX; ti++) {
+                            // The method abortRequested() is synchronized
+                            // so check it only once per loop just before
+                            // doing any actual decoding.
+                            if (abortRequested()) {
+                                isAbortRequested = true;
+                                break;
+                            }
+
+                            decodeTile(theImage, decompressor, ti, tj, -1);
+
+                            reportProgress(theImage);
+                        }
+
+                        if (isAbortRequested) break;
+                    }
+                }
+
+                if (isAbortRequested) {
+                    processReadAborted();
+                } else {
+                    processImageComplete();
+                }
+
+                return theImage;
+        } finally {
+           if (decompressor != null) decompressor.dispose();
+        }
+    }
+
+    private TIFFDecompressor getDecompressor(BufferedImage theImage) throws IIOException {
+        TIFFDecompressor decompressor = null;
         if (imageReadParam instanceof TIFFImageReadParam) {
             TIFFImageReadParam tparam =
-                (TIFFImageReadParam)imageReadParam;
-            this.decompressor = tparam.getTIFFDecompressor();
-            colorConverter = tparam.getColorConverter();
+                    (TIFFImageReadParam) imageReadParam;
+            decompressor = tparam.getTIFFDecompressor();
         }
 
         // If we didn't find one, use a standard decompressor
-        if (this.decompressor == null) {
+        if (decompressor == null) {
             if (compression ==
-                BaselineTIFFTagSet.COMPRESSION_NONE) {
+                    BaselineTIFFTagSet.COMPRESSION_NONE) {
                 // Get the fillOrder field.
                 TIFFField fillOrderField =
-                    imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_FILL_ORDER);
+                        imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_FILL_ORDER);
 
                 // Set the decompressor based on the fill order.
-                if(fillOrderField != null && fillOrderField.getAsInt(0) == 2) {
-                    this.decompressor = new TIFFLSBDecompressor();
+                if (fillOrderField != null && fillOrderField.getAsInt(0) == 2) {
+                    decompressor = new TIFFLSBDecompressor();
                 } else {
-                    this.decompressor = new TIFFNullDecompressor();
+                    decompressor = new TIFFNullDecompressor();
                 }
             } else if (compression ==
-                       BaselineTIFFTagSet.COMPRESSION_CCITT_T_6) {
+                    BaselineTIFFTagSet.COMPRESSION_CCITT_T_6) {
 
                 // Try to create the codecLib decompressor.
-                if(PackageUtil.isCodecLibAvailable()) {
+                if (PackageUtil.isCodecLibAvailable()) {
                     try {
-                        this.decompressor =
-                            new TIFFCodecLibFaxDecompressor(compression);
-                        if(DEBUG) {
+                        decompressor = new TIFFCodecLibFaxDecompressor(compression);
+                        if (DEBUG) {
                             System.out.println
-                                ("Using codecLib T.6 decompressor");
+                                    ("Using codecLib T.6 decompressor");
                         }
                     } catch (RuntimeException re) {
-                        if(DEBUG) {
+                        if (DEBUG) {
                             System.out.println(re);
                         }
                     }
                 }
 
                 // Fall back to the Java decompressor.
-                if (this.decompressor == null) {
-                    if(DEBUG) {
+                if (decompressor == null) {
+                    if (DEBUG) {
                         System.out.println("Using Java T.6 decompressor");
                     }
-                    this.decompressor = new TIFFFaxDecompressor();
+                    decompressor = new TIFFFaxDecompressor();
                 }
             } else if (compression ==
-                       BaselineTIFFTagSet.COMPRESSION_CCITT_T_4) {
+                    BaselineTIFFTagSet.COMPRESSION_CCITT_T_4) {
 
-                if(PackageUtil.isCodecLibAvailable()) {
+                if (PackageUtil.isCodecLibAvailable()) {
                     // Try to create the codecLib decompressor.
                     try {
-                        this.decompressor =
-                            new TIFFCodecLibFaxDecompressor(compression);
-                        if(DEBUG) {
+                        decompressor =
+                                new TIFFCodecLibFaxDecompressor(compression);
+                        if (DEBUG) {
                             System.out.println
-                                ("Using codecLib T.4 decompressor");
+                                    ("Using codecLib T.4 decompressor");
                         }
                     } catch (RuntimeException re) {
-                        if(DEBUG) {
+                        if (DEBUG) {
                             System.out.println(re);
                         }
                     }
                 }
 
                 // Fall back to the Java decompressor.
-                if (this.decompressor == null) {
-                    if(DEBUG) {
+                if (decompressor == null) {
+                    if (DEBUG) {
                         System.out.println("Using Java T.4 decompressor");
                     }
-                    this.decompressor = new TIFFFaxDecompressor();
+                    decompressor = new TIFFFaxDecompressor();
                 }
             } else if (compression ==
-                       BaselineTIFFTagSet.COMPRESSION_CCITT_RLE) {
-                this.decompressor = new TIFFFaxDecompressor();
+                    BaselineTIFFTagSet.COMPRESSION_CCITT_RLE) {
+                decompressor = new TIFFFaxDecompressor();
             } else if (compression ==
-                       BaselineTIFFTagSet.COMPRESSION_PACKBITS) {
-                if(DEBUG) {
+                    BaselineTIFFTagSet.COMPRESSION_PACKBITS) {
+                if (DEBUG) {
                     System.out.println("Using TIFFPackBitsDecompressor");
                 }
-                this.decompressor = new TIFFPackBitsDecompressor();
+                decompressor = new TIFFPackBitsDecompressor();
             } else if (compression ==
-                       BaselineTIFFTagSet.COMPRESSION_LZW) {
-                if(DEBUG) {
+                    BaselineTIFFTagSet.COMPRESSION_LZW) {
+                if (DEBUG) {
                     System.out.println("Using TIFFLZWDecompressor");
                 }
                 TIFFField predictorField =
-                    imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_PREDICTOR);
+                        imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_PREDICTOR);
                 int predictor = ((predictorField == null) ?
-                                 BaselineTIFFTagSet.PREDICTOR_NONE :
-                                 predictorField.getAsInt(0));
-                this.decompressor = new TIFFLZWDecompressor(predictor);
+                        BaselineTIFFTagSet.PREDICTOR_NONE :
+                        predictorField.getAsInt(0));
+                decompressor = new TIFFLZWDecompressor(predictor);
             } else if (compression ==
-                       BaselineTIFFTagSet.COMPRESSION_JPEG) {
-                this.decompressor = new TIFFJPEGDecompressor();
+                    BaselineTIFFTagSet.COMPRESSION_JPEG) {
+                decompressor = new TIFFJPEGDecompressor();
             } else if (compression ==
-                       BaselineTIFFTagSet.COMPRESSION_ZLIB ||
-                       compression ==
-                       BaselineTIFFTagSet.COMPRESSION_DEFLATE) {
+                    BaselineTIFFTagSet.COMPRESSION_ZLIB ||
+                    compression ==
+                            BaselineTIFFTagSet.COMPRESSION_DEFLATE) {
                 TIFFField predictorField =
-                    imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_PREDICTOR);
+                        imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_PREDICTOR);
                 int predictor = ((predictorField == null) ?
-                                 BaselineTIFFTagSet.PREDICTOR_NONE :
-                                 predictorField.getAsInt(0));
-                this.decompressor = new TIFFDeflateDecompressor(predictor);
+                        BaselineTIFFTagSet.PREDICTOR_NONE :
+                        predictorField.getAsInt(0));
+                decompressor = new TIFFDeflateDecompressor(predictor);
             } else if (compression ==
-                       BaselineTIFFTagSet.COMPRESSION_OLD_JPEG) {
+                    BaselineTIFFTagSet.COMPRESSION_OLD_JPEG) {
                 TIFFField JPEGProcField =
-                    imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_JPEG_PROC);
-                if(JPEGProcField == null) {
+                        imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_JPEG_PROC);
+                if (JPEGProcField == null) {
                     processWarningOccurred
-                        ("JPEGProc field missing; assuming baseline sequential JPEG process.");
-                } else if(JPEGProcField.getAsInt(0) !=
-                   BaselineTIFFTagSet.JPEG_PROC_BASELINE) {
+                            ("JPEGProc field missing; assuming baseline sequential JPEG process.");
+                } else if (JPEGProcField.getAsInt(0) !=
+                        BaselineTIFFTagSet.JPEG_PROC_BASELINE) {
                     throw new IIOException
-                        ("Old-style JPEG supported for baseline sequential JPEG process only!");
+                            ("Old-style JPEG supported for baseline sequential JPEG process only!");
                 }
-                this.decompressor = new TIFFOldJPEGDecompressor();
+                decompressor = new TIFFOldJPEGDecompressor();
                 //throw new IIOException("Old-style JPEG not supported!");
             } else if (compression == PrivateTIFFTagSet.COMPRESSION_ZSTD) {
                 TIFFField predictorField =
@@ -1972,153 +2078,59 @@ public class TIFFImageReader extends ImageReader {
                 int predictor = ((predictorField == null) ?
                         BaselineTIFFTagSet.PREDICTOR_NONE :
                         predictorField.getAsInt(0));
-                this.decompressor = new TIFFZSTDDecompressor(predictor);
-            }
-
-
-            else {
+                decompressor = new TIFFZSTDDecompressor(predictor);
+            } else {
                 throw new IIOException
-                    ("Unsupported compression type (tag number = "+
-                     compression+")!");
+                        ("Unsupported compression type (tag number = " +
+                                compression + ")!");
             }
 
             if (photometricInterpretation ==
-                BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_Y_CB_CR &&
-                compression != BaselineTIFFTagSet.COMPRESSION_JPEG &&
-                compression != BaselineTIFFTagSet.COMPRESSION_OLD_JPEG) {
+                    BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_Y_CB_CR &&
+                    compression != BaselineTIFFTagSet.COMPRESSION_JPEG &&
+                    compression != BaselineTIFFTagSet.COMPRESSION_OLD_JPEG) {
                 boolean convertYCbCrToRGB =
-                    theImage.getColorModel().getColorSpace().getType() ==
-                    ColorSpace.TYPE_RGB;
+                        theImage.getColorModel().getColorSpace().getType() ==
+                                ColorSpace.TYPE_RGB;
                 TIFFDecompressor wrappedDecompressor =
-                    this.decompressor instanceof TIFFNullDecompressor ?
-                    null : this.decompressor;
-                this.decompressor =
-                    new TIFFYCbCrDecompressor(wrappedDecompressor,
-                                              convertYCbCrToRGB);
+                        decompressor instanceof TIFFNullDecompressor ?
+                                null : decompressor;
+                decompressor =
+                        new TIFFYCbCrDecompressor(wrappedDecompressor,
+                                convertYCbCrToRGB);
             }
         }
 
-        if(DEBUG) {
-            System.out.println("\nDecompressor class = "+
-                               decompressor.getClass().getName()+"\n");
+        if (DEBUG && decompressor != null) {
+            System.out.println("\nDecompressor class = " +
+                    decompressor.getClass().getName() + "\n");
         }
 
+        return decompressor;
+    }
+
+    private TIFFColorConverter getColorConverter(BufferedImage theImage, TIFFDecompressor decompressor) {
+        TIFFColorConverter colorConverter = null;
+        if (imageReadParam instanceof TIFFImageReadParam) {
+            TIFFImageReadParam tparam =
+                    (TIFFImageReadParam) imageReadParam;
+            colorConverter = tparam.getColorConverter();
+        }
         if (colorConverter == null) {
             if (photometricInterpretation ==
-                BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_CIELAB &&
-                theImage.getColorModel().getColorSpace().getType() ==
-                ColorSpace.TYPE_RGB) {
+                    BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_CIELAB &&
+                    theImage.getColorModel().getColorSpace().getType() ==
+                            ColorSpace.TYPE_RGB) {
                 colorConverter = new TIFFCIELabColorConverter();
-             } else if (photometricInterpretation ==
-                        BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_Y_CB_CR &&
-                        !(this.decompressor instanceof TIFFYCbCrDecompressor) &&
-                        compression != BaselineTIFFTagSet.COMPRESSION_JPEG &&
-                        compression != BaselineTIFFTagSet.COMPRESSION_OLD_JPEG) {
-                 colorConverter = new TIFFYCbCrColorConverter(imageMetadata);
+            } else if (photometricInterpretation ==
+                    BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_Y_CB_CR &&
+                    !(decompressor instanceof TIFFYCbCrDecompressor) &&
+                    compression != BaselineTIFFTagSet.COMPRESSION_JPEG &&
+                    compression != BaselineTIFFTagSet.COMPRESSION_OLD_JPEG) {
+                colorConverter = new TIFFYCbCrColorConverter(imageMetadata);
             }
         }
-        
-        decompressor.setReader(this);
-        decompressor.setMetadata(imageMetadata);
-        decompressor.setImage(theImage);
-
-        decompressor.setPhotometricInterpretation(photometricInterpretation);
-        decompressor.setCompression(compression);
-        decompressor.setSamplesPerPixel(samplesPerPixel);
-        decompressor.setBitsPerSample(bitsPerSample);
-        decompressor.setSampleFormat(sampleFormat);
-        decompressor.setExtraSamples(extraSamples);
-        decompressor.setColorMap(colorMap);
-
-        decompressor.setColorConverter(colorConverter);
-
-        decompressor.setSourceXOffset(sourceXOffset);
-        decompressor.setSourceYOffset(sourceYOffset);
-        decompressor.setSubsampleX(srcXSubsampling);
-        decompressor.setSubsampleY(srcYSubsampling);
-
-        decompressor.setDstXOffset(dstXOffset);
-        decompressor.setDstYOffset(dstYOffset);
-
-        decompressor.setSourceBands(sourceBands);
-        decompressor.setDestinationBands(destinationBands);
-
-        // Compute bounds on the tile indices for this source region.
-        int minTileX =
-            TIFFImageWriter.XToTileX(srcRegion.x, 0, tileOrStripWidth);
-        int minTileY =
-            TIFFImageWriter.YToTileY(srcRegion.y, 0, tileOrStripHeight);
-        int maxTileX =
-            TIFFImageWriter.XToTileX(srcRegion.x + srcRegion.width - 1,
-                                     0, tileOrStripWidth);
-        int maxTileY =
-            TIFFImageWriter.YToTileY(srcRegion.y + srcRegion.height - 1,
-                                     0, tileOrStripHeight);
-
-        boolean isAbortRequested = false;
-        if (planarConfiguration ==
-            BaselineTIFFTagSet.PLANAR_CONFIGURATION_PLANAR) {
-            
-            decompressor.setPlanar(true);
-            
-            int[] sb = new int[1];
-            int[] db = new int[1];
-            for (int tj = minTileY; tj <= maxTileY; tj++) {
-                for (int ti = minTileX; ti <= maxTileX; ti++) {
-                    for (int band = 0; band < sourceBands.length; band++) {
-                        sb[0] = sourceBands[band];
-                        decompressor.setSourceBands(sb);
-                        db[0] = destinationBands[band];
-                        decompressor.setDestinationBands(db);
-                        //XXX decompressor.beginDecoding();
-
-                        // The method abortRequested() is synchronized
-                        // so check it only once per loop just before
-                        // doing any actual decoding.
-                        if(abortRequested()) {
-                            isAbortRequested = true;
-                            break;
-                        }
-
-                        decodeTile(ti, tj, sb[0]);
-                    }
-
-                    if(isAbortRequested) break;
-
-                    reportProgress();
-                }
-
-                if(isAbortRequested) break;
-            }
-        } else {
-            //XXX decompressor.beginDecoding();
-
-            for (int tj = minTileY; tj <= maxTileY; tj++) {
-                for (int ti = minTileX; ti <= maxTileX; ti++) {
-                    // The method abortRequested() is synchronized
-                    // so check it only once per loop just before
-                    // doing any actual decoding.
-                    if(abortRequested()) {
-                        isAbortRequested = true;
-                        break;
-                    }
-
-                    decodeTile(ti, tj, -1);
-
-                    reportProgress();
-                }
-
-                if(isAbortRequested) break;
-            }
-        }
-
-        if (isAbortRequested) {
-            processReadAborted();
-        } else {
-            processImageComplete();
-        }
-
-        return theImage;
+        return colorConverter;
     }
 
     public void reset() {
@@ -2223,14 +2235,7 @@ public class TIFFImageReader extends ImageReader {
     
     @Override
     public void dispose() {
-        if (this.decompressor != null) {
-            this.decompressor.dispose();
-        }
         this.layout = null;
-        if (this.theImage != null) {
-            this.theImage.flush();
-        }
-        this.theImage = null;
         this.imageStartPosition = null;
         this.imageMetadata = null;
         this.imageReadParam = null;

@@ -284,11 +284,6 @@ public class TIFFJPEGDecompressor extends TIFFDecompressor {
         
     }
 
-    protected void finalize() throws Throwable {
-        super.finalize();
-        dispose();
-    }
-    
     @Override
     public void dispose() {
         super.dispose();

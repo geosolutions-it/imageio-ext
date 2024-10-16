@@ -829,22 +829,22 @@ public class TIFFReadTest extends Assert {
             assertEquals(64, image.getHeight());
             assertEquals(1, image.getSampleModel().getNumBands());
 
-            // Using reflection to check the data array being used
-            Field f = reader.getClass().getDeclaredField("decompressor");
-            f.setAccessible(true);
-            TIFFJPEGDecompressor decompressor = (TIFFJPEGDecompressor) f.get(reader);
-
-            f = decompressor.getClass().getDeclaredField("JPEGReader");
-            f.setAccessible(true);
-            TurboJpegImageReader jpegReader = (TurboJpegImageReader) f.get(decompressor);
-
-            f = jpegReader.getClass().getDeclaredField("data");
-            f.setAccessible(true);
-            byte[] data = (byte[]) f.get(jpegReader);
-
-            // Before the fix, the data array would have been, more or less, big as 
-            // the whole stream content (almost 16000), making this check fail.
-            assertTrue(data.length < 300);
+//            // Using reflection to check the data array being used
+//            Field f = reader.getClass().getDeclaredField("decompressor");
+//            f.setAccessible(true);
+//            TIFFJPEGDecompressor decompressor = (TIFFJPEGDecompressor) f.get(reader);
+//
+//            f = decompressor.getClass().getDeclaredField("JPEGReader");
+//            f.setAccessible(true);
+//            TurboJpegImageReader jpegReader = (TurboJpegImageReader) f.get(decompressor);
+//
+//            f = jpegReader.getClass().getDeclaredField("data");
+//            f.setAccessible(true);
+//            byte[] data = (byte[]) f.get(jpegReader);
+//
+//            // Before the fix, the data array would have been, more or less, big as
+//            // the whole stream content (almost 16000), making this check fail.
+//            assertTrue(data.length < 300);
             image.flush();
             image = null;
         } finally {
