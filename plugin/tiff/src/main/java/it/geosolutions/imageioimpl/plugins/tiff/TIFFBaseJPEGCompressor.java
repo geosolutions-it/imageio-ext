@@ -541,11 +541,6 @@ public abstract class TIFFBaseJPEGCompressor extends TIFFCompressor {
         return compDataLength;
     }
 
-    protected void finalize() throws Throwable {
-        super.finalize();
-        dispose();
-    }
-    
     @Override
     public void dispose() {
         super.dispose();

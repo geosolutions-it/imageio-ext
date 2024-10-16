@@ -73,7 +73,7 @@ public class CogImageReader extends TIFFImageReader {
 
         // prepare for reading
         prepareRead(imageIndex, param);
-        this.theImage = getDestination(param, getImageTypes(imageIndex), width, height, noData);
+        BufferedImage theImage = getDestination(param, getImageTypes(imageIndex), width, height, noData);
 
         // This could probably be made more efficient...
         Rectangle srcRegion = new Rectangle(0, 0, 0, 0);
