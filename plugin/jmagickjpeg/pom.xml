@@ -4,11 +4,11 @@
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-jmagickjpeg</artifactId>
   <packaging>jar</packaging>
-  <version>1.4.7</version>
+  <version>1.4.7_p1</version>
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-plugin</artifactId>
-    <version>1.4.7</version>
+    <version>1.4.7_p1</version>
   </parent>
   <name>JPEG Plugin that internally uses JMagick</name>
   <!-- ===================================================================== -->
