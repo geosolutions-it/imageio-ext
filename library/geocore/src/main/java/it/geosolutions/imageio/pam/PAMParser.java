@@ -10,14 +10,14 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 
 
 /**
  * Parsing class which allows to parse GDAL PAM Auxiliary files into  PAMDataset objects.
- * 
+ *
  * @author Daniele Romagnoli, GeoSolutions SAS
  */
 public class PAMParser {
@@ -36,7 +36,7 @@ public class PAMParser {
     private final static Logger LOGGER = Logger.getLogger(PAMParser.class.toString());
 
     static {
-        try 
+        try
         {
             CONTEXT = JAXBContext.newInstance("it.geosolutions.imageio.pam");
         } catch (JAXBException e) {
@@ -61,7 +61,7 @@ public class PAMParser {
 
     /**
      * Unmarshal the file and return and PAMDataset object.
-     * 
+     *
      * @param pamFile
      * @return
      * @throws JAXBException
@@ -75,7 +75,7 @@ public class PAMParser {
         }
         return pamDataset;
     }
-    
+
     /**
      * Return the value of a metadata string for the provided rasterBand.
      * @param rasterBand the {@link PAMRasterBand} to be checked.
