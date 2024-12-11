@@ -57,7 +57,9 @@ public class ZipDeflateCompressor implements Compressor {
                         int destOffset, int destLength) {
         deflater.setInput(srcData, srcOffset, srcLength);
         deflater.finish();
-        return deflater.deflate(destData, destOffset, destLength);
+        final int written = deflater.deflate(destData, destOffset, destLength);
+        deflater.reset();
+        return written;
     }
 
     @Override

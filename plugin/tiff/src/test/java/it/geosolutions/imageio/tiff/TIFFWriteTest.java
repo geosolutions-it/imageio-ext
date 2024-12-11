@@ -276,7 +276,29 @@ public class TIFFWriteTest extends Assert {
         writeParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
         writeParam.setCompressionType("ZSTD");
         writer.setOutput(new FileImageOutputStream(outputFile));
-        writer.write(image);
+        writer.write(null, new IIOImage(image, null, null), writeParam);
+        writer.dispose();
+        TIFFReadTest.assertImagesEqual(image, TIFFReadTest.readTiff(outputFile));
+    }
+
+    @Test
+    public void writeDeflatedTilled() throws IOException {
+        final File inputFile =TestData.file(this, "test.tif");
+        final File outputFile = TestData.temp(this, "testw.tif",true);
+        TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi()
+                .createReaderInstance();
+        reader.setInput(new FileImageInputStream(inputFile));
+        BufferedImage image = reader.read(0);
+        final TIFFImageWriter writer= (TIFFImageWriter) new TIFFImageWriterSpi().createWriterInstance();
+        final ImageWriteParam writeParam= new TIFFImageWriteParam(Locale.getDefault());
+        writeParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+        writeParam.setTilingMode(ImageWriteParam.MODE_EXPLICIT);
+        writeParam.setTiling(8, 8,0,0);
+        writeParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+        writeParam.setCompressionType("Deflate");
+        writeParam.setCompressionQuality(1);
+        writer.setOutput(new FileImageOutputStream(outputFile));
+        writer.write(null, new IIOImage(image, null, null), writeParam);
         writer.dispose();
         TIFFReadTest.assertImagesEqual(image, TIFFReadTest.readTiff(outputFile));
     }
