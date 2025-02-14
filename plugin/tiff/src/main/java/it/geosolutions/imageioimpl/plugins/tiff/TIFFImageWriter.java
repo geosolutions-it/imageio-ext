@@ -3906,9 +3906,7 @@ public class TIFFImageWriter extends ImageWriter {
                             stream.seek(replacePixelsTileOffsets[tileIndex]);
                         }
 
-                        image = new SingleTileRenderedImage(raster, cm);
-
-                        int numBytes = writeTile(image, tileRect, encoder);
+                        int numBytes = writeTile(new SingleTileRenderedImage(raster, cm), tileRect, encoder);
 
                         if(isEmpty) {
                             // Update Strip/TileOffsets and
