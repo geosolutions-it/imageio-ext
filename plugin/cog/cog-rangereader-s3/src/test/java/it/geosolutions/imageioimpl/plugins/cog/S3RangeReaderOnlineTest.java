@@ -136,4 +136,16 @@ public class S3RangeReaderOnlineTest {
 
     }
 
+    @Test
+    public void testUSA() throws Exception {
+        BasicAuthURI uri = new BasicAuthURI("s3-us://sentinel-cogs/sentinel-s2-l2a-cogs/32/T/MS/2025/2/S2B_32TMS_20250209_0_L2A/B02.tif");
+        uri.setPassword("");
+        uri.setUser("");
+        String region = "us-west-2";
+        System.setProperty("ioo.s3-us.aws.region", region);
+        readRanges(new S3RangeReader(uri, CogImageReadParam.DEFAULT_HEADER_LENGTH));
+
+
+    }
+
 }

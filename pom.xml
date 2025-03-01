@@ -191,7 +191,7 @@
         
         <configuration>
             <!-- Necessary to enable javadoc to handle J2SE 1.4 features. -->
-          <source>1.8</source>
+          <source>17</source>
             <!-- Specifies whether or not the version text is included.-->
           <version>false</version>
             <!-- Omit qualifying package name before class names in output.-->
