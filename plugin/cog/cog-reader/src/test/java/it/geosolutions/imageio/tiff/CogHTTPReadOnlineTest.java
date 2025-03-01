@@ -16,13 +16,20 @@
  */
 package it.geosolutions.imageio.tiff;
 
+import it.geosolutions.imageio.maskband.DatasetLayout;
 import it.geosolutions.imageio.plugins.cog.CogImageReadParam;
 import it.geosolutions.imageioimpl.plugins.cog.*;
+import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReader;
+import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
+import it.geosolutions.imageioimpl.plugins.tiff.TiffDatasetLayoutImpl;
 import org.junit.Assert;
 import org.junit.Test;
 
+import javax.imageio.ImageReadParam;
+import javax.imageio.stream.FileImageInputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -177,6 +184,57 @@ public class CogHTTPReadOnlineTest {
 
         param.setSourceRegion(new Rectangle(x, y, width, height));
         BufferedImage cogImage = reader.read(0, param);
+
+        Assert.assertEquals(width, cogImage.getWidth());
+        Assert.assertEquals(height, cogImage.getHeight());
+    }
+
+
+    @Test
+    public void readCogJpegMask() throws IOException {
+        DefaultCogImageInputStream cogStream = new DefaultCogImageInputStream("http://localhost/tc_81235068/homedepot_spokane_wa_section1_concrete_final_20230921_ortho_COG.tif");
+        CogImageReader reader = new CogImageReader(new CogImageReaderSpi());
+        reader.setInput(cogStream);
+
+        int x = 0;
+        int y = 0;
+        int width = 1830;
+        int height = 1830;
+
+        CogImageReadParam param = new CogImageReadParam();
+        param.setSourceRegion(new Rectangle(x, y, width, height));
+        param.setRangeReaderClass(HttpRangeReader.class);
+        BufferedImage cogImage = reader.read(0, param);
+
+        System.out.println(cogImage.getSampleModel());
+        System.out.println(cogImage.getColorModel());
+
+        Assert.assertEquals(width, cogImage.getWidth());
+        Assert.assertEquals(height, cogImage.getHeight());
+    }
+
+    @Test
+    public void readLocalJpegMask() throws IOException {
+        final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi()
+                .createReaderInstance();
+        reader.setInput(new FileImageInputStream(new File("/var/www/html/tc_81235068/homedepot_spokane_wa_section1_concrete_final_20230921_ortho_COG.tif")));
+
+        DatasetLayout dtLayout = TiffDatasetLayoutImpl.parseLayout(reader.getStreamMetadata());
+        System.out.println(dtLayout);
+
+        int x = 0;
+        int y = 0;
+        int width = 1830;
+        int height = 1830;
+
+        ImageReadParam param = new ImageReadParam();
+        param.setSourceRegion(new Rectangle(x, y, width, height));
+        BufferedImage cogImage = reader.read(1, param);
+
+        System.out.println(cogImage.getSampleModel());
+        System.out.println(cogImage.getColorModel());
+        System.out.println(cogImage.getWidth());
+        System.out.println(cogImage.getHeight());
 
         Assert.assertEquals(width, cogImage.getWidth());
         Assert.assertEquals(height, cogImage.getHeight());
