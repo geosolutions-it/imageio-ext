@@ -102,9 +102,9 @@ public class PredictorDecompressor {
                 if (byteOrder == ByteOrder.LITTLE_ENDIAN) {
                     for (int j = 0; j < srcHeight; j++) {
                         int count = dstOffset + samplesPerPixel * (j * srcWidth + 1) * 4;
-                        int pbase = count - samplesPerPixel * 4;
-                        int prev = TIFFDecompressor.readIntegerFromBuffer(buf, pbase, pbase + 1, pbase + 2, pbase + 3);
                         for (int i = samplesPerPixel; i < srcWidth * samplesPerPixel; i++) {
+                            int prevBase = count - samplesPerPixel * 4;
+                            int prev = TIFFDecompressor.readIntegerFromBuffer(buf, prevBase, prevBase + 1, prevBase + 2, prevBase + 3);
                             int curr = TIFFDecompressor.readIntegerFromBuffer(buf, count, count + 1, count + 2, count + 3);
                             int sum = curr + prev;
                             buf[count] = (byte) (sum & 0xFF);
@@ -112,15 +112,14 @@ public class PredictorDecompressor {
                             buf[count + 2] = (byte) ((sum >> 16) & 0xFF);
                             buf[count + 3] = (byte) ((sum >> 24) & 0xFF);
                             count += 4;
-                            prev = sum;
                         }
                     }
                 } else {
                     for (int j = 0; j < srcHeight; j++) {
                         int count = dstOffset + samplesPerPixel * (j * srcWidth + 1) * 4;
-                        int pbase = count - samplesPerPixel * 4;
-                        int prev = TIFFDecompressor.readIntegerFromBuffer(buf, pbase + 3, pbase + 2, pbase + 1, pbase);
                         for (int i = samplesPerPixel; i < srcWidth * samplesPerPixel; i++) {
+                            int prevBase = count - samplesPerPixel * 4;
+                            int prev = TIFFDecompressor.readIntegerFromBuffer(buf, prevBase + 3, prevBase + 2, prevBase + 1, prevBase);
                             int curr = TIFFDecompressor.readIntegerFromBuffer(buf, count + 3, count + 2, count + 1, count);
                             int sum = curr + prev;
                             buf[count + 3] = (byte) (sum & 0xFF);
@@ -128,7 +127,6 @@ public class PredictorDecompressor {
                             buf[count + 1] = (byte) (sum >> 16 & 0xFF);
                             buf[count] = (byte) (sum >> 24 & 0xFF);
                             count += 4;
-                            prev = sum;
                         }
                     }
                 }
