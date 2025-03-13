@@ -49,7 +49,8 @@ public class TIFFZSTDDecompressor extends TIFFDecompressor {
     @Override
     public void decodeRaw(byte[] b, int dstOffset, int bitsPerPixel, int scanlineStride) throws IOException {
         PredictorDecompressor predictorDecompressor = new PredictorDecompressor(
-                predictor, bitsPerSample, sampleFormat, samplesPerPixel, stream.getByteOrder());
+                predictor, bitsPerSample, sampleFormat,
+                planar ? 1 : samplesPerPixel, stream.getByteOrder());
         predictorDecompressor.validate();
 
         stream.seek(offset);

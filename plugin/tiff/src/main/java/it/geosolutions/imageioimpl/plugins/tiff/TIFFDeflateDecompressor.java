@@ -112,7 +112,8 @@ public class TIFFDeflateDecompressor extends TIFFDecompressor {
                                        int scanlineStride) throws IOException {
 
         PredictorDecompressor predictorDecompressor = new PredictorDecompressor(
-                predictor, bitsPerSample, sampleFormat, samplesPerPixel, stream.getByteOrder());
+                predictor, bitsPerSample, sampleFormat,
+                planar ? 1 : samplesPerPixel, stream.getByteOrder());
         predictorDecompressor.validate();
 
         // Seek to current tile data offset.
