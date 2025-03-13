@@ -784,6 +784,41 @@ public class TIFFReadTest extends Assert {
         assertImagesEqual(readTiff("sampleRGBA.tif"), readTiff("sampleRGBA32f_DEFLATE_p3.tif"));
     }
 
+    @Test
+    public void readMultiBandPredictor2BandInterleaved() throws IOException {
+        assertImagesEqual(readTiff("sampleRGBA.tif"), readTiff("sampleRGBA_LZW_p2_bi.tif"));
+        assertImagesEqual(readTiff("sampleRGBA.tif"), readTiff("sampleRGBA_DEFLATE_p2_bi.tif"));
+        assertImagesEqual(readTiff("sampleRGBA.tif"), readTiff("sampleRGBA_ZSTD_p2_bi.tif"));
+    }
+
+    @Test
+    public void readMultiBandInt16Predictor2BandInterleaved() throws IOException {
+        assertImagesEqual(readTiff("sampleRGBA.tif"), readTiff("sampleRGBA16_LZW_p2_bi.tif"));
+        assertImagesEqual(readTiff("sampleRGBA.tif"), readTiff("sampleRGBA16_DEFLATE_p2_bi.tif"));
+        assertImagesEqual(readTiff("sampleRGBA.tif"), readTiff("sampleRGBA16_ZSTD_p2_bi.tif"));
+    }
+
+    @Test
+    public void readMultiBandInt32Predictor2BandInterleaved() throws IOException {
+        assertImagesEqual(readTiff("sampleRGBA.tif"), readTiff("sampleRGBA32_LZW_p2_bi.tif"));
+        assertImagesEqual(readTiff("sampleRGBA.tif"), readTiff("sampleRGBA32_DEFLATE_p2_bi.tif"));
+        assertImagesEqual(readTiff("sampleRGBA.tif"), readTiff("sampleRGBA32_ZSTD_p2_bi.tif"));
+    }
+
+    @Test
+    public void readMultiBandFloat32Predictor2BandInterleaved() throws IOException {
+        assertImagesEqual(readTiff("sampleRGBA.tif"), readTiff("sampleRGBA32f_LZW_p2_bi.tif"));
+        assertImagesEqual(readTiff("sampleRGBA.tif"), readTiff("sampleRGBA32f_DEFLATE_p2_bi.tif"));
+        assertImagesEqual(readTiff("sampleRGBA.tif"), readTiff("sampleRGBA32f_ZSTD_p2_bi.tif"));
+    }
+
+    @Test
+    public void readMultiBandFloat32Predictor3BandInterleaved() throws IOException {
+        assertImagesEqual(readTiff("sampleRGBA.tif"), readTiff("sampleRGBA32f_LZW_p3_bi.tif"));
+        assertImagesEqual(readTiff("sampleRGBA.tif"), readTiff("sampleRGBA32f_DEFLATE_p3_bi.tif"));
+        assertImagesEqual(readTiff("sampleRGBA.tif"), readTiff("sampleRGBA32f_ZSTD_p3_bi.tif"));
+    }
+
     static int[] toByteArray(int dataType, Object arr) {
         int[] result = new int[Array.getLength(arr)];
         for (int i = 0; i < result.length; i++) {
