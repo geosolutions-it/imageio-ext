@@ -31,15 +31,6 @@
   <!-- =========================================================== -->
   <profiles>
     <profile>
-        <id>jmagick</id>
-        <activation>
-         <property><name>all</name></property>
-        </activation>
-        <modules>
-           <module>jmagickjpeg</module>
-        </modules>
-    </profile>
-    <profile>
       <id>base</id>
         <activation>
          <property><name>all</name></property>
