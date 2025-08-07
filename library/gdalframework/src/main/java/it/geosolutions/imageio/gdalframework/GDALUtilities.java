@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadataFormat;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
@@ -46,6 +47,8 @@ import javax.imageio.spi.ServiceRegistry;
 import javax.media.jai.JAI;
 import javax.media.jai.RasterFactory;
 
+import com.sun.media.imageioimpl.common.BogusColorSpace;
+import it.geosolutions.imageio.imageioimpl.EnhancedImageReadParam;
 import org.gdal.gdal.Dataset;
 import org.gdal.gdal.Driver;
 import org.gdal.gdal.gdal;
@@ -763,6 +766,99 @@ public final class GDALUtilities {
         }
         return colorModel;
     }
+
+    /**
+     * Extracts the bands from the provided {@link ImageReadParam},
+     * with EnhancedImageReadParam.getBands() taking precedence
+     * over ImageReadParam.getSourceBands() and overriding it.
+     *
+     * @param imageReadParam
+     * @return
+     */
+    public static int[] extractBands(ImageReadParam imageReadParam) {
+        int[] srcBands = imageReadParam.getSourceBands();
+        if (imageReadParam instanceof EnhancedImageReadParam) {
+            // Let's check if the EnhancedImageReadParam has been set and it contains
+            // a bands array. In that case, this will take precedence over the srcBands
+            final EnhancedImageReadParam eparam = (EnhancedImageReadParam) imageReadParam;
+            if (eparam.getBands() != null) {
+                srcBands = eparam.getBands();
+                imageReadParam.setSourceBands(srcBands);
+            }
+        }
+        return srcBands;
+    }
+
+    /**
+     * Extracts a {@link ColorModel} given a source ColorModel, a
+     * provided {@link SampleModel} and a number of destination bands.
+     * If the number of bands in the provided {@link SampleModel} matches
+     * the destination number of bands, the source color model is returned.
+     *
+     * @param cm
+     *                the original ColorModel.
+     * @param sm
+     *                the SampleModel to be used as reference.
+     * @param destNumBands
+     *                the number of bands to be used for extracting the ColorModel.
+     * @return a new ColorModel based on the provided parameters.
+     */
+    public static ColorModel extractColorModel(ColorModel cm, SampleModel sm, int destNumBands) {
+        int dataType = sm.getDataType();
+
+        if (sm.getNumBands() != destNumBands) {
+            boolean hasAlpha = (destNumBands == 2 || destNumBands == 4) && cm.hasAlpha();
+            int transparency = hasAlpha ? Transparency.TRANSLUCENT : Transparency.OPAQUE;
+
+            // Choose color space based on band count
+            ColorSpace cs;
+            if (destNumBands == 1 || destNumBands == 2) {
+                cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
+            } else if (destNumBands == 3 || destNumBands == 4) {
+                cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
+            } else {
+                cs = new BogusColorSpace(destNumBands);
+            }
+
+            // Validate compatibility for float/double types
+            if (isSupportedColorModel(cs, hasAlpha, dataType)) {
+                cm = buildColorModel(cs, hasAlpha, transparency, dataType);
+            } else {
+                // Fall back to generic model if the requested one is invalid
+                cm = buildColorModel(new BogusColorSpace(destNumBands), false, Transparency.OPAQUE, dataType);
+            }
+        }
+
+        return cm;
+    }
+
+    private static ColorModel buildColorModel(ColorSpace cs, boolean hasAlpha, int transparency, int dataType) {
+        return new ComponentColorModel(cs, hasAlpha, false, transparency, dataType);
+    }
+
+    /**
+     * Check if the combination is valid for ComponentColorModel.
+     */
+    private static boolean isSupportedColorModel(ColorSpace cs, boolean hasAlpha, int dataType) {
+        int numComponents = cs.getNumComponents() + (hasAlpha ? 1 : 0);
+        boolean isFloatLike = dataType == DataBuffer.TYPE_FLOAT || dataType == DataBuffer.TYPE_DOUBLE;
+
+        // Disallow RGB for float/double data types
+        // TODO: RGB are supported using FloatDoubleColorModel with normalized pixels in range [0,1]
+        // Skip that case for now
+        if (isFloatLike && cs == ColorSpace.getInstance(ColorSpace.CS_sRGB)) {
+            return false;
+        }
+
+        // Allow GRAY with float/double
+        if (isFloatLike && cs == ColorSpace.getInstance(ColorSpace.CS_GRAY) && numComponents <= 2) {
+            return true;
+        }
+
+        // Allow all other types
+        return !isFloatLike;
+    }
+
 
 	//
 	// Provides to retrieve projections from the provided {@lik RenderedImage}
