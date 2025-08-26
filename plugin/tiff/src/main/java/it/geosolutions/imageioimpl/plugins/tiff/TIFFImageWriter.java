@@ -3400,7 +3400,7 @@ public class TIFFImageWriter extends ImageWriter {
         TIFFIFD rootIFD = new TIFFIFD(tagSets);
         // XXX Ignore unknown fields in metadata presumably because
         // any fields needed to write pixels would be known?
-        rootIFD.initialize(stream, true);
+        rootIFD.initialize(stream, true, isBtiff);
         stream.reset();
 
         return rootIFD;
@@ -3465,8 +3465,7 @@ public class TIFFImageWriter extends ImageWriter {
             }
 
             // Get the image dimensions.
-            f =
-                replacePixelsIFD.getTIFFField(BaselineTIFFTagSet.TAG_IMAGE_WIDTH);
+            f = replacePixelsIFD.getTIFFField(BaselineTIFFTagSet.TAG_IMAGE_WIDTH);
             if(f == null) {
                 throw new IIOException("Cannot read ImageWidth field.");
             }
@@ -3915,12 +3914,18 @@ public class TIFFImageWriter extends ImageWriter {
                             // Update Strip/TileOffsets and
                             // Strip/TileByteCounts fields.
                             stream.mark();
-                            stream.seek(replacePixelsOffsetsPosition +
-                                        4*tileIndex);
-                            stream.writeInt((int)nextSpace);
-                            stream.seek(replacePixelsByteCountsPosition +
-                                        4*tileIndex);
-                            stream.writeInt(numBytes);
+
+                            if (isBtiff) {
+                                stream.seek(replacePixelsOffsetsPosition + 8 * tileIndex);
+                                stream.writeLong(nextSpace);
+                                stream.seek(replacePixelsByteCountsPosition + 8 * tileIndex);
+                                stream.writeLong(numBytes);
+                            } else {
+                                stream.seek(replacePixelsOffsetsPosition + 4 * tileIndex);
+                                stream.writeInt((int)nextSpace);
+                                stream.seek(replacePixelsByteCountsPosition + 4 * tileIndex);
+                                stream.writeInt(numBytes);
+                            }
                             stream.reset();
 
                             // Increment location of next available space.
