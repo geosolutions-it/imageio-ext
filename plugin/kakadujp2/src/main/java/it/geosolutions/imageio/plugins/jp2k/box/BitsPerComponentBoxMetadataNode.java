@@ -16,9 +16,9 @@
  */
 package it.geosolutions.imageio.plugins.jp2k.box;
 
-import javax.imageio.metadata.IIOMetadataNode;
+import it.geosolutions.util.StringUtils;
 
-import com.sun.media.imageioimpl.common.ImageUtil;
+import javax.imageio.metadata.IIOMetadataNode;
 
 /**
  * This class is defined to represent a Bits Per Component Box of JPEG JP2 file
@@ -40,7 +40,7 @@ public class BitsPerComponentBoxMetadataNode extends BaseJP2KBoxMetadataNode {
     BitsPerComponentBoxMetadataNode(final BitsPerComponentBox box) {
         super(box);
         final byte[] bd = box.getBitDepth();
-        bitDepth = ImageUtil.convertObjectToString(bd);
+        bitDepth = StringUtils.convertObjectToString(bd);
         try {
             IIOMetadataNode child = new IIOMetadataNode("BitDepth");
             child.setUserObject(bd);

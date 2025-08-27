@@ -17,9 +17,9 @@
 package it.geosolutions.imageio.plugins.jp2k.box;
 
 
-import javax.imageio.metadata.IIOMetadataNode;
+import it.geosolutions.util.StringUtils;
 
-import com.sun.media.imageioimpl.common.ImageUtil;
+import javax.imageio.metadata.IIOMetadataNode;
 
 /**
  * This class is defined to represent a Data Entry URL Box of JPEG JP2 file
@@ -39,9 +39,9 @@ public class DataEntryURLBoxMetadataNode extends BaseJP2KBoxMetadataNode {
     DataEntryURLBoxMetadataNode(final DataEntryURLBox box) {
         super(box);
         final byte v = box.getVersion();
-        version = ImageUtil.convertObjectToString(v);
+        version = StringUtils.convertObjectToString(v);
         final byte[] fl = box.getFlags();
-        flags = ImageUtil.convertObjectToString(fl);
+        flags = StringUtils.convertObjectToString(fl);
         url = box.getURL();
         try {
             IIOMetadataNode child = new IIOMetadataNode("Version");

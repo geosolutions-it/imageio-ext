@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
@@ -23,7 +24,6 @@ import org.powermock.core.classloader.annotations.SuppressStaticInitializationFo
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import kdu_jni.Jp2_channels;
 
 @RunWith(PowerMockRunner.class)
@@ -74,7 +74,8 @@ public class KakaduUtilitiesTest {
         assertEquals(expectedCallsAndArgs, args);
     }
 
-    public @Ignore @Test void testInitializeRGBChannels_KduV7Plus() throws Exception {
+    @Ignore @Test
+    public void testInitializeRGBChannels_KduV7Plus() throws Exception {
         assumeTrue(format("JNI version=%d, expected >= 7, ignoring", JNI_VERSION), JNI_VERSION >= 7);
 
         KakaduUtilities.initializeRGBChannels(channels);

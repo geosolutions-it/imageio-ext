@@ -19,32 +19,25 @@ import it.geosolutions.imageio.plugins.jp2k.box.XMLBox;
 import it.geosolutions.imageio.plugins.jp2k.box.XMLBoxMetadataNode;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
-
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.image.RenderedImage;
-import java.awt.image.renderable.ParameterBlock;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.logging.Level;
-
-import javax.imageio.ImageReadParam;
-import javax.imageio.ImageReader;
-import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.metadata.IIOMetadataNode;
-import javax.imageio.stream.FileImageOutputStream;
-import org.eclipse.imagen.Histogram;
 import org.eclipse.imagen.ImageLayout;
 import org.eclipse.imagen.JAI;
 import org.eclipse.imagen.ParameterBlockJAI;
 import org.eclipse.imagen.PlanarImage;
 import org.eclipse.imagen.RenderedOp;
-import javax.swing.JFrame;
-
+import org.eclipse.imagen.media.viewer.RenderedImageBrowser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import javax.imageio.ImageReader;
+import javax.imageio.metadata.IIOMetadataNode;
+import javax.imageio.stream.FileImageOutputStream;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.image.RenderedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
@@ -185,18 +178,8 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
 
     public static void displayStatistics(boolean b, RenderedImage source) {
         PlanarImage img = JAI.create("extrema", source, null);
-        double[] maximum = (double[]) img.getProperty("maximum");
-        double[] minimum = (double[]) img.getProperty("minimum");
 
-        ParameterBlock pb = (new ParameterBlock()).addSource(source);
-        pb.add(null).add(1).add(1).add(new int[] { 65536 });
-        pb.add(new double[] { minimum[0] }).add(new double[] { maximum[0] });
-
-        PlanarImage dst = JAI.create("histogram", pb);
-        Histogram h = (Histogram) dst.getProperty("hiStOgRam");
-        JFrame frame = new HistogramFrame(h, b);
-        frame.pack();
-        frame.show();
+        RenderedImageBrowser.showChain(img, true, true, "Statistics", true);
     }
     
     @Test

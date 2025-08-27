@@ -21,6 +21,7 @@ package it.geosolutions.imageio.plugins.jp2k;
 import it.geosolutions.imageio.plugins.jp2k.JP2KKakaduImageWriteParam.Compression;
 import it.geosolutions.imageio.plugins.jp2k.JP2KKakaduImageWriteParam.ProgressionOrder;
 import it.geosolutions.imageio.plugins.jp2k.box.UUIDBox;
+import it.geosolutions.imageio.stream.AccessibleStream;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.util.KakaduUtilities;
 
@@ -291,8 +292,8 @@ public class JP2KKakaduImageWriter extends ImageWriter {
         super.setOutput(output); // validates output
         if (output instanceof File)
             outputFile = (File) output;
-        else if (output instanceof FileImageOutputStreamExt)
-            outputFile = ((FileImageOutputStreamExt) output).getFile();
+        else if (output instanceof AccessibleStream)
+            outputFile = ((AccessibleStream<File>) output).getTarget();
         else if (output instanceof URL) {
             final URL tempURL = (URL) output;
             if (tempURL.getProtocol().equalsIgnoreCase("file")) {

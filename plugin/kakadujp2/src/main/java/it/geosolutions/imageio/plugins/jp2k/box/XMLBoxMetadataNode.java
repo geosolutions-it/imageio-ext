@@ -23,7 +23,7 @@ import it.geosolutions.imageio.plugins.jp2k.JP2KBox;
 import it.geosolutions.util.KakaduUtilities;
 import org.w3c.dom.DOMException;
 
-import com.sun.media.imageioimpl.common.ImageUtil;
+
 
 /**
  * This class is defined to represent a XML box of JPEG JP2 file format. This

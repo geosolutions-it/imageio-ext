@@ -16,9 +16,9 @@
  */
 package it.geosolutions.imageio.plugins.jp2k.box;
 
-import javax.imageio.metadata.IIOMetadataNode;
+import it.geosolutions.util.StringUtils;
 
-import com.sun.media.imageioimpl.common.ImageUtil;
+import javax.imageio.metadata.IIOMetadataNode;
 
 /**
  * This class is defined to represent a File Type Box of JPEG JP2 file format. 
@@ -38,9 +38,9 @@ public class FileTypeBoxMetadataNode extends BaseJP2KBoxMetadataNode {
     
     FileTypeBoxMetadataNode(final FileTypeBox box) {
         super(box);
-        brand = ImageUtil.convertObjectToString(box.getBrand());
+        brand = StringUtils.convertObjectToString(box.getBrand());
         minorVersion = Integer.toString(box.getMinorVersion());
-        compatibilityList= ImageUtil.convertObjectToString(box.getCompatibilitySet());
+        compatibilityList= StringUtils.convertObjectToString(box.getCompatibilitySet());
         
         try {
             IIOMetadataNode child = new IIOMetadataNode("Brand");
