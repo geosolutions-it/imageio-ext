@@ -46,12 +46,6 @@
   <!-- =========================================================== -->
   <profiles>
     <profile>
-        <id>jmagick</id>
-        <modules>
-           <module>jmagickjpeg</module>
-        </modules>
-    </profile>
-    <profile>
       <id>base</id>
        <modules>
         <module>gdalenvisat</module>
