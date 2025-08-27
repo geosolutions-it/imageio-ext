@@ -16,7 +16,6 @@
  */
 package it.geosolutions.imageio.plugins.jpeg;
 
-import it.geosolutions.imageio.imageioimpl.imagereadmt.ImageReadDescriptorMT;
 import it.geosolutions.resources.TestData;
 
 import java.awt.RenderingHints;
@@ -99,7 +98,7 @@ public class JPEGReadTest extends Assert {
 		final ParameterBlockJAI pbjImageRead;
 		final ImageReadParam irp = reader.getDefaultReadParam();
 		irp.setSourceSubsampling(4, 4, 0, 0);
-		pbjImageRead = new ParameterBlockJAI("ImageReadMT");
+		pbjImageRead = new ParameterBlockJAI("ImageRead");
 		pbjImageRead.setParameter("Input", file);
 		pbjImageRead.setParameter("Reader", reader);
 		pbjImageRead.setParameter("readParam", irp);
@@ -109,7 +108,7 @@ public class JPEGReadTest extends Assert {
 		final ImageLayout l = new ImageLayout();
 		l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512).setTileWidth(512);
 
-		RenderedOp image = JAI.create("ImageReadMT", pbjImageRead,
+		RenderedOp image = JAI.create("ImageRead", pbjImageRead,
 				new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
 
 		if (TestData.isInteractiveTest()) {
@@ -120,9 +119,6 @@ public class JPEGReadTest extends Assert {
 			jf.show();
 		} else {
 			assertNotNull(image.getTiles());
-			// remember that if we do not explictly provide an Imagereader to
-			// the ImageReadMT operation it consistently dispose the one it
-			// creates once we dispose the ImageReadOpImage
 			image.dispose();
 		}
 	}

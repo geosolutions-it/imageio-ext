@@ -15,7 +15,6 @@
  */
 package it.geosolutions.imageio.plugins.jp2k;
 
-import it.geosolutions.imageio.imageioimpl.imagereadmt.ImageReadDescriptorMT;
 import it.geosolutions.imageio.plugins.jp2k.box.XMLBox;
 import it.geosolutions.imageio.plugins.jp2k.box.XMLBoxMetadataNode;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
@@ -70,10 +69,9 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
         if (!runTests)
             return;
         final File file = TestData.file(this, "CB_TM432.jp2");
-        ImageReadDescriptorMT.register(JAI.getDefaultInstance());
 
         final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
-                "ImageReadMT");
+                "ImageRead");
         ImageLayout l = new ImageLayout();
         l.setTileHeight(256);
         l.setTileWidth(256);
@@ -86,7 +84,7 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
         pbjImageRead.setParameter("ReadParam", rp);
         pbjImageRead.setParameter("Input", file);
         pbjImageRead.setParameter("imageChoice", 0);
-        RenderedOp image = JAI.create("ImageReadMT", pbjImageRead,
+        RenderedOp image = JAI.create("ImageRead", pbjImageRead,
                 new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
         if (TestData.isInteractiveTest())
             ImageIOUtilities.visualize(image);

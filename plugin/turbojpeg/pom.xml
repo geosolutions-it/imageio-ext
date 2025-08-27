@@ -24,10 +24,6 @@
         </dependency>
         <dependency>
             <groupId>it.geosolutions.imageio-ext</groupId>
-            <artifactId>imageio-ext-imagereadmt</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>it.geosolutions.imageio-ext</groupId>
             <artifactId>imageio-ext-test-data</artifactId>
             <scope>test</scope>
         </dependency>

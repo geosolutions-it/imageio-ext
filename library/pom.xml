@@ -26,7 +26,6 @@
     <module>streams</module>
     <module>geocore</module>
     <module>gdalframework</module>
-    <module>imagereadmt</module>
     <module>netcdf-core</module>
     <module>libjpegturbo</module>
   </modules>

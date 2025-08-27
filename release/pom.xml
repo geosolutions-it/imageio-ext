@@ -23,11 +23,6 @@
     </dependency>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
-      <artifactId>imageio-ext-imagereadmt</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-gdalgeotiff</artifactId>
       <version>${project.version}</version>
     </dependency>
