@@ -52,5 +52,10 @@
 			<version>${jmh.version}</version>
 			<scope>test</scope>
 		</dependency>
+        <dependency>
+            <groupId>org.eclipse.imagen</groupId>
+            <artifactId>bandmerge</artifactId>
+            <scope>test</scope>
+        </dependency>
 	</dependencies>
 </project>

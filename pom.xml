@@ -375,6 +375,12 @@
             <artifactId>rendered-image-browser</artifactId>
             <version>${imagen.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.imagen</groupId>
+            <artifactId>bandmerge</artifactId>
+            <version>${imagen.version}</version>
+            <scope>test</scope>
+        </dependency>
      <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>

@@ -9,18 +9,24 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 
+import it.geosolutions.imageio.plugins.arcgrid.AsciiGridsImageMetadata;
+import it.geosolutions.imageio.plugins.arcgrid.AsciiGridsImageWriter;
 import it.geosolutions.imageio.plugins.arcgrid.spi.AsciiGridsImageReaderSpi;
+import it.geosolutions.resources.TestData;
 import junit.framework.TestCase;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageWriter;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.stream.FileImageOutputStream;
+
 import org.eclipse.imagen.JAI;
 import org.eclipse.imagen.ParameterBlockJAI;
 import org.eclipse.imagen.PlanarImage;
 import org.eclipse.imagen.RenderedOp;
 
-import org.eclipse.imagen.media.operator.ImageWriteDescriptor;
 
 public class AsciiGridTileIndexRasterTest extends TestCase {
   public AsciiGridTileIndexRasterTest(String name) {
@@ -276,14 +282,11 @@ public class AsciiGridTileIndexRasterTest extends TestCase {
     final File foutput = File.createTempFile("grid-written-test", ".asc");
     foutput.deleteOnExit();
 
-    final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
-            "ImageWrite");
-    pbjImageWrite.setParameter("Output", foutput);
-    pbjImageWrite.addSource(image);
+      AsciiGridsImageWriter writer = new AsciiGridsImageWriter(null);
+      writer.setOutput(new FileImageOutputStream(foutput));
+      IIOMetadata metadata = (IIOMetadata) image.getProperty("JAI.ImageMetadata");
+      writer.write(new IIOImage(image, null, metadata));
 
-    final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
-    final ImageWriter writer = (ImageWriter) op.getProperty(ImageWriteDescriptor.PROPERTY_NAME_IMAGE_WRITER);
-    writer.dispose();
 
     // assert the written out data can be read in propertly
     doInSequenceCheck(foutput);
