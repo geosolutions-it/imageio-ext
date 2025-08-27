@@ -33,7 +33,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
-import javax.media.jai.JAI;
+import org.eclipse.imagen.JAI;
 
 import org.junit.After;
 import org.junit.Assert;

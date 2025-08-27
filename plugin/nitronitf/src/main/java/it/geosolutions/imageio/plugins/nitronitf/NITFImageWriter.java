@@ -28,9 +28,7 @@ import it.geosolutions.imageio.plugins.nitronitf.wrapper.ShapeFileWrapper;
 import it.geosolutions.imageio.plugins.nitronitf.wrapper.TextWrapper;
 import it.geosolutions.imageio.plugins.nitronitf.wrapper.ImageWrapper.Category;
 import it.geosolutions.imageio.plugins.nitronitf.wrapper.ImageWrapper.ImageBand;
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
-import it.geosolutions.imageio.stream.output.FileImageOutputStreamExt;
 
 import java.awt.image.DataBufferByte;
 import java.awt.image.RenderedImage;
@@ -52,7 +50,7 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageWriterSpi;
-import javax.media.jai.operator.BandSelectDescriptor;
+import org.eclipse.imagen.media.bandselect.BandSelectDescriptor;
 
 import nitf.BandInfo;
 import nitf.BandSource;

@@ -43,8 +43,8 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageReaderWriterSpi;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.spi.ServiceRegistry;
-import javax.media.jai.JAI;
-import javax.media.jai.RasterFactory;
+import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.RasterFactory;
 
 import org.gdal.gdal.Dataset;
 import org.gdal.gdal.Driver;
@@ -53,7 +53,7 @@ import org.gdal.gdalconst.gdalconst;
 import org.gdal.gdalconst.gdalconstConstants;
 
 import com.sun.media.imageioimpl.common.ImageUtil;
-import com.sun.media.jai.operator.ImageReadDescriptor;
+import org.eclipse.imagen.media.imageread.ImageReadDescriptor;
 
 /**
  * Utility class providing a set of static utility methods

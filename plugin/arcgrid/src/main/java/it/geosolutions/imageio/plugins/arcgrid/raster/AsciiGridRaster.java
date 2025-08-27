@@ -32,10 +32,10 @@ import java.util.logging.Logger;
 import javax.imageio.ImageReadParam;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
-import javax.media.jai.JAI;
-import javax.media.jai.RasterFactory;
-import javax.media.jai.TileFactory;
-import javax.media.jai.iterator.RectIter;
+import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.RasterFactory;
+import org.eclipse.imagen.TileFactory;
+import org.eclipse.imagen.iterator.RectIter;
 
 /**
  * Abstract base class to handle ASCII ArcGrid/GRASS formats

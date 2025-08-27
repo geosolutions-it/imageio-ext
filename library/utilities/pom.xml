@@ -11,4 +11,15 @@
   <packaging>jar</packaging>
   <version>1.4-SNAPSHOT</version>
   <name>Image I/O-Extensions - utilities classes and methods</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.eclipse.imagen</groupId>
+            <artifactId>imageread</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.imagen</groupId>
+            <artifactId>rendered-image-browser</artifactId>
+        </dependency>
+    </dependencies>
 </project>

@@ -15,12 +15,12 @@ import junit.framework.TestCase;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageWriter;
-import javax.media.jai.JAI;
-import javax.media.jai.ParameterBlockJAI;
-import javax.media.jai.PlanarImage;
-import javax.media.jai.RenderedOp;
+import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ParameterBlockJAI;
+import org.eclipse.imagen.PlanarImage;
+import org.eclipse.imagen.RenderedOp;
 
-import com.sun.media.jai.operator.ImageWriteDescriptor;
+import org.eclipse.imagen.media.operator.ImageWriteDescriptor;
 
 public class AsciiGridTileIndexRasterTest extends TestCase {
   public AsciiGridTileIndexRasterTest(String name) {

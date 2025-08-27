@@ -17,8 +17,14 @@
 package it.geosolutions.imageio.plugins.exif;
 
 import it.geosolutions.imageio.plugins.exif.EXIFTags.Type;
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
+import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
+import it.geosolutions.imageio.plugins.tiff.EXIFParentTIFFTagSet;
+import it.geosolutions.imageio.plugins.tiff.EXIFTIFFTagSet;
+import it.geosolutions.imageio.plugins.tiff.TIFFTag;
+import it.geosolutions.imageio.stream.AccessibleStream;
+import org.apache.commons.io.FileUtils;
 
+import javax.imageio.stream.ImageInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -30,12 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.commons.io.FileUtils;
-
-import com.sun.media.imageio.plugins.tiff.BaselineTIFFTagSet;
-import com.sun.media.imageio.plugins.tiff.EXIFParentTIFFTagSet;
-import com.sun.media.imageio.plugins.tiff.EXIFTIFFTagSet;
-import com.sun.media.imageio.plugins.tiff.TIFFTag;
 
 /**
  * @author Daniele Romagnoli, GeoSolutions SAS
@@ -160,7 +160,7 @@ public class EXIFUtilities {
      */
     private static void updateStream(
             final OutputStream outputStream, 
-            final FileImageInputStreamExt inputStream,
+            final ImageInputStream inputStream,
             final EXIFMetadata exif, 
             final int previousEXIFLength) throws IOException {
         ByteArrayOutputStream baos = null;
@@ -355,14 +355,14 @@ public class EXIFUtilities {
     }
 
     /**
-     * Update the EXIF content referred by a {@link FileImageInputStreamExt} using the 
+     * Update the EXIF content referred by a {@link FmageInputStream} using the
      * content available in the {@link ByteArrayOutputStream}. Store the result
      * to the specified {@link OutputStream}.
      * 
      * @param outputStream a {@link OutputStream} where to write
      * @param byteStream a {@link ByteArrayOutputStream} previously populated with the content
      *   of an EXIF marker.   
-     * @param inputStream a {@link FileImageInputStreamExt} referring to a file containing 
+     * @param inputStream a {@link ImageInputStream} referring to a file containing
      *   EXIF metadata to be updated
      * @param originalAPP1MarkerLength is the length of the original APP1 marker 
      *          (the one containing EXIF content), before the update
@@ -371,7 +371,7 @@ public class EXIFUtilities {
     private static void updateFromStream(
             final OutputStream outputStream, 
             final ByteArrayOutputStream byteStream,
-            final FileImageInputStreamExt inputStream, 
+            final ImageInputStream inputStream,
             final int originalAPP1MarkerLength) throws IOException {
         final byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
         int readlength = 0;
@@ -686,7 +686,7 @@ public class EXIFUtilities {
     }
 
     /** 
-     * Replace the EXIF contained within a file referred by a {@link FileImageInputStreamExt} instance
+     * Replace the EXIF contained within a file referred by a {@link ImageInputStream} instance
      * with the EXIF represented by the specified {@link EXIFMetadata} instance. The original file
      * will be overwritten by the new one containing updated EXIF.
      * 
@@ -694,11 +694,11 @@ public class EXIFUtilities {
      * but simply content update. Therefore, tags in the original EXIF which are missing in the 
      * updated EXIF parameter, won't be modified. 
      * 
-     * @param inputStream a {@link FileImageInputStreamExt} referring to a JPEG containing EXIF 
+     * @param inputStream a {@link ImageInputStream} referring to a JPEG containing EXIF
      * @param exif the {@link EXIFMetadata} instance containing tags to be updated
      */
     public static void replaceEXIFs(
-            final FileImageInputStreamExt inputStream, 
+            final ImageInputStream inputStream,
             final EXIFMetadata exif)
             throws IOException {
         
@@ -711,7 +711,7 @@ public class EXIFUtilities {
             final File file = File.createTempFile("replacingExif", ".exif");
             final OutputStream fos = new FileOutputStream(file);
             updateStream(fos, inputStream, updatedExif, app1Length);
-            final File previousFile = inputStream.getFile();
+            final File previousFile = ((AccessibleStream<File>) inputStream).getTarget();
             FileUtils.deleteQuietly(previousFile);
             FileUtils.moveFile(file, previousFile);
         }
@@ -731,7 +731,7 @@ public class EXIFUtilities {
      * @throws IOException
      */
     private static EXIFMetadataWrapper parseExifMetadata(
-            final FileImageInputStreamExt inputStream, 
+            final ImageInputStream inputStream,
             final EXIFMetadata exif) throws IOException {
         
         List<TIFFTagWrapper> baselineTags = null;

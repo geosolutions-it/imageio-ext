@@ -17,7 +17,6 @@
 package it.geosolutions.imageio.plugins.geotiff;
 
 import it.geosolutions.imageio.gdalframework.GDALImageReaderSpi;
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 
 import java.io.File;
 import java.io.IOException;
@@ -87,7 +86,7 @@ public class GeoTiffImageReaderSpi extends GDALImageReaderSpi {
                 suffixes,
                 MIMETypes,
                 readerCN, // readerClassName
-                new Class[] { File.class, FileImageInputStreamExt.class },
+                new Class[] { File.class, AccessibleStream.class },
                 wSN, // writer Spi Names
                 supportsStandardStreamMetadataFormat,
                 nativeStreamMetadataFormatName,

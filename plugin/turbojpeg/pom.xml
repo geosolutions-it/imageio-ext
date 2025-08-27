@@ -24,6 +24,11 @@
         </dependency>
         <dependency>
             <groupId>it.geosolutions.imageio-ext</groupId>
+            <artifactId>imageio-ext-tiff</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>it.geosolutions.imageio-ext</groupId>
             <artifactId>imageio-ext-test-data</artifactId>
             <scope>test</scope>
         </dependency>

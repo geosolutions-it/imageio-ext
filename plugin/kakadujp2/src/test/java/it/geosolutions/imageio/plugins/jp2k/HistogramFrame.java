@@ -52,12 +52,12 @@ import java.awt.geom.PathIterator;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 
-import javax.media.jai.Histogram;
+import org.eclipse.imagen.Histogram;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
-import com.sun.media.jai.widget.DisplayJAI;
+import org.eclipse.imagen.media.widget.DisplayJAI;
 
 /**
  * This class is defined to display the statistics or the histogram in a

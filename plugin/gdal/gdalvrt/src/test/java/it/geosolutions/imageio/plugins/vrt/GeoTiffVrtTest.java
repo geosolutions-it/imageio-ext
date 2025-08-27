@@ -16,7 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.vrt;
 
-import com.sun.media.jai.operator.ImageWriteDescriptor;
+import org.eclipse.imagen.media.operator.ImageWriteDescriptor;
 import it.geosolutions.imageio.core.GCP;
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
@@ -36,10 +36,10 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
-import javax.media.jai.ImageLayout;
-import javax.media.jai.JAI;
-import javax.media.jai.ParameterBlockJAI;
-import javax.media.jai.RenderedOp;
+import org.eclipse.imagen.ImageLayout;
+import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ParameterBlockJAI;
+import org.eclipse.imagen.RenderedOp;
 import java.awt.*;
 import java.awt.image.RenderedImage;
 import java.io.File;

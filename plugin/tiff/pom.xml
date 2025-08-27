@@ -29,12 +29,6 @@
     	<version>${project.version}</version>
     </dependency>
     <dependency>
-    	<groupId>it.geosolutions.imageio-ext</groupId>
-    	<artifactId>imageio-ext-turbojpeg</artifactId>
-    	<version>${project.version}</version>
-    	<scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>io.airlift</groupId>
       <artifactId>aircompressor</artifactId>
       <version>0.27</version>

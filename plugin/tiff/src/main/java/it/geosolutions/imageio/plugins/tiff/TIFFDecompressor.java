@@ -105,7 +105,7 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 
-import com.sun.media.imageioimpl.common.BogusColorSpace;
+import org.eclipse.imagen.NotAColorSpace;
 import com.sun.media.imageioimpl.common.ImageUtil;
 import com.sun.media.imageioimpl.common.SimpleCMYKColorSpace;
 
@@ -1091,7 +1091,7 @@ public abstract class TIFFDecompressor {
             if(samplesPerPixel == 4)
                 cs = SimpleCMYKColorSpace.getInstance();
             else
-                cs = new BogusColorSpace(samplesPerPixel);
+                cs = new NotAColorSpace(samplesPerPixel);
             // By specifying the bits per sample the color values
             // will scale on display
             ColorModel cm =
@@ -1219,7 +1219,7 @@ public abstract class TIFFDecompressor {
                                                hasAlpha,
                                                alphaPremultiplied);
                     } else {
-                        ColorSpace cs = new BogusColorSpace(samplesPerPixel);
+                        ColorSpace cs = new NotAColorSpace(samplesPerPixel);
                         cm = createComponentCM(cs,
                                                samplesPerPixel,
                                                dataType,
@@ -1336,7 +1336,7 @@ public abstract class TIFFDecompressor {
                     getDataTypeFromNumBits(maxBitsPerSample, isSigned);
                 SampleModel sm = createInterleavedSM(dataType,
                                                      samplesPerPixel);
-                ColorSpace cs = new BogusColorSpace(samplesPerPixel);
+                ColorSpace cs = new NotAColorSpace(samplesPerPixel);
                 ColorModel cm = createComponentCM(cs,
                                                   samplesPerPixel,
                                                   dataType,

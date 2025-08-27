@@ -25,7 +25,6 @@ import it.geosolutions.imageio.plugins.exif.EXIFTags;
 import it.geosolutions.imageio.plugins.exif.EXIFTags.Type;
 import it.geosolutions.imageio.plugins.exif.EXIFUtilities;
 import it.geosolutions.imageio.plugins.exif.TIFFTagWrapper;
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 import it.geosolutions.resources.TestData;
 
@@ -47,16 +46,18 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.FileImageInputStream;
-import javax.media.jai.ImageLayout;
-import javax.media.jai.JAI;
-import javax.media.jai.operator.BandSelectDescriptor;
+import javax.imageio.stream.ImageInputStream;
+
+import org.eclipse.imagen.ImageLayout;
+import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.media.bandselect.BandSelectDescriptor;
 
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.libjpegturbo.turbojpeg.TJ;
 
-import com.sun.media.jai.operator.ImageReadDescriptor;
+import org.eclipse.imagen.media.imageread.ImageReadDescriptor;
 
 public class JPEGWriterTest extends BaseTest {
 
@@ -124,7 +125,7 @@ public class JPEGWriterTest extends BaseTest {
     @Ignore
     public void testExifReplace() throws IOException {
         EXIFMetadata exif = initExif();
-        FileImageInputStreamExt inStream = new FileImageInputStreamExtImpl(new File(
+        ImageInputStream inStream = new FileImageInputStreamExtImpl(new File(
                 "/media/bigdisk/data/turbojpeg/lastExif.jpeg"));
         EXIFUtilities.replaceEXIFs(inStream, exif);
     }

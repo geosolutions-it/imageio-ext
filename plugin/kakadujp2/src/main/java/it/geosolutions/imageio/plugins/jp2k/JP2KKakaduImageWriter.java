@@ -21,7 +21,6 @@ package it.geosolutions.imageio.plugins.jp2k;
 import it.geosolutions.imageio.plugins.jp2k.JP2KKakaduImageWriteParam.Compression;
 import it.geosolutions.imageio.plugins.jp2k.JP2KKakaduImageWriteParam.ProgressionOrder;
 import it.geosolutions.imageio.plugins.jp2k.box.UUIDBox;
-import it.geosolutions.imageio.stream.output.FileImageOutputStreamExt;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.util.KakaduUtilities;
 

@@ -46,7 +46,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
-import javax.media.jai.RasterFactory;
+import org.eclipse.imagen.RasterFactory;
 
 /**
  * Class used for reading ASCII ArcInfo Grid Format (ArcGrid) and ASCII GRASS

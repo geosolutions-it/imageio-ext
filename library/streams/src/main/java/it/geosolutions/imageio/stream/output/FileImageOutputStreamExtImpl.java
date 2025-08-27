@@ -16,6 +16,7 @@
  */
 package it.geosolutions.imageio.stream.output;
 
+import it.geosolutions.imageio.stream.AccessibleStream;
 import it.geosolutions.imageio.stream.eraf.EnhancedRandomAccessFile;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 
@@ -35,7 +36,7 @@ import javax.imageio.stream.ImageOutputStreamImpl;
  * @author Simone Giannecchini, GeoSolutions
  */
 public class FileImageOutputStreamExtImpl extends ImageOutputStreamImpl
-        implements FileImageOutputStreamExt {
+        implements ImageOutputStream, AccessibleStream<File> {
 
     private EnhancedRandomAccessFile eraf;
 

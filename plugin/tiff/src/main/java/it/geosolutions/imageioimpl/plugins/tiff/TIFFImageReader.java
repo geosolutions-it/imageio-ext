@@ -73,7 +73,7 @@
  */
 package it.geosolutions.imageioimpl.plugins.tiff;
 
-import com.sun.media.imageioimpl.common.BogusColorSpace;
+import org.eclipse.imagen.NotAColorSpace;
 import com.sun.media.imageioimpl.common.ImageUtil;
 import com.sun.media.imageioimpl.common.PackageUtil;
 import it.geosolutions.imageio.imageioimpl.EnhancedImageReadParam;
@@ -95,7 +95,7 @@ import javax.imageio.*;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
-import javax.media.jai.RasterFactory;
+import org.eclipse.imagen.RasterFactory;
 import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_ColorSpace;

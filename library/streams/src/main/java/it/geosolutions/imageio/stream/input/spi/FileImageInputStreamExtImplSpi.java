@@ -16,7 +16,6 @@
  */
 package it.geosolutions.imageio.stream.input.spi;
 
-import com.sun.media.imageio.stream.FileChannelImageInputStream;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -33,7 +32,6 @@ import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageInputStream;
 
 import it.geosolutions.imageio.stream.eraf.EnhancedRandomAccessFile;
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExtFileChannelImpl;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 
 /**
@@ -43,7 +41,7 @@ import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
  * 
  * <p>
  * It is worth to point out that {@link ImageIO} already provide the
- * {@link FileChannelImageInputStream} in order to efficiently access images
+ * FileChannelImageInputStream in order to efficiently access images
  * with buffering. despite to this I have ran into many problems with
  * {@link FileChannel}s especially on Windows machines, hence I came up with
  * this {@link ImageInputStream} subclass and this {@link ImageInputStreamSpi}
@@ -68,16 +66,6 @@ public class FileImageInputStreamExtImplSpi extends ImageInputStreamSpi {
     private static final String version = "1.0";
 
     private static final Class<File> inputClass = File.class;
-
-    private static volatile boolean useFileChannel;
-
-    static {
-        useFileChannel = Boolean.getBoolean("it.geosolutions.stream.useFileChannel");
-        if (useFileChannel && LOGGER.isLoggable(Level.INFO)) {
-            LOGGER.info("The FileImageInputStreamExtImplSpi will use File channels instead of " +
-                    "Enhanced Random Access Files");
-        }
-    }
 
     /**
      * Constructs a blank {@link ImageInputStreamSpi}. It is up to the subclass
@@ -151,11 +139,7 @@ public class FileImageInputStreamExtImplSpi extends ImageInputStreamSpi {
 		}
 
         try {
-            if (!useFileChannel) {
                 return new FileImageInputStreamExtImpl((File) input);
-            } else {
-                return new FileImageInputStreamExtFileChannelImpl((File) input);
-            }
 		} catch (FileNotFoundException e) {
 			if (LOGGER.isLoggable(Level.FINE))
 				LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
@@ -168,11 +152,5 @@ public class FileImageInputStreamExtImplSpi extends ImageInputStreamSpi {
 
     }
 
-    public static boolean isUseFileChannel() {
-        return useFileChannel;
-    }
 
-    public static void setUseFileChannel(boolean useFileChannel) {
-        FileImageInputStreamExtImplSpi.useFileChannel = useFileChannel;
-    }
 }

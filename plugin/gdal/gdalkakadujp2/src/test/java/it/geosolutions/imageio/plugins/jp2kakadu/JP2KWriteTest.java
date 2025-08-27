@@ -16,7 +16,6 @@
  */
 package it.geosolutions.imageio.plugins.jp2kakadu;
 
-import it.geosolutions.imageio.stream.output.FileImageOutputStreamExtImpl;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 
@@ -30,14 +29,14 @@ import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
-import javax.media.jai.JAI;
-import javax.media.jai.ParameterBlockJAI;
-import javax.media.jai.RenderedOp;
+import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ParameterBlockJAI;
+import org.eclipse.imagen.RenderedOp;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.sun.media.jai.operator.ImageWriteDescriptor;
+import org.eclipse.imagen.media.operator.ImageWriteDescriptor;
 
 /**
  * Class for testing all supported Kakadu Create Options

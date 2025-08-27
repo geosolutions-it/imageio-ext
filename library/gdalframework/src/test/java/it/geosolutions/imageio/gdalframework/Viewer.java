@@ -21,7 +21,7 @@ import it.geosolutions.imageio.gdalframework.GDALUtilities.MetadataChoice;
 import java.awt.BorderLayout;
 import java.awt.image.RenderedImage;
 
-import javax.media.jai.widget.ScrollingImagePanel;
+import org.eclipse.imagen.widget.ScrollingImagePanel;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;

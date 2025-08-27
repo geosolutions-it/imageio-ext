@@ -16,7 +16,6 @@
  */
 package it.geosolutions.imageio.plugins.jp2k;
 
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 import it.geosolutions.imageio.utilities.Utilities;
 import it.geosolutions.util.KakaduUtilities;
 
@@ -98,7 +97,7 @@ public class JP2KKakaduImageReaderSpi extends ImageReaderSpi {
                 suffixes,
                 MIMETypes,
                 readerCN, // readerClassName
-                new Class[] { File.class, FileImageInputStreamExt.class, 
+                new Class[] { File.class, AccessibleStream.class, 
                 		URL.class },
                 wSN, // writer Spi Names
                 supportsStandardStreamMetadataFormat,

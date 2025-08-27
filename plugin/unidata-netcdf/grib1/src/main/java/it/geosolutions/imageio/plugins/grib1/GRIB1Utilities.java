@@ -21,7 +21,7 @@ import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
 import java.io.IOException;
 
-import javax.media.jai.RasterFactory;
+import org.eclipse.imagen.RasterFactory;
 
 import ucar.ma2.Array;
 import ucar.nc2.Variable;

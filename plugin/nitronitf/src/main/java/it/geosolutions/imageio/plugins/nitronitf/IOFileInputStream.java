@@ -1,7 +1,5 @@
 package it.geosolutions.imageio.plugins.nitronitf;
 
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
-
 import java.io.File;
 import java.io.IOException;
 

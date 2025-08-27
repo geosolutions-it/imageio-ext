@@ -20,7 +20,7 @@ import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.util.KakaduUtilities;
 
 import javax.imageio.spi.ImageReaderSpi;
-import javax.media.jai.JAI;
+import org.eclipse.imagen.JAI;
 
 public class AbstractJP2KakaduTestCase {
     protected static boolean runTests;

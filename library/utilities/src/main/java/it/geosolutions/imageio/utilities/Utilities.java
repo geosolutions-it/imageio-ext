@@ -22,7 +22,7 @@ package it.geosolutions.imageio.utilities;
 import java.io.File;
 import java.net.URL;
 
-import javax.media.jai.JAI;
+import org.eclipse.imagen.JAI;
 
 /**
  * Simple class for utility methods.
@@ -180,13 +180,13 @@ public final class Utilities {
 	 * By default, JAI uses hardware accelerated methods when available. For example, it make use of
 	 * MMX instructions on Intel processors. Unluckily, some native method crash the Java Virtual
 	 * Machine under some circumstances. For example on JAI 1.1.2, the {@code "Affine"} operation on
-	 * an image with float data type, bilinear interpolation and an {@link javax.media.jai.ImageLayout}
+	 * an image with float data type, bilinear interpolation and an {@link org.eclipse.imagen.ImageLayout}
 	 * rendering hint cause an exception in medialib native code. Disabling the native acceleration
 	 * (i.e using the pure Java version) is a convenient workaround until Sun fix the bug.
 	 * <p>
 	 * <strong>Implementation note:</strong> the current implementation assumes that factories for
-	 * native implementations are declared in the {@code com.sun.media.jai.mlib} package, while
-	 * factories for pure java implementations are declared in the {@code com.sun.media.jai.opimage}
+	 * native implementations are declared in the {@code org.eclipse.imagen.media.mlib} package, while
+	 * factories for pure java implementations are declared in the {@code org.eclipse.imagen.media.opimage}
 	 * package. It work for Sun's 1.1.2 implementation, but may change in future versions. If this
 	 * method doesn't recognize the package, it does nothing.
 	 *

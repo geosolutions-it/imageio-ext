@@ -16,6 +16,28 @@
  */
 package it.geosolutions.imageio.utilities;
 
+import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.NotAColorSpace;
+import org.eclipse.imagen.OperationRegistry;
+import org.eclipse.imagen.PlanarImage;
+import org.eclipse.imagen.ROI;
+import org.eclipse.imagen.RasterFactory;
+import org.eclipse.imagen.RenderedOp;
+import org.eclipse.imagen.media.imageread.ImageReadDescriptor;
+import org.eclipse.imagen.media.viewer.RenderedImageBrowser;
+import org.eclipse.imagen.registry.RIFRegistry;
+import org.eclipse.imagen.registry.RenderedRegistryMode;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+
+import javax.imageio.ImageReader;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.spi.IIORegistry;
+import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.spi.ImageReaderWriterSpi;
+import javax.imageio.spi.ImageWriterSpi;
+import javax.imageio.spi.ServiceRegistry;
+import javax.imageio.stream.ImageInputStream;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
@@ -40,32 +62,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-
-import javax.imageio.ImageReader;
-import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.spi.IIORegistry;
-import javax.imageio.spi.ImageReaderSpi;
-import javax.imageio.spi.ImageReaderWriterSpi;
-import javax.imageio.spi.ImageWriterSpi;
-import javax.imageio.spi.ServiceRegistry;
-import javax.imageio.stream.ImageInputStream;
-import javax.media.jai.JAI;
-import javax.media.jai.OperationRegistry;
-import javax.media.jai.PlanarImage;
-import javax.media.jai.ROI;
-import javax.media.jai.RenderedOp;
-import javax.media.jai.registry.RIFRegistry;
-import javax.media.jai.registry.RenderedRegistryMode;
-import javax.media.jai.widget.ScrollingImagePanel;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-
-import com.sun.media.imageioimpl.common.BogusColorSpace;
-import com.sun.media.jai.codecimpl.util.RasterFactory;
-import com.sun.media.jai.operator.ImageReadDescriptor;
 
 /**
  * Simple class containing commonly used utility methods.
@@ -105,7 +101,7 @@ public class ImageIOUtilities {
      * which is not premultiplied.  1- and 2-banded data will use a
      * grayscale <code>ColorSpace</code>, and 3- and 4-banded data a sRGB
      * <code>ColorSpace</code>. Data with 5 or more bands will have a
-     * <code>BogusColorSpace</code>.</p>
+     * <code>NotAColorSpace</code>.</p>
      *
      * <p>An instance of <code>DirectColorModel</code> will be created for
      * instances of <code>SinglePixelPackedSampleModel</code> with no more
@@ -162,7 +158,7 @@ public class ImageIOUtilities {
              } else if (numBands <= 4) {
                  colorSpace = ColorSpace.getInstance(ColorSpace.CS_sRGB);
              } else {
-                 colorSpace = new BogusColorSpace(numBands);
+                 colorSpace = new NotAColorSpace(numBands);
              }
      
              boolean hasAlpha = (numBands == 2) || (numBands == 4);
@@ -335,17 +331,7 @@ public class ImageIOUtilities {
      *                title for the frame (usually the image filename)
      */
     public static void visualize(final RenderedImage ri, String title) {
-        final JFrame frame = new JFrame(title);
-        frame.getContentPane().add(new ScrollingImagePanel(ri, 1024, 768));
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                frame.pack();
-                frame.setSize(1024, 768);
-                frame.setVisible(true);
-            }
-        });
+        RenderedImageBrowser.showChain(ri, false, true, title, true);
     }
 
     /**
@@ -817,13 +803,13 @@ public class ImageIOUtilities {
 	 * By default, JAI uses hardware accelerated methods when available. For example, it make use of
 	 * MMX instructions on Intel processors. Unluckily, some native method crash the Java Virtual
 	 * Machine under some circumstances. For example on JAI 1.1.2, the {@code "Affine"} operation on
-	 * an image with float data type, bilinear interpolation and an {@link javax.media.jai.ImageLayout}
+	 * an image with float data type, bilinear interpolation and an {@link org.eclipse.imagen.ImageLayout}
 	 * rendering hint cause an exception in medialib native code. Disabling the native acceleration
 	 * (i.e using the pure Java version) is a convenient workaround until Sun fix the bug.
 	 * <p>
 	 * <strong>Implementation note:</strong> the current implementation assumes that factories for
-	 * native implementations are declared in the {@code com.sun.media.jai.mlib} package, while
-	 * factories for pure java implementations are declared in the {@code com.sun.media.jai.opimage}
+	 * native implementations are declared in the {@code org.eclipse.imagen.media.mlib} package, while
+	 * factories for pure java implementations are declared in the {@code org.eclipse.imagen.media.opimage}
 	 * package. It work for Sun's 1.1.2 implementation, but may change in future versions. If this
 	 * method doesn't recognize the package, it does nothing.
 	 *
@@ -838,7 +824,7 @@ public class ImageIOUtilities {
 	                                                             final boolean  allowed,
 	                                                             final JAI jai)
 	{
-	    final String product = "com.sun.media.jai";
+	    final String product = "org.eclipse.imagen.media";
 	    final OperationRegistry registry = jai.getOperationRegistry();
 	
 	    // TODO: Check if we can remove SuppressWarnings with a future JAI version.
@@ -851,13 +837,13 @@ public class ImageIOUtilities {
 	        Boolean               currentState = null;
 	        for (final RenderedImageFactory factory : factories) {
 	            final String pack = factory.getClass().getPackage().getName();
-	            if (pack.equals("com.sun.media.jai.mlib")) {
+	            if (pack.equals("org.eclipse.imagen.media.mlib")) {
 	                nativeFactory = factory;
 	                if (javaFactory != null) {
 	                    currentState = Boolean.FALSE;
 	                }
 	            }
-	            if (pack.equals("com.sun.media.jai.opimage")) {
+	            if (pack.equals("org.eclipse.imagen.media.opimage")) {
 	                javaFactory = factory;
 	                if (nativeFactory != null) {
 	                    currentState = Boolean.TRUE;
@@ -974,7 +960,7 @@ public class ImageIOUtilities {
     public static ImageTypeSpecifier getBandSelectedType(int numBands, SampleModel sm) {
         ColorModel cmDestination =
                 new ComponentColorModel(
-                        new BogusColorSpace(numBands),
+                        new NotAColorSpace(numBands),
                         false,
                         false,
                         Transparency.OPAQUE,

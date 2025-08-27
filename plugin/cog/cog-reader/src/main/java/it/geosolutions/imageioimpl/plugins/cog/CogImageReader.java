@@ -22,7 +22,7 @@ import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReader;
 
 import javax.imageio.ImageReadParam;
 import javax.imageio.spi.ImageReaderSpi;
-import javax.media.jai.PlanarImage;
+import org.eclipse.imagen.PlanarImage;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;

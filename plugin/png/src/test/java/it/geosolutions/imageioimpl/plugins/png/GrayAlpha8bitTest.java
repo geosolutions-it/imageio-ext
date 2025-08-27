@@ -29,13 +29,13 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
 import javax.imageio.ImageIO;
-import javax.media.jai.ImageLayout;
-import javax.media.jai.JAI;
-import javax.media.jai.PlanarImage;
-import javax.media.jai.operator.BandMergeDescriptor;
-import javax.media.jai.operator.BandSelectDescriptor;
-import javax.media.jai.operator.ConstantDescriptor;
-import javax.media.jai.operator.MosaicDescriptor;
+import org.eclipse.imagen.ImageLayout;
+import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.PlanarImage;
+import org.eclipse.imagen.media.bandmerge.BandMergeDescriptor;
+import org.eclipse.imagen.media.bandselect.BandSelectDescriptor;
+import org.eclipse.imagen.operator.ConstantDescriptor;
+import org.eclipse.imagen.media.mosaic.MosaicDescriptor;
 
 import org.junit.Test;
 

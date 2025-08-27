@@ -40,9 +40,9 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
-import javax.media.jai.JAI;
-import javax.media.jai.ParameterBlockJAI;
-import javax.media.jai.RenderedOp;
+import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ParameterBlockJAI;
+import org.eclipse.imagen.RenderedOp;
 
 import junit.framework.Assert;
 import junit.framework.Test;
@@ -51,8 +51,8 @@ import junit.framework.TestSuite;
 
 import org.w3c.dom.Node;
 
-import com.sun.media.jai.operator.ImageReadDescriptor;
-import com.sun.media.jai.operator.ImageWriteDescriptor;
+import org.eclipse.imagen.media.imageread.ImageReadDescriptor;
+import org.eclipse.imagen.media.operator.ImageWriteDescriptor;
 
 /**
  * @author Daniele Romagnoli, GeoSolutions.

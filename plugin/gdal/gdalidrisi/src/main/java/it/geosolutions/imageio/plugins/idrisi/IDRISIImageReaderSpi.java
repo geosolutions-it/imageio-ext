@@ -17,7 +17,6 @@
 package it.geosolutions.imageio.plugins.idrisi;
 
 import it.geosolutions.imageio.gdalframework.GDALImageReaderSpi;
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 
 import java.io.File;
 import java.io.IOException;
@@ -88,7 +87,7 @@ public class IDRISIImageReaderSpi extends GDALImageReaderSpi {
 				MIMETypes,
 				readerCN, // readerClassName
 				new Class[] 
-					        { File.class, FileImageInputStreamExt.class },
+					        { File.class, AccessibleStream.class },
 				wSN, // writer Spi Names
 				supportsStandardStreamMetadataFormat,
 				nativeStreamMetadataFormatName,

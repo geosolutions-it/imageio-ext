@@ -17,7 +17,6 @@
 package it.geosolutions.imageio.gdalframework;
 
 import it.geosolutions.imageio.gdalframework.GDALUtilities.DriverCreateCapabilities;
-import it.geosolutions.imageio.stream.output.FileImageOutputStreamExt;
 import it.geosolutions.imageio.utilities.Utilities;
 
 import java.awt.Color;
@@ -50,7 +49,7 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageWriterSpi;
-import javax.media.jai.PlanarImage;
+import org.eclipse.imagen.PlanarImage;
 
 import org.gdal.gdal.Band;
 import org.gdal.gdal.ColorTable;

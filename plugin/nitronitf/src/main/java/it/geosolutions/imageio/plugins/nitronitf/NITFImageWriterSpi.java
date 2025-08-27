@@ -22,8 +22,6 @@
 
 package it.geosolutions.imageio.plugins.nitronitf;
 
-import it.geosolutions.imageio.stream.output.FileImageOutputStreamExt;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

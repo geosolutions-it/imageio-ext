@@ -23,7 +23,6 @@ import it.geosolutions.imageio.plugins.jp2k.box.ColorSpecificationBox;
 import it.geosolutions.imageio.plugins.jp2k.box.ComponentMappingBox;
 import it.geosolutions.imageio.plugins.jp2k.box.ImageHeaderBox;
 import it.geosolutions.imageio.plugins.jp2k.box.PaletteBox;
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 import it.geosolutions.imageio.utilities.Utilities;
 import it.geosolutions.util.KakaduUtilities;
 

@@ -23,7 +23,7 @@ import org.junit.Assert;
 import org.junit.Before;
 
 import javax.imageio.ImageReader;
-import javax.media.jai.ImageLayout;
+import org.eclipse.imagen.ImageLayout;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileNotFoundException;

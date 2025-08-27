@@ -19,7 +19,7 @@ package it.geosolutions.imageio.gdalframework;
 import it.geosolutions.imageio.core.CoreCommonIIOStreamMetadata;
 import it.geosolutions.imageio.core.GCP;
 import it.geosolutions.imageio.imageioimpl.EnhancedImageReadParam;
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
+import it.geosolutions.imageio.stream.AccessibleStream;
 import it.geosolutions.imageio.stream.input.URIImageInputStream;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.imageio.utilities.Utilities;
@@ -590,8 +590,8 @@ public abstract class GDALImageReader extends ImageReader {
         if (datasetSource == null) {
             if (myInput instanceof File)
                 datasetSource = (File) myInput;
-            else if (myInput instanceof FileImageInputStreamExt)
-                datasetSource = ((FileImageInputStreamExt) myInput).getFile();
+            else if (myInput instanceof AccessibleStream)
+                datasetSource = ((AccessibleStream<File>) myInput).getTarget();
             else if (input instanceof URL) {
                 final URL tempURL = (URL) input;
                 if (tempURL.getProtocol().equalsIgnoreCase("file")) {
@@ -651,11 +651,11 @@ public abstract class GDALImageReader extends ImageReader {
         }
         // //
         //
-        // FileImageInputStreamExt input
+        // AccessibleStream input
         //
         // //
-        else if (input instanceof FileImageInputStreamExt) {
-            datasetSource = ((FileImageInputStreamExt) input).getFile();
+        else if (input instanceof AccessibleStream) {
+            datasetSource = ((AccessibleStream<File>) input).getTarget();
             imageInputStream = (ImageInputStream) input;
         }
         // //
@@ -700,6 +700,7 @@ public abstract class GDALImageReader extends ImageReader {
                 mainDataSet = GDALUtilities.acquireDataSet(urisource, gdalconstConstants.GA_ReadOnly);    
             }
             if (mainDataSet != null) {
+            	isInputDecodable = ((GDALImageReaderSpi) this.getOriginatingProvider()).isDecodable(mainDataSet);
             	isInputDecodable = ((GDALImageReaderSpi) this.getOriginatingProvider()).isDecodable(mainDataSet);
             } else
                 isInputDecodable = false;

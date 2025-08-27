@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 
-import javax.media.jai.JAI;
+import org.eclipse.imagen.JAI;
 
 import ucar.ma2.Array;
 import ucar.ma2.ArrayFloat;
