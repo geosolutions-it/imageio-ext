@@ -24,7 +24,7 @@ import it.geosolutions.imageio.plugins.jp2k.box.ComponentMappingBox;
 import it.geosolutions.imageio.plugins.jp2k.box.ImageHeaderBox;
 import it.geosolutions.imageio.plugins.jp2k.box.PaletteBox;
 import it.geosolutions.imageio.stream.AccessibleStream;
-import it.geosolutions.imageio.utilities.Utilities;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.util.KakaduUtilities;
 import kdu_jni.Jp2_family_src;
 import kdu_jni.Jpx_codestream_source;
@@ -829,7 +829,7 @@ public class JP2KKakaduImageReader extends ImageReader {
         } else if (input instanceof URL) {
             final URL tempURL = (URL) input;
             if (tempURL.getProtocol().equalsIgnoreCase("file")) {
-                    inputFile = Utilities.urlToFile(tempURL);
+                inputFile = ImageIOUtilities.urlToFile(tempURL);
             }
         } else if (input instanceof ImageInputStream) {
             try {

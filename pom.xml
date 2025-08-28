@@ -381,6 +381,12 @@
             <version>${imagen.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.imagen</groupId>
+            <artifactId>mosaic</artifactId>
+            <version>${imagen.version}</version>
+            <scope>test</scope>
+        </dependency>
      <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>

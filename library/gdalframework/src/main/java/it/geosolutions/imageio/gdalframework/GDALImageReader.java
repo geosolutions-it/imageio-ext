@@ -22,7 +22,6 @@ import it.geosolutions.imageio.imageioimpl.EnhancedImageReadParam;
 import it.geosolutions.imageio.stream.AccessibleStream;
 import it.geosolutions.imageio.stream.input.URIImageInputStream;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
-import it.geosolutions.imageio.utilities.Utilities;
 
 import java.awt.Rectangle;
 import java.awt.image.BandedSampleModel;
@@ -595,7 +594,7 @@ public abstract class GDALImageReader extends ImageReader {
             else if (input instanceof URL) {
                 final URL tempURL = (URL) input;
                 if (tempURL.getProtocol().equalsIgnoreCase("file")) {
-                        datasetSource = Utilities.urlToFile(tempURL);
+                    datasetSource = ImageIOUtilities.urlToFile(tempURL);
                 }
                 else
                     throw new IllegalArgumentException("Not a supported Input");

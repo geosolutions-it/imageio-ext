@@ -44,6 +44,7 @@ import javax.imageio.spi.ImageReaderWriterSpi;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.spi.ServiceRegistry;
 import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.PlanarImage;
 import org.eclipse.imagen.RasterFactory;
 
 import org.gdal.gdal.Dataset;
@@ -52,7 +53,6 @@ import org.gdal.gdal.gdal;
 import org.gdal.gdalconst.gdalconst;
 import org.gdal.gdalconst.gdalconstConstants;
 
-import com.sun.media.imageioimpl.common.ImageUtil;
 import org.eclipse.imagen.media.imageread.ImageReadDescriptor;
 
 /**
@@ -735,7 +735,7 @@ public final class GDALUtilities {
             // ColorModel that may be used with the specified
             // SampleModel
             //
-            colorModel = ImageUtil.createColorModel(sampleModel);
+            colorModel = PlanarImage.createColorModel(sampleModel);
             if (colorModel == null) {
                 LOGGER.severe("No ColorModels found");
             }

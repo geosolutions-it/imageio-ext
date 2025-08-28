@@ -17,6 +17,7 @@
 package it.geosolutions.imageio.plugins.srp;
 
 import it.geosolutions.imageio.gdalframework.GDALImageReaderSpi;
+import it.geosolutions.imageio.stream.AccessibleStream;
 
 import javax.imageio.ImageReader;
 import java.io.File;

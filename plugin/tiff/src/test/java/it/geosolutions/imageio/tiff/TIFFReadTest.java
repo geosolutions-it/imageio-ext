@@ -49,7 +49,6 @@ import org.eclipse.imagen.media.imageread.ImageReadDescriptor;
 import it.geosolutions.imageio.core.CoreCommonImageMetadata;
 import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
 import it.geosolutions.imageio.plugins.tiff.PrivateTIFFTagSet;
-import it.geosolutions.imageio.plugins.turbojpeg.TurboJpegUtilities;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReader;

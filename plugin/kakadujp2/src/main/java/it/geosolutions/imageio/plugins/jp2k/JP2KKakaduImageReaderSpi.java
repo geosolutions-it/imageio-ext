@@ -17,7 +17,7 @@
 package it.geosolutions.imageio.plugins.jp2k;
 
 import it.geosolutions.imageio.stream.AccessibleStream;
-import it.geosolutions.imageio.utilities.Utilities;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.util.KakaduUtilities;
 
 import java.io.File;
@@ -128,7 +128,7 @@ public class JP2KKakaduImageReaderSpi extends ImageReaderSpi {
         } else if (input instanceof URL) {
             final URL tempURL = (URL) input;
             if (tempURL.getProtocol().equalsIgnoreCase("file")) {
-                source = Utilities.urlToFile(tempURL);
+                source = ImageIOUtilities.urlToFile(tempURL);
             }
         } else
             return false;

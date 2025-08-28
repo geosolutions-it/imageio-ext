@@ -73,9 +73,6 @@
  */
 package it.geosolutions.imageioimpl.plugins.tiff;
 
-import org.eclipse.imagen.NotAColorSpace;
-import com.sun.media.imageioimpl.common.ImageUtil;
-import com.sun.media.imageioimpl.common.PackageUtil;
 import it.geosolutions.imageio.imageioimpl.EnhancedImageReadParam;
 import it.geosolutions.imageio.maskband.DatasetLayout;
 import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
@@ -88,25 +85,39 @@ import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.imageioimpl.plugins.tiff.gdal.GDALMetadata;
 import it.geosolutions.imageioimpl.plugins.tiff.gdal.GDALMetadataParser;
-
 import org.w3c.dom.Node;
 
-import javax.imageio.*;
+import javax.imageio.IIOException;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
-import org.eclipse.imagen.RasterFactory;
-import java.awt.*;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_ColorSpace;
 import java.awt.color.ICC_Profile;
-import java.awt.image.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.nio.ByteOrder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
@@ -1615,7 +1626,7 @@ public class TIFFImageReader extends ImageReader {
                 Iterator<ImageTypeSpecifier> imageTypes = getImageTypes(imageIndex);
                 theImageType = param.getDestinationType() != null ?
                         param.getDestinationType() :
-                        ImageUtil.getDestinationType(param, imageTypes);
+                        ImageIOUtilities.getDestinationType(param, imageTypes);
             }
 
             this.destinationBands = param.getDestinationBands();
@@ -1981,21 +1992,6 @@ public class TIFFImageReader extends ImageReader {
             } else if (compression ==
                     BaselineTIFFTagSet.COMPRESSION_CCITT_T_6) {
 
-                // Try to create the codecLib decompressor.
-                if (PackageUtil.isCodecLibAvailable()) {
-                    try {
-                        decompressor = new TIFFCodecLibFaxDecompressor(compression);
-                        if (DEBUG) {
-                            System.out.println
-                                    ("Using codecLib T.6 decompressor");
-                        }
-                    } catch (RuntimeException re) {
-                        if (DEBUG) {
-                            System.out.println(re);
-                        }
-                    }
-                }
-
                 // Fall back to the Java decompressor.
                 if (decompressor == null) {
                     if (DEBUG) {
@@ -2005,23 +2001,6 @@ public class TIFFImageReader extends ImageReader {
                 }
             } else if (compression ==
                     BaselineTIFFTagSet.COMPRESSION_CCITT_T_4) {
-
-                if (PackageUtil.isCodecLibAvailable()) {
-                    // Try to create the codecLib decompressor.
-                    try {
-                        decompressor =
-                                new TIFFCodecLibFaxDecompressor(compression);
-                        if (DEBUG) {
-                            System.out.println
-                                    ("Using codecLib T.4 decompressor");
-                        }
-                    } catch (RuntimeException re) {
-                        if (DEBUG) {
-                            System.out.println(re);
-                        }
-                    }
-                }
-
                 // Fall back to the Java decompressor.
                 if (decompressor == null) {
                     if (DEBUG) {

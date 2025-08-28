@@ -17,15 +17,15 @@
 package it.geosolutions.imageio.plugins.arcgrid;
 
 import it.geosolutions.imageio.gdalframework.GDALImageReaderSpi;
+import it.geosolutions.imageio.stream.AccessibleStream;
 
+import javax.imageio.ImageReader;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.imageio.ImageReader;
 
 /**
  * Service provider interface for the Ascii ArcInfo Image

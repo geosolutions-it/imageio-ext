@@ -60,7 +60,7 @@
  */
 package it.geosolutions.imageio.plugins.jp2k.box;
 
-import it.geosolutions.util.StringUtils;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 
 import javax.imageio.metadata.IIOMetadataNode;
 
@@ -110,7 +110,7 @@ public class PaletteBoxMetadataNode extends BaseJP2KBoxMetadataNode {
 
         child = new IIOMetadataNode("BitDepth");
         child.setUserObject(bd.clone());
-        child.setNodeValue(StringUtils.convertObjectToString(bd));
+        child.setNodeValue(ImageIOUtilities.convertObjectToString(bd));
         appendChild(child);
 
         child = new IIOMetadataNode("LUT");
@@ -121,7 +121,7 @@ public class PaletteBoxMetadataNode extends BaseJP2KBoxMetadataNode {
                 row[j] = lut[j][i];
 
             child1.setUserObject(row);
-            child1.setNodeValue(StringUtils.convertObjectToString(row));
+            child1.setNodeValue(ImageIOUtilities.convertObjectToString(row));
             child.appendChild(child1);
         }
         appendChild(child);

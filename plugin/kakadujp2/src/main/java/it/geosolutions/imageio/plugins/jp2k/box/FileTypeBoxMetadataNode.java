@@ -16,7 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.jp2k.box;
 
-import it.geosolutions.util.StringUtils;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 
 import javax.imageio.metadata.IIOMetadataNode;
 
@@ -38,9 +38,9 @@ public class FileTypeBoxMetadataNode extends BaseJP2KBoxMetadataNode {
     
     FileTypeBoxMetadataNode(final FileTypeBox box) {
         super(box);
-        brand = StringUtils.convertObjectToString(box.getBrand());
+        brand = ImageIOUtilities.convertObjectToString(box.getBrand());
         minorVersion = Integer.toString(box.getMinorVersion());
-        compatibilityList= StringUtils.convertObjectToString(box.getCompatibilitySet());
+        compatibilityList= ImageIOUtilities.convertObjectToString(box.getCompatibilitySet());
         
         try {
             IIOMetadataNode child = new IIOMetadataNode("Brand");

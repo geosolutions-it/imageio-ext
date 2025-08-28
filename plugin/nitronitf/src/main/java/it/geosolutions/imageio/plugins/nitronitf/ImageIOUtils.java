@@ -22,6 +22,21 @@
 
 package it.geosolutions.imageio.plugins.nitronitf;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.ImageOutputStream;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
@@ -49,24 +64,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.ImageWriter;
-import javax.imageio.stream.ImageInputStream;
-import javax.imageio.stream.ImageOutputStream;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.WindowConstants;
-
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import sun.awt.image.SunWritableRaster;
 
 public class ImageIOUtils {
 
@@ -340,7 +337,7 @@ public class ImageIOUtils {
         BandedSampleModel bsm = new BandedSampleModel(dataType, numElems, numLines,
                 bandOffsets.length, bandOffsets, bandOffsets);
 
-        SunWritableRaster ras = new SunWritableRaster(bsm, d, new Point(0, 0));
+        WritableRaster ras = Raster.createWritableRaster(bsm, d, new Point(0, 0));
         return ras;
     }
 
@@ -376,7 +373,7 @@ public class ImageIOUtils {
         PixelInterleavedSampleModel pism = new PixelInterleavedSampleModel(dataType, numElems,
                 numLines, bandOffsets.length, numElems * bandOffsets.length, bandOffsets);
 
-        SunWritableRaster ras = new SunWritableRaster(pism, d, new Point(0, 0));
+        WritableRaster ras = Raster.createWritableRaster(pism, d, new Point(0, 0));
         return ras;
     }
 

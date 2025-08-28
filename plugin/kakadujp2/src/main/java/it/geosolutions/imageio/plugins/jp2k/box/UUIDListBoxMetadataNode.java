@@ -16,7 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.jp2k.box;
 
-import it.geosolutions.util.StringUtils;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 
 import javax.imageio.metadata.IIOMetadataNode;
 
@@ -49,7 +49,7 @@ public class UUIDListBoxMetadataNode extends BaseJP2KBoxMetadataNode {
             child = new IIOMetadataNode("UUID");
             if (uuids[i]!=null)
                 child.setUserObject(uuids[i].clone());
-            uuid[i]= StringUtils.convertObjectToString(uuids[i]);
+            uuid[i]= ImageIOUtilities.convertObjectToString(uuids[i]);
             child.setNodeValue(uuid[i]);
             appendChild(child);
         }

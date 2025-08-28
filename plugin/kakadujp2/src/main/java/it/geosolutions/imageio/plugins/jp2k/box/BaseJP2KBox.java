@@ -61,7 +61,7 @@
 package it.geosolutions.imageio.plugins.jp2k.box;
 
 import it.geosolutions.imageio.plugins.jp2k.JP2KBoxMetadata;
-import it.geosolutions.util.StringUtils;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -266,7 +266,7 @@ public abstract class BaseJP2KBox extends DefaultMutableTreeNode implements
         setDefaultAttributes(node);
         IIOMetadataNode child = new IIOMetadataNode("Content");
         child.setUserObject(data);
-        child.setNodeValue(StringUtils.convertObjectToString(data));
+        child.setNodeValue(ImageIOUtilities.convertObjectToString(data));
         node.appendChild(child);
 
         return node;

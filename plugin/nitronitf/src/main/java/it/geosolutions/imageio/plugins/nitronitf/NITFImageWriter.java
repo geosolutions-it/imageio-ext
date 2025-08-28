@@ -28,6 +28,7 @@ import it.geosolutions.imageio.plugins.nitronitf.wrapper.ShapeFileWrapper;
 import it.geosolutions.imageio.plugins.nitronitf.wrapper.TextWrapper;
 import it.geosolutions.imageio.plugins.nitronitf.wrapper.ImageWrapper.Category;
 import it.geosolutions.imageio.plugins.nitronitf.wrapper.ImageWrapper.ImageBand;
+import it.geosolutions.imageio.stream.AccessibleStream;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 
 import java.awt.image.DataBufferByte;
@@ -50,6 +51,8 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageWriterSpi;
+import javax.imageio.stream.ImageInputStream;
+
 import org.eclipse.imagen.media.bandselect.BandSelectDescriptor;
 
 import nitf.BandInfo;
@@ -132,8 +135,8 @@ public class NITFImageWriter extends ImageWriter {
     }
 
     public void setOutput(Object output) {
-        if (output instanceof FileImageOutputStreamExt) {
-            outputFile = ((FileImageOutputStreamExt) output).getFile();
+        if (output instanceof AccessibleStream) {
+            outputFile = ((AccessibleStream<File>) output).getTarget();
         } else if (output instanceof File) {
             outputFile = (File) output;
         } else {
@@ -228,7 +231,7 @@ public class NITFImageWriter extends ImageWriter {
      * @throws IOException
      */
     private static void addImageSegment(final Record record, final List<ImageWrapper> images,
-            final FileImageInputStreamExt fis, final WriteCompression compression)
+                                        final ImageInputStream fis, final WriteCompression compression)
             throws NITFException, IOException {
         ImageSegment segment = null;
         ImageSubheader subheader = null;
@@ -342,7 +345,7 @@ public class NITFImageWriter extends ImageWriter {
      */
     private static double initImageSubHeader(final ImageWrapper imageWrapper,
             final ImageSubheader subheader, final WriteCompression compression,
-            final FileImageInputStreamExt fis) throws IOException, NITFException {
+            final ImageInputStream fis) throws IOException, NITFException {
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.log(Level.FINE, "Populating ImageSubHeader");
         }
@@ -440,7 +443,7 @@ public class NITFImageWriter extends ImageWriter {
      */
     private static double setImageCompression(final ImageSubheader subheader,
             final WriteCompression compression, final RenderedImage ri,
-            final FileImageInputStreamExt fis) throws IOException {
+            final ImageInputStream fis) throws IOException {
         double ratio = Double.NaN;
         final int numBits = ri.getSampleModel().getSampleSize(0);
         if (compression != null && compression != WriteCompression.UNCOMPRESSED) {
@@ -512,7 +515,7 @@ public class NITFImageWriter extends ImageWriter {
      * @throws IOException
      */
     private boolean writeNITF(final Record record, final List<ImageWrapper> images,
-            final ShapeFileWrapper shp, final FileImageInputStreamExt fis,
+            final ShapeFileWrapper shp, final ImageInputStream fis,
             final List<TextWrapper> texts) throws NITFException, IOException {
         final int numImages = images.size();
         ImageWrapper image = images.get(0);
@@ -742,7 +745,7 @@ public class NITFImageWriter extends ImageWriter {
         ImageWrapper imageW = inputImages.get(0);
         RenderedImage ri = imageW.getImage();
         final boolean isJP2 = (compression != null && compression != WriteCompression.UNCOMPRESSED);
-        FileImageInputStreamExt jp2Stream = null;
+        ImageInputStream jp2Stream = null;
         File tempFile = null;
         try {
             Record record = new Record(Version.NITF_21);

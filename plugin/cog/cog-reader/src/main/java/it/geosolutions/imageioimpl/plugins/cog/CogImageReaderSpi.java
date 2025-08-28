@@ -16,7 +16,6 @@
  */
 package it.geosolutions.imageioimpl.plugins.cog;
 
-import com.sun.media.imageioimpl.common.PackageUtil;
 import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
 
 import javax.imageio.ImageReader;
@@ -39,7 +38,7 @@ public class CogImageReaderSpi extends TIFFImageReaderSpi {
 
     @Override
     public String getDescription(Locale locale) {
-        return PackageUtil.getSpecificationTitle() + " COG Image Reader";
+        return "ImageIO EXT COG Image Reader";
     }
 
     @Override

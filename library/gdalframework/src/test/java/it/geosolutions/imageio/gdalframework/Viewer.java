@@ -17,11 +17,11 @@
 package it.geosolutions.imageio.gdalframework;
 
 import it.geosolutions.imageio.gdalframework.GDALUtilities.MetadataChoice;
+import org.eclipse.imagen.media.viewer.RenderedImageBrowser;
 
 import java.awt.BorderLayout;
 import java.awt.image.RenderedImage;
 
-import org.eclipse.imagen.widget.ScrollingImagePanel;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -486,67 +486,9 @@ public final class Viewer {
     // TODO: Fix it since frame components are not well composed/located
     private static void visualizeWithTextArea(RenderedImage ri, String title,
             final MetadataChoice textFields, final int index, final boolean displayImage) {
-
-        StringBuffer sb = new StringBuffer();
-        switch (textFields) {
-        case ONLY_IMAGE_METADATA:
-            sb.append("  Image Metadata from ").append(title);
-            break;
-        case ONLY_STREAM_METADATA:
-            sb.append("  Stream Metadata");
-            break;
-        case STREAM_AND_IMAGE_METADATA:
-            sb.append("  Metadata from ").append(title);
-            break;
-        case PROJECT_AND_GEOTRANSF:
-            sb.append("  CRS Information for ").append(title);
-            break;
-        case EVERYTHING:
-            sb.append(" Additional Information from ").append(title);
-            break;
-        }
-        final JFrame frame = new JFrame(title);
-
-        frame.getContentPane().setLayout(new BorderLayout());
-
-        // Sometime, we dont want to display image, only text data which
-        // need to be placed to the start of the area.
-        String textPosition = BorderLayout.PAGE_START;
-
         if (displayImage) {
-            frame.getContentPane().add(new ScrollingImagePanel(ri, 640, 480));
-
-            textPosition = BorderLayout.LINE_START;
+            RenderedImageBrowser.showChainAndWaitOnClose(ri);
         }
-
-        JLabel label = new JLabel(sb.toString());
-        frame.getContentPane().add(label, textPosition);
-
-        JTextArea textArea = new JTextArea();
-        if (textFields == MetadataChoice.PROJECT_AND_GEOTRANSF)
-            textArea.setText(GDALUtilities.buildCRSProperties(ri, index));
-        else if (textFields != MetadataChoice.EVERYTHING)
-            textArea.setText(GDALUtilities.buildMetadataText(ri, textFields, index));
-        else
-            textArea.setText(new StringBuffer(GDALUtilities.buildMetadataText(ri, textFields,
-                    index).toString()).append(newLine).append(
-                    		GDALUtilities.buildCRSProperties(ri, index)).toString());
-        textArea.setEditable(false);
-
-        frame.getContentPane().add(textArea);
-        frame.getContentPane().add(new JScrollPane(textArea),
-                BorderLayout.PAGE_END);
-
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        SwingUtilities.invokeLater(new Runnable() {
-
-            public void run() {
-                frame.pack();
-                frame.setSize(1024, 768);
-                frame.setVisible(true);
-            }
-        });
     }
 
 }

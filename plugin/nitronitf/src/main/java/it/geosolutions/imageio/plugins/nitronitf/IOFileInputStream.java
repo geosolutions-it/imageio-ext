@@ -3,8 +3,11 @@ package it.geosolutions.imageio.plugins.nitronitf;
 import java.io.File;
 import java.io.IOException;
 
+import it.geosolutions.imageio.stream.AccessibleStream;
 import nitf.IOInterface;
 import nitf.NITFException;
+
+import javax.imageio.stream.ImageInputStream;
 
 /**
  * implementation of the IOInterface, which allows to do buffered read operations on top of a FileInputStream.
@@ -12,15 +15,15 @@ import nitf.NITFException;
  */
 public class IOFileInputStream extends IOInterface {
 
-    private FileImageInputStreamExt stream;
+    private ImageInputStream stream;
 
     private File file;
 
     long size = 0;
 
-    public IOFileInputStream(FileImageInputStreamExt stream) {
+    public IOFileInputStream(ImageInputStream stream) {
         this.stream = stream;
-        this.file = stream.getFile();
+        this.file = ((AccessibleStream<File>) stream).getTarget();
         size = this.file.length();
     }
 

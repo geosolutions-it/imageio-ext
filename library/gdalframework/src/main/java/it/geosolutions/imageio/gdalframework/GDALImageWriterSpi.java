@@ -16,11 +16,14 @@
  */
 package it.geosolutions.imageio.gdalframework;
 
+import it.geosolutions.imageio.stream.AccessibleStream;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import javax.imageio.spi.ImageWriterSpi;
+import javax.imageio.stream.ImageOutputStream;
 
 /**
  * The abstract service provider interface (SPI) for {@link GDALImageWriter}s.
@@ -61,7 +64,7 @@ public abstract class GDALImageWriterSpi extends ImageWriterSpi {
                 suffixes,
                 MIMETypes,
                 writerClassName, // writer class name
-                STANDARD_OUTPUT_TYPE,
+                new Class[]{ImageOutputStream.class, AccessibleStream.class}, // output types
                 readerSpiNames, // reader spi names
                 supportsStandardStreamMetadataFormat,
                 nativeStreamMetadataFormatName,

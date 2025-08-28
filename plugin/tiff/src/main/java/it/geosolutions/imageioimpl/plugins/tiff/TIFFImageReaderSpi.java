@@ -73,7 +73,6 @@
  */
 package it.geosolutions.imageioimpl.plugins.tiff;
 
-import com.sun.media.imageioimpl.common.PackageUtil;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 
 import javax.imageio.ImageReader;
@@ -133,9 +132,7 @@ public class TIFFImageReaderSpi extends ImageReaderSpi {
     }
 
     public String getDescription(Locale locale) {
-        String desc = PackageUtil.getSpecificationTitle() +
-                " TIFF Image Reader";
-        return desc;
+        return "ImageIO-Ext TIFF Image Reader";
     }
 
     public boolean canDecodeInput(Object input) throws IOException {

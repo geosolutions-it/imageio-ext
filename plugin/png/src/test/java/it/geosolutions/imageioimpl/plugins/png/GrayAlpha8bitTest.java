@@ -60,7 +60,7 @@ public class GrayAlpha8bitTest {
         RenderedImage alpha = ConstantDescriptor.create(Float.valueOf(bi.getWidth()),
                 Float.valueOf(bi.getHeight()), new Byte[] { Byte.valueOf((byte) 255) },
                 new RenderingHints(JAI.KEY_IMAGE_LAYOUT, tempLayout));
-        RenderedImage grayAlpha = BandMergeDescriptor.create(bi, alpha, null);
+        RenderedImage grayAlpha = BandMergeDescriptor.create(null, 0d, true, null, bi, alpha);
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         float quality = 5f/9 - 1;
@@ -159,7 +159,7 @@ public class GrayAlpha8bitTest {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         float quality = 5f / 9 - 1;
         RenderedImage mosaic = MosaicDescriptor.create(new RenderedImage[]{ gray },
-                MosaicDescriptor.MOSAIC_TYPE_OVERLAY, null, null, null, null, null);
+                MosaicDescriptor.MOSAIC_TYPE_OVERLAY, null, null, null, null, null, null);
 
         new PNGWriter().writePNG(mosaic, bos, -quality, FilterType.FILTER_NONE);
         BufferedImage read = ImageIO.read(new ByteArrayInputStream(bos.toByteArray()));

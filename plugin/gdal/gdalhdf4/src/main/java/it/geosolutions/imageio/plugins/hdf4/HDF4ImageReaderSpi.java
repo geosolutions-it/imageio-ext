@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import it.geosolutions.imageio.stream.AccessibleStream;
 
 import javax.imageio.ImageReader;
 

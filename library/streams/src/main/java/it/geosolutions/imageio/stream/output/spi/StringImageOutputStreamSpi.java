@@ -17,7 +17,7 @@
 package it.geosolutions.imageio.stream.output.spi;
 
 import it.geosolutions.imageio.stream.output.FileImageOutputStreamExtImpl;
-import it.geosolutions.imageio.utilities.Utilities;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -99,7 +99,7 @@ public class StringImageOutputStreamSpi extends ImageOutputStreamSpi {
         if (tempURL.getProtocol().compareToIgnoreCase("eraf") == 0) {
             File tempFile;
             try {
-                tempFile = Utilities.urlToFile(tempURL);
+                tempFile = ImageIOUtilities.urlToFile(tempURL);
                 return new FileImageOutputStreamExtImpl(tempFile);
             } catch (UnsupportedEncodingException e) {
                 if (LOGGER.isLoggable(Level.FINE))

@@ -17,7 +17,8 @@
 package it.geosolutions.imageio.gdalframework;
 
 import it.geosolutions.imageio.gdalframework.GDALUtilities.DriverCreateCapabilities;
-import it.geosolutions.imageio.utilities.Utilities;
+import it.geosolutions.imageio.stream.AccessibleStream;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -1563,7 +1564,7 @@ public abstract class GDALImageWriter extends ImageWriter {
 
     /**
      * Sets the destination to the given <code>Object</code>, usually a
-     * <code>File</code> or a {@link FileImageOutputStreamExt}.
+     * <code>File</code> or a {@link it.geosolutions.imageio.stream.AccessibleStream}.
      * 
      * @param output
      *                the <code>Object</code> to use for future writing.
@@ -1572,12 +1573,12 @@ public abstract class GDALImageWriter extends ImageWriter {
         super.setOutput(output); // validates output
         if (output instanceof File)
             outputFile = (File) output;
-        else if (output instanceof FileImageOutputStreamExt)
-            outputFile = ((FileImageOutputStreamExt) output).getFile();
+        else if (output instanceof AccessibleStream)
+            outputFile = ((AccessibleStream<File>) output).getTarget();
         else if (output instanceof URL) {
             final URL tempURL = (URL) output;
             if (tempURL.getProtocol().equalsIgnoreCase("file")) {
-                    outputFile = Utilities.urlToFile(tempURL);
+                outputFile = ImageIOUtilities.urlToFile(tempURL);
             }
             else
                 throw new IllegalArgumentException("Not a Valid Input");

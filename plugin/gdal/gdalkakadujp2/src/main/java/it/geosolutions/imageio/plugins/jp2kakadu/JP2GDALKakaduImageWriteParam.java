@@ -20,8 +20,6 @@ import it.geosolutions.imageio.gdalframework.GDALImageWriteParam;
 
 import java.util.Locale;
 
-import com.sun.media.imageio.plugins.jpeg2000.J2KImageWriteParam;
-
 /**
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
