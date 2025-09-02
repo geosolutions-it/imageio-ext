@@ -850,15 +850,17 @@ public abstract class GDALImageReader extends ImageReader {
         final int width = item.getWidth();
         final int height = item.getHeight();
         final SampleModel itemSampleModel = item.getSampleModel();
-        int itemNBands = itemSampleModel.getNumBands();
-        int nDestBands;
-
         BufferedImage bi = null;
         final ImageReadParam imageReadParam;
         if (param == null)
             imageReadParam = getDefaultReadParam();
         else
             imageReadParam = param;
+
+        int itemNBands = itemSampleModel.getNumBands();
+        int[] srcBands = GDALUtilities.extractBands(imageReadParam);
+        int[] destBands = imageReadParam.getDestinationBands();
+        int nDestBands;
 
         // //
         //
@@ -867,6 +869,8 @@ public abstract class GDALImageReader extends ImageReader {
         // //
         ImageTypeSpecifier imageType = imageReadParam.getDestinationType();
         SampleModel destSampleModel = null;
+
+        // Set number of destination bands
         if (imageType != null) {
             destSampleModel = imageType.getSampleModel();
             nDestBands = destSampleModel.getNumBands();
@@ -874,6 +878,10 @@ public abstract class GDALImageReader extends ImageReader {
             bi = imageReadParam.getDestination();
             if (bi != null)
                 nDestBands = bi.getSampleModel().getNumBands();
+            else if (destBands != null)
+                nDestBands = destBands.length;
+            else if (srcBands != null)
+                nDestBands = srcBands.length;
             else
                 nDestBands = itemNBands;
         }
@@ -884,8 +892,7 @@ public abstract class GDALImageReader extends ImageReader {
         //
         // //
         checkReadParamBandSettings(imageReadParam, itemNBands, nDestBands);
-        int[] srcBands = imageReadParam.getSourceBands();
-//        int[] destBands = imageReadParam.getDestinationBands();
+
 //
         // //
         //
@@ -939,7 +946,7 @@ public abstract class GDALImageReader extends ImageReader {
             // //
             ColorModel cm;
             if (imageType == null) {
-                cm = item.getColorModel();
+                cm = GDALUtilities.extractColorModel(item.getColorModel(), item.getSampleModel(), nDestBands);
                 bi = new BufferedImage(cm, (WritableRaster) readDatasetRaster(
                         item, srcRegion, destRegion, srcBands,null), false, null);
             } else {

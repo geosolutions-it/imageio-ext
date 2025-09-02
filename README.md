@@ -41,6 +41,51 @@ Here below you can find links with useful information for working with ImageIO-E
 * [Working with Maven](https://github.com/geosolutions-it/imageio-ext/wiki/Working-with-Maven)
 * [Continuous Build](https://github.com/geosolutions-it/imageio-ext/wiki/ContinuosIntegration)
 
+## Java 17 Compatibility
+
+When using ImageIO-Ext with Java 17, you need to add the following JVM arguments to access internal Java modules that the library requires:
+
+```bash
+--add-opens java.base/java.lang=ALL-UNNAMED
+--add-opens java.base/java.util=ALL-UNNAMED
+--add-opens java.desktop/java.awt.image=ALL-UNNAMED
+--add-opens java.desktop/javax.imageio.stream=ALL-UNNAMED
+--add-opens java.desktop/javax.imageio=ALL-UNNAMED
+--add-exports java.desktop/com.sun.imageio.plugins.jpeg=ALL-UNNAMED
+--add-exports java.desktop/com.sun.imageio.plugins.png=ALL-UNNAMED
+```
+
+### Example Usage
+
+**Running your application:**
+
+```bash
+java --add-opens java.base/java.lang=ALL-UNNAMED \
+     --add-opens java.base/java.util=ALL-UNNAMED \
+     --add-opens java.desktop/java.awt.image=ALL-UNNAMED \
+     --add-opens java.desktop/javax.imageio.stream=ALL-UNNAMED \
+     --add-opens java.desktop/javax.imageio=ALL-UNNAMED \
+     --add-exports java.desktop/com.sun.imageio.plugins.jpeg=ALL-UNNAMED \
+     --add-exports java.desktop/com.sun.imageio.plugins.png=ALL-UNNAMED \
+     -cp your-classpath YourMainClass
+```
+
+**Running tests with Maven:**
+
+The project automatically handles these JVM arguments when building with Java 9+ through the `jdk-9-plus` profile in the root POM, so you can simply run:
+
+```bash
+mvn test
+```
+
+If you need to override or add additional JVM arguments for tests, you can use:
+
+```bash
+mvn test -Dsurefire.jvm.args="your-additional-args"
+```
+
+These arguments are required because ImageIO-Ext accesses internal Java APIs that are encapsulated by the module system introduced in Java 9+.
+
 # Important Notice
 **In case you want to enable ECW Decode support, it is mandatory you agree with the ECW Eula. Moreover if you want to support ECW Decode in a Server application you need to BUY a license from ERDAS.**
 
