@@ -42,6 +42,7 @@
         <module>tiff</module>
         <module>gdal</module>
         <module>cog</module>
+        <module>raw</module>
       </modules>
     </profile>
 	<profile>
@@ -78,6 +79,7 @@
 	<module>png</module>
         <module>cog</module>
         <module>libdeflate</module>
+        <module>raw</module>
 	</modules>
     </profile>
   </profiles>

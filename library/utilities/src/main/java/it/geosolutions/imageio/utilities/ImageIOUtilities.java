@@ -1533,4 +1533,80 @@ public class ImageIOUtilities {
             throw new IIOException(String.format("Writer %s cannot encode images of type %s", spi.getDescription(Locale.getDefault()), type));
         }
     }
+
+    /**
+     * Returns the size in bytes of a tile for the provided SampleModel.
+     * <p>
+     * The size is computed as scanlineStride * height * elementSizeInBytes,
+     * plus any band or pixel offsets.
+     * <p>
+     * If the SampleModel is null, 0 is returned.
+     */
+    public static long getTileSize(SampleModel sm) {
+        int elementSize = DataBuffer.getDataTypeSize(sm.getDataType());
+
+        if (sm instanceof MultiPixelPackedSampleModel) {
+            MultiPixelPackedSampleModel mppsm =
+                    (MultiPixelPackedSampleModel)sm;
+            return (mppsm.getScanlineStride() * mppsm.getHeight() +
+                    (mppsm.getDataBitOffset() + elementSize -1) / elementSize) *
+                    ((elementSize + 7) / 8);
+        } else if (sm instanceof ComponentSampleModel) {
+            ComponentSampleModel csm = (ComponentSampleModel)sm;
+            int[] bandOffsets = csm.getBandOffsets();
+            int maxBandOff = bandOffsets[0];
+            for (int i=1; i<bandOffsets.length; i++)
+                maxBandOff = Math.max(maxBandOff, bandOffsets[i]);
+
+            long size = 0;
+            int pixelStride = csm.getPixelStride();
+            int scanlineStride = csm.getScanlineStride();
+            if (maxBandOff >= 0)
+                size += maxBandOff + 1;
+            if (pixelStride > 0)
+                size += pixelStride * (sm.getWidth() - 1);
+            if (scanlineStride > 0)
+                size += scanlineStride * (sm.getHeight() - 1);
+
+            int[] bankIndices = csm.getBankIndices();
+            maxBandOff = bankIndices[0];
+            for (int i=1; i<bankIndices.length; i++)
+                maxBandOff = Math.max(maxBandOff, bankIndices[i]);
+            return size * (maxBandOff + 1) * ((elementSize + 7) / 8);
+        } else if (sm instanceof SinglePixelPackedSampleModel) {
+            SinglePixelPackedSampleModel sppsm =
+                    (SinglePixelPackedSampleModel)sm;
+            long size = sppsm.getScanlineStride() * (sppsm.getHeight() - 1) +
+                    sppsm.getWidth();
+            return size * ((elementSize + 7) / 8);
+        }
+
+        return 0;
+    }
+
+    /**
+     * Returns the size in bytes of a tile for the provided SampleModel.
+     * <p>
+     * The size is computed as width * height * numBands * elementSizeInBytes
+     * <p>
+     * If the SampleModel is null, 0 is returned.
+     */
+    public static long getBandSize(SampleModel sm) {
+        int elementSize = DataBuffer.getDataTypeSize(sm.getDataType());
+
+        if (sm instanceof ComponentSampleModel) {
+            ComponentSampleModel csm = (ComponentSampleModel)sm;
+            int pixelStride = csm.getPixelStride();
+            int scanlineStride = csm.getScanlineStride();
+            long size = Math.min(pixelStride, scanlineStride);
+
+            if (pixelStride > 0)
+                size += pixelStride * (sm.getWidth() - 1);
+            if (scanlineStride > 0)
+                size += scanlineStride * (sm.getHeight() - 1);
+            return size * ((elementSize + 7) / 8);
+        } else
+            return getTileSize(sm);
+    }
+
 }

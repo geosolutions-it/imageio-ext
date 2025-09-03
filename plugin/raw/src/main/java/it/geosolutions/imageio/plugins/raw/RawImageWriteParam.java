@@ -1,5 +1,5 @@
 /*
- * $RCSfile: SingleTileRenderedImage.java,v $
+ * $RCSfile: RawImageWriteParam.java,v $
  *
  * 
  * Copyright (c) 2005 Sun Microsystems, Inc. All  Rights Reserved.
@@ -39,50 +39,48 @@
  * nuclear facility. 
  *
  * $Revision: 1.1 $
- * $Date: 2005/02/11 05:01:23 $
+ * $Date: 2005/02/11 05:01:42 $
  * $State: Exp $
  */
-package it.geosolutions.imageioimpl.plugins.tiff;
 
-import it.geosolutions.imageio.utilities.SimpleRenderedImage;
+/*
+ *    ImageI/O-Ext - OpenSource Java Image translation Library
+ *    http://www.geo-solutions.it/
+ *    https://github.com/geosolutions-it/imageio-ext
+ *    (C) 2025, GeoSolutions
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    either version 3 of the License, or (at your option) any later version.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 
-import java.awt.image.ColorModel;
-import java.awt.image.Raster;
+package it.geosolutions.imageio.plugins.raw;
+
+import java.util.Locale;
+
+import javax.imageio.ImageWriteParam;
 
 /**
- * A simple class that provides RenderedImage functionality
- * given a Raster and a ColorModel.
+ * A subclass of <code>ImageWriteParam</code> for writing images in
+ * the RAW format.
  */
-public class SingleTileRenderedImage extends SimpleRenderedImage {
-
-    Raster ras;
-
-    /**
-     * Constructs a SingleTileRenderedImage based on a Raster
-     * and a ColorModel.
-     *
-     * @param ras A Raster that will define tile (0, 0) of the image.
-     * @param colorModel A ColorModel that will serve as the image's
-     *           ColorModel.
-     */
-    public SingleTileRenderedImage(Raster ras, ColorModel colorModel) {
-        this.ras = ras;
-
-        this.tileGridXOffset = this.minX = ras.getMinX();
-        this.tileGridYOffset = this.minY = ras.getMinY();
-        this.tileWidth = this.width = ras.getWidth();
-        this.tileHeight = this.height = ras.getHeight();
-        this.sampleModel = ras.getSampleModel();
-        this.colorModel = colorModel;
+public class RawImageWriteParam extends ImageWriteParam {
+    /** Constructor to set locales. */
+    public RawImageWriteParam(Locale locale) {
+        super(locale);
+	canWriteTiles = true;
     }
 
-    /**
-     * Returns the image's Raster as tile (0, 0).
-     */
-    public Raster getTile(int tileX, int tileY) {
-        if (tileX != 0 || tileY != 0) {
-            throw new IllegalArgumentException("tileX != 0 || tileY != 0");
-        }
-        return ras;
+/*
+    public void setTilingMode(int mode) {
+	if (mode == MODE_EXPLICIT)
+	    throw new IllegalArgumentException(I18N.getString("RawImageWriteParam0"));
     }
+*/
 }

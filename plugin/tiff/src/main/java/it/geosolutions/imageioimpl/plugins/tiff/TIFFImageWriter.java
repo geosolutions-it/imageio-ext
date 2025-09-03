@@ -120,6 +120,7 @@ import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
 
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
+import it.geosolutions.imageio.utilities.SimpleRenderedImage;
 import org.w3c.dom.Node;
 
 
