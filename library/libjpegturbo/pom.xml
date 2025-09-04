@@ -6,32 +6,4 @@
    <version>1.2.1.5</version>
    <packaging>jar</packaging>
    <name>Libjpegturbo java wrapper</name>
-   <distributionManagement>
-      <repository>
-         <uniqueVersion>false</uniqueVersion>
-         <id>geosolutions</id>
-         <url>ftp://demo.geo-solutions.it</url>
-      </repository>
-   </distributionManagement>
-   <build>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <configuration>
-            <source>1.8</source>  <!-- The -source argument for the Java compiler. -->
-            <target>1.8</target>  <!-- The -target argument for the Java compiler. -->
-            <debug>true</debug>   <!-- Whether to include debugging information.   -->
-            <encoding>ISO-8859-1</encoding> <!-- The -encoding argument for the Java compiler. -->
-          </configuration>
-        </plugin>
-      </plugins>
-      <extensions>
-         <extension>
-            <groupId>org.apache.maven.wagon</groupId>
-            <artifactId>wagon-ftp</artifactId>
-            <version>1.0-beta-2</version>
-         </extension>
-      </extensions>
-   </build>
 </project>
