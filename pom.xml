@@ -60,26 +60,21 @@
   
   <profiles>
    <profile>
-   <id>deployosgeo</id>
-     <distributionManagement>
-      <repository>
-       <uniqueVersion>false</uniqueVersion>
-       <id>osgeo</id>
-       <name>OSGeo Geotools - Maven 2 repo</name>
-       <url>dav:http://download.osgeo.org/webdav/geotools/</url>
-      </repository>
-     </distributionManagement>
-   </profile>
-   <profile>
-   <id>deployopengeo</id>
-     <distributionManagement>
-      <repository>
-       <uniqueVersion>false</uniqueVersion>
-       <id>opengeo</id>
-       <name>OpenGeo - Maven 2 repo</name>
-       <url>dav:http://repo.opengeo.org</url>
-      </repository>
-     </distributionManagement>
+     <id>deployosgeo</id>
+       <distributionManagement>
+         <repository>
+             <uniqueVersion>false</uniqueVersion>
+             <id>nexus</id>
+             <name>OSGeo Release Repository</name>
+             <url>https://repo.osgeo.org/repository/geotools-releases/</url>
+         </repository>
+         <snapshotRepository>
+             <uniqueVersion>false</uniqueVersion>
+             <id>nexus</id>
+             <name>OSGeo Snapshot Repository</name>
+             <url>https://repo.osgeo.org/repository/geotools-snapshots/</url>
+         </snapshotRepository>
+       </distributionManagement>
    </profile>
   <!--..................................-->
   <!--      GeoSolutions Repository     -->
