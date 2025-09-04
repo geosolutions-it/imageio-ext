@@ -38,7 +38,7 @@ public class CogImageReaderSpi extends TIFFImageReaderSpi {
 
     @Override
     public String getDescription(Locale locale) {
-        return "ImageIO EXT COG Image Reader";
+        return "ImageIO-Ext COG Image Reader";
     }
 
     @Override

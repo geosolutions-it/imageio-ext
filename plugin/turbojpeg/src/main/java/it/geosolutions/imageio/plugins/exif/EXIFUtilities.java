@@ -355,7 +355,7 @@ public class EXIFUtilities {
     }
 
     /**
-     * Update the EXIF content referred by a {@link FmageInputStream} using the
+     * Update the EXIF content referred by a {@link ImageInputStream} using the
      * content available in the {@link ByteArrayOutputStream}. Store the result
      * to the specified {@link OutputStream}.
      * 

@@ -172,7 +172,7 @@ public class JPEGWriterCompareTest extends BaseTest {
      * @param nativeAcc       should we use native acceleration.
      * @return this {@link ImageWorker}.
      * @throws IOException In case an error occurs during the search for an {@link ImageOutputStream} or
-     *                     during the eoncding process.
+     *                     during the encoding process.
      */
     public static final void writeJPEG(final RenderedImage image, final Object destination,
                                        final String compression, final float compressionRate, final boolean nativeAcc)

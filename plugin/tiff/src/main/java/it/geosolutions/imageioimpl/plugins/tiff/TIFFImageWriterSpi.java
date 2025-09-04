@@ -128,7 +128,7 @@ public class TIFFImageWriterSpi extends ImageWriterSpi {
     }
 
     public String getDescription(Locale locale) {
-    	return "ImageIO-EXT TIFF Image Writer";
+    	return "ImageIO-Ext TIFF Image Writer";
     }
 
     public ImageWriter createWriterInstance(Object extension) {
