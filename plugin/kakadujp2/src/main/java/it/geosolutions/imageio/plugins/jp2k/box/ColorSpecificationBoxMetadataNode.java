@@ -16,11 +16,9 @@
  */
 package it.geosolutions.imageio.plugins.jp2k.box;
 
-import java.awt.color.ICC_Profile;
-
 import javax.imageio.metadata.IIOMetadataNode;
-
-import com.sun.media.imageioimpl.common.ImageUtil;
+import java.awt.color.ICC_Profile;
+import java.util.Objects;
 
 /**
  * This class is defined to represent a Color Specification Box of JPEG JP2 file format. 
@@ -79,7 +77,7 @@ public class ColorSpecificationBoxMetadataNode extends BaseJP2KBoxMetadataNode {
            
             child = new IIOMetadataNode("ICCProfile");
             child.setUserObject(profile);
-            child.setNodeValue(ImageUtil.convertObjectToString(profile));
+            child.setNodeValue(Objects.toString(profile, ""));
             appendChild(child);
             
         } catch (Exception e) {

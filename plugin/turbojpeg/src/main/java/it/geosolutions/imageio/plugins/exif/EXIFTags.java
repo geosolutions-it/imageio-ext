@@ -16,9 +16,9 @@
  */
 package it.geosolutions.imageio.plugins.exif;
 
-import com.sun.media.imageio.plugins.tiff.BaselineTIFFTagSet;
-import com.sun.media.imageio.plugins.tiff.EXIFParentTIFFTagSet;
-import com.sun.media.imageio.plugins.tiff.EXIFTIFFTagSet;
+import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
+import it.geosolutions.imageio.plugins.tiff.EXIFParentTIFFTagSet;
+import it.geosolutions.imageio.plugins.tiff.EXIFTIFFTagSet;
 
 public class EXIFTags {
     

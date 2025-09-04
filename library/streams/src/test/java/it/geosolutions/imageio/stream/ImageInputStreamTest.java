@@ -38,11 +38,11 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
-import javax.media.jai.JAI;
-import javax.media.jai.RenderedOp;
-import javax.media.jai.widget.ScrollingImagePanel;
+import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.RenderedOp;
 import javax.swing.JFrame;
 
+import org.eclipse.imagen.media.viewer.RenderedImageBrowser;
 import org.junit.Test;
 
 import junit.framework.Assert;
@@ -80,12 +80,7 @@ public class ImageInputStreamTest  {
 	 */
 	private void visualize(final RenderedOp image, String string)
 			throws HeadlessException {
-		final JFrame f = new JFrame();
-		f.setTitle(string);
-		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		f.getContentPane().add(new ScrollingImagePanel(image, 800, 800));
-		f.pack();
-		f.setVisible(true);
+        RenderedImageBrowser.showChain(image, false, true, string, true);
 	}
 
 	@Test

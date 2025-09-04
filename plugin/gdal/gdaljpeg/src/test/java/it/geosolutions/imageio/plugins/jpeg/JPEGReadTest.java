@@ -35,15 +35,15 @@ import java.io.IOException;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
-import javax.media.jai.ImageLayout;
-import javax.media.jai.JAI;
-import javax.media.jai.ParameterBlockJAI;
-import javax.media.jai.RenderedOp;
+import org.eclipse.imagen.ImageLayout;
+import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ParameterBlockJAI;
+import org.eclipse.imagen.RenderedOp;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.sun.media.jai.codecimpl.util.RasterFactory;
+import org.eclipse.imagen.RasterFactory;
 
 /**
  * Testing reading capabilities for {@link JpegGDALImageReader} leveraging on

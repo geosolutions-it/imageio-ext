@@ -16,11 +16,10 @@
  */
 package it.geosolutions.imageio.gdalframework;
 
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
+import it.geosolutions.imageio.stream.AccessibleStream;
 import it.geosolutions.imageio.stream.input.spi.StringImageInputStreamSpi;
 import it.geosolutions.imageio.stream.input.spi.URLImageInputStreamSpi;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
-import it.geosolutions.imageio.utilities.Utilities;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,11 +29,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.imageio.ImageReader;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
@@ -173,9 +170,9 @@ public abstract class GDALImageReaderSpi extends ImageReaderSpi {
         if (input instanceof File)
         	sourceFile=(File) input;
         
-        // at this point it must be an instance of FileImageInputStreamExt to be able to proceed
-        if(input instanceof FileImageInputStreamExt)
-        	sourceFile=((FileImageInputStreamExt)input).getFile();
+        // at this point it must be an instance of an AccessibleStream to be able to proceed
+        if(input instanceof AccessibleStream)
+        	sourceFile=((AccessibleStream<File>)input).getTarget();
         	
        if(sourceFile==null||!sourceFile.exists()||!sourceFile.canRead()){
     	   return false;

@@ -21,14 +21,15 @@ import it.geosolutions.imageio.gdalframework.GDALUtilities;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
+import org.eclipse.imagen.ImageLayout;
 import org.junit.Assert;
 import org.junit.Test;
 
+import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ParameterBlockJAI;
+import org.eclipse.imagen.RenderedOp;
+
 import javax.imageio.ImageReadParam;
-import javax.media.jai.ImageLayout;
-import javax.media.jai.JAI;
-import javax.media.jai.ParameterBlockJAI;
-import javax.media.jai.RenderedOp;
 import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.image.ColorModel;

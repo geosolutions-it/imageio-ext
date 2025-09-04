@@ -16,38 +16,38 @@
  */
 package it.geosolutions.imageio.plugins.vrt;
 
-import com.sun.media.jai.operator.ImageWriteDescriptor;
 import it.geosolutions.imageio.core.GCP;
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.plugins.geotiff.GeoTiffImageReaderSpi;
+import it.geosolutions.imageio.plugins.geotiff.GeoTiffImageWriter;
 import it.geosolutions.imageio.plugins.geotiff.GeoTiffImageWriterSpi;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
+import it.geosolutions.imageio.stream.output.FileImageOutputStreamExtImpl;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
-import org.gdal.osr.SpatialReference;
+import org.eclipse.imagen.ImageLayout;
+import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ParameterBlockJAI;
+import org.eclipse.imagen.RenderedOp;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
-import javax.media.jai.ImageLayout;
-import javax.media.jai.JAI;
-import javax.media.jai.ParameterBlockJAI;
-import javax.media.jai.RenderedOp;
-import java.awt.*;
+import javax.imageio.stream.FileImageOutputStream;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * @author Daniele Romagnoli, GeoSolutions.
@@ -177,21 +177,10 @@ public class GeoTiffVrtTest extends AbstractGDALTest {
         // ////////////////////////////////////////////////////////////////
         // preparing to write
         // ////////////////////////////////////////////////////////////////
-        final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI("ImageWrite");
-        ImageWriter writer = new GeoTiffImageWriterSpi().createWriterInstance();
-        pbjImageWrite.setParameter("Output", outputFile);
-        pbjImageWrite.setParameter("writer", writer);
-        pbjImageWrite.setParameter("ImageMetadata", metadata);
-        pbjImageWrite.setParameter("Transcode", false);
-        ImageWriteParam param = new ImageWriteParam(Locale.getDefault());
-        param.setSourceRegion(new Rectangle(10, 10, 100, 100));
-        param.setSourceSubsampling(2, 1, 0, 0);
-        pbjImageWrite.setParameter("writeParam", param);
+        GeoTiffImageWriter writer = new GeoTiffImageWriter(new GeoTiffImageWriterSpi());
+        writer.setOutput(new FileImageOutputStreamExtImpl(outputFile));
+        writer.write(new IIOImage(image, null, metadata));
 
-        pbjImageWrite.addSource(image);
-        final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
-        final ImageWriter writer2 = (ImageWriter) op.getProperty(ImageWriteDescriptor.PROPERTY_NAME_IMAGE_WRITER);
-        writer2.dispose();
 
         // ////////////////////////////////////////////////////////////////
         // preparing to read again
@@ -240,16 +229,9 @@ public class GeoTiffVrtTest extends AbstractGDALTest {
         // ////////////////////////////////////////////////////////////////
         // preparing to write
         // ////////////////////////////////////////////////////////////////
-        final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI("ImageWrite");
-        ImageWriter writer = new GeoTiffImageWriterSpi().createWriterInstance();
-        pbjImageWrite.setParameter("Output", outputFile);
-        pbjImageWrite.setParameter("writer", writer);
-        pbjImageWrite.setParameter("ImageMetadata", metadata);
-        pbjImageWrite.setParameter("Transcode", false);
-        pbjImageWrite.addSource(image);
-        final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
-        final ImageWriter writer2 = (ImageWriter) op.getProperty(ImageWriteDescriptor.PROPERTY_NAME_IMAGE_WRITER);
-        writer2.dispose();
+        GeoTiffImageWriter writer = new GeoTiffImageWriter(new GeoTiffImageWriterSpi());
+        writer.setOutput(new FileImageOutputStreamExtImpl(outputFile));
+        writer.write(new IIOImage(image, null, metadata));
 
         // ////////////////////////////////////////////////////////////////
         // preparing to read again

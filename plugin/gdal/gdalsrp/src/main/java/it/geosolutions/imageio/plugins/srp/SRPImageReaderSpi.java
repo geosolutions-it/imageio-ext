@@ -17,7 +17,7 @@
 package it.geosolutions.imageio.plugins.srp;
 
 import it.geosolutions.imageio.gdalframework.GDALImageReaderSpi;
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
+import it.geosolutions.imageio.stream.AccessibleStream;
 
 import javax.imageio.ImageReader;
 import java.io.File;
@@ -83,7 +83,7 @@ public class SRPImageReaderSpi extends GDALImageReaderSpi {
                 suffixes,
                 MIMETypes,
                 readerCN, // readerClassName
-                new Class[] { File.class, FileImageInputStreamExt.class },
+                new Class[] { File.class, AccessibleStream.class },
                 wSN, // writer Spi Names
                 supportsStandardStreamMetadataFormat,
                 nativeStreamMetadataFormatName,

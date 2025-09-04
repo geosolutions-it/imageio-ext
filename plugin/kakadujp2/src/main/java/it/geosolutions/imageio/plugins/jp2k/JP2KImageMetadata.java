@@ -16,15 +16,12 @@
  */
 package it.geosolutions.imageio.plugins.jp2k;
 
-import java.util.logging.Logger;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
+import org.w3c.dom.Node;
 
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
-
-import org.w3c.dom.Node;
-
-import com.sun.media.imageioimpl.common.ImageUtil;
 
 public class JP2KImageMetadata extends IIOMetadata {
 
@@ -132,12 +129,12 @@ public class JP2KImageMetadata extends IIOMetadata {
         
         child = new IIOMetadataNode(BITS_PER_COMPONENT);
         child.setUserObject(bitsPerComponent);
-        child.setNodeValue(ImageUtil.convertObjectToString(bitsPerComponent));
+        child.setNodeValue(ImageIOUtilities.convertObjectToString(bitsPerComponent));
         rootNode.appendChild(child);
         
         child = new IIOMetadataNode(COMPONENT_INDEXES);
         child.setUserObject(componentIndexes);
-        child.setNodeValue(ImageUtil.convertObjectToString(componentIndexes));
+        child.setNodeValue(ImageIOUtilities.convertObjectToString(componentIndexes));
         rootNode.appendChild(child);
         
         child = new IIOMetadataNode(IS_SIGNED);

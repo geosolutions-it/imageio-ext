@@ -21,7 +21,20 @@ import it.geosolutions.imageio.plugins.arcgrid.raster.AsciiGridRaster;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
+import junit.framework.Assert;
+import junit.framework.TestCase;
+import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ParameterBlockJAI;
+import org.eclipse.imagen.RenderedOp;
+import org.eclipse.imagen.media.imageread.ImageReadDescriptor;
+import org.w3c.dom.Node;
 
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.stream.FileImageOutputStream;
 import java.awt.Rectangle;
 import java.awt.image.Raster;
 import java.io.BufferedInputStream;
@@ -32,27 +45,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
-
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReadParam;
-import javax.imageio.ImageReader;
-import javax.imageio.ImageWriter;
-import javax.media.jai.JAI;
-import javax.media.jai.ParameterBlockJAI;
-import javax.media.jai.RenderedOp;
-
-import junit.framework.Assert;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-import org.w3c.dom.Node;
-
-import com.sun.media.jai.operator.ImageReadDescriptor;
-import com.sun.media.jai.operator.ImageWriteDescriptor;
 
 /**
  * @author Daniele Romagnoli, GeoSolutions.
@@ -128,29 +122,13 @@ public class AsciiGridTest extends TestCase {
 	            ImageIOUtilities.visualize(image, title, true);
 	        else
 	            image.getTiles();
-	
-	        // //
-	        //
-	        // Writing it out
-	        //
-	        // //
-	        final File foutput = TestData.temp(this, "file.asc", true);
-	        final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
-	                "ImageWrite");
-	        pbjImageWrite.setParameter("Output", foutput);
-	        pbjImageWrite.addSource(image);
-	
-	        // //
-	        //
-	        // What I am doing here is crucial, that is getting the used writer and
-	        // disposing it. This will force the underlying stream to write data on
-	        // disk.
-	        //
-	        // //
-	        final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
-	        final ImageWriter writer = (ImageWriter) op.getProperty(ImageWriteDescriptor.PROPERTY_NAME_IMAGE_WRITER);
-	        writer.dispose();
-	
+
+            final File foutput = TestData.temp(this, "file.asc", true);
+            AsciiGridsImageWriter writer = new AsciiGridsImageWriter(null);
+            writer.setOutput(new FileImageOutputStream(foutput));
+            IIOMetadata metadata = (IIOMetadata) image.getProperty("JAI.ImageMetadata");
+            writer.write(new IIOImage(image, null, metadata));
+
 	        // //
 	        //
 	        // Reading it back
@@ -192,10 +170,6 @@ public class AsciiGridTest extends TestCase {
         //
         // //
         final File foutput = TestData.temp(this, "file.asc", true);
-        final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
-                "ImageWrite");
-        pbjImageWrite.setParameter("Output", foutput);
-        pbjImageWrite.addSource(image);
 
         final ImageReader reader = (ImageReader) image
                 .getProperty(ImageReadDescriptor.PROPERTY_NAME_IMAGE_READER);
@@ -205,26 +179,11 @@ public class AsciiGridTest extends TestCase {
                 raster.getNCols(), raster.getNRows(), raster.getCellSizeX(), raster.getCellSizeY(),
                 raster.getXllCellCoordinate(), raster.getYllCellCoordinate(), 
                 raster.isCorner(), true, raster.getNoData());
-//        writer.write (new IIOImage(image, null, grassMetadata));
-//        writer.dispose();
-        pbjImageWrite.setParameter("ImageMetadata", grassMetadata);
-        pbjImageWrite.setParameter("Transcode", false);
 
-        
-        // //
-        //
-        // What I am doing here is crucial, that is getting the used writer and
-        // disposing it. This will force the underlying stream to write data on
-        // disk.
-        //
-        // //
-        final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
-        final ImageWriter writer = (ImageWriter) op.getProperty(ImageWriteDescriptor.PROPERTY_NAME_IMAGE_WRITER);
-        writer.dispose();
+        AsciiGridsImageWriter writer = new AsciiGridsImageWriter(null);
+        writer.setOutput(new FileImageOutputStream(foutput));
+        writer.write(new IIOImage(image, null, grassMetadata));
 
-
-        
-        
         // //
         //
         // Reading it back

@@ -32,7 +32,7 @@
  */
 package it.geosolutions.resources;
 
-import it.geosolutions.imageio.utilities.Utilities;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -46,7 +46,6 @@ import java.io.LineNumberReader;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.Enumeration;
@@ -241,7 +240,7 @@ public class TestData implements Runnable {
      */
     public static File file(final Object caller, final String path) throws IOException {
         final URL url = url(caller, path);
-        final File file = Utilities.urlToFile(url);
+        final File file = ImageIOUtilities.urlToFile(url);
         if (!file.exists()) {
             throw new FileNotFoundException("Could not locate test-data: " + path);
         }
@@ -335,7 +334,7 @@ public class TestData implements Runnable {
             throws IOException
     {
         final URL url = url(caller, name);
-        final File file = Utilities.urlToFile(url);
+        final File file = ImageIOUtilities.urlToFile(url);
         if (file.exists()) {
             return new RandomAccessFile(file, "r").getChannel();
         }

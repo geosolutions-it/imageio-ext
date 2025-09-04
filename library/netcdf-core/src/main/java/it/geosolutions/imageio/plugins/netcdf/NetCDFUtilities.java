@@ -16,10 +16,9 @@
  */
 package it.geosolutions.imageio.plugins.netcdf;
 
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
+import it.geosolutions.imageio.stream.AccessibleStream;
 import it.geosolutions.imageio.stream.input.URIImageInputStream;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
-import it.geosolutions.imageio.utilities.Utilities;
 
 import java.awt.image.DataBuffer;
 import java.io.File;
@@ -631,7 +630,7 @@ public class NetCDFUtilities {
      * 
      * @param input
      *                the input object (usually a {@code File}, a
-     *                {@code String} or a {@code FileImageInputStreamExt).
+     *                {@code String} or a {@code AccessibleStream<File>).
      * @return {@code NetcdfDataset} in case of success.
      * @throws IOException
      *                 if some error occur while opening the dataset.
@@ -670,8 +669,8 @@ public class NetCDFUtilities {
             dataset = NetcdfDataset.openDataset(uriInStream.getUri().toString());
         }
 
-        else if (input instanceof FileImageInputStreamExt) {
-            File file = ((FileImageInputStreamExt) input).getFile();
+        else if (input instanceof AccessibleStream) {
+            File file = ((AccessibleStream<File>) input).getTarget();
             if (!file.isDirectory())
                 dataset = NetcdfDataset.openDataset(file.getPath());
             else

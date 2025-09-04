@@ -16,8 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.jp2k;
 
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
-import it.geosolutions.imageio.utilities.Utilities;
+import it.geosolutions.imageio.stream.AccessibleStream;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.util.KakaduUtilities;
 
 import java.io.File;
@@ -98,7 +98,7 @@ public class JP2KKakaduImageReaderSpi extends ImageReaderSpi {
                 suffixes,
                 MIMETypes,
                 readerCN, // readerClassName
-                new Class[] { File.class, FileImageInputStreamExt.class, 
+                new Class[] { File.class, AccessibleStream.class,
                 		URL.class },
                 wSN, // writer Spi Names
                 supportsStandardStreamMetadataFormat,
@@ -123,12 +123,12 @@ public class JP2KKakaduImageReaderSpi extends ImageReaderSpi {
         // Retrieving the File source
         if (input instanceof File) {
             source = (File) input;
-        } else if (input instanceof FileImageInputStreamExt) {
-            source = ((FileImageInputStreamExt) input).getFile();
+        } else if (input instanceof AccessibleStream) {
+            source = ((AccessibleStream<File>) input).getTarget();
         } else if (input instanceof URL) {
             final URL tempURL = (URL) input;
             if (tempURL.getProtocol().equalsIgnoreCase("file")) {
-                source = Utilities.urlToFile(tempURL);
+                source = ImageIOUtilities.urlToFile(tempURL);
             }
         } else
             return false;

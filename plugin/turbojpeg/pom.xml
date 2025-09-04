@@ -5,12 +5,12 @@
     <parent>
         <groupId>it.geosolutions.imageio-ext</groupId>
         <artifactId>imageio-ext-plugin</artifactId>
-        <version>1.4-SNAPSHOT</version>
+        <version>2.0-SNAPSHOT</version>
     </parent>
         
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-turbojpeg</artifactId>
-    <version>1.4-SNAPSHOT</version>
+    <version>2.0-SNAPSHOT</version>
 
     <packaging>jar</packaging>
 
@@ -24,7 +24,8 @@
         </dependency>
         <dependency>
             <groupId>it.geosolutions.imageio-ext</groupId>
-            <artifactId>imageio-ext-imagereadmt</artifactId>
+            <artifactId>imageio-ext-tiff</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>it.geosolutions.imageio-ext</groupId>

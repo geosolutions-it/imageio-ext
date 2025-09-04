@@ -24,13 +24,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.IIOException;
-import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageInputStream;
 
-import com.sun.media.imageioimpl.common.PackageUtil;
 
 /**
  * 
@@ -78,8 +76,8 @@ public class TurboJpegImageReaderSpi extends ImageReaderSpi {
     private boolean registered = false;
 
     public TurboJpegImageReaderSpi() {
-        super(PackageUtil.getVendor(),
-              PackageUtil.getVersion(),
+        super("1.0",
+              "GeoSolutions",
               names,
               suffixes,
               MIMETypes,

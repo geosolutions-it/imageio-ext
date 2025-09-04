@@ -53,66 +53,6 @@ public class JPEGWriterSpeedTest extends BaseTest {
     
     @Test
     @Ignore
-    public void testJPEGCLIB() throws FileNotFoundException, IOException, SecurityException,
-            NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
-
-        assumeTrue(!SKIP_TESTS);            
-        
-        String fileName = null;
-        ImageOutputStream out1 = null;
-        
-        try {
-
-            ImageWriterSpi spi = clibSPI;
-            fileName = OUTPUT_FOLDER
-                    + ((SAMPLE_IMAGE.getSampleModel().getNumBands() == 1) ? "GRAY" : "RGB")
-                    + "CLIBoutput.jpeg";
-            final File file = new File(fileName);
-            out1 = new FileImageOutputStream(file);
-
-            ImageWriter writer1 = spi.createWriterInstance();
-            ImageWriteParam param = writer1.getDefaultWriteParam();
-            param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-            param.setCompressionQuality(0.75f);
-            
-            writer1.setOutput(out1);
-            writer1.write(null, new IIOImage(SAMPLE_IMAGE, null, null), param);
-            out1.close();
-            writer1.dispose();
-
-            // Writing loops
-            long start = System.nanoTime();
-            for (int i = 0; i < LOOP; i++) {
-                // Startup write
-                out1 = new FileImageOutputStream(file);
-                writer1 = spi.createWriterInstance();
-                writer1.setOutput(out1);
-                writer1.write(null, new IIOImage(SAMPLE_IMAGE, null, null), param);
-                out1.close();
-                writer1.dispose();
-            }
-
-            long end = System.nanoTime();
-            long total = end - start;
-            reportTime("Clib", total, LOOP);
-
-        } catch (Throwable t) {
-            if (LOGGER.isLoggable(Level.WARNING)) {
-                LOGGER.warning(t.getLocalizedMessage());
-            }
-        } finally {
-            if (out1 != null) {
-                try {
-                    out1.close();
-                } catch (Throwable t) {
-                    //
-                }
-            }
-        }
-    }
-
-    @Test
-    @Ignore
     public void testJPEGJDK() throws FileNotFoundException, IOException, SecurityException,
             NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
 

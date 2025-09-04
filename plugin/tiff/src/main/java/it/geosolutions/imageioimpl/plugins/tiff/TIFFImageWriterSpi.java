@@ -83,7 +83,6 @@ import javax.imageio.spi.ImageReaderWriterSpi;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.spi.ServiceRegistry;
 
-import com.sun.media.imageioimpl.common.PackageUtil;
 
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 
@@ -129,9 +128,7 @@ public class TIFFImageWriterSpi extends ImageWriterSpi {
     }
 
     public String getDescription(Locale locale) {
-	String desc = PackageUtil.getSpecificationTitle() + 
-	    " TIFF Image Writer";  
-	return desc;
+    	return "ImageIO-Ext TIFF Image Writer";
     }
 
     public ImageWriter createWriterInstance(Object extension) {

@@ -38,13 +38,13 @@ import javax.imageio.ImageWriter;
 import javax.imageio.event.IIOWriteProgressListener;
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.FileImageOutputStream;
-import javax.media.jai.PlanarImage;
+import org.eclipse.imagen.PlanarImage;
 
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.sun.media.jai.operator.ImageReadDescriptor;
+import org.eclipse.imagen.media.imageread.ImageReadDescriptor;
 
 
 /**

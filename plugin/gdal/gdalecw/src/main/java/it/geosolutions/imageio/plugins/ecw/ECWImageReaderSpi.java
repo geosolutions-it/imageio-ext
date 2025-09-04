@@ -18,19 +18,17 @@ package it.geosolutions.imageio.plugins.ecw;
 
 import it.geosolutions.imageio.gdalframework.GDALImageReaderSpi;
 import it.geosolutions.imageio.gdalframework.GDALUtilities;
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
+import it.geosolutions.imageio.stream.AccessibleStream;
+import org.gdal.gdal.Dataset;
+import org.gdal.gdalconst.gdalconst;
 
+import javax.imageio.ImageReader;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.imageio.ImageReader;
-
-import org.gdal.gdal.Dataset;
-import org.gdal.gdalconst.gdalconst;
 
 /**
  * Service provider interface for the ECW Image
@@ -90,7 +88,7 @@ public class ECWImageReaderSpi extends GDALImageReaderSpi {
                 suffixes,
                 MIMETypes,
                 readerCN, // readerClassName
-                new Class[] { File.class, FileImageInputStreamExt.class, 
+                new Class[] { File.class, AccessibleStream.class,
                         ECWPImageInputStream.class },
                 wSN, // writer Spi Names
                 supportsStandardStreamMetadataFormat,

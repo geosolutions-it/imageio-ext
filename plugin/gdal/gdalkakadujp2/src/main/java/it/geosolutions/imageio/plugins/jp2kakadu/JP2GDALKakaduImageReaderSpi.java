@@ -17,18 +17,16 @@
 package it.geosolutions.imageio.plugins.jp2kakadu;
 
 import it.geosolutions.imageio.gdalframework.GDALImageReaderSpi;
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
+import it.geosolutions.imageio.stream.AccessibleStream;
+import org.gdal.gdal.gdal;
 
+import javax.imageio.ImageReader;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.imageio.ImageReader;
-
-import org.gdal.gdal.gdal;
 
 /**
  * Service provider interface for the jp2k image
@@ -102,7 +100,7 @@ public class JP2GDALKakaduImageReaderSpi extends GDALImageReaderSpi {
                 extensions,
                 mimeTypes,
                 readerCN, // readerClassName
-                new Class[] { File.class, FileImageInputStreamExt.class },
+                new Class[] { File.class, AccessibleStream.class },
                 wSN, // writer Spi Names
                 supportsStandardStreamMetadataFormat,
                 nativeStreamMetadataFormatName,

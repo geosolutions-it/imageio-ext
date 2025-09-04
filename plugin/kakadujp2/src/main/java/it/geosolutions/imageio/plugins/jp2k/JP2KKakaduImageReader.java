@@ -23,10 +23,30 @@ import it.geosolutions.imageio.plugins.jp2k.box.ColorSpecificationBox;
 import it.geosolutions.imageio.plugins.jp2k.box.ComponentMappingBox;
 import it.geosolutions.imageio.plugins.jp2k.box.ImageHeaderBox;
 import it.geosolutions.imageio.plugins.jp2k.box.PaletteBox;
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
-import it.geosolutions.imageio.utilities.Utilities;
+import it.geosolutions.imageio.stream.AccessibleStream;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.util.KakaduUtilities;
+import kdu_jni.Jp2_family_src;
+import kdu_jni.Jpx_codestream_source;
+import kdu_jni.Jpx_input_box;
+import kdu_jni.Jpx_source;
+import kdu_jni.KduException;
+import kdu_jni.Kdu_codestream;
+import kdu_jni.Kdu_coords;
+import kdu_jni.Kdu_dims;
+import kdu_jni.Kdu_global;
+import kdu_jni.Kdu_simple_file_source;
+import kdu_jni.Kdu_stripe_decompressor;
+import org.eclipse.imagen.PlanarImage;
 
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.stream.ImageInputStream;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeModel;
 import java.awt.Rectangle;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
@@ -58,29 +78,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.imageio.ImageReadParam;
-import javax.imageio.ImageReader;
-import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.spi.ImageReaderSpi;
-import javax.imageio.stream.ImageInputStream;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeModel;
-
-import kdu_jni.Jp2_family_src;
-import kdu_jni.Jpx_codestream_source;
-import kdu_jni.Jpx_input_box;
-import kdu_jni.Jpx_source;
-import kdu_jni.KduException;
-import kdu_jni.Kdu_codestream;
-import kdu_jni.Kdu_coords;
-import kdu_jni.Kdu_dims;
-import kdu_jni.Kdu_global;
-import kdu_jni.Kdu_simple_file_source;
-import kdu_jni.Kdu_stripe_decompressor;
-
-import com.sun.media.imageioimpl.common.ImageUtil;
 
 /**
  * <code>JP2KakaduImageReader</code> is a <code>ImageReader</code> able to
@@ -826,13 +823,13 @@ public class JP2KKakaduImageReader extends ImageReader {
         if (input instanceof File) {
             inputFile = (File) input;
             // Checking if the provided input is a FileImageInputStreamExt
-        } else if (input instanceof FileImageInputStreamExt) {
-            inputFile = ((FileImageInputStreamExt) input).getFile();
+        } else if (input instanceof AccessibleStream) {
+            inputFile = ((AccessibleStream<File>) input).getTarget();
             // Checking if the provided input is a URL
         } else if (input instanceof URL) {
             final URL tempURL = (URL) input;
             if (tempURL.getProtocol().equalsIgnoreCase("file")) {
-                    inputFile = Utilities.urlToFile(tempURL);
+                inputFile = ImageIOUtilities.urlToFile(tempURL);
             }
         } else if (input instanceof ImageInputStream) {
             try {
@@ -1150,8 +1147,7 @@ public class JP2KKakaduImageReader extends ImageReader {
             if (dataBufferType != -1) {
                 if (nComponents == 1
                         && (maxBitDepth == 1 || maxBitDepth == 2 || maxBitDepth == 4)) {
-                    codestreamP.setColorModel(ImageUtil
-                            .createColorModel(getSampleModel(codestreamP)));
+                    codestreamP.setColorModel(PlanarImage.createColorModel(getSampleModel(codestreamP)));
                 } else {
                     codestreamP.setColorModel(new ComponentColorModel(cs,
                             codestreamP.getBitsPerComponent(), hasAlpha, false,
@@ -1168,7 +1164,7 @@ public class JP2KKakaduImageReader extends ImageReader {
         if (codestreamP.getSampleModel() == null)
             return null;
 
-        return ImageUtil.createColorModel(codestreamP.getSampleModel());
+        return PlanarImage.createColorModel(codestreamP.getSampleModel());
     }
 
     /**

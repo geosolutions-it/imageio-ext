@@ -17,7 +17,7 @@
 package it.geosolutions.imageio.plugins.doq1;
 
 import it.geosolutions.imageio.gdalframework.GDALImageReaderSpi;
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
+import it.geosolutions.imageio.stream.AccessibleStream;
 
 import java.io.File;
 import java.io.IOException;
@@ -86,7 +86,7 @@ public class DOQ1ImageReaderSpi extends GDALImageReaderSpi {
                 suffixes,
                 MIMETypes,
                 readerCN, // readerClassName
-                new Class[] { File.class, FileImageInputStreamExt.class },
+                new Class[] { File.class, AccessibleStream.class },
                 wSN, // writer Spi Names
                 supportsStandardStreamMetadataFormat,
                 nativeStreamMetadataFormatName,

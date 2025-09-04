@@ -17,8 +17,7 @@
 package it.geosolutions.imageio.plugins.jp2k.box;
 
 import it.geosolutions.imageio.plugins.jp2k.JP2KBox;
-
-import com.sun.media.imageioimpl.common.ImageUtil;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 
 /**
  * This class is defined to represent a UUID Box of JPEG JP2 file format. This
@@ -75,7 +74,7 @@ public class UUIDBoxMetadataNode extends BaseJP2KBoxMetadataNode {
     
     @Override
     public String getNodeValue() {
-        return ImageUtil.convertObjectToString(getContent());
+        return ImageIOUtilities.convertObjectToString(getContent());
     }
 
     @Override

@@ -7,12 +7,12 @@
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext</artifactId>
-    <version>1.4-SNAPSHOT</version>
+    <version>2.0-SNAPSHOT</version>
   </parent>
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-plugin</artifactId>
   <packaging>pom</packaging>
-  <version>1.4-SNAPSHOT</version>
+  <version>2.0-SNAPSHOT</version>
   <name>GeoSolutions Image I/O-Extensions plugins</name>
   <description>
     Image I/O-Extensions plugin modules.
@@ -42,6 +42,7 @@
         <module>tiff</module>
         <module>gdal</module>
         <module>cog</module>
+        <module>raw</module>
       </modules>
     </profile>
 	<profile>
@@ -78,6 +79,7 @@
 	<module>png</module>
         <module>cog</module>
         <module>libdeflate</module>
+        <module>raw</module>
 	</modules>
     </profile>
   </profiles>

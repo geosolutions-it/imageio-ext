@@ -16,9 +16,9 @@
  */
 package it.geosolutions.imageio.plugins.jp2k.box;
 
-import javax.imageio.metadata.IIOMetadataNode;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 
-import com.sun.media.imageioimpl.common.ImageUtil;
+import javax.imageio.metadata.IIOMetadataNode;
 
 /**
  * This class is defined to represent a UUID list Box of JPEG JP2 file format.
@@ -49,7 +49,7 @@ public class UUIDListBoxMetadataNode extends BaseJP2KBoxMetadataNode {
             child = new IIOMetadataNode("UUID");
             if (uuids[i]!=null)
                 child.setUserObject(uuids[i].clone());
-            uuid[i]=ImageUtil.convertObjectToString(uuids[i]);
+            uuid[i]= ImageIOUtilities.convertObjectToString(uuids[i]);
             child.setNodeValue(uuid[i]);
             appendChild(child);
         }

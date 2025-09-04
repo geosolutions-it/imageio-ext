@@ -61,17 +61,15 @@
 package it.geosolutions.imageio.plugins.jp2k.box;
 
 import it.geosolutions.imageio.plugins.jp2k.JP2KBoxMetadata;
-
-import java.lang.reflect.Method;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.swing.tree.DefaultMutableTreeNode;
-
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import com.sun.media.imageioimpl.common.ImageUtil;
+import java.lang.reflect.Method;
+import java.util.Objects;
 
 /**
  * This class is defined to create the box of JP2 file format. A box has a
@@ -215,7 +213,7 @@ public abstract class BaseJP2KBox extends DefaultMutableTreeNode implements
                         (Class[]) null);
                 Object obj = m.invoke(this, (Object[]) null);
                 child.setUserObject(obj);
-                child.setNodeValue(ImageUtil.convertObjectToString(obj));
+                child.setNodeValue(Objects.toString(obj, ""));
                 node.appendChild(child);
             }
             return node;
@@ -268,7 +266,7 @@ public abstract class BaseJP2KBox extends DefaultMutableTreeNode implements
         setDefaultAttributes(node);
         IIOMetadataNode child = new IIOMetadataNode("Content");
         child.setUserObject(data);
-        child.setNodeValue(ImageUtil.convertObjectToString(data));
+        child.setNodeValue(ImageIOUtilities.convertObjectToString(data));
         node.appendChild(child);
 
         return node;

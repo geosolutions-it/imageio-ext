@@ -32,12 +32,12 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageInputStream;
-import javax.media.jai.RenderedOp;
-import javax.media.jai.operator.BandSelectDescriptor;
+import org.eclipse.imagen.RenderedOp;
+import org.eclipse.imagen.media.bandselect.BandSelectDescriptor;
 
 import org.junit.Test;
 
-import com.sun.media.jai.operator.ImageReadDescriptor;
+import org.eclipse.imagen.media.imageread.ImageReadDescriptor;
 
 import ar.com.hjg.pngj.FilterType;
 import ar.com.hjg.pngj.PngReader;

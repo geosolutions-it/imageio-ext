@@ -7,12 +7,12 @@
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-plugin</artifactId>
-    <version>1.4-SNAPSHOT</version>
+    <version>2.0-SNAPSHOT</version>
   </parent>
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-gdal-plugin</artifactId>
   <packaging>pom</packaging>
-  <version>1.4-SNAPSHOT</version>
+  <version>2.0-SNAPSHOT</version>
   <name>GeoSolutions Image I/O-Extensions GDAL plugins</name>
   <description>
     Image I/O-Extensions GDAL plugin modules.
@@ -45,12 +45,6 @@
   <!--     Modules for the build in approximate dependency order   -->
   <!-- =========================================================== -->
   <profiles>
-    <profile>
-        <id>jmagick</id>
-        <modules>
-           <module>jmagickjpeg</module>
-        </modules>
-    </profile>
     <profile>
       <id>base</id>
        <modules>

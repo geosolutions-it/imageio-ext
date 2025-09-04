@@ -19,7 +19,7 @@ package it.geosolutions.imageio.plugins.arcgrid;
 import it.geosolutions.imageio.plugins.arcgrid.raster.AsciiGridRaster;
 import it.geosolutions.imageio.plugins.arcgrid.raster.AsciiGridRaster.AsciiGridRasterType;
 import it.geosolutions.imageio.plugins.arcgrid.spi.AsciiGridsImageReaderSpi;
-import it.geosolutions.imageio.utilities.Utilities;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 
 import java.awt.Rectangle;
 import java.awt.Transparency;
@@ -46,7 +46,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
-import javax.media.jai.RasterFactory;
+import org.eclipse.imagen.RasterFactory;
 
 /**
  * Class used for reading ASCII ArcInfo Grid Format (ArcGrid) and ASCII GRASS
@@ -209,7 +209,7 @@ public final class AsciiGridsImageReader extends ImageReader {
 			}
 			// now we know it is pointing to a file
 			// let's see if it exists
-			final File inFile = Utilities.urlToFile(testUrl);
+            final File inFile = ImageIOUtilities.urlToFile(testUrl);
 			if (!inFile.exists()) {
 			    // is not a file let's reject it
 			    if (LOGGER.isLoggable(Level.SEVERE))

@@ -17,13 +17,13 @@
 package it.geosolutions.imageio.plugins.hdf4;
 
 import it.geosolutions.imageio.gdalframework.GDALImageReaderSpi;
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import it.geosolutions.imageio.stream.AccessibleStream;
 
 import javax.imageio.ImageReader;
 
@@ -82,7 +82,7 @@ public class HDF4ImageReaderSpi extends GDALImageReaderSpi {
                 suffixes,
                 MIMETypes,
                 readerCN, // readerClassName
-                new Class[] { File.class, FileImageInputStreamExt.class },
+                new Class[] { File.class, AccessibleStream.class },
                 wSN, // writer Spi Names
                 supportsStandardStreamMetadataFormat,
                 nativeStreamMetadataFormatName,

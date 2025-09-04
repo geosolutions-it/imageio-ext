@@ -22,8 +22,6 @@
 
 package it.geosolutions.imageio.plugins.nitronitf;
 
-import it.geosolutions.imageio.stream.output.FileImageOutputStreamExt;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -33,6 +31,7 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageWriterSpi;
 
+import it.geosolutions.imageio.stream.AccessibleStream;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -47,7 +46,7 @@ public class NITFImageWriterSpi extends ImageWriterSpi {
                 new String[] { "ntf", "nitf", "nsf" }, // suffixes
                 new String[] { "image/x-ntf", "image/x-nitf" }, // MIMETypes
                 NITFImageWriter.class.getName(), // writerClassName
-                new Class[] { File.class, FileImageOutputStreamExt.class }, // outputTypes
+                new Class[] { File.class, AccessibleStream.class }, // outputTypes
                 null, // readerSpiNames
                 false, // supportsStandardStreamMetadataFormat
                 null, // nativeStreamMetadataFormatName

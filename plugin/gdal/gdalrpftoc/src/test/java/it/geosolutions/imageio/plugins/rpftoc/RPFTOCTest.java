@@ -27,9 +27,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.imageio.ImageReadParam;
-import javax.media.jai.JAI;
-import javax.media.jai.ParameterBlockJAI;
-import javax.media.jai.RenderedOp;
+import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ParameterBlockJAI;
+import org.eclipse.imagen.RenderedOp;
 
 import org.junit.Assert;
 import org.junit.Test;

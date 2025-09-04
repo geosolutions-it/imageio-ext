@@ -73,6 +73,15 @@
  */
 package it.geosolutions.imageio.plugins.tiff;
 
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
+import org.eclipse.imagen.NotAColorSpace;
+
+import javax.imageio.IIOException;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.MemoryCacheImageInputStream;
 import java.awt.Rectangle;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
@@ -97,17 +106,6 @@ import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.ByteOrder;
-
-import javax.imageio.IIOException;
-import javax.imageio.ImageReader;
-import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.stream.ImageInputStream;
-import javax.imageio.stream.MemoryCacheImageInputStream;
-
-import com.sun.media.imageioimpl.common.BogusColorSpace;
-import com.sun.media.imageioimpl.common.ImageUtil;
-import com.sun.media.imageioimpl.common.SimpleCMYKColorSpace;
 
 /**
  * A class defining a pluggable TIFF decompressor.
@@ -1091,7 +1089,7 @@ public abstract class TIFFDecompressor {
             if(samplesPerPixel == 4)
                 cs = SimpleCMYKColorSpace.getInstance();
             else
-                cs = new BogusColorSpace(samplesPerPixel);
+                cs = new NotAColorSpace(samplesPerPixel);
             // By specifying the bits per sample the color values
             // will scale on display
             ColorModel cm =
@@ -1219,7 +1217,7 @@ public abstract class TIFFDecompressor {
                                                hasAlpha,
                                                alphaPremultiplied);
                     } else {
-                        ColorSpace cs = new BogusColorSpace(samplesPerPixel);
+                        ColorSpace cs = new NotAColorSpace(samplesPerPixel);
                         cm = createComponentCM(cs,
                                                samplesPerPixel,
                                                dataType,
@@ -1336,7 +1334,7 @@ public abstract class TIFFDecompressor {
                     getDataTypeFromNumBits(maxBitsPerSample, isSigned);
                 SampleModel sm = createInterleavedSM(dataType,
                                                      samplesPerPixel);
-                ColorSpace cs = new BogusColorSpace(samplesPerPixel);
+                ColorSpace cs = new NotAColorSpace(samplesPerPixel);
                 ColorModel cm = createComponentCM(cs,
                                                   samplesPerPixel,
                                                   dataType,
@@ -2354,9 +2352,9 @@ public abstract class TIFFDecompressor {
         // be contiguous unless it has a single component band stored
         // in a single bank.
         this.isBilevel =
-            ImageUtil.isBinary(this.image.getRaster().getSampleModel());
+            ImageIOUtilities.isBinary(this.image.getRaster().getSampleModel());
         this.isContiguous = this.isBilevel ?
-            true : ImageUtil.imageIsContiguous(this.image);
+            true : ImageIOUtilities.imageIsContiguous(this.image);
 
         // Analyze destination image to see if we can copy into it
         // directly
@@ -2504,7 +2502,7 @@ public abstract class TIFFDecompressor {
             Rectangle rect = isImageSimple ?
                 new Rectangle(dstMinX, dstMinY, dstWidth, dstHeight) :
                 ras.getBounds();
-            byteData = ImageUtil.getPackedBinaryData(ras, rect);
+            byteData = ImageIOUtilities.getPackedBinaryData(ras, rect);
             dstOffset = 0;
             pixelBitStride = 1;
             scanlineStride = (rect.width + 7)/8;
@@ -2910,7 +2908,7 @@ public abstract class TIFFDecompressor {
             Rectangle rect = isImageSimple ?
                 new Rectangle(dstMinX, dstMinY, dstWidth, dstHeight) :
                 ras.getBounds();
-            ImageUtil.setPackedBinaryData(byteData, ras, rect);
+            ImageIOUtilities.setPackedBinaryData(byteData, ras, rect);
         }
 
         // XXX A better test might be if the rawImage raster either

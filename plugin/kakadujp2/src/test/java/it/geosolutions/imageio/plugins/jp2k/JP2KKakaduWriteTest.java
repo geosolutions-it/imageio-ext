@@ -20,7 +20,21 @@ package it.geosolutions.imageio.plugins.jp2k;
 
 import it.geosolutions.resources.TestData;
 import it.geosolutions.util.KakaduUtilities;
+import kdu_jni.KduException;
+import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ParameterBlockJAI;
+import org.eclipse.imagen.RenderedOp;
+import org.junit.Assume;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.FileImageOutputStream;
+import javax.imageio.stream.ImageOutputStream;
 import java.awt.Rectangle;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
@@ -39,25 +53,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.logging.Logger;
-
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.ImageWriter;
-import javax.imageio.stream.FileImageOutputStream;
-import javax.imageio.stream.ImageOutputStream;
-import javax.media.jai.JAI;
-import javax.media.jai.ParameterBlockJAI;
-import javax.media.jai.RenderedOp;
-
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import kdu_jni.KduException;
-
-import com.sun.imageio.plugins.bmp.BMPImageReaderSpi;
 
 public class JP2KKakaduWriteTest {
 
@@ -488,11 +483,8 @@ public class JP2KKakaduWriteTest {
         final FileImageOutputStream stream = new FileImageOutputStream (outFile);
         stream.writeBytes("This is an Image Header written before the j2c raw codestream");
         
-        final ImageReader reader = new BMPImageReaderSpi()
-                .createReaderInstance();
         final File file = TestData.file(this, "RGB24.bmp");
-        reader.setInput(ImageIO.createImageInputStream(file));
-        BufferedImage bi = reader.read(0);
+        BufferedImage bi = ImageIO.read(file);
         
         final ImageWriter writer = new JP2KKakaduImageWriterSpi()
         .createWriterInstance();
@@ -507,10 +499,7 @@ public class JP2KKakaduWriteTest {
     
     public @Test void testRGB() throws IOException {
         final File file = TestData.file(this, "RGB24.bmp");
-        final ImageReader reader = new BMPImageReaderSpi()
-                .createReaderInstance();
-        reader.setInput(ImageIO.createImageInputStream(file));
-        BufferedImage bi = reader.read(0);
+        BufferedImage bi = ImageIO.read(file);
         write(outputFileName + "_RGB", bi, true, lossLessQuality);
         write(outputFileName + "_RGB", bi, false, lossLessQuality);
         write(outputFileName + "_RGB", bi, true, lossyQuality);

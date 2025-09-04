@@ -60,9 +60,9 @@
  */
 package it.geosolutions.imageio.plugins.jp2k.box;
 
-import javax.imageio.metadata.IIOMetadataNode;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 
-import com.sun.media.imageioimpl.common.ImageUtil;
+import javax.imageio.metadata.IIOMetadataNode;
 
 /**
  * This class is designed to represent a palette box for JPEG 2000 JP2 file
@@ -110,7 +110,7 @@ public class PaletteBoxMetadataNode extends BaseJP2KBoxMetadataNode {
 
         child = new IIOMetadataNode("BitDepth");
         child.setUserObject(bd.clone());
-        child.setNodeValue(ImageUtil.convertObjectToString(bd));
+        child.setNodeValue(ImageIOUtilities.convertObjectToString(bd));
         appendChild(child);
 
         child = new IIOMetadataNode("LUT");
@@ -121,7 +121,7 @@ public class PaletteBoxMetadataNode extends BaseJP2KBoxMetadataNode {
                 row[j] = lut[j][i];
 
             child1.setUserObject(row);
-            child1.setNodeValue(ImageUtil.convertObjectToString(row));
+            child1.setNodeValue(ImageIOUtilities.convertObjectToString(row));
             child.appendChild(child1);
         }
         appendChild(child);

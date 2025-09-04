@@ -16,7 +16,7 @@
  */
 package it.geosolutions.imageio.tiff;
 
-import com.sun.media.jai.operator.ImageReadDescriptor;
+import org.eclipse.imagen.media.imageread.ImageReadDescriptor;
 import it.geosolutions.imageio.plugins.tiff.TIFFImageReadParam;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReader;
@@ -29,8 +29,8 @@ import org.junit.runners.Parameterized;
 
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.stream.FileImageInputStream;
-import javax.media.jai.PlanarImage;
-import javax.media.jai.RenderedOp;
+import org.eclipse.imagen.PlanarImage;
+import org.eclipse.imagen.RenderedOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;

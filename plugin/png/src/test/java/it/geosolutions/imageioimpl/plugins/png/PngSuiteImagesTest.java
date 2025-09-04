@@ -36,10 +36,10 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.media.jai.ImageLayout;
-import javax.media.jai.JAI;
-import javax.media.jai.RenderedOp;
-import javax.media.jai.operator.FormatDescriptor;
+import org.eclipse.imagen.ImageLayout;
+import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.RenderedOp;
+import org.eclipse.imagen.media.format.FormatDescriptor;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

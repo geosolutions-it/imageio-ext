@@ -73,6 +73,7 @@
  */
 package it.geosolutions.imageioimpl.plugins.tiff;
 
+
 import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
 import it.geosolutions.imageio.plugins.tiff.EXIFParentTIFFTagSet;
 import it.geosolutions.imageio.plugins.tiff.EXIFTIFFTagSet;
@@ -118,12 +119,10 @@ import javax.imageio.metadata.IIOMetadataFormatImpl;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
 
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
+import it.geosolutions.imageio.utilities.SimpleRenderedImage;
 import org.w3c.dom.Node;
 
-import com.sun.media.imageioimpl.common.ImageUtil;
-import com.sun.media.imageioimpl.common.PackageUtil;
-import com.sun.media.imageioimpl.common.SimpleRenderedImage;
-import com.sun.media.imageioimpl.common.SingleTileRenderedImage;
 
 public class TIFFImageWriter extends ImageWriter {
 
@@ -908,20 +907,6 @@ public class TIFFImageWriter extends ImageWriter {
 
         if (compressor == null) {
             if (compression == BaselineTIFFTagSet.COMPRESSION_CCITT_RLE) {
-                if(PackageUtil.isCodecLibAvailable()) {
-                    try {
-                        compressor = new TIFFCodecLibRLECompressor();
-                        if(DEBUG) {
-                            System.out.println
-                                ("Using codecLib RLE compressor");
-                        }
-                    } catch(RuntimeException e) {
-                        if(DEBUG) {
-                            System.out.println(e);
-                        }
-                    }
-                }
-
                 if(compressor == null) {
                     compressor = new TIFFRLECompressor();
                     if(DEBUG) {
@@ -935,20 +920,6 @@ public class TIFFImageWriter extends ImageWriter {
                 }
             } else if (compression ==
                        BaselineTIFFTagSet.COMPRESSION_CCITT_T_4) {
-                if(PackageUtil.isCodecLibAvailable()) {
-                    try {
-                        compressor = new TIFFCodecLibT4Compressor();
-                        if(DEBUG) {
-                            System.out.println
-                                ("Using codecLib T.4 compressor");
-                        }
-                    } catch(RuntimeException e) {
-                        if(DEBUG) {
-                            System.out.println(e);
-                        }
-                    }
-                }
-
                 if(compressor == null) {
                     compressor = new TIFFT4Compressor();
                     if(DEBUG) {
@@ -962,20 +933,6 @@ public class TIFFImageWriter extends ImageWriter {
                 }
             } else if (compression ==
                        BaselineTIFFTagSet.COMPRESSION_CCITT_T_6) {
-                if(PackageUtil.isCodecLibAvailable()) {
-                    try {
-                        compressor = new TIFFCodecLibT6Compressor();
-                        if(DEBUG) {
-                            System.out.println
-                                ("Using codecLib T.6 compressor");
-                        }
-                    } catch(RuntimeException e) {
-                        if(DEBUG) {
-                            System.out.println(e);
-                        }
-                    }
-                }
-
                 if(compressor == null) {
                     compressor = new TIFFT6Compressor();
                     if(DEBUG) {
@@ -1245,7 +1202,7 @@ public class TIFFImageWriter extends ImageWriter {
         // metadata and the ColorSpace is non-standard ICC.
         if(cm != null &&
            rootIFD.getTIFFField(BaselineTIFFTagSet.TAG_ICC_PROFILE) == null &&
-           ImageUtil.isNonStandardICCColorSpace(cm.getColorSpace())) {
+           ImageIOUtilities.isNonStandardICCColorSpace(cm.getColorSpace())) {
             ICC_ColorSpace iccColorSpace = (ICC_ColorSpace)cm.getColorSpace();
             byte[] iccProfileData = iccColorSpace.getProfile().getData();
             TIFFField iccProfileField =
@@ -1863,7 +1820,7 @@ public class TIFFImageWriter extends ImageWriter {
                     lineStride = (tileRect.width + 7)/8;
                 }
                 */
-                byte[] buf = ImageUtil.getPackedBinaryData(raster,
+                byte[] buf = ImageIOUtilities.getPackedBinaryData(raster,
                                                            tileRect);
 
                 if(isInverted) {
@@ -2739,7 +2696,7 @@ public class TIFFImageWriter extends ImageWriter {
             
         this.imageType = new ImageTypeSpecifier(colorModel, sampleModel);
 
-        ImageUtil.canEncodeImage(this, this.imageType);
+        ImageIOUtilities.canEncodeImage(this, this.imageType);
 
         // Compute output dimensions
         int destWidth = (sourceWidth + periodX - 1)/periodX;
@@ -2852,7 +2809,7 @@ public class TIFFImageWriter extends ImageWriter {
         initializeScaleTables(sampleModel.getSampleSize());
 
         // Determine whether bilevel.
-        this.isBilevel = ImageUtil.isBinary(image.getSampleModel());
+        this.isBilevel = ImageIOUtilities.isBinary(image.getSampleModel());
 
         // Check for photometric inversion.
         this.isInverted =
@@ -2868,7 +2825,7 @@ public class TIFFImageWriter extends ImageWriter {
         // Analyze image data suitability for direct copy.
         this.isImageSimple =
                 (isBilevel ||
-                        (!isInverted && ImageUtil.imageIsContiguous(image))) &&
+                        (!isInverted && ImageIOUtilities.imageIsContiguous(image))) &&
                         !isRescaling &&                 // no value rescaling
                         sourceBands == null &&          // no subbanding
                         periodX == 1 && periodY == 1 && // no subsampling
@@ -3791,7 +3748,7 @@ public class TIFFImageWriter extends ImageWriter {
                 initializeScaleTables(scaleSampleSize);
 
                 // Determine whether bilevel.
-                this.isBilevel = ImageUtil.isBinary(image.getSampleModel());
+                this.isBilevel = ImageIOUtilities.isBinary(image.getSampleModel());
 
                 // Check for photometric inversion.
                 this.isInverted =
@@ -3807,7 +3764,7 @@ public class TIFFImageWriter extends ImageWriter {
                 // Analyze image data suitability for direct copy.
                 this.isImageSimple = 
                     (isBilevel ||
-                     (!isInverted && ImageUtil.imageIsContiguous(image))) &&
+                     (!isInverted && ImageIOUtilities.imageIsContiguous(image))) &&
                     !isRescaling &&                 // no value rescaling
                     sourceBands == null &&          // no subbanding
                     periodX == 1 && periodY == 1 && // no subsampling

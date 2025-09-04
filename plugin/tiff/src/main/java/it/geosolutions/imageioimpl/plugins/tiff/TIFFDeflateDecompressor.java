@@ -138,7 +138,7 @@ public class TIFFDeflateDecompressor extends TIFFDecompressor {
         try {
             deflateDecompressor.decompress(buf, bufOffset, bytesPerRow*srcHeight);
         } catch (DataFormatException dfe) {
-            throw new IIOException(I18N.getString("TIFFDeflateDecompressor0"),
+            throw new IIOException("Data format exception during deflate decompression",
                     dfe);
         } finally {
             deflateDecompressor.done();

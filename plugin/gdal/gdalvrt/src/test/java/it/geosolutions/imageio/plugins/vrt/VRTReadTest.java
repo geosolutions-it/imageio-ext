@@ -24,7 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.imageio.ImageReader;
-import javax.media.jai.ImageLayout;
+import org.eclipse.imagen.ImageLayout;
 
 import org.junit.Assert;
 import org.junit.Before;

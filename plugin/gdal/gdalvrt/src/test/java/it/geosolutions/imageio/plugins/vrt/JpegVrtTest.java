@@ -16,7 +16,7 @@
  */
 package it.geosolutions.imageio.plugins.vrt;
 
-import com.sun.media.jai.codecimpl.util.RasterFactory;
+import org.eclipse.imagen.RasterFactory;
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
@@ -27,10 +27,10 @@ import org.junit.Test;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
-import javax.media.jai.ImageLayout;
-import javax.media.jai.JAI;
-import javax.media.jai.ParameterBlockJAI;
-import javax.media.jai.RenderedOp;
+import org.eclipse.imagen.ImageLayout;
+import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ParameterBlockJAI;
+import org.eclipse.imagen.RenderedOp;
 import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.image.ColorModel;

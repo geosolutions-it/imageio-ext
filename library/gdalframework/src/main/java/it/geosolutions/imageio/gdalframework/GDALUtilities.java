@@ -16,6 +16,28 @@
  */
 package it.geosolutions.imageio.gdalframework;
 
+import it.geosolutions.imageio.imageioimpl.EnhancedImageReadParam;
+import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.NotAColorSpace;
+import org.eclipse.imagen.PlanarImage;
+import org.eclipse.imagen.RasterFactory;
+import org.eclipse.imagen.media.imageread.ImageReadDescriptor;
+import org.gdal.gdal.Dataset;
+import org.gdal.gdal.Driver;
+import org.gdal.gdal.gdal;
+import org.gdal.gdalconst.gdalconst;
+import org.gdal.gdalconst.gdalconstConstants;
+
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.metadata.IIOMetadataFormat;
+import javax.imageio.metadata.IIOMetadataFormatImpl;
+import javax.imageio.metadata.IIOMetadataNode;
+import javax.imageio.spi.IIORegistry;
+import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.spi.ImageReaderWriterSpi;
+import javax.imageio.spi.ImageWriterSpi;
+import javax.imageio.spi.ServiceRegistry;
 import java.awt.Dimension;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
@@ -33,30 +55,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.imageio.ImageReadParam;
-import javax.imageio.ImageReader;
-import javax.imageio.metadata.IIOMetadataFormat;
-import javax.imageio.metadata.IIOMetadataFormatImpl;
-import javax.imageio.metadata.IIOMetadataNode;
-import javax.imageio.spi.IIORegistry;
-import javax.imageio.spi.ImageReaderSpi;
-import javax.imageio.spi.ImageReaderWriterSpi;
-import javax.imageio.spi.ImageWriterSpi;
-import javax.imageio.spi.ServiceRegistry;
-import javax.media.jai.JAI;
-import javax.media.jai.RasterFactory;
-
-import com.sun.media.imageioimpl.common.BogusColorSpace;
-import it.geosolutions.imageio.imageioimpl.EnhancedImageReadParam;
-import org.gdal.gdal.Dataset;
-import org.gdal.gdal.Driver;
-import org.gdal.gdal.gdal;
-import org.gdal.gdalconst.gdalconst;
-import org.gdal.gdalconst.gdalconstConstants;
-
-import com.sun.media.imageioimpl.common.ImageUtil;
-import com.sun.media.jai.operator.ImageReadDescriptor;
 
 /**
  * Utility class providing a set of static utility methods
@@ -738,7 +736,7 @@ public final class GDALUtilities {
             // ColorModel that may be used with the specified
             // SampleModel
             //
-            colorModel = ImageUtil.createColorModel(sampleModel);
+            colorModel = PlanarImage.createColorModel(sampleModel);
             if (colorModel == null) {
                 LOGGER.severe("No ColorModels found");
             }
@@ -817,7 +815,7 @@ public final class GDALUtilities {
             } else if (destNumBands == 3 || destNumBands == 4) {
                 cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
             } else {
-                cs = new BogusColorSpace(destNumBands);
+                cs = new NotAColorSpace(destNumBands);
             }
 
             // Validate compatibility for float/double types
@@ -825,7 +823,7 @@ public final class GDALUtilities {
                 cm = buildColorModel(cs, hasAlpha, transparency, dataType);
             } else {
                 // Fall back to generic model if the requested one is invalid
-                cm = buildColorModel(new BogusColorSpace(destNumBands), false, Transparency.OPAQUE, dataType);
+                cm = buildColorModel(new NotAColorSpace(destNumBands), false, Transparency.OPAQUE, dataType);
             }
         }
 

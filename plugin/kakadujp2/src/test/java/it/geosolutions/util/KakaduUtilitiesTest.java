@@ -74,7 +74,8 @@ public class KakaduUtilitiesTest {
         assertEquals(expectedCallsAndArgs, args);
     }
 
-    public @Ignore @Test void testInitializeRGBChannels_KduV7Plus() throws Exception {
+    @Ignore @Test
+    public void testInitializeRGBChannels_KduV7Plus() throws Exception {
         assumeTrue(format("JNI version=%d, expected >= 7, ignoring", JNI_VERSION), JNI_VERSION >= 7);
 
         KakaduUtilities.initializeRGBChannels(channels);
