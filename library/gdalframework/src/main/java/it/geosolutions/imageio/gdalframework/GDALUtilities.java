@@ -17,9 +17,9 @@
 package it.geosolutions.imageio.gdalframework;
 
 import it.geosolutions.imageio.imageioimpl.EnhancedImageReadParam;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import org.eclipse.imagen.JAI;
 import org.eclipse.imagen.NotAColorSpace;
-import org.eclipse.imagen.PlanarImage;
 import org.eclipse.imagen.RasterFactory;
 import org.eclipse.imagen.media.imageread.ImageReadDescriptor;
 import org.gdal.gdal.Dataset;
@@ -736,7 +736,7 @@ public final class GDALUtilities {
             // ColorModel that may be used with the specified
             // SampleModel
             //
-            colorModel = PlanarImage.createColorModel(sampleModel);
+            colorModel = ImageIOUtilities.createColorModel(sampleModel);
             if (colorModel == null) {
                 LOGGER.severe("No ColorModels found");
             }
