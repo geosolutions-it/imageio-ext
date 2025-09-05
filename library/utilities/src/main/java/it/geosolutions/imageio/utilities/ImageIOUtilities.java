@@ -31,6 +31,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import javax.imageio.IIOException;
+import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
@@ -498,14 +499,14 @@ public class ImageIOUtilities {
                     	if (providerClassName.equalsIgnoreCase(customProviderName)) {
                         custom = provider;
                     }
-                    if (standard!=null && custom!=null){
-                        if(ImageReaderSpi.class.isAssignableFrom(standard.getClass()))
-                            return registry.setOrdering(ImageReaderSpi.class, (ImageReaderSpi)custom,(ImageReaderSpi) standard);    
-                        else
-                            return registry.setOrdering(ImageWriterSpi.class, (ImageWriterSpi)custom,(ImageWriterSpi) standard);    
-                    }
                 }
             }
+        }
+        if (standard!=null && custom!=null){
+            if(ImageReaderSpi.class.isAssignableFrom(standard.getClass()))
+                return registry.setOrdering(ImageReaderSpi.class, (ImageReaderSpi)custom,(ImageReaderSpi) standard);
+            else
+                return registry.setOrdering(ImageWriterSpi.class, (ImageWriterSpi)custom,(ImageWriterSpi) standard);
         }
 
         //we did not find them
