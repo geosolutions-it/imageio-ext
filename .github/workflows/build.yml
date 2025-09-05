@@ -33,5 +33,16 @@ jobs:
         distribution: 'zulu'
         cache: maven
 
+    - name: Set up GDAL
+      run: |
+        sudo apt update
+        sudo apt install --no-install-recommends -y gdal-bin libgdal-dev
+        # From OSGeo live
+        URL="http://download.osgeo.org/livedvd/data/gdal/gdal-3.4.3+dfsg-java.20220622.tgz"
+        FILE=/tmp/$(basename "$URL")
+        wget --no-verbose -O "$FILE" "$URL" && \
+        sudo tar xvf "$FILE" -C /
+        sudo mv /usr/lib/jni/libgdalalljni.so /usr/lib
+
     - name: Build and Test
       run: mvn -U clean install -T1C -Dall -Djava.awt.headless=true -DskipTests=false -ntp -fae
