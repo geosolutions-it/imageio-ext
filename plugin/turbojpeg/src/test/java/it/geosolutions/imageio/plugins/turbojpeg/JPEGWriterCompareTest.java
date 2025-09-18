@@ -18,8 +18,11 @@ package it.geosolutions.imageio.plugins.turbojpeg;
 
 import it.geosolutions.imageio.utilities.ImageOutputStreamAdapter2;
 import it.geosolutions.resources.TestData;
+import org.eclipse.imagen.RenderedOp;
 import org.eclipse.imagen.media.algebra.SubtractDescriptor;
-import org.eclipse.imagen.operator.ExtremaDescriptor;
+import org.eclipse.imagen.media.stats.Extrema;
+import org.eclipse.imagen.media.stats.Statistics;
+import org.eclipse.imagen.media.stats.StatisticsDescriptor;
 import org.junit.Test;
 
 import javax.imageio.IIOImage;
@@ -135,14 +138,13 @@ public class JPEGWriterCompareTest extends BaseTest {
 
     private static boolean imagesAreEquals(BufferedImage bi1, BufferedImage bi2) {
         RenderedImage subtractA = SubtractDescriptor.create(bi1, bi2, null);
-        double[][] extremaA = (double[][]) ExtremaDescriptor.create(subtractA, null, 1, 1, false,
-                1, null).getProperty("Extrema");
+        Double[][] extremaA = getExtrema(subtractA);
         System.out.println("A - B");
 
         return extremaIsZero(extremaA);
     }
 
-    private static boolean extremaIsZero(double[][] extrema) {
+    private static boolean extremaIsZero(Double[][] extrema) {
         System.out.println("extrema values: MIN[R,G,B]; MAX[R,G,B] = [" + extrema[0][0] + ","
                 + extrema[0][1] + "," + extrema[0][2] + "] ; [" + extrema[1][0] + ","
                 + extrema[1][1] + "," + extrema[1][2] + "]");
@@ -277,15 +279,23 @@ public class JPEGWriterCompareTest extends BaseTest {
     }
 
     private void writeAsJpeg(final BufferedImage buffered) throws Exception {
-
         int differencesNative = 0;
-
         System.out.println("----------------------------\nTESTING Not-Native WRITER\n----------------------------\n");
 
         int differencesNoNative = write(LOOP, DELAY_MS, buffered, false);
-
         System.out.println(" Doing " + LOOP + " couples of writes resulted in \n"
                 + differencesNoNative + " difference on outputImage between 2 consecutive writes using the Turbo writer");
+    }
 
+    private static Double[][] getExtrema(RenderedImage image) {
+        Statistics.StatsType[] stats = {Statistics.StatsType.EXTREMA};
+        RenderedOp extremaOp = StatisticsDescriptor.create(image, 1, 1, null, null, false, null, stats, null);
+        Statistics[][] resultStats = (Statistics[][]) extremaOp.getProperty(Statistics.STATS_PROPERTY);
+        Extrema resultStat = (Extrema) resultStats[0][0];
+        double[] resultValue = (double[]) resultStat.getResult();
+        Double[][] result = new Double[2][];
+        result[0] = new Double[] {resultValue[0]};
+        result[1] = new Double[] {resultValue[1]};
+        return result;
     }
 }
