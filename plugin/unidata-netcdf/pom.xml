@@ -7,12 +7,12 @@
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-plugin</artifactId>
-    <version>2.0.0-M0</version>
+    <version>2.0-SNAPSHOT</version>
   </parent>
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-netcdf-plugin</artifactId>
   <packaging>pom</packaging>
-  <version>2.0.0-M0</version>
+  <version>2.0-SNAPSHOT</version>
   <name>GeoSolutions Image I/O-Extensions NetCDF Based plugins</name>
   <description>
     Image I/O-Extensions NetCDF plugin modules.
