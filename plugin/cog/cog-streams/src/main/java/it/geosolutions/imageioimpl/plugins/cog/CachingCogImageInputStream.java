@@ -17,13 +17,11 @@
 package it.geosolutions.imageioimpl.plugins.cog;
 
 import it.geosolutions.imageio.core.BasicAuthURI;
-import it.geosolutions.imageio.plugins.cog.CogImageReadParam;
+import it.geosolutions.imageio.utilities.SoftValueHashMap;
 
-import javax.imageio.stream.ImageInputStreamImpl;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -41,75 +39,49 @@ import static it.geosolutions.imageioimpl.plugins.cog.CogTileInfo.HEADER_TILE_IN
  * @author joshfix
  * Created on 2019-08-28
  */
-public class CachingCogImageInputStream extends ImageInputStreamImpl implements CogImageInputStream {
+public class CachingCogImageInputStream extends DefaultCogImageInputStream implements CogImageInputStream {
 
     private boolean initialized = false;
 
-    protected URI uri;
-    protected RangeReader rangeReader;
-    protected CogTileInfo header;
+    private static final Logger LOGGER = Logger.getLogger(CachingCogImageInputStream.class.getName());
 
-    private final static Logger LOGGER = Logger.getLogger(CachingCogImageInputStream.class.getName());
-
-    public CachingCogImageInputStream(URI uri) {
-        this.uri = uri;
-    }
-
-    public CachingCogImageInputStream(String uri) {
-        this(URI.create(uri));
+    public CachingCogImageInputStream(String url) {
+        super(url);
     }
 
     public CachingCogImageInputStream(URL url) {
-        this(url.toString());
+        super(url);
+    }
+
+    public CachingCogImageInputStream(URI uri) {
+        super(uri);
     }
 
     public CachingCogImageInputStream(BasicAuthURI cogUri) {
-        this.uri = cogUri.getUri();
+        super(cogUri);
     }
 
     public CachingCogImageInputStream(URI uri, RangeReader rangeReader) {
-        this.uri = uri;
-        init(rangeReader);
+        super(uri, rangeReader);
     }
 
-    /**
-     * Directly sets the range reader and reads the header.
-     *
-     * @param rangeReader A `RangeReader` implementation to be used.
-     */
-    @Override
-    public void init(RangeReader rangeReader) {
-        this.rangeReader = rangeReader;
-        initializeHeader();
-    }
 
-    /**
-     * Uses the class specified in `CogImageReadParam` to attempt to instantiate a `RangeReader` implementation, then
-     * reads the header.
-     *
-     * @param param An `ImageReadParam` that contains information about which `RangeReader` implementation to use.
-     */
     @Override
-    public void init(CogImageReadParam param) {
-        Class<? extends RangeReader> rangeReaderClass = ((CogImageReadParam) param).getRangeReaderClass();
-        if (null != rangeReaderClass) {
-            try {
-                rangeReader = rangeReaderClass.getDeclaredConstructor(URI.class, int.class)
-                        .newInstance(uri, param.getHeaderLength());
-            } catch (Exception e) {
-                LOGGER.severe("Unable to instantiate range reader class " + rangeReaderClass.getCanonicalName());
-                throw new RuntimeException(e);
-            }
+    protected void initializeHeader(int headerLength) {
+        header = new CogTileInfo(headerLength);
+        data = new SoftValueHashMap<>(0);
+
+        // determine if the header has already been cached
+        byte[] headerBytes;
+        if (CacheManagement.DEFAULT.headerExists(uri.toString())) {
+            headerBytes = CacheManagement.DEFAULT.getHeader(uri.toString());
+            rangeReader.setHeaderLength(headerBytes.length);
         } else {
-            throw new RuntimeException("Range reader class not specified in CogImageReadParam.");
+            headerBytes = rangeReader.readHeader();
+            CacheManagement.DEFAULT.cacheHeader(uri.toString(), headerBytes);
         }
-
-        if (rangeReader == null) {
-            throw new RuntimeException("Unable to instantiate range reader class "
-                    + rangeReaderClass.getCanonicalName());
-        }
-
-        initializeHeader(param.getHeaderLength());
+        data.put(0L, headerBytes);
+        initialized = true;
     }
 
     @Override
@@ -117,73 +89,59 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
         return initialized;
     }
 
-    protected void initializeHeader() {
-        initializeHeader(CogImageReadParam.DEFAULT_HEADER_LENGTH);
-    }
-
-    protected void initializeHeader(int headerLength) {
-        header = new CogTileInfo(headerLength);
-
-        // determine if the header has already been cached
-        if (CacheManagement.DEFAULT.headerExists(uri.toString())) {
-            headerLength = CacheManagement.DEFAULT.getHeader(uri.toString()).length;
-            rangeReader.setHeaderLength(headerLength);
-        } else {
-            CacheManagement.DEFAULT.cacheHeader(uri.toString(), rangeReader.fetchHeader());
-        }
-        initialized = true;
-    }
-
-    @Override
-    public CogTileInfo getHeader() {
-        return header;
-    }
-
     /**
      * TIFFImageReader will read and decode the requested region of the GeoTIFF tile by tile.  Because of this, we will
      * not arbitrarily store fixed-length byte chunks in cache, but instead create a cache entry for all the bytes for
      * each tile.
-     * <p>
-     * The first step is to loop through the tile ranges from CogTileInfo and determine which tiles are already cached.
-     * Tile ranges that are not in cache are submitted to RangeBuilder to build contiguous ranges to be read via HTTP.
-     * <p>
-     * Once the contiguous ranges have been read, we obtain the full image-length byte array from the RangeReader.  Then
-     * loop through each of the requested tile ranges from CogTileInfo and cache the bytes.
-     * <p>
-     * There are likely lots of optimizations to be made in here.
      */
     @Override
     public void readRanges(CogTileInfo cogTileInfo) {
-        // instantiate the range builder
-        ContiguousRangeComposer contiguousRangeComposer =
-                new ContiguousRangeComposer(0, cogTileInfo.getHeaderLength() - 1);
 
-        // determine which requested tiles are not in cache and build the required ranges that need to be read (if any)
+        Map<Integer, TileRange> missingTiles = loadDataFromCache(cogTileInfo);
+
+        // fetch the missing tiles
+        ContiguousRangeComposer contiguousRangeComposer =
+                new ContiguousRangeComposer(0L, cogTileInfo.getHeaderLength() - 1L);
+        missingTiles.forEach((tileIndex, tileRange) -> {
+            if (tileIndex == HEADER_TILE_INDEX) {
+                return;
+            }
+            contiguousRangeComposer.addTileRange(tileRange.getStart(), tileRange.getEnd());
+        });
+        rangeReader.setHeaderLength(cogTileInfo.getHeaderLength());
+        Set<long[]> ranges = contiguousRangeComposer.getRanges();
+        LOGGER.fine("Submitting " + ranges.size() + " range request(s)");
+        Map<Long, byte[]> fetchedTiles = rangeReader.read(ranges);
+        this.data.putAll(fetchedTiles);
+
+        //create contiguous data chunks (required for super.read(...))
+        this.data = ByteChunksMerger.merge(this.data);
+
+        //populate cache
+        updateTileCache(missingTiles);
+
+    }
+
+    private Map<Integer, TileRange> loadDataFromCache(CogTileInfo cogTileInfo) {
+        Map<Integer, TileRange> missingTiles = new HashMap<>();
         cogTileInfo.getTileRanges().forEach((tileIndex, tileRange) -> {
             if (tileIndex == HEADER_TILE_INDEX) {
                 return;
             }
-
             TileCacheEntryKey key = new TileCacheEntryKey(uri.toString(), tileIndex);
-            if (!CacheManagement.DEFAULT.keyExists(key)) {
-                contiguousRangeComposer.addTileRange(tileRange.getStart(), tileRange.getEnd());
+            if (CacheManagement.DEFAULT.keyExists(key)) {
+                data.put(tileRange.getStart(), CacheManagement.DEFAULT.getTile(key));
+            } else {
+                missingTiles.put(tileIndex, tileRange);
             }
         });
-        rangeReader.setHeaderLength(cogTileInfo.getHeaderLength());
 
-        // get the ranges for the tiles that are not already cached.  if there are none, simply return
-        Set<long[]> ranges = contiguousRangeComposer.getRanges();
-        if (ranges.size() == 0) {
-            return;
-        }
+        return missingTiles;
+    }
 
-        // read all they byte ranges for tiles that are not in cache
-        LOGGER.fine("Submitting " + ranges.size() + " range request(s)");
-        // Update the headerLength
-        Map<Long, byte[]> data = rangeReader.read(ranges);
 
-        // cache the bytes for each tile
-        cogTileInfo.getTileRanges().forEach((tileIndex, tileRange) -> {
+    private void updateTileCache(Map<Integer, TileRange> missingTiles) {
+        missingTiles.forEach((tileIndex, tileRange) -> {
             if (tileIndex == HEADER_TILE_INDEX) {
                 return;
             }
@@ -191,49 +149,17 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
 
             for (Map.Entry<Long, byte[]> entry : data.entrySet()) {
                 long contiguousRangeOffset = entry.getKey();
-                int contiguousRangeLength = (int) contiguousRangeOffset + entry.getValue().length;
+                byte[] contiguousBytes = entry.getValue();
+                int contiguousRangeLength = (int) contiguousRangeOffset + contiguousBytes.length;
                 if (tileRange.getStart() >= contiguousRangeOffset && tileRange.getEnd() < contiguousRangeLength) {
-                    byte[] contiguousBytes = entry.getValue();
-                    long relativeOffset = tileRange.getStart() - contiguousRangeOffset;
-                    byte[] tileBytes = Arrays
-                            .copyOfRange(contiguousBytes, (int) relativeOffset, (int) tileRange.getEnd());
+                    int relativeOffset = (int) (tileRange.getStart() - contiguousRangeOffset);
+                    int tileByteLen = (int) tileRange.getByteLength();
+                    byte[] tileBytes = new byte[tileByteLen];
+                    System.arraycopy(contiguousBytes, relativeOffset, tileBytes, 0, tileByteLen);
                     CacheManagement.DEFAULT.cacheTile(key, tileBytes);
                 }
             }
         });
     }
 
-    @Override
-    public int read() throws IOException {
-        byte[] b = new byte[1];
-        read(b, 0, 1);
-        return b[0];
-    }
-
-    @Override
-    public int read(byte[] b, int off, int len) {
-        // based on the stream position, determine which tile we are in and fetch the corresponding TileRange
-        // TODO: CachingCogImageInputStream never worked very well.
-        //  We need to update this section too, when fixing the related ticket
-        TileRange tileRange = header.getTileRange(streamPos);
-
-        // get the bytes from cache for the tile. need to determine if we're reading from the header or a tile.
-        byte[] bytes;
-        switch (tileRange.getIndex()) {
-            case HEADER_TILE_INDEX:
-                bytes = CacheManagement.DEFAULT.getHeader(uri.toString());
-                break;
-            default:
-                TileCacheEntryKey key = new TileCacheEntryKey(uri.toString(), tileRange.getIndex());
-                bytes = CacheManagement.DEFAULT.getTile(key);
-        }
-
-        // translate the overall stream position to the stream position of the fetched tile
-        int relativeStreamPos = (int) (streamPos - tileRange.getStart());
-
-        // copy the bytes from the fetched tile into the destination byte array
-        System.arraycopy(bytes, relativeStreamPos, b, off, len);
-        streamPos += len;
-        return len;
-    }
 }
