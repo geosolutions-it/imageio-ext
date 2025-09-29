@@ -28,7 +28,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageReadParam;
 import org.eclipse.imagen.ImageLayout;
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.ParameterBlockJAI;
 import org.eclipse.imagen.RenderedOp;
 
@@ -37,7 +37,7 @@ import org.junit.Test;
 
 /**
  * Testing reading capabilities for {@link JP2GDALKakaduImageReader} leveraging
- * on JAI.
+ * on ImageN.
  * 
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
@@ -69,8 +69,8 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
         final ImageLayout layout = new ImageLayout();
         layout.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(256)
                 .setTileWidth(256);
-        RenderedOp image = JAI.create("ImageRead", pbjImageRead,
-                new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout));
+        RenderedOp image = ImageN.create("ImageRead", pbjImageRead,
+                new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, layout));
         if (TestData.isInteractiveTest())
             Viewer.visualizeBothMetadata(image, "");
         else
@@ -79,7 +79,7 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
     }
 
     /**
-     * Test read exploiting common JAI operations (Crop-Translate-Rotate)
+     * Test read exploiting common ImageN operations (Crop-Translate-Rotate)
      * 
      * @throws FileNotFoundException
      * @throws IOException
@@ -118,8 +118,8 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
         final ImageLayout layout = new ImageLayout();
         layout.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512)
                 .setTileWidth(512);
-        RenderedOp image = JAI.create("ImageRead", pbjImageRead,
-                new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout));
+        RenderedOp image = ImageN.create("ImageRead", pbjImageRead,
+                new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, layout));
 
         if (TestData.isInteractiveTest())
             ImageIOUtilities.visualize(image, "subsampled");
@@ -139,7 +139,7 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
         pbjCrop.setParameter("y", yCrop);
         pbjCrop.setParameter("width", cropWidth);
         pbjCrop.setParameter("height", cropHeigth);
-        final RenderedOp croppedImage = JAI.create("Crop", pbjCrop);
+        final RenderedOp croppedImage = ImageN.create("Crop", pbjCrop);
 
         if (TestData.isInteractiveTest())
             ImageIOUtilities.visualize(croppedImage, "cropped");
@@ -154,7 +154,7 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
         Float yTrans = new Float(yCrop.floatValue() * (-1));
         pbjTranslate.setParameter("xTrans", xTrans);
         pbjTranslate.setParameter("yTrans", yTrans);
-        final RenderedOp translatedImage = JAI
+        final RenderedOp translatedImage = ImageN
                 .create("Translate", pbjTranslate);
 
         if (TestData.isInteractiveTest())
@@ -174,7 +174,7 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
         pbjRotate.setParameter("yOrigin", yOrigin);
         pbjRotate.setParameter("angle", angle);
 
-        final RenderedOp rotatedImage = JAI.create("Rotate", pbjRotate);
+        final RenderedOp rotatedImage = ImageN.create("Rotate", pbjRotate);
 
         StringBuffer title = new StringBuffer("SUBSAMP:").append("X[").append(
                 xSubSampling.toString()).append("]-Y[").append(

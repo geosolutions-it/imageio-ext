@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 
 import ucar.ma2.Array;
 import ucar.ma2.ArrayFloat;
@@ -287,7 +287,7 @@ public class NCOMConverter {
             // something bad happened
             if (NetCDFConverterUtilities.LOGGER.isLoggable(Level.INFO))
                 NetCDFConverterUtilities.LOGGER.log(Level.INFO, e.getLocalizedMessage(), e);
-            JAI.getDefaultInstance().getTileCache().flush();
+            ImageN.getDefaultInstance().getTileCache().flush();
         }
     }
 

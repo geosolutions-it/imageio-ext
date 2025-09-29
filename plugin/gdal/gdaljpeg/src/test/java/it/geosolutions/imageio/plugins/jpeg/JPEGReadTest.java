@@ -36,7 +36,7 @@ import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import org.eclipse.imagen.ImageLayout;
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.ParameterBlockJAI;
 import org.eclipse.imagen.RenderedOp;
 
@@ -47,7 +47,7 @@ import org.eclipse.imagen.RasterFactory;
 
 /**
  * Testing reading capabilities for {@link JpegGDALImageReader} leveraging on
- * JAI.
+ * ImageN.
  * 
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
@@ -80,8 +80,8 @@ public class JPEGReadTest extends AbstractGDALTest {
         l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512)
                 .setTileWidth(512);
 
-        RenderedOp image = JAI.create("ImageRead", pbjImageRead,
-                new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
+        RenderedOp image = ImageN.create("ImageRead", pbjImageRead,
+                new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, l));
         if (TestData.isInteractiveTest())
             Viewer.visualizeAllInformation(image,fileName);
         else
@@ -165,8 +165,8 @@ public class JPEGReadTest extends AbstractGDALTest {
         l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(128)
                 .setTileWidth(128);
 
-        RenderedOp image = JAI.create("ImageRead", pbjImageRead,
-                new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
+        RenderedOp image = ImageN.create("ImageRead", pbjImageRead,
+                new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, l));
 
         if (TestData.isInteractiveTest())
             Viewer.visualizeAllInformation(image,"imageread");

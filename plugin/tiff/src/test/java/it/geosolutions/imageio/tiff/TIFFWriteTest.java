@@ -48,7 +48,7 @@ import org.eclipse.imagen.media.imageread.ImageReadDescriptor;
 
 
 /**
- * Testing reading capabilities for {@link JP2KKakaduImageReader} leveraging on JAI.
+ * Testing reading capabilities for {@link JP2KKakaduImageReader} leveraging on ImageN.
  * 
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
@@ -171,7 +171,7 @@ public class TIFFWriteTest extends Assert {
     @Test
     public void readWriteFromFileDirect() throws IOException {
 
-//        JAI.getDefaultInstance().getTileCache().setMemoryCapacity(512*1024*1024);
+//        ImageN.getDefaultInstance().getTileCache().setMemoryCapacity(512*1024*1024);
 //        final TCTool tc= new TCTool((SunTileCache)JAI.getDefaultInstance().getTileCache());
         final File inputFile =TestData.file(this, "test.tif");// new File("c:\\work\\dem30_final.tiff");
         final File outputFile = TestData.temp(this, "testw.tif",true);
@@ -190,7 +190,7 @@ public class TIFFWriteTest extends Assert {
         BufferedImage image = reader.read(0, param);
 //        RenderedImage image = ImageReadDescriptor.create(new FileImageInputStream(inputFile),
 //                Integer.valueOf(0), false, false, false, null, null, null,
-//                reader, new RenderingHints(JAI.KEY_IMAGE_LAYOUT, new ImageLayout().setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512).setTileWidth(512)));
+//                reader, new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, new ImageLayout().setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512).setTileWidth(512)));
         
         final TIFFImageWriter writer= (TIFFImageWriter) new TIFFImageWriterSpi().createWriterInstance();
         final ImageWriteParam writeParam= new TIFFImageWriteParam(Locale.getDefault());

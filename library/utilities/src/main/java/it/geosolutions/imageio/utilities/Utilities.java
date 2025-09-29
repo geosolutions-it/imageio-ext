@@ -22,7 +22,7 @@ package it.geosolutions.imageio.utilities;
 import java.io.File;
 import java.net.URL;
 
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 
 /**
  * Simple class for utility methods.
@@ -176,10 +176,10 @@ public final class Utilities {
 	}
     
     /**
-	 * Allows or disallow native acceleration for the specified operation on the given JAI instance.
-	 * By default, JAI uses hardware accelerated methods when available. For example, it make use of
+	 * Allows or disallow native acceleration for the specified operation on the given ImageN instance.
+	 * By default, ImageN uses hardware accelerated methods when available. For example, it make use of
 	 * MMX instructions on Intel processors. Unluckily, some native method crash the Java Virtual
-	 * Machine under some circumstances. For example on JAI 1.1.2, the {@code "Affine"} operation on
+	 * Machine under some circumstances. For example on ImageN 1.1.2, the {@code "Affine"} operation on
 	 * an image with float data type, bilinear interpolation and an {@link org.eclipse.imagen.ImageLayout}
 	 * rendering hint cause an exception in medialib native code. Disabling the native acceleration
 	 * (i.e using the pure Java version) is a convenient workaround until Sun fix the bug.
@@ -193,23 +193,23 @@ public final class Utilities {
 	 * @param operation The operation name (e.g. {@code "Affine"}).
 	 * @param allowed {@code false} to disallow native acceleration.
 	 * @param jai The instance of {@link JAI} we are going to work on. This argument can be
-	 *        omitted for the {@linkplain JAI#getDefaultInstance default JAI instance}.
+	 *        omitted for the {@linkplain JAI#getDefaultInstance default ImageN instance}.
 	 *
 	 * @see <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4906854">JAI bug report 4906854</a>
 	 * @deprecated Use {@link ImageIOUtilities#setNativeAccelerationAllowed(String,boolean,JAI)} instead
 	 */
 	public synchronized static void setNativeAccelerationAllowed(final String operation,
 	                                                             final boolean  allowed,
-	                                                             final JAI jai)
+	                                                             final ImageN jai)
 	{
 		ImageIOUtilities.setNativeAccelerationAllowed(operation, allowed, jai);
 	}
 
     /**
 	 * Allows or disallow native acceleration for the specified operation on the
-	 * {@linkplain JAI#getDefaultInstance default JAI instance}. This method is
+	 * {@linkplain JAI#getDefaultInstance default ImageN instance}. This method is
 	 * a shortcut for <code>{@linkplain #setNativeAccelerationAllowed(String,boolean,JAI)
-	 * setNativeAccelerationAllowed}(operation, allowed, JAI.getDefaultInstance())</code>.
+	 * setNativeAccelerationAllowed}(operation, allowed, ImageN.getDefaultInstance())</code>.
 	 *
 	 * @see #setNativeAccelerationAllowed(String, boolean, JAI)
 	 * @deprecated Use {@link ImageIOUtilities#setNativeAccelerationAllowed(String,boolean)} instead

@@ -30,7 +30,7 @@ import java.io.ByteArrayOutputStream;
 
 import javax.imageio.ImageIO;
 import org.eclipse.imagen.ImageLayout;
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.PlanarImage;
 import org.eclipse.imagen.media.bandmerge.BandMergeDescriptor;
 import org.eclipse.imagen.media.bandselect.BandSelectDescriptor;
@@ -59,7 +59,7 @@ public class GrayAlpha8bitTest {
                 ImageLayout.SAMPLE_MODEL_MASK);
         RenderedImage alpha = ConstantDescriptor.create(Float.valueOf(bi.getWidth()),
                 Float.valueOf(bi.getHeight()), new Byte[] { Byte.valueOf((byte) 255) },
-                new RenderingHints(JAI.KEY_IMAGE_LAYOUT, tempLayout));
+                new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, tempLayout));
         RenderedImage grayAlpha = BandMergeDescriptor.create(null, 0d, true, null, bi, alpha);
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();

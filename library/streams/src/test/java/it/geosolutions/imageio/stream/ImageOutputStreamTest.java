@@ -33,7 +33,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -64,7 +64,7 @@ public class ImageOutputStreamTest {
 
 
         // read test image
-        RenderedImage image = JAI.create("ImageRead", TestData.file(this, "sample.jpeg"));
+        RenderedImage image = ImageN.create("ImageRead", TestData.file(this, "sample.jpeg"));
 
         // try to encode a jpeg
         BufferedImage test=null;

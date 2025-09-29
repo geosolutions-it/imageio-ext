@@ -29,7 +29,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageReadParam;
 import org.eclipse.imagen.ImageLayout;
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.ParameterBlockJAI;
 import org.eclipse.imagen.RenderedOp;
 
@@ -40,7 +40,7 @@ import org.junit.Before;
 
 /**
  * Testing reading capabilities for {@link JP2GDALEcwImageReader} leveraging on
- * JAI.
+ * ImageN.
  * 
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
@@ -95,8 +95,8 @@ public class JP2KReadTest extends AbstractGDALTest {
         final ImageLayout layout = new ImageLayout();
         layout.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(256)
                 .setTileWidth(256);
-        RenderedOp image = JAI.create("ImageRead", pbjImageRead,
-                new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout));
+        RenderedOp image = ImageN.create("ImageRead", pbjImageRead,
+                new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, layout));
         if (TestData.isInteractiveTest())
             Viewer.visualizeAllInformation(image,"gdaljp2k");
         else
@@ -105,7 +105,7 @@ public class JP2KReadTest extends AbstractGDALTest {
     }
 
     /**
-     * Test read exploiting common JAI operations (Crop-Translate-Rotate)
+     * Test read exploiting common ImageN operations (Crop-Translate-Rotate)
      * 
      * @throws FileNotFoundException
      * @throws IOException
@@ -140,8 +140,8 @@ public class JP2KReadTest extends AbstractGDALTest {
         final ImageLayout layout = new ImageLayout();
         layout.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(256)
                 .setTileWidth(256);
-        RenderedOp image = JAI.create("ImageRead", pbjImageRead,
-                new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout));
+        RenderedOp image = ImageN.create("ImageRead", pbjImageRead,
+                new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, layout));
 
         if (TestData.isInteractiveTest())
             ImageIOUtilities.visualize(image, "subsampled");
@@ -161,7 +161,7 @@ public class JP2KReadTest extends AbstractGDALTest {
         pbjCrop.setParameter("y", yCrop);
         pbjCrop.setParameter("width", cropWidth);
         pbjCrop.setParameter("height", cropHeigth);
-        final RenderedOp croppedImage = JAI.create("Crop", pbjCrop);
+        final RenderedOp croppedImage = ImageN.create("Crop", pbjCrop);
 
         if (TestData.isInteractiveTest())
             ImageIOUtilities.visualize(croppedImage, "cropped");
@@ -176,7 +176,7 @@ public class JP2KReadTest extends AbstractGDALTest {
         Float yTrans = new Float(yCrop.floatValue() * (-1));
         pbjTranslate.setParameter("xTrans", xTrans);
         pbjTranslate.setParameter("yTrans", yTrans);
-        final RenderedOp translatedImage = JAI
+        final RenderedOp translatedImage = ImageN
                 .create("Translate", pbjTranslate);
 
         if (TestData.isInteractiveTest())
@@ -196,7 +196,7 @@ public class JP2KReadTest extends AbstractGDALTest {
         pbjRotate.setParameter("yOrigin", yOrigin);
         pbjRotate.setParameter("angle", angle);
 
-        final RenderedOp rotatedImage = JAI.create("Rotate", pbjRotate);
+        final RenderedOp rotatedImage = ImageN.create("Rotate", pbjRotate);
 
         StringBuilder title = new StringBuilder("SUBSAMP:").append("X[").append(
                 xSubSampling.toString()).append("]-Y[").append(
@@ -221,8 +221,8 @@ public class JP2KReadTest extends AbstractGDALTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        JAI.getDefaultInstance().getTileCache().setMemoryCapacity(64 * 1024 * 1024);
-        JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
+        ImageN.getDefaultInstance().getTileCache().setMemoryCapacity(64 * 1024 * 1024);
+        ImageN.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
     }
 
 }

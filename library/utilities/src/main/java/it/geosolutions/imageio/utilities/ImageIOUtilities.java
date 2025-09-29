@@ -16,7 +16,7 @@
  */
 package it.geosolutions.imageio.utilities;
 
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.NotAColorSpace;
 import org.eclipse.imagen.OperationRegistry;
 import org.eclipse.imagen.PlanarImage;
@@ -280,8 +280,8 @@ public class ImageIOUtilities {
      * Visualize the image, after rescaling its values, given a threshold for
      * the ROI. This is useful to rescale an image coming from a source which
      * may contain noDataValues. The ROI threshold allows to set a minimal value
-     * to be included in the computation of the future JAI extrema operation
-     * used before the JAI rescale operation.
+     * to be included in the computation of the future ImageN extrema operation
+     * used before the ImageN rescale operation.
      * 
      * @param image
      *                RenderedImage to visualize
@@ -300,7 +300,7 @@ public class ImageIOUtilities {
             pb.add(roi); // The region of the image to scan
 
         // Perform the extrema operation on the source image
-        RenderedOp op = JAI.create("extrema", pb);
+        RenderedOp op = ImageN.create("extrema", pb);
 
         // Retrieve both the maximum and minimum pixel value
         double[][] extrema = (double[][]) op.getProperty("extrema");
@@ -314,12 +314,12 @@ public class ImageIOUtilities {
         pbRescale.add(scale);
         pbRescale.add(offset);
         pbRescale.addSource(image);
-        RenderedOp rescaledImage = JAI.create("Rescale", pbRescale);
+        RenderedOp rescaledImage = ImageN.create("Rescale", pbRescale);
 
         ParameterBlock pbConvert = new ParameterBlock();
         pbConvert.addSource(rescaledImage);
         pbConvert.add(DataBuffer.TYPE_BYTE);
-        RenderedOp destImage = JAI.create("format", pbConvert);
+        RenderedOp destImage = ImageN.create("format", pbConvert);
         visualize(destImage, title);
     }
 
@@ -417,7 +417,7 @@ public class ImageIOUtilities {
 			// Look for JDK core ImageWriterSpi's
 			if (provider.getVendorName().startsWith("Sun Microsystems")
 					&& desc.equalsIgnoreCase(provider.getDescription(locale)) &&
-					// not JAI Image I/O plugins
+					// not ImageN Image I/O plugins
 					!provider.getPluginClassName().startsWith(jiioPath)) {
 
 				// Get the formatNames supported by this Spi
@@ -811,10 +811,10 @@ public class ImageIOUtilities {
 	}
 
 	/**
-	 * Allows or disallow native acceleration for the specified operation on the given JAI instance.
-	 * By default, JAI uses hardware accelerated methods when available. For example, it make use of
+	 * Allows or disallow native acceleration for the specified operation on the given ImageN instance.
+	 * By default, ImageN uses hardware accelerated methods when available. For example, it make use of
 	 * MMX instructions on Intel processors. Unluckily, some native method crash the Java Virtual
-	 * Machine under some circumstances. For example on JAI 1.1.2, the {@code "Affine"} operation on
+	 * Machine under some circumstances. For example on ImageN 1.1.2, the {@code "Affine"} operation on
 	 * an image with float data type, bilinear interpolation and an {@link org.eclipse.imagen.ImageLayout}
 	 * rendering hint cause an exception in medialib native code. Disabling the native acceleration
 	 * (i.e using the pure Java version) is a convenient workaround until Sun fix the bug.
@@ -828,18 +828,18 @@ public class ImageIOUtilities {
 	 * @param operation The operation name (e.g. {@code "Affine"}).
 	 * @param allowed {@code false} to disallow native acceleration.
 	 * @param jai The instance of {@link JAI} we are going to work on. This argument can be
-	 *        omitted for the {@linkplain JAI#getDefaultInstance default JAI instance}.
+	 *        omitted for the {@linkplain JAI#getDefaultInstance default ImageN instance}.
 	 *
 	 * @see <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4906854">JAI bug report 4906854</a>
 	 */
 	public synchronized static void setNativeAccelerationAllowed(final String operation,
 	                                                             final boolean  allowed,
-	                                                             final JAI jai)
+	                                                             final ImageN jai)
 	{
 	    final String product = "org.eclipse.imagen.media";
 	    final OperationRegistry registry = jai.getOperationRegistry();
 	
-	    // TODO: Check if we can remove SuppressWarnings with a future JAI version.
+	    // TODO: Check if we can remove SuppressWarnings with a future ImageN version.
 	    @SuppressWarnings("unchecked")
 	    final List<RenderedImageFactory> factories = registry.getOrderedFactoryList(
 	            RenderedRegistryMode.MODE_NAME, operation, product);
@@ -875,14 +875,14 @@ public class ImageIOUtilities {
 
 	/**
 	 * Allows or disallow native acceleration for the specified operation on the
-	 * {@linkplain JAI#getDefaultInstance default JAI instance}. This method is
+	 * {@linkplain JAI#getDefaultInstance default ImageN instance}. This method is
 	 * a shortcut for <code>{@linkplain #setNativeAccelerationAllowed(String,boolean,JAI)
-	 * setNativeAccelerationAllowed}(operation, allowed, JAI.getDefaultInstance())</code>.
+	 * setNativeAccelerationAllowed}(operation, allowed, ImageN.getDefaultInstance())</code>.
 	 *
 	 * @see #setNativeAccelerationAllowed(String, boolean, JAI)
 	 */
 	public static void setNativeAccelerationAllowed(final String operation, final boolean allowed) {
-	    setNativeAccelerationAllowed(operation, allowed, JAI.getDefaultInstance());
+	    setNativeAccelerationAllowed(operation, allowed, ImageN.getDefaultInstance());
 	}
 
 	public final static void checkNotNull (final Object checkMe, final String message){

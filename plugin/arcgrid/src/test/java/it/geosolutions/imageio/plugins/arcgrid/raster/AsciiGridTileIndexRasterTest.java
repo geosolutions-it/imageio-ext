@@ -22,7 +22,7 @@ import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.FileImageOutputStream;
 
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.ParameterBlockJAI;
 import org.eclipse.imagen.PlanarImage;
 import org.eclipse.imagen.RenderedOp;
@@ -110,7 +110,7 @@ public class AsciiGridTileIndexRasterTest extends TestCase {
     pbjImageRead.add(null);
     pbjImageRead.add(readP);
     pbjImageRead.add(readerSPI.createReaderInstance());
-    final RenderedOp asciiCoverage = JAI.create("ImageRead", pbjImageRead, new RenderingHints(null));
+    final RenderedOp asciiCoverage = ImageN.create("ImageRead", pbjImageRead, new RenderingHints(null));
     return PlanarImage.wrapRenderedImage(asciiCoverage);
   }
 
@@ -173,7 +173,7 @@ public class AsciiGridTileIndexRasterTest extends TestCase {
     // the right position so that the first desired sample for the tile is read correctly
     ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
     pbjImageRead.setParameter("Input", ascFile.getAbsolutePath());
-    RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+    RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 
     final int pixelsPerTile = image.getTileWidth() * image.getTileHeight();
     int pixel = (pixelsPerTile);
@@ -193,7 +193,7 @@ public class AsciiGridTileIndexRasterTest extends TestCase {
     // this test confirms that the stream positions remembered during skipping are correct
     ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
     pbjImageRead.setParameter("Input", ascFile.getAbsolutePath());
-    RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+    RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 
     // this causes the second tile to be built without using any index
     // it used to be flakey and pointed the stream at the wrong position in the file
@@ -217,7 +217,7 @@ public class AsciiGridTileIndexRasterTest extends TestCase {
   public void getExactMatchTileUsingIndexEntriesSetDuringReading() throws Exception {
     ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
     pbjImageRead.setParameter("Input", ascFile.getAbsolutePath());
-    RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+    RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 
     // this causes us to do throw away a lot of samples but put a whole bunch of entries in to the sample
     // stream index
@@ -242,7 +242,7 @@ public class AsciiGridTileIndexRasterTest extends TestCase {
   public void getTilesUsingIndexEntriesSetDuringReading() throws Exception {
     ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
     pbjImageRead.setParameter("Input", ascFile.getAbsolutePath());
-    RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+    RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 
     // this causes us to do throw away a lot of samples but put a whole bunch of entries in to the sample
     // stream index
@@ -268,7 +268,7 @@ public class AsciiGridTileIndexRasterTest extends TestCase {
   public void canWriteAndRead() throws Exception {
     ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
     pbjImageRead.setParameter("Input", ascFile.getAbsolutePath());
-    RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+    RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
     image.getTiles();
 
     final int numPixels = width * height;
@@ -284,7 +284,7 @@ public class AsciiGridTileIndexRasterTest extends TestCase {
 
       AsciiGridsImageWriter writer = new AsciiGridsImageWriter(null);
       writer.setOutput(new FileImageOutputStream(foutput));
-      IIOMetadata metadata = (IIOMetadata) image.getProperty("JAI.ImageMetadata");
+      IIOMetadata metadata = (IIOMetadata) image.getProperty("ImageN.ImageMetadata");
       writer.write(new IIOImage(image, null, metadata));
 
 

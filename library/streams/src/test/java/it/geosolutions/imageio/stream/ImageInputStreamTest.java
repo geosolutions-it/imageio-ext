@@ -38,7 +38,7 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.RenderedOp;
 import javax.swing.JFrame;
 
@@ -65,7 +65,7 @@ public class ImageInputStreamTest  {
 		// new FileInputStream(TestData.file(this, "sample.jpeg")));
 		// final ImageInputStreamAdapter adapter = new ImageInputStreamAdapter(
 		// stream);
-		// final RenderedOp image= JAI.create("ImageRead", adapter);
+		// final RenderedOp image= ImageN.create("ImageRead", adapter);
 		// visualize(image,"testURLImageInputStreamSpi");
 		// } catch (IOException e) {
 		// LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
@@ -230,7 +230,7 @@ public class ImageInputStreamTest  {
 		try {
 			final URL url = TestData.url(this, "sample.jpeg");
 			final ImageInputStream stream = ImageIO.createImageInputStream(url);
-			final RenderedOp image = JAI.create("ImageRead", stream);
+			final RenderedOp image = ImageN.create("ImageRead", stream);
 			if (TestData.isInteractiveTest())
 				visualize(image, "testURLImageInputStreamSpi");
 			else
@@ -255,7 +255,7 @@ public class ImageInputStreamTest  {
 		try {
 			final File url = TestData.file(this, "sample.jpeg");
 			final ImageInputStream stream = ImageIO.createImageInputStream(url);
-			final RenderedOp image = JAI.create("ImageRead", stream);
+			final RenderedOp image = ImageN.create("ImageRead", stream);
 			if (TestData.isInteractiveTest())
 				visualize(image, "testFileImageInputStreamExtImpl");
 			else
@@ -310,7 +310,7 @@ public class ImageInputStreamTest  {
         try {
             final String url = TestData.url(this, "sample.jpeg").toString();
             final ImageInputStream stream = ImageIO.createImageInputStream(url);
-            final RenderedOp image = JAI.create("ImageRead", stream);
+            final RenderedOp image = ImageN.create("ImageRead", stream);
             if (TestData.isInteractiveTest())
                 visualize(image, "testURLImageInputStreamSpi");
             else

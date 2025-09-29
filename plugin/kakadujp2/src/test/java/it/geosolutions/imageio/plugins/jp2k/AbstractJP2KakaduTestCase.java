@@ -17,7 +17,7 @@
 package it.geosolutions.imageio.plugins.jp2k;
 
 import it.geosolutions.util.KakaduUtilities;
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 
 public class AbstractJP2KakaduTestCase {
     protected static boolean runTests;
@@ -28,12 +28,12 @@ public class AbstractJP2KakaduTestCase {
 
     public void setUp() throws Exception {
         // general settings
-         JAI.getDefaultInstance().getTileScheduler().setParallelism(2);
-         JAI.getDefaultInstance().getTileScheduler().setPriority(6);
-         JAI.getDefaultInstance().getTileScheduler().setPrefetchPriority(2);
-         JAI.getDefaultInstance().getTileScheduler().setPrefetchParallelism(1);
-         JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
+         ImageN.getDefaultInstance().getTileScheduler().setParallelism(2);
+         ImageN.getDefaultInstance().getTileScheduler().setPriority(6);
+         ImageN.getDefaultInstance().getTileScheduler().setPrefetchPriority(2);
+         ImageN.getDefaultInstance().getTileScheduler().setPrefetchParallelism(1);
+         ImageN.getDefaultInstance().getTileCache().setMemoryCapacity(
          64 * 1024 * 1024);
-         JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
+         ImageN.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
     }
 }

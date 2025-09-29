@@ -47,7 +47,7 @@ public class WCSTest extends AbstractGDALTest {
             && GDALUtilities.isDriverAvailable("WCS");
 
     /**
-     * Test read exploiting common JAI operations (Crop-Translate-Rotate)
+     * Test read exploiting common ImageN operations (Crop-Translate-Rotate)
      * 
      * @throws FileNotFoundException
      * @throws IOException

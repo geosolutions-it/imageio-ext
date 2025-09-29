@@ -49,7 +49,7 @@ import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
 
 import org.eclipse.imagen.ImageLayout;
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.media.bandselect.BandSelectDescriptor;
 
 import org.junit.Before;
@@ -70,7 +70,7 @@ public class JPEGWriterTest extends BaseTest {
     
     static {
         try {
-            JAI.getDefaultInstance().getTileCache().setMemoryCapacity(128 * 1024 * 1024);
+            ImageN.getDefaultInstance().getTileCache().setMemoryCapacity(128 * 1024 * 1024);
             if (!(INPUT_FILE.exists() && INPUT_FILE.canRead())) {
                 SKIP_TESTS = true;
                 LOGGER.warning(ERROR_FILE_MESSAGE);
@@ -299,7 +299,7 @@ public class JPEGWriterTest extends BaseTest {
             layout.setTileWidth(228);
             layout.setTileHeight(104);
             reader = ImageIO.getImageReaders(stream).next();
-            RenderingHints hints = new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout);
+            RenderingHints hints = new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, layout);
             BufferedImage sourceImage = ImageIO.read(input);
             sourceImage.getWidth();
             RenderedImage inputImage = BandSelectDescriptor.create(sourceImage, new int[]{0}, hints); 
