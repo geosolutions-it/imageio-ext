@@ -33,7 +33,7 @@ import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import org.eclipse.imagen.ImageLayout;
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.ParameterBlockJAI;
 import org.eclipse.imagen.RenderedOp;
 
@@ -90,8 +90,8 @@ public class HDF4Test extends AbstractGDALTest {
                 l.setTileGridXOffset(0).setTileGridYOffset(0)
                         .setTileHeight(256).setTileWidth(256);
                 // get a RenderedImage
-                RenderedOp image = JAI.create("ImageRead", pbjImageRead,
-                        new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
+                RenderedOp image = ImageN.create("ImageRead", pbjImageRead,
+                        new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, l));
                 image.getTiles();
                 if (TestData.isInteractiveTest())
                     Viewer.visualizeAllInformation(image, fileName);
@@ -206,12 +206,12 @@ public class HDF4Test extends AbstractGDALTest {
 	        return;
 	    }
 	    // general settings
-	    JAI.getDefaultInstance().getTileScheduler().setParallelism(5);
-	    JAI.getDefaultInstance().getTileScheduler().setPriority(4);
-	    JAI.getDefaultInstance().getTileScheduler().setPrefetchPriority(2);
-	    JAI.getDefaultInstance().getTileScheduler().setPrefetchParallelism(5);
-	    JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
+	    ImageN.getDefaultInstance().getTileScheduler().setParallelism(5);
+	    ImageN.getDefaultInstance().getTileScheduler().setPriority(4);
+	    ImageN.getDefaultInstance().getTileScheduler().setPrefetchPriority(2);
+	    ImageN.getDefaultInstance().getTileScheduler().setPrefetchParallelism(5);
+	    ImageN.getDefaultInstance().getTileCache().setMemoryCapacity(
 	            180 * 1024 * 1024);
-	    JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
+	    ImageN.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
 	}
 }

@@ -45,7 +45,7 @@ public class DtedVrtTest extends AbstractGDALTest {
     }
 
     /**
-     * Test read exploiting common JAI operations (Crop-Translate-Rotate)
+     * Test read exploiting common ImageN operations (Crop-Translate-Rotate)
      * 
      * @throws FileNotFoundException
      * @throws IOException

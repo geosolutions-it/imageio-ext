@@ -26,7 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.imageio.ImageReadParam;
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.ParameterBlockJAI;
 import org.eclipse.imagen.RenderedOp;
 
@@ -44,7 +44,7 @@ public class NITFTest extends  AbstractGDALTest {
 
 
     /**
-     * Test read exploiting common JAI operations (Crop-Translate-Rotate)
+     * Test read exploiting common ImageN operations (Crop-Translate-Rotate)
      * 
      * @throws FileNotFoundException
      * @throws IOException
@@ -79,7 +79,7 @@ public class NITFTest extends  AbstractGDALTest {
         pbjImageRead.setParameter("readParam", irp);
 
         // get a RenderedImage
-        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 
         if (TestData.isInteractiveTest())
             Viewer.visualizeAllInformation(image, "Subsampling Read");

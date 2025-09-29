@@ -29,7 +29,7 @@ import java.util.Iterator;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.ParameterBlockJAI;
 import org.eclipse.imagen.RenderedOp;
 
@@ -37,7 +37,7 @@ import org.junit.Assert;
 
 /**
  * Testing reading capabilities for {@link ArcBinaryGridImageReader} leveraging
- * on JAI.
+ * on ImageN.
  * 
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
@@ -61,7 +61,7 @@ public class ArcBinaryGridReadTest extends AbstractGDALTest {
         .append("\nTests are skipped");
 
     /**
-     * Simple test read through JAI - ImageIO
+     * Simple test read through ImageN - ImageIO
      * 
      * @throws FileNotFoundException
      * @throws IOException
@@ -83,7 +83,7 @@ public class ArcBinaryGridReadTest extends AbstractGDALTest {
         rp.setSourceSubsampling(8, 8, 0, 0);
         pbjImageRead.setParameter("readParam", rp);
         pbjImageRead.setParameter("Input", file);
-        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 
         if (TestData.isInteractiveTest())
             ImageIOUtilities.visualize(image, fileName, true);

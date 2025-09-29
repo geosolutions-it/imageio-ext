@@ -96,7 +96,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        // Reading
 //        pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
 //                .createReaderInstance());
-//        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+//        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -121,7 +121,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite.setParameter("writeParam", param);
 //
 //        // Writing
-//        final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
+//        final RenderedOp op = ImageN.create("ImageWrite", pbjImageWrite);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -146,7 +146,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite2.setParameter("writeParam", param2);
 //
 //        // Writing
-//        final RenderedOp op2 = JAI.create("ImageWrite", pbjImageWrite2);
+//        final RenderedOp op2 = ImageN.create("ImageWrite", pbjImageWrite2);
 //    }
 //
 //    // ////////////////////////////////////////////////////////////////////////
@@ -194,7 +194,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        // Reading
 //        pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
 //                .createReaderInstance());
-//        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+//        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -219,7 +219,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite.setParameter("writeParam", param);
 //
 //        // Writing
-//        final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
+//        final RenderedOp op = ImageN.create("ImageWrite", pbjImageWrite);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -244,7 +244,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite2.setParameter("writeParam", param2);
 //
 //        // Writing
-//        final RenderedOp op2 = JAI.create("ImageWrite", pbjImageWrite2);
+//        final RenderedOp op2 = ImageN.create("ImageWrite", pbjImageWrite2);
 //    }
 //
 //    // ////////////////////////////////////////////////////////////////////////
@@ -285,7 +285,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        }
 //        pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
 //                .createReaderInstance());
-//        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+//        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -311,7 +311,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite.setParameter("writeParam", param);
 //
 //        // Writing
-//        final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
+//        final RenderedOp op = ImageN.create("ImageWrite", pbjImageWrite);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -337,7 +337,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite2.setParameter("writeParam", param2);
 //
 //        // Writing
-//        final RenderedOp op2 = JAI.create("ImageWrite", pbjImageWrite2);
+//        final RenderedOp op2 = ImageN.create("ImageWrite", pbjImageWrite2);
 //    }
 //
 //    // ////////////////////////////////////////////////////////////////////////
@@ -378,7 +378,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        }
 //        pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
 //                .createReaderInstance());
-//        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+//        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -403,7 +403,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite.setParameter("writeParam", param);
 //
 //        // Writing
-//        final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
+//        final RenderedOp op = ImageN.create("ImageWrite", pbjImageWrite);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -428,7 +428,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite2.setParameter("writeParam", param2);
 //
 //        // Writing
-//        final RenderedOp op2 = JAI.create("ImageWrite", pbjImageWrite2);
+//        final RenderedOp op2 = ImageN.create("ImageWrite", pbjImageWrite2);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -453,7 +453,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite3.setParameter("writeParam", param3);
 //
 //        // Writing
-//        final RenderedOp op3 = JAI.create("ImageWrite", pbjImageWrite3);
+//        final RenderedOp op3 = ImageN.create("ImageWrite", pbjImageWrite3);
 //    }
 //
 //    // ////////////////////////////////////////////////////////////////////////
@@ -492,7 +492,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        }
 //        pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
 //                .createReaderInstance());
-//        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+//        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -517,7 +517,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite.setParameter("writeParam", param);
 //
 //        // Writing
-//        final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
+//        final RenderedOp op = ImageN.create("ImageWrite", pbjImageWrite);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -542,7 +542,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite2.setParameter("writeParam", param2);
 //
 //        // Writing
-//        final RenderedOp op2 = JAI.create("ImageWrite", pbjImageWrite2);
+//        final RenderedOp op2 = ImageN.create("ImageWrite", pbjImageWrite2);
 //    }
 //
 //    // ////////////////////////////////////////////////////////////////////////
@@ -574,7 +574,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        }
 //        pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
 //                .createReaderInstance());
-//        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+//        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -616,7 +616,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //            pbjImageWrite.setParameter("writeParam", param);
 //
 //            // Writing
-//            final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
+//            final RenderedOp op = ImageN.create("ImageWrite", pbjImageWrite);
 //        }
 //    }
 //
@@ -656,7 +656,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        }
 //        pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
 //                .createReaderInstance());
-//        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+//        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -681,7 +681,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite.setParameter("writeParam", param);
 //
 //        // Writing
-//        final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
+//        final RenderedOp op = ImageN.create("ImageWrite", pbjImageWrite);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -706,7 +706,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite2.setParameter("writeParam", param2);
 //
 //        // Writing
-//        final RenderedOp op2 = JAI.create("ImageWrite", pbjImageWrite2);
+//        final RenderedOp op2 = ImageN.create("ImageWrite", pbjImageWrite2);
 //    }
 //
 //    // ////////////////////////////////////////////////////////////////////////
@@ -745,7 +745,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        }
 //        pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
 //                .createReaderInstance());
-//        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+//        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -770,7 +770,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite.setParameter("writeParam", param);
 //
 //        // Writing
-//        final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
+//        final RenderedOp op = ImageN.create("ImageWrite", pbjImageWrite);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -795,7 +795,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite2.setParameter("writeParam", param2);
 //
 //        // Writing
-//        final RenderedOp op2 = JAI.create("ImageWrite", pbjImageWrite2);
+//        final RenderedOp op2 = ImageN.create("ImageWrite", pbjImageWrite2);
 //    }
 //
 //    // ////////////////////////////////////////////////////////////////////////
@@ -834,7 +834,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        }
 //        pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
 //                .createReaderInstance());
-//        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+//        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -859,7 +859,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite.setParameter("writeParam", param);
 //
 //        // Writing
-//        final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
+//        final RenderedOp op = ImageN.create("ImageWrite", pbjImageWrite);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -884,7 +884,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite2.setParameter("writeParam", param2);
 //
 //        // Writing
-//        final RenderedOp op2 = JAI.create("ImageWrite", pbjImageWrite2);
+//        final RenderedOp op2 = ImageN.create("ImageWrite", pbjImageWrite2);
 //    }
 //
 //    // ////////////////////////////////////////////////////////////////////////
@@ -918,7 +918,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        }
 //        pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
 //                .createReaderInstance());
-//        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+//        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -965,7 +965,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //            pbjImageWrite.setParameter("writeParam", param);
 //
 //            // Writing
-//            final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
+//            final RenderedOp op = ImageN.create("ImageWrite", pbjImageWrite);
 //        }
 //    }
 //
@@ -1007,7 +1007,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        }
 //        pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
 //                .createReaderInstance());
-//        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+//        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -1032,7 +1032,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite.setParameter("writeParam", param);
 //
 //        // Writing
-//        final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
+//        final RenderedOp op = ImageN.create("ImageWrite", pbjImageWrite);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -1057,7 +1057,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite2.setParameter("writeParam", param2);
 //
 //        // Writing
-//        final RenderedOp op2 = JAI.create("ImageWrite", pbjImageWrite2);
+//        final RenderedOp op2 = ImageN.create("ImageWrite", pbjImageWrite2);
 //    }
 //
 //    // ////////////////////////////////////////////////////////////////////////
@@ -1115,7 +1115,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        }
 //        pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
 //                .createReaderInstance());
-//        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+//        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -1177,7 +1177,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        }
 //        pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
 //                .createReaderInstance());
-//        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+//        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -1202,7 +1202,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite.setParameter("writeParam", param);
 //
 //        // Writing
-//        final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
+//        final RenderedOp op = ImageN.create("ImageWrite", pbjImageWrite);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -1227,7 +1227,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite2.setParameter("writeParam", param2);
 //
 //        // Writing
-//        final RenderedOp op2 = JAI.create("ImageWrite", pbjImageWrite2);
+//        final RenderedOp op2 = ImageN.create("ImageWrite", pbjImageWrite2);
 //    }
 //
 //    // ////////////////////////////////////////////////////////////////////////
@@ -1265,7 +1265,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        }
 //        pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
 //                .createReaderInstance());
-//        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+//        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -1290,7 +1290,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite.setParameter("writeParam", param);
 //
 //        // Writing
-//        final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
+//        final RenderedOp op = ImageN.create("ImageWrite", pbjImageWrite);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -1315,7 +1315,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite2.setParameter("writeParam", param2);
 //
 //        // Writing
-//        final RenderedOp op2 = JAI.create("ImageWrite", pbjImageWrite2);
+//        final RenderedOp op2 = ImageN.create("ImageWrite", pbjImageWrite2);
 //    }
 //
 //    // ////////////////////////////////////////////////////////////////////////
@@ -1361,7 +1361,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        // Reading
 //        pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
 //                .createReaderInstance());
-//        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+//        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -1387,7 +1387,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite.setParameter("writeParam", param);
 //
 //        // Writing
-//        final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
+//        final RenderedOp op = ImageN.create("ImageWrite", pbjImageWrite);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -1413,7 +1413,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite2.setParameter("writeParam", param2);
 //
 //        // Writing
-//        final RenderedOp op2 = JAI.create("ImageWrite", pbjImageWrite2);
+//        final RenderedOp op2 = ImageN.create("ImageWrite", pbjImageWrite2);
 //    }
 //
 //    // ////////////////////////////////////////////////////////////////////////
@@ -1453,7 +1453,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        }
 //        pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
 //                .createReaderInstance());
-//        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+//        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -1477,7 +1477,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite.setParameter("writeParam", param);
 //
 //        // Writing
-//        final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
+//        final RenderedOp op = ImageN.create("ImageWrite", pbjImageWrite);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -1508,7 +1508,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite2.setParameter("writeParam", param2);
 //
 //        // Writing
-//        final RenderedOp op2 = JAI.create("ImageWrite", pbjImageWrite2);
+//        final RenderedOp op2 = ImageN.create("ImageWrite", pbjImageWrite2);
 //    }
 //
 //    // ////////////////////////////////////////////////////////////////////////
@@ -1547,7 +1547,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        }
 //        pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
 //                .createReaderInstance());
-//        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+//        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -1572,7 +1572,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite.setParameter("writeParam", param);
 //
 //        // Writing
-//        final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
+//        final RenderedOp op = ImageN.create("ImageWrite", pbjImageWrite);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -1597,7 +1597,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite2.setParameter("writeParam", param2);
 //
 //        // Writing
-//        final RenderedOp op2 = JAI.create("ImageWrite", pbjImageWrite2);
+//        final RenderedOp op2 = ImageN.create("ImageWrite", pbjImageWrite2);
 //    }
 //
 //    // ////////////////////////////////////////////////////////////////////////
@@ -1645,7 +1645,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        }
 //        pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
 //                .createReaderInstance());
-//        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+//        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -1670,7 +1670,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite.setParameter("writeParam", param);
 //
 //        // Writing
-//        final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
+//        final RenderedOp op = ImageN.create("ImageWrite", pbjImageWrite);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -1695,7 +1695,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite2.setParameter("writeParam", param2);
 //
 //        // Writing
-//        final RenderedOp op2 = JAI.create("ImageWrite", pbjImageWrite2);
+//        final RenderedOp op2 = ImageN.create("ImageWrite", pbjImageWrite2);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -1719,7 +1719,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite3.setParameter("writeParam", param3);
 //
 //        // Writing
-//        final RenderedOp op3 = JAI.create("ImageWrite", pbjImageWrite3);
+//        final RenderedOp op3 = ImageN.create("ImageWrite", pbjImageWrite3);
 //    }
 //
 //    // ////////////////////////////////////////////////////////////////////////
@@ -1766,7 +1766,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        }
 //        pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
 //                .createReaderInstance());
-//        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+//        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -1791,7 +1791,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite.setParameter("writeParam", param);
 //
 //        // Writing
-//        final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
+//        final RenderedOp op = ImageN.create("ImageWrite", pbjImageWrite);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -1816,7 +1816,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite2.setParameter("writeParam", param2);
 //
 //        // Writing
-//        final RenderedOp op2 = JAI.create("ImageWrite", pbjImageWrite2);
+//        final RenderedOp op2 = ImageN.create("ImageWrite", pbjImageWrite2);
 //    }
 //
 //    // ////////////////////////////////////////////////////////////////////////
@@ -1855,7 +1855,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        }
 //        pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
 //                .createReaderInstance());
-//        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+//        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -1880,7 +1880,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite.setParameter("writeParam", param);
 //
 //        // Writing
-//        final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
+//        final RenderedOp op = ImageN.create("ImageWrite", pbjImageWrite);
 //
 //        // ////////////////////////////////////////////////////////////////////
 //        //
@@ -1905,7 +1905,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite2.setParameter("writeParam", param2);
 //
 //        // Writing
-//        final RenderedOp op2 = JAI.create("ImageWrite", pbjImageWrite2);
+//        final RenderedOp op2 = ImageN.create("ImageWrite", pbjImageWrite2);
 //    }
 //
 //    // ////////////////////////////////////////////////////////////////////////
@@ -1937,7 +1937,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageRead.setParameter("readParam", param);
 //        pbjImageRead.setParameter("Input", inputFile);
 //        pbjImageRead.setParameter("reader", reader);
-//        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+//        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 //        image.getRendering();
 //        if (TestData.isInteractiveTest())
 //            ImageIOUtilities.visualize(image, "First Read Image");
@@ -1967,7 +1967,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite.setParameter("writeParam", param2);
 //
 //        // Writing
-//        final RenderedOp op = JAI.create("ImageWrite", pbjImageWrite);
+//        final RenderedOp op = ImageN.create("ImageWrite", pbjImageWrite);
 //        final ImageWriter writer2 = (ImageWriter) op
 //                .getProperty(ImageWriteDescriptor.PROPERTY_NAME_IMAGE_WRITER);
 //        writer2.dispose();
@@ -1981,7 +1981,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageReRead.setParameter("Input", outputFile);
 //        pbjImageReRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
 //                .createReaderInstance());
-//        final RenderedOp image2 = JAI.create("ImageRead", pbjImageReRead);
+//        final RenderedOp image2 = ImageN.create("ImageRead", pbjImageReRead);
 //        if (TestData.isInteractiveTest())
 //            ImageIOUtilities.visualize(image2, "Written Image");
 //        else
@@ -2000,7 +2000,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //            pbjImageRead.setParameter("readParam", readParam);
 //        }
 //        pbjImageRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi().createReaderInstance());
-//        return JAI.create("ImageRead", pbjImageRead);
+//        return ImageN.create("ImageRead", pbjImageRead);
 //    }
 
 //    /**
@@ -2036,7 +2036,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        pbjImageWrite.setParameter("writeParam", iwp);
 //
 //        // Do the write
-//        JAI.create("ImageWrite", pbjImageWrite);
+//        ImageN.create("ImageWrite", pbjImageWrite);
 //        return out;
 //    }
 }

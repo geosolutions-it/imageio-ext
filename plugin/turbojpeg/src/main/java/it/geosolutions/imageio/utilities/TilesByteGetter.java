@@ -28,7 +28,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.PlanarImage;
 import org.eclipse.imagen.TileScheduler;
 
@@ -149,7 +149,7 @@ public class TilesByteGetter {
                     final int minTx = ri.getMinTileX();
                     final int minTy = ri.getMinTileY();
                     int TH = multithreadingLevel;
-                    final TileScheduler ts = JAI.getDefaultInstance().getTileScheduler();
+                    final TileScheduler ts = ImageN.getDefaultInstance().getTileScheduler();
                     final List<Point> tiles = new ArrayList<Point>();
                     final LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<Runnable>();
                     final List<Callable<Integer>> queueX = new ArrayList<Callable<Integer>>();
@@ -173,7 +173,7 @@ public class TilesByteGetter {
                     if (usePrefetching){
                         final int minTx = ri.getMinTileX();
                         final int minTy = ri.getMinTileY();
-                        TileScheduler ts = JAI.getDefaultInstance().getTileScheduler();
+                        TileScheduler ts = ImageN.getDefaultInstance().getTileScheduler();
                         List<Point> tiles = new ArrayList<Point>();
                         int tx = 0;
                         int ty = 0;

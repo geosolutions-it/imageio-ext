@@ -43,7 +43,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import org.eclipse.imagen.ImageLayout;
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.ParameterBlockJAI;
 import org.eclipse.imagen.RasterFactory;
 import org.eclipse.imagen.RenderedOp;
@@ -97,7 +97,7 @@ public class MrSIDTest extends AbstractGDALTest {
             final File file = TestData.file(this, fileName);
             final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
             pbjImageRead.setParameter("Input", file);
-            RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+            RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
             IIOMetadata metadata = (IIOMetadata) image
                     .getProperty(ImageReadDescriptor.PROPERTY_NAME_METADATA_IMAGE);
             Assert.assertTrue(metadata instanceof GDALCommonIIOImageMetadata);
@@ -139,7 +139,7 @@ public class MrSIDTest extends AbstractGDALTest {
     }
 
     /**
-     * Test read exploiting common JAI operations (Crop-Translate-Rotate)
+     * Test read exploiting common ImageN operations (Crop-Translate-Rotate)
      * 
      * @throws FileNotFoundException
      * @throws IOException
@@ -176,8 +176,8 @@ public class MrSIDTest extends AbstractGDALTest {
             pbjImageRead.setParameter("readParam", irp);
 
             // get a RenderedImage
-            RenderedOp image = JAI.create("ImageRead", pbjImageRead,
-                    new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
+            RenderedOp image = ImageN.create("ImageRead", pbjImageRead,
+                    new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, l));
 
             if (TestData.isInteractiveTest())
                 Viewer.visualizeAllInformation(image, "Subsampling Read");
@@ -202,7 +202,7 @@ public class MrSIDTest extends AbstractGDALTest {
             pbjCrop.setParameter("width", cropWidth);
             pbjCrop.setParameter("height", cropHeigth);
 
-            final RenderedOp croppedImage = JAI.create("Crop", pbjCrop);
+            final RenderedOp croppedImage = ImageN.create("Crop", pbjCrop);
             if (TestData.isInteractiveTest())
                 Viewer.visualizeAllInformation(croppedImage, "Cropped Image");
             else
@@ -221,7 +221,7 @@ public class MrSIDTest extends AbstractGDALTest {
             pbjTranslate.setParameter("xTrans", xTrans);
             pbjTranslate.setParameter("yTrans", yTrans);
 
-            final RenderedOp translatedImage = JAI.create("Translate",
+            final RenderedOp translatedImage = ImageN.create("Translate",
                     pbjTranslate);
             if (TestData.isInteractiveTest())
                 Viewer.visualizeAllInformation(translatedImage, "Translated Image");
@@ -243,7 +243,7 @@ public class MrSIDTest extends AbstractGDALTest {
             pbjRotate.setParameter("yOrigin", yOrigin);
             pbjRotate.setParameter("angle", angle);
 
-            final RenderedOp rotatedImage = JAI.create("Rotate", pbjRotate);
+            final RenderedOp rotatedImage = ImageN.create("Rotate", pbjRotate);
             if (TestData.isInteractiveTest())
                 Viewer.visualizeAllInformation(rotatedImage, "Rotated Image");
             else {
@@ -337,8 +337,8 @@ public class MrSIDTest extends AbstractGDALTest {
             final ImageLayout l = new ImageLayout();
             l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(256)
                     .setTileWidth(256);
-            RenderedOp image = JAI.create("ImageRead", pbjImageRead,
-                    new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
+            RenderedOp image = ImageN.create("ImageRead", pbjImageRead,
+                    new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, l));
 
             if (TestData.isInteractiveTest())
                 Viewer.visualizeAllInformation(image, "SourceBand selection");

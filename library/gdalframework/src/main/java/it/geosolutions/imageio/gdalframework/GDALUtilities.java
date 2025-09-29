@@ -18,7 +18,7 @@ package it.geosolutions.imageio.gdalframework;
 
 import it.geosolutions.imageio.imageioimpl.EnhancedImageReadParam;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.NotAColorSpace;
 import org.eclipse.imagen.RasterFactory;
 import org.eclipse.imagen.media.imageread.ImageReadDescriptor;
@@ -590,7 +590,7 @@ public final class GDALUtilities {
      * <p>
      */
     public static Dimension toTileSize(final Dimension size) {
-        Dimension defaultSize = JAI.getDefaultTileSize();
+        Dimension defaultSize = ImageN.getDefaultTileSize();
         if (defaultSize == null) {
             defaultSize = DEFAULT_TILE_SIZE;
         }

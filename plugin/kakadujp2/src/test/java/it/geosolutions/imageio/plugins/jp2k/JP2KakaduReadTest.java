@@ -20,7 +20,7 @@ import it.geosolutions.imageio.plugins.jp2k.box.XMLBoxMetadataNode;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 import org.eclipse.imagen.ImageLayout;
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.ParameterBlockJAI;
 import org.eclipse.imagen.PlanarImage;
 import org.eclipse.imagen.RenderedOp;
@@ -44,7 +44,7 @@ import static junit.framework.TestCase.assertTrue;
 
 /**
  * Testing reading capabilities for {@link JP2KKakaduImageReader} leveraging on
- * JAI.
+ * ImageN.
  * 
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
@@ -77,8 +77,8 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
         pbjImageRead.setParameter("ReadParam", rp);
         pbjImageRead.setParameter("Input", file);
         pbjImageRead.setParameter("imageChoice", 0);
-        RenderedOp image = JAI.create("ImageRead", pbjImageRead,
-                new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
+        RenderedOp image = ImageN.create("ImageRead", pbjImageRead,
+                new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, l));
         if (TestData.isInteractiveTest())
             ImageIOUtilities.visualize(image);
         else
@@ -177,7 +177,7 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
     }
 
     public static void displayStatistics(boolean b, RenderedImage source) {
-        PlanarImage img = JAI.create("extrema", source, null);
+        PlanarImage img = ImageN.create("extrema", source, null);
 
         RenderedImageBrowser.showChain(img, true, true, "Statistics", true);
     }

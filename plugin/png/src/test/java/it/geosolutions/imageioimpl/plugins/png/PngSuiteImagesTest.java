@@ -37,7 +37,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 import org.eclipse.imagen.ImageLayout;
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.RenderedOp;
 import org.eclipse.imagen.media.format.FormatDescriptor;
 
@@ -93,7 +93,7 @@ public class PngSuiteImagesTest {
         il.setTileWidth(8);
         il.setTileHeight(8);
 
-        RenderingHints hints = new RenderingHints(JAI.KEY_IMAGE_LAYOUT, il);
+        RenderingHints hints = new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, il);
         RenderedOp tiled = FormatDescriptor.create(input, input.getSampleModel().getDataType(),
                 hints);
         assertEquals(8, tiled.getTileWidth());

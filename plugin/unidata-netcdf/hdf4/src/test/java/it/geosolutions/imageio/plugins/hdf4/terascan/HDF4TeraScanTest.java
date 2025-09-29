@@ -32,7 +32,7 @@ import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
 import org.eclipse.imagen.ImageLayout;
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.ParameterBlockJAI;
 import org.eclipse.imagen.RenderedOp;
 
@@ -78,7 +78,7 @@ public class HDF4TeraScanTest extends TestCase {
     }
 
     /**
-     * Test read exploiting common JAI operations (Crop-Translate-Rotate)
+     * Test read exploiting common ImageN operations (Crop-Translate-Rotate)
      * 
      * @throws FileNotFoundException
      * @throws IOException
@@ -110,8 +110,8 @@ public class HDF4TeraScanTest extends TestCase {
             pbjImageRead.setParameter("readParam", irp);
 
             // get a RenderedImage
-            final RenderedOp image = JAI.create("ImageRead", pbjImageRead,
-                    new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
+            final RenderedOp image = ImageN.create("ImageRead", pbjImageRead,
+                    new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, l));
 
             
             // Silly equality test

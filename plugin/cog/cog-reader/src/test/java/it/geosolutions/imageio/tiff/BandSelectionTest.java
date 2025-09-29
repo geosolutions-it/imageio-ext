@@ -186,7 +186,7 @@ public class BandSelectionTest {
                 return reader.read(0, param);
             }
 
-            // deferred read, to go through the JAI machinery figuring out the deferred image layout 
+            // deferred read, to go through the ImageN machinery figuring out the deferred image layout 
             // (and then making it a BufferedImage so that we can dispose the reader safely)
             cogStream.init(param); // needed to make it load the header
             RenderedOp op = ImageReadDescriptor.create(cogStream, 0, false, false, false, null,

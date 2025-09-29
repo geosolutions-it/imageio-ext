@@ -28,7 +28,7 @@ import it.geosolutions.imageio.stream.output.FileImageOutputStreamExtImpl;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 import org.eclipse.imagen.ImageLayout;
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.ParameterBlockJAI;
 import org.eclipse.imagen.RenderedOp;
 import org.junit.Assert;
@@ -132,7 +132,7 @@ public class GeoTiffVrtTest extends AbstractGDALTest {
         pbjImageRead = new ParameterBlockJAI("ImageRead");
         pbjImageRead.setParameter("Input", new FileImageInputStreamExtImpl(file));
         pbjImageRead.setParameter("Reader", new VRTImageReaderSpi().createReaderInstance());
-        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
         if (TestData.isInteractiveTest())
             Viewer.visualizeAllInformation(image, "", true);
         else
@@ -169,7 +169,7 @@ public class GeoTiffVrtTest extends AbstractGDALTest {
         final ImageLayout l = new ImageLayout();
         l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(256).setTileWidth(256);
 
-        RenderedOp image = JAI.create("ImageRead", pbjImageRead,new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
+        RenderedOp image = ImageN.create("ImageRead", pbjImageRead,new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, l));
 
         if (TestData.isInteractiveTest())
             Viewer.visualizeAllInformation(image,"geotiff");
@@ -188,7 +188,7 @@ public class GeoTiffVrtTest extends AbstractGDALTest {
         final ParameterBlockJAI pbjImageReRead = new ParameterBlockJAI("ImageRead");
         pbjImageReRead.setParameter("Input", outputFile);
         pbjImageReRead.setParameter("Reader", new GeoTiffImageReaderSpi() .createReaderInstance());
-        final RenderedOp image2 = JAI.create("ImageRead", pbjImageReRead);
+        final RenderedOp image2 = ImageN.create("ImageRead", pbjImageReRead);
         if (TestData.isInteractiveTest())
             Viewer.visualizeAllInformation(image2,"geotif2");
         else
@@ -221,7 +221,7 @@ public class GeoTiffVrtTest extends AbstractGDALTest {
         final ImageLayout l = new ImageLayout();
         l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(256).setTileWidth(256);
 
-        RenderedOp image = JAI.create("ImageRead", pbjImageRead, new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
+        RenderedOp image = ImageN.create("ImageRead", pbjImageRead, new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, l));
 
         if (TestData.isInteractiveTest())
             Viewer.visualizeAllInformation(image, "Paletted image read");
@@ -239,7 +239,7 @@ public class GeoTiffVrtTest extends AbstractGDALTest {
         final ParameterBlockJAI pbjImageReRead = new ParameterBlockJAI("ImageRead");
         pbjImageReRead.setParameter("Input", outputFile);
         pbjImageReRead.setParameter("Reader", new GeoTiffImageReaderSpi().createReaderInstance());
-        final RenderedOp image2 = JAI.create("ImageRead", pbjImageReRead);
+        final RenderedOp image2 = ImageN.create("ImageRead", pbjImageReRead);
         if (TestData.isInteractiveTest())
             Viewer.visualizeAllInformation(image2,"Paletted image read back after writing");
         else

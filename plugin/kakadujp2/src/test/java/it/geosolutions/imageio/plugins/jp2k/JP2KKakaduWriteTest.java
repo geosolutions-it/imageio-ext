@@ -21,7 +21,7 @@ package it.geosolutions.imageio.plugins.jp2k;
 import it.geosolutions.resources.TestData;
 import it.geosolutions.util.KakaduUtilities;
 import kdu_jni.KduException;
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.ParameterBlockJAI;
 import org.eclipse.imagen.RenderedOp;
 import org.junit.Assume;
@@ -191,7 +191,7 @@ public class JP2KKakaduWriteTest {
     
                     pbjImageRead.setParameter("reader", reader);
                     pbjImageRead.setParameter("Input", file);
-                    RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+                    RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
     
                     write(config.outputFileName, image, config.writeCodeStreamOnly,
                             config.quality, config.useJAI, config.param);
@@ -256,7 +256,7 @@ public class JP2KKakaduWriteTest {
 
             pbjImageRead.setParameter("reader", reader);
             pbjImageRead.setParameter("Input", file);
-            RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+            RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
             write(config.outputFileName, image, config.writeCodeStreamOnly,
                     config.quality, config.useJAI, config.param);
         }
@@ -311,7 +311,7 @@ public class JP2KKakaduWriteTest {
             pbjImageWrite.setParameter("output", outputStream);
             pbjImageWrite.setParameter("writeParam", param);
             pbjImageWrite.addSource(bi);
-            RenderedOp image = JAI.create("ImageWrite", pbjImageWrite);
+            RenderedOp image = ImageN.create("ImageWrite", pbjImageWrite);
         }
     }
 

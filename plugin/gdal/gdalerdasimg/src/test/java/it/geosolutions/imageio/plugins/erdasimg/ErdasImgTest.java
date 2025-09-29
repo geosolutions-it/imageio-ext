@@ -25,7 +25,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.ParameterBlockJAI;
 import org.eclipse.imagen.RenderedOp;
 
@@ -44,7 +44,7 @@ public class ErdasImgTest extends AbstractGDALTest {
 
 
     /**
-     * Test read exploiting common JAI operations (Crop-Translate-Rotate)
+     * Test read exploiting common ImageN operations (Crop-Translate-Rotate)
      * 
      * @throws FileNotFoundException
      * @throws IOException
@@ -71,7 +71,7 @@ public class ErdasImgTest extends AbstractGDALTest {
         pbjImageRead.setParameter("Input", file);
 
         // get a RenderedImage
-        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 
         if (TestData.isInteractiveTest())
             Viewer.visualizeAllInformation(image, "Read");

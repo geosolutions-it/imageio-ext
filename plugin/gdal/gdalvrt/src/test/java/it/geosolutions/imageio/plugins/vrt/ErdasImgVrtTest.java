@@ -25,7 +25,7 @@ import org.eclipse.imagen.ImageLayout;
 import org.junit.Assert;
 import org.junit.Test;
 
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.ParameterBlockJAI;
 import org.eclipse.imagen.RenderedOp;
 
@@ -50,7 +50,7 @@ public class ErdasImgVrtTest extends AbstractGDALTest {
     public final static String fileName = "sample-erdas.img.vrt";
 
     /**
-     * Test read exploiting common JAI operations (Crop-Translate-Rotate)
+     * Test read exploiting common ImageN operations (Crop-Translate-Rotate)
      * 
      * @throws FileNotFoundException
      * @throws IOException
@@ -70,7 +70,7 @@ public class ErdasImgVrtTest extends AbstractGDALTest {
         pbjImageRead.setParameter("Input", file);
 
         // get a RenderedImage
-        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 
         if (TestData.isInteractiveTest())
             Viewer.visualizeAllInformation(image, "Read");
@@ -105,10 +105,10 @@ public class ErdasImgVrtTest extends AbstractGDALTest {
         ImageLayout layout = new ImageLayout().setTileHeight(256).setTileWidth(256);
         layout.setColorModel(cm);
         layout.setSampleModel(sm);
-        RenderingHints hints = new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout);
+        RenderingHints hints = new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, layout);
 
         // get a RenderedImage
-        RenderedOp image = JAI.create("ImageRead", pbjImageRead, hints);
+        RenderedOp image = ImageN.create("ImageRead", pbjImageRead, hints);
 
         sm = image.getSampleModel();
         cm = image.getColorModel();

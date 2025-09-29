@@ -24,7 +24,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import javax.imageio.ImageReadParam;
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.ParameterBlockJAI;
 import org.eclipse.imagen.RenderedOp;
 import java.awt.image.Raster;
@@ -67,7 +67,7 @@ public class RpftocVrtTest extends  AbstractGDALTest {
         pbjImageRead.setParameter("readParam", irp);
 
         // get a RenderedImage
-        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 
         if (TestData.isInteractiveTest())
             Viewer.visualizeAllInformation(image, "Subsampling Read");

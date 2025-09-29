@@ -27,7 +27,7 @@ import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.RasterFactory;
 import org.eclipse.imagen.iterator.RandomIterFactory;
 import org.eclipse.imagen.iterator.WritableRandomIter;
@@ -330,7 +330,7 @@ public class HOPSConverter{
             // something bad happened
             if (LOGGER.isLoggable(Level.INFO))
                 LOGGER.log(Level.INFO, e.getLocalizedMessage(), e);
-            JAI.getDefaultInstance().getTileCache().flush();
+            ImageN.getDefaultInstance().getTileCache().flush();
         }
     }
 

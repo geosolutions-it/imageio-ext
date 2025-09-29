@@ -33,7 +33,7 @@ import java.io.IOException;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import org.eclipse.imagen.ImageLayout;
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.ParameterBlockJAI;
 import org.eclipse.imagen.RenderedOp;
 
@@ -90,8 +90,8 @@ public class ECWTest extends AbstractGDALTest {
         pbjImageRead.setParameter("readParam", irp);
         final ImageLayout l = new ImageLayout();
         l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512).setTileWidth(512);
-        RenderedOp image = JAI.create("ImageRead", pbjImageRead,
-                new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
+        RenderedOp image = ImageN.create("ImageRead", pbjImageRead,
+                new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, l));
         if (TestData.isInteractiveTest())
         	Viewer.visualizeAllInformation(image, fileName);
         else
@@ -172,13 +172,13 @@ public class ECWTest extends AbstractGDALTest {
     public void setUp() throws Exception {
         super.setUp();
         // general settings
-        JAI.getDefaultInstance().getTileScheduler().setParallelism(10);
-        JAI.getDefaultInstance().getTileScheduler().setPriority(4);
-        JAI.getDefaultInstance().getTileScheduler().setPrefetchPriority(2);
-        JAI.getDefaultInstance().getTileScheduler().setPrefetchParallelism(5);
-        JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
+        ImageN.getDefaultInstance().getTileScheduler().setParallelism(10);
+        ImageN.getDefaultInstance().getTileScheduler().setPriority(4);
+        ImageN.getDefaultInstance().getTileScheduler().setPrefetchPriority(2);
+        ImageN.getDefaultInstance().getTileScheduler().setPrefetchParallelism(5);
+        ImageN.getDefaultInstance().getTileCache().setMemoryCapacity(
                 128 * 1024 * 1024);
-        JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
+        ImageN.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
     }
 
 

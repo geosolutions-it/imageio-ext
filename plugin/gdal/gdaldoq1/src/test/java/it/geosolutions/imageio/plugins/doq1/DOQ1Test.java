@@ -29,7 +29,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageReadParam;
 import org.eclipse.imagen.ImageLayout;
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.ParameterBlockJAI;
 import org.eclipse.imagen.RenderedOp;
 
@@ -47,7 +47,7 @@ public class DOQ1Test extends AbstractGDALTest {
     public final static String fileName = "fakedoq1.doq";
 
     /**
-     * Test read exploiting common JAI operations (Crop-Translate-Rotate)
+     * Test read exploiting common ImageN operations (Crop-Translate-Rotate)
      * 
      * @throws FileNotFoundException
      * @throws IOException
@@ -83,7 +83,7 @@ public class DOQ1Test extends AbstractGDALTest {
         l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(32).setTileWidth(32);
 
         // get a RenderedImage
-        RenderedOp image = JAI.create("ImageRead", pbjImageRead,new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
+        RenderedOp image = ImageN.create("ImageRead", pbjImageRead,new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, l));
 
         if (TestData.isInteractiveTest()) {
             Viewer.visualizeAllInformation(image, "test");

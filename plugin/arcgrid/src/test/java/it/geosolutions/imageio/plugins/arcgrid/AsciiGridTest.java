@@ -23,7 +23,7 @@ import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 import junit.framework.Assert;
 import junit.framework.TestCase;
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.ParameterBlockJAI;
 import org.eclipse.imagen.RenderedOp;
 import org.eclipse.imagen.media.imageread.ImageReadDescriptor;
@@ -105,7 +105,7 @@ public class AsciiGridTest extends TestCase {
      * Read an ArcGrid file and write it back to another file
      */
     public void testReadWrite() throws FileNotFoundException, IOException {
-        String title = new String("Simple JAI ImageRead operation test");
+        String title = new String("Simple ImageN ImageRead operation test");
         
         final String[] files = TestData.file(this,".").list(new FilenameFilter() {
 			
@@ -117,7 +117,7 @@ public class AsciiGridTest extends TestCase {
         for(String fileName:files){
 	        ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
 	        pbjImageRead.setParameter("Input", new File(inputDirectory,fileName));
-	        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+	        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 	        if (TestData.isInteractiveTest())
 	            ImageIOUtilities.visualize(image, title, true);
 	        else
@@ -126,7 +126,7 @@ public class AsciiGridTest extends TestCase {
             final File foutput = TestData.temp(this, "file.asc", true);
             AsciiGridsImageWriter writer = new AsciiGridsImageWriter(null);
             writer.setOutput(new FileImageOutputStream(foutput));
-            IIOMetadata metadata = (IIOMetadata) image.getProperty("JAI.ImageMetadata");
+            IIOMetadata metadata = (IIOMetadata) image.getProperty("ImageN.ImageMetadata");
             writer.write(new IIOImage(image, null, metadata));
 
 	        // //
@@ -136,7 +136,7 @@ public class AsciiGridTest extends TestCase {
 	        // //
 	        pbjImageRead = new ParameterBlockJAI("ImageRead");
 	        pbjImageRead.setParameter("Input", foutput);
-	        RenderedOp image2 = JAI.create("ImageRead", pbjImageRead);
+	        RenderedOp image2 = ImageN.create("ImageRead", pbjImageRead);
 	        title = new String("Read Back the just written image");
 	        if (TestData.isInteractiveTest())
 	            ImageIOUtilities.visualize(image, title, true);
@@ -153,12 +153,12 @@ public class AsciiGridTest extends TestCase {
      * Read an ESRI ArcGrid file and write it back as GRASS
      */
     public void testReadAsEsriAndWriteAsGrass() throws FileNotFoundException, IOException {
-        String title = new String("Simple JAI ImageRead operation test");
+        String title = new String("Simple ImageN ImageRead operation test");
 
         File testFile = TestData.file(this, "095b_dem_90m.asc");
         ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
         pbjImageRead.setParameter("Input", testFile);
-        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
         if (TestData.isInteractiveTest()) {
             ImageIOUtilities.visualize(image, title, true);
         } else {
@@ -191,7 +191,7 @@ public class AsciiGridTest extends TestCase {
         // //
         pbjImageRead = new ParameterBlockJAI("ImageRead");
         pbjImageRead.setParameter("Input", foutput);
-        RenderedOp image2 = JAI.create("ImageRead", pbjImageRead);
+        RenderedOp image2 = ImageN.create("ImageRead", pbjImageRead);
         title = new String("Read Back the just written image");
         if (TestData.isInteractiveTest()) {
             ImageIOUtilities.visualize(image2, title, true);
@@ -218,7 +218,7 @@ public class AsciiGridTest extends TestCase {
                     new FileInputStream(inputFile));
             ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
             pbjImageRead.setParameter("Input", stream);
-            RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+            RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
             if (TestData.isInteractiveTest())
                 ImageIOUtilities.visualize(image, title, true);
             else{
@@ -256,7 +256,7 @@ public class AsciiGridTest extends TestCase {
         // Setting subSampling factors
         irp.setSourceSubsampling(2, 2, 0, 0);
         pbjImageRead.setParameter("ReadParam", irp);
-        RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
         if (TestData.isInteractiveTest())
             ImageIOUtilities.visualize(image, title, true);
         else{
@@ -314,7 +314,7 @@ public class AsciiGridTest extends TestCase {
         // Setting subSampling factors
         irp.setSourceSubsampling(4, 4, 0, 0);
         pbjImageRead.setParameter("ReadParam", irp);
-        image = JAI.create("ImageRead", pbjImageRead);
+        image = ImageN.create("ImageRead", pbjImageRead);
         if (TestData.isInteractiveTest())
             ImageIOUtilities.visualize(image, title, true);
         else{
@@ -369,7 +369,7 @@ public class AsciiGridTest extends TestCase {
         // Setting subSampling factors
         irp.setSourceSubsampling(4, 4, 0, 0);
         pbjImageRead.setParameter("ReadParam", irp);
-        image = JAI.create("ImageRead", pbjImageRead);
+        image = ImageN.create("ImageRead", pbjImageRead);
         if (TestData.isInteractiveTest())
             ImageIOUtilities.visualize(image, title, true);
         else{

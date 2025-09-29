@@ -42,7 +42,7 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
 import org.eclipse.imagen.ImageLayout;
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.RenderedOp;
 
 import org.eclipse.imagen.media.opimage.CopyOpImage;
@@ -264,9 +264,9 @@ public class TurboJpegImageWriter extends ImageWriter
             if (srcImage instanceof RenderedOp)
             {
                 hints = ((RenderedOp) srcImage).getRenderingHints();
-                if ((hints != null) && hints.containsKey(JAI.KEY_IMAGE_LAYOUT))
+                if ((hints != null) && hints.containsKey(ImageN.KEY_IMAGE_LAYOUT))
                 {
-                    layout = (ImageLayout) hints.get(JAI.KEY_IMAGE_LAYOUT);
+                    layout = (ImageLayout) hints.get(ImageN.KEY_IMAGE_LAYOUT);
                 }
                 else
                 {
@@ -276,7 +276,7 @@ public class TurboJpegImageWriter extends ImageWriter
             else
             {
                 layout = new ImageLayout(srcImage);
-                hints = new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout);
+                hints = new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, layout);
             }
             
             // Imposing the layout of the requested image

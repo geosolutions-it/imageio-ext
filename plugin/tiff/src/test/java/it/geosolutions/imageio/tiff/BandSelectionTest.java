@@ -188,7 +188,7 @@ public class BandSelectionTest {
                 return reader.read(0, param);
             }
 
-            // deferred read, to go through the JAI machinery figuring out the deferred image layout 
+            // deferred read, to go through the ImageN machinery figuring out the deferred image layout 
             // (and then making it a BufferedImage so that we can dispose the reader safely)
             RenderedOp op = ImageReadDescriptor.create(is, 0, false, false, false, null,
                     null, param, reader, null);

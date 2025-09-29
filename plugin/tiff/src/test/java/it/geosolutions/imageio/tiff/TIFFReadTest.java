@@ -57,7 +57,7 @@ import it.geosolutions.imageioimpl.plugins.tiff.TIFFStreamMetadata.MetadataNode;
 import it.geosolutions.resources.TestData;
 
 /**
- * Testing reading capabilities for {@link JP2KKakaduImageReader} leveraging on JAI.
+ * Testing reading capabilities for {@link JP2KKakaduImageReader} leveraging on ImageN.
  * 
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.

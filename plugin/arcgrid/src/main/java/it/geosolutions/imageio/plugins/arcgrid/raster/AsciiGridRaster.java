@@ -32,7 +32,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageReadParam;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.RasterFactory;
 import org.eclipse.imagen.TileFactory;
 import org.eclipse.imagen.iterator.RectIter;
@@ -641,7 +641,7 @@ public abstract class AsciiGridRaster {
 		// Number of samples to count before I find useful data
 		final long tileBeginsAtSampleIndex = (nCols * srcRegionYOffset);
 
-		final TileFactory factory = (TileFactory) JAI.getDefaultInstance().getRenderingHint(JAI.KEY_TILE_FACTORY);
+		final TileFactory factory = (TileFactory) ImageN.getDefaultInstance().getRenderingHint(ImageN.KEY_TILE_FACTORY);
 		if (factory != null)
 			raster = factory.createTile(RasterFactory.createBandedSampleModel(
 					java.awt.image.DataBuffer.TYPE_DOUBLE, dstWidth, dstHeight,

@@ -31,7 +31,7 @@ import java.util.Iterator;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
-import org.eclipse.imagen.JAI;
+import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.ParameterBlockJAI;
 import org.eclipse.imagen.RenderedOp;
 
@@ -40,7 +40,7 @@ import org.junit.Test;
 
 /**
  * Testing reading capabilities for {@link ArcGridImageReader} leveraging on
- * JAI.
+ * ImageN.
  * 
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
@@ -52,7 +52,7 @@ public class ArcGridReadTest extends AbstractGDALTest {
 	}
 
 	/**
-	 * Simple test read through JAI - ImageIO
+	 * Simple test read through ImageN - ImageIO
 	 * 
 	 * @throws FileNotFoundException
 	 * @throws IOException
@@ -68,7 +68,7 @@ public class ArcGridReadTest extends AbstractGDALTest {
 		final File file = TestData.file(this, fileName);
 		pbjImageRead = new ParameterBlockJAI("ImageRead");
 		pbjImageRead.setParameter("Input", file);
-		RenderedOp image = JAI.create("ImageRead", pbjImageRead);
+		RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 		if (TestData.isInteractiveTest())
 			Viewer.visualizeAllInformation(image, fileName);
 		else
