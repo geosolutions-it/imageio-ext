@@ -179,7 +179,7 @@ public final class Utilities {
 	 * Allows or disallow native acceleration for the specified operation on the given ImageN instance.
 	 * By default, ImageN uses hardware accelerated methods when available. For example, it make use of
 	 * MMX instructions on Intel processors. Unluckily, some native method crash the Java Virtual
-	 * Machine under some circumstances. For example on ImageN 1.1.2, the {@code "Affine"} operation on
+	 * Machine under some circumstances. For example on ImageN, the {@code "Affine"} operation on
 	 * an image with float data type, bilinear interpolation and an {@link org.eclipse.imagen.ImageLayout}
 	 * rendering hint cause an exception in medialib native code. Disabling the native acceleration
 	 * (i.e using the pure Java version) is a convenient workaround until Sun fix the bug.
