@@ -30,7 +30,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import org.eclipse.imagen.ImageN;
-import org.eclipse.imagen.ParameterBlockJAI;
+import org.eclipse.imagen.ParameterBlockImageN;
 import org.eclipse.imagen.RenderedOp;
 
 import org.junit.Assert;
@@ -70,7 +70,7 @@ public class ArcBinaryGridReadTest extends AbstractGDALTest {
         if (!isGDALAvailable) {
             return;
         }
-        final ParameterBlockJAI pbjImageRead;
+        final ParameterBlockImageN pbjImageRead;
         File file = null;
         try {
             file = TestData.file(this, fileName);
@@ -78,7 +78,7 @@ public class ArcBinaryGridReadTest extends AbstractGDALTest {
             LOGGER.warning(warningMessage.toString());
             return;
         }
-        pbjImageRead = new ParameterBlockJAI("ImageRead");
+        pbjImageRead = new ParameterBlockImageN("ImageRead");
         ImageReadParam rp = new ImageReadParam();
         rp.setSourceSubsampling(8, 8, 0, 0);
         pbjImageRead.setParameter("readParam", rp);

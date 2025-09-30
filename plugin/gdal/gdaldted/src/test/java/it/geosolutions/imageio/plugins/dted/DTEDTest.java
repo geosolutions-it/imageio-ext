@@ -28,7 +28,7 @@ import java.io.IOException;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import org.eclipse.imagen.ImageLayout;
-import org.eclipse.imagen.ParameterBlockJAI;
+import org.eclipse.imagen.ParameterBlockImageN;
 
 import org.junit.Assert;
 import org.junit.Before;

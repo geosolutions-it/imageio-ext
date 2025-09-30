@@ -23,7 +23,7 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.FileImageOutputStream;
 
 import org.eclipse.imagen.ImageN;
-import org.eclipse.imagen.ParameterBlockJAI;
+import org.eclipse.imagen.ParameterBlockImageN;
 import org.eclipse.imagen.PlanarImage;
 import org.eclipse.imagen.RenderedOp;
 
@@ -171,7 +171,7 @@ public class AsciiGridTileIndexRasterTest extends TestCase {
   public void outOfOrderTileAccess() throws Exception {
     // this test triggers the skipping routine and makes sure that it lands us in
     // the right position so that the first desired sample for the tile is read correctly
-    ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
+    ParameterBlockImageN pbjImageRead = new ParameterBlockImageN("ImageRead");
     pbjImageRead.setParameter("Input", ascFile.getAbsolutePath());
     RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 
@@ -191,7 +191,7 @@ public class AsciiGridTileIndexRasterTest extends TestCase {
 
   	public void outOfOrderTileAccessWithIndexedSkippedPositions() throws Exception {
     // this test confirms that the stream positions remembered during skipping are correct
-    ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
+    ParameterBlockImageN pbjImageRead = new ParameterBlockImageN("ImageRead");
     pbjImageRead.setParameter("Input", ascFile.getAbsolutePath());
     RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 
@@ -215,7 +215,7 @@ public class AsciiGridTileIndexRasterTest extends TestCase {
   }
 
   public void getExactMatchTileUsingIndexEntriesSetDuringReading() throws Exception {
-    ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
+    ParameterBlockImageN pbjImageRead = new ParameterBlockImageN("ImageRead");
     pbjImageRead.setParameter("Input", ascFile.getAbsolutePath());
     RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 
@@ -240,7 +240,7 @@ public class AsciiGridTileIndexRasterTest extends TestCase {
   }
 
   public void getTilesUsingIndexEntriesSetDuringReading() throws Exception {
-    ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
+    ParameterBlockImageN pbjImageRead = new ParameterBlockImageN("ImageRead");
     pbjImageRead.setParameter("Input", ascFile.getAbsolutePath());
     RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 
@@ -266,7 +266,7 @@ public class AsciiGridTileIndexRasterTest extends TestCase {
   }
 
   public void canWriteAndRead() throws Exception {
-    ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
+    ParameterBlockImageN pbjImageRead = new ParameterBlockImageN("ImageRead");
     pbjImageRead.setParameter("Input", ascFile.getAbsolutePath());
     RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
     image.getTiles();

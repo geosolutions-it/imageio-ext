@@ -21,7 +21,7 @@ import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 import org.eclipse.imagen.ImageLayout;
 import org.eclipse.imagen.ImageN;
-import org.eclipse.imagen.ParameterBlockJAI;
+import org.eclipse.imagen.ParameterBlockImageN;
 import org.eclipse.imagen.PlanarImage;
 import org.eclipse.imagen.RenderedOp;
 import org.eclipse.imagen.media.viewer.RenderedImageBrowser;
@@ -63,7 +63,7 @@ public class JP2KakaduReadTest extends AbstractJP2KakaduTestCase {
             return;
         final File file = TestData.file(this, "CB_TM432.jp2");
 
-        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+        final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN(
                 "ImageRead");
         ImageLayout l = new ImageLayout();
         l.setTileHeight(256);

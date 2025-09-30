@@ -27,7 +27,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import org.eclipse.imagen.ImageN;
-import org.eclipse.imagen.ParameterBlockJAI;
+import org.eclipse.imagen.ParameterBlockImageN;
 import org.eclipse.imagen.RenderedOp;
 import java.awt.*;
 import java.awt.image.RenderedImage;
@@ -60,10 +60,10 @@ public class ArcGridReadVrtTest extends AbstractGDALTest {
 		if (!isGDALAvailable) {
 			return;
 		}
-		final ParameterBlockJAI pbjImageRead;
+		final ParameterBlockImageN pbjImageRead;
 		final String fileName = "095b_dem_90m.asc.vrt";
 		final File file = TestData.file(this, fileName);
-		pbjImageRead = new ParameterBlockJAI("ImageRead");
+		pbjImageRead = new ParameterBlockImageN("ImageRead");
 		pbjImageRead.setParameter("Input", file);
 		RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 		if (TestData.isInteractiveTest())

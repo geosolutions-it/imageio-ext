@@ -22,7 +22,7 @@ import it.geosolutions.resources.TestData;
 import it.geosolutions.util.KakaduUtilities;
 import kdu_jni.KduException;
 import org.eclipse.imagen.ImageN;
-import org.eclipse.imagen.ParameterBlockJAI;
+import org.eclipse.imagen.ParameterBlockImageN;
 import org.eclipse.imagen.RenderedOp;
 import org.junit.Assume;
 import org.junit.Before;
@@ -184,7 +184,7 @@ public class JP2KKakaduWriteTest {
     
                 for (TestConfiguration config : configs) {
     
-                    final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+                    final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN(
                             "ImageRead");
                     ImageReader reader = ImageIO.getImageReaders(
                             ImageIO.createImageInputStream(file)).next();
@@ -249,7 +249,7 @@ public class JP2KKakaduWriteTest {
 
         for (TestConfiguration config : configs) {
 
-            final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+            final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN(
                     "ImageRead");
             ImageReader reader = ImageIO.getImageReaders(
                     ImageIO.createImageInputStream(file)).next();
@@ -302,7 +302,7 @@ public class JP2KKakaduWriteTest {
             writer.write(null, new IIOImage(bi, null, null), param);
             writer.dispose();
         } else {
-            final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
+            final ParameterBlockImageN pbjImageWrite = new ParameterBlockImageN(
                     "ImageWrite");
 
             final ImageWriter writer = new JP2KKakaduImageWriterSpi()

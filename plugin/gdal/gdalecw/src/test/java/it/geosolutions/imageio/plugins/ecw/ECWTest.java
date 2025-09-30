@@ -34,7 +34,7 @@ import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import org.eclipse.imagen.ImageLayout;
 import org.eclipse.imagen.ImageN;
-import org.eclipse.imagen.ParameterBlockJAI;
+import org.eclipse.imagen.ParameterBlockImageN;
 import org.eclipse.imagen.RenderedOp;
 
 import org.junit.Assert;
@@ -79,13 +79,13 @@ public class ECWTest extends AbstractGDALTest {
     public void imageRead() throws FileNotFoundException, IOException {
     	if(!isECWAvailable)
     		return;
-        final ParameterBlockJAI pbjImageRead;
+        final ParameterBlockImageN pbjImageRead;
         final EnhancedImageReadParam irp = new EnhancedImageReadParam();
         final String fileName = "sample.ecw";
         final File file = TestData.file(this, fileName);
 
         irp.setSourceSubsampling(2, 2, 0, 0);
-        pbjImageRead = new ParameterBlockJAI("ImageRead");
+        pbjImageRead = new ParameterBlockImageN("ImageRead");
         pbjImageRead.setParameter("Input", file);
         pbjImageRead.setParameter("readParam", irp);
         final ImageLayout l = new ImageLayout();

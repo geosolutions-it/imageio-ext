@@ -34,7 +34,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import org.eclipse.imagen.ImageLayout;
 import org.eclipse.imagen.ImageN;
-import org.eclipse.imagen.ParameterBlockJAI;
+import org.eclipse.imagen.ParameterBlockImageN;
 import org.eclipse.imagen.RenderedOp;
 
 import org.junit.Assert;
@@ -78,7 +78,7 @@ public class HDF4Test extends AbstractGDALTest {
                 irp.setSourceSubsampling(1, 1, 0, 0);
                 final String fileName = "TOVS_DAILY_AM_870330_NG.HDF";
                 final File file = TestData.file(this, fileName);
-                ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+                ParameterBlockImageN pbjImageRead = new ParameterBlockImageN(
                         "ImageRead");
                 final ImageReader mReader = new HDF4ImageReaderSpi()
                         .createReaderInstance();

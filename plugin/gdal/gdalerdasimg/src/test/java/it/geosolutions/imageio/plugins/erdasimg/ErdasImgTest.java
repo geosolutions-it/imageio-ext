@@ -26,7 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.eclipse.imagen.ImageN;
-import org.eclipse.imagen.ParameterBlockJAI;
+import org.eclipse.imagen.ParameterBlockImageN;
 import org.eclipse.imagen.RenderedOp;
 
 import org.junit.Assert;
@@ -66,8 +66,8 @@ public class ErdasImgTest extends AbstractGDALTest {
         // ////////////////////////////////////////////////////////////////
         // preparing to read
         // ////////////////////////////////////////////////////////////////
-        final ParameterBlockJAI pbjImageRead;
-        pbjImageRead = new ParameterBlockJAI("ImageRead");
+        final ParameterBlockImageN pbjImageRead;
+        pbjImageRead = new ParameterBlockImageN("ImageRead");
         pbjImageRead.setParameter("Input", file);
 
         // get a RenderedImage

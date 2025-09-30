@@ -44,7 +44,7 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import org.eclipse.imagen.ImageLayout;
 import org.eclipse.imagen.ImageN;
-import org.eclipse.imagen.ParameterBlockJAI;
+import org.eclipse.imagen.ParameterBlockImageN;
 import org.eclipse.imagen.RasterFactory;
 import org.eclipse.imagen.RenderedOp;
 
@@ -95,7 +95,7 @@ public class MrSIDTest extends AbstractGDALTest {
         }
         try {
             final File file = TestData.file(this, fileName);
-            final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
+            final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN("ImageRead");
             pbjImageRead.setParameter("Input", file);
             RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
             IIOMetadata metadata = (IIOMetadata) image
@@ -155,7 +155,7 @@ public class MrSIDTest extends AbstractGDALTest {
             // ////////////////////////////////////////////////////////////////
             // preparing to read
             // ////////////////////////////////////////////////////////////////
-            final ParameterBlockJAI pbjImageRead;
+            final ParameterBlockImageN pbjImageRead;
             final ImageReadParam irp = new ImageReadParam();
 
             // subsample by 2 on both dimensions
@@ -171,7 +171,7 @@ public class MrSIDTest extends AbstractGDALTest {
             l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512)
                     .setTileWidth(512);
 
-            pbjImageRead = new ParameterBlockJAI("ImageRead");
+            pbjImageRead = new ParameterBlockImageN("ImageRead");
             pbjImageRead.setParameter("Input", file);
             pbjImageRead.setParameter("readParam", irp);
 
@@ -187,7 +187,7 @@ public class MrSIDTest extends AbstractGDALTest {
             // ////////////////////////////////////////////////////////////////
             // preparing to crop
             // ////////////////////////////////////////////////////////////////
-            final ParameterBlockJAI pbjCrop = new ParameterBlockJAI("Crop");
+            final ParameterBlockImageN pbjCrop = new ParameterBlockImageN("Crop");
             pbjCrop.addSource(image);
 
             Float xCrop = new Float(image.getWidth() * 3 / 4.0
@@ -211,7 +211,7 @@ public class MrSIDTest extends AbstractGDALTest {
             // ////////////////////////////////////////////////////////////////
             // preparing to translate
             // ////////////////////////////////////////////////////////////////
-            final ParameterBlockJAI pbjTranslate = new ParameterBlockJAI(
+            final ParameterBlockImageN pbjTranslate = new ParameterBlockImageN(
                     "Translate");
             pbjTranslate.addSource(croppedImage);
 
@@ -232,7 +232,7 @@ public class MrSIDTest extends AbstractGDALTest {
             // preparing to rotate
             // ////////////////////////////////////////////////////////////////
 
-            final ParameterBlockJAI pbjRotate = new ParameterBlockJAI("Rotate");
+            final ParameterBlockImageN pbjRotate = new ParameterBlockImageN("Rotate");
             pbjRotate.addSource(translatedImage);
 
             Float xOrigin = new Float(cropWidth.floatValue() / 2);
@@ -324,7 +324,7 @@ public class MrSIDTest extends AbstractGDALTest {
             // Preparing the ImageRead operation
             //
             // //
-            ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
+            ParameterBlockImageN pbjImageRead = new ParameterBlockImageN("ImageRead");
             pbjImageRead.setParameter("Input", file);
             pbjImageRead.setParameter("readParam", param);
             pbjImageRead.setParameter("reader", reader);

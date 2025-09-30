@@ -84,7 +84,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        // //
 //        // Preparing to read
 //        // //
-//        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN(
 //                "ImageRead");
 //        pbjImageRead.setParameter("Input", inputFile);
 //        if (ENABLE_SUBSAMPLING) {
@@ -104,7 +104,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile1));
@@ -129,7 +129,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite2 = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite2 = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite2.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile2));
@@ -183,7 +183,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        // //
 //        // Preparing to read
 //        // //
-//        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN(
 //                "ImageRead");
 //        pbjImageRead.setParameter("Input", inputFile);
 //        if (ENABLE_SUBSAMPLING) {
@@ -202,7 +202,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile1));
@@ -227,7 +227,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite2 = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite2 = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite2.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile2));
@@ -275,7 +275,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        // //
 //        // Preparing to read
 //        // //
-//        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN(
 //                "ImageRead");
 //        pbjImageRead.setParameter("Input", inputFile);
 //        if (ENABLE_SUBSAMPLING) {
@@ -293,7 +293,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile1));
@@ -319,7 +319,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite2 = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite2 = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite2.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile2));
@@ -368,7 +368,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        // //
 //        // Preparing to read
 //        // //
-//        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN(
 //                "ImageRead");
 //        pbjImageRead.setParameter("Input", inputFile);
 //        if (ENABLE_SUBSAMPLING) {
@@ -386,7 +386,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile1));
@@ -411,7 +411,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite2 = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite2 = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite2.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile2));
@@ -436,7 +436,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite3 = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite3 = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite3.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile3));
@@ -482,7 +482,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        // //
 //        // Preparing to read
 //        // //
-//        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN(
 //                "ImageRead");
 //        pbjImageRead.setParameter("Input", inputFile);
 //        if (ENABLE_SUBSAMPLING) {
@@ -500,7 +500,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile1));
@@ -525,7 +525,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite2 = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite2 = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite2.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile2));
@@ -564,7 +564,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        // //
 //        // Preparing to read
 //        // //
-//        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN(
 //                "ImageRead");
 //        pbjImageRead.setParameter("Input", inputFile);
 //        if (ENABLE_SUBSAMPLING) {
@@ -598,7 +598,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //                    deleteTempFilesOnExit);
 //
 //            // Setting output and writer
-//            final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
+//            final ParameterBlockImageN pbjImageWrite = new ParameterBlockImageN(
 //                    "ImageWrite");
 //            pbjImageWrite.setParameter("Output",
 //                    new FileImageOutputStreamExtImpl(outputFile));
@@ -646,7 +646,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        // //
 //        // Preparing to read
 //        // //
-//        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN(
 //                "ImageRead");
 //        pbjImageRead.setParameter("Input", inputFile);
 //        if (ENABLE_SUBSAMPLING) {
@@ -664,7 +664,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile1));
@@ -689,7 +689,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite2 = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite2 = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite2.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile2));
@@ -735,7 +735,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        // //
 //        // Preparing to read
 //        // //
-//        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN(
 //                "ImageRead");
 //        pbjImageRead.setParameter("Input", inputFile);
 //        if (ENABLE_SUBSAMPLING) {
@@ -753,7 +753,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile1));
@@ -778,7 +778,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite2 = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite2 = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite2.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile2));
@@ -824,7 +824,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        // //
 //        // Preparing to read
 //        // //
-//        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN(
 //                "ImageRead");
 //        pbjImageRead.setParameter("Input", inputFile);
 //        if (ENABLE_SUBSAMPLING) {
@@ -842,7 +842,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile1));
@@ -867,7 +867,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite2 = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite2 = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite2.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile2));
@@ -907,7 +907,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        // //
 //        // Preparing to read
 //        // //
-//        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN(
 //                "ImageRead");
 //
 //        pbjImageRead.setParameter("Input", inputFile);
@@ -942,7 +942,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //                    deleteTempFilesOnExit);
 //
 //            // Setting output and writer
-//            final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
+//            final ParameterBlockImageN pbjImageWrite = new ParameterBlockImageN(
 //                    "ImageWrite");
 //            pbjImageWrite.setParameter("Output",
 //                    new FileImageOutputStreamExtImpl(outputFile));
@@ -997,7 +997,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        // //
 //        // Preparing to read
 //        // //
-//        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN(
 //                "ImageRead");
 //        pbjImageRead.setParameter("Input", inputFile);
 //        if (ENABLE_SUBSAMPLING) {
@@ -1015,7 +1015,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile1));
@@ -1040,7 +1040,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite2 = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite2 = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite2.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile2));
@@ -1105,7 +1105,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        // //
 //        // Preparing to read
 //        // //
-//        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN(
 //                "ImageRead");
 //        pbjImageRead.setParameter("Input", inputFile);
 //        if (ENABLE_SUBSAMPLING) {
@@ -1123,7 +1123,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile1));
@@ -1167,7 +1167,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        // //
 //        // Preparing to read
 //        // //
-//        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN(
 //                "ImageRead");
 //        pbjImageRead.setParameter("Input", inputFile);
 //        if (ENABLE_SUBSAMPLING) {
@@ -1185,7 +1185,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile1));
@@ -1210,7 +1210,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite2 = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite2 = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite2.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile2));
@@ -1255,7 +1255,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        // //
 //        // Preparing to read
 //        // //
-//        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN(
 //                "ImageRead");
 //        pbjImageRead.setParameter("Input", inputFile);
 //        if (ENABLE_SUBSAMPLING) {
@@ -1273,7 +1273,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile1));
@@ -1298,7 +1298,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite2 = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite2 = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite2.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile2));
@@ -1350,7 +1350,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        // //
 //        // Preparing to read
 //        // //
-//        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN(
 //                "ImageRead");
 //        pbjImageRead.setParameter("Input", inputFile);
 //        if (ENABLE_SUBSAMPLING) {
@@ -1369,7 +1369,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile1));
@@ -1395,7 +1395,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite2 = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite2 = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite2.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile2));
@@ -1442,7 +1442,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        // //
 //        // Preparing to read
 //        // //
-//        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN(
 //                "ImageRead");
 //
 //        pbjImageRead.setParameter("Input", inputFile);
@@ -1461,7 +1461,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile1));
@@ -1486,7 +1486,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        // ////////////////////////////////////////////////////////////////////
 //
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite2 = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite2 = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite2.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile2));
@@ -1537,7 +1537,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        // //
 //        // Preparing to read
 //        // //
-//        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN(
 //                "ImageRead");
 //        pbjImageRead.setParameter("Input", inputFile);
 //        if (ENABLE_SUBSAMPLING) {
@@ -1555,7 +1555,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile1));
@@ -1580,7 +1580,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite2 = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite2 = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite2.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile2));
@@ -1635,7 +1635,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        // //
 //        // Preparing to read
 //        // //
-//        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN(
 //                "ImageRead");
 //        pbjImageRead.setParameter("Input", inputFile);
 //        if (ENABLE_SUBSAMPLING) {
@@ -1653,7 +1653,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile1));
@@ -1678,7 +1678,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite2 = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite2 = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite2.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile2));
@@ -1703,7 +1703,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite3 = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite3 = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite3.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile3));
@@ -1756,7 +1756,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        // //
 //        // Preparing to read
 //        // //
-//        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN(
 //                "ImageRead");
 //        pbjImageRead.setParameter("Input", inputFile);
 //        if (ENABLE_SUBSAMPLING) {
@@ -1774,7 +1774,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile1));
@@ -1799,7 +1799,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite2 = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite2 = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite2.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile2));
@@ -1845,7 +1845,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        // //
 //        // Preparing to read
 //        // //
-//        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN(
 //                "ImageRead");
 //        pbjImageRead.setParameter("Input", inputFile);
 //        if (ENABLE_SUBSAMPLING) {
@@ -1863,7 +1863,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile1));
@@ -1888,7 +1888,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite2 = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite2 = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite2.setParameter("Output", new FileImageOutputStreamExtImpl(
 //                outputFile2));
@@ -1928,7 +1928,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        // Reading
 //        //
 //        // ////////////////////////////////////////////////////////////////////
-//        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN(
 //                "ImageRead");
 //        ImageReader reader = new JP2GDALKakaduImageReaderSpi()
 //                .createReaderInstance();
@@ -1949,7 +1949,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        //
 //        // ////////////////////////////////////////////////////////////////////
 //        // Setting output and writer
-//        final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageWrite = new ParameterBlockImageN(
 //                "ImageWrite");
 //        pbjImageWrite.setParameter("Output", outputFile);
 //
@@ -1976,7 +1976,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        // preparing to read again
 //        //
 //        // ////////////////////////////////////////////////////////////////
-//        final ParameterBlockJAI pbjImageReRead = new ParameterBlockJAI(
+//        final ParameterBlockImageN pbjImageReRead = new ParameterBlockImageN(
 //                "ImageRead");
 //        pbjImageReRead.setParameter("Input", outputFile);
 //        pbjImageReRead.setParameter("Reader", new JP2GDALKakaduImageReaderSpi()
@@ -1992,7 +1992,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 
 //    /** Reads the test image honoring ENABLE_SUBSAMPLING. */
 //    private RenderedOp readTestImage(File inputFile) throws IOException {
-//        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
+//        final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN("ImageRead");
 //        pbjImageRead.setParameter("Input", inputFile);
 //        if (ENABLE_SUBSAMPLING) {
 //            ImageReadParam readParam = new ImageReadParam();
@@ -2017,7 +2017,7 @@ public class JP2KWriteTest extends AbstractJP2KTestCase {
 //        final File out = TestData.temp(this, outName, deleteTempFilesOnExit);
 //
 //        // Prepare writer + output
-//        final ParameterBlockJAI pbjImageWrite = new ParameterBlockJAI("ImageWrite");
+//        final ParameterBlockImageN pbjImageWrite = new ParameterBlockImageN("ImageWrite");
 //        pbjImageWrite.setParameter("Output", new FileImageOutputStreamExtImpl(out));
 //
 //        ImageWriter writer = new JP2GDALKakaduImageWriterSpi().createWriterInstance();
