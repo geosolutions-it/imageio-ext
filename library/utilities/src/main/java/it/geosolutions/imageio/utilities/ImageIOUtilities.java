@@ -834,10 +834,10 @@ public class ImageIOUtilities {
 	 */
 	public synchronized static void setNativeAccelerationAllowed(final String operation,
 	                                                             final boolean  allowed,
-	                                                             final ImageN jai)
+	                                                             final ImageN imagen)
 	{
 	    final String product = "org.eclipse.imagen.media";
-	    final OperationRegistry registry = jai.getOperationRegistry();
+	    final OperationRegistry registry = imagen.getOperationRegistry();
 	
 	    // TODO: Check if we can remove SuppressWarnings with a future ImageN version.
 	    @SuppressWarnings("unchecked")

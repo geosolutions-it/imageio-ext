@@ -200,9 +200,9 @@ public final class Utilities {
 	 */
 	public synchronized static void setNativeAccelerationAllowed(final String operation,
 	                                                             final boolean  allowed,
-	                                                             final ImageN jai)
+	                                                             final ImageN imagen)
 	{
-		ImageIOUtilities.setNativeAccelerationAllowed(operation, allowed, jai);
+		ImageIOUtilities.setNativeAccelerationAllowed(operation, allowed, imagen);
 	}
 
     /**
