@@ -33,7 +33,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import org.eclipse.imagen.ImageN;
-import org.eclipse.imagen.ParameterBlockJAI;
+import org.eclipse.imagen.ParameterBlockImageN;
 import org.eclipse.imagen.RenderedOp;
 
 import org.junit.Assert;
@@ -63,11 +63,11 @@ public class IdrisiReadTest extends AbstractGDALTest {
 		if (!isGDALAvailable) {
 			return;
 		}
-		final ParameterBlockJAI pbjImageRead;
+		final ParameterBlockImageN pbjImageRead;
 		final String fileName = "idrisi.rst";
 		TestData.unzipFile(this, "idrisi.zip");
 		final File file = TestData.file(this, fileName);
-		pbjImageRead = new ParameterBlockJAI("ImageRead");
+		pbjImageRead = new ParameterBlockImageN("ImageRead");
 		pbjImageRead.setParameter("Input", file);
 		RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 		if (TestData.isInteractiveTest())

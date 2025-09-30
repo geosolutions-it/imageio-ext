@@ -26,7 +26,7 @@ import org.junit.Test;
 import javax.imageio.ImageReadParam;
 import org.eclipse.imagen.ImageLayout;
 import org.eclipse.imagen.ImageN;
-import org.eclipse.imagen.ParameterBlockJAI;
+import org.eclipse.imagen.ParameterBlockImageN;
 import org.eclipse.imagen.RenderedOp;
 import java.awt.*;
 import java.io.File;
@@ -59,10 +59,10 @@ public class Doq1VrtTest extends AbstractGDALTest {
         // ////////////////////////////////////////////////////////////////
         // preparing to read
         // ////////////////////////////////////////////////////////////////
-        final ParameterBlockJAI pbjImageRead;
+        final ParameterBlockImageN pbjImageRead;
         final ImageReadParam irp = new ImageReadParam();
 
-        pbjImageRead = new ParameterBlockJAI("ImageRead");
+        pbjImageRead = new ParameterBlockImageN("ImageRead");
         pbjImageRead.setParameter("Input", file);
         pbjImageRead.setParameter("readParam", irp);
         

@@ -26,7 +26,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageReadParam;
 import org.eclipse.imagen.ImageN;
-import org.eclipse.imagen.ParameterBlockJAI;
+import org.eclipse.imagen.ParameterBlockImageN;
 import org.eclipse.imagen.RenderedOp;
 
 import org.junit.Test;
@@ -65,7 +65,7 @@ public class EnvisatTest extends AbstractGDALTest {
         // ////////////////////////////////////////////////////////////////
         // preparing to read
         // ////////////////////////////////////////////////////////////////
-        final ParameterBlockJAI pbjImageRead;
+        final ParameterBlockImageN pbjImageRead;
         final ImageReadParam irp = new ImageReadParam();
 
         // subsample by 2 on both dimensions
@@ -74,7 +74,7 @@ public class EnvisatTest extends AbstractGDALTest {
         final int xSubSamplingOffset = 0;
         final int ySubSamplingOffset = 0;
         irp.setSourceSubsampling(xSubSampling, ySubSampling,xSubSamplingOffset, ySubSamplingOffset);
-        pbjImageRead = new ParameterBlockJAI("ImageRead");
+        pbjImageRead = new ParameterBlockImageN("ImageRead");
         pbjImageRead.setParameter("Input", file);
         pbjImageRead.setParameter("readParam", irp);
 

@@ -30,7 +30,7 @@ import java.io.IOException;
 import javax.imageio.ImageReadParam;
 import org.eclipse.imagen.ImageLayout;
 import org.eclipse.imagen.ImageN;
-import org.eclipse.imagen.ParameterBlockJAI;
+import org.eclipse.imagen.ParameterBlockImageN;
 import org.eclipse.imagen.RenderedOp;
 
 import org.gdal.gdal.Driver;
@@ -86,9 +86,9 @@ public class JP2KReadTest extends AbstractGDALTest {
         if (!isJP2ECWAvailable) {
             return;
         }
-        final ParameterBlockJAI pbjImageRead;
+        final ParameterBlockImageN pbjImageRead;
         final File file = TestData.file(this, fileName);
-        pbjImageRead = new ParameterBlockJAI("ImageRead");
+        pbjImageRead = new ParameterBlockImageN("ImageRead");
         pbjImageRead.setParameter("Input", file);
         pbjImageRead.setParameter("Reader", new JP2GDALEcwImageReaderSpi()
                 .createReaderInstance());
@@ -120,7 +120,7 @@ public class JP2KReadTest extends AbstractGDALTest {
         // ////////////////////////////////////////////////////////////////
         // preparing to read
         // ////////////////////////////////////////////////////////////////
-        final ParameterBlockJAI pbjImageRead;
+        final ParameterBlockImageN pbjImageRead;
         final ImageReadParam irp = new ImageReadParam();
 
         Integer xSubSampling = new Integer(2);
@@ -132,7 +132,7 @@ public class JP2KReadTest extends AbstractGDALTest {
                 .intValue(), xSubSamplingOffset.intValue(), ySubSamplingOffset
                 .intValue());
 
-        pbjImageRead = new ParameterBlockJAI("ImageRead");
+        pbjImageRead = new ParameterBlockImageN("ImageRead");
         pbjImageRead.setParameter("Input", inputFile);
         pbjImageRead.setParameter("readParam", irp);
         pbjImageRead.setParameter("Reader", new JP2GDALEcwImageReaderSpi()
@@ -149,7 +149,7 @@ public class JP2KReadTest extends AbstractGDALTest {
         // ////////////////////////////////////////////////////////////////
         // preparing to crop
         // ////////////////////////////////////////////////////////////////
-        final ParameterBlockJAI pbjCrop = new ParameterBlockJAI("Crop");
+        final ParameterBlockImageN pbjCrop = new ParameterBlockImageN("Crop");
         pbjCrop.addSource(image);
 
         // Setting a square crop to avoid blanks zone when rotating.
@@ -169,7 +169,7 @@ public class JP2KReadTest extends AbstractGDALTest {
         // ////////////////////////////////////////////////////////////////
         // preparing to translate
         // ////////////////////////////////////////////////////////////////
-        final ParameterBlockJAI pbjTranslate = new ParameterBlockJAI(
+        final ParameterBlockImageN pbjTranslate = new ParameterBlockImageN(
                 "Translate");
         pbjTranslate.addSource(croppedImage);
         Float xTrans = new Float(xCrop.floatValue() * (-1));
@@ -185,7 +185,7 @@ public class JP2KReadTest extends AbstractGDALTest {
         // ////////////////////////////////////////////////////////////////
         // preparing to rotate
         // ////////////////////////////////////////////////////////////////
-        final ParameterBlockJAI pbjRotate = new ParameterBlockJAI("Rotate");
+        final ParameterBlockImageN pbjRotate = new ParameterBlockImageN("Rotate");
         pbjRotate.addSource(translatedImage);
 
         Float xOrigin = new Float(cropWidth.floatValue() / 2);

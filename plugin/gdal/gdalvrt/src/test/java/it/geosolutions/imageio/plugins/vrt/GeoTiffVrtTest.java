@@ -29,7 +29,7 @@ import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 import org.eclipse.imagen.ImageLayout;
 import org.eclipse.imagen.ImageN;
-import org.eclipse.imagen.ParameterBlockJAI;
+import org.eclipse.imagen.ParameterBlockImageN;
 import org.eclipse.imagen.RenderedOp;
 import org.junit.Assert;
 import org.junit.Before;
@@ -125,11 +125,11 @@ public class GeoTiffVrtTest extends AbstractGDALTest {
         if (!isGDALAvailable) {
             return;
         }
-        final ParameterBlockJAI pbjImageRead;
+        final ParameterBlockImageN pbjImageRead;
         String fileName = "utmByte.tif.vrt";
         final File file = TestData.file(this, fileName);
 
-        pbjImageRead = new ParameterBlockJAI("ImageRead");
+        pbjImageRead = new ParameterBlockImageN("ImageRead");
         pbjImageRead.setParameter("Input", new FileImageInputStreamExtImpl(file));
         pbjImageRead.setParameter("Reader", new VRTImageReaderSpi().createReaderInstance());
         RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
@@ -161,7 +161,7 @@ public class GeoTiffVrtTest extends AbstractGDALTest {
         reader.setInput(inputFile);
         final IIOMetadata metadata = reader.getImageMetadata(0);
 
-        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
+        final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN("ImageRead");
         pbjImageRead.setParameter("Input", inputFile);
         pbjImageRead.setParameter("reader", reader);
         pbjImageRead.setParameter("readParam", rparam);
@@ -185,7 +185,7 @@ public class GeoTiffVrtTest extends AbstractGDALTest {
         // ////////////////////////////////////////////////////////////////
         // preparing to read again
         // ////////////////////////////////////////////////////////////////
-        final ParameterBlockJAI pbjImageReRead = new ParameterBlockJAI("ImageRead");
+        final ParameterBlockImageN pbjImageReRead = new ParameterBlockImageN("ImageRead");
         pbjImageReRead.setParameter("Input", outputFile);
         pbjImageReRead.setParameter("Reader", new GeoTiffImageReaderSpi() .createReaderInstance());
         final RenderedOp image2 = ImageN.create("ImageRead", pbjImageReRead);
@@ -214,7 +214,7 @@ public class GeoTiffVrtTest extends AbstractGDALTest {
         reader.setInput(inputFile);
         final IIOMetadata metadata = reader.getImageMetadata(0);
 
-        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
+        final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN("ImageRead");
         pbjImageRead.setParameter("Input", inputFile);
         pbjImageRead.setParameter("reader", reader);
 
@@ -236,7 +236,7 @@ public class GeoTiffVrtTest extends AbstractGDALTest {
         // ////////////////////////////////////////////////////////////////
         // preparing to read again
         // ////////////////////////////////////////////////////////////////
-        final ParameterBlockJAI pbjImageReRead = new ParameterBlockJAI("ImageRead");
+        final ParameterBlockImageN pbjImageReRead = new ParameterBlockImageN("ImageRead");
         pbjImageReRead.setParameter("Input", outputFile);
         pbjImageReRead.setParameter("Reader", new GeoTiffImageReaderSpi().createReaderInstance());
         final RenderedOp image2 = ImageN.create("ImageRead", pbjImageReRead);

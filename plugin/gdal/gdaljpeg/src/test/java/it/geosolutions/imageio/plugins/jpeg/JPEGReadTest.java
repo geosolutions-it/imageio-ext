@@ -37,7 +37,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import org.eclipse.imagen.ImageLayout;
 import org.eclipse.imagen.ImageN;
-import org.eclipse.imagen.ParameterBlockJAI;
+import org.eclipse.imagen.ParameterBlockImageN;
 import org.eclipse.imagen.RenderedOp;
 
 import org.junit.Assert;
@@ -65,12 +65,12 @@ public class JPEGReadTest extends AbstractGDALTest {
         if (!isGDALAvailable) {
             return;
         }
-        final ParameterBlockJAI pbjImageRead;
+        final ParameterBlockImageN pbjImageRead;
         final ImageReadParam irp = new ImageReadParam();
         final String fileName = "bw_sample.jpg";
         final File file = TestData.file(this, fileName);
         irp.setSourceSubsampling(1, 2, 0, 0);
-        pbjImageRead = new ParameterBlockJAI("ImageRead");
+        pbjImageRead = new ParameterBlockImageN("ImageRead");
         pbjImageRead.setParameter("Input", file);
         pbjImageRead.setParameter("Reader", new JpegGDALImageReaderSpi()
                 .createReaderInstance());
@@ -156,7 +156,7 @@ public class JPEGReadTest extends AbstractGDALTest {
         // //
         ImageReader reader = new JpegGDALImageReaderSpi()
                 .createReaderInstance();
-        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+        final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN(
                 "ImageRead");
         pbjImageRead.setParameter("Input", inputFile);
         pbjImageRead.setParameter("reader", reader);

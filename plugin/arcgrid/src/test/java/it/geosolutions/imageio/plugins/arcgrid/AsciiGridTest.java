@@ -24,7 +24,7 @@ import it.geosolutions.resources.TestData;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 import org.eclipse.imagen.ImageN;
-import org.eclipse.imagen.ParameterBlockJAI;
+import org.eclipse.imagen.ParameterBlockImageN;
 import org.eclipse.imagen.RenderedOp;
 import org.eclipse.imagen.media.imageread.ImageReadDescriptor;
 import org.w3c.dom.Node;
@@ -115,7 +115,7 @@ public class AsciiGridTest extends TestCase {
 		});
         File inputDirectory = TestData.file(this, ".");
         for(String fileName:files){
-	        ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
+	        ParameterBlockImageN pbjImageRead = new ParameterBlockImageN("ImageRead");
 	        pbjImageRead.setParameter("Input", new File(inputDirectory,fileName));
 	        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 	        if (TestData.isInteractiveTest())
@@ -134,7 +134,7 @@ public class AsciiGridTest extends TestCase {
 	        // Reading it back
 	        //
 	        // //
-	        pbjImageRead = new ParameterBlockJAI("ImageRead");
+	        pbjImageRead = new ParameterBlockImageN("ImageRead");
 	        pbjImageRead.setParameter("Input", foutput);
 	        RenderedOp image2 = ImageN.create("ImageRead", pbjImageRead);
 	        title = new String("Read Back the just written image");
@@ -156,7 +156,7 @@ public class AsciiGridTest extends TestCase {
         String title = new String("Simple ImageN ImageRead operation test");
 
         File testFile = TestData.file(this, "095b_dem_90m.asc");
-        ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
+        ParameterBlockImageN pbjImageRead = new ParameterBlockImageN("ImageRead");
         pbjImageRead.setParameter("Input", testFile);
         RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
         if (TestData.isInteractiveTest()) {
@@ -189,7 +189,7 @@ public class AsciiGridTest extends TestCase {
         // Reading it back
         //
         // //
-        pbjImageRead = new ParameterBlockJAI("ImageRead");
+        pbjImageRead = new ParameterBlockImageN("ImageRead");
         pbjImageRead.setParameter("Input", foutput);
         RenderedOp image2 = ImageN.create("ImageRead", pbjImageRead);
         title = new String("Read Back the just written image");
@@ -216,7 +216,7 @@ public class AsciiGridTest extends TestCase {
             File inputFile = TestData.file(this, "spearfish.asc.gz");
             final GZIPInputStream stream = new GZIPInputStream(
                     new FileInputStream(inputFile));
-            ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
+            ParameterBlockImageN pbjImageRead = new ParameterBlockImageN("ImageRead");
             pbjImageRead.setParameter("Input", stream);
             RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
             if (TestData.isInteractiveTest())
@@ -246,7 +246,7 @@ public class AsciiGridTest extends TestCase {
         // Preparing ImageRead parameters
         //
         File inputFile = TestData.file(this, "dem.asc");
-        ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
+        ParameterBlockImageN pbjImageRead = new ParameterBlockImageN("ImageRead");
         pbjImageRead.setParameter("Input", inputFile);
         ImageReadParam irp = new ImageReadParam();
 
@@ -307,7 +307,7 @@ public class AsciiGridTest extends TestCase {
         // Preparing ImageRead parameters
         //
         inputFile = TestData.file(this, "spearfish_dem.arx");
-        pbjImageRead = new ParameterBlockJAI("ImageRead");
+        pbjImageRead = new ParameterBlockImageN("ImageRead");
         pbjImageRead.setParameter("Input", inputFile);
         irp = new ImageReadParam();
 
@@ -362,7 +362,7 @@ public class AsciiGridTest extends TestCase {
         // Preparing ImageRead parameters
         //
         inputFile = TestData.file(this, "SWAN_NURC_LigurianSeaL07_HSIGN.asc");
-        pbjImageRead = new ParameterBlockJAI("ImageRead");
+        pbjImageRead = new ParameterBlockImageN("ImageRead");
         pbjImageRead.setParameter("Input", inputFile);
         irp = new ImageReadParam();
 

@@ -29,7 +29,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import org.eclipse.imagen.ImageLayout;
 import org.eclipse.imagen.ImageN;
-import org.eclipse.imagen.ParameterBlockJAI;
+import org.eclipse.imagen.ParameterBlockImageN;
 import org.eclipse.imagen.RenderedOp;
 import java.awt.*;
 import java.awt.color.ColorSpace;
@@ -59,12 +59,12 @@ public class JpegVrtTest extends AbstractGDALTest {
         if (!isGDALAvailable) {
             return;
         }
-        final ParameterBlockJAI pbjImageRead;
+        final ParameterBlockImageN pbjImageRead;
         final ImageReadParam irp = new ImageReadParam();
         final String fileName = "bw_sample.jpg.vrt";
         final File file = TestData.file(this, fileName);
         irp.setSourceSubsampling(1, 2, 0, 0);
-        pbjImageRead = new ParameterBlockJAI("ImageRead");
+        pbjImageRead = new ParameterBlockImageN("ImageRead");
         pbjImageRead.setParameter("Input", file);
         pbjImageRead.setParameter("readParam", irp);
 
@@ -146,7 +146,7 @@ public class JpegVrtTest extends AbstractGDALTest {
         // Preparing for image read operation
         //
         // //
-        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
+        final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN(
                 "ImageRead");
         pbjImageRead.setParameter("Input", inputFile);
         pbjImageRead.setParameter("readParam", rparam);

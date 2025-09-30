@@ -33,7 +33,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
 import org.eclipse.imagen.ImageLayout;
 import org.eclipse.imagen.ImageN;
-import org.eclipse.imagen.ParameterBlockJAI;
+import org.eclipse.imagen.ParameterBlockImageN;
 import org.eclipse.imagen.RenderedOp;
 
 import junit.framework.TestCase;
@@ -91,7 +91,7 @@ public class HDF4TeraScanTest extends TestCase {
             // ////////////////////////////////////////////////////////////////
             // preparing the ImageRead
             // ////////////////////////////////////////////////////////////////
-            final ParameterBlockJAI pbjImageRead;
+            final ParameterBlockImageN pbjImageRead;
             final ImageReadParam irp = new ImageReadParam();
 
             // subsample by 2 on both dimensions
@@ -105,7 +105,7 @@ public class HDF4TeraScanTest extends TestCase {
             final ImageLayout l = new ImageLayout();
             l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(64).setTileWidth(64);
 
-            pbjImageRead = new ParameterBlockJAI("ImageRead");
+            pbjImageRead = new ParameterBlockImageN("ImageRead");
             pbjImageRead.setParameter("Input", file);
             pbjImageRead.setParameter("readParam", irp);
 

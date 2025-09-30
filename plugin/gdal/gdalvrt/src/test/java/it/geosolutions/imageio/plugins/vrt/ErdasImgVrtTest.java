@@ -26,7 +26,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import org.eclipse.imagen.ImageN;
-import org.eclipse.imagen.ParameterBlockJAI;
+import org.eclipse.imagen.ParameterBlockImageN;
 import org.eclipse.imagen.RenderedOp;
 
 import javax.imageio.ImageReadParam;
@@ -65,8 +65,8 @@ public class ErdasImgVrtTest extends AbstractGDALTest {
         // ////////////////////////////////////////////////////////////////
         // preparing to read
         // ////////////////////////////////////////////////////////////////
-        final ParameterBlockJAI pbjImageRead;
-        pbjImageRead = new ParameterBlockJAI("ImageRead");
+        final ParameterBlockImageN pbjImageRead;
+        pbjImageRead = new ParameterBlockImageN("ImageRead");
         pbjImageRead.setParameter("Input", file);
 
         // get a RenderedImage
@@ -89,8 +89,8 @@ public class ErdasImgVrtTest extends AbstractGDALTest {
         // ////////////////////////////////////////////////////////////////
         // preparing to read
         // ////////////////////////////////////////////////////////////////
-        final ParameterBlockJAI pbjImageRead;
-        pbjImageRead = new ParameterBlockJAI("ImageRead");
+        final ParameterBlockImageN pbjImageRead;
+        pbjImageRead = new ParameterBlockImageN("ImageRead");
         pbjImageRead.setParameter("Input", file);
         ImageReadParam param = new ImageReadParam();
         param.setSourceBands(new int[] { 2 });
