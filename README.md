@@ -1,5 +1,5 @@
 # The ImageIO-Ext Project
-![GeoSolutions Rocks!](http://3.bp.blogspot.com/_0_xIiXP5xuY/TUGnIbDpcgI/AAAAAAAAAOY/gKhkBdKZcfs/s1600/imageio_jpg_580x320_crop_q85.jpg)
+![GeoSolutions Rocks!](release/imageio.jpg)
 
 The **ImageIO-Ext** is an Open Source project that provides extensions, fixes and improvements for the standard Oracle Java Image I/O project such as:
 
@@ -10,7 +10,7 @@ The **ImageIO-Ext** is an Open Source project that provides extensions, fixes an
 5. A NITF plugin based on [NITRO](http://nitro-nitf.sourceforge.net/wikka.php?wakka=HomePage). More info can be found [here](https://github.com/geosolutions-it/imageio-ext/wiki/NITF-plugin)
 6. A new PNG Writer with improved performances. More informations can be found [here](https://github.com/geosolutions-it/imageio-ext/wiki/PNG-plugin).
 
-The ImageIO library provides support for encoding/decoding raster formats in Java. Some useful documentation on ImageIO can be found [here](http://docs.oracle.com/javase/1.4.2/docs/guide/imageio/spec/imageio_guideTOC.fm.html).
+The ImageIO library provides support for encoding/decoding raster formats in Java. Some useful documentation on ImageIO can be found [here](https://docs.oracle.com/javase/8/docs/technotes/guides/imageio/spec/imageio_guideTOC.fm.html).
 
 See the documentation below for more information on the ImageIO-Ext project.
 
