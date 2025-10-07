@@ -20,7 +20,7 @@
     <gdal.version>3.2.0</gdal.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <libdeflate.java.version>0.1.0-beta</libdeflate.java.version>
-    <imagen.version>0.9.0-SNAPSHOT</imagen.version>
+    <imagen.version>0.9.0</imagen.version>
     <surefire.jvm.args></surefire.jvm.args>
   </properties>
 
@@ -43,7 +43,7 @@
   <description>Container for tools and extensions to Image I/O project</description>
   <organization>
     <name>GeoSolutions</name>
-    <url>https://www.geo-solutions.it</url>
+    <url>https://www.geosolutionsgroup.com</url>
   </organization>
   <inceptionYear>2006</inceptionYear>
   <licenses>
@@ -398,32 +398,32 @@
     <dependencies>
      <!-- Tests or legacy -->
      <dependency>
-  <groupId>org.eclipse.imagen</groupId>
-  <artifactId>imagen-core</artifactId>
-  <version>${imagen.version}</version>
-</dependency>
-        <dependency>
-            <groupId>org.eclipse.imagen</groupId>
-            <artifactId>imageread</artifactId>
-            <version>${imagen.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.imagen</groupId>
-            <artifactId>rendered-image-browser</artifactId>
-            <version>${imagen.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.imagen</groupId>
-            <artifactId>bandmerge</artifactId>
-            <version>${imagen.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.imagen</groupId>
-            <artifactId>mosaic</artifactId>
-            <version>${imagen.version}</version>
-            <scope>test</scope>
-        </dependency>
+       <groupId>org.eclipse.imagen</groupId>
+       <artifactId>imagen-core</artifactId>
+       <version>${imagen.version}</version>
+     </dependency>
+     <dependency>
+         <groupId>org.eclipse.imagen</groupId>
+         <artifactId>imageread</artifactId>
+         <version>${imagen.version}</version>
+     </dependency>
+     <dependency>
+         <groupId>org.eclipse.imagen</groupId>
+         <artifactId>rendered-image-browser</artifactId>
+         <version>${imagen.version}</version>
+     </dependency>
+     <dependency>
+         <groupId>org.eclipse.imagen</groupId>
+         <artifactId>bandmerge</artifactId>
+         <version>${imagen.version}</version>
+         <scope>test</scope>
+     </dependency>
+     <dependency>
+         <groupId>org.eclipse.imagen</groupId>
+         <artifactId>mosaic</artifactId>
+         <version>${imagen.version}</version>
+         <scope>test</scope>
+     </dependency>
      <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
@@ -482,9 +482,9 @@
  <dependencies>
   <!-- Tests or legacy -->
   <dependency>
-  <groupId>org.eclipse.imagen</groupId>
-  <artifactId>imagen-core</artifactId>
- </dependency>
+    <groupId>org.eclipse.imagen</groupId>
+    <artifactId>imagen-core</artifactId>
+  </dependency>
   <dependency>
 	<groupId>junit</groupId>
 	<artifactId>junit</artifactId>
@@ -614,15 +614,6 @@
   <!--              Extensions settings for Deployment          -->
   <!-- ======================================================== -->
    <extensions>
-  
-    <!--....................................-->
-    <!-- java.net maven2 (using wagon svn)  -->
-    <!--....................................-->
-    <!-- <extension>                             -->
-    <!--  <groupId>org.jvnet.wagon-svn</groupId> -->
-    <!--  <artifactId>wagon-svn</artifactId>     -->
-    <!--  <version>RELEASE</version>             -->
-    <!-- </extension>                            -->
     
     <!--.............................................-->
     <!--       geo-solutions (using wagon ftp)       -->
