@@ -19,19 +19,14 @@ package it.geosolutions.imageio.plugins.netcdf;
 import it.geosolutions.imageio.ndplugin.BaseImageReader;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.KeyValuePair;
 import it.geosolutions.imageio.utilities.Utilities;
-
 import java.io.IOException;
-
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
-
 import org.w3c.dom.Node;
 
 public class NetCDFStreamMetadata extends IIOMetadata {
-    /**
-     * The name of the native metadata format for this object.
-     */
+    /** The name of the native metadata format for this object. */
     public static final String nativeMetadataFormatName = "it_geosolutions_imageio_plugins_netcdf_streamMetadata_1.0";
 
     private BaseImageReader reader;
@@ -40,15 +35,13 @@ public class NetCDFStreamMetadata extends IIOMetadata {
 
     public NetCDFStreamMetadata(final BaseImageReader reader) {
         this.reader = reader;
-
     }
 
     /**
-     * Returns the XML DOM <code>Node</code> object that represents the root
-     * of a tree of metadata contained within this object on its native format.
-     * 
-     * @return a root node containing common metadata exposed on its native
-     *         format.
+     * Returns the XML DOM <code>Node</code> object that represents the root of a tree of metadata contained within this
+     * object on its native format.
+     *
+     * @return a root node containing common metadata exposed on its native format.
      */
     protected Node createCommonNativeTree() {
         // Create root node
@@ -66,7 +59,7 @@ public class NetCDFStreamMetadata extends IIOMetadata {
             final int numAttributes = innerReader.getNumGlobalAttributes();
             try {
                 for (int i = 0; i < numAttributes; i++) {
-                	KeyValuePair keyValuePair = innerReader.getGlobalAttribute(i);  
+                    KeyValuePair keyValuePair = innerReader.getGlobalAttribute(i);
                     String attributeName = keyValuePair.getKey();
                     final String attributeValue = keyValuePair.getValue();
 
@@ -74,8 +67,7 @@ public class NetCDFStreamMetadata extends IIOMetadata {
                     // Note: IIOMetadata doesn't allow to set attribute name
                     // containing "\\". Therefore we replace that char
                     // //
-                    if (attributeName.contains("\\"))
-                        attributeName = Utilities.adjustAttributeName(attributeName);
+                    if (attributeName.contains("\\")) attributeName = Utilities.adjustAttributeName(attributeName);
                     node.setAttribute(attributeName, attributeValue);
                 }
             } catch (IOException e) {
@@ -88,14 +80,11 @@ public class NetCDFStreamMetadata extends IIOMetadata {
     }
 
     /**
-     * Returns an XML DOM <code>Node</code> object that represents the root of
-     * a tree of common stream metadata contained within this object according
-     * to the conventions defined by a given metadata format name.
-     * 
+     * Returns an XML DOM <code>Node</code> object that represents the root of a tree of common stream metadata
+     * contained within this object according to the conventions defined by a given metadata format name.
      */
     public Node getAsTree(String formatName) {
-        if (nativeMetadataFormatName.equalsIgnoreCase(formatName))
-            return createCommonNativeTree();
+        if (nativeMetadataFormatName.equalsIgnoreCase(formatName)) return createCommonNativeTree();
         throw new IllegalArgumentException(formatName + " is not a supported format name");
     }
 
@@ -105,14 +94,11 @@ public class NetCDFStreamMetadata extends IIOMetadata {
     }
 
     @Override
-    public void mergeTree(String formatName, Node root)
-            throws IIOInvalidTreeException {
+    public void mergeTree(String formatName, Node root) throws IIOInvalidTreeException {
         // TODO: add message
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void reset() {
-    }
-
+    public void reset() {}
 }

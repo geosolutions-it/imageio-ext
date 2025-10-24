@@ -20,21 +20,20 @@ import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
-import org.junit.Assert;
-import org.junit.Test;
-
-import javax.imageio.ImageReadParam;
-import org.eclipse.imagen.ImageN;
-import org.eclipse.imagen.ParameterBlockImageN;
-import org.eclipse.imagen.RenderedOp;
 import java.awt.image.Raster;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import javax.imageio.ImageReadParam;
+import org.eclipse.imagen.ImageN;
+import org.eclipse.imagen.ParameterBlockImageN;
+import org.eclipse.imagen.RenderedOp;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class SPRTest extends AbstractGDALTest {
 
-    public final static String fileName = "FKUSRP01.IMG";
+    public static final String fileName = "FKUSRP01.IMG";
 
     @Test
     public void read() throws FileNotFoundException, IOException {
@@ -59,8 +58,7 @@ public class SPRTest extends AbstractGDALTest {
         final int ySubSampling = 2;
         final int xSubSamplingOffset = 0;
         final int ySubSamplingOffset = 0;
-        irp.setSourceSubsampling(xSubSampling, ySubSampling,
-                xSubSamplingOffset, ySubSamplingOffset);
+        irp.setSourceSubsampling(xSubSampling, ySubSampling, xSubSamplingOffset, ySubSamplingOffset);
         pbjImageRead = new ParameterBlockImageN("ImageRead");
         pbjImageRead.setParameter("Input", file);
         pbjImageRead.setParameter("readParam", irp);
@@ -68,12 +66,10 @@ public class SPRTest extends AbstractGDALTest {
         // get a RenderedImage
         RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 
-        if (TestData.isInteractiveTest())
-            Viewer.visualizeAllInformation(image, "Subsampling Read");
-        else
-        {
+        if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(image, "Subsampling Read");
+        else {
             Raster[] io = image.getTiles();
-            Assert.assertNotNull(io );
+            Assert.assertNotNull(io);
             Assert.assertEquals(64, image.getWidth());
             Assert.assertEquals(64, image.getHeight());
         }

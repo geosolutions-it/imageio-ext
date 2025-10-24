@@ -17,14 +17,13 @@
 package it.geosolutions.imageioimpl.plugins.cog;
 
 /**
- * This utility class will look for either a system property or environment variable.  When calling
- * `getPropertyValue`, if no system property is found, the property key with the format `my.property.key` will be
- * converted to `MY_PROPERTY_KEY` and an attempt will be made to fetch from the environment.  Similarly, when
- * `getEnvironmentValue` is called, if no env var is found, the key will be converted to system property style and an
- * attempt will be made to locate the value in system properties.
+ * This utility class will look for either a system property or environment variable. When calling `getPropertyValue`,
+ * if no system property is found, the property key with the format `my.property.key` will be converted to
+ * `MY_PROPERTY_KEY` and an attempt will be made to fetch from the environment. Similarly, when `getEnvironmentValue` is
+ * called, if no env var is found, the key will be converted to system property style and an attempt will be made to
+ * locate the value in system properties.
  *
- * @author joshfix
- * Created on 2019-09-19
+ * @author joshfix Created on 2019-09-19
  */
 public class PropertyLocator {
 
@@ -59,15 +58,10 @@ public class PropertyLocator {
     }
 
     public static String convertEnvVarToProperty(String envVar) {
-        return envVar
-                .toLowerCase()
-                .replace("_", ".");
+        return envVar.toLowerCase().replace("_", ".");
     }
 
     public static String convertPropertyToEnvVar(String property) {
-        return property
-                .toUpperCase()
-                .replace(".", "_")
-                .replace("-", "_");
+        return property.toUpperCase().replace(".", "_").replace("-", "_");
     }
 }

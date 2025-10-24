@@ -19,12 +19,11 @@ package it.geosolutions.imageioimpl.plugins.cog;
 import static it.geosolutions.imageioimpl.plugins.cog.PropertyLocator.getEnvironmentValue;
 
 /**
- * Configuration properties for tile cache.  Attempts to read environment variables containing connection settings and
- * if not found, will fallback to attempting to read system properties.  If still not found, the provided default
- * values will be used.
+ * Configuration properties for tile cache. Attempts to read environment variables containing connection settings and if
+ * not found, will fallback to attempting to read system properties. If still not found, the provided default values
+ * will be used.
  *
- * @author joshfix
- * Created on 2019-09-19
+ * @author joshfix Created on 2019-09-19
  */
 public class CacheConfig {
 

@@ -17,7 +17,6 @@
 package it.geosolutions.imageio.plugins.jp2k.box;
 
 import it.geosolutions.imageio.plugins.jp2k.JP2KBox;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -28,13 +27,10 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadataNode;
-
 import kdu_jni.Jp2_input_box;
 import kdu_jni.KduException;
-
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
@@ -43,43 +39,39 @@ import org.w3c.dom.Node;
  * @author Daniele Romagnoli, GeoSolutions
  */
 public class BoxUtilities {
-	
-    private final static Logger LOGGER = Logger.getLogger("BoxUtilities");
 
-    public final static String JP2_ASOC_LBL_GML_DATA = "gml.data";
-    
-    /**
-     * A Hashtable contains the class names for each type of the boxes. This
-     * table will be used to construct a Box object from a Node object by using
-     * reflection.
-     */
-    public final static Map <Integer, Class<? extends BaseJP2KBox>> boxClasses = new HashMap <Integer, Class<? extends BaseJP2KBox>>();
+    private static final Logger LOGGER = Logger.getLogger("BoxUtilities");
 
-    public final static Map <Integer, String> boxNames = new HashMap <Integer, String>();
+    public static final String JP2_ASOC_LBL_GML_DATA = "gml.data";
 
     /**
-     * The table to link tag names for all the JP2 boxes.
+     * A Hashtable contains the class names for each type of the boxes. This table will be used to construct a Box
+     * object from a Node object by using reflection.
      */
-    public final static Map<Integer, String> names = new HashMap<Integer, String>();
-    
-    
-    public final static Set<String> SUPERBOX_NAMES= new HashSet<String>();
-    
-        // Initializes the "SUPERBOX_NAMES" set
+    public static final Map<Integer, Class<? extends BaseJP2KBox>> boxClasses =
+            new HashMap<Integer, Class<? extends BaseJP2KBox>>();
+
+    public static final Map<Integer, String> boxNames = new HashMap<Integer, String>();
+
+    /** The table to link tag names for all the JP2 boxes. */
+    public static final Map<Integer, String> names = new HashMap<Integer, String>();
+
+    public static final Set<String> SUPERBOX_NAMES = new HashSet<String>();
+
+    // Initializes the "SUPERBOX_NAMES" set
     static {
-    	SUPERBOX_NAMES.add(JP2HeaderBox.NAME);
-    	SUPERBOX_NAMES.add(ResolutionBox.NAME);
-    	SUPERBOX_NAMES.add(UUIDInfoBox.NAME);
-    	SUPERBOX_NAMES.add(ASOCBox.NAME);
-    	SUPERBOX_NAMES.add(CodestreamHeaderBox.NAME);
-    	SUPERBOX_NAMES.add(CompositingLayerHeaderBox.NAME);
+        SUPERBOX_NAMES.add(JP2HeaderBox.NAME);
+        SUPERBOX_NAMES.add(ResolutionBox.NAME);
+        SUPERBOX_NAMES.add(UUIDInfoBox.NAME);
+        SUPERBOX_NAMES.add(ASOCBox.NAME);
+        SUPERBOX_NAMES.add(CodestreamHeaderBox.NAME);
+        SUPERBOX_NAMES.add(CompositingLayerHeaderBox.NAME);
     }
 
     // Initializes the hash table "names".
     static {
-        
         names.put(JP2KFileBox.BOX_TYPE, JP2KFileBox.JP2K_MD_NAME);
-        
+
         // children for the root
         names.put(SignatureBox.BOX_TYPE, SignatureBox.JP2K_MD_NAME);
         names.put(FileTypeBox.BOX_TYPE, FileTypeBox.JP2K_MD_NAME);
@@ -92,7 +84,7 @@ public class BoxUtilities {
         // Children of HeadCStream
         names.put(JP2HeaderBox.BOX_TYPE, JP2HeaderBox.JP2K_MD_NAME);
         names.put(ContiguousCodestreamBox.BOX_TYPE, ContiguousCodestreamBox.JP2K_MD_NAME);
-        
+
         // Children of JPEG2000HeaderSuperBox
         names.put(ImageHeaderBox.BOX_TYPE, ImageHeaderBox.JP2K_MD_NAME);
 
@@ -106,34 +98,29 @@ public class BoxUtilities {
         names.put(ASOCBox.BOX_TYPE, ASOCBox.JP2K_MD_NAME);
 
         // Children of JPEG2000ResolutionBox
-        names.put(ResolutionBox.BOX_TYPE_CAPTURE,
-                "JPEG2000CaptureResolutionBox");
-        names.put(ResolutionBox.BOX_TYPE_DEFAULT_DISPLAY,
-                "JPEG2000DefaultDisplayResolutionBox");
+        names.put(ResolutionBox.BOX_TYPE_CAPTURE, "JPEG2000CaptureResolutionBox");
+        names.put(ResolutionBox.BOX_TYPE_DEFAULT_DISPLAY, "JPEG2000DefaultDisplayResolutionBox");
 
-        
-        
         // Children of JPEG2000UUIDInfoBox
         names.put(UUIDBox.BOX_TYPE, UUIDBox.JP2K_MD_NAME);
         names.put(UUIDInfoBox.BOX_TYPE, UUIDInfoBox.JP2K_MD_NAME);
         names.put(UUIDListBox.BOX_TYPE, UUIDListBox.JP2K_MD_NAME);
         names.put(DataEntryURLBox.BOX_TYPE, DataEntryURLBox.JP2K_MD_NAME);
-        
+
         // JPX rreq
-        names.put(ReaderRequirementsBox.BOX_TYPE, ReaderRequirementsBox.JP2K_MD_NAME);  
+        names.put(ReaderRequirementsBox.BOX_TYPE, ReaderRequirementsBox.JP2K_MD_NAME);
         names.put(CodestreamHeaderBox.BOX_TYPE, CodestreamHeaderBox.JP2K_MD_NAME);
         names.put(CompositingLayerHeaderBox.BOX_TYPE, CompositingLayerHeaderBox.JP2K_MD_NAME);
-        
-        
-        // JPX Label Box 
-        names.put(LabelBox.BOX_TYPE, LabelBox.JP2K_MD_NAME); 
+
+        // JPX Label Box
+        names.put(LabelBox.BOX_TYPE, LabelBox.JP2K_MD_NAME);
     }
 
     // Initializes the hash table "boxClasses".
     static {
         // children for the root
         boxClasses.put(JP2KFileBox.BOX_TYPE, JP2KFileBox.class);
-        
+
         boxClasses.put(SignatureBox.BOX_TYPE, SignatureBox.class);
         boxClasses.put(FileTypeBox.BOX_TYPE, FileTypeBox.class);
 
@@ -155,7 +142,7 @@ public class BoxUtilities {
         boxClasses.put(ComponentMappingBox.BOX_TYPE, ComponentMappingBox.class);
         boxClasses.put(ChannelDefinitionBox.BOX_TYPE, ChannelDefinitionBox.class);
         boxClasses.put(ResolutionBox.BOX_TYPE, ResolutionBox.class);
-        
+
         boxClasses.put(ASOCBox.BOX_TYPE, ASOCBox.class);
 
         // Children of JPEG2000ResolutionBox
@@ -164,20 +151,19 @@ public class BoxUtilities {
 
         // Children of JPEG2000UUIDInfoBox
         boxClasses.put(UUIDInfoBox.BOX_TYPE, UUIDInfoBox.class);
-        
-        
+
         boxClasses.put(UUIDBox.BOX_TYPE, UUIDBox.class);
         boxClasses.put(UUIDListBox.BOX_TYPE, UUIDListBox.class);
         boxClasses.put(DataEntryURLBox.BOX_TYPE, DataEntryURLBox.class);
-        
+
         // JPX rreq
-        boxClasses.put(ReaderRequirementsBox.BOX_TYPE, ReaderRequirementsBox.class);   
-        
+        boxClasses.put(ReaderRequirementsBox.BOX_TYPE, ReaderRequirementsBox.class);
+
         boxClasses.put(CodestreamHeaderBox.BOX_TYPE, CodestreamHeaderBox.class);
         boxClasses.put(CompositingLayerHeaderBox.BOX_TYPE, CompositingLayerHeaderBox.class);
-        
-        // JPX Label Box 
-        boxClasses.put(LabelBox.BOX_TYPE, LabelBox.class); 
+
+        // JPX Label Box
+        boxClasses.put(LabelBox.BOX_TYPE, LabelBox.class);
     }
 
     static {
@@ -194,7 +180,7 @@ public class BoxUtilities {
         // Children of HeadCStream
         boxNames.put(JP2HeaderBox.BOX_TYPE, JP2HeaderBox.NAME);
         boxNames.put(ContiguousCodestreamBox.BOX_TYPE, ContiguousCodestreamBox.NAME);
-        
+
         boxNames.put(ASOCBox.BOX_TYPE, ASOCBox.NAME);
 
         // Children of JPEG2000HeaderSuperBox
@@ -214,85 +200,84 @@ public class BoxUtilities {
 
         boxNames.put(UUIDBox.BOX_TYPE, UUIDBox.NAME);
         boxNames.put(UUIDInfoBox.BOX_TYPE, UUIDInfoBox.NAME);
-        
+
         // Children of JPEG2000UUIDInfoBox
         boxNames.put(UUIDListBox.BOX_TYPE, UUIDListBox.NAME);
         boxNames.put(DataEntryURLBox.BOX_TYPE, DataEntryURLBox.NAME);
-        
+
         // JPX rreq
         boxNames.put(ReaderRequirementsBox.BOX_TYPE, ReaderRequirementsBox.NAME);
-        
+
         boxNames.put(CodestreamHeaderBox.BOX_TYPE, CodestreamHeaderBox.NAME);
         boxNames.put(CompositingLayerHeaderBox.BOX_TYPE, CompositingLayerHeaderBox.NAME);
-        
-        // JPX Label Box 
-        boxNames.put(LabelBox.BOX_TYPE, LabelBox.NAME); 
+
+        // JPX Label Box
+        boxNames.put(LabelBox.BOX_TYPE, LabelBox.NAME);
     }
 
     /**
-     * Copies that four bytes of an integer into the byte array. Necessary for
-     * the subclasses to compose the content array from the data elements
+     * Copies that four bytes of an integer into the byte array. Necessary for the subclasses to compose the content
+     * array from the data elements
      */
     public static void copyInt(final byte[] data, int pos, final int value) {
-        data[pos++] = (byte) ((value >> 24)& 0xFF);
-        data[pos++] = (byte) ((value >> 16)& 0xFF);
-        data[pos++] = (byte) ((value >> 8)& 0xFF);
-        data[pos++] = (byte) (value );
+        data[pos++] = (byte) ((value >> 24) & 0xFF);
+        data[pos++] = (byte) ((value >> 16) & 0xFF);
+        data[pos++] = (byte) ((value >> 8) & 0xFF);
+        data[pos++] = (byte) (value);
     }
 
     /**
-     * Creates a <code>Box</code> object with the provided <code>type</code>
-     * based on the provided Node object based on reflection.
-     * 
+     * Creates a <code>Box</code> object with the provided <code>type</code> based on the provided Node object based on
+     * reflection.
+     *
      * @todo handle Exception
      */
     public static JP2KBox createBox(int type, Node node) throws IIOInvalidTreeException {
-        Class<? extends JP2KBox> boxClass =boxClasses.get(new Integer(type));
+        Class<? extends JP2KBox> boxClass = boxClasses.get(new Integer(type));
 
         try {
             // gets the constructor with <code>Node</code> parameter
-            Constructor<? extends JP2KBox> cons = boxClass.getConstructor(new Class[] { Node.class });
+            Constructor<? extends JP2KBox> cons = boxClass.getConstructor(new Class[] {Node.class});
             if (cons != null) {
-                return cons.newInstance(new Object[] { node });
+                return cons.newInstance(new Object[] {node});
             }
         } catch (NoSuchMethodException e) {
-        	LOGGER.log(Level.SEVERE,e.getLocalizedMessage(),e);
+            LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
         } catch (InvocationTargetException e) {
-        	LOGGER.log(Level.SEVERE,e.getLocalizedMessage(),e);
+            LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
         } catch (IllegalAccessException e) {
-        	LOGGER.log(Level.SEVERE,e.getLocalizedMessage(),e);
+            LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
         } catch (InstantiationException e) {
-        	LOGGER.log(Level.SEVERE,e.getLocalizedMessage(),e);
+            LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
         }
         throw new IllegalArgumentException("The provided type or Node are not valid");
     }
 
     /**
-     * Creates a <code>Box</code> object with the provided <code>type</code>
-     * based on the provided data object based on reflection.
+     * Creates a <code>Box</code> object with the provided <code>type</code> based on the provided data object based on
+     * reflection.
      */
     public static JP2KBox createBox(int type, byte[] data) {
-        Class<? extends JP2KBox> boxClass =  boxClasses.get(new Integer(type));
+        Class<? extends JP2KBox> boxClass = boxClasses.get(new Integer(type));
 
         try {
-        	//super box elements have default contructors
-        	if(data==null)
-        		return boxClass.newInstance();
-        	
+            // super box elements have default contructors
+            if (data == null) return boxClass.newInstance();
+
             // gets the constructor with <code>byte[]</code> parameter
-            final Constructor<? extends JP2KBox> cons = boxClass.getConstructor(Array.newInstance(
-                    byte.class, 0).getClass());
+            final Constructor<? extends JP2KBox> cons =
+                    boxClass.getConstructor(Array.newInstance(byte.class, 0).getClass());
             if (cons != null) {
-                return cons.newInstance(new Object[] { data });
+                return cons.newInstance(new Object[] {data});
             }
         } catch (NoSuchMethodException e) {
-        	LOGGER.log(Level.SEVERE,e.getLocalizedMessage(),e);
+            LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
         } catch (InvocationTargetException e) {
-        	LOGGER.log(Level.SEVERE,e.getLocalizedMessage(),e);
+            LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
         } catch (IllegalAccessException e) {
-        	LOGGER.log(Level.SEVERE,e.getLocalizedMessage(),e);
+            LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
         } catch (InstantiationException e) {
-        	LOGGER.log(Level.SEVERE,e.getLocalizedMessage(),e);
+            LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
         }
         throw new IllegalArgumentException("The provided type or data are not valid");
     }
@@ -308,8 +293,7 @@ public class BoxUtilities {
     public static byte[] getByteArrayElementValue(Node node) {
         if (node instanceof IIOMetadataNode) {
             Object obj = ((IIOMetadataNode) node).getUserObject();
-            if (obj instanceof byte[])
-                return (byte[]) obj;
+            if (obj instanceof byte[]) return (byte[]) obj;
         }
 
         return parseByteArray(node.getNodeValue());
@@ -319,13 +303,11 @@ public class BoxUtilities {
     public static byte getByteElementValue(Node node) {
         if (node instanceof IIOMetadataNode) {
             Object obj = ((IIOMetadataNode) node).getUserObject();
-            if (obj instanceof Byte)
-                return ((Byte) obj).byteValue();
+            if (obj instanceof Byte) return ((Byte) obj).byteValue();
         }
 
         String value = node.getNodeValue();
-        if (value != null)
-            return new Byte(value).byteValue();
+        if (value != null) return new Byte(value).byteValue();
         return (byte) 0;
     }
 
@@ -333,8 +315,7 @@ public class BoxUtilities {
     public static int[] getIntArrayElementValue(Node node) {
         if (node instanceof IIOMetadataNode) {
             Object obj = ((IIOMetadataNode) node).getUserObject();
-            if (obj instanceof int[])
-                return (int[]) obj;
+            if (obj instanceof int[]) return (int[]) obj;
         }
 
         return parseIntArray(node.getNodeValue());
@@ -344,20 +325,17 @@ public class BoxUtilities {
     public static int getIntElementValue(Node node) {
         if (node instanceof IIOMetadataNode) {
             Object obj = ((IIOMetadataNode) node).getUserObject();
-            if (obj instanceof Integer)
-                return ((Integer) obj).intValue();
+            if (obj instanceof Integer) return ((Integer) obj).intValue();
         }
 
         String value = node.getNodeValue();
-        if (value != null)
-            return new Integer(value).intValue();
+        if (value != null) return new Integer(value).intValue();
         return 0;
     }
 
     /**
-     * Returns the XML tag name defined in JP2 XML xsd/dtd for the box with the
-     * provided <code>type</code>. If the <code>type</code> is not known,
-     * the string <code>"unknown"</code> is returned.
+     * Returns the XML tag name defined in JP2 XML xsd/dtd for the box with the provided <code>type</code>. If the
+     * <code>type</code> is not known, the string <code>"unknown"</code> is returned.
      */
     public static String getName(int type) {
         String name = names.get(new Integer(type));
@@ -365,9 +343,8 @@ public class BoxUtilities {
     }
 
     /**
-     * Returns the BoxName for the box with the provided <code>type</code>.
-     * If the <code>type</code> is not known, the string
-     * <code>"unknown"</code> is returned.
+     * Returns the BoxName for the box with the provided <code>type</code>. If the <code>type</code> is not known, the
+     * string <code>"unknown"</code> is returned.
      */
     public static String getBoxName(int type) {
         String name = boxNames.get(new Integer(type));
@@ -378,24 +355,19 @@ public class BoxUtilities {
     public static short getShortElementValue(Node node) {
         if (node instanceof IIOMetadataNode) {
             Object obj = ((IIOMetadataNode) node).getUserObject();
-            if (obj instanceof Short)
-                return ((Short) obj).shortValue();
+            if (obj instanceof Short) return ((Short) obj).shortValue();
         }
         String value = node.getNodeValue();
-        if (value != null)
-            return new Short(value).shortValue();
+        if (value != null) return new Short(value).shortValue();
         return (short) 0;
     }
 
-    /**
-     * Gets its <code>String</code> value from an <code>IIOMetadataNode</code>.
-     */
+    /** Gets its <code>String</code> value from an <code>IIOMetadataNode</code>. */
     public static String getStringElementValue(Node node) {
 
         if (node instanceof IIOMetadataNode) {
             Object obj = ((IIOMetadataNode) node).getUserObject();
-            if (obj instanceof String)
-                return (String) obj;
+            if (obj instanceof String) return (String) obj;
         }
 
         return node.getNodeValue();
@@ -403,16 +375,15 @@ public class BoxUtilities {
 
     /** Returns the type String based on the provided name. */
     public static String getTypeByName(String name) {
-        for (Map.Entry<Integer,String> entry:names.entrySet()) {
-            if (name.equals(entry.getValue()))
-                return getTypeString(entry.getKey());
+        for (Map.Entry<Integer, String> entry : names.entrySet()) {
+            if (name.equals(entry.getValue())) return getTypeString(entry.getKey());
         }
         return null;
     }
 
     /**
-     * Converts the box type from integer to string. This is necessary because
-     * type is defined as String in xsd/dtd and integer in the box classes.
+     * Converts the box type from integer to string. This is necessary because type is defined as String in xsd/dtd and
+     * integer in the box classes.
      */
     public static int getTypeInt(String s) {
         byte[] buf = s.getBytes();
@@ -425,8 +396,8 @@ public class BoxUtilities {
     }
 
     /**
-     * Converts the box type from integer to string. This is necessary because
-     * type is defined as String in xsd/dtd and integer in the box classes.
+     * Converts the box type from integer to string. This is necessary because type is defined as String in xsd/dtd and
+     * integer in the box classes.
      */
     public static String getTypeString(int type) {
         byte[] buf = new byte[4];
@@ -440,8 +411,7 @@ public class BoxUtilities {
 
     /** Parses the byte array expressed by a string. */
     public static byte[] parseByteArray(String value) {
-        if (value == null)
-            return null;
+        if (value == null) return null;
 
         StringTokenizer token = new StringTokenizer(value);
         int count = token.countTokens();
@@ -456,8 +426,7 @@ public class BoxUtilities {
 
     /** Parses the integer array expressed a string. */
     public static int[] parseIntArray(String value) {
-        if (value == null)
-            return null;
+        if (value == null) return null;
 
         StringTokenizer token = new StringTokenizer(value);
         int count = token.countTokens();
@@ -470,49 +439,40 @@ public class BoxUtilities {
         return buf;
     }
 
-    /**
-     * Returns the Box class for the box with the provided <code>type</code>.
-     */
+    /** Returns the Box class for the box with the provided <code>type</code>. */
     public static Class<? extends BaseJP2KBox> getBoxClass(int type) {
         switch (type) {
-	        case ResolutionBox.BOX_TYPE:
-	        case ResolutionBox.BOX_TYPE_CAPTURE:
-	        case ResolutionBox.BOX_TYPE_DEFAULT_DISPLAY:
-	            return ResolutionBox.class;
+            case ResolutionBox.BOX_TYPE:
+            case ResolutionBox.BOX_TYPE_CAPTURE:
+            case ResolutionBox.BOX_TYPE_DEFAULT_DISPLAY:
+                return ResolutionBox.class;
         }
         return boxClasses.get(type);
     }
 
     /**
-     * Return the numeric decimal value of an ASCII code representing a
-     * Hexadecimal value.
-     * 
-     * @param c
-     *                the ASCII code representing a Hexadecimal value.
-     * @return the numeric decimal value of an ASCII code representing a
-     *         Hexadecimal value.
+     * Return the numeric decimal value of an ASCII code representing a Hexadecimal value.
+     *
+     * @param c the ASCII code representing a Hexadecimal value.
+     * @return the numeric decimal value of an ASCII code representing a Hexadecimal value.
      */
     public static int getValue(int c) {
-        if (c < 58 && c >= 48)
-            return c - 48;
-        else if (c < 71 && c >= 65)
-            return c - 55;
+        if (c < 58 && c >= 48) return c - 48;
+        else if (c < 71 && c >= 65) return c - 55;
         return -1;
     }
 
     /**
-     * 
      * @param box
      * @return
-     * @throws KduException
-     * TODO optimize me
+     * @throws KduException TODO optimize me
      */
-	public static byte[] getContent(final Jp2_input_box box) throws KduException {
-	    final int nBytes = (int) box.Get_box_bytes();
-	    final byte[] buffer = new byte[nBytes];
-	    int readBytes = box.Read(buffer, nBytes);
-	    final byte[] destBuffer = new byte[readBytes];
-	    System.arraycopy(buffer, 0, destBuffer, 0, readBytes);
-	    return destBuffer;
-	}
+    public static byte[] getContent(final Jp2_input_box box) throws KduException {
+        final int nBytes = (int) box.Get_box_bytes();
+        final byte[] buffer = new byte[nBytes];
+        int readBytes = box.Read(buffer, nBytes);
+        final byte[] destBuffer = new byte[readBytes];
+        System.arraycopy(buffer, 0, destBuffer, 0, readBytes);
+        return destBuffer;
+    }
 }

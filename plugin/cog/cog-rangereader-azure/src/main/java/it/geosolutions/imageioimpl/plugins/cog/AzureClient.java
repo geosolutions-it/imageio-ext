@@ -1,35 +1,25 @@
 /**
- * This program is free software: you can redistribute it and/or modify it under the terms of the
- * GNU Lesser General Public License as published by the Free Software Foundation, either version 3
- * of the License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General
+ * Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
  *
- * <p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * <p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  *
- * <p>You should have received a copy of the GNU Lesser General Public License along with this
- * program. If not, see <http://www.gnu.org/licenses/>.
+ * <p>You should have received a copy of the GNU Lesser General Public License along with this program. If not, see
+ * <http://www.gnu.org/licenses/>.
  *
  * @author Andrea Aime, GeoSolutions, Copyright 2019
- *
- *    ImageI/O-Ext - OpenSource Java Image translation Library
- *    http://www.geo-solutions.it/
- *    https://github.com/geosolutions-it/imageio-ext
- *    (C) 2022, GeoSolutions
- *
- *    This library is free software; you can redistribute it and/or
- *    modify it under the terms of the GNU Lesser General Public
- *    License as published by the Free Software Foundation;
- *    either version 3 of the License, or (at your option) any later version.
- *
- *    This library is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *    Lesser General Public License for more details.
+ *     <p>ImageI/O-Ext - OpenSource Java Image translation Library http://www.geo-solutions.it/
+ *     https://github.com/geosolutions-it/imageio-ext (C) 2022, GeoSolutions
+ *     <p>This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser
+ *     General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your
+ *     option) any later version.
+ *     <p>This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
+ *     implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+ *     License for more details.
  */
 package it.geosolutions.imageioimpl.plugins.cog;
-
-import java.time.Duration;
 
 import com.azure.core.credential.AzureNamedKeyCredential;
 import com.azure.core.http.HttpClient;
@@ -45,10 +35,11 @@ import com.azure.storage.blob.models.BlobRange;
 import com.azure.storage.blob.models.BlobRequestConditions;
 import com.azure.storage.blob.models.BlobStorageException;
 import com.azure.storage.blob.models.DownloadRetryOptions;
+import java.time.Duration;
 
 /**
- * AzureClient class has been adapted from GWC Azure blob module, but it won't
- * try to create a missing container since it's read-only
+ * AzureClient class has been adapted from GWC Azure blob module, but it won't try to create a missing container since
+ * it's read-only
  */
 class AzureClient {
 

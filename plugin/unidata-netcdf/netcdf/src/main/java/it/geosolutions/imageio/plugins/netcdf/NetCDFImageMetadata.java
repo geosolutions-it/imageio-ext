@@ -20,27 +20,25 @@ import it.geosolutions.imageio.core.CoreCommonImageMetadata;
 import it.geosolutions.imageio.ndplugin.BaseImageMetadata;
 import it.geosolutions.imageio.ndplugin.BaseImageReader;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.KeyValuePair;
-
 import java.io.IOException;
 import java.util.HashMap;
-
 import javax.imageio.metadata.IIOMetadataNode;
-
 import org.w3c.dom.Node;
 
 /**
  * Class for the NetCDF Image Metadata representation.
- * 
+ *
  * @author Alessio Fabiani, GeoSolutions
  * @author Daniele Romagnoli, GeoSolutions
  */
 public class NetCDFImageMetadata extends BaseImageMetadata {
 
-    private final static String driverName = "netCDF";
+    private static final String driverName = "netCDF";
 
-    private final static String driverDescription = "Network Common Data Format";
+    private static final String driverDescription = "Network Common Data Format";
 
-    public static final String nativeMetadataFormatName = "it_geosolutions_imageio_plugins_nectdf_netcdfImageMetadata_1.0";
+    public static final String nativeMetadataFormatName =
+            "it_geosolutions_imageio_plugins_nectdf_netcdfImageMetadata_1.0";
 
     private HashMap<String, String> additionalMetadata;
 
@@ -60,26 +58,24 @@ public class NetCDFImageMetadata extends BaseImageMetadata {
             setDriverDescription(driverDescription);
             setDatasetName(reader.getInnerReader().getVariableName(imageIndex));
             final double scale = reader.getScale(imageIndex);
-            if (!Double.isNaN(scale))
-                setScales(new Double[] { Double.valueOf(scale) });
+            if (!Double.isNaN(scale)) setScales(new Double[] {Double.valueOf(scale)});
             final double offset = reader.getOffset(imageIndex);
-            if (!Double.isNaN(offset))
-                setOffsets(new Double[] { Double.valueOf(offset) });
+            if (!Double.isNaN(offset)) setOffsets(new Double[] {Double.valueOf(offset)});
             final double fillValue = reader.getFillValue(imageIndex);
-            if (!Double.isNaN(fillValue))
-                setNoDataValues(new Double[] { Double.valueOf(fillValue) });
+            if (!Double.isNaN(fillValue)) setNoDataValues(new Double[] {Double.valueOf(fillValue)});
 
             // TODO: Setting valid range as max min is ok?
             final double[] validRange = reader.getValidRange(imageIndex);
-            if (validRange != null && validRange.length == 2
+            if (validRange != null
+                    && validRange.length == 2
                     && !Double.isNaN(validRange[0])
                     && !Double.isNaN(validRange[1])) {
-                setMinimums(new Double[] { Double.valueOf(validRange[0]) });
-                setMaximums(new Double[] { Double.valueOf(validRange[1]) });
+                setMinimums(new Double[] {Double.valueOf(validRange[0])});
+                setMaximums(new Double[] {Double.valueOf(validRange[1])});
             }
 
             // overviews are always absent
-            setNumOverviews(new int[] { 0 });
+            setNumOverviews(new int[] {0});
 
             final BaseNetCDFImageReader innerReader = reader.getInnerReader();
             final int numAttributes = innerReader.getNumAttributes(imageIndex);
@@ -91,26 +87,22 @@ public class NetCDFImageMetadata extends BaseImageMetadata {
                 additionalMetadata.put(attributeName, attributeValue);
             }
 
-        } else
-            throw new IllegalArgumentException( "Reader is not a NetCDFImageReader.");
+        } else throw new IllegalArgumentException("Reader is not a NetCDFImageReader.");
     }
 
     /**
-     * Returns an XML DOM <code>Node</code> object that represents the root of
-     * a tree of common stream metadata contained within this object according
-     * to the conventions defined by a given metadata format name.
+     * Returns an XML DOM <code>Node</code> object that represents the root of a tree of common stream metadata
+     * contained within this object according to the conventions defined by a given metadata format name.
      */
     public Node getAsTree(String formatName) {
-        if (NetCDFImageMetadata.nativeMetadataFormatName .equalsIgnoreCase(formatName))
-            return createNativeTree();
+        if (NetCDFImageMetadata.nativeMetadataFormatName.equalsIgnoreCase(formatName)) return createNativeTree();
         else if (CoreCommonImageMetadata.nativeMetadataFormatName.equalsIgnoreCase(formatName))
             return super.createCommonNativeTree();
-        throw new IllegalArgumentException(formatName+ " is not a supported format name");
+        throw new IllegalArgumentException(formatName + " is not a supported format name");
     }
 
     private synchronized Node createNativeTree() {
-        if (this.nativeTree != null)
-            return this.nativeTree;
+        if (this.nativeTree != null) return this.nativeTree;
         nativeTree = new IIOMetadataNode(NetCDFImageMetadata.nativeMetadataFormatName);
 
         // ////////////////////////////////////////////////////////////////////
@@ -131,5 +123,4 @@ public class NetCDFImageMetadata extends BaseImageMetadata {
 
         return nativeTree;
     }
-
 }

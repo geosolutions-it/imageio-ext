@@ -21,11 +21,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Utility class to examine all COG tiles that need to be read for the current request and build a list of ranges
- * tiles that are in a contiguous sequence.
+ * Utility class to examine all COG tiles that need to be read for the current request and build a list of ranges tiles
+ * that are in a contiguous sequence.
  *
- * @author joshfix
- * Created on 2019-08-27
+ * @author joshfix Created on 2019-08-27
  */
 public class ContiguousRangeComposer {
 
@@ -35,9 +34,10 @@ public class ContiguousRangeComposer {
     protected Set<long[]> ranges = new HashSet<>();
 
     /**
-     * we don't add the initial start/end range immediately.  instead, we will wait until the next range is added
-     * and compare it's start position with the current end position.  if it's contiguous, we extend the end range
-     * by the byte count of the added tile.  if it's not, we add the current start/end as a range.
+     * we don't add the initial start/end range immediately. instead, we will wait until the next range is added and
+     * compare it's start position with the current end position. if it's contiguous, we extend the end range by the
+     * byte count of the added tile. if it's not, we add the current start/end as a range.
+     *
      * @param initialRangeStart start byte location of the tile
      * @param initialRangeEnd end byte location of the tile
      */
@@ -47,9 +47,9 @@ public class ContiguousRangeComposer {
     }
 
     /**
-     * Accepts a start and end byte position and determines if the start position directly follows the current range
-     * end position.  If true, the range end will be extended.  If false, the current range will be added to the list
-     * of ranges and a new current range start/end will be established.
+     * Accepts a start and end byte position and determines if the start position directly follows the current range end
+     * position. If true, the range end will be extended. If false, the current range will be added to the list of
+     * ranges and a new current range start/end will be established.
      *
      * @param start the start byte position
      * @param end the end byte position
@@ -62,21 +62,22 @@ public class ContiguousRangeComposer {
             currentRangeEnd = end;
         } else {
             // this tile is in a new position.  add the current range and start a new one.
-            ranges.add(new long[]{currentRangeStart, currentRangeEnd});
+            ranges.add(new long[] {currentRangeStart, currentRangeEnd});
             currentRangeStart = start;
             currentRangeEnd = end;
         }
     }
 
     /**
-     * Returns the set of ranges.  Note that the addTileRange method only adds a range to the list if the range was not
+     * Returns the set of ranges. Note that the addTileRange method only adds a range to the list if the range was not
      * contiguous
+     *
      * @return
      */
     public Set<long[]> getRanges() {
         if (tileAdded) {
             Set<long[]> rangeCopy = new HashSet<>(ranges);
-            rangeCopy.add(new long[]{currentRangeStart, currentRangeEnd});
+            rangeCopy.add(new long[] {currentRangeStart, currentRangeEnd});
             return rangeCopy;
         }
 

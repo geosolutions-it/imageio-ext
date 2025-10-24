@@ -17,36 +17,31 @@
 package it.geosolutions.imageio.plugins.turbojpeg;
 
 import it.geosolutions.imageio.utilities.ImageOutputStreamAdapter2;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.Locale;
-
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.spi.ServiceRegistry;
 
-/**
- * @author Daniele Romagnoli, GeoSolutions SaS
- */
+/** @author Daniele Romagnoli, GeoSolutions SaS */
 public class TurboJpegImageWriterSpi extends ImageWriterSpi {
-    
+
     static {
-        // Initialization to make sure the native library is available 
+        // Initialization to make sure the native library is available
         // before instantiating any writer
         TurboJpegUtilities.loadTurboJpeg();
-        
     }
 
-    static final String[] suffixes = { "JPEG", "JPG", "jpeg", "jpg" };
+    static final String[] suffixes = {"JPEG", "JPG", "jpeg", "jpg"};
 
-    static final String[] formatNames = { "jpeg", "jpg" };
+    static final String[] formatNames = {"jpeg", "jpg"};
 
-    static final String[] MIMETypes = { "image/jpeg" };
+    static final String[] MIMETypes = {"image/jpeg"};
 
     static final String version = "1.0";
 
@@ -55,7 +50,7 @@ public class TurboJpegImageWriterSpi extends ImageWriterSpi {
     static final String vendorName = "GeoSolutions";
 
     // ReaderSpiNames
-    static final String[] readerSpiName = { "it.geosolutions.imageio.plugins.turbojpeg.TurboJpegImageReaderSpi" };
+    static final String[] readerSpiName = {"it.geosolutions.imageio.plugins.turbojpeg.TurboJpegImageReaderSpi"};
 
     // StreamMetadataFormatNames and StreamMetadataFormatClassNames
     static final boolean supportsStandardStreamMetadataFormat = false;
@@ -75,16 +70,21 @@ public class TurboJpegImageWriterSpi extends ImageWriterSpi {
 
     static final String nativeImageMetadataFormatClassName = null;
 
-    static final String[] extraImageMetadataFormatNames = { null };
+    static final String[] extraImageMetadataFormatNames = {null};
 
-    static final String[] extraImageMetadataFormatClassNames = { null };
-    
-    /**
-     * Default {@link ImageWriterSpi} constructor for JP2K writers.
-     */
+    static final String[] extraImageMetadataFormatClassNames = {null};
+
+    /** Default {@link ImageWriterSpi} constructor for JP2K writers. */
     public TurboJpegImageWriterSpi() {
-        super(vendorName, version, formatNames, suffixes, MIMETypes, writerCN,
-                new Class[]{ImageOutputStreamAdapter2.class, OutputStream.class, File.class}, readerSpiName,
+        super(
+                vendorName,
+                version,
+                formatNames,
+                suffixes,
+                MIMETypes,
+                writerCN,
+                new Class[] {ImageOutputStreamAdapter2.class, OutputStream.class, File.class},
+                readerSpiName,
                 supportsStandardStreamMetadataFormat,
                 nativeStreamMetadataFormatName,
                 nativeStreamMetadataFormatClassName,
@@ -97,23 +97,17 @@ public class TurboJpegImageWriterSpi extends ImageWriterSpi {
                 extraImageMetadataFormatClassNames);
     }
 
-    /**
-     * @see javax.imageio.spi.ImageWriterSpi#createWriterInstance(java.lang.Object)
-     */
+    /** @see javax.imageio.spi.ImageWriterSpi#createWriterInstance(java.lang.Object) */
     public ImageWriter createWriterInstance(Object extension) throws IOException {
         return new TurboJpegImageWriter(this);
     }
 
-    /**
-     * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
-     */
+    /** @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale) */
     public String getDescription(Locale locale) {
         return "SPI for JPEG ImageWriter based on TurboJPEG";
     }
 
-    /**
-     * TODO: Refine the check before releasing.
-     */
+    /** TODO: Refine the check before releasing. */
     public boolean canEncodeImage(ImageTypeSpecifier type) {
         return true;
     }
@@ -124,7 +118,7 @@ public class TurboJpegImageWriterSpi extends ImageWriterSpi {
         if (!TurboJpegUtilities.isTurboJpegAvailable()) {
             IIORegistry iioRegistry = (IIORegistry) registry;
             final Class<ImageWriterSpi> spiClass = ImageWriterSpi.class;
-            final Iterator<ImageWriterSpi> iter = iioRegistry.getServiceProviders(spiClass,true);
+            final Iterator<ImageWriterSpi> iter = iioRegistry.getServiceProviders(spiClass, true);
             while (iter.hasNext()) {
                 final ImageWriterSpi provider = (ImageWriterSpi) iter.next();
                 if (provider instanceof TurboJpegImageWriterSpi) {
@@ -133,5 +127,4 @@ public class TurboJpegImageWriterSpi extends ImageWriterSpi {
             }
         }
     }
-
 }

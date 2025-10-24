@@ -19,35 +19,30 @@ package it.geosolutions.imageio.plugins.doq2;
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
-import it.geosolutions.imageio.utilities.Utilities;
 import it.geosolutions.resources.TestData;
-
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import javax.imageio.ImageReadParam;
 import org.eclipse.imagen.ImageLayout;
 import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.ParameterBlockImageN;
 import org.eclipse.imagen.RenderedOp;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
  * Testing reading capabilities for {@link DOQ2ImageReader}.
- * 
+ *
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class DOQ2Test extends AbstractGDALTest {
-    public final static String fileName = "C3607614_truncated.NWS";
+    public static final String fileName = "C3607614_truncated.NWS";
 
- 
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -55,7 +50,7 @@ public class DOQ2Test extends AbstractGDALTest {
 
     /**
      * Test read exploiting common ImageN operations (Crop-Translate-Rotate)
-     * 
+     *
      * @throws FileNotFoundException
      * @throws IOException
      */
@@ -81,16 +76,16 @@ public class DOQ2Test extends AbstractGDALTest {
         pbjImageRead.setParameter("Input", file);
         pbjImageRead.setParameter("readParam", irp);
 
-        //NOTE that the actual sample data (fakedoq1.doq) only contains a row.
-        //Therefore, we need to force the read on that reduced area.
-        //Requesting a bigger image height will result in a GDAL ReadBlock error. 
-        irp.setSourceRegion(new Rectangle(0,0,500,1));
-        
+        // NOTE that the actual sample data (fakedoq1.doq) only contains a row.
+        // Therefore, we need to force the read on that reduced area.
+        // Requesting a bigger image height will result in a GDAL ReadBlock error.
+        irp.setSourceRegion(new Rectangle(0, 0, 500, 1));
+
         final ImageLayout l = new ImageLayout();
         l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512).setTileWidth(512);
 
         // get a RenderedImage
-        RenderedOp image = ImageN.create("ImageRead", pbjImageRead,new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, l));
+        RenderedOp image = ImageN.create("ImageRead", pbjImageRead, new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, l));
 
         if (TestData.isInteractiveTest()) {
             Viewer.visualizeAllInformation(image, "test");
@@ -101,5 +96,4 @@ public class DOQ2Test extends AbstractGDALTest {
         Assert.assertEquals(1, image.getHeight());
         ImageIOUtilities.disposeImage(image);
     }
-
 }

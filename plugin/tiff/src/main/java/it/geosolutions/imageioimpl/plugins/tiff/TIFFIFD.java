@@ -1,42 +1,42 @@
 /*
  * $RCSfile: TIFFIFD.java,v $
  *
- * 
+ *
  * Copyright (c) 2005 Sun Microsystems, Inc. All  Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
- * are met: 
- * 
- * - Redistribution of source code must retain the above copyright 
+ * are met:
+ *
+ * - Redistribution of source code must retain the above copyright
  *   notice, this  list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in 
+ *   notice, this list of conditions and the following disclaimer in
  *   the documentation and/or other materials provided with the
  *   distribution.
- * 
- * Neither the name of Sun Microsystems, Inc. or the names of 
- * contributors may be used to endorse or promote products derived 
+ *
+ * Neither the name of Sun Microsystems, Inc. or the names of
+ * contributors may be used to endorse or promote products derived
  * from this software without specific prior written permission.
- * 
- * This software is provided "AS IS," without a warranty of any 
- * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND 
- * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, 
+ *
+ * This software is provided "AS IS," without a warranty of any
+ * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND
+ * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY
- * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL 
- * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF 
+ * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL
+ * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF
  * USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS
- * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR 
+ * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR
  * ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL,
  * CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND
  * REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR
  * INABILITY TO USE THIS SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGES. 
- * 
- * You acknowledge that this software is not designed or intended for 
- * use in the design, construction, operation or maintenance of any 
- * nuclear facility. 
+ * POSSIBILITY OF SUCH DAMAGES.
+ *
+ * You acknowledge that this software is not designed or intended for
+ * use in the design, construction, operation or maintenance of any
+ * nuclear facility.
  *
  * $Revision: 1.7 $
  * $Date: 2006/09/27 23:56:30 $
@@ -78,7 +78,6 @@ import it.geosolutions.imageio.plugins.tiff.TIFFDirectory;
 import it.geosolutions.imageio.plugins.tiff.TIFFField;
 import it.geosolutions.imageio.plugins.tiff.TIFFTag;
 import it.geosolutions.imageio.plugins.tiff.TIFFTagSet;
-
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -86,23 +85,22 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 
-
 public class TIFFIFD extends TIFFDirectory {
-	
-	/** we do not allow lazy loading by default.**/
+
+    /** we do not allow lazy loading by default.* */
     private static final boolean LAZY_LOADING = Boolean.getBoolean("it.geosolutions.imageio.tiff.lazy");
-	private long stripOrTileByteCountsPosition = -1;
+
+    private long stripOrTileByteCountsPosition = -1;
     private long stripOrTileOffsetsPosition = -1;
     private long lastPosition = -1;
 
     public static TIFFTag getTag(int tagNumber, List tagSets) {
         Iterator iter = tagSets.iterator();
         while (iter.hasNext()) {
-            TIFFTagSet tagSet = (TIFFTagSet)iter.next();
+            TIFFTagSet tagSet = (TIFFTagSet) iter.next();
             TIFFTag tag = tagSet.getTag(tagNumber);
             if (tag != null) {
                 return tag;
@@ -115,7 +113,7 @@ public class TIFFIFD extends TIFFDirectory {
     public static TIFFTag getTag(String tagName, List tagSets) {
         Iterator iter = tagSets.iterator();
         while (iter.hasNext()) {
-            TIFFTagSet tagSet = (TIFFTagSet)iter.next();
+            TIFFTagSet tagSet = (TIFFTagSet) iter.next();
             TIFFTag tag = tagSet.getTag(tagName);
             if (tag != null) {
                 return tag;
@@ -125,76 +123,73 @@ public class TIFFIFD extends TIFFDirectory {
         return null;
     }
 
-    private static void writeTIFFFieldToStream(TIFFField field,
-                                               ImageOutputStream stream)
-        throws IOException {
+    private static void writeTIFFFieldToStream(TIFFField field, ImageOutputStream stream) throws IOException {
         int count = field.getCount();
         Object data = field.getData();
 
         switch (field.getType()) {
-        case TIFFTag.TIFF_ASCII:
-            for (int i = 0; i < count; i++) {
-                String s = ((String[])data)[i];
-                int length = s.length();
-                for (int j = 0; j < length; j++) {
-                    stream.writeByte(s.charAt(j) & 0xff);
+            case TIFFTag.TIFF_ASCII:
+                for (int i = 0; i < count; i++) {
+                    String s = ((String[]) data)[i];
+                    int length = s.length();
+                    for (int j = 0; j < length; j++) {
+                        stream.writeByte(s.charAt(j) & 0xff);
+                    }
+                    stream.writeByte(0);
                 }
-                stream.writeByte(0);
-            }
-            break;
-        case TIFFTag.TIFF_UNDEFINED:
-        case TIFFTag.TIFF_BYTE:
-        case TIFFTag.TIFF_SBYTE:
-            stream.write((byte[])data);
-            break;
-        case TIFFTag.TIFF_SHORT:
-            stream.writeChars((char[])data, 0, ((char[])data).length);
-            break;
-        case TIFFTag.TIFF_SSHORT:
-            stream.writeShorts((short[])data, 0, ((short[])data).length);
-            break;
-        case TIFFTag.TIFF_SLONG:
-            stream.writeInts((int[])data, 0, ((int[])data).length);
-            break;
-        case TIFFTag.TIFF_LONG:
-            for (int i = 0; i < count; i++) {
-                stream.writeInt((int)(((long[])data)[i]));
-            }
-            break;
-        case TIFFTag.TIFF_LONG8:
-        	stream.writeLongs((long[])data,0,((long[])data).length);
-            break;
-        case TIFFTag.TIFF_IFD_POINTER:
-            stream.writeInt(0); // will need to be backpatched
-            break;
-        case TIFFTag.TIFF_FLOAT:
-            stream.writeFloats((float[])data, 0, ((float[])data).length);
-            break;
-        case TIFFTag.TIFF_DOUBLE:
-            stream.writeDoubles((double[])data, 0, ((double[])data).length);
-            break;
-        case TIFFTag.TIFF_SRATIONAL:
-            for (int i = 0; i < count; i++) {
-                stream.writeInt(((int[][])data)[i][0]);
-                stream.writeInt(((int[][])data)[i][1]);
-            }
-            break;
-        case TIFFTag.TIFF_RATIONAL:
-            for (int i = 0; i < count; i++) {
-                long num = ((long[][])data)[i][0];
-                long den = ((long[][])data)[i][1];
-                stream.writeInt((int)num);
-                stream.writeInt((int)den);
-            }
-            break;
-        default:
-            // error
+                break;
+            case TIFFTag.TIFF_UNDEFINED:
+            case TIFFTag.TIFF_BYTE:
+            case TIFFTag.TIFF_SBYTE:
+                stream.write((byte[]) data);
+                break;
+            case TIFFTag.TIFF_SHORT:
+                stream.writeChars((char[]) data, 0, ((char[]) data).length);
+                break;
+            case TIFFTag.TIFF_SSHORT:
+                stream.writeShorts((short[]) data, 0, ((short[]) data).length);
+                break;
+            case TIFFTag.TIFF_SLONG:
+                stream.writeInts((int[]) data, 0, ((int[]) data).length);
+                break;
+            case TIFFTag.TIFF_LONG:
+                for (int i = 0; i < count; i++) {
+                    stream.writeInt((int) (((long[]) data)[i]));
+                }
+                break;
+            case TIFFTag.TIFF_LONG8:
+                stream.writeLongs((long[]) data, 0, ((long[]) data).length);
+                break;
+            case TIFFTag.TIFF_IFD_POINTER:
+                stream.writeInt(0); // will need to be backpatched
+                break;
+            case TIFFTag.TIFF_FLOAT:
+                stream.writeFloats((float[]) data, 0, ((float[]) data).length);
+                break;
+            case TIFFTag.TIFF_DOUBLE:
+                stream.writeDoubles((double[]) data, 0, ((double[]) data).length);
+                break;
+            case TIFFTag.TIFF_SRATIONAL:
+                for (int i = 0; i < count; i++) {
+                    stream.writeInt(((int[][]) data)[i][0]);
+                    stream.writeInt(((int[][]) data)[i][1]);
+                }
+                break;
+            case TIFFTag.TIFF_RATIONAL:
+                for (int i = 0; i < count; i++) {
+                    long num = ((long[][]) data)[i][0];
+                    long den = ((long[][]) data)[i][1];
+                    stream.writeInt((int) num);
+                    stream.writeInt((int) den);
+                }
+                break;
+            default:
+                // error
         }
     }
 
     public TIFFIFD(List tagSets, TIFFTag parentTag) {
-        super((TIFFTagSet[])tagSets.toArray(new TIFFTagSet[tagSets.size()]),
-              parentTag);
+        super((TIFFTagSet[]) tagSets.toArray(new TIFFTagSet[tagSets.size()]), parentTag);
     }
 
     public TIFFIFD(List tagSets) {
@@ -206,8 +201,7 @@ public class TIFFIFD extends TIFFDirectory {
     }
 
     /**
-     * Returns an <code>Iterator</code> over the TIFF fields. The
-     * traversal is in the order of increasing tag number.
+     * Returns an <code>Iterator</code> over the TIFF fields. The traversal is in the order of increasing tag number.
      */
     // Note: the sort is guaranteed for low fields by the use of an
     // array wherein the index corresponds to the tag number and for
@@ -219,91 +213,79 @@ public class TIFFIFD extends TIFFDirectory {
     // Stream position initially at beginning, left at end
     // if ignoreUnknownFields is true, do not load fields for which
     // a tag cannot be found in an allowed TagSet.
-    public void initialize(ImageInputStream stream,
-                           boolean ignoreUnknownFields) throws IOException {
+    public void initialize(ImageInputStream stream, boolean ignoreUnknownFields) throws IOException {
         initialize(stream, ignoreUnknownFields, false);
     }
-    public void initialize(ImageInputStream stream,
-            boolean ignoreUnknownFields, final boolean isBTIFF) throws IOException {
-    	removeTIFFFields();
+
+    public void initialize(ImageInputStream stream, boolean ignoreUnknownFields, final boolean isBTIFF)
+            throws IOException {
+        removeTIFFFields();
 
         List tagSetList = getTagSetList();
 
-       
         final long numEntries;
-        if(isBTIFF)
-        	numEntries= stream.readLong();
-        else
-        	numEntries= stream.readUnsignedShort();
-        
+        if (isBTIFF) numEntries = stream.readLong();
+        else numEntries = stream.readUnsignedShort();
+
         for (int i = 0; i < numEntries; i++) {
             // Read tag number, value type, and value count.
             int tag = stream.readUnsignedShort();
             int type = stream.readUnsignedShort();
             int count;
-	        if(isBTIFF)
-	        {
-	        	long count_=stream.readLong();
-	        	count = (int)count_;
-	        	if(count!=count_)
-	        		throw new IllegalArgumentException("unable to use long number of values");
-	        }
-	        else            
-	            count = (int)stream.readUnsignedInt();
+            if (isBTIFF) {
+                long count_ = stream.readLong();
+                count = (int) count_;
+                if (count != count_) throw new IllegalArgumentException("unable to use long number of values");
+            } else count = (int) stream.readUnsignedInt();
 
             // Get the associated TIFFTag.
             TIFFTag tiffTag = getTag(tag, tagSetList);
 
             // Ignore unknown fields.
-            if(ignoreUnknownFields && tiffTag == null) {
+            if (ignoreUnknownFields && tiffTag == null) {
                 // Skip the value/offset so as to leave the stream
                 // position at the start of the next IFD entry.
 
-            	if(isBTIFF)
-            		stream.skipBytes(8);
-            	else
-            		stream.skipBytes(4);
+                if (isBTIFF) stream.skipBytes(8);
+                else stream.skipBytes(4);
 
                 // XXX Warning message ...
 
                 // Continue with the next IFD entry.
                 continue;
             }
-       
+
             long nextTagOffset;
-            
-            if(isBTIFF){
-            	nextTagOffset = stream.getStreamPosition() + 8;
-            	int sizeOfType = TIFFTag.getSizeOfType(type);
-            	if (count*sizeOfType > 8) {
-	                long value = stream.readLong();
-	                stream.seek(value);
-	             }
-            }
-            else{            	
-            	nextTagOffset = stream.getStreamPosition() + 4;
-            	int sizeOfType = TIFFTag.getSizeOfType(type);
-	             if (count*sizeOfType > 4) {
-	                long value = stream.readUnsignedInt();
-	                stream.seek(value);
-	             }
-            }
-            
-            if (tag == BaselineTIFFTagSet.TAG_STRIP_BYTE_COUNTS ||
-                tag == BaselineTIFFTagSet.TAG_TILE_BYTE_COUNTS ||
-                tag == BaselineTIFFTagSet.TAG_JPEG_INTERCHANGE_FORMAT_LENGTH) {
-                this.stripOrTileByteCountsPosition =
-                    stream.getStreamPosition();
-                if (LAZY_LOADING) {
-                	type = type == TIFFTag.TIFF_LONG ? TIFFTag.TIFF_LAZY_LONG : TIFFTag.TIFF_LAZY_LONG8;
+
+            if (isBTIFF) {
+                nextTagOffset = stream.getStreamPosition() + 8;
+                int sizeOfType = TIFFTag.getSizeOfType(type);
+                if (count * sizeOfType > 8) {
+                    long value = stream.readLong();
+                    stream.seek(value);
                 }
-            } else if (tag == BaselineTIFFTagSet.TAG_STRIP_OFFSETS ||
-                       tag == BaselineTIFFTagSet.TAG_TILE_OFFSETS ||
-                       tag == BaselineTIFFTagSet.TAG_JPEG_INTERCHANGE_FORMAT) {
-                this.stripOrTileOffsetsPosition =
-                    stream.getStreamPosition();
+            } else {
+                nextTagOffset = stream.getStreamPosition() + 4;
+                int sizeOfType = TIFFTag.getSizeOfType(type);
+                if (count * sizeOfType > 4) {
+                    long value = stream.readUnsignedInt();
+                    stream.seek(value);
+                }
+            }
+
+            if (tag == BaselineTIFFTagSet.TAG_STRIP_BYTE_COUNTS
+                    || tag == BaselineTIFFTagSet.TAG_TILE_BYTE_COUNTS
+                    || tag == BaselineTIFFTagSet.TAG_JPEG_INTERCHANGE_FORMAT_LENGTH) {
+                this.stripOrTileByteCountsPosition = stream.getStreamPosition();
                 if (LAZY_LOADING) {
-                	type = type == TIFFTag.TIFF_LONG ? TIFFTag.TIFF_LAZY_LONG : TIFFTag.TIFF_LAZY_LONG8;
+                    type = type == TIFFTag.TIFF_LONG ? TIFFTag.TIFF_LAZY_LONG : TIFFTag.TIFF_LAZY_LONG8;
+                }
+            } else if (tag == BaselineTIFFTagSet.TAG_STRIP_OFFSETS
+                    || tag == BaselineTIFFTagSet.TAG_TILE_OFFSETS
+                    || tag == BaselineTIFFTagSet.TAG_JPEG_INTERCHANGE_FORMAT) {
+                this.stripOrTileOffsetsPosition = stream.getStreamPosition();
+                if (LAZY_LOADING) {
+                    type = type == TIFFTag.TIFF_LONG ? TIFFTag.TIFF_LAZY_LONG : TIFFTag.TIFF_LAZY_LONG8;
                 }
             }
 
@@ -311,159 +293,159 @@ public class TIFFIFD extends TIFFDirectory {
 
             try {
                 switch (type) {
-                case TIFFTag.TIFF_BYTE:
-                case TIFFTag.TIFF_SBYTE:
-                case TIFFTag.TIFF_UNDEFINED:
-                case TIFFTag.TIFF_ASCII:
-                    byte[] bvalues = new byte[count];
-                    stream.readFully(bvalues, 0, count);
-                
-                    if (type == TIFFTag.TIFF_ASCII) {
-                        // Can be multiple strings
-                        final List<String> v = new ArrayList<String>();
-                        boolean inString = false;
-                        int prevIndex = 0;
-                        for (int index = 0; index <= count; index++) {
-                            if (index < count && bvalues[index] != 0) {
-                                if (!inString) {
-                                // start of string
-                                    prevIndex = index;
-                                    inString = true;
-                                }
-                            } else { // null or special case at end of string
-                                if (inString) {
-                                // end of string
-                                    final String s = new String(bvalues, prevIndex,index - prevIndex);
-                                    v.add(s);
-                                    inString = false;
-                                }
-                            }
-                        }
+                    case TIFFTag.TIFF_BYTE:
+                    case TIFFTag.TIFF_SBYTE:
+                    case TIFFTag.TIFF_UNDEFINED:
+                    case TIFFTag.TIFF_ASCII:
+                        byte[] bvalues = new byte[count];
+                        stream.readFully(bvalues, 0, count);
 
-                        count = v.size();
-                        String[] strings;
-                        if(count != 0) {
-                            strings = new String[count];
-                            for (int c = 0 ; c < count; c++) {
-                                strings[c] = v.get(c);
+                        if (type == TIFFTag.TIFF_ASCII) {
+                            // Can be multiple strings
+                            final List<String> v = new ArrayList<String>();
+                            boolean inString = false;
+                            int prevIndex = 0;
+                            for (int index = 0; index <= count; index++) {
+                                if (index < count && bvalues[index] != 0) {
+                                    if (!inString) {
+                                        // start of string
+                                        prevIndex = index;
+                                        inString = true;
+                                    }
+                                } else { // null or special case at end of string
+                                    if (inString) {
+                                        // end of string
+                                        final String s = new String(bvalues, prevIndex, index - prevIndex);
+                                        v.add(s);
+                                        inString = false;
+                                    }
+                                }
                             }
+
+                            count = v.size();
+                            String[] strings;
+                            if (count != 0) {
+                                strings = new String[count];
+                                for (int c = 0; c < count; c++) {
+                                    strings[c] = v.get(c);
+                                }
+                            } else {
+                                // This case has been observed when the value of
+                                // 'count' recorded in the field is non-zero but
+                                // the value portion contains all nulls.
+                                count = 1;
+                                strings = new String[] {""};
+                            }
+
+                            obj = strings;
                         } else {
-                            // This case has been observed when the value of
-                            // 'count' recorded in the field is non-zero but
-                            // the value portion contains all nulls.
-                            count = 1;
-                            strings = new String[] {""};
+                            obj = bvalues;
                         }
-                    
-                        obj = strings;
-                    } else {
-                        obj = bvalues;
-                    }
-                    break;
-                
-                case TIFFTag.TIFF_SHORT:
-                    char[] cvalues = new char[count];
-                    for (int j = 0; j < count; j++) {
-                        cvalues[j] = (char)(stream.readUnsignedShort());
-                    }
-                    obj = cvalues;
-                    break;
-                
-                case TIFFTag.TIFF_LONG:
-                case TIFFTag.TIFF_IFD_POINTER:
-                    long[] lvalues = new long[count];
-                    for (int j = 0; j < count; j++) {
-                        lvalues[j] = stream.readUnsignedInt();
-                    }
-                    obj = lvalues;
-                    break;
-                
-                case TIFFTag.TIFF_RATIONAL:
-                    long[][] llvalues = new long[count][2];
-                    for (int j = 0; j < count; j++) {
-                        llvalues[j][0] = stream.readUnsignedInt();
-                        llvalues[j][1] = stream.readUnsignedInt();
-                    }
-                    obj = llvalues;
-                    break;
-                
-                case TIFFTag.TIFF_SSHORT:
-                    short[] svalues = new short[count];
-                    for (int j = 0; j < count; j++) {
-                        svalues[j] = stream.readShort();
-                    }
-                    obj = svalues;
-                    break;
-                
-                case TIFFTag.TIFF_SLONG:
-                    int[] ivalues = new int[count];
-                    for (int j = 0; j < count; j++) {
-                        ivalues[j] = stream.readInt();
-                    }
-                    obj = ivalues;
-                    break;
-                
-                case TIFFTag.TIFF_SRATIONAL:
-                    int[][] iivalues = new int[count][2];
-                    for (int j = 0; j < count; j++) {
-                        iivalues[j][0] = stream.readInt();
-                        iivalues[j][1] = stream.readInt();
-                    }
-                    obj = iivalues;
-                    break;
-                
-                case TIFFTag.TIFF_FLOAT:
-                    float[] fvalues = new float[count];
-                    for (int j = 0; j < count; j++) {
-                        fvalues[j] = stream.readFloat();
-                    }
-                    obj = fvalues;
-                    break;
-                
-                case TIFFTag.TIFF_DOUBLE:
-                    double[] dvalues = new double[count];
-                    for (int j = 0; j < count; j++) {
-                        dvalues[j] = stream.readDouble();
-                    }
-                    obj = dvalues;
-                    break;
-                           
-                case TIFFTag.TIFF_LONG8:
-                case TIFFTag.TIFF_SLONG8:	
-                case TIFFTag.TIFF_IFD8:
-                    long[] lBvalues = new long[count];
-                    for (int j = 0; j < count; j++) {
-                        lBvalues[j] = stream.readLong();
-                    }
-                    obj = lBvalues;
-                    break;
-                
-                case TIFFTag.TIFF_LAZY_LONG8:   
-                case TIFFTag.TIFF_LAZY_LONG:   
-                    obj = new TIFFLazyData(stream, type, count);
-                    break;
-                default:
-                    // XXX Warning
-                    break;
+                        break;
+
+                    case TIFFTag.TIFF_SHORT:
+                        char[] cvalues = new char[count];
+                        for (int j = 0; j < count; j++) {
+                            cvalues[j] = (char) (stream.readUnsignedShort());
+                        }
+                        obj = cvalues;
+                        break;
+
+                    case TIFFTag.TIFF_LONG:
+                    case TIFFTag.TIFF_IFD_POINTER:
+                        long[] lvalues = new long[count];
+                        for (int j = 0; j < count; j++) {
+                            lvalues[j] = stream.readUnsignedInt();
+                        }
+                        obj = lvalues;
+                        break;
+
+                    case TIFFTag.TIFF_RATIONAL:
+                        long[][] llvalues = new long[count][2];
+                        for (int j = 0; j < count; j++) {
+                            llvalues[j][0] = stream.readUnsignedInt();
+                            llvalues[j][1] = stream.readUnsignedInt();
+                        }
+                        obj = llvalues;
+                        break;
+
+                    case TIFFTag.TIFF_SSHORT:
+                        short[] svalues = new short[count];
+                        for (int j = 0; j < count; j++) {
+                            svalues[j] = stream.readShort();
+                        }
+                        obj = svalues;
+                        break;
+
+                    case TIFFTag.TIFF_SLONG:
+                        int[] ivalues = new int[count];
+                        for (int j = 0; j < count; j++) {
+                            ivalues[j] = stream.readInt();
+                        }
+                        obj = ivalues;
+                        break;
+
+                    case TIFFTag.TIFF_SRATIONAL:
+                        int[][] iivalues = new int[count][2];
+                        for (int j = 0; j < count; j++) {
+                            iivalues[j][0] = stream.readInt();
+                            iivalues[j][1] = stream.readInt();
+                        }
+                        obj = iivalues;
+                        break;
+
+                    case TIFFTag.TIFF_FLOAT:
+                        float[] fvalues = new float[count];
+                        for (int j = 0; j < count; j++) {
+                            fvalues[j] = stream.readFloat();
+                        }
+                        obj = fvalues;
+                        break;
+
+                    case TIFFTag.TIFF_DOUBLE:
+                        double[] dvalues = new double[count];
+                        for (int j = 0; j < count; j++) {
+                            dvalues[j] = stream.readDouble();
+                        }
+                        obj = dvalues;
+                        break;
+
+                    case TIFFTag.TIFF_LONG8:
+                    case TIFFTag.TIFF_SLONG8:
+                    case TIFFTag.TIFF_IFD8:
+                        long[] lBvalues = new long[count];
+                        for (int j = 0; j < count; j++) {
+                            lBvalues[j] = stream.readLong();
+                        }
+                        obj = lBvalues;
+                        break;
+
+                    case TIFFTag.TIFF_LAZY_LONG8:
+                    case TIFFTag.TIFF_LAZY_LONG:
+                        obj = new TIFFLazyData(stream, type, count);
+                        break;
+                    default:
+                        // XXX Warning
+                        break;
                 }
-            } catch(EOFException eofe) {
+            } catch (EOFException eofe) {
                 // The TIFF 6.0 fields have tag numbers less than or equal
                 // to 532 (ReferenceBlackWhite) or equal to 33432 (Copyright).
                 // If there is an error reading a baseline tag, then re-throw
                 // the exception and fail; otherwise continue with the next
                 // field.
-                if(BaselineTIFFTagSet.getInstance().getTag(tag) == null) {
+                if (BaselineTIFFTagSet.getInstance().getTag(tag) == null) {
                     throw eofe;
                 }
             }
-            
+
             if (tiffTag == null) {
                 // XXX Warning: unknown tag
             } else if (!tiffTag.isDataTypeOK(type)) {
                 // XXX Warning: bad data type
             } else if (tiffTag.isIFDPointer() && obj != null) {
                 stream.mark();
-                stream.seek(((long[])obj)[0]);
+                stream.seek(((long[]) obj)[0]);
 
                 List tagSets = new ArrayList(1);
                 tagSets.add(tiffTag.getTagSet());
@@ -481,7 +463,7 @@ public class TIFFIFD extends TIFFDirectory {
 
             // Add the field if its contents have been initialized which
             // will not be the case if an EOF was ignored above.
-            if(obj != null) {
+            if (obj != null) {
                 TIFFField f = new TIFFField(tiffTag, type, count, obj);
                 addTIFFField(f);
             }
@@ -492,32 +474,28 @@ public class TIFFIFD extends TIFFDirectory {
         this.lastPosition = stream.getStreamPosition();
     }
 
-    public void writeToStream(ImageOutputStream stream, final boolean isBTIFF)
-        throws IOException {
+    public void writeToStream(ImageOutputStream stream, final boolean isBTIFF) throws IOException {
 
-    	
-    	long nextSpace;
-    	
-    	if(!isBTIFF){
-    		int numFields = getNumTIFFFields();
+        long nextSpace;
+
+        if (!isBTIFF) {
+            int numFields = getNumTIFFFields();
             stream.writeShort(numFields);
 
-            nextSpace = stream.getStreamPosition() + 12*numFields + 4;
+            nextSpace = stream.getStreamPosition() + 12 * numFields + 4;
 
-        } else{
-    		long numFields = getNumTIFFFields();
-    		stream.writeLong(numFields);
-    		
-    		nextSpace = stream.getStreamPosition() + 20*numFields + 8; 
-    		
-    	}
-    	
-    	Iterator iter = iterator();
-    	
-        
+        } else {
+            long numFields = getNumTIFFFields();
+            stream.writeLong(numFields);
+
+            nextSpace = stream.getStreamPosition() + 20 * numFields + 8;
+        }
+
+        Iterator iter = iterator();
+
         while (iter.hasNext()) {
-            TIFFField f = (TIFFField)iter.next();
-            
+            TIFFField f = (TIFFField) iter.next();
+
             TIFFTag tag = f.getTag();
 
             int type = f.getType();
@@ -527,7 +505,7 @@ public class TIFFIFD extends TIFFDirectory {
             if (type == 0) {
                 type = TIFFTag.TIFF_UNDEFINED;
             }
-            int size = count*TIFFTag.getSizeOfType(type);
+            int size = count * TIFFTag.getSizeOfType(type);
 
             if (type == TIFFTag.TIFF_ASCII) {
                 int chars = 0;
@@ -541,56 +519,33 @@ public class TIFFIFD extends TIFFDirectory {
             int tagNumber = f.getTagNumber();
             stream.writeShort(tagNumber);
             stream.writeShort(type);
-            
-            if(isBTIFF){
-            	stream.writeLong(count);
-            	stream.writeLong(0);
-            	stream.mark(); // Mark beginning of next field
-            	stream.skipBytes(-8);
+
+            if (isBTIFF) {
+                stream.writeLong(count);
+                stream.writeLong(0);
+                stream.mark(); // Mark beginning of next field
+                stream.skipBytes(-8);
+            } else {
+                stream.writeInt(count);
+                stream.writeInt(0);
+                stream.mark(); // Mark beginning of next field
+                stream.skipBytes(-4);
             }
-            else{
-            	stream.writeInt(count);
-            	stream.writeInt(0);
-            	stream.mark(); // Mark beginning of next field
-            	stream.skipBytes(-4);
-            }
-            
+
             long pos;
 
-            if(!isBTIFF){
-	            if (size > 4 || tag.isIFDPointer()) {     
-	                // Ensure IFD or value is written on a word boundary
-	                nextSpace = (nextSpace + 3) & ~0x3;
-	
-	                stream.writeInt((int)nextSpace);
-	                stream.seek(nextSpace);
-	                pos = nextSpace;
-	
-	                if (tag.isIFDPointer()) {
-	                    TIFFIFD subIFD = (TIFFIFD)f.getData();
-	                    subIFD.writeToStream(stream, isBTIFF);
-	                    nextSpace = subIFD.lastPosition;
-	                } else {
-	                    writeTIFFFieldToStream(f, stream);
-	                    nextSpace = stream.getStreamPosition();
-	                }
-	            } else {
-	                pos = stream.getStreamPosition();
-	                writeTIFFFieldToStream(f, stream);
-	            }
-            }
-            else{
-            	if (size > 8 || tag.isIFDPointer()) {     
-                    // Ensure IFD or value is written on a Long boundary
-                    nextSpace = (nextSpace + 7) & ~0x7;
+            if (!isBTIFF) {
+                if (size > 4 || tag.isIFDPointer()) {
+                    // Ensure IFD or value is written on a word boundary
+                    nextSpace = (nextSpace + 3) & ~0x3;
 
-                    stream.writeLong(nextSpace);
+                    stream.writeInt((int) nextSpace);
                     stream.seek(nextSpace);
                     pos = nextSpace;
 
                     if (tag.isIFDPointer()) {
-                        TIFFIFD subIFD = (TIFFIFD)f.getData();
-                        subIFD.writeToStream(stream,isBTIFF);
+                        TIFFIFD subIFD = (TIFFIFD) f.getData();
+                        subIFD.writeToStream(stream, isBTIFF);
                         nextSpace = subIFD.lastPosition;
                     } else {
                         writeTIFFFieldToStream(f, stream);
@@ -600,30 +555,46 @@ public class TIFFIFD extends TIFFDirectory {
                     pos = stream.getStreamPosition();
                     writeTIFFFieldToStream(f, stream);
                 }
-            	
+            } else {
+                if (size > 8 || tag.isIFDPointer()) {
+                    // Ensure IFD or value is written on a Long boundary
+                    nextSpace = (nextSpace + 7) & ~0x7;
+
+                    stream.writeLong(nextSpace);
+                    stream.seek(nextSpace);
+                    pos = nextSpace;
+
+                    if (tag.isIFDPointer()) {
+                        TIFFIFD subIFD = (TIFFIFD) f.getData();
+                        subIFD.writeToStream(stream, isBTIFF);
+                        nextSpace = subIFD.lastPosition;
+                    } else {
+                        writeTIFFFieldToStream(f, stream);
+                        nextSpace = stream.getStreamPosition();
+                    }
+                } else {
+                    pos = stream.getStreamPosition();
+                    writeTIFFFieldToStream(f, stream);
+                }
             }
             // If we are writing the data for the
             // StripByteCounts, TileByteCounts, StripOffsets,
             // TileOffsets, JPEGInterchangeFormat, or
             // JPEGInterchangeFormatLength fields, record the current stream
             // position for backpatching
-            if (tagNumber ==
-                BaselineTIFFTagSet.TAG_STRIP_BYTE_COUNTS ||
-                tagNumber == BaselineTIFFTagSet.TAG_TILE_BYTE_COUNTS ||
-                tagNumber == BaselineTIFFTagSet.TAG_JPEG_INTERCHANGE_FORMAT_LENGTH) {
+            if (tagNumber == BaselineTIFFTagSet.TAG_STRIP_BYTE_COUNTS
+                    || tagNumber == BaselineTIFFTagSet.TAG_TILE_BYTE_COUNTS
+                    || tagNumber == BaselineTIFFTagSet.TAG_JPEG_INTERCHANGE_FORMAT_LENGTH) {
                 this.stripOrTileByteCountsPosition = pos;
-            } else if (tagNumber ==
-                       BaselineTIFFTagSet.TAG_STRIP_OFFSETS ||
-                       tagNumber ==
-                       BaselineTIFFTagSet.TAG_TILE_OFFSETS ||
-                       tagNumber ==
-                       BaselineTIFFTagSet.TAG_JPEG_INTERCHANGE_FORMAT) {
+            } else if (tagNumber == BaselineTIFFTagSet.TAG_STRIP_OFFSETS
+                    || tagNumber == BaselineTIFFTagSet.TAG_TILE_OFFSETS
+                    || tagNumber == BaselineTIFFTagSet.TAG_JPEG_INTERCHANGE_FORMAT) {
                 this.stripOrTileOffsetsPosition = pos;
             }
 
             stream.reset(); // Go to marked position of next field
         }
-        
+
         this.lastPosition = nextSpace;
     }
 
@@ -639,18 +610,15 @@ public class TIFFIFD extends TIFFDirectory {
         return lastPosition;
     }
 
-    void setPositions(long stripOrTileOffsetsPosition,
-                      long stripOrTileByteCountsPosition,
-                      long lastPosition) {
+    void setPositions(long stripOrTileOffsetsPosition, long stripOrTileByteCountsPosition, long lastPosition) {
         this.stripOrTileOffsetsPosition = stripOrTileOffsetsPosition;
         this.stripOrTileByteCountsPosition = stripOrTileByteCountsPosition;
         this.lastPosition = lastPosition;
     }
 
     /**
-     * Returns a <code>TIFFIFD</code> wherein all fields from the
-     * <code>BaselineTIFFTagSet</code> are copied by value and all other
-     * fields copied by reference.
+     * Returns a <code>TIFFIFD</code> wherein all fields from the <code>BaselineTIFFTagSet</code> are copied by value
+     * and all other fields copied by reference.
      */
     public TIFFIFD getShallowClone() {
         // Get the baseline TagSet.
@@ -658,7 +626,7 @@ public class TIFFIFD extends TIFFDirectory {
 
         // If the baseline TagSet is not included just return.
         List tagSetList = getTagSetList();
-        if(!tagSetList.contains(baselineTagSet)) {
+        if (!tagSetList.contains(baselineTagSet)) {
             return this;
         }
 
@@ -670,16 +638,16 @@ public class TIFFIFD extends TIFFDirectory {
 
         // Iterate over the fields in this IFD.
         Iterator fields = iterator();
-        while(fields.hasNext()) {
+        while (fields.hasNext()) {
             // Get the next field.
-            TIFFField field = (TIFFField)fields.next();
+            TIFFField field = (TIFFField) fields.next();
 
             // Get its tag number.
             Integer tagNumber = new Integer(field.getTagNumber());
 
             // Branch based on membership in baseline set.
             TIFFField fieldClone;
-            if(baselineTagNumbers.contains(tagNumber)) {
+            if (baselineTagNumbers.contains(tagNumber)) {
                 // Copy by value.
                 Object fieldData = field.getData();
 
@@ -687,48 +655,49 @@ public class TIFFIFD extends TIFFDirectory {
 
                 try {
                     switch (fieldType) {
-                    case TIFFTag.TIFF_BYTE:
-                    case TIFFTag.TIFF_SBYTE:
-                    case TIFFTag.TIFF_UNDEFINED:
-                        fieldData = ((byte[])fieldData).clone();
-                        break;
-                    case TIFFTag.TIFF_ASCII:
-                        fieldData = ((String[])fieldData).clone();
-                        break;
-                    case TIFFTag.TIFF_SHORT:
-                        fieldData = ((char[])fieldData).clone();
-                        break;
-                    case TIFFTag.TIFF_LONG:
-                    case TIFFTag.TIFF_IFD_POINTER:
-                        fieldData = ((long[])fieldData).clone();
-                        break;
-                    case TIFFTag.TIFF_RATIONAL:
-                        fieldData = ((long[][])fieldData).clone();
-                        break;
-                    case TIFFTag.TIFF_SSHORT:
-                        fieldData = ((short[])fieldData).clone();
-                        break;
-                    case TIFFTag.TIFF_SLONG:
-                        fieldData = ((int[])fieldData).clone();
-                        break;
-                    case TIFFTag.TIFF_SRATIONAL:
-                        fieldData = ((int[][])fieldData).clone();
-                        break;
-                    case TIFFTag.TIFF_FLOAT:
-                        fieldData = ((float[])fieldData).clone();
-                        break;
-                    case TIFFTag.TIFF_DOUBLE:
-                        fieldData = ((double[])fieldData).clone();
-                        break;
-                    default:
-                        // Shouldn't happen but do nothing ...
+                        case TIFFTag.TIFF_BYTE:
+                        case TIFFTag.TIFF_SBYTE:
+                        case TIFFTag.TIFF_UNDEFINED:
+                            fieldData = ((byte[]) fieldData).clone();
+                            break;
+                        case TIFFTag.TIFF_ASCII:
+                            fieldData = ((String[]) fieldData).clone();
+                            break;
+                        case TIFFTag.TIFF_SHORT:
+                            fieldData = ((char[]) fieldData).clone();
+                            break;
+                        case TIFFTag.TIFF_LONG:
+                        case TIFFTag.TIFF_IFD_POINTER:
+                            fieldData = ((long[]) fieldData).clone();
+                            break;
+                        case TIFFTag.TIFF_RATIONAL:
+                            fieldData = ((long[][]) fieldData).clone();
+                            break;
+                        case TIFFTag.TIFF_SSHORT:
+                            fieldData = ((short[]) fieldData).clone();
+                            break;
+                        case TIFFTag.TIFF_SLONG:
+                            fieldData = ((int[]) fieldData).clone();
+                            break;
+                        case TIFFTag.TIFF_SRATIONAL:
+                            fieldData = ((int[][]) fieldData).clone();
+                            break;
+                        case TIFFTag.TIFF_FLOAT:
+                            fieldData = ((float[]) fieldData).clone();
+                            break;
+                        case TIFFTag.TIFF_DOUBLE:
+                            fieldData = ((double[]) fieldData).clone();
+                            break;
+                        default:
+                            // Shouldn't happen but do nothing ...
                     }
-                } catch(Exception e) {
+                } catch (Exception e) {
                     // Ignore it and copy by reference ...
                 }
 
-                fieldClone = new TIFFField(field.getTag(), fieldType,
-                                           field.getCount(), fieldData);
+                fieldClone = new TIFFField(
+                        field.getTag(), fieldType,
+                        field.getCount(), fieldData);
             } else {
                 // Copy by reference.
                 fieldClone = field;
@@ -739,9 +708,7 @@ public class TIFFIFD extends TIFFDirectory {
         }
 
         // Set positions.
-        shallowClone.setPositions(stripOrTileOffsetsPosition,
-                                  stripOrTileByteCountsPosition,
-                                  lastPosition);
+        shallowClone.setPositions(stripOrTileOffsetsPosition, stripOrTileByteCountsPosition, lastPosition);
 
         return shallowClone;
     }

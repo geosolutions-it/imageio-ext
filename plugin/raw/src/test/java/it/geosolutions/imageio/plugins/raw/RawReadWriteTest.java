@@ -16,18 +16,10 @@
  */
 package it.geosolutions.imageio.plugins.raw;
 
-import it.geosolutions.imageio.stream.input.RawImageInputStream;
-import org.eclipse.imagen.PlanarImage;
-import org.eclipse.imagen.TiledImage;
-import org.junit.Test;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertTrue;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.ImageWriter;
-import javax.imageio.stream.ImageOutputStream;
-import javax.imageio.stream.MemoryCacheImageInputStream;
-import javax.imageio.stream.MemoryCacheImageOutputStream;
+import it.geosolutions.imageio.stream.input.RawImageInputStream;
 import java.awt.Dimension;
 import java.awt.image.ComponentSampleModel;
 import java.awt.image.DataBuffer;
@@ -37,9 +29,16 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
-
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertTrue;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
+import javax.imageio.stream.MemoryCacheImageInputStream;
+import javax.imageio.stream.MemoryCacheImageOutputStream;
+import org.eclipse.imagen.PlanarImage;
+import org.eclipse.imagen.TiledImage;
+import org.junit.Test;
 
 public class RawReadWriteTest {
 
@@ -77,7 +76,8 @@ public class RawReadWriteTest {
 
         TiledImage source = getTestImage(pixelType);
         byte[] data;
-        try (ByteArrayOutputStream bos = new ByteArrayOutputStream(); ImageOutputStream ios = new MemoryCacheImageOutputStream(bos)) {
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                ImageOutputStream ios = new MemoryCacheImageOutputStream(bos)) {
             writer.setOutput(ios);
             writer.write(source);
             ios.flush();
@@ -86,14 +86,16 @@ public class RawReadWriteTest {
 
         RenderedImage target;
         try (ByteArrayInputStream bis = new ByteArrayInputStream(data);
-             RawImageInputStream ris = new RawImageInputStream(new MemoryCacheImageInputStream(bis),
-                     ImageTypeSpecifier.createFromRenderedImage(source), new long[]{0}, new Dimension[]{new Dimension(SIZE, SIZE)})) {
+                RawImageInputStream ris = new RawImageInputStream(
+                        new MemoryCacheImageInputStream(bis),
+                        ImageTypeSpecifier.createFromRenderedImage(source),
+                        new long[] {0},
+                        new Dimension[] {new Dimension(SIZE, SIZE)})) {
             reader.setInput(ris);
             target = reader.read(0);
         }
 
-        if (pixelType == DataBuffer.TYPE_FLOAT ||
-                pixelType == DataBuffer.TYPE_DOUBLE) {
+        if (pixelType == DataBuffer.TYPE_FLOAT || pixelType == DataBuffer.TYPE_DOUBLE) {
             compareImagesDouble(source, target);
         } else {
             compareImagesInteger(source, target);
@@ -125,7 +127,7 @@ public class RawReadWriteTest {
     }
 
     private TiledImage getTestImage(int pixelType) {
-        SampleModel sm = new ComponentSampleModel(pixelType, TILE_SIZE, TILE_SIZE, 1, TILE_SIZE, new int[]{0});
+        SampleModel sm = new ComponentSampleModel(pixelType, TILE_SIZE, TILE_SIZE, 1, TILE_SIZE, new int[] {0});
         TiledImage image = new TiledImage(0, 0, SIZE, SIZE, 0, 0, sm, PlanarImage.createColorModel(sm));
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
@@ -151,5 +153,4 @@ public class RawReadWriteTest {
         assertTrue(reader.getOriginatingProvider() instanceof RawImageReaderSpi);
         return reader;
     }
-
 }

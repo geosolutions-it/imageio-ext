@@ -16,30 +16,28 @@
  */
 package it.geosolutions.imageioimpl.plugins.cog;
 
+import static it.geosolutions.imageioimpl.plugins.cog.CogTileInfo.HEADER_TILE_INDEX;
+
 import it.geosolutions.imageio.core.BasicAuthURI;
 import it.geosolutions.imageio.plugins.cog.CogImageReadParam;
 import it.geosolutions.imageio.utilities.SoftValueHashMap;
-
-import javax.imageio.stream.ImageInputStreamImpl;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
-
-import static it.geosolutions.imageioimpl.plugins.cog.CogTileInfo.HEADER_TILE_INDEX;
+import javax.imageio.stream.ImageInputStreamImpl;
 
 /**
- * ImageInputStream implementation for COG.  This class will request all requested ranges be read by
- * the provided RangeReader implementation and store the results in memory.  When TIFFImageReader requests tiles, the
- * byte data will be served from the `data` Map.
+ * ImageInputStream implementation for COG. This class will request all requested ranges be read by the provided
+ * RangeReader implementation and store the results in memory. When TIFFImageReader requests tiles, the byte data will
+ * be served from the `data` Map.
  *
- * NOTE: This is a special use case class and is intended for use ONLY with the CogImageReader.  Using this
+ * <p>NOTE: This is a special use case class and is intended for use ONLY with the CogImageReader. Using this
  * ImageInputStream for other purposes will almost certainly result in errors/failures.
  *
- * @author joshfix
- * Created on 2019-08-23
+ * @author joshfix Created on 2019-08-23
  */
 public class DefaultCogImageInputStream extends ImageInputStreamImpl implements CogImageInputStream {
 
@@ -47,10 +45,9 @@ public class DefaultCogImageInputStream extends ImageInputStreamImpl implements 
     protected URI uri;
     protected CogTileInfo header;
     protected RangeReader rangeReader;
-    protected Map <Long, byte[]> data;
+    protected Map<Long, byte[]> data;
 
-
-    private final static Logger LOGGER = Logger.getLogger(DefaultCogImageInputStream.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DefaultCogImageInputStream.class.getName());
 
     public DefaultCogImageInputStream(String url) {
         this(URI.create(url));
@@ -96,7 +93,8 @@ public class DefaultCogImageInputStream extends ImageInputStreamImpl implements 
 
         if (null != rangeReaderClass) {
             try {
-                rangeReader = rangeReaderClass.getDeclaredConstructor(URI.class, int.class)
+                rangeReader = rangeReaderClass
+                        .getDeclaredConstructor(URI.class, int.class)
                         .newInstance(uri, param.getHeaderLength());
             } catch (Exception e) {
                 LOGGER.severe("Unable to instantiate range reader class " + rangeReaderClass.getCanonicalName());
@@ -107,8 +105,8 @@ public class DefaultCogImageInputStream extends ImageInputStreamImpl implements 
         }
 
         if (rangeReader == null) {
-            throw new RuntimeException("Unable to instantiate range reader class "
-                    + rangeReaderClass.getCanonicalName());
+            throw new RuntimeException(
+                    "Unable to instantiate range reader class " + rangeReaderClass.getCanonicalName());
         }
 
         initializeHeader(param.getHeaderLength());
@@ -138,7 +136,8 @@ public class DefaultCogImageInputStream extends ImageInputStreamImpl implements 
     @Override
     public void readRanges(CogTileInfo cogTileInfo) {
         // read data with the RangeReader and set the byte order and pointer on the new input stream
-        ContiguousRangeComposer contiguousRangeComposer = new ContiguousRangeComposer(0, cogTileInfo.getHeaderLength() - 1);
+        ContiguousRangeComposer contiguousRangeComposer =
+                new ContiguousRangeComposer(0, cogTileInfo.getHeaderLength() - 1);
 
         cogTileInfo.getTileRanges().forEach((tileIndex, tileRange) -> {
             if (tileIndex == HEADER_TILE_INDEX) {
@@ -203,7 +202,7 @@ public class DefaultCogImageInputStream extends ImageInputStreamImpl implements 
             }
         }
 
-        int relativeStreamPos = (int)(streamPos - rangeStart);
+        int relativeStreamPos = (int) (streamPos - rangeStart);
 
         // copy the bytes from the fetched tile into the destination byte array
         System.arraycopy(contiguousRange, relativeStreamPos, b, off, len);

@@ -16,9 +16,17 @@
  */
 package it.geosolutions.imageioimpl.plugins.png;
 
+import static org.junit.Assert.assertTrue;
+
 import ar.com.hjg.pngj.FilterType;
 import it.geosolutions.imageio.plugins.png.PNGWriter;
 import it.geosolutions.resources.TestData;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
+import java.io.ByteArrayOutputStream;
+import java.util.Collection;
+import javax.imageio.ImageIO;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openjdk.jmh.annotations.*;
@@ -28,22 +36,10 @@ import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.WritableRaster;
-import java.io.ByteArrayOutputStream;
-import java.util.Collection;
-
-import static org.junit.Assert.assertTrue;
-
 @Ignore
 public class PNGWriterBenchmarkTest {
 
-    /**
-     * This only exists as an easy method to run a profiler on. It isn't actually
-     * a valid test, so it'll be ignored.
-     */
+    /** This only exists as an easy method to run a profiler on. It isn't actually a valid test, so it'll be ignored. */
     @Test
     @Ignore
     public void profileNonSubImageBenchmark() throws Exception {
@@ -54,10 +50,7 @@ public class PNGWriterBenchmarkTest {
         }
     }
 
-    /**
-     * This only exists as an easy method to run a profiler on. It isn't actually
-     * a valid test, so it'll be ignored.
-     */
+    /** This only exists as an easy method to run a profiler on. It isn't actually a valid test, so it'll be ignored. */
     @Test
     @Ignore
     public void profileSubImageBenchmark() throws Exception {
@@ -69,8 +62,8 @@ public class PNGWriterBenchmarkTest {
     }
 
     /**
-     * We run a benchmark on non-sub-images and a benchmark on sub-images and
-     * check to make sure that the throughput is within 10% of each other.
+     * We run a benchmark on non-sub-images and a benchmark on sub-images and check to make sure that the throughput is
+     * within 10% of each other.
      */
     @Test
     public void runAllBenchmarksAndCompareResults() throws Exception {
@@ -106,7 +99,6 @@ public class PNGWriterBenchmarkTest {
         }
     }
 
-
     @BenchmarkMode(Mode.Throughput)
     @Fork(1)
     @Threads(1)
@@ -114,10 +106,7 @@ public class PNGWriterBenchmarkTest {
     @Measurement(time = 1)
     public static class PngWriterBenchmark {
 
-
-        /**
-         * Creates a sub-image of the full one.
-         */
+        /** Creates a sub-image of the full one. */
         @State(Scope.Thread)
         public static class SubImageState {
             BufferedImage bufferedImage;
@@ -130,11 +119,11 @@ public class PNGWriterBenchmarkTest {
         }
 
         /**
-         * Takes a portion of the full image (similar to SubImageState) but clones it into a standalone
-         * BufferedImage that explicitly does NOT have a parent; i.e. it is intentionally no longer a sub-image.
-         * <p>
-         * The reason we crop the original photo is just to make this benchmark comparable to the {@link SubImageState},
-         * such that they are encoding the same image size and contents.
+         * Takes a portion of the full image (similar to SubImageState) but clones it into a standalone BufferedImage
+         * that explicitly does NOT have a parent; i.e. it is intentionally no longer a sub-image.
+         *
+         * <p>The reason we crop the original photo is just to make this benchmark comparable to the
+         * {@link SubImageState}, such that they are encoding the same image size and contents.
          */
         @State(Scope.Thread)
         public static class NonSubImageState {
@@ -166,7 +155,6 @@ public class PNGWriterBenchmarkTest {
                 writer.writePNG(bufferedImage, out, 1, FilterType.FILTER_NONE);
             }
         }
-
     }
 
     public static BufferedImage deepCopy(BufferedImage image) {

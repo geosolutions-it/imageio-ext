@@ -24,36 +24,26 @@ import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 
 /**
- * A thread invoking {@link Reference#clear} on each enqueded reference.
- * This is useful only if {@code Reference} subclasses has overridden
- * their {@code clear()} method in order to perform some cleaning.
- * This thread is used by {@link WeakHashSet} and {@link WeakValueHashMap},
- * which remove their entry from the collection when {@link Reference#clear}
- * is invoked.
+ * A thread invoking {@link Reference#clear} on each enqueded reference. This is useful only if {@code Reference}
+ * subclasses has overridden their {@code clear()} method in order to perform some cleaning. This thread is used by
+ * {@link WeakHashSet} and {@link WeakValueHashMap}, which remove their entry from the collection when
+ * {@link Reference#clear} is invoked.
  *
  * @author Martin Desruisseaux
  */
 final class WeakCollectionCleaner extends Thread {
-    /**
-     * The name of the logger to use.
-     */
+    /** The name of the logger to use. */
     private static final String LOGGER = "org.geotools.util";
 
-    /**
-     * The default thread.
-     */
+    /** The default thread. */
     public static final WeakCollectionCleaner DEFAULT = new WeakCollectionCleaner();
 
-    /**
-     * List of reference collected by the garbage collector.
-     * Those elements must be removed from {@link #table}.
-     */
+    /** List of reference collected by the garbage collector. Those elements must be removed from {@link #table}. */
     final ReferenceQueue referenceQueue = new ReferenceQueue();
 
     /**
-     * Constructs and starts a new thread as a daemon. This thread will be sleeping
-     * most of the time.  It will run only some few nanoseconds each time a new
-     * {@link WeakReference} is enqueded.
+     * Constructs and starts a new thread as a daemon. This thread will be sleeping most of the time. It will run only
+     * some few nanoseconds each time a new {@link WeakReference} is enqueded.
      */
     private WeakCollectionCleaner() {
         super("WeakCollectionCleaner");
@@ -62,9 +52,7 @@ final class WeakCollectionCleaner extends Thread {
         start();
     }
 
-    /**
-     * Loop to be run during the virtual machine lifetime.
-     */
+    /** Loop to be run during the virtual machine lifetime. */
     public void run() {
         // The reference queue should never be null.  However some strange cases (maybe caused
         // by an anormal JVM state) have been reported on the mailing list. In such case, stop
@@ -92,15 +80,15 @@ final class WeakCollectionCleaner extends Thread {
             } catch (InterruptedException exception) {
                 // Somebody doesn't want to lets us sleep... Go back to work.
             } catch (Exception exception) {
-//                Logging.unexpectedException(LOGGER,
-//                        WeakCollectionCleaner.class, "remove", exception);
+                //                Logging.unexpectedException(LOGGER,
+                //                        WeakCollectionCleaner.class, "remove", exception);
             } catch (AssertionError exception) {
-//                Logging.unexpectedException(LOGGER,
-//                        WeakCollectionCleaner.class, "remove", exception);
+                //                Logging.unexpectedException(LOGGER,
+                //                        WeakCollectionCleaner.class, "remove", exception);
                 // Do not kill the thread on assertion failure, in order to
                 // keep the same behaviour as if assertions were turned off.
             }
         }
-//        Logging.getLogger(LOGGER).severe("Daemon stopped."); // Should never happen.
+        //        Logging.getLogger(LOGGER).severe("Daemon stopped."); // Should never happen.
     }
 }

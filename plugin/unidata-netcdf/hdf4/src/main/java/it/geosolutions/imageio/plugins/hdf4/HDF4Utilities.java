@@ -23,20 +23,20 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 public class HDF4Utilities {
-	
-	public final static String TERASCAN_DATETIME_FORMAT = "yyyy/MM/dd HH:mm:ss";
-		
-	public final static String APS_DATETIME_FORMAT = "EEE MMM dd HH:mm:ss yyyy"; 
-	
-//	private static Map<String, SimpleDateFormat> DATE_FORMATTER = new HashMap<String,SimpleDateFormat>(2);
 
-	public static Date getDateTime(final String toBeParsed, final String inputFormat){
-		final SimpleDateFormat sdf = new SimpleDateFormat(inputFormat,Locale.US);
-		sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-		try {
-			return sdf.parse(toBeParsed);
-		} catch (ParseException e) {
-			return null;
-		}
-	}
+    public static final String TERASCAN_DATETIME_FORMAT = "yyyy/MM/dd HH:mm:ss";
+
+    public static final String APS_DATETIME_FORMAT = "EEE MMM dd HH:mm:ss yyyy";
+
+    //	private static Map<String, SimpleDateFormat> DATE_FORMATTER = new HashMap<String,SimpleDateFormat>(2);
+
+    public static Date getDateTime(final String toBeParsed, final String inputFormat) {
+        final SimpleDateFormat sdf = new SimpleDateFormat(inputFormat, Locale.US);
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        try {
+            return sdf.parse(toBeParsed);
+        } catch (ParseException e) {
+            return null;
+        }
+    }
 }

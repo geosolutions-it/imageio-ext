@@ -1,42 +1,42 @@
 /*
  * $RCSfile: ComponentMappingBox.java,v $
  *
- * 
+ *
  * Copyright (c) 2005 Sun Microsystems, Inc. All  Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
- * are met: 
- * 
- * - Redistribution of source code must retain the above copyright 
+ * are met:
+ *
+ * - Redistribution of source code must retain the above copyright
  *   notice, this  list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in 
+ *   notice, this list of conditions and the following disclaimer in
  *   the documentation and/or other materials provided with the
  *   distribution.
- * 
- * Neither the name of Sun Microsystems, Inc. or the names of 
- * contributors may be used to endorse or promote products derived 
+ *
+ * Neither the name of Sun Microsystems, Inc. or the names of
+ * contributors may be used to endorse or promote products derived
  * from this software without specific prior written permission.
- * 
- * This software is provided "AS IS," without a warranty of any 
- * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND 
- * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, 
+ *
+ * This software is provided "AS IS," without a warranty of any
+ * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND
+ * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY
- * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL 
- * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF 
+ * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL
+ * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF
  * USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS
- * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR 
+ * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR
  * ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL,
  * CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND
  * REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR
  * INABILITY TO USE THIS SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGES. 
- * 
- * You acknowledge that this software is not designed or intended for 
- * use in the design, construction, operation or maintenance of any 
- * nuclear facility. 
+ * POSSIBILITY OF SUCH DAMAGES.
+ *
+ * You acknowledge that this software is not designed or intended for
+ * use in the design, construction, operation or maintenance of any
+ * nuclear facility.
  *
  * $Revision: 1.1 $
  * $Date: 2005/02/11 05:01:32 $
@@ -60,26 +60,24 @@
  */
 package it.geosolutions.imageio.plugins.jp2k.box;
 
-
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadataNode;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * This class is defined to represent a Component Mapping Box of JPEG JP2 file
- * format. A Component Mapping Box has a length, and a fixed type of "cmap".
- * This box exists if and only is a PaletteBox exists. Its content defines the
- * type LUT output components and their mapping to the color component.
+ * This class is defined to represent a Component Mapping Box of JPEG JP2 file format. A Component Mapping Box has a
+ * length, and a fixed type of "cmap". This box exists if and only is a PaletteBox exists. Its content defines the type
+ * LUT output components and their mapping to the color component.
  */
 @SuppressWarnings("serial")
 public class ComponentMappingBox extends BaseJP2KBox {
 
-    public final static int BOX_TYPE = 0x636D6170;
+    public static final int BOX_TYPE = 0x636D6170;
 
-    public final static String NAME = "cmap";
+    public static final String NAME = "cmap";
 
-    public final static String JP2K_MD_NAME = "JP2KComponentMappingBox";
+    public static final String JP2K_MD_NAME = "JP2KComponentMappingBox";
 
     /** The data elements. */
     private short[] components;
@@ -90,18 +88,12 @@ public class ComponentMappingBox extends BaseJP2KBox {
 
     private byte[] localData;
 
-    /**
-     * Constructs a <code>ComponentMappingBox</code> from the provided content
-     * byte array.
-     */
+    /** Constructs a <code>ComponentMappingBox</code> from the provided content byte array. */
     public ComponentMappingBox(byte[] data) {
         super(8 + data.length, BOX_TYPE, data);
     }
 
-    /**
-     * Constructs a <code>ComponentMappingBox</code> from the provided
-     * component mapping.
-     */
+    /** Constructs a <code>ComponentMappingBox</code> from the provided component mapping. */
     public ComponentMappingBox(short[] comp, byte[] t, byte[] m) {
         super(8 + (comp.length << 2), BOX_TYPE, null);
         this.components = comp;
@@ -109,10 +101,7 @@ public class ComponentMappingBox extends BaseJP2KBox {
         this.map = m;
     }
 
-    /**
-     * Constructs a <code>ComponentMappingBox</code> based on the provided
-     * <code>org.w3c.dom.Node</code>.
-     */
+    /** Constructs a <code>ComponentMappingBox</code> based on the provided <code>org.w3c.dom.Node</code>. */
     public ComponentMappingBox(Node node) throws IIOInvalidTreeException {
         super(node);
         NodeList children = node.getChildNodes();
@@ -157,9 +146,8 @@ public class ComponentMappingBox extends BaseJP2KBox {
     }
 
     /**
-     * Creates an <code>IIOMetadataNode</code> from this component mapping
-     * box. The format of this node is defined in the XML dtd and xsd for the
-     * JP2 image file.
+     * Creates an <code>IIOMetadataNode</code> from this component mapping box. The format of this node is defined in
+     * the XML dtd and xsd for the JP2 image file.
      */
     public IIOMetadataNode getNativeNode() {
         return new ComponentMappingBoxMetadataNode(this);
@@ -178,8 +166,7 @@ public class ComponentMappingBox extends BaseJP2KBox {
     }
 
     protected synchronized byte[] compose() {
-        if (localData != null)
-            return localData;
+        if (localData != null) return localData;
         localData = new byte[type.length << 2];
         for (int i = 0, j = 0; i < type.length; i++) {
             localData[j++] = (byte) (components[i] >> 8);

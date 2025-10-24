@@ -18,34 +18,32 @@ package it.geosolutions.imageio.plugins.wcs;
 
 import it.geosolutions.imageio.gdalframework.GDALImageReaderSpi;
 import it.geosolutions.imageio.stream.AccessibleStream;
-
-import javax.imageio.ImageReader;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageReader;
 
 /**
  * Service provider interface for WCS image reader
- * 
+ *
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class WCSImageReaderSpi extends GDALImageReaderSpi {
 
-    private static final Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.plugins.wcs");
+    private static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.wcs");
 
-    static final String[] suffixes = { "xml" };
+    static final String[] suffixes = {"xml"};
 
-    static final String[] formatNames = { "Wcs" };
+    static final String[] formatNames = {"Wcs"};
 
-    static final String[] MIMETypes = { "image/wcs" };
+    static final String[] MIMETypes = {"image/wcs"};
 
     static final String version = "1.0";
-    
+
     static final String description = "WCS Image Reader, version " + version;
 
     static final String readerCN = "it.geosolutions.imageio.plugins.wcs.WCSImageReader";
@@ -53,7 +51,7 @@ public class WCSImageReaderSpi extends GDALImageReaderSpi {
     static final String vendorName = "GeoSolutions";
 
     // writerSpiNames
-    static final String[] wSN = { null };
+    static final String[] wSN = {null};
 
     // StreamMetadataFormatNames and StreamMetadataFormatClassNames
     static final boolean supportsStandardStreamMetadataFormat = false;
@@ -62,9 +60,9 @@ public class WCSImageReaderSpi extends GDALImageReaderSpi {
 
     static final String nativeStreamMetadataFormatClassName = null;
 
-    static final String[] extraStreamMetadataFormatNames = { null };
+    static final String[] extraStreamMetadataFormatNames = {null};
 
-    static final String[] extraStreamMetadataFormatClassNames = { null };
+    static final String[] extraStreamMetadataFormatClassNames = {null};
 
     // ImageMetadataFormatNames and ImageMetadataFormatClassNames
     static final boolean supportsStandardImageMetadataFormat = false;
@@ -73,9 +71,9 @@ public class WCSImageReaderSpi extends GDALImageReaderSpi {
 
     static final String nativeImageMetadataFormatClassName = null;
 
-    static final String[] extraImageMetadataFormatNames = { null };
+    static final String[] extraImageMetadataFormatNames = {null};
 
-    static final String[] extraImageMetadataFormatClassNames = { null };
+    static final String[] extraImageMetadataFormatClassNames = {null};
 
     public WCSImageReaderSpi() {
         super(
@@ -85,7 +83,7 @@ public class WCSImageReaderSpi extends GDALImageReaderSpi {
                 suffixes,
                 MIMETypes,
                 readerCN, // readerClassName
-                new Class[] { File.class, AccessibleStream.class },
+                new Class[] {File.class, AccessibleStream.class},
                 wSN, // writer Spi Names
                 supportsStandardStreamMetadataFormat,
                 nativeStreamMetadataFormatName,
@@ -96,34 +94,27 @@ public class WCSImageReaderSpi extends GDALImageReaderSpi {
                 nativeImageMetadataFormatName,
                 nativeImageMetadataFormatClassName,
                 extraImageMetadataFormatNames,
-                extraImageMetadataFormatClassNames, Collections
-                        .singletonList("WCS"));
-        if (LOGGER.isLoggable(Level.FINE))
-            LOGGER.fine("WCSImageReaderSpi Constructor");
-
+                extraImageMetadataFormatClassNames,
+                Collections.singletonList("WCS"));
+        if (LOGGER.isLoggable(Level.FINE)) LOGGER.fine("WCSImageReaderSpi Constructor");
     }
 
-    /**
-     * This method checks if the provided input can be decoded from this SPI
-     */
+    /** This method checks if the provided input can be decoded from this SPI */
     public boolean canDecodeInput(Object input) throws IOException {
         return super.canDecodeInput(input);
     }
 
     /**
      * Returns an instance of the WCSImageReader
-     * 
+     *
      * @see javax.imageio.spi.ImageReaderSpi#createReaderInstance(java.lang.Object)
      */
     public ImageReader createReaderInstance(Object source) throws IOException {
         return new WCSImageReader(this);
     }
 
-    /**
-     * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
-     */
+    /** @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale) */
     public String getDescription(Locale locale) {
         return description;
     }
-
 }

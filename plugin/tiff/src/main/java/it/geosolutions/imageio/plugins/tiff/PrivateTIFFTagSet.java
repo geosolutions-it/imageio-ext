@@ -32,44 +32,32 @@ package it.geosolutions.imageio.plugins.tiff;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A class representing private and custom tags.
- */
+/** A class representing private and custom tags. */
 public class PrivateTIFFTagSet extends TIFFTagSet {
 
     private static PrivateTIFFTagSet theInstance = null;
 
-    /**
-     * Used by GDAL: a XML document providing
-     */
+    /** Used by GDAL: a XML document providing */
     public static final int TAG_GDAL_METADATA = 42112;
 
-    /**
-     * Used by GDAL: an ASCII encoded nodata value.
-     */
+    /** Used by GDAL: an ASCII encoded nodata value. */
     public static final int TAG_GDAL_NODATA = 42113;
 
-    /**
-     * Used by ZSTD
-     */
+    /** Used by ZSTD */
     public static final int COMPRESSION_ZSTD = 50000;
 
     static class GDALNoData extends TIFFTag {
-        public GDALNoData () {
-            super("GDALNoDataTag",
-                  TAG_GDAL_NODATA,
-                  1 << TIFFTag.TIFF_ASCII);
+        public GDALNoData() {
+            super("GDALNoDataTag", TAG_GDAL_NODATA, 1 << TIFFTag.TIFF_ASCII);
         }
     }
 
     static class GDALMetadata extends TIFFTag {
         public GDALMetadata() {
-            super("GDALMetadata",
-                    TAG_GDAL_METADATA,
-                    1 << TIFFTag.TIFF_ASCII);
+            super("GDALMetadata", TAG_GDAL_METADATA, 1 << TIFFTag.TIFF_ASCII);
         }
     }
-    
+
     private static List<TIFFTag> tags;
 
     private static void initTags() {
@@ -87,7 +75,7 @@ public class PrivateTIFFTagSet extends TIFFTagSet {
      *
      * @return a <code>PrivateTIFFTagSet</code> instance.
      */
-    public synchronized static PrivateTIFFTagSet getInstance() {
+    public static synchronized PrivateTIFFTagSet getInstance() {
         if (theInstance == null) {
             initTags();
             theInstance = new PrivateTIFFTagSet();

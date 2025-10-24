@@ -16,16 +16,6 @@
  */
 package it.geosolutions.imageio.plugins.png;
 
-import java.awt.image.ColorModel;
-import java.awt.image.IndexColorModel;
-import java.awt.image.RenderedImage;
-import java.io.OutputStream;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import ar.com.hjg.pngj.FilterType;
 import ar.com.hjg.pngj.ImageInfo;
 import ar.com.hjg.pngj.PngWriter;
@@ -33,32 +23,40 @@ import ar.com.hjg.pngj.chunks.ChunksListForWrite;
 import ar.com.hjg.pngj.chunks.PngChunkPLTE;
 import ar.com.hjg.pngj.chunks.PngChunkTRNS;
 import ar.com.hjg.pngj.chunks.PngMetadata;
+import java.awt.image.ColorModel;
+import java.awt.image.IndexColorModel;
+import java.awt.image.RenderedImage;
+import java.io.OutputStream;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 /**
  * Encodes the image in PNG using the PNGJ library
- * 
+ *
  * @author Andrea Aime - GeoSolutions
  */
 public class PNGWriter {
 
     private static final Logger LOGGER = Logger.getAnonymousLogger();
 
-    public RenderedImage writePNG(RenderedImage image, OutputStream outStream, float quality,
-            FilterType filterType) throws Exception {
+    public RenderedImage writePNG(RenderedImage image, OutputStream outStream, float quality, FilterType filterType)
+            throws Exception {
         return writePNG(image, outStream, quality, filterType, null);
     }
 
-    public RenderedImage writePNG(RenderedImage image, OutputStream outStream, float quality,
-            FilterType filterType, Map<String,String> text) throws Exception {
-        
+    public RenderedImage writePNG(
+            RenderedImage image, OutputStream outStream, float quality, FilterType filterType, Map<String, String> text)
+            throws Exception {
+
         // compute the compression level similarly to what the Clib code does
         int level = Math.round(9 * (1f - quality));
         // get the optimal scanline provider for this image
         RenderedImage original = image;
         ScanlineProvider scanlines = ScanlineProviderFactory.getProvider(image);
         if (scanlines == null) {
-            throw new IllegalArgumentException("Could not find a scanline extractor for "
-                    + original);
+            throw new IllegalArgumentException("Could not find a scanline extractor for " + original);
         }
 
         // encode using the PNGJ library and the GeoServer own scanline providers
@@ -92,11 +90,11 @@ public class PNGWriter {
                     }
                     transparent.setPalletteAlpha(alpha);
                     chunkList.queue(transparent);
-
                 }
             }
             if (text != null && !text.isEmpty()) {
-                Iterator<Entry<String, String>> entrySetIterator = text.entrySet().iterator();
+                Iterator<Entry<String, String>> entrySetIterator =
+                        text.entrySet().iterator();
                 while (entrySetIterator.hasNext()) {
                     Entry<String, String> entrySet = entrySetIterator.next();
                     metadata.setText(entrySet.getKey(), entrySet.getValue(), true, false);
@@ -118,9 +116,9 @@ public class PNGWriter {
     }
 
     /**
-     * Quick method used for checking if the image can be optimized with the selected scanline extractors or if the image must be rescaled to byte
-     * before writing the image.
-     * 
+     * Quick method used for checking if the image can be optimized with the selected scanline extractors or if the
+     * image must be rescaled to byte before writing the image.
+     *
      * @param image
      * @return
      */
@@ -129,14 +127,13 @@ public class PNGWriter {
         return scanlines != null;
     }
 
-    private ImageInfo getImageInfo(RenderedImage image, ScanlineProvider scanlines,
-            ColorModel colorModel, boolean indexed) {
+    private ImageInfo getImageInfo(
+            RenderedImage image, ScanlineProvider scanlines, ColorModel colorModel, boolean indexed) {
         int numColorComponents = colorModel.getNumColorComponents();
         boolean grayscale = !indexed && numColorComponents < 3;
         byte bitDepth = scanlines.getBitDepth();
         boolean hasAlpha = !indexed && colorModel.hasAlpha();
-        ImageInfo ii = new ImageInfo(image.getWidth(), image.getHeight(), bitDepth, hasAlpha,
-                grayscale, indexed);
+        ImageInfo ii = new ImageInfo(image.getWidth(), image.getHeight(), bitDepth, hasAlpha, grayscale, indexed);
         return ii;
     }
 }

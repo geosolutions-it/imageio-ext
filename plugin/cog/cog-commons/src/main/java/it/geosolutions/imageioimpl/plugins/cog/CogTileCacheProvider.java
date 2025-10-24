@@ -19,8 +19,7 @@ package it.geosolutions.imageioimpl.plugins.cog;
 /**
  * This interface should be implemented by cache providers to be compatible with the CachingHttpCogImageInputStream.
  *
- * @author joshfix
- * Created on 2019-08-29
+ * @author joshfix Created on 2019-08-29
  */
 public interface CogTileCacheProvider {
 
@@ -71,5 +70,4 @@ public interface CogTileCacheProvider {
      * @return Boolean value representing whether or not the header has been cached
      */
     boolean headerExists(String key);
-
 }

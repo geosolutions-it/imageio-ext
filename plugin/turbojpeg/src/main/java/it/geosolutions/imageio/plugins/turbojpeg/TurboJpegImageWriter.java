@@ -19,7 +19,6 @@ package it.geosolutions.imageio.plugins.turbojpeg;
 import it.geosolutions.imageio.plugins.exif.EXIFMetadata;
 import it.geosolutions.imageio.plugins.exif.EXIFUtilities;
 import it.geosolutions.imageio.utilities.ImageOutputStreamAdapter2;
-
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.ComponentSampleModel;
@@ -33,7 +32,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.imageio.IIOImage;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
@@ -44,36 +42,29 @@ import javax.imageio.stream.ImageOutputStream;
 import org.eclipse.imagen.ImageLayout;
 import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.RenderedOp;
-
 import org.eclipse.imagen.media.opimage.CopyOpImage;
 import org.libjpegturbo.turbojpeg.TJ;
 import org.libjpegturbo.turbojpeg.TJCompressor;
-
 
 /**
  * @author Daniele Romagnoli, GeoSolutions SaS
  * @author Simone Giannecchini, GeoSolutions SaS
  * @author Emanuele Tajariol, GeoSolutions SaS
  */
-public class TurboJpegImageWriter extends ImageWriter
-{
+public class TurboJpegImageWriter extends ImageWriter {
 
     /** The LOGGER for this class. */
     private static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.turbojpeg");
 
     private ImageOutputStream outputStream = null;
 
-    public TurboJpegImageWriter(ImageWriterSpi originatingProvider)
-    {
+    public TurboJpegImageWriter(ImageWriterSpi originatingProvider) {
         super(originatingProvider);
     }
 
-    /**
-     * Get a default {@link ImageWriteParam} instance.
-     */
+    /** Get a default {@link ImageWriteParam} instance. */
     @Override
-    public ImageWriteParam getDefaultWriteParam()
-    {
+    public ImageWriteParam getDefaultWriteParam() {
         TurboJpegImageWriteParam wparam = new TurboJpegImageWriteParam();
         wparam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
         wparam.setCompressionType(TurboJpegImageWriteParam.DEFAULT_COMPRESSION_SCHEME);
@@ -82,45 +73,37 @@ public class TurboJpegImageWriter extends ImageWriter
     }
 
     @Override
-    public IIOMetadata convertImageMetadata(IIOMetadata inData, ImageTypeSpecifier imageType,
-        ImageWriteParam param)
-    {
+    public IIOMetadata convertImageMetadata(IIOMetadata inData, ImageTypeSpecifier imageType, ImageWriteParam param) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public IIOMetadata convertStreamMetadata(IIOMetadata inData, ImageWriteParam param)
-    {
-    	throw new UnsupportedOperationException();
+    public IIOMetadata convertStreamMetadata(IIOMetadata inData, ImageWriteParam param) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public IIOMetadata getDefaultImageMetadata(ImageTypeSpecifier imageType, ImageWriteParam param)
-    {
+    public IIOMetadata getDefaultImageMetadata(ImageTypeSpecifier imageType, ImageWriteParam param) {
         return null;
     }
 
     @Override
-    public IIOMetadata getDefaultStreamMetadata(ImageWriteParam param)
-    {
+    public IIOMetadata getDefaultStreamMetadata(ImageWriteParam param) {
         return null;
     }
 
     /**
-     * Sets the destination to the given <code>Object</code>.
-     * For this TurboJPEG specific implementation, it needs to be
-     * an instance of  {@link ImageOutputStreamAdapter2}.
+     * Sets the destination to the given <code>Object</code>. For this TurboJPEG specific implementation, it needs to be
+     * an instance of {@link ImageOutputStreamAdapter2}.
      *
-     * @param output
-     *            the <code>Object</code> to use for future writing.
+     * @param output the <code>Object</code> to use for future writing.
      */
-    public void setOutput(Object output) 
-    {
+    public void setOutput(Object output) {
         if (output instanceof OutputStream) {
             outputStream = new ImageOutputStreamAdapter2((OutputStream) output);
         } else if (output instanceof ImageOutputStreamAdapter2) {
             outputStream = (ImageOutputStreamAdapter2) output;
-        } else if (output instanceof File){
+        } else if (output instanceof File) {
             try {
                 outputStream = new ImageOutputStreamAdapter2(new FileOutputStream((File) output));
             } catch (FileNotFoundException e) {
@@ -131,8 +114,7 @@ public class TurboJpegImageWriter extends ImageWriter
     }
 
     @Override
-    public void write(IIOMetadata metadata, IIOImage image, ImageWriteParam writeParam) throws IOException
-    {
+    public void write(IIOMetadata metadata, IIOImage image, ImageWriteParam writeParam) throws IOException {
 
         // Getting image properties
         RenderedImage srcImage = image.getRenderedImage();
@@ -152,79 +134,63 @@ public class TurboJpegImageWriter extends ImageWriter
         final int quality = (int) (param.getCompressionQuality() * 100);
 
         int pf = TJ.PF_RGB;
-        if (bandOffsets.length == 3)
-        {
+        if (bandOffsets.length == 3) {
             if (componentSampling == -1) {
                 componentSampling = TurboJpegImageWriteParam.DEFAULT_RGB_COMPONENT_SUBSAMPLING;
             }
-            if ((bandOffsets[0] == 2) && (bandOffsets[2] == 0))
-            {
+            if ((bandOffsets[0] == 2) && (bandOffsets[2] == 0)) {
                 pf = TJ.PF_BGR;
             }
-        }
-        else if (bandOffsets.length == 1 && componentSampling == -1)
-        {
+        } else if (bandOffsets.length == 1 && componentSampling == -1) {
             pf = TJ.PF_GRAY;
             componentSampling = TJ.SAMP_GRAY;
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("TurboJPEG won't work with this type of sampleModel");
         }
 
-        if (componentSampling < 0)
-        {
+        if (componentSampling < 0) {
             throw new IOException("Subsampling level not set");
         }
-        
+
         final int pixelsize = sm.getPixelStride();
         final int width = srcImage.getWidth();
         final int height = srcImage.getHeight();
         final int pitch = pixelsize * width;
-        
-        TJCompressor compressor = null;
-        try
-        {
-//            final long jsize = TurboJpegUtilities.bufSize(width, height);
 
-            Rectangle rect = new Rectangle(srcImage.getMinX(), srcImage.getMinY(), srcImage.getWidth(), srcImage.getHeight());
+        TJCompressor compressor = null;
+        try {
+            //            final long jsize = TurboJpegUtilities.bufSize(width, height);
+
+            Rectangle rect =
+                    new Rectangle(srcImage.getMinX(), srcImage.getMinY(), srcImage.getWidth(), srcImage.getHeight());
             Raster data = srcImage.getData(rect);
             final byte[] inputImageData = ((DataBufferByte) data.getDataBuffer()).getData();
-            
+
             final byte[] outputImageData;
             try {
                 compressor = new TJCompressor();
                 compressor.setSourceImage(inputImageData, width, pitch, height, pf);
                 compressor.setJPEGQuality(quality);
                 compressor.setSubsamp(componentSampling);
-                
-                outputImageData = compressor.compress(TJ.FLAG_FASTDCT);                
+
+                outputImageData = compressor.compress(TJ.FLAG_FASTDCT);
             } catch (Exception ex) {
                 throw new IOException("Error in turbojpeg comressor: " + ex.getMessage(), ex);
-            }            
-            
-            final int imageDataSize = compressor.getCompressedSize();            
-            
-            if (exif != null)
-            {
+            }
+
+            final int imageDataSize = compressor.getCompressedSize();
+
+            if (exif != null) {
                 EXIFUtilities.insertEXIFintoStream(
                         ((ImageOutputStreamAdapter2) outputStream).getOs(), outputImageData, imageDataSize, exif);
-            }
-            else
-            {
+            } else {
                 outputStream.write(outputImageData, 0, imageDataSize);
             }
-        }
-
-        finally
-        {
-            if(compressor != null) {
-                try
-                {
+        } finally {
+            if (compressor != null) {
+                try {
                     compressor.close();
-                }
-                catch (Exception t)
-                {
+                } catch (Exception t) {
                     LOGGER.log(Level.SEVERE, t.getLocalizedMessage(), t);
                 }
             }
@@ -232,55 +198,45 @@ public class TurboJpegImageWriter extends ImageWriter
     }
 
     /**
-     * Performs a few check in order to make sure to provide the proper data bytes to the
-     * incoming encoding phase. When calling getData(Rectangle).getDataBuffer() on an image having size
-     * smaller than the tile size, the underlying data buffer will be made of the data contained in the
-     * full tile (Even having used the getData(Rectangle) call. As an instance, a Rectangle(0,0,64,64)
-     * extracted from a 64x64 image with tiling 128x128 will result into a ByteBuffer filled with
-     * 128x128xBands bytes. (Therefore a lot of zeros). The encoded image will have a lot of scattered
-     * black stripes.
-     * This method do a copy of the only needed part of data when such a condition is met, or return the
-     * original image otherwise.
+     * Performs a few check in order to make sure to provide the proper data bytes to the incoming encoding phase. When
+     * calling getData(Rectangle).getDataBuffer() on an image having size smaller than the tile size, the underlying
+     * data buffer will be made of the data contained in the full tile (Even having used the getData(Rectangle) call. As
+     * an instance, a Rectangle(0,0,64,64) extracted from a 64x64 image with tiling 128x128 will result into a
+     * ByteBuffer filled with 128x128xBands bytes. (Therefore a lot of zeros). The encoded image will have a lot of
+     * scattered black stripes. This method do a copy of the only needed part of data when such a condition is met, or
+     * return the original image otherwise.
      *
      * @param srcImage The source image to be refined.
      * @return
      */
-    private RenderedImage refineImage(RenderedImage srcImage)
-    {
+    private RenderedImage refineImage(RenderedImage srcImage) {
         final int w = srcImage.getWidth();
         final int h = srcImage.getHeight();
         final int minX = srcImage.getMinX();
         final int minY = srcImage.getMinY();
         final int tw = srcImage.getTileWidth();
         final int th = srcImage.getTileHeight();
-        
+
         // Checking if the tiling size is bigger than the actual image size,
-        // in that case we need to do something like a crop by copying a 
-        // portion of the original data 
-        if ((tw > w) || (th > h))
-        {
+        // in that case we need to do something like a crop by copying a
+        // portion of the original data
+        if ((tw > w) || (th > h)) {
             RenderingHints hints = null;
             ImageLayout layout = null;
-            if (srcImage instanceof RenderedOp)
-            {
+            if (srcImage instanceof RenderedOp) {
                 hints = ((RenderedOp) srcImage).getRenderingHints();
-                if ((hints != null) && hints.containsKey(ImageN.KEY_IMAGE_LAYOUT))
-                {
+                if ((hints != null) && hints.containsKey(ImageN.KEY_IMAGE_LAYOUT)) {
                     layout = (ImageLayout) hints.get(ImageN.KEY_IMAGE_LAYOUT);
-                }
-                else
-                {
+                } else {
                     layout = new ImageLayout(srcImage);
                 }
-            }
-            else
-            {
+            } else {
                 layout = new ImageLayout(srcImage);
                 hints = new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, layout);
             }
-            
+
             // Imposing the layout of the requested image
-            // as well as reducing the tile layout which was 
+            // as well as reducing the tile layout which was
             // bigger than the image
             layout.setTileHeight(h);
             layout.setTileWidth(w);
@@ -294,5 +250,4 @@ public class TurboJpegImageWriter extends ImageWriter
         }
         return srcImage;
     }
-
 }

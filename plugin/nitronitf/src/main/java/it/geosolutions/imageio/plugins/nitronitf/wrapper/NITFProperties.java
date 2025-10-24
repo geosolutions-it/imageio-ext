@@ -19,30 +19,23 @@ package it.geosolutions.imageio.plugins.nitronitf.wrapper;
 import java.util.List;
 
 /**
- * A NITF Properties holder class storing all the fields and TREs values, segments and headers to be
- * used to write a NITF file. 
- * 
- * @todo Setup streamMetadata and imageMetadata objects to replace this entity. 
- * @author Daniele Romagnoli, GeoSolutions s.a.s.
+ * A NITF Properties holder class storing all the fields and TREs values, segments and headers to be used to write a
+ * NITF file.
  *
+ * @todo Setup streamMetadata and imageMetadata objects to replace this entity.
+ * @author Daniele Romagnoli, GeoSolutions s.a.s.
  */
 public class NITFProperties {
 
-    /** 
-     * The object wrapping the MainHeader 
-     */
+    /** The object wrapping the MainHeader */
     private HeaderWrapper header;
 
     private ShapeFileWrapper shape;
 
-    /** 
-     * The list of objects wrapping the TextSegments 
-     */
+    /** The list of objects wrapping the TextSegments */
     private List<TextWrapper> textsWrapper;
 
-    /** 
-     * The list of objects wrapping the ImageSegments  
-     */
+    /** The list of objects wrapping the ImageSegments */
     private List<ImageWrapper> imagesWrapper;
 
     // private Map<String, Map<String, String>> extensionsMap;
@@ -72,10 +65,9 @@ public class NITFProperties {
     }
 
     /**
-     * Get the underlying text wrapper {@code List}. Note that this getter 
-     * returns the list itself, not a copy. 
-     * Therefore any change to the referred {@code List} will directly 
-     * modify the underlying object. 
+     * Get the underlying text wrapper {@code List}. Note that this getter returns the list itself, not a copy.
+     * Therefore any change to the referred {@code List} will directly modify the underlying object.
+     *
      * @return the underlying {@code List} of {@link TextWrapper} objects.
      */
     public List<TextWrapper> getTextsWrapper() {
@@ -87,10 +79,9 @@ public class NITFProperties {
     }
 
     /**
-     * Get the underlying images wrapper {@code List}. Note that this getter 
-     * returns the list itself, not a copy. 
-     * Therefore any change to the referred {@code List} will directly 
-     * modify the underlying object. 
+     * Get the underlying images wrapper {@code List}. Note that this getter returns the list itself, not a copy.
+     * Therefore any change to the referred {@code List} will directly modify the underlying object.
+     *
      * @return the underlying {@code List} of {@link ImageWrapper} objects.
      */
     public List<ImageWrapper> getImagesWrapper() {
@@ -100,5 +91,4 @@ public class NITFProperties {
     public void setImagesWrapper(List<ImageWrapper> imagesWrapper) {
         this.imagesWrapper = imagesWrapper;
     }
-
 }

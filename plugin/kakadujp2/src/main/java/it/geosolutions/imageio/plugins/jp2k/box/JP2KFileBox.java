@@ -17,27 +17,23 @@
 package it.geosolutions.imageio.plugins.jp2k.box;
 
 import it.geosolutions.imageio.plugins.jp2k.JP2KBox;
-
 import javax.imageio.metadata.IIOMetadataNode;
 
 /**
  * Fake node to represent that a JPEG2000 file is a superbox itself.
- * 
+ *
  * @author Simone Giannecchini, GeoSolutions.
- * 
  */
 public class JP2KFileBox extends DefaultJP2KBox implements JP2KBox {
 
-    /**
-     * 
-     */
+    /** */
     private static final long serialVersionUID = -2615305045686220671L;
 
     public static final int BOX_TYPE = 0x00000001;
 
-    public final static String JP2K_MD_NAME = "JP2KFileBoxes";
+    public static final String JP2K_MD_NAME = "JP2KFileBoxes";
 
-    public final static String NAME = "jp2k";
+    public static final String NAME = "jp2k";
 
     @Override
     public synchronized byte[] getContent() {
@@ -47,7 +43,7 @@ public class JP2KFileBox extends DefaultJP2KBox implements JP2KBox {
     public JP2KFileBox() {
         super(-1, BOX_TYPE, null);
     }
-    
+
     public IIOMetadataNode getNativeNode() {
         String name = BoxUtilities.getName(getType());
         IIOMetadataNode node = new IIOMetadataNode(name);

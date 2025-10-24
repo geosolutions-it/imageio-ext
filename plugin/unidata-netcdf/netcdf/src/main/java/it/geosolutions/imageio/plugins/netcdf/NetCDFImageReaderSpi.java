@@ -19,40 +19,36 @@ package it.geosolutions.imageio.plugins.netcdf;
 import it.geosolutions.imageio.ndplugin.BaseImageReaderSpi;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 import it.geosolutions.imageio.stream.input.URIImageInputStream;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.EnumSet;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.imageio.ImageReader;
-
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dataset.NetcdfDataset.Enhance;
 
 /**
  * Service provider interface for the NetCDF Image
- * 
+ *
  * @author Alessio Fabiani, GeoSolutions
  */
 public class NetCDFImageReaderSpi extends BaseImageReaderSpi {
 
-	static{
-		NetcdfDataset.setDefaultEnhanceMode(EnumSet.of(Enhance.CoordSystems));
-	}
-	
+    static {
+        NetcdfDataset.setDefaultEnhanceMode(EnumSet.of(Enhance.CoordSystems));
+    }
+
     /** Default Logger * */
-    private static final Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.plugins.netcdf");
+    private static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.netcdf");
 
-    static final String[] suffixes = { "nc", "NC" };
+    static final String[] suffixes = {"nc", "NC"};
 
-    static final String[] formatNames = { "netcdf", "NetCDF" };
+    static final String[] formatNames = {"netcdf", "NetCDF"};
 
-    static final String[] MIMETypes = { "image/x-netcdf", "image/x-nc" };
+    static final String[] MIMETypes = {"image/x-netcdf", "image/x-nc"};
 
     static final String version = "1.0";
 
@@ -61,7 +57,7 @@ public class NetCDFImageReaderSpi extends BaseImageReaderSpi {
     // //
     // writerSpiNames
     // //
-    static final String[] wSN = { null };
+    static final String[] wSN = {null};
 
     // //
     // StreamMetadataFormatNames and StreamMetadataFormatClassNames
@@ -72,9 +68,9 @@ public class NetCDFImageReaderSpi extends BaseImageReaderSpi {
 
     static final String nativeStreamMetadataFormatClassName = null;
 
-    static final String[] extraStreamMetadataFormatNames = { null };
+    static final String[] extraStreamMetadataFormatNames = {null};
 
-    static final String[] extraStreamMetadataFormatClassNames = { null };
+    static final String[] extraStreamMetadataFormatClassNames = {null};
 
     // //
     // ImageMetadataFormatNames and ImageMetadataFormatClassNames
@@ -85,9 +81,9 @@ public class NetCDFImageReaderSpi extends BaseImageReaderSpi {
 
     static final String nativeImageMetadataFormatClassName = null;
 
-    static final String[] extraImageMetadataFormatNames = { null };
+    static final String[] extraImageMetadataFormatNames = {null};
 
-    static final String[] extraImageMetadataFormatClassNames = { null };
+    static final String[] extraImageMetadataFormatClassNames = {null};
 
     /** Default Constructor * */
     public NetCDFImageReaderSpi() {
@@ -121,8 +117,7 @@ public class NetCDFImageReaderSpi extends BaseImageReaderSpi {
         File input = null;
         if (source instanceof FileImageInputStreamExtImpl) {
             input = ((FileImageInputStreamExtImpl) source).getFile();
-            if (LOGGER.isLoggable(Level.FINE))
-                LOGGER.fine("Found a valid FileImageInputStream");
+            if (LOGGER.isLoggable(Level.FINE)) LOGGER.fine("Found a valid FileImageInputStream");
         }
 
         if (source instanceof File) {
@@ -132,7 +127,8 @@ public class NetCDFImageReaderSpi extends BaseImageReaderSpi {
             URIImageInputStream uriInStream = (URIImageInputStream) source;
             try {
                 // TODO perhaps it would be better to not make an online check. Might be slowing down.
-                NetcdfDataset openDataset = NetcdfDataset.openDataset(uriInStream.getUri().toString());
+                NetcdfDataset openDataset =
+                        NetcdfDataset.openDataset(uriInStream.getUri().toString());
                 openDataset.close();
                 return true;
             } catch (IOException e) {
@@ -144,36 +140,29 @@ public class NetCDFImageReaderSpi extends BaseImageReaderSpi {
             try {
                 file = NetcdfFile.open(input.getPath());
                 if (file != null) {
-                    if (LOGGER.isLoggable(Level.FINE))
-                        LOGGER.fine("File successfully opened");
+                    if (LOGGER.isLoggable(Level.FINE)) LOGGER.fine("File successfully opened");
                     canDecode = true;
                 }
             } catch (IOException ioe) {
                 canDecode = false;
             } finally {
-                if (file != null)
-                    file.close();
+                if (file != null) file.close();
             }
-
         }
         return canDecode;
     }
 
-    /**
-     * @see javax.imageio.spi.ImageReaderSpi#createReaderInstance(java.lang.Object)
-     */
+    /** @see javax.imageio.spi.ImageReaderSpi#createReaderInstance(java.lang.Object) */
     @Override
-    public ImageReader createReaderInstance(Object extension)
-            throws IOException {
+    public ImageReader createReaderInstance(Object extension) throws IOException {
         return new NetCDFImageReader(this);
     }
 
-    /**
-     * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
-     */
+    /** @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale) */
     @Override
     public String getDescription(Locale locale) {
-        return new StringBuffer("NetCDF-CF Image Reader, version ").append(
-                version).toString();
+        return new StringBuffer("NetCDF-CF Image Reader, version ")
+                .append(version)
+                .toString();
     }
 }

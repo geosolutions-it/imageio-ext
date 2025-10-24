@@ -18,26 +18,23 @@ package it.geosolutions.imageio.stream.input;
 
 import it.geosolutions.imageio.stream.AccessibleStream;
 import it.geosolutions.imageio.stream.eraf.EnhancedRandomAccessFile;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteOrder;
-
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageInputStreamImpl;
 
 /**
- * An implementation of {@link ImageInputStream} that gets its input from a
- * {@link File}. The eraf contents are assumed to be stable during the lifetime
- * of the object.
- * 
+ * An implementation of {@link ImageInputStream} that gets its input from a {@link File}. The eraf contents are assumed
+ * to be stable during the lifetime of the object.
+ *
  * @author Simone Giannecchini, GeoSolutions
  */
-public  class FileImageInputStreamExtImpl extends ImageInputStreamImpl
+public class FileImageInputStreamExtImpl extends ImageInputStreamImpl
         implements ImageInputStream, AccessibleStream<File> {
 
-    /** the associated {@link File}*/
+    /** the associated {@link File} */
     private File file;
 
     private EnhancedRandomAccessFile eraf;
@@ -147,58 +144,37 @@ public  class FileImageInputStreamExtImpl extends ImageInputStreamImpl
     }
 
     /**
-     * Constructs a {@link FileImageInputStreamExtImpl} that will read from a
-     * given {@link File}.
-     * 
-     * <p>
-     * The eraf contents must not change between the time this object is
-     * constructed and the time of the last call to a read method.
-     * 
-     * @param f
-     *                a {@link File} to read from.
-     * 
-     * @exception NullPointerException
-     *                    if <code>f</code> is <code>null</code>.
-     * @exception SecurityException
-     *                    if a security manager exists and does not allow read
-     *                    access to the eraf.
-     * @exception FileNotFoundException
-     *                    if <code>f</code> is a directory or cannot be opened
-     *                    for reading for any other reason.
-     * @exception IOException
-     *                    if an I/O error occurs.
+     * Constructs a {@link FileImageInputStreamExtImpl} that will read from a given {@link File}.
+     *
+     * <p>The eraf contents must not change between the time this object is constructed and the time of the last call to
+     * a read method.
+     *
+     * @param f a {@link File} to read from.
+     * @exception NullPointerException if <code>f</code> is <code>null</code>.
+     * @exception SecurityException if a security manager exists and does not allow read access to the eraf.
+     * @exception FileNotFoundException if <code>f</code> is a directory or cannot be opened for reading for any other
+     *     reason.
+     * @exception IOException if an I/O error occurs.
      */
-    public FileImageInputStreamExtImpl(File f) throws FileNotFoundException,
-            IOException {
+    public FileImageInputStreamExtImpl(File f) throws FileNotFoundException, IOException {
         this(f, -1);
     }
 
     /**
-     * Constructs a {@link FileImageInputStreamExtImpl} that will read from a
-     * given {@link File}.
-     * 
-     * <p>
-     * The eraf contents must not change between the time this object is
-     * constructed and the time of the last call to a read method.
-     * 
-     * @param f
-     *                a {@link File} to read from.
-     * @param bufferSize
-     *                size of the underlying buffer.
-     * 
-     * @exception NullPointerException
-     *                    if <code>f</code> is <code>null</code>.
-     * @exception SecurityException
-     *                    if a security manager exists and does not allow read
-     *                    access to the eraf.
-     * @exception FileNotFoundException
-     *                    if <code>f</code> is a directory or cannot be opened
-     *                    for reading for any other reason.
-     * @exception IOException
-     *                    if an I/O error occurs.
+     * Constructs a {@link FileImageInputStreamExtImpl} that will read from a given {@link File}.
+     *
+     * <p>The eraf contents must not change between the time this object is constructed and the time of the last call to
+     * a read method.
+     *
+     * @param f a {@link File} to read from.
+     * @param bufferSize size of the underlying buffer.
+     * @exception NullPointerException if <code>f</code> is <code>null</code>.
+     * @exception SecurityException if a security manager exists and does not allow read access to the eraf.
+     * @exception FileNotFoundException if <code>f</code> is a directory or cannot be opened for reading for any other
+     *     reason.
+     * @exception IOException if an I/O error occurs.
      */
-    public FileImageInputStreamExtImpl(File f, int bufferSize)
-            throws IOException {
+    public FileImageInputStreamExtImpl(File f, int bufferSize) throws IOException {
         // //
         //
         // Check that the input file is a valid file
@@ -217,12 +193,9 @@ public  class FileImageInputStreamExtImpl extends ImageInputStreamImpl
         // NOTE: this must be done accordingly to what ImageInputStreamImpl
         // does, otherwise some ImageReader subclasses might not work.
         this.eraf.setByteOrder(ByteOrder.BIG_ENDIAN);
-
     }
 
-    /**
-     * Reads an int from the underlying {@link EnhancedRandomAccessFile}.
-     */
+    /** Reads an int from the underlying {@link EnhancedRandomAccessFile}. */
     public int read() throws IOException {
         checkClosed();
         bitOffset = 0;
@@ -234,17 +207,14 @@ public  class FileImageInputStreamExtImpl extends ImageInputStreamImpl
     }
 
     /**
-     * Read up to <code>len</code> bytes into an array, at a specified offset.
-     * This will block until at least one byte has been read.
-     * 
-     * @param b
-     *                the byte array to receive the bytes.
-     * @param off
-     *                the offset in the array where copying will start.
-     * @param len
-     *                the number of bytes to copy.
-     * @return the actual number of bytes read, or -1 if there is not more data
-     *         due to the end of the eraf being reached.
+     * Read up to <code>len</code> bytes into an array, at a specified offset. This will block until at least one byte
+     * has been read.
+     *
+     * @param b the byte array to receive the bytes.
+     * @param off the offset in the array where copying will start.
+     * @param len the number of bytes to copy.
+     * @return the actual number of bytes read, or -1 if there is not more data due to the end of the eraf being
+     *     reached.
      */
     public int read(byte[] b, int off, int len) throws IOException {
         checkClosed();
@@ -257,9 +227,8 @@ public  class FileImageInputStreamExtImpl extends ImageInputStreamImpl
     }
 
     /**
-     * Returns the length of the underlying eraf, or <code>-1</code> if it is
-     * unknown.
-     * 
+     * Returns the length of the underlying eraf, or <code>-1</code> if it is unknown.
+     *
      * @return the eraf length as a <code>long</code>, or <code>-1</code>.
      */
     public long length() {
@@ -271,9 +240,7 @@ public  class FileImageInputStreamExtImpl extends ImageInputStreamImpl
         }
     }
 
-    /**
-     * Seeks the current position to pos.
-     */
+    /** Seeks the current position to pos. */
     public void seek(long pos) throws IOException {
         checkClosed();
         if (pos < flushedPos) {
@@ -286,34 +253,27 @@ public  class FileImageInputStreamExtImpl extends ImageInputStreamImpl
 
     /**
      * Closes the underlying {@link EnhancedRandomAccessFile}.
-     * 
-     * @throws IOException
-     *                 in case something bad happens.
+     *
+     * @throws IOException in case something bad happens.
      */
     public void close() throws IOException {
         try {
-            if(!isClosed){
+            if (!isClosed) {
                 super.close();
                 eraf.close();
                 eraf = null;
             }
         } finally {
-            isClosed=true;
+            isClosed = true;
         }
     }
 
-    /**
-     * Retrieves the {@link File} we are connected to.
-     */
+    /** Retrieves the {@link File} we are connected to. */
     public File getFile() {
         return file;
     }
 
-    /**
-     * Disposes this {@link FileImageInputStreamExtImpl} by closing its
-     * underlying {@link EnhancedRandomAccessFile}.
-     * 
-     */
+    /** Disposes this {@link FileImageInputStreamExtImpl} by closing its underlying {@link EnhancedRandomAccessFile}. */
     public void dispose() {
         try {
             close();
@@ -324,7 +284,7 @@ public  class FileImageInputStreamExtImpl extends ImageInputStreamImpl
 
     /**
      * Provides a simple description for this {@link ImageInputStream}.
-     * 
+     *
      * @return a simple description for this {@link ImageInputStream}.
      */
     public String toString() {

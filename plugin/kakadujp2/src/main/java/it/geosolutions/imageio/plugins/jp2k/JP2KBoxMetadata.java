@@ -22,7 +22,7 @@ import javax.imageio.metadata.IIOMetadataNode;
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
  */
-public interface JP2KBoxMetadata extends JP2KBox{
+public interface JP2KBoxMetadata extends JP2KBox {
 
     public IIOMetadataNode getNativeNode();
 }

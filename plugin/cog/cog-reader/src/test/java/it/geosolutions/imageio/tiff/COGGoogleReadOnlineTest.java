@@ -21,23 +21,19 @@ import it.geosolutions.imageioimpl.plugins.cog.CogImageReader;
 import it.geosolutions.imageioimpl.plugins.cog.CogImageReaderSpi;
 import it.geosolutions.imageioimpl.plugins.cog.DefaultCogImageInputStream;
 import it.geosolutions.imageioimpl.plugins.cog.GSRangeReader;
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
-
 public class COGGoogleReadOnlineTest {
 
-    private static String GS_COG_URI = "gs://gcp-public-data-landsat/LC08/01/044/034" +
-            "/LC08_L1GT_044034_20130330_20170310_01_T2" +
-            "/LC08_L1GT_044034_20130330_20170310_01_T2_B11.TIF";
+    private static String GS_COG_URI = "gs://gcp-public-data-landsat/LC08/01/044/034"
+            + "/LC08_L1GT_044034_20130330_20170310_01_T2" + "/LC08_L1GT_044034_20130330_20170310_01_T2_B11.TIF";
 
-    private static String HTTPS_COG_URI = "https://storage.googleapis" +
-            ".com/gcp-public-data-landsat/LC08/01/044/034" +
-            "/LC08_L1GT_044034_20130330_20170310_01_T2" +
-            "/LC08_L1GT_044034_20130330_20170310_01_T2_B11.TIF";
-
+    private static String HTTPS_COG_URI = "https://storage.googleapis" + ".com/gcp-public-data-landsat/LC08/01/044/034"
+            + "/LC08_L1GT_044034_20130330_20170310_01_T2"
+            + "/LC08_L1GT_044034_20130330_20170310_01_T2_B11.TIF";
 
     @Test
     public void testGSReadFirstTiles() throws Exception {

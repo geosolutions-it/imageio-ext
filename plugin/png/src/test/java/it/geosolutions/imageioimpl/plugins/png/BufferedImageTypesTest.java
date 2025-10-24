@@ -16,8 +16,8 @@
  */
 package it.geosolutions.imageioimpl.plugins.png;
 
+import ar.com.hjg.pngj.FilterType;
 import it.geosolutions.imageio.plugins.png.PNGWriter;
-
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -26,15 +26,11 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import javax.imageio.ImageIO;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-
-import ar.com.hjg.pngj.FilterType;
 
 @RunWith(Parameterized.class)
 public class BufferedImageTypesTest {
@@ -42,11 +38,11 @@ public class BufferedImageTypesTest {
     static final int WIDTH = 1024;
 
     static final int HEIGTH = 1024;
-    
+
     static final int STROKE_WIDTH = 30;
 
     static final int LINES = 200;
-    
+
     BufferedImage image;
 
     String name;
@@ -59,9 +55,9 @@ public class BufferedImageTypesTest {
 
     @Parameters(name = "{0}")
     public static Collection parameters() throws Exception {
-        String[] types = new String[] { "4BYTE_ABGR", "INT_ARGB", "3BYTE_BGR", "INT_BGR", 
-                "INT_RGB", "BYTE_INDEXED", "BYTE_GRAY" };
-        
+        String[] types =
+                new String[] {"4BYTE_ABGR", "INT_ARGB", "3BYTE_BGR", "INT_BGR", "INT_RGB", "BYTE_INDEXED", "BYTE_GRAY"};
+
         List<Object[]> parameters = new ArrayList<Object[]>();
         for (int i = 0; i < types.length; i++) {
             String type = types[i];
@@ -69,25 +65,24 @@ public class BufferedImageTypesTest {
             int imageType = (Integer) field.get(null);
             parameters.add(new Object[] {type.toLowerCase(), imageType});
         }
-        
+
         return parameters;
     }
-
 
     @Test
     public void compareImage() throws Exception {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        float quality = 4f/9 - 1;
+        float quality = 4f / 9 - 1;
         new PNGWriter().writePNG(image, bos, -quality, FilterType.FILTER_NONE);
         ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
         BufferedImage readBack = ImageIO.read(bis);
-        
+
         boolean success = false;
         try {
             ImageAssert.assertImagesEqual(image, readBack);
             success = true;
         } finally {
-            if(!success) {
+            if (!success) {
                 ImageIO.write(image, "PNG", new File("./target/" + name + "_expected.png"));
                 ImageIO.write(readBack, "PNG", new File("./target/" + name + "_actual.png"));
             }
@@ -97,7 +92,7 @@ public class BufferedImageTypesTest {
     @Test
     public void compareSubImage() throws Exception {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        float quality = 4f/9 - 1;
+        float quality = 4f / 9 - 1;
         BufferedImage subImage = image.getSubimage(100, 100, 100, 100);
 
         ImageIO.write(subImage, "PNG", new File("./target/" + name + "_expected.png"));
@@ -111,11 +106,10 @@ public class BufferedImageTypesTest {
             ImageAssert.assertImagesEqual(subImage, readBack);
             success = true;
         } finally {
-            if(!success) {
+            if (!success) {
                 ImageIO.write(subImage, "PNG", new File("./target/" + name + "_expected.png"));
                 ImageIO.write(readBack, "PNG", new File("./target/" + name + "_actual.png"));
             }
         }
     }
-
 }

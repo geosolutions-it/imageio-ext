@@ -33,33 +33,31 @@ import it.geosolutions.imageio.compression.AbstractCompressorSpi;
 import it.geosolutions.imageio.compression.CompressionType;
 import it.geosolutions.imageio.compression.Compressor;
 import it.geosolutions.imageio.compression.CompressorSpi;
-import me.steinborn.libdeflate.Libdeflate;
-
 import java.util.Collections;
 import java.util.Set;
+import me.steinborn.libdeflate.Libdeflate;
 
-/**
- * Compressor SPI based on libdeflate java library
- */
+/** Compressor SPI based on libdeflate java library */
 public class LibDeflateCompressorSpi extends AbstractCompressorSpi implements CompressorSpi {
 
-    final static int DEFAULT_PRIORITY = 80;
+    static final int DEFAULT_PRIORITY = 80;
 
-    private final static int DEFAUL_MAX_LEVEL = 8;
+    private static final int DEFAUL_MAX_LEVEL = 8;
 
-    private final static int DEFAUL_MIN_LEVEL = 1;
+    private static final int DEFAUL_MIN_LEVEL = 1;
 
-    public final static int getDefaultPriority() {
+    public static final int getDefaultPriority() {
         return DEFAULT_PRIORITY;
     }
 
-    public final static int getDefaultMaxLevel() {
+    public static final int getDefaultMaxLevel() {
         return DEFAUL_MAX_LEVEL;
     }
 
-    public final static int getDefaultMinLevel() {
+    public static final int getDefaultMinLevel() {
         return DEFAUL_MIN_LEVEL;
     }
+
     public LibDeflateCompressorSpi() {
         super();
         minLevel = DEFAUL_MIN_LEVEL;
@@ -86,5 +84,4 @@ public class LibDeflateCompressorSpi extends AbstractCompressorSpi implements Co
     public boolean isEnabled() {
         return Libdeflate.isAvailable();
     }
-
 }

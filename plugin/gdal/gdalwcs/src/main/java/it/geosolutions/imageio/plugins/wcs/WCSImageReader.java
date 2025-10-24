@@ -17,26 +17,22 @@
 package it.geosolutions.imageio.plugins.wcs;
 
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
-
 import java.awt.image.RenderedImage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * {@link WCSImageReader} is a {@link GDALImageReader} able to create
- * {@link RenderedImage} from WCS services.
- * 
+ * {@link WCSImageReader} is a {@link GDALImageReader} able to create {@link RenderedImage} from WCS services.
+ *
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class WCSImageReader extends GDALImageReader {
 
-    private static final Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.plugins.wcs");
+    private static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.wcs");
 
     public WCSImageReader(WCSImageReaderSpi originatingProvider) {
         super(originatingProvider, 0);
-        if (LOGGER.isLoggable(Level.FINE))
-            LOGGER.fine("WCSImageReader Constructor");
+        if (LOGGER.isLoggable(Level.FINE)) LOGGER.fine("WCSImageReader Constructor");
     }
 }

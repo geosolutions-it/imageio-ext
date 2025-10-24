@@ -1,29 +1,21 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <properties>
-      <tests.holdwrittenfiles>false</tests.holdwrittenfiles>
-  </properties>
-  <profiles>
-   <profile>
-     <id>tests.holdwrittenfiles</id>
-     <properties>
-      <tests.holdwrittenfiles>true</tests.holdwrittenfiles>
-     </properties>
-   </profile>
-  </profiles>
-  <groupId>it.geosolutions.imageio-ext</groupId>
-  <artifactId>imageio-ext-gdalkakadujp2</artifactId>
-  <packaging>jar</packaging>
-  <version>2.1-SNAPSHOT</version>
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-gdal-plugin</artifactId>
     <version>2.1-SNAPSHOT</version>
   </parent>
+  <groupId>it.geosolutions.imageio-ext</groupId>
+  <artifactId>imageio-ext-gdalkakadujp2</artifactId>
+  <version>2.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
   <name>Jpeg2000 (Kakadu) Plugin that internally uses GDAL</name>
+  <properties>
+    <tests.holdwrittenfiles>false</tests.holdwrittenfiles>
+  </properties>
   <build>
-   <plugins>
+    <plugins>
       <!-- ======================================================= -->
       <!--                        Tests                            -->
       <!-- ======================================================= -->
@@ -36,8 +28,16 @@
           </includes>
           <forkMode>once</forkMode>
           <argLine>-Xmx${test.maxHeapSize} -enableassertions -Dtest.extensive=${extensive.tests} -Dtest.interactive=${interactive.tests} -Dit.geosolutions.imageio.plugins.jp2kakadu.holdwrittenfiles=${tests.holdwrittenfiles}</argLine>
-         </configuration>
+        </configuration>
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>tests.holdwrittenfiles</id>
+      <properties>
+        <tests.holdwrittenfiles>true</tests.holdwrittenfiles>
+      </properties>
+    </profile>
+  </profiles>
 </project>

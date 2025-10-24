@@ -18,7 +18,7 @@ package it.geosolutions.imageio.plugins.nitronitf.wrapper;
 
 /**
  * Wrapper class related to a TextSegment of a NITF file.
- * 
+ *
  * @author Daniele Romagnoli, GeoSolutions s.a.s.
  */
 public class TextWrapper extends IdentifiableNITFObjectWrapper {
@@ -52,5 +52,4 @@ public class TextWrapper extends IdentifiableNITFObjectWrapper {
     public void setTextContent(byte[] textContent) {
         this.textContent = textContent;
     }
-
 }

@@ -19,9 +19,9 @@ package it.geosolutions.imageio.plugins.png;
 import java.awt.image.*;
 
 /**
- * Wraps a {@link RenderedImage} into a scaline provider optimized to turn its pixels into PNG
- * scanlines at the best performance
- * 
+ * Wraps a {@link RenderedImage} into a scaline provider optimized to turn its pixels into PNG scanlines at the best
+ * performance
+ *
  * @author Andrea Aime - GeoSolutions
  */
 public class ScanlineProviderFactory {
@@ -61,10 +61,10 @@ public class ScanlineProviderFactory {
                         }
                     } else {
                         if (cm.getPixelSize() == 8) {
-                            if (sm instanceof PixelInterleavedSampleModel &&
-                                    (((PixelInterleavedSampleModel)sm).getPixelStride() != 1)) {
-                                    return new RasterByteSingleBandSkippingBytesProvider(raster);
-                                }
+                            if (sm instanceof PixelInterleavedSampleModel
+                                    && (((PixelInterleavedSampleModel) sm).getPixelStride() != 1)) {
+                                return new RasterByteSingleBandSkippingBytesProvider(raster);
+                            }
                             return new RasterByteSingleBandProvider(raster, 8, raster.getWidth());
                         } else if (cm.getPixelSize() == 4) {
                             int scanlineLength = (raster.getWidth() + 1) / 2;
@@ -94,9 +94,9 @@ public class ScanlineProviderFactory {
         } else if (cm instanceof IndexColorModel) {
             IndexColorModel icm = (IndexColorModel) cm;
             int pixelSize = icm.getPixelSize();
-            // the RGBA quantizer can generate pixel sizes which are not powers of two, 
+            // the RGBA quantizer can generate pixel sizes which are not powers of two,
             // re-align to powers of two
-            if((pixelSize & (pixelSize - 1)) != 0) {
+            if ((pixelSize & (pixelSize - 1)) != 0) {
                 int nextPower = (int) (Math.floor(Math.log(pixelSize) / Math.log(2)) + 1);
                 pixelSize = (int) Math.pow(2, nextPower);
             }
@@ -119,16 +119,13 @@ public class ScanlineProviderFactory {
                         return new RasterByteSingleBandProvider(raster, 8, raster.getWidth(), icm);
                     } else if (pixelSize == 4) {
                         int scanlineLength = (raster.getWidth() + 1) / 2;
-                        return new RasterByteRepackSingleBandProvider(raster, 4, scanlineLength,
-                                icm);
+                        return new RasterByteRepackSingleBandProvider(raster, 4, scanlineLength, icm);
                     } else if (pixelSize == 2) {
                         int scanlineLength = (raster.getWidth() + 2) / 4;
-                        return new RasterByteRepackSingleBandProvider(raster, 2, scanlineLength,
-                                icm);
+                        return new RasterByteRepackSingleBandProvider(raster, 2, scanlineLength, icm);
                     } else if (pixelSize == 1) {
                         int scanlineLength = (raster.getWidth() + 4) / 8;
-                        return new RasterByteRepackSingleBandProvider(raster, 1, scanlineLength,
-                                icm);
+                        return new RasterByteRepackSingleBandProvider(raster, 1, scanlineLength, icm);
                     }
                 }
             } else if (sm.getDataType() == DataBuffer.TYPE_USHORT) {
@@ -137,7 +134,7 @@ public class ScanlineProviderFactory {
                         int scanlineLength = raster.getWidth() * 2;
                         return new RasterShortSingleBandProvider(raster, 16, scanlineLength, icm);
                     } else if (pixelSize == 8) {
-                        int scanlineLength = raster.getWidth() + ((raster.getWidth() % 2 == 0) ? 0 : 1); 
+                        int scanlineLength = raster.getWidth() + ((raster.getWidth() % 2 == 0) ? 0 : 1);
                         return new RasterShortSingleBandProvider(raster, 8, scanlineLength, icm);
                     } else if (pixelSize == 4) {
                         int scanlineLength = (raster.getWidth() + 1) / 2;

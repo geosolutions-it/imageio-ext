@@ -29,17 +29,13 @@
  */
 package it.geosolutions.imageioimpl.plugins.tiff;
 
-
 import io.airlift.compress.zstd.ZstdCompressor;
 import it.geosolutions.imageio.plugins.tiff.PrivateTIFFTagSet;
 import it.geosolutions.imageio.plugins.tiff.TIFFCompressor;
-
-import javax.imageio.ImageWriteParam;
 import java.io.IOException;
+import javax.imageio.ImageWriteParam;
 
-/**
- * Compressor for ZSTD compression.
- */
+/** Compressor for ZSTD compression. */
 public class TIFFZSTDCompressor extends TIFFCompressor {
 
     ZstdCompressor compressor = new ZstdCompressor();
@@ -53,12 +49,10 @@ public class TIFFZSTDCompressor extends TIFFCompressor {
         // Currently the java ZSTD library only support compression level 3
     }
 
-    public int encode(byte[] b, int off,
-                      int width, int height,
-                      int[] bitsPerSample,
-                      int scanlineStride) throws IOException {
+    public int encode(byte[] b, int off, int width, int height, int[] bitsPerSample, int scanlineStride)
+            throws IOException {
 
-        int inputSize = height*scanlineStride;
+        int inputSize = height * scanlineStride;
         int maxOutputLenght = compressor.maxCompressedLength(inputSize);
 
         byte[] compData = new byte[maxOutputLenght];

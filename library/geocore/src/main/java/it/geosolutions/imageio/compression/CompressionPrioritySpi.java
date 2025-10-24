@@ -29,10 +29,8 @@
  */
 package it.geosolutions.imageio.compression;
 
-/**
- * Service Provider Interface for compression with priority support
- */
-public interface CompressionPrioritySpi  {
+/** Service Provider Interface for compression with priority support */
+public interface CompressionPrioritySpi {
 
     /** Return the priority of this SPI. Default is 50 */
     int getPriority();

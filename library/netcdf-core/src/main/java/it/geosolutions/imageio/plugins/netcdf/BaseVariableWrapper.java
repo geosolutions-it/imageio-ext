@@ -17,7 +17,6 @@
 package it.geosolutions.imageio.plugins.netcdf;
 
 import java.awt.image.SampleModel;
-
 import ucar.nc2.Variable;
 
 public abstract class BaseVariableWrapper {
@@ -32,24 +31,24 @@ public abstract class BaseVariableWrapper {
 
     private int tileHeight;
 
-	private int tileWidth;
+    private int tileWidth;
 
     private int rank;
-    
+
     private int numBands;
-    
-	private SampleModel sampleModel;
+
+    private SampleModel sampleModel;
 
     public void setSampleModel(SampleModel sampleModel) {
-		this.sampleModel = sampleModel;
-	}
+        this.sampleModel = sampleModel;
+    }
 
     public BaseVariableWrapper(Variable variable) {
         this.variable = variable;
         rank = variable.getRank();
         width = variable.getDimension(rank - NetCDFUtilities.X_DIMENSION).getLength();
         height = variable.getDimension(rank - NetCDFUtilities.Y_DIMENSION).getLength();
-        numBands = rank>2?variable.getDimension(2).getLength():1;
+        numBands = rank > 2 ? variable.getDimension(2).getLength() : 1;
         tileHeight = height;
         tileWidth = width;
         name = variable.getName();
@@ -68,10 +67,9 @@ public abstract class BaseVariableWrapper {
     }
 
     public int getNumBands() {
-		return numBands;
-	}
+        return numBands;
+    }
 
-    
     public int getTileHeight() {
         return tileHeight;
     }
@@ -79,14 +77,14 @@ public abstract class BaseVariableWrapper {
     public int getTileWidth() {
         return tileWidth;
     }
-    
-    public void setTileHeight(int tileHeight) {
-		this.tileHeight = tileHeight;
-	}
 
-	public void setTileWidth(int tileWidth) {
-		this.tileWidth = tileWidth;
-	}
+    public void setTileHeight(int tileHeight) {
+        this.tileHeight = tileHeight;
+    }
+
+    public void setTileWidth(int tileWidth) {
+        this.tileWidth = tileWidth;
+    }
 
     public Variable getVariable() {
         return variable;

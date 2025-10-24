@@ -16,16 +16,12 @@
  */
 package it.geosolutions.imageioimpl.plugins.cog;
 
+import com.azure.storage.blob.BlobUrlParts;
+import it.geosolutions.imageio.core.BasicAuthURI;
 import java.net.MalformedURLException;
 import java.net.URI;
 
-import com.azure.storage.blob.BlobUrlParts;
-
-import it.geosolutions.imageio.core.BasicAuthURI;
-
-/**
- * Helps locate configuration properties in system/environment for use in building Azure client.
- */
+/** Helps locate configuration properties in system/environment for use in building Azure client. */
 public class AzureConfigurationProperties {
 
     private static final String AZURE_ACCOUNT_NAME = "azure.reader.accountName";
@@ -69,31 +65,31 @@ public class AzureConfigurationProperties {
                 accountName = host.substring(0, blobcoreIdx);
             }
 
-        } catch (IllegalStateException| MalformedURLException e) {
-            throw new RuntimeException("Unable to parse the provided uri " + path + "due to " + e.getLocalizedMessage());
+        } catch (IllegalStateException | MalformedURLException e) {
+            throw new RuntimeException(
+                    "Unable to parse the provided uri " + path + "due to " + e.getLocalizedMessage());
         }
 
-        if (container == null) {//REVISIT: dead code
+        if (container == null) { // REVISIT: dead code
             container = PropertyLocator.getEnvironmentValue(AZURE_ACCOUNT_CONTAINER, null);
         }
-        if (prefix == null) {//REVISIT: dead code
+        if (prefix == null) { // REVISIT: dead code
             prefix = PropertyLocator.getEnvironmentValue(AZURE_ACCOUNT_PREFIX, null);
         }
-        if (cogUri.getUser() != null && cogUri.getPassword()!= null) {
+        if (cogUri.getUser() != null && cogUri.getPassword() != null) {
             accountName = cogUri.getUser();
             accountKey = cogUri.getPassword();
         }
 
-        if (accountName == null) {//REVISIT: dead code
+        if (accountName == null) { // REVISIT: dead code
             accountName = PropertyLocator.getEnvironmentValue(AZURE_ACCOUNT_NAME, null);
         }
         if (accountKey == null) {
             accountKey = PropertyLocator.getEnvironmentValue(AZURE_ACCOUNT_KEY, null);
         }
-        if (maxConnections == null) {//REVISIT: dead code
+        if (maxConnections == null) { // REVISIT: dead code
             maxConnections = Integer.parseInt(PropertyLocator.getEnvironmentValue(AZURE_MAX_CONNECTIONS, "5"));
         }
-
     }
 
     public String getContainer() {

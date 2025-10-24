@@ -16,10 +16,10 @@
  */
 package it.geosolutions.imageioimpl.plugins.cog;
 
+import static it.geosolutions.imageioimpl.plugins.cog.CogTileInfo.HEADER_TILE_INDEX;
+
 import it.geosolutions.imageio.core.BasicAuthURI;
 import it.geosolutions.imageio.plugins.cog.CogImageReadParam;
-
-import javax.imageio.stream.ImageInputStreamImpl;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
@@ -27,19 +27,17 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
-
-import static it.geosolutions.imageioimpl.plugins.cog.CogTileInfo.HEADER_TILE_INDEX;
+import javax.imageio.stream.ImageInputStreamImpl;
 
 /**
  * This ImageInputStream implementation asynchronously fetches all tiles/ranges via the RangeReader implementation and
- * utilizes ehcache to cache each tile requested by the TIFFImageReader.  All subsequent tile reads will be fetched
- * from cache.
- * <p>
- * NOTE: This is a special use case class and is intended for use ONLY with the CogImageReader.  Using this
+ * utilizes ehcache to cache each tile requested by the TIFFImageReader. All subsequent tile reads will be fetched from
+ * cache.
+ *
+ * <p>NOTE: This is a special use case class and is intended for use ONLY with the CogImageReader. Using this
  * ImageInputStream for other purposes will almost certainly result in errors/failures.
  *
- * @author joshfix
- * Created on 2019-08-28
+ * @author joshfix Created on 2019-08-28
  */
 public class CachingCogImageInputStream extends ImageInputStreamImpl implements CogImageInputStream {
 
@@ -49,7 +47,7 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
     protected RangeReader rangeReader;
     protected CogTileInfo header;
 
-    private final static Logger LOGGER = Logger.getLogger(CachingCogImageInputStream.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(CachingCogImageInputStream.class.getName());
 
     public CachingCogImageInputStream(URI uri) {
         this.uri = uri;
@@ -94,7 +92,8 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
         Class<? extends RangeReader> rangeReaderClass = ((CogImageReadParam) param).getRangeReaderClass();
         if (null != rangeReaderClass) {
             try {
-                rangeReader = rangeReaderClass.getDeclaredConstructor(URI.class, int.class)
+                rangeReader = rangeReaderClass
+                        .getDeclaredConstructor(URI.class, int.class)
                         .newInstance(uri, param.getHeaderLength());
             } catch (Exception e) {
                 LOGGER.severe("Unable to instantiate range reader class " + rangeReaderClass.getCanonicalName());
@@ -105,8 +104,8 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
         }
 
         if (rangeReader == null) {
-            throw new RuntimeException("Unable to instantiate range reader class "
-                    + rangeReaderClass.getCanonicalName());
+            throw new RuntimeException(
+                    "Unable to instantiate range reader class " + rangeReaderClass.getCanonicalName());
         }
 
         initializeHeader(param.getHeaderLength());
@@ -140,17 +139,18 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
     }
 
     /**
-     * TIFFImageReader will read and decode the requested region of the GeoTIFF tile by tile.  Because of this, we will
+     * TIFFImageReader will read and decode the requested region of the GeoTIFF tile by tile. Because of this, we will
      * not arbitrarily store fixed-length byte chunks in cache, but instead create a cache entry for all the bytes for
      * each tile.
-     * <p>
-     * The first step is to loop through the tile ranges from CogTileInfo and determine which tiles are already cached.
-     * Tile ranges that are not in cache are submitted to RangeBuilder to build contiguous ranges to be read via HTTP.
-     * <p>
-     * Once the contiguous ranges have been read, we obtain the full image-length byte array from the RangeReader.  Then
-     * loop through each of the requested tile ranges from CogTileInfo and cache the bytes.
-     * <p>
-     * There are likely lots of optimizations to be made in here.
+     *
+     * <p>The first step is to loop through the tile ranges from CogTileInfo and determine which tiles are already
+     * cached. Tile ranges that are not in cache are submitted to RangeBuilder to build contiguous ranges to be read via
+     * HTTP.
+     *
+     * <p>Once the contiguous ranges have been read, we obtain the full image-length byte array from the RangeReader.
+     * Then loop through each of the requested tile ranges from CogTileInfo and cache the bytes.
+     *
+     * <p>There are likely lots of optimizations to be made in here.
      */
     @Override
     public void readRanges(CogTileInfo cogTileInfo) {
@@ -195,8 +195,8 @@ public class CachingCogImageInputStream extends ImageInputStreamImpl implements 
                 if (tileRange.getStart() >= contiguousRangeOffset && tileRange.getEnd() < contiguousRangeLength) {
                     byte[] contiguousBytes = entry.getValue();
                     long relativeOffset = tileRange.getStart() - contiguousRangeOffset;
-                    byte[] tileBytes = Arrays
-                            .copyOfRange(contiguousBytes, (int) relativeOffset, (int) tileRange.getEnd());
+                    byte[] tileBytes =
+                            Arrays.copyOfRange(contiguousBytes, (int) relativeOffset, (int) tileRange.getEnd());
                     CacheManagement.DEFAULT.cacheTile(key, tileBytes);
                 }
             }

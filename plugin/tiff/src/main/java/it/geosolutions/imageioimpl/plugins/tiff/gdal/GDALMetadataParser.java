@@ -18,19 +18,15 @@
 
 package it.geosolutions.imageioimpl.plugins.tiff.gdal;
 
+import it.geosolutions.imageio.pam.PAMParser;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 import java.io.StringReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Unmarshaller;
-
-import it.geosolutions.imageio.pam.PAMParser;
-
-/**
- * Utility class to parse GDALMetadata objects from XML strings contained in the TIFF tags
- */
+/** Utility class to parse GDALMetadata objects from XML strings contained in the TIFF tags */
 public class GDALMetadataParser {
 
     private static JAXBContext CONTEXT;

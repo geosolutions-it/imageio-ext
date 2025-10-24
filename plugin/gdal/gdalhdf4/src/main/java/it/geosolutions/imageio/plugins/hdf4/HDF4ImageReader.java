@@ -17,13 +17,11 @@
 package it.geosolutions.imageio.plugins.hdf4;
 
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
-
 import java.awt.image.RenderedImage;
 
 /**
- * {@link HDF4ImageReader} is a {@link GDALImageReader} able to create
- * {@link RenderedImage} from HDF4 files.
- * 
+ * {@link HDF4ImageReader} is a {@link GDALImageReader} able to create {@link RenderedImage} from HDF4 files.
+ *
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
  */
@@ -32,7 +30,7 @@ public class HDF4ImageReader extends GDALImageReader {
     /**
      * Constructs a
      * <code>HDF4ImageReader<code> using a {@link HDF4ImageReaderSpi}.
-     * 
+     *
      * @param originatingProvider
      *            The {@link HDF4ImageReaderSpi} to use for building this
      *            <code>HDF4ImageReader<code>.

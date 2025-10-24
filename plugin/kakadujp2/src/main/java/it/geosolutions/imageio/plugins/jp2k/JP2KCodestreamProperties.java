@@ -21,12 +21,12 @@ import java.awt.image.SampleModel;
 
 /**
  * Placeholder for a wide set of codestream properties.
- * 
+ *
  * @author Daniele Romagnoli, GeoSolutions
  * @author Simone Giannecchini, GeoSolutions
  */
 class JP2KCodestreamProperties {
-    
+
     /** Number of components of the source. */
     private int numComponents;
 
@@ -67,10 +67,8 @@ class JP2KCodestreamProperties {
     private int[] bitsPerComponent;
 
     private int[] componentIndexes;
-    
-    protected JP2KCodestreamProperties(){
-        
-    }
+
+    protected JP2KCodestreamProperties() {}
 
     public int getNumComponents() {
         return numComponents;
@@ -177,7 +175,7 @@ class JP2KCodestreamProperties {
     }
 
     public int[] getBitsPerComponent() {
-        return bitsPerComponent!=null?bitsPerComponent.clone():bitsPerComponent;
+        return bitsPerComponent != null ? bitsPerComponent.clone() : bitsPerComponent;
     }
 
     public void setBitsPerComponent(int[] bitsPerComponent) {
@@ -185,11 +183,10 @@ class JP2KCodestreamProperties {
     }
 
     public int[] getComponentIndexes() {
-        return componentIndexes!=null?componentIndexes.clone():componentIndexes;
+        return componentIndexes != null ? componentIndexes.clone() : componentIndexes;
     }
 
     public void setComponentIndexes(int[] componentIndexes) {
         this.componentIndexes = componentIndexes;
     }
-    
 }

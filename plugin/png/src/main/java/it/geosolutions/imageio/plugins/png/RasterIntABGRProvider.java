@@ -22,7 +22,7 @@ import java.awt.image.SinglePixelPackedSampleModel;
 
 /**
  * A scanline provider optimized for rasters with int packed RGB or RGBA pixels
- * 
+ *
  * @author Andrea Aime - GeoSolutions
  */
 public final class RasterIntABGRProvider extends AbstractScanlineProvider {
@@ -30,7 +30,7 @@ public final class RasterIntABGRProvider extends AbstractScanlineProvider {
     final int[] pixels;
 
     final boolean bgrOrder;
-    
+
     final boolean hasAlpha;
 
     public RasterIntABGRProvider(Raster raster, boolean hasAlpha) {
@@ -45,7 +45,6 @@ public final class RasterIntABGRProvider extends AbstractScanlineProvider {
         }
     }
 
-    
     public void next(final byte[] row, final int offset, final int length) {
         int pxIdx = cursor.next();
         int i = offset;
@@ -77,5 +76,4 @@ public final class RasterIntABGRProvider extends AbstractScanlineProvider {
             }
         }
     }
-
 }

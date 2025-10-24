@@ -16,18 +16,16 @@
  */
 package it.geosolutions.imageioimpl.plugins.cog;
 
+import java.net.Proxy;
+import java.util.concurrent.TimeUnit;
 import okhttp3.ConnectionPool;
 import okhttp3.Dispatcher;
 import okhttp3.OkHttpClient;
 
-import java.util.concurrent.TimeUnit;
-import java.net.Proxy;
-
 /**
- *  Utility class to assist building OkHttp client.  OkHttp clients should be singletons and re-used.
+ * Utility class to assist building OkHttp client. OkHttp clients should be singletons and re-used.
  *
- * @author joshfix
- * Created on 10/23/19
+ * @author joshfix Created on 10/23/19
  */
 public class HttpClientFactory {
 
@@ -43,16 +41,13 @@ public class HttpClientFactory {
         dispatcher.setMaxRequestsPerHost(configProps.getMaxRequestsPerHost());
 
         ConnectionPool connectionPool = new ConnectionPool(
-                configProps.getMaxIdleConnections(),
-                configProps.getKeepAliveDuration(),
-                TimeUnit.SECONDS);
+                configProps.getMaxIdleConnections(), configProps.getKeepAliveDuration(), TimeUnit.SECONDS);
 
-        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
-                .dispatcher(dispatcher)
-                .connectionPool(connectionPool);
+        OkHttpClient.Builder clientBuilder =
+                new OkHttpClient.Builder().dispatcher(dispatcher).connectionPool(connectionPool);
 
         Proxy proxy = configProps.getHttpProxy();
-        if(proxy != null) {
+        if (proxy != null) {
             clientBuilder.proxy(proxy);
         }
 

@@ -16,13 +16,9 @@
  */
 package it.geosolutions.imageioimpl.plugins.cog;
 
-import it.geosolutions.imageio.core.BasicAuthURI;
-import software.amazon.awssdk.core.ResponseBytes;
-import software.amazon.awssdk.core.async.AsyncResponseTransformer;
-import software.amazon.awssdk.services.s3.S3AsyncClient;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import static software.amazon.awssdk.core.async.AsyncResponseTransformer.toBytes;
 
+import it.geosolutions.imageio.core.BasicAuthURI;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -31,32 +27,29 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
-
-import static software.amazon.awssdk.core.async.AsyncResponseTransformer.toBytes;
+import software.amazon.awssdk.core.ResponseBytes;
+import software.amazon.awssdk.core.async.AsyncResponseTransformer;
+import software.amazon.awssdk.services.s3.S3AsyncClient;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 
 /**
- * Reads URIs from S3 with the format
- * https://s3-<region>.amazonaws.com/<bucket>/<key>
- * https://s3.<region>.amazonaws.com/<bucket>/<key>
- * https://<bucket>.s3-<region>.amazonaws.com/<key>
- * https://<bucket>.s3.<region>.amazonaws.com/<key>
- * or
- * s3://<bucket>/<key>
- * For the latter, the region must be set via environment variables, system properties or be provided via the URL
- * parameter `region`:
- * * s3://<bucket>/<key>?region=us-west-2
+ * Reads URIs from S3 with the format https://s3-<region>.amazonaws.com/<bucket>/<key>
+ * https://s3.<region>.amazonaws.com/<bucket>/<key> https://<bucket>.s3-<region>.amazonaws.com/<key>
+ * https://<bucket>.s3.<region>.amazonaws.com/<key> or s3://<bucket>/<key> For the latter, the region must be set via
+ * environment variables, system properties or be provided via the URL parameter `region`: *
+ * s3://<bucket>/<key>?region=us-west-2
  *
- * API documentation: https://docs.aws.amazon.com/sdk-for-java/v2/developer-guide/aws-sdk-java-dg-v2.pdf
+ * <p>API documentation: https://docs.aws.amazon.com/sdk-for-java/v2/developer-guide/aws-sdk-java-dg-v2.pdf
  *
- * @author joshfix
- * Created on 2019-08-21
+ * @author joshfix Created on 2019-08-21
  */
 public class S3RangeReader extends AbstractRangeReader {
 
     protected S3AsyncClient client;
     protected S3ConfigurationProperties configProps;
 
-    private final static Logger LOGGER = Logger.getLogger(S3RangeReader.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(S3RangeReader.class.getName());
 
     public S3RangeReader(String url, int headerLength) {
         this(URI.create(url), headerLength);
@@ -79,18 +72,19 @@ public class S3RangeReader extends AbstractRangeReader {
     @Override
     public byte[] fetchHeader() {
         byte[] currentHeader = data.get(0L);
-        if ( currentHeader != null) {
+        if (currentHeader != null) {
             headerOffset = currentHeader.length;
         }
         GetObjectRequest headerRequest = buildRequest();
         try {
-            ResponseBytes<GetObjectResponse> responseBytes = client.getObject(headerRequest, toBytes()).get();
+            ResponseBytes<GetObjectResponse> responseBytes =
+                    client.getObject(headerRequest, toBytes()).get();
 
             // get the header bytes
             byte[] headerBytes = responseBytes.asByteArray();
             if (headerOffset != 0) {
-                byte [] oldHeader = data.get(0L);
-                byte [] newHeader = new byte[headerBytes.length + oldHeader.length];
+                byte[] oldHeader = data.get(0L);
+                byte[] newHeader = new byte[headerBytes.length + oldHeader.length];
                 System.arraycopy(oldHeader, 0, newHeader, 0, oldHeader.length);
                 System.arraycopy(headerBytes, 0, newHeader, oldHeader.length, headerBytes.length);
                 headerBytes = newHeader;
@@ -106,20 +100,21 @@ public class S3RangeReader extends AbstractRangeReader {
 
     @Override
     public Map<Long, byte[]> read(Collection<long[]> ranges) {
-        return read(ranges.toArray(new long[][]{}));
+        return read(ranges.toArray(new long[][] {}));
     }
 
     @Override
     public byte[] readHeader() {
         LOGGER.fine("reading header");
-        byte[] currentHeader  = HEADERS_CACHE.get(uri.toString());
+        byte[] currentHeader = HEADERS_CACHE.get(uri.toString());
 
         if (currentHeader != null) {
             return currentHeader;
         }
         GetObjectRequest headerRequest = buildRequest();
         try {
-            ResponseBytes<GetObjectResponse> responseBytes = client.getObject(headerRequest, toBytes()).get();
+            ResponseBytes<GetObjectResponse> responseBytes =
+                    client.getObject(headerRequest, toBytes()).get();
 
             // get the header bytes
             byte[] headerBytes = responseBytes.asByteArray();
@@ -136,7 +131,7 @@ public class S3RangeReader extends AbstractRangeReader {
         return GetObjectRequest.builder()
                 .bucket(configProps.getBucket())
                 .key(configProps.getKey())
-                .range("bytes="+ headerOffset +"-" + (headerOffset + headerLength - 1))
+                .range("bytes=" + headerOffset + "-" + (headerOffset + headerLength - 1))
                 .build();
     }
 
@@ -191,7 +186,8 @@ public class S3RangeReader extends AbstractRangeReader {
      * @param data
      * @param downloads
      */
-    protected void awaitCompletion(Map<Long, byte[]> data, Map<Long, CompletableFuture<ResponseBytes<GetObjectResponse>>> downloads) {
+    protected void awaitCompletion(
+            Map<Long, byte[]> data, Map<Long, CompletableFuture<ResponseBytes<GetObjectResponse>>> downloads) {
         boolean stillWaiting = true;
         List<Long> completed = new ArrayList<>(downloads.size());
         while (stillWaiting) {
@@ -205,8 +201,8 @@ public class S3RangeReader extends AbstractRangeReader {
                             data.put(key, future.get().asByteArray());
                             completed.add(key);
                         } catch (Exception e) {
-                            LOGGER.warning("Unable to write data from S3 to the destination ByteBuffer. "
-                                    + e.getMessage());
+                            LOGGER.warning(
+                                    "Unable to write data from S3 to the destination ByteBuffer. " + e.getMessage());
                         }
                     }
                 } else {
@@ -222,7 +218,7 @@ public class S3RangeReader extends AbstractRangeReader {
         String scheme = uri.getScheme().toLowerCase();
         if (scheme.startsWith("s3")) {
             return new URL("https://"
-            + configProps.getBucket()
+                    + configProps.getBucket()
                     + S3ConfigurationProperties.S3_DOT_VH
                     + configProps.getRegion()
                     + S3ConfigurationProperties.AMAZON_AWS
@@ -230,5 +226,4 @@ public class S3RangeReader extends AbstractRangeReader {
         }
         return super.getURL();
     }
-
 }

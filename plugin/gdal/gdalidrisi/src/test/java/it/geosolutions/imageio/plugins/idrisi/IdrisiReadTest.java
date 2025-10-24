@@ -18,125 +18,113 @@ package it.geosolutions.imageio.plugins.idrisi;
 
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.Viewer;
-import it.geosolutions.imageio.plugins.idrisi.IDRISIImageReader;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
-
 import java.awt.Rectangle;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
-
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.ParameterBlockImageN;
 import org.eclipse.imagen.RenderedOp;
-
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Testing reading capabilities for {@link IDRISIImageReader} leveraging on
- * ImageN.
- * 
+ * Testing reading capabilities for {@link IDRISIImageReader} leveraging on ImageN.
+ *
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
- * 
  */
 public class IdrisiReadTest extends AbstractGDALTest {
-	public IdrisiReadTest() {
-		super();
-	}
+    public IdrisiReadTest() {
+        super();
+    }
 
-	/**
-	 * Simple test read through ImageN - ImageIO
-	 * 
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-	@org.junit.Test
-	public void readJAI() throws FileNotFoundException, IOException {
-		if (!isGDALAvailable) {
-			return;
-		}
-		final ParameterBlockImageN pbjImageRead;
-		final String fileName = "idrisi.rst";
-		TestData.unzipFile(this, "idrisi.zip");
-		final File file = TestData.file(this, fileName);
-		pbjImageRead = new ParameterBlockImageN("ImageRead");
-		pbjImageRead.setParameter("Input", file);
-		RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
-		if (TestData.isInteractiveTest())
-			Viewer.visualizeAllInformation(image, fileName);
-		else
-			image.getTiles();
-		Assert.assertEquals(86, image.getWidth());
-		Assert.assertEquals(43, image.getHeight());
-		ImageIOUtilities.disposeImage(image);
-		
-		
-	}
+    /**
+     * Simple test read through ImageN - ImageIO
+     *
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    @org.junit.Test
+    public void readJAI() throws FileNotFoundException, IOException {
+        if (!isGDALAvailable) {
+            return;
+        }
+        final ParameterBlockImageN pbjImageRead;
+        final String fileName = "idrisi.rst";
+        TestData.unzipFile(this, "idrisi.zip");
+        final File file = TestData.file(this, fileName);
+        pbjImageRead = new ParameterBlockImageN("ImageRead");
+        pbjImageRead.setParameter("Input", file);
+        RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
+        if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(image, fileName);
+        else image.getTiles();
+        Assert.assertEquals(86, image.getWidth());
+        Assert.assertEquals(43, image.getHeight());
+        ImageIOUtilities.disposeImage(image);
+    }
 
-	/**
-	 * Simple test read through ImageIO
-	 * 
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-	@Test
-	public void readImageIO() throws FileNotFoundException, IOException {
-		if (!isGDALAvailable) {
-			return;
-		}
-		TestData.unzipFile(this, "idrisi.zip");
-		final File file = TestData.file(this, "idrisi.rst");
+    /**
+     * Simple test read through ImageIO
+     *
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    @Test
+    public void readImageIO() throws FileNotFoundException, IOException {
+        if (!isGDALAvailable) {
+            return;
+        }
+        TestData.unzipFile(this, "idrisi.zip");
+        final File file = TestData.file(this, "idrisi.rst");
 
-		// //
-		//
-		// Try to get a reader for this raster data
-		//
-		// //
-		final Iterator<ImageReader> it = ImageIO.getImageReaders(file);
-		Assert.assertTrue(it.hasNext());
+        // //
+        //
+        // Try to get a reader for this raster data
+        //
+        // //
+        final Iterator<ImageReader> it = ImageIO.getImageReaders(file);
+        Assert.assertTrue(it.hasNext());
 
-		// //
-		//
-		// read some data from it using subsampling
-		//
-		// //
-		final ImageReader reader = (ImageReader) it.next();
-		Assert.assertTrue(reader instanceof IDRISIImageReader);
-		ImageReadParam rp = reader.getDefaultReadParam();
-		rp.setSourceSubsampling(2, 2, 0, 0);
-		reader.setInput(file);
-		RenderedImage image = reader.read(0, rp);
-		if (TestData.isInteractiveTest())
-			Viewer.visualizeAllInformation(image, "subsample read " + file.getName());
+        // //
+        //
+        // read some data from it using subsampling
+        //
+        // //
+        final ImageReader reader = (ImageReader) it.next();
+        Assert.assertTrue(reader instanceof IDRISIImageReader);
+        ImageReadParam rp = reader.getDefaultReadParam();
+        rp.setSourceSubsampling(2, 2, 0, 0);
+        reader.setInput(file);
+        RenderedImage image = reader.read(0, rp);
+        if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(image, "subsample read " + file.getName());
 
-		Assert.assertEquals((int) (reader.getWidth(0) / 2.0 + 0.5), image.getWidth());
-		Assert.assertEquals((int) (reader.getHeight(0) / 2.0 + 0.5), image.getHeight());
-       reader.reset();
-		// //
-		//
-		// read some data from it using sourceregion
-		//
-		// //
-		Assert.assertTrue(reader instanceof IDRISIImageReader);
-		rp = reader.getDefaultReadParam();
-		rp.setSourceRegion(new Rectangle(0, 0, 60, 42));
-		reader.setInput(file);
-		image = reader.read(0, rp);
-		if (TestData.isInteractiveTest())
-			Viewer.visualizeAllInformation(image, "subsample read " + file.getName());
-		reader.reset();
+        Assert.assertEquals((int) (reader.getWidth(0) / 2.0 + 0.5), image.getWidth());
+        Assert.assertEquals((int) (reader.getHeight(0) / 2.0 + 0.5), image.getHeight());
+        reader.reset();
+        // //
+        //
+        // read some data from it using sourceregion
+        //
+        // //
+        Assert.assertTrue(reader instanceof IDRISIImageReader);
+        rp = reader.getDefaultReadParam();
+        rp.setSourceRegion(new Rectangle(0, 0, 60, 42));
+        reader.setInput(file);
+        image = reader.read(0, rp);
+        if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(image, "subsample read " + file.getName());
+        reader.reset();
 
-		Assert.assertEquals(60, image.getWidth());
-		Assert.assertEquals(42, image.getHeight());
+        Assert.assertEquals(60, image.getWidth());
+        Assert.assertEquals(42, image.getHeight());
 
-		reader.dispose();
-	}
+        reader.dispose();
+    }
 }

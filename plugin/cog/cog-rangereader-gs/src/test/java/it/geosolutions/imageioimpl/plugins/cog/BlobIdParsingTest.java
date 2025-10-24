@@ -16,24 +16,23 @@
  */
 package it.geosolutions.imageioimpl.plugins.cog;
 
-import com.google.cloud.storage.BlobId;
-import it.geosolutions.imageioimpl.plugins.cog.GSRangeReader;
-import org.junit.Test;
-
-import java.net.URI;
-
 import static org.junit.Assert.assertEquals;
+
+import com.google.cloud.storage.BlobId;
+import java.net.URI;
+import org.junit.Test;
 
 public class BlobIdParsingTest {
 
-    private static String GS_UTIL_COG_URI = "gs://gcp-public-data-landsat/LC08/01/044/034" +
-            "/LC08_L1GT_044034_20130330_20170310_01_T2" +
-            "/LC08_L1GT_044034_20130330_20170310_01_T2_B11.TIF";
+    private static String GS_UTIL_COG_URI = "gs://gcp-public-data-landsat/LC08/01/044/034"
+            + "/LC08_L1GT_044034_20130330_20170310_01_T2" + "/LC08_L1GT_044034_20130330_20170310_01_T2_B11.TIF";
 
-    private static String PUBLIC_COG_URI = "https://storage.googleapis.com/gcp-public-data-landsat/LC08/01/044/034/LC08_L1GT_044034_20130330_20170310_01_T2/LC08_L1GT_044034_20130330_20170310_01_T2_B11.TIF";
-    
-    private static String AUTHENTICATED_COG_URI = "https://storage.cloud.google.com/gcp-public-data-landsat/LC08/01/044/034/LC08_L1GT_044034_20130330_20170310_01_T2/LC08_L1GT_044034_20130330_20170310_01_T2_B11.TIF";
-    
+    private static String PUBLIC_COG_URI =
+            "https://storage.googleapis.com/gcp-public-data-landsat/LC08/01/044/034/LC08_L1GT_044034_20130330_20170310_01_T2/LC08_L1GT_044034_20130330_20170310_01_T2_B11.TIF";
+
+    private static String AUTHENTICATED_COG_URI =
+            "https://storage.cloud.google.com/gcp-public-data-landsat/LC08/01/044/034/LC08_L1GT_044034_20130330_20170310_01_T2/LC08_L1GT_044034_20130330_20170310_01_T2_B11.TIF";
+
     @Test
     public void testGsUtilCOGURI() throws Exception {
         BlobId blobId = GSRangeReader.getBlobId(new URI(GS_UTIL_COG_URI));
@@ -54,8 +53,8 @@ public class BlobIdParsingTest {
 
     private void assertBlobId(BlobId blobId) {
         assertEquals("gcp-public-data-landsat", blobId.getBucket());
-        assertEquals("LC08/01/044/034/LC08_L1GT_044034_20130330_20170310_01_T2/LC08_L1GT_044034_20130330_20170310_01_T2_B11.TIF", blobId.getName());
+        assertEquals(
+                "LC08/01/044/034/LC08_L1GT_044034_20130330_20170310_01_T2/LC08_L1GT_044034_20130330_20170310_01_T2_B11.TIF",
+                blobId.getName());
     }
-
-
 }

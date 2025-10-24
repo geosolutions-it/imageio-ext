@@ -16,8 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.jp2kakadu;
 
-import javax.imageio.ImageWriteParam;
 import java.util.Locale;
+import javax.imageio.ImageWriteParam;
 
 public class J2KImageWriteParam extends ImageWriteParam {
     public static final String FILTER_97 = "w9x7";
@@ -27,7 +27,7 @@ public class J2KImageWriteParam extends ImageWriteParam {
     private boolean lossless = true;
     private boolean componentTransformation = true;
     private String filter = "w5x3";
-    private int[] codeBlockSize = new int[]{64, 64};
+    private int[] codeBlockSize = new int[] {64, 64};
     private String progressionType = "layer";
     private boolean EPH = false;
     private boolean SOP = false;
@@ -46,7 +46,7 @@ public class J2KImageWriteParam extends ImageWriteParam {
         this.canOffsetTiles = true;
         this.canWriteTiles = true;
         this.canOffsetTiles = true;
-        this.compressionTypes = new String[]{"JPEG2000"};
+        this.compressionTypes = new String[] {"JPEG2000"};
         this.canWriteCompressed = true;
         this.tilingMode = 2;
     }
@@ -72,7 +72,6 @@ public class J2KImageWriteParam extends ImageWriteParam {
             this.lossless = true;
             this.filter = "w5x3";
         }
-
     }
 
     public double getEncodingRate() {

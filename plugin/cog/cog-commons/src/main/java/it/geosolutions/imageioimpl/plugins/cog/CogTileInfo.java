@@ -22,8 +22,7 @@ import java.util.TreeMap;
 /**
  * This is a utility class that stores all of the required tile range metadata for a given read operation.
  *
- * @author joshfix
- * Created on 2019-08-28
+ * @author joshfix Created on 2019-08-28
  */
 public class CogTileInfo {
 
@@ -59,15 +58,15 @@ public class CogTileInfo {
     }
 
     /**
-     * We don't actually know the true header size and use an arbitrary value (16KB). If a tile offset starts before
-     * the end of the header, we can reduce the header size.  Note that this does not necessarily provide us with the
-     * true end location of the header, but we can avoid overlapping header and tile ranges by reducing it.
+     * We don't actually know the true header size and use an arbitrary value (16KB). If a tile offset starts before the
+     * end of the header, we can reduce the header size. Note that this does not necessarily provide us with the true
+     * end location of the header, but we can avoid overlapping header and tile ranges by reducing it.
      *
      * @param offset the starting offset of the tile range to be added
      */
     protected void checkHeaderSize(long offset) {
         if (offset < headerLength && offset > 0) {
-            headerLength = (int)offset;
+            headerLength = (int) offset;
             tileRanges.put(HEADER_TILE_INDEX, new TileRange(HEADER_TILE_INDEX, 0, headerLength));
         }
     }
@@ -132,11 +131,11 @@ public class CogTileInfo {
      */
     public int getTileIndex(long offset) {
         for (Map.Entry<Integer, TileRange> entry : tileRanges.entrySet()) {
-            if (offset >= entry.getValue().getStart() && offset < entry.getValue().getEnd()) {
+            if (offset >= entry.getValue().getStart()
+                    && offset < entry.getValue().getEnd()) {
                 return entry.getKey();
             }
         }
         return -1;
     }
-
 }

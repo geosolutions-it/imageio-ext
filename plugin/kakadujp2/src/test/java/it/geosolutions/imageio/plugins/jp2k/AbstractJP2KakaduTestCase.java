@@ -28,12 +28,11 @@ public class AbstractJP2KakaduTestCase {
 
     public void setUp() throws Exception {
         // general settings
-         ImageN.getDefaultInstance().getTileScheduler().setParallelism(2);
-         ImageN.getDefaultInstance().getTileScheduler().setPriority(6);
-         ImageN.getDefaultInstance().getTileScheduler().setPrefetchPriority(2);
-         ImageN.getDefaultInstance().getTileScheduler().setPrefetchParallelism(1);
-         ImageN.getDefaultInstance().getTileCache().setMemoryCapacity(
-         64 * 1024 * 1024);
-         ImageN.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
+        ImageN.getDefaultInstance().getTileScheduler().setParallelism(2);
+        ImageN.getDefaultInstance().getTileScheduler().setPriority(6);
+        ImageN.getDefaultInstance().getTileScheduler().setPrefetchPriority(2);
+        ImageN.getDefaultInstance().getTileScheduler().setPrefetchParallelism(1);
+        ImageN.getDefaultInstance().getTileCache().setMemoryCapacity(64 * 1024 * 1024);
+        ImageN.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
     }
 }

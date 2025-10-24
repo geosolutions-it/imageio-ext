@@ -17,25 +17,22 @@
 package it.geosolutions.imageio.plugins.jp2k.box;
 
 import javax.imageio.metadata.IIOInvalidTreeException;
-
 import org.w3c.dom.Node;
 
-/**
- * @author Daniele Romagnoli, GeoSolutions.
- */
+/** @author Daniele Romagnoli, GeoSolutions. */
 @SuppressWarnings("serial")
 public class ReaderRequirementsBox extends BaseJP2KBox {
 
-    public final static int BOX_TYPE = 0x72726571;
+    public static final int BOX_TYPE = 0x72726571;
 
-    public final static String NAME = "rreq";
+    public static final String NAME = "rreq";
 
     public static final String JP2K_MD_NAME = "JP2KReaderRequirementsBox";
 
     private byte maskLength;
 
     private int numberOfStandardFlags;
-    
+
     private int numberOfVendorFlags;
 
     private int[] standardFlags;
@@ -45,10 +42,8 @@ public class ReaderRequirementsBox extends BaseJP2KBox {
     private long fullyUnderstandAspectMask;
 
     private long decodeCompletelyMask;
-    
-    /**
-     * TODO: Add vendor features
-     */
+
+    /** TODO: Add vendor features */
 
     /**
      * @param length
@@ -65,8 +60,7 @@ public class ReaderRequirementsBox extends BaseJP2KBox {
      * @param extraLength
      * @param data
      */
-    public ReaderRequirementsBox(int length, int type, long extraLength,
-            byte[] data) {
+    public ReaderRequirementsBox(int length, int type, long extraLength, byte[] data) {
         super(length, type, extraLength, data);
     }
 
@@ -95,35 +89,33 @@ public class ReaderRequirementsBox extends BaseJP2KBox {
         numberOfStandardFlags = (((data[nsfIndex] & 0xFF) << 8) | (data[nsfIndex + 1] & 0xFF));
         standardFlags = new int[numberOfStandardFlags];
         standardMasks = new long[numberOfStandardFlags];
-        
-        switch (maskLength){
-        case 1:
-            
-        case 2:
-            fullyUnderstandAspectMask = (((data[1] & 0xFF) << 8) | (data[2] & 0xFF));
-            decodeCompletelyMask = (((data[3] & 0xFF) << 8) | (data[4] & 0xFF));
-            nsfIndex += 2;
-            for (int i = 0; i < numberOfStandardFlags; i++) {
-                standardFlags[i] =  (((data[nsfIndex + (i * 2)] & 0xFF) << 8) | (data[nsfIndex
-                        + (i * 2) + 1] & 0xFF));
-            }
-            nsfIndex += (numberOfStandardFlags * 2);
 
-            for (int i = 0; i < numberOfStandardFlags; i++) {
-                standardMasks[i] = (((data[nsfIndex + (i * 2)] & 0xFF) << 8) | (data[nsfIndex
-                        + (i * 2) + 1] & 0xFF));
-            }
-            
-            nsfIndex += (numberOfStandardFlags * maskLength);
-            numberOfVendorFlags = (((data[nsfIndex] & 0xFF) << 8) | (data[nsfIndex + 1] & 0xFF));
-            //TODO: Continue setting these fields             
-            
-            break;
-        case 4:
-            
-        case 8:
+        switch (maskLength) {
+            case 1:
+
+            case 2:
+                fullyUnderstandAspectMask = (((data[1] & 0xFF) << 8) | (data[2] & 0xFF));
+                decodeCompletelyMask = (((data[3] & 0xFF) << 8) | (data[4] & 0xFF));
+                nsfIndex += 2;
+                for (int i = 0; i < numberOfStandardFlags; i++) {
+                    standardFlags[i] =
+                            (((data[nsfIndex + (i * 2)] & 0xFF) << 8) | (data[nsfIndex + (i * 2) + 1] & 0xFF));
+                }
+                nsfIndex += (numberOfStandardFlags * 2);
+
+                for (int i = 0; i < numberOfStandardFlags; i++) {
+                    standardMasks[i] =
+                            (((data[nsfIndex + (i * 2)] & 0xFF) << 8) | (data[nsfIndex + (i * 2) + 1] & 0xFF));
+                }
+
+                nsfIndex += (numberOfStandardFlags * maskLength);
+                numberOfVendorFlags = (((data[nsfIndex] & 0xFF) << 8) | (data[nsfIndex + 1] & 0xFF));
+                // TODO: Continue setting these fields
+
+                break;
+            case 4:
+
+            case 8:
         }
-        
-       
     }
 }

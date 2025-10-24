@@ -16,8 +16,8 @@
  */
 package it.geosolutions.imageioimpl.plugins.png;
 
+import ar.com.hjg.pngj.FilterType;
 import it.geosolutions.imageio.plugins.png.PNGWriter;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -27,20 +27,16 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import javax.imageio.ImageIO;
 import javax.imageio.ImageTypeSpecifier;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import ar.com.hjg.pngj.FilterType;
-
 @RunWith(Parameterized.class)
 public class CustomUShortImageTypesTest {
-    
+
     private int nbits;
     private int size;
 
@@ -48,12 +44,12 @@ public class CustomUShortImageTypesTest {
         this.nbits = nbits;
         this.size = size;
     }
-    
+
     @Parameters(name = "bits{0}/size{1}")
     public static Collection<Object[]> parameters() {
         List<Object[]> result = new ArrayList<Object[]>();
-        for(int nbits : new int[] {1, 2, 4, 8, 16}) {
-            for(int size = 1; size <= 32; size++) {
+        for (int nbits : new int[] {1, 2, 4, 8, 16}) {
+            for (int size = 1; size <= 32; size++) {
                 result.add(new Object[] {nbits, size});
             }
         }
@@ -71,11 +67,11 @@ public class CustomUShortImageTypesTest {
         graphics.setColor(Color.WHITE);
         graphics.fillRect(16, 0, 16, 32);
         graphics.dispose();
-        
+
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        float quality = 5f/9 - 1;
+        float quality = 5f / 9 - 1;
         new PNGWriter().writePNG(bi, bos, -quality, FilterType.FILTER_NONE);
-        
+
         BufferedImage read = ImageIO.read(new ByteArrayInputStream(bos.toByteArray()));
         ImageAssert.assertImagesEqual(bi, read);
     }

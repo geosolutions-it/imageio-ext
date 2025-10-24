@@ -16,16 +16,14 @@
  */
 package it.geosolutions.imageio.plugins.jp2k.box;
 
-import javax.imageio.metadata.IIOMetadataNode;
 import java.awt.color.ICC_Profile;
 import java.util.Objects;
+import javax.imageio.metadata.IIOMetadataNode;
 
 /**
- * This class is defined to represent a Color Specification Box of JPEG JP2 file format. 
- * A Color Specification Box has a length, and a fixed type of "colr". 
- * Its content contains the method to define the color space, the precedence and 
- * approximation accuracy (0 for JP2 files), the enumerated color space, and 
- * the ICC color profile if any.
+ * This class is defined to represent a Color Specification Box of JPEG JP2 file format. A Color Specification Box has a
+ * length, and a fixed type of "colr". Its content contains the method to define the color space, the precedence and
+ * approximation accuracy (0 for JP2 files), the enumerated color space, and the ICC color profile if any.
  */
 @SuppressWarnings("serial")
 public class ColorSpecificationBoxMetadataNode extends BaseJP2KBoxMetadataNode {
@@ -39,7 +37,7 @@ public class ColorSpecificationBoxMetadataNode extends BaseJP2KBoxMetadataNode {
     private String enumeratedColorSpace;
 
     private String iccProfile;
-    
+
     private ICC_Profile profile;
 
     public ColorSpecificationBoxMetadataNode(final ColorSpecificationBox box) {
@@ -49,37 +47,37 @@ public class ColorSpecificationBoxMetadataNode extends BaseJP2KBoxMetadataNode {
         final byte prec = box.getPrecedence();
         final int enumCS = box.getEnumeratedColorSpace();
         profile = box.getICCProfile();
-        
+
         try {
             IIOMetadataNode child = new IIOMetadataNode("Method");
             child.setUserObject(Byte.valueOf(m));
             method = Byte.toString(m);
             child.setNodeValue(method);
             appendChild(child);
-            
+
             child = new IIOMetadataNode("Precedence");
             child.setUserObject(Byte.valueOf(prec));
             precedence = Byte.toString(prec);
             child.setNodeValue(precedence);
             appendChild(child);
-            
+
             child = new IIOMetadataNode("ApproximationAccuracy");
             child.setUserObject(Byte.valueOf(approx));
             approximationAccuracy = Byte.toString(approx);
             child.setNodeValue(approximationAccuracy);
             appendChild(child);
-            
+
             child = new IIOMetadataNode("EnumeratedColorSpace");
             child.setUserObject(Integer.valueOf(enumCS));
             enumeratedColorSpace = Integer.toString(enumCS);
             child.setNodeValue(enumeratedColorSpace);
             appendChild(child);
-           
+
             child = new IIOMetadataNode("ICCProfile");
             child.setUserObject(profile);
             child.setNodeValue(Objects.toString(profile, ""));
             appendChild(child);
-            
+
         } catch (Exception e) {
             throw new IllegalArgumentException("BoxMetadataNode0");
         }
@@ -104,5 +102,4 @@ public class ColorSpecificationBoxMetadataNode extends BaseJP2KBoxMetadataNode {
     public String getICCProfile() {
         return iccProfile;
     }
-    
 }

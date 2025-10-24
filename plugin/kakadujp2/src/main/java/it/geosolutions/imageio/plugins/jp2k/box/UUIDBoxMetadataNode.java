@@ -20,9 +20,8 @@ import it.geosolutions.imageio.plugins.jp2k.JP2KBox;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 
 /**
- * This class is defined to represent a UUID Box of JPEG JP2 file format. This
- * type of box has a length, a type of "uuid". Its content is a 16-byte UUID
- * followed with a various-length data.
+ * This class is defined to represent a UUID Box of JPEG JP2 file format. This type of box has a length, a type of
+ * "uuid". Its content is a 16-byte UUID followed with a various-length data.
  */
 public class UUIDBoxMetadataNode extends BaseJP2KBoxMetadataNode {
 
@@ -47,7 +46,6 @@ public class UUIDBoxMetadataNode extends BaseJP2KBoxMetadataNode {
                     data = new byte[content.length - 16];
                     System.arraycopy(content, 16, data, 0, data.length);
                 }
-
             }
         }
         return content;
@@ -60,18 +58,16 @@ public class UUIDBoxMetadataNode extends BaseJP2KBoxMetadataNode {
 
     public byte[] getUuid() {
         getContent();
-        if (uuid!=null)
-            return uuid.clone();
+        if (uuid != null) return uuid.clone();
         return uuid;
     }
 
     public byte[] getData() {
         getContent();
-        if (data!=null)
-            return data.clone();
+        if (data != null) return data.clone();
         return data;
     }
-    
+
     @Override
     public String getNodeValue() {
         return ImageIOUtilities.convertObjectToString(getContent());
@@ -80,8 +76,7 @@ public class UUIDBoxMetadataNode extends BaseJP2KBoxMetadataNode {
     @Override
     public Object getUserObject() {
         getContent();
-        if (content!=null)
-            return content.clone();
+        if (content != null) return content.clone();
         return null;
     }
 }

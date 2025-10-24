@@ -16,21 +16,20 @@
  */
 package it.geosolutions.imageio.core;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.spi.ImageInputStreamSpi;
-import javax.imageio.spi.ImageReaderSpi;
-import javax.imageio.stream.ImageInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.spi.ImageInputStreamSpi;
+import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.stream.ImageInputStream;
 
 /**
- * A provider containing SPIs to get reading access on a source:
- * a provided SPI to get an ImageReader as well as a provided SPI to get
- * an ImageInputStream on top of that source.
+ * A provider containing SPIs to get reading access on a source: a provided SPI to get an ImageReader as well as a
+ * provided SPI to get an ImageInputStream on top of that source.
  */
 public class SourceSPIProvider {
 
@@ -62,15 +61,12 @@ public class SourceSPIProvider {
         this.source = source;
     }
 
-    /**
-     * Return a URL representation of the source, returning null
-     * when no URL representation can be obtained
-     */
+    /** Return a URL representation of the source, returning null when no URL representation can be obtained */
     public URL getSourceUrl() throws MalformedURLException {
         if (source instanceof URL) {
             return (URL) source;
         } else if (source instanceof String) {
-            return new URL((String)source);
+            return new URL((String) source);
         } else if (source instanceof File) {
             return fileToUrl((File) source);
         } else if (source instanceof URI) {
@@ -80,30 +76,22 @@ public class SourceSPIProvider {
         }
     }
 
-    public SourceSPIProvider(
-            Object source, ImageReaderSpi readerSpi, ImageInputStreamSpi streamSpi) {
+    public SourceSPIProvider(Object source, ImageReaderSpi readerSpi, ImageInputStreamSpi streamSpi) {
         this.readerSpi = readerSpi;
         this.streamSpi = streamSpi;
         this.source = source;
     }
-
 
     public ImageReader getReader() throws IOException {
         return readerSpi.createReaderInstance();
     }
 
     public ImageInputStream getStream() throws IOException {
-        return streamSpi.createInputStreamInstance(
-                        source,
-                        ImageIO.getUseCache(),
-                        ImageIO.getCacheDirectory());
+        return streamSpi.createInputStreamInstance(source, ImageIO.getUseCache(), ImageIO.getCacheDirectory());
     }
 
-    /**
-     * Return a compatible SourceProvider (same readerSPI, same streamSPI)
-     * for a different URL
-     */
-    public SourceSPIProvider getCompatibleSourceProvider (URL url) {
+    /** Return a compatible SourceProvider (same readerSPI, same streamSPI) for a different URL */
+    public SourceSPIProvider getCompatibleSourceProvider(URL url) {
         return new SourceSPIProvider(url, readerSpi, streamSpi);
     }
 

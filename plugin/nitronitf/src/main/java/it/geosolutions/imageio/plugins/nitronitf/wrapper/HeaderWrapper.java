@@ -20,7 +20,7 @@ import java.util.Map;
 
 /**
  * Wrapper class related to a Main Header of a NITF file.
- * 
+ *
  * @author Daniele Romagnoli, GeoSolutions s.a.s.
  */
 public class HeaderWrapper extends IdentifiableNITFObjectWrapper {
@@ -74,5 +74,4 @@ public class HeaderWrapper extends IdentifiableNITFObjectWrapper {
     public void setTres(Map<String, Map<String, String>> tres) {
         this.tres = tres;
     }
-
 }

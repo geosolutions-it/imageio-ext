@@ -17,7 +17,6 @@
 package it.geosolutions.imageio.stream.input.compressed;
 
 import it.geosolutions.io.input.adapter.InputStreamAdapter;
-
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.io.IOException;
@@ -26,58 +25,43 @@ import java.io.SequenceInputStream;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedInputStream;
 import java.util.zip.Inflater;
-
 import javax.imageio.stream.ImageInputStream;
 
 /**
- * This class implements a stream filter for reading compressed data in the GZIP
- * format.
- * 
+ * This class implements a stream filter for reading compressed data in the GZIP format.
+ *
  * @author Simone Giannecchini, GeoSolutions
- * 
  */
 public class GZIPImageInputStream extends InflaterImageInputStream {
     private byte[] tmpbuf = new byte[128];
 
-    /**
-     * GZIP header magic number.
-     */
-    public final static int GZIP_MAGIC = 0x8b1f;
+    /** GZIP header magic number. */
+    public static final int GZIP_MAGIC = 0x8b1f;
 
-    /**
-     * File header flags.
-     */
-    private final static int FHCRC = 2; // Header CRC
+    /** File header flags. */
+    private static final int FHCRC = 2; // Header CRC
 
-    private final static int FEXTRA = 4; // Extra field
+    private static final int FEXTRA = 4; // Extra field
 
-    private final static int FNAME = 8; // File name
+    private static final int FNAME = 8; // File name
 
-    private final static int FCOMMENT = 16; // File comment
+    private static final int FCOMMENT = 16; // File comment
 
-    /**
-     * CRC-32 for uncompressed data.
-     */
+    /** CRC-32 for uncompressed data. */
     protected CRC32 crc = new CRC32();
 
-    /**
-     * Indicates end of input stream.
-     */
+    /** Indicates end of input stream. */
     protected boolean eos;
 
     private boolean closed = false;
 
     /**
      * Creates a new input stream with the specified buffer size.
-     * 
-     * @param in
-     *                the input stream
-     * @param size
-     *                the input buffer size
-     * @exception IOException
-     *                    if an I/O error has occurred
-     * @exception IllegalArgumentException
-     *                    if size is <= 0
+     *
+     * @param in the input stream
+     * @param size the input buffer size
+     * @exception IOException if an I/O error has occurred
+     * @exception IllegalArgumentException if size is <= 0
      */
     public GZIPImageInputStream(ImageInputStream iis) throws IOException {
         super(iis, new Inflater(true), 8192);
@@ -86,12 +70,9 @@ public class GZIPImageInputStream extends InflaterImageInputStream {
         crc.reset();
     }
 
-    /**
-     * Reads GZIP member header.
-     */
+    /** Reads GZIP member header. */
     private void readHeader() throws IOException {
-        CheckedInputStream in = new CheckedInputStream(new InputStreamAdapter(
-                this.iis), crc);
+        CheckedInputStream in = new CheckedInputStream(new InputStreamAdapter(this.iis), crc);
         crc.reset();
         // Check header magic
         if (readUShort(in) != GZIP_MAGIC) {
@@ -128,40 +109,30 @@ public class GZIPImageInputStream extends InflaterImageInputStream {
         }
     }
 
-    /**
-     * Reads GZIP member trailer.
-     */
+    /** Reads GZIP member trailer. */
     private void readTrailer() throws IOException {
         InputStream in = new InputStreamAdapter(this.iis);
         int n = inf.getRemaining();
         if (n > 0) {
-            in = new SequenceInputStream(new ByteArrayInputStream(buf, len - n,
-                    n), in);
+            in = new SequenceInputStream(new ByteArrayInputStream(buf, len - n, n), in);
         }
         // Uses left-to-right evaluation order
-        if ((readUInt(in) != crc.getValue()) ||
-        // rfc1952; ISIZE is the input size modulo 2^32
+        if ((readUInt(in) != crc.getValue())
+                ||
+                // rfc1952; ISIZE is the input size modulo 2^32
                 // TODO: improve this test (getBytesWritten() method from 1.5
                 // should be preferred)
-                (readUInt(in) != (inf.getTotalOut() & 0xffffffffL)))
-            throw new IOException("Corrupt GZIP trailer");
+                (readUInt(in) != (inf.getTotalOut() & 0xffffffffL))) throw new IOException("Corrupt GZIP trailer");
     }
 
     /**
-     * Reads uncompressed data into an array of bytes. Blocks until enough input
-     * is available for decompression.
-     * 
-     * @param buf
-     *                the buffer into which the data is read
-     * @param off
-     *                the start offset of the data
-     * @param len
-     *                the maximum number of bytes read
-     * @return the actual number of bytes read, or -1 if the end of the
-     *         compressed input stream is reached
-     * @exception IOException
-     *                    if an I/O error has occurred or the compressed input
-     *                    data is corrupt
+     * Reads uncompressed data into an array of bytes. Blocks until enough input is available for decompression.
+     *
+     * @param buf the buffer into which the data is read
+     * @param off the start offset of the data
+     * @param len the maximum number of bytes read
+     * @return the actual number of bytes read, or -1 if the end of the compressed input stream is reached
+     * @exception IOException if an I/O error has occurred or the compressed input data is corrupt
      */
     public int read(byte[] buf, int off, int len) throws IOException {
         checkClosed();
@@ -179,11 +150,9 @@ public class GZIPImageInputStream extends InflaterImageInputStream {
     }
 
     /**
-     * Closes this input stream and releases any system resources associated
-     * with the stream.
-     * 
-     * @exception IOException
-     *                    if an I/O error has occurred
+     * Closes this input stream and releases any system resources associated with the stream.
+     *
+     * @exception IOException if an I/O error has occurred
      */
     public void close() throws IOException {
         if (!closed) {
@@ -193,27 +162,21 @@ public class GZIPImageInputStream extends InflaterImageInputStream {
         }
     }
 
-    /**
-     * Reads unsigned integer in Intel byte order.
-     */
+    /** Reads unsigned integer in Intel byte order. */
     private long readUInt(InputStream in) throws IOException {
         long a = readUShort(in);
         long b = readUShort(in);
         return ((b & 0xffff) << 16) | (a & 0xffff);
     }
 
-    /**
-     * Reads unsigned short in Intel byte order.
-     */
+    /** Reads unsigned short in Intel byte order. */
     private int readUShort(InputStream in) throws IOException {
         int a = readUByte(in);
         int b = readUByte(in);
         return ((b & 0xff) << 8) | (a & 0xff);
     }
 
-    /**
-     * Reads unsigned byte.
-     */
+    /** Reads unsigned byte. */
     private int readUByte(InputStream in) throws IOException {
         int b = in.read();
         if (b == -1) {
@@ -223,8 +186,8 @@ public class GZIPImageInputStream extends InflaterImageInputStream {
     }
 
     /**
-     * Skips bytes of input data blocking until all bytes are skipped. Does not
-     * assume that the input stream is capable of seeking.
+     * Skips bytes of input data blocking until all bytes are skipped. Does not assume that the input stream is capable
+     * of seeking.
      */
     private void skipBytes(InputStream in, int n) throws IOException {
         while (n > 0) {

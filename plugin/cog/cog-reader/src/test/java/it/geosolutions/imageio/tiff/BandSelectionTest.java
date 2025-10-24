@@ -16,21 +16,14 @@
  */
 package it.geosolutions.imageio.tiff;
 
-import org.eclipse.imagen.media.imageread.ImageReadDescriptor;
+import static org.junit.Assert.assertEquals;
+
 import it.geosolutions.imageio.plugins.cog.CogImageReadParam;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.imageioimpl.plugins.cog.CogImageReader;
 import it.geosolutions.imageioimpl.plugins.cog.CogImageReaderSpi;
 import it.geosolutions.imageioimpl.plugins.cog.DefaultCogImageInputStream;
 import it.geosolutions.imageioimpl.plugins.cog.HttpRangeReader;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-
-import javax.imageio.ImageTypeSpecifier;
-import org.eclipse.imagen.PlanarImage;
-import org.eclipse.imagen.RenderedOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
@@ -38,25 +31,29 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
-
-import static org.junit.Assert.assertEquals;
+import javax.imageio.ImageTypeSpecifier;
+import org.eclipse.imagen.PlanarImage;
+import org.eclipse.imagen.RenderedOp;
+import org.eclipse.imagen.media.imageread.ImageReadDescriptor;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 /**
- * Tests band selection with a variety of file layouts (pixel vs band interleaved) and
- * compressions (since decompressors are informed of band selection).
+ * Tests band selection with a variety of file layouts (pixel vs band interleaved) and compressions (since decompressors
+ * are informed of band selection).
  */
 @RunWith(Parameterized.class)
 public class BandSelectionTest {
 
     private static String URL_BASE = "https://gs-cog.s3.eu-central-1.amazonaws.com/sample/";
-    
-    private static BufferedImage REFERENCE_IMAGE;
 
+    private static BufferedImage REFERENCE_IMAGE;
 
     @BeforeClass
     public static void readReference() throws IOException {
-        DefaultCogImageInputStream cogStream = new DefaultCogImageInputStream(URL_BASE +
-                "sampleRGBA.tif");
+        DefaultCogImageInputStream cogStream = new DefaultCogImageInputStream(URL_BASE + "sampleRGBA.tif");
         CogImageReader reader = new CogImageReader(new CogImageReaderSpi());
         reader.setInput(cogStream);
 
@@ -66,15 +63,14 @@ public class BandSelectionTest {
         REFERENCE_IMAGE = reader.read(0, param);
     }
 
-
     private final boolean enhancedBandSelection;
     private final boolean deferredLoading;
 
     @Parameterized.Parameters(name = "Enhanced read: {0} - Deferred load: {1} ")
     public static List<Object[]> useEnhancedBandSelection() {
-        return Arrays.asList(new Object[][]{{false, false},{true, false }, {false, true}, {true, true}});
+        return Arrays.asList(new Object[][] {{false, false}, {true, false}, {false, true}, {true, true}});
     }
-    
+
     public BandSelectionTest(boolean enhancedBandSelection, boolean deferredLoading) {
         this.enhancedBandSelection = enhancedBandSelection;
         this.deferredLoading = deferredLoading;
@@ -160,8 +156,7 @@ public class BandSelectionTest {
 
     private BufferedImage readWithBandSelect(String fileName, int[] bands) throws Exception {
         CogImageReader reader = null;
-        try (DefaultCogImageInputStream cogStream =
-                     new DefaultCogImageInputStream(URL_BASE + fileName)) {
+        try (DefaultCogImageInputStream cogStream = new DefaultCogImageInputStream(URL_BASE + fileName)) {
             reader = new CogImageReader(new CogImageReaderSpi());
             CogImageReadParam param = new CogImageReadParam();
             param.setRangeReaderClass(HttpRangeReader.class);
@@ -175,8 +170,8 @@ public class BandSelectionTest {
             }
 
             if (deferredLoading || !enhancedBandSelection) {
-                ImageTypeSpecifier its = ImageIOUtilities.getBandSelectedType(bands.length,
-                        REFERENCE_IMAGE.getSampleModel());
+                ImageTypeSpecifier its =
+                        ImageIOUtilities.getBandSelectedType(bands.length, REFERENCE_IMAGE.getSampleModel());
                 param.setDestinationType(its);
             }
 
@@ -186,11 +181,11 @@ public class BandSelectionTest {
                 return reader.read(0, param);
             }
 
-            // deferred read, to go through the ImageN machinery figuring out the deferred image layout 
+            // deferred read, to go through the ImageN machinery figuring out the deferred image layout
             // (and then making it a BufferedImage so that we can dispose the reader safely)
             cogStream.init(param); // needed to make it load the header
-            RenderedOp op = ImageReadDescriptor.create(cogStream, 0, false, false, false, null,
-                    null, param, reader, null);
+            RenderedOp op =
+                    ImageReadDescriptor.create(cogStream, 0, false, false, false, null, null, param, reader, null);
             return PlanarImage.wrapRenderedImage(op).getAsBufferedImage();
         } finally {
             if (reader != null) {
@@ -198,6 +193,4 @@ public class BandSelectionTest {
             }
         }
     }
-
-    
 }

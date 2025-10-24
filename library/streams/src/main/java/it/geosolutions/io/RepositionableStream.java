@@ -1,7 +1,7 @@
-/*		 
+/*
  * fastutil: Fast & compact type-specific collections for Java
  *
- * Copyright (C) 2005, 2006 Sebastiano Vigna 
+ * Copyright (C) 2005, 2006 Sebastiano Vigna
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -38,28 +38,25 @@ package it.geosolutions.io;
 
 /**
  * A basic interface specifying positioning methods for a byte stream.
- * 
+ *
  * @author Sebastiano Vigna
  * @since 4.4
  */
-
 public interface RepositionableStream {
 
     /**
      * Sets the current stream position.
-     * 
-     * @param newPosition
-     *                the new stream position.
+     *
+     * @param newPosition the new stream position.
      */
     void position(long newPosition) throws java.io.IOException;
 
     /**
      * Returns the current stream position.
-     * 
+     *
      * @return the current stream position.
      */
     long position() throws java.io.IOException;
-
 }
 
 // Local Variables:

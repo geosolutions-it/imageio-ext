@@ -22,25 +22,21 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Central control for ImageI/O-Ext internal caches. Allows external code to reset
- * all caches, and bits of code to register and listen for such clean events.
+ * Central control for ImageI/O-Ext internal caches. Allows external code to reset all caches, and bits of code to
+ * register and listen for such clean events.
  */
 public class ExtCaches {
 
     private static final Logger LOGGER = Logger.getLogger(ExtCaches.class.getName());
 
-    /**
-     * Listener that will be called back when the {@link ExtCaches#clean()} method is called
-     */
+    /** Listener that will be called back when the {@link ExtCaches#clean()} method is called */
     public interface Listener {
         void clean();
     }
 
     private static List<Listener> LISTENERS = new CopyOnWriteArrayList<>();
 
-    /**
-     * Cleans ImageI/O-Ext caches
-     */
+    /** Cleans ImageI/O-Ext caches */
     public static void clean() {
         for (Listener listener : LISTENERS) {
             try {
@@ -51,9 +47,7 @@ public class ExtCaches {
         }
     }
 
-    /**
-     * Adds a clean even listener
-     */
+    /** Adds a clean even listener */
     public static void addListener(Listener listener) {
         LISTENERS.add(listener);
     }
