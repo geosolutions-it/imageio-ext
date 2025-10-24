@@ -22,8 +22,7 @@ import it.geosolutions.imageioimpl.plugins.cog.RangeReader;
 /**
  * A subclass of TIFFImageReadParam to hold information about which RangeReader implementation to use.
  *
- * @author joshfix
- * Created on 2019-09-18
+ * @author joshfix Created on 2019-09-18
  */
 public class CogImageReadParam extends TIFFImageReadParam {
 
@@ -35,7 +34,7 @@ public class CogImageReadParam extends TIFFImageReadParam {
     public static final int DEFAULT_HEADER_LENGTH;
 
     static {
-        final String defaultHeaderLength= System.getProperty(DEFAULT_COG_HEADER_LENGTH_KEY);
+        final String defaultHeaderLength = System.getProperty(DEFAULT_COG_HEADER_LENGTH_KEY);
         if (defaultHeaderLength != null) {
             DEFAULT_HEADER_LENGTH = Integer.parseInt(defaultHeaderLength);
         } else {

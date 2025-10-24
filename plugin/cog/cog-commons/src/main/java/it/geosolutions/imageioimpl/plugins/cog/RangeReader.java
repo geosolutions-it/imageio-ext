@@ -17,7 +17,6 @@
 package it.geosolutions.imageioimpl.plugins.cog;
 
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
@@ -25,14 +24,12 @@ import java.util.Map;
 /**
  * Defines methods that should be implemented by classes that support remotely reading tile ranges.
  *
- * @author joshfix
- * Created on 10/22/19
+ * @author joshfix Created on 10/22/19
  */
 public interface RangeReader {
 
     /**
-     * Returns a URL representing the source of the reader, 
-     * eventually transforming it in a form that can still be read,
+     * Returns a URL representing the source of the reader, eventually transforming it in a form that can still be read,
      * but uses a protocol compatible with the URL class.
      */
     URL getURL() throws MalformedURLException;
@@ -52,8 +49,8 @@ public interface RangeReader {
     int getHeaderLength();
 
     /**
-     * Reads the byte ranges specified in the parameter.  To incur maximum performance, where the ranges are contiguous
-     * (eg, 1000-1346, 1347-2000), they should be concatenated (eg, 1000-2000).  Additionally, the read operations for
+     * Reads the byte ranges specified in the parameter. To incur maximum performance, where the ranges are contiguous
+     * (eg, 1000-1346, 1347-2000), they should be concatenated (eg, 1000-2000). Additionally, the read operations for
      * each range should execute in parallel and return after all parallel reads have completed.
      *
      * @param ranges a 2D array of start/end byte locations to be read
@@ -62,8 +59,8 @@ public interface RangeReader {
     Map<Long, byte[]> read(long[]... ranges);
 
     /**
-     * Reads the byte ranges specified in the parameter.  To incur maximum performance, where the ranges are contiguous
-     * (eg, 1000-1346, 1347-2000), they should be concatenated (eg, 1000-2000).  Additionally, the read operations for
+     * Reads the byte ranges specified in the parameter. To incur maximum performance, where the ranges are contiguous
+     * (eg, 1000-1346, 1347-2000), they should be concatenated (eg, 1000-2000). Additionally, the read operations for
      * each range should execute in parallel and return after all parallel reads have completed.
      *
      * @param ranges a collection of long arrays containing the start/end byte locations to be read

@@ -27,19 +27,6 @@ import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 import it.geosolutions.imageio.stream.output.FileImageOutputStreamExtImpl;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
-import org.eclipse.imagen.ImageLayout;
-import org.eclipse.imagen.ImageN;
-import org.eclipse.imagen.ParameterBlockImageN;
-import org.eclipse.imagen.RenderedOp;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import javax.imageio.IIOImage;
-import javax.imageio.ImageReadParam;
-import javax.imageio.ImageReader;
-import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.stream.FileImageOutputStream;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.RenderedImage;
@@ -48,6 +35,17 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.imageio.IIOImage;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.metadata.IIOMetadata;
+import org.eclipse.imagen.ImageLayout;
+import org.eclipse.imagen.ImageN;
+import org.eclipse.imagen.ParameterBlockImageN;
+import org.eclipse.imagen.RenderedOp;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Daniele Romagnoli, GeoSolutions.
@@ -55,7 +53,7 @@ import java.util.List;
  */
 public class GeoTiffVrtTest extends AbstractGDALTest {
 
-    final static List<GCP> referenceGCPs = new ArrayList<GCP>(4);
+    static final List<GCP> referenceGCPs = new ArrayList<GCP>(4);
 
     @Before
     public void setUp() throws Exception {
@@ -66,10 +64,10 @@ public class GeoTiffVrtTest extends AbstractGDALTest {
         // unzip it
         TestData.unzipFile(this, "test-geotiff-data.zip");
 
-        final int columns[] = new int[] { 0, 50, 0, 50 };
-        final int rows[] = new int[] { 0, 50, 50, 0 };
-        final int easting[] = new int[] { -180, -135, -180, -135 };
-        final int northing[] = new int[] { 90, 45, 45, 90 };
+        final int columns[] = new int[] {0, 50, 0, 50};
+        final int rows[] = new int[] {0, 50, 50, 0};
+        final int easting[] = new int[] {-180, -135, -180, -135};
+        final int northing[] = new int[] {90, 45, 45, 90};
         for (int i = 0; i < 4; i++) {
             GCP gcp = new GCP();
             gcp.setId(Integer.toString(i + 1));
@@ -80,7 +78,6 @@ public class GeoTiffVrtTest extends AbstractGDALTest {
             gcp.setNorthing(northing[i]);
             referenceGCPs.add(gcp);
         }
-
     }
 
     public GeoTiffVrtTest() {
@@ -89,7 +86,7 @@ public class GeoTiffVrtTest extends AbstractGDALTest {
 
     /**
      * Test Read without exploiting JAI-ImageIO Tools
-     * 
+     *
      * @throws FileNotFoundException
      * @throws IOException
      */
@@ -107,8 +104,7 @@ public class GeoTiffVrtTest extends AbstractGDALTest {
         ImageReader reader = new VRTImageReaderSpi().createReaderInstance();
         reader.setInput(inputFile);
         final RenderedImage image = reader.readAsRenderedImage(0, irp);
-        if (TestData.isInteractiveTest())
-            Viewer.visualizeAllInformation(image, fileName);
+        if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(image, fileName);
         Assert.assertEquals(128, image.getWidth());
         Assert.assertEquals(128, image.getHeight());
         reader.dispose();
@@ -116,7 +112,7 @@ public class GeoTiffVrtTest extends AbstractGDALTest {
 
     /**
      * Test Read exploiting JAI-ImageIO tools capabilities
-     * 
+     *
      * @throws FileNotFoundException
      * @throws IOException
      */
@@ -133,15 +129,13 @@ public class GeoTiffVrtTest extends AbstractGDALTest {
         pbjImageRead.setParameter("Input", new FileImageInputStreamExtImpl(file));
         pbjImageRead.setParameter("Reader", new VRTImageReaderSpi().createReaderInstance());
         RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
-        if (TestData.isInteractiveTest())
-            Viewer.visualizeAllInformation(image, "", true);
-        else
-        	Assert.assertNotNull(image.getTiles());
+        if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(image, "", true);
+        else Assert.assertNotNull(image.getTiles());
     }
 
     /**
      * Test Writing capabilities.
-     * 
+     *
      * @throws FileNotFoundException
      * @throws IOException
      */
@@ -169,10 +163,9 @@ public class GeoTiffVrtTest extends AbstractGDALTest {
         final ImageLayout l = new ImageLayout();
         l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(256).setTileWidth(256);
 
-        RenderedOp image = ImageN.create("ImageRead", pbjImageRead,new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, l));
+        RenderedOp image = ImageN.create("ImageRead", pbjImageRead, new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, l));
 
-        if (TestData.isInteractiveTest())
-            Viewer.visualizeAllInformation(image,"geotiff");
+        if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(image, "geotiff");
 
         // ////////////////////////////////////////////////////////////////
         // preparing to write
@@ -181,23 +174,20 @@ public class GeoTiffVrtTest extends AbstractGDALTest {
         writer.setOutput(new FileImageOutputStreamExtImpl(outputFile));
         writer.write(new IIOImage(image, null, metadata));
 
-
         // ////////////////////////////////////////////////////////////////
         // preparing to read again
         // ////////////////////////////////////////////////////////////////
         final ParameterBlockImageN pbjImageReRead = new ParameterBlockImageN("ImageRead");
         pbjImageReRead.setParameter("Input", outputFile);
-        pbjImageReRead.setParameter("Reader", new GeoTiffImageReaderSpi() .createReaderInstance());
+        pbjImageReRead.setParameter("Reader", new GeoTiffImageReaderSpi().createReaderInstance());
         final RenderedOp image2 = ImageN.create("ImageRead", pbjImageReRead);
-        if (TestData.isInteractiveTest())
-            Viewer.visualizeAllInformation(image2,"geotif2");
-        else
-        	Assert.assertNotNull(image2.getTiles());
+        if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(image2, "geotif2");
+        else Assert.assertNotNull(image2.getTiles());
     }
 
     /**
      * Test Read on a Paletted Image
-     * 
+     *
      * @throws FileNotFoundException
      * @throws IOException
      */
@@ -223,8 +213,7 @@ public class GeoTiffVrtTest extends AbstractGDALTest {
 
         RenderedOp image = ImageN.create("ImageRead", pbjImageRead, new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, l));
 
-        if (TestData.isInteractiveTest())
-            Viewer.visualizeAllInformation(image, "Paletted image read");
+        if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(image, "Paletted image read");
 
         // ////////////////////////////////////////////////////////////////
         // preparing to write
@@ -241,13 +230,12 @@ public class GeoTiffVrtTest extends AbstractGDALTest {
         pbjImageReRead.setParameter("Reader", new GeoTiffImageReaderSpi().createReaderInstance());
         final RenderedOp image2 = ImageN.create("ImageRead", pbjImageReRead);
         if (TestData.isInteractiveTest())
-            Viewer.visualizeAllInformation(image2,"Paletted image read back after writing");
-        else
-        	Assert.assertNotNull(image2.getTiles());
+            Viewer.visualizeAllInformation(image2, "Paletted image read back after writing");
+        else Assert.assertNotNull(image2.getTiles());
         ImageIOUtilities.disposeImage(image2);
         ImageIOUtilities.disposeImage(image);
     }
-    
+
     @Test
     public void testDataTypes() throws IOException, FileNotFoundException {
         if (!isGDALAvailable) {
@@ -260,31 +248,30 @@ public class GeoTiffVrtTest extends AbstractGDALTest {
         fileList.add("utmInt32.tif.vrt");
         fileList.add("utmFloat32.tif.vrt");
         fileList.add("utmFloat64.tif.vrt");
-        
-        for (String fileName: fileList){
-	        final ImageReadParam irp = new ImageReadParam();
-	        final File inputFile = TestData.file(this, fileName);
-	        irp.setSourceSubsampling(1, 1, 0, 0);
-	        ImageReader reader = new VRTImageReaderSpi().createReaderInstance();
-	        reader.setInput(inputFile);
-	        final RenderedImage image = reader.readAsRenderedImage(0, irp);
-	        if (TestData.isInteractiveTest())
-	        	Viewer.visualizeAllInformation(image, fileName);
-	        if(!fileName.contains("paletted")){
-	        	Assert.assertEquals(256, image.getHeight());
-	        	Assert.assertEquals(256, image.getWidth());
-	        } else {
-	        	Assert.assertEquals(128, image.getHeight());
-	        	Assert.assertEquals(128, image.getWidth());
-	        }
-	        
-	        reader.dispose();
+
+        for (String fileName : fileList) {
+            final ImageReadParam irp = new ImageReadParam();
+            final File inputFile = TestData.file(this, fileName);
+            irp.setSourceSubsampling(1, 1, 0, 0);
+            ImageReader reader = new VRTImageReaderSpi().createReaderInstance();
+            reader.setInput(inputFile);
+            final RenderedImage image = reader.readAsRenderedImage(0, irp);
+            if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(image, fileName);
+            if (!fileName.contains("paletted")) {
+                Assert.assertEquals(256, image.getHeight());
+                Assert.assertEquals(256, image.getWidth());
+            } else {
+                Assert.assertEquals(128, image.getHeight());
+                Assert.assertEquals(128, image.getWidth());
+            }
+
+            reader.dispose();
         }
     }
-    
+
     /**
      * Test Read exploiting JAI-ImageIO tools capabilities
-     * 
+     *
      * @throws FileNotFoundException
      * @throws IOException
      */
@@ -293,25 +280,24 @@ public class GeoTiffVrtTest extends AbstractGDALTest {
         if (!isGDALAvailable) {
             return;
         }
-        
+
         String fileName = "gcp.tif.vrt";
         final File file = TestData.file(this, fileName);
 
         ImageReader reader = new VRTImageReaderSpi().createReaderInstance();
         reader.setInput(file);
-        GDALCommonIIOImageMetadata metadata = (GDALCommonIIOImageMetadata)reader.getImageMetadata(0);
-        
+        GDALCommonIIOImageMetadata metadata = (GDALCommonIIOImageMetadata) reader.getImageMetadata(0);
+
         final int gcpNumber = metadata.getGcpNumber();
         Assert.assertEquals(gcpNumber, 4);
-        
+
         final List<GCP> gcps = metadata.getGCPs();
         Assert.assertNotNull(gcps);
         Assert.assertFalse(gcps.isEmpty());
-        for (int i = 0; i < 4; i++){
+        for (int i = 0; i < 4; i++) {
             Assert.assertEquals(gcps.get(i), referenceGCPs.get(i));
         }
-        
+
         reader.dispose();
     }
-
 }

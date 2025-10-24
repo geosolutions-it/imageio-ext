@@ -19,27 +19,24 @@ package it.geosolutions.imageio.plugins.vrt;
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.resources.TestData;
-import org.junit.Assert;
-import org.junit.Test;
-
-import javax.imageio.ImageReader;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import javax.imageio.ImageReader;
+import org.junit.Assert;
+import org.junit.Test;
 
-/**
- * Testing reading capabilities for ESRI HDR with {@link VRTImageReader}.
- */
+/** Testing reading capabilities for ESRI HDR with {@link VRTImageReader}. */
 public class EnviHdrVrtTest extends AbstractGDALTest {
 
     /**
      * Test Read without exploiting JAI-ImageIO Tools
-     * 
+     *
      * @throws FileNotFoundException
      * @throws IOException
      */
-	@Test
+    @Test
     public void testManualRead() throws IOException, FileNotFoundException {
         if (!isGDALAvailable) {
             return;
@@ -50,10 +47,8 @@ public class EnviHdrVrtTest extends AbstractGDALTest {
         ImageReader reader = new VRTImageReaderSpi().createReaderInstance();
         reader.setInput(file);
         final RenderedImage image = reader.read(0);
-        if (TestData.isInteractiveTest())
-            Viewer.visualizeAllInformation(image,fileName);
-        else
-            Assert.assertNotNull(image);
+        if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(image, fileName);
+        else Assert.assertNotNull(image);
         reader.dispose();
     }
 }

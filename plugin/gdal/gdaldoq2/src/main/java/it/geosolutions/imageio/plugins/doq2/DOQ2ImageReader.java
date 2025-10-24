@@ -17,27 +17,23 @@
 package it.geosolutions.imageio.plugins.doq2;
 
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
-
 import java.awt.image.RenderedImage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * {@link DOQ2ImageReader} is a {@link GDALImageReader} able to create
- * {@link RenderedImage} from New Labelled USGS Digital Orthophoto Quarter Quadrangles files.
- * 
+ * {@link DOQ2ImageReader} is a {@link GDALImageReader} able to create {@link RenderedImage} from New Labelled USGS
+ * Digital Orthophoto Quarter Quadrangles files.
+ *
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class DOQ2ImageReader extends GDALImageReader {
 
-    private static final Logger LOGGER = Logger
-            .getLogger(DOQ2ImageReader.class.toString());
+    private static final Logger LOGGER = Logger.getLogger(DOQ2ImageReader.class.toString());
 
     public DOQ2ImageReader(final DOQ2ImageReaderSpi originatingProvider) {
         super(originatingProvider, 0);
-        if (LOGGER.isLoggable(Level.FINE))
-            LOGGER.fine("DOQ2ImageReader Constructor");
+        if (LOGGER.isLoggable(Level.FINE)) LOGGER.fine("DOQ2ImageReader Constructor");
     }
-
 }

@@ -33,7 +33,6 @@ import it.geosolutions.imageio.compression.AbstractCompressorSpi;
 import it.geosolutions.imageio.compression.CompressionType;
 import it.geosolutions.imageio.compression.Compressor;
 import it.geosolutions.imageio.compression.CompressorSpi;
-
 import java.util.Collections;
 import java.util.Set;
 

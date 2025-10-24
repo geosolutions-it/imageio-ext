@@ -27,22 +27,19 @@ import it.geosolutions.imageio.plugins.jp2k.box.UUIDBox;
 import it.geosolutions.imageio.plugins.jp2k.box.UUIDBoxMetadataNode;
 import it.geosolutions.imageio.plugins.jp2k.box.XMLBox;
 import it.geosolutions.imageio.plugins.jp2k.box.XMLBoxMetadataNode;
-
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
-
 import org.w3c.dom.Node;
 
 public class JP2KStreamMetadata extends IIOMetadata {
 
-    public final static String NUM_CODESTREAMS = "NumberOfCodestreams";
+    public static final String NUM_CODESTREAMS = "NumberOfCodestreams";
 
     public static final String nativeMetadataFormatName = "it_geosolutions_imageio_plugins_jp2k_StreamMetadata_1.0";
 
@@ -52,11 +49,9 @@ public class JP2KStreamMetadata extends IIOMetadata {
 
     private SoftReference<Node> nativeTreeNodeRef;
 
-    public JP2KStreamMetadata(final TreeModel treeModel,
-            final int numCodestreams) {
+    public JP2KStreamMetadata(final TreeModel treeModel, final int numCodestreams) {
         final JP2KFileBox box = (JP2KFileBox) treeModel.getRoot();
-        if (box == null)
-            throw new IllegalArgumentException("Originating tree is empty");
+        if (box == null) throw new IllegalArgumentException("Originating tree is empty");
         this.numCodestreams = numCodestreams;
         final JP2KFileBox root = (JP2KFileBox) box.clone();
         this.treeModel = new DefaultTreeModel(root);
@@ -68,8 +63,7 @@ public class JP2KStreamMetadata extends IIOMetadata {
         }
     }
 
-    private void cloneTree(final JP2KBox toBeCloned, final JP2KBox parent,
-            int index) {
+    private void cloneTree(final JP2KBox toBeCloned, final JP2KBox parent, int index) {
         final JP2KBox currentBox = (JP2KBox) ((JP2KBox) toBeCloned).clone();
         parent.insert(currentBox, index++);
 
@@ -83,16 +77,12 @@ public class JP2KStreamMetadata extends IIOMetadata {
 
     @Override
     public Node getAsTree(String formatName) {
-        if (formatName.equalsIgnoreCase(nativeMetadataFormatName))
-            return getNativeTree();
-        else
-            throw new IllegalArgumentException(formatName
-                    + " is not a supported format name");
+        if (formatName.equalsIgnoreCase(nativeMetadataFormatName)) return getNativeTree();
+        else throw new IllegalArgumentException(formatName + " is not a supported format name");
     }
 
     private Node getNativeTree() {
-        Node nativeTree = this.nativeTreeNodeRef == null ? null
-                : this.nativeTreeNodeRef.get();
+        Node nativeTree = this.nativeTreeNodeRef == null ? null : this.nativeTreeNodeRef.get();
         if (nativeTree == null) {
             IIOMetadataNode node = new IIOMetadataNode(nativeMetadataFormatName);
             JP2KBoxMetadata root = (JP2KBoxMetadata) treeModel.getRoot();
@@ -104,40 +94,37 @@ public class JP2KStreamMetadata extends IIOMetadata {
     }
 
     private Node buildTree(final JP2KBoxMetadata node) {
-        if (node == null)
-            throw new IllegalArgumentException("Null node provided ");
+        if (node == null) throw new IllegalArgumentException("Null node provided ");
         IIOMetadataNode mdNode;
         switch (node.getType()) {
-        // Using LazyBox in the following 3 cases.
-        case XMLBox.BOX_TYPE:
-            mdNode = new XMLBoxMetadataNode(node);
-            break;
-        case UUIDBox.BOX_TYPE:
-            mdNode = new UUIDBoxMetadataNode(node);
-            break;
-        case ASOCBox.BOX_TYPE:
-            mdNode = new ASOCBoxMetadataNode(node);
-            break;
-        case LabelBox.BOX_TYPE:
-            mdNode = new LabelBoxMetadataNode(node);
-            break;
-        case JP2KFileBox.BOX_TYPE:
-            mdNode = node.getNativeNode();
-            mdNode.setAttribute(NUM_CODESTREAMS, Integer.toString(0));
-            break;
-        case ContiguousCodestreamBox.BOX_TYPE:
-            return null;
+            // Using LazyBox in the following 3 cases.
+            case XMLBox.BOX_TYPE:
+                mdNode = new XMLBoxMetadataNode(node);
+                break;
+            case UUIDBox.BOX_TYPE:
+                mdNode = new UUIDBoxMetadataNode(node);
+                break;
+            case ASOCBox.BOX_TYPE:
+                mdNode = new ASOCBoxMetadataNode(node);
+                break;
+            case LabelBox.BOX_TYPE:
+                mdNode = new LabelBoxMetadataNode(node);
+                break;
+            case JP2KFileBox.BOX_TYPE:
+                mdNode = node.getNativeNode();
+                mdNode.setAttribute(NUM_CODESTREAMS, Integer.toString(0));
+                break;
+            case ContiguousCodestreamBox.BOX_TYPE:
+                return null;
 
-        default:
-            mdNode = node.getNativeNode();
+            default:
+                mdNode = node.getNativeNode();
         }
         final int childCount = node.getChildCount();
         int i = 0;
         while (i < childCount) {
-            final Node appendMe = buildTree((JP2KBoxMetadata) node
-                    .getChildAt(i++));
-            if (appendMe != null)
-                mdNode.appendChild(appendMe);
+            final Node appendMe = buildTree((JP2KBoxMetadata) node.getChildAt(i++));
+            if (appendMe != null) mdNode.appendChild(appendMe);
         }
         return mdNode;
     }
@@ -156,68 +143,61 @@ public class JP2KStreamMetadata extends IIOMetadata {
     // return (ASOCBoxMetadataNode)returnedNode[0];
     // return null;
     // }
-    //    
+    //
 
     /**
-     * Search the first occurrence of a node related to the specified box type
-     * and return it as a {@link IIOMetadataNode} or null in case of not found.
-     * Search is performed visiting the children of a node before the brothers.
+     * Search the first occurrence of a node related to the specified box type and return it as a
+     * {@link IIOMetadataNode} or null in case of not found. Search is performed visiting the children of a node before
+     * the brothers.
      */
     public IIOMetadataNode searchFirstOccurrenceNode(final int requestedBoxType) {
         final Node rootNode = getAsTree(nativeMetadataFormatName);
         final List<IIOMetadataNode> returnedNodes = new ArrayList<IIOMetadataNode>(1);
-        searchOccurrencesNode(rootNode, BoxUtilities
-                .getName(requestedBoxType), returnedNodes, true);
-        if (!returnedNodes.isEmpty())
-            return returnedNodes.get(0);
+        searchOccurrencesNode(rootNode, BoxUtilities.getName(requestedBoxType), returnedNodes, true);
+        if (!returnedNodes.isEmpty()) return returnedNodes.get(0);
         return null;
     }
-    
+
     /**
      * Search any JP2 Box metadata node occurrence of the specified type.
-     * @param requestedBoxType 
-     * 			the box type to be searched.
-     * @return
-     * 			a List containing any occurrence found.
+     *
+     * @param requestedBoxType the box type to be searched.
+     * @return a List containing any occurrence found.
      */
     public List<IIOMetadataNode> searchOccurrencesNode(final int requestedBoxType) {
         final Node rootNode = getAsTree(nativeMetadataFormatName);
         final List<IIOMetadataNode> returnedNodes = new ArrayList<IIOMetadataNode>(1);
-        searchOccurrencesNode(rootNode, BoxUtilities
-                .getName(requestedBoxType), returnedNodes, false);
+        searchOccurrencesNode(rootNode, BoxUtilities.getName(requestedBoxType), returnedNodes, false);
         return returnedNodes;
     }
 
-    private void searchOccurrencesNode(final Node node, final String requestedBoxType, 
-    		final List<IIOMetadataNode> returnedNodes, final boolean exitFirstFound) {
+    private void searchOccurrencesNode(
+            final Node node,
+            final String requestedBoxType,
+            final List<IIOMetadataNode> returnedNodes,
+            final boolean exitFirstFound) {
         if (node != null) {
             if (node.getNodeName().equalsIgnoreCase(requestedBoxType)) {
-            	boolean sameNode = false;
-            	for (IIOMetadataNode foundNode : returnedNodes){
-            		if (foundNode == node){
-            			sameNode = true;
-            			break;
-            		}
-            	}
-            	if (!sameNode){
-            		returnedNodes.add((IIOMetadataNode) node);
-            		if (exitFirstFound)
-            			return;
-            	}
-                
+                boolean sameNode = false;
+                for (IIOMetadataNode foundNode : returnedNodes) {
+                    if (foundNode == node) {
+                        sameNode = true;
+                        break;
+                    }
+                }
+                if (!sameNode) {
+                    returnedNodes.add((IIOMetadataNode) node);
+                    if (exitFirstFound) return;
+                }
             }
 
             if (node.hasChildNodes()) {
-                searchOccurrencesNode(node.getFirstChild(),
-                        requestedBoxType, returnedNodes, exitFirstFound);
-                if (returnedNodes != null && !returnedNodes.isEmpty() && exitFirstFound)
-                    return;
+                searchOccurrencesNode(node.getFirstChild(), requestedBoxType, returnedNodes, exitFirstFound);
+                if (returnedNodes != null && !returnedNodes.isEmpty() && exitFirstFound) return;
                 Node sibling = node.getNextSibling();
                 while (sibling != null) {
-                    searchOccurrencesNode(sibling, requestedBoxType,
-                            returnedNodes, exitFirstFound);
-                    if (returnedNodes != null && !returnedNodes.isEmpty() && exitFirstFound)
-                        return;
+                    searchOccurrencesNode(sibling, requestedBoxType, returnedNodes, exitFirstFound);
+                    if (returnedNodes != null && !returnedNodes.isEmpty() && exitFirstFound) return;
                     sibling = sibling.getNextSibling();
                 }
             }
@@ -225,8 +205,8 @@ public class JP2KStreamMetadata extends IIOMetadata {
         return;
     }
 
-    //    
-    //    
+    //
+    //
     // public void parseGML(){
     // final ASOCBoxMetadataNode mainAsocBoxNode =
     // findParentASOCBoxMetadataNode();
@@ -242,7 +222,7 @@ public class JP2KStreamMetadata extends IIOMetadata {
     // Node xmlNode = labelNode.getNextSibling();
     // if (xmlNode!=null && xmlNode instanceof XMLBoxMetadataNode){
     // XMLBoxMetadataNode xmlBoxNode = (XMLBoxMetadataNode) xmlNode;
-    //                            
+    //
     // }
     // }
     // }
@@ -257,14 +237,10 @@ public class JP2KStreamMetadata extends IIOMetadata {
     // }
 
     @Override
-    public void mergeTree(String formatName, Node root)
-            throws IIOInvalidTreeException {
+    public void mergeTree(String formatName, Node root) throws IIOInvalidTreeException {
         throw new UnsupportedOperationException("MergeTree is unsupported");
     }
 
     @Override
-    public void reset() {
-
-    }
-
+    public void reset() {}
 }

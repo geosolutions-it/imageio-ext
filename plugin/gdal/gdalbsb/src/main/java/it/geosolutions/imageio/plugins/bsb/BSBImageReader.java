@@ -17,15 +17,13 @@
 package it.geosolutions.imageio.plugins.bsb;
 
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
-
 import java.awt.image.RenderedImage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * {@link BSBImageReader} is a {@link GDALImageReader} able to create
- * {@link RenderedImage} from BSB files.
- * 
+ * {@link BSBImageReader} is a {@link GDALImageReader} able to create {@link RenderedImage} from BSB files.
+ *
  * @author Julien Carlos, INT.
  */
 public class BSBImageReader extends GDALImageReader {
@@ -33,14 +31,12 @@ public class BSBImageReader extends GDALImageReader {
 
     /**
      * Constructs a <code>BSBImageReader<code> using a {@link BSBImageReaderSpi}.
-     * 
+     *
      * @param originatingProvider The {@link BSBImageReaderSpi} to use for building this <code>BSBImageReader<code>.
      */
     public BSBImageReader(BSBImageReaderSpi originatingProvider) {
         super(originatingProvider, 0);
-        
-        if (LOGGER.isLoggable(Level.FINE))
-            LOGGER.fine("BSBImageReaderSpi Constructor");
-    }
 
+        if (LOGGER.isLoggable(Level.FINE)) LOGGER.fine("BSBImageReaderSpi Constructor");
+    }
 }

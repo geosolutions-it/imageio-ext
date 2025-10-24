@@ -17,40 +17,30 @@
 package it.geosolutions.imageio.stream.input.compressed;
 
 import it.geosolutions.imageio.stream.input.FilterImageInputStream;
-
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 import java.util.zip.ZipException;
-
 import javax.imageio.stream.ImageInputStream;
 
-/**
- * @author Simone Giannecchini, GeoSolutions
- */
+/** @author Simone Giannecchini, GeoSolutions */
 public class InflaterImageInputStream extends FilterImageInputStream {
-    /**
-     * Length of input buffer.
-     */
+    /** Length of input buffer. */
     protected int len;
 
     private byte[] b = new byte[512];
 
     protected boolean closed = false;
 
-    /**
-     * Input buffer for decompression.
-     */
+    /** Input buffer for decompression. */
     protected byte[] buf;
 
     protected byte[] singleByteBuf = new byte[1];
 
     protected boolean usesDefaultInflater = false;
 
-    /**
-     * Decompressor for this stream.
-     */
+    /** Decompressor for this stream. */
     protected Inflater inf;
 
     public InflaterImageInputStream(ImageInputStream iis) {
@@ -65,27 +55,22 @@ public class InflaterImageInputStream extends FilterImageInputStream {
             throw new NullPointerException();
         }
         buf = new byte[8192];
-
     }
 
-    public InflaterImageInputStream(ImageInputStream iis, Inflater inflater,
-            int size) {
+    public InflaterImageInputStream(ImageInputStream iis, Inflater inflater, int size) {
         super(iis);
         this.inf = inflater;
         if (inf == null) {
             throw new NullPointerException();
         }
         buf = new byte[size];
-
     }
 
     /**
-     * Reads a byte of uncompressed data. This method will block until enough
-     * input is available for decompression.
-     * 
+     * Reads a byte of uncompressed data. This method will block until enough input is available for decompression.
+     *
      * @return the byte read, or -1 if end of compressed input is reached
-     * @exception IOException
-     *                    if an I/O error has occurred
+     * @exception IOException if an I/O error has occurred
      */
     public int read() throws IOException {
         checkClosed();
@@ -93,21 +78,15 @@ public class InflaterImageInputStream extends FilterImageInputStream {
     }
 
     /**
-     * Reads uncompressed data into an array of bytes. This method will block
-     * until some input can be decompressed.
-     * 
-     * @param b
-     *                the buffer into which the data is read
-     * @param off
-     *                the start offset of the data
-     * @param len
-     *                the maximum number of bytes read
-     * @return the actual number of bytes read, or -1 if the end of the
-     *         compressed input is reached or a preset dictionary is needed
-     * @exception ZipException
-     *                    if a ZIP format error has occurred
-     * @exception IOException
-     *                    if an I/O error has occurred
+     * Reads uncompressed data into an array of bytes. This method will block until some input can be decompressed.
+     *
+     * @param b the buffer into which the data is read
+     * @param off the start offset of the data
+     * @param len the maximum number of bytes read
+     * @return the actual number of bytes read, or -1 if the end of the compressed input is reached or a preset
+     *     dictionary is needed
+     * @exception ZipException if a ZIP format error has occurred
+     * @exception IOException if an I/O error has occurred
      */
     public int read(byte[] b, int off, int len) throws IOException {
         checkClosed();
@@ -135,9 +114,8 @@ public class InflaterImageInputStream extends FilterImageInputStream {
 
     /**
      * Fills input buffer with more data to decompress.
-     * 
-     * @exception IOException
-     *                    if an I/O error has occurred
+     *
+     * @exception IOException if an I/O error has occurred
      */
     protected void fill() throws IOException {
         checkClosed();
@@ -149,16 +127,13 @@ public class InflaterImageInputStream extends FilterImageInputStream {
     }
 
     /**
-     * Closes this input stream and releases any system resources associated
-     * with the stream.
-     * 
-     * @exception IOException
-     *                    if an I/O error has occurred
+     * Closes this input stream and releases any system resources associated with the stream.
+     *
+     * @exception IOException if an I/O error has occurred
      */
     public void close() throws IOException {
         if (!closed) {
-            if (usesDefaultInflater)
-                inf.end();
+            if (usesDefaultInflater) inf.end();
             super.close();
             closed = true;
         }
@@ -182,14 +157,11 @@ public class InflaterImageInputStream extends FilterImageInputStream {
 
     /**
      * Skips specified number of bytes of uncompressed data.
-     * 
-     * @param n
-     *                the number of bytes to skip
+     *
+     * @param n the number of bytes to skip
      * @return the actual number of bytes skipped.
-     * @exception IOException
-     *                    if an I/O error has occurred
-     * @exception IllegalArgumentException
-     *                    if n < 0
+     * @exception IOException if an I/O error has occurred
+     * @exception IllegalArgumentException if n < 0
      */
     public long skipBytes(long n) throws IOException {
         if (n < 0) {
@@ -211,5 +183,4 @@ public class InflaterImageInputStream extends FilterImageInputStream {
         }
         return total;
     }
-
 }

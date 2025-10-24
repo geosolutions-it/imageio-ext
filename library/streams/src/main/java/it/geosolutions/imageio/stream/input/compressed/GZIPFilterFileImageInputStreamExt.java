@@ -18,23 +18,20 @@ package it.geosolutions.imageio.stream.input.compressed;
 
 import it.geosolutions.imageio.stream.AccessibleStream;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
-
-import javax.imageio.stream.ImageInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import javax.imageio.stream.ImageInputStream;
 
 /**
  * @author Daniele Romagnoli, GeoSolutions
  * @author Simone Giannecchini, GeoSolutions
  */
-
 public class GZIPFilterFileImageInputStreamExt extends GZIPImageInputStream
         implements ImageInputStream, AccessibleStream<File> {
     private File file;
 
-    public GZIPFilterFileImageInputStreamExt(File file)
-            throws FileNotFoundException, IOException {
+    public GZIPFilterFileImageInputStreamExt(File file) throws FileNotFoundException, IOException {
         super(new GZIPImageInputStream(new FileImageInputStreamExtImpl(file)));
         this.file = file;
     }
@@ -47,7 +44,7 @@ public class GZIPFilterFileImageInputStreamExt extends GZIPImageInputStream
 
     /**
      * return the associated file
-     * 
+     *
      * @return the file
      */
     public File getFile() {

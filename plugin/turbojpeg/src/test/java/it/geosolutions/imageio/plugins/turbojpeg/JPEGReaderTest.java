@@ -3,16 +3,14 @@ package it.geosolutions.imageio.plugins.turbojpeg;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assume.assumeTrue;
+
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.logging.Logger;
-
 import javax.imageio.ImageReader;
 import javax.imageio.stream.FileImageInputStream;
-
 import org.junit.Test;
 
 public class JPEGReaderTest {

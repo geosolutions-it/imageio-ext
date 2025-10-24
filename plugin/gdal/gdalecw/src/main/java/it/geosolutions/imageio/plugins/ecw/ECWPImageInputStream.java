@@ -18,24 +18,22 @@ package it.geosolutions.imageio.plugins.ecw;
 
 import it.geosolutions.imageio.stream.input.URIImageInputStream;
 import it.geosolutions.imageio.stream.input.URIImageInputStreamImpl;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteOrder;
-
 import javax.imageio.stream.IIOByteBuffer;
 
 /**
- * A simple class which allow to handle ECWP protocol on GDAL.
- * Actually, this shouldn't be used as a real ImageInputStream.
- * 
+ * A simple class which allow to handle ECWP protocol on GDAL. Actually, this shouldn't be used as a real
+ * ImageInputStream.
+ *
  * @author Daniele Romagnoli, GeoSolutions
  * @author Simone Giannecchini, GeoSolutions
  */
 public class ECWPImageInputStream implements URIImageInputStream {
 
-    private final static String ECWP_PREFIX = "ecwp://";
+    private static final String ECWP_PREFIX = "ecwp://";
 
     private URIImageInputStreamImpl uriInputStream;
 
@@ -50,8 +48,7 @@ public class ECWPImageInputStream implements URIImageInputStream {
         try {
             uri = new URI(ecwpUrl);
         } catch (URISyntaxException e) {
-            throw new IllegalArgumentException(
-                    "Unable to create a proper stream for the provided input");
+            throw new IllegalArgumentException("Unable to create a proper stream for the provided input");
         }
         uriInputStream = new URIImageInputStreamImpl(uri);
     }
@@ -67,8 +64,7 @@ public class ECWPImageInputStream implements URIImageInputStream {
     public String getECWPLink() {
         final URI uri = getUri();
         String ecwp = null;
-        if (uri != null)
-            ecwp = uri.toString();
+        if (uri != null) ecwp = uri.toString();
         return ecwp;
     }
 
@@ -164,29 +160,21 @@ public class ECWPImageInputStream implements URIImageInputStream {
         return uriInputStream.readFloat();
     }
 
-    public void readFully(byte[] b) throws IOException {
-    }
+    public void readFully(byte[] b) throws IOException {}
 
-    public void readFully(byte[] b, int off, int len) throws IOException {
-    }
+    public void readFully(byte[] b, int off, int len) throws IOException {}
 
-    public void readFully(short[] s, int off, int len) throws IOException {
-    }
+    public void readFully(short[] s, int off, int len) throws IOException {}
 
-    public void readFully(char[] c, int off, int len) throws IOException {
-    }
+    public void readFully(char[] c, int off, int len) throws IOException {}
 
-    public void readFully(int[] i, int off, int len) throws IOException {
-    }
+    public void readFully(int[] i, int off, int len) throws IOException {}
 
-    public void readFully(long[] l, int off, int len) throws IOException {
-    }
+    public void readFully(long[] l, int off, int len) throws IOException {}
 
-    public void readFully(float[] f, int off, int len) throws IOException {
-    }
+    public void readFully(float[] f, int off, int len) throws IOException {}
 
-    public void readFully(double[] d, int off, int len) throws IOException {
-    }
+    public void readFully(double[] d, int off, int len) throws IOException {}
 
     public int readInt() throws IOException {
         return uriInputStream.readInt();
@@ -220,17 +208,13 @@ public class ECWPImageInputStream implements URIImageInputStream {
         return uriInputStream.readUnsignedShort();
     }
 
-    public void reset() throws IOException {
-    }
+    public void reset() throws IOException {}
 
-    public void seek(long pos) throws IOException {
-    }
+    public void seek(long pos) throws IOException {}
 
-    public void setBitOffset(int bitOffset) throws IOException {
-    }
+    public void setBitOffset(int bitOffset) throws IOException {}
 
-    public void setByteOrder(ByteOrder byteOrder) {
-    }
+    public void setByteOrder(ByteOrder byteOrder) {}
 
     public int skipBytes(int n) throws IOException {
         return uriInputStream.skipBytes(n);

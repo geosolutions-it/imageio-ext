@@ -17,13 +17,12 @@
 package it.geosolutions.imageio.ndplugin;
 
 import java.io.IOException;
-
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 
-/** 
+/**
  * A base ImageReader class
- * 
+ *
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
  */
@@ -36,8 +35,7 @@ public abstract class BaseImageReader extends ImageReader {
     }
 
     public void setNumImages(final int numImages) {
-        if (this.numRasters == -1)
-            this.numRasters = numImages;
+        if (this.numRasters == -1) this.numRasters = numImages;
     }
 
     protected BaseImageReader(final ImageReaderSpi originatingProvider) {
@@ -47,22 +45,18 @@ public abstract class BaseImageReader extends ImageReader {
     public void dispose() {
         numRasters = -1;
     }
-    
+
     /**
-     * Simple check of the specified image index. Valid indexes are belonging
-     * the range [0 - numRasters]. In case this constraint is not respected, an
-     * {@link IndexOutOfBoundsException} is thrown.
-     * 
-     * @param imageIndex
-     *                the index to be checked
-     * 
-     * @throw {@link IndexOutOfBoundsException} in case the provided imageIndex
-     *        is not in the range of supported ones.
+     * Simple check of the specified image index. Valid indexes are belonging the range [0 - numRasters]. In case this
+     * constraint is not respected, an {@link IndexOutOfBoundsException} is thrown.
+     *
+     * @param imageIndex the index to be checked
+     * @throw {@link IndexOutOfBoundsException} in case the provided imageIndex is not in the range of supported ones.
      */
     public void checkImageIndex(final int imageIndex) {
         if (imageIndex < 0 || imageIndex >= numRasters) {
-            throw new IndexOutOfBoundsException(
-                    "Invalid imageIndex. It should " + (numRasters > 0 ? ("belong the range [0," + (numRasters - 1)) : "be 0"));
+            throw new IndexOutOfBoundsException("Invalid imageIndex. It should "
+                    + (numRasters > 0 ? ("belong the range [0," + (numRasters - 1)) : "be 0"));
         }
     }
 }

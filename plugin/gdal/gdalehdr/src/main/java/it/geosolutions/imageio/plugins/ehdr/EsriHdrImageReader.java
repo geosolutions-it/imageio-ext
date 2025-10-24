@@ -17,26 +17,23 @@
 package it.geosolutions.imageio.plugins.ehdr;
 
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
-
 import java.awt.image.RenderedImage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * {@link EsriHdrImageReader} is a {@link GDALImageReader} able to create
- * {@link RenderedImage} from ESRI header labelled files.
- * 
+ * {@link EsriHdrImageReader} is a {@link GDALImageReader} able to create {@link RenderedImage} from ESRI header
+ * labelled files.
+ *
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class EsriHdrImageReader extends GDALImageReader {
 
-    private static final Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.plugins.ehdr");
+    private static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.ehdr");
 
     public EsriHdrImageReader(EsriHdrImageReaderSpi originatingProvider) {
         super(originatingProvider, 0);
-        if (LOGGER.isLoggable(Level.FINE))
-            LOGGER.fine("EsriHdrImageReader Constructor");
+        if (LOGGER.isLoggable(Level.FINE)) LOGGER.fine("EsriHdrImageReader Constructor");
     }
 }

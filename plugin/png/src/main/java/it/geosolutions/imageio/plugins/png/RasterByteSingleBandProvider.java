@@ -21,9 +21,9 @@ import java.awt.image.IndexColorModel;
 import java.awt.image.Raster;
 
 /**
- * A scanline provider that can copy 1-1 data from the buffered image into the scanline without
- * performing any kind of transformation
- * 
+ * A scanline provider that can copy 1-1 data from the buffered image into the scanline without performing any kind of
+ * transformation
+ *
  * @author Andrea Aime - GeoSolutions
  */
 public final class RasterByteSingleBandProvider extends AbstractScanlineProvider {
@@ -35,13 +35,11 @@ public final class RasterByteSingleBandProvider extends AbstractScanlineProvider
         this.bytes = ((DataBufferByte) raster.getDataBuffer()).getData();
     }
 
-    public RasterByteSingleBandProvider(Raster raster, int bitDepth, int scanlineLength,
-            IndexColorModel palette) {
+    public RasterByteSingleBandProvider(Raster raster, int bitDepth, int scanlineLength, IndexColorModel palette) {
         super(raster, bitDepth, scanlineLength, bitDepth / 8, palette);
         this.bytes = ((DataBufferByte) raster.getDataBuffer()).getData();
     }
 
-    
     public void next(final byte[] scanline, final int offset, final int length) {
         if (this.currentRow == height) {
             throw new IllegalStateException("All scanlines have been read already");
@@ -51,5 +49,4 @@ public final class RasterByteSingleBandProvider extends AbstractScanlineProvider
         System.arraycopy(bytes, next, scanline, offset, length);
         currentRow++;
     }
-
 }

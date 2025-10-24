@@ -21,29 +21,24 @@ import it.geosolutions.imageio.gdalframework.GDALUtilities;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
-
 import java.awt.RenderingHints;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.imageio.ImageReadParam;
 import org.eclipse.imagen.ImageLayout;
 import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.ParameterBlockImageN;
 import org.eclipse.imagen.RenderedOp;
-
 import org.gdal.gdal.Driver;
 import org.gdal.gdal.gdal;
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Testing reading capabilities for {@link JP2GDALMrSidImageReader} leveraging
- * on ImageN.
- * 
+ * Testing reading capabilities for {@link JP2GDALMrSidImageReader} leveraging on ImageN.
+ *
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
@@ -51,37 +46,35 @@ public class JP2KReadTest extends AbstractGDALTest {
 
     private static final Logger LOGGER = Logger.getLogger(JP2KReadTest.class.toString());
 
-    public final static String fileName = "test.jp2";
+    public static final String fileName = "test.jp2";
 
-	/** A simple flag set to true in case the JP2 MrSID driver is available */
-	protected static boolean isJp2MrSidDriverAvailable;
+    /** A simple flag set to true in case the JP2 MrSID driver is available */
+    protected static boolean isJp2MrSidDriverAvailable;
 
     static {
-        if (isGDALAvailable){
+        if (isGDALAvailable) {
+            gdal.AllRegister();
+            final Driver driverkak = gdal.GetDriverByName("JP2KAK");
+            final Driver driverecw = gdal.GetDriverByName("JP2ECW");
+            if (driverkak != null || driverecw != null) {
+                final StringBuilder skipDriver = new StringBuilder("");
+                if (driverkak != null) skipDriver.append("JP2KAK ");
+                if (driverecw != null) skipDriver.append("JP2ECW");
+                gdal.SetConfigOption("GDAL_SKIP", skipDriver.toString());
                 gdal.AllRegister();
-	        final Driver driverkak = gdal.GetDriverByName("JP2KAK");
-	        final Driver driverecw = gdal.GetDriverByName("JP2ECW");
-	        if (driverkak != null || driverecw != null) {
-	            final StringBuilder skipDriver = new StringBuilder("");
-	            if (driverkak != null)
-	                skipDriver.append("JP2KAK ");
-	            if (driverecw != null)
-	                skipDriver.append("JP2ECW");
-	            gdal.SetConfigOption("GDAL_SKIP", skipDriver.toString());
-	            gdal.AllRegister();
-	        }
-	        isJp2MrSidDriverAvailable = GDALUtilities.isDriverAvailable("JP2MrSID");
+            }
+            isJp2MrSidDriverAvailable = GDALUtilities.isDriverAvailable("JP2MrSID");
         } else {
             isJp2MrSidDriverAvailable = false;
         }
-        if (!isJp2MrSidDriverAvailable){
+        if (!isJp2MrSidDriverAvailable) {
             AbstractGDALTest.missingDriverMessage("JP2MrSID");
         }
     }
 
-	/**
+    /**
      * Simple test read
-     * 
+     *
      * @throws FileNotFoundException
      * @throws IOException
      */
@@ -94,23 +87,19 @@ public class JP2KReadTest extends AbstractGDALTest {
         final File file = TestData.file(this, fileName);
         pbjImageRead = new ParameterBlockImageN("ImageRead");
         pbjImageRead.setParameter("Input", file);
-        pbjImageRead.setParameter("Reader", new JP2GDALMrSidImageReaderSpi()
-                .createReaderInstance());
+        pbjImageRead.setParameter("Reader", new JP2GDALMrSidImageReaderSpi().createReaderInstance());
         final ImageLayout layout = new ImageLayout();
-        layout.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(256)
-                .setTileWidth(256);
-        RenderedOp image = ImageN.create("ImageRead", pbjImageRead,
-                new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, layout));
-        if (TestData.isInteractiveTest())
-            Viewer.visualizeAllInformation(image,fileName);
-        else
-            Assert.assertNotNull(image.getTiles());
+        layout.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(256).setTileWidth(256);
+        RenderedOp image =
+                ImageN.create("ImageRead", pbjImageRead, new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, layout));
+        if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(image, fileName);
+        else Assert.assertNotNull(image.getTiles());
         ImageIOUtilities.disposeImage(image);
     }
 
     /**
      * Test read exploiting common ImageN operations (Crop-Translate-Rotate)
-     * 
+     *
      * @throws FileNotFoundException
      * @throws IOException
      */
@@ -132,23 +121,22 @@ public class JP2KReadTest extends AbstractGDALTest {
         Integer xSubSamplingOffset = new Integer(0);
         Integer ySubSamplingOffset = new Integer(0);
 
-        irp.setSourceSubsampling(xSubSampling.intValue(), ySubSampling
-                .intValue(), xSubSamplingOffset.intValue(), ySubSamplingOffset
-                .intValue());
+        irp.setSourceSubsampling(
+                xSubSampling.intValue(),
+                ySubSampling.intValue(),
+                xSubSamplingOffset.intValue(),
+                ySubSamplingOffset.intValue());
 
         pbjImageRead = new ParameterBlockImageN("ImageRead");
         pbjImageRead.setParameter("Input", inputFile);
         pbjImageRead.setParameter("readParam", irp);
-        pbjImageRead.setParameter("Reader", new JP2GDALMrSidImageReaderSpi()
-                .createReaderInstance());
+        pbjImageRead.setParameter("Reader", new JP2GDALMrSidImageReaderSpi().createReaderInstance());
         final ImageLayout layout = new ImageLayout();
-        layout.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512)
-                .setTileWidth(512);
-        RenderedOp image = ImageN.create("ImageRead", pbjImageRead,
-                new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, layout));
+        layout.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512).setTileWidth(512);
+        RenderedOp image =
+                ImageN.create("ImageRead", pbjImageRead, new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, layout));
 
-        if (TestData.isInteractiveTest())
-            Viewer.visualizeAllInformation(image, "subsampled");
+        if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(image, "subsampled");
 
         // ////////////////////////////////////////////////////////////////
         // preparing to crop
@@ -167,24 +155,20 @@ public class JP2KReadTest extends AbstractGDALTest {
         pbjCrop.setParameter("height", cropHeigth);
         final RenderedOp croppedImage = ImageN.create("Crop", pbjCrop);
 
-        if (TestData.isInteractiveTest())
-            Viewer.visualizeAllInformation(croppedImage, "cropped");
+        if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(croppedImage, "cropped");
 
         // ////////////////////////////////////////////////////////////////
         // preparing to translate
         // ////////////////////////////////////////////////////////////////
-        final ParameterBlockImageN pbjTranslate = new ParameterBlockImageN(
-                "Translate");
+        final ParameterBlockImageN pbjTranslate = new ParameterBlockImageN("Translate");
         pbjTranslate.addSource(croppedImage);
         Float xTrans = new Float(xCrop.floatValue() * (-1));
         Float yTrans = new Float(yCrop.floatValue() * (-1));
         pbjTranslate.setParameter("xTrans", xTrans);
         pbjTranslate.setParameter("yTrans", yTrans);
-        final RenderedOp translatedImage = ImageN
-                .create("Translate", pbjTranslate);
+        final RenderedOp translatedImage = ImageN.create("Translate", pbjTranslate);
 
-        if (TestData.isInteractiveTest())
-            Viewer.visualizeAllInformation(translatedImage, "translated");
+        if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(translatedImage, "translated");
 
         // ////////////////////////////////////////////////////////////////
         // preparing to rotate
@@ -202,24 +186,36 @@ public class JP2KReadTest extends AbstractGDALTest {
 
         final RenderedOp rotatedImage = ImageN.create("Rotate", pbjRotate);
 
-        StringBuilder title = new StringBuilder("SUBSAMP:").append("X[").append(
-                xSubSampling.toString()).append("]-Y[").append(
-                ySubSampling.toString()).append("]-Xof[").append(
-                xSubSamplingOffset.toString()).append("]-Yof[").append(
-                ySubSamplingOffset).append("]CROP:X[").append(xCrop.toString())
-                .append("]-Y[").append(yCrop.toString()).append("]-W[").append(
-                        cropWidth.toString()).append("]-H[").append(
-                        cropHeigth.toString()).append("]TRANS:X[").append(
-                        xTrans.toString()).append("]-Y[").append(
-                        yTrans.toString()).append("]ROTATE:xOrig[").append(
-                        xOrigin.toString()).append("]-yOrig[").append(
-                        yOrigin.toString()).append("]-ang[").append(
-                        angle.toString()).append("]");
-        if (TestData.isInteractiveTest())
-            Viewer.visualizeAllInformation(rotatedImage, title.toString());
-        else
-        	Assert.assertNotNull(rotatedImage.getTiles());
+        StringBuilder title = new StringBuilder("SUBSAMP:")
+                .append("X[")
+                .append(xSubSampling.toString())
+                .append("]-Y[")
+                .append(ySubSampling.toString())
+                .append("]-Xof[")
+                .append(xSubSamplingOffset.toString())
+                .append("]-Yof[")
+                .append(ySubSamplingOffset)
+                .append("]CROP:X[")
+                .append(xCrop.toString())
+                .append("]-Y[")
+                .append(yCrop.toString())
+                .append("]-W[")
+                .append(cropWidth.toString())
+                .append("]-H[")
+                .append(cropHeigth.toString())
+                .append("]TRANS:X[")
+                .append(xTrans.toString())
+                .append("]-Y[")
+                .append(yTrans.toString())
+                .append("]ROTATE:xOrig[")
+                .append(xOrigin.toString())
+                .append("]-yOrig[")
+                .append(yOrigin.toString())
+                .append("]-ang[")
+                .append(angle.toString())
+                .append("]");
+        if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(rotatedImage, title.toString());
+        else Assert.assertNotNull(rotatedImage.getTiles());
         ImageIOUtilities.disposeImage(rotatedImage);
     }
-
 }

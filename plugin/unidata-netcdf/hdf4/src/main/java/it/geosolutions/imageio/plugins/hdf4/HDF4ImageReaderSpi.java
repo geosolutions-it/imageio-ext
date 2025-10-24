@@ -19,45 +19,42 @@ package it.geosolutions.imageio.plugins.hdf4;
 import it.geosolutions.imageio.ndplugin.BaseImageReaderSpi;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.EnumSet;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.imageio.ImageReader;
-
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dataset.NetcdfDataset.Enhance;
 import ucar.nc2.iosp.hdf4.H4iosp;
 
 /**
  * Service provider interface for the APS-HDF Image
- * 
+ *
  * @author Daniele Romagnoli
  */
 public abstract class HDF4ImageReaderSpi extends BaseImageReaderSpi {
 
-	static{
-		NetcdfDataset.setDefaultEnhanceMode(EnumSet.of(Enhance.CoordSystems));
-	}
+    static {
+        NetcdfDataset.setDefaultEnhanceMode(EnumSet.of(Enhance.CoordSystems));
+    }
 
     private static final Logger LOGGER = Logger.getLogger(HDF4ImageReaderSpi.class.toString());
 
-    static final String[] suffixes = { "hdf", "hdf4" };
+    static final String[] suffixes = {"hdf", "hdf4"};
 
-    static final String[] formatNames = { "HDF4" };
+    static final String[] formatNames = {"HDF4"};
 
-    static final String[] MIMETypes = { "image/hdf4" };
+    static final String[] MIMETypes = {"image/hdf4"};
 
     static final String version = "1.0";
 
     static final String readerCN = "it.geosolutions.imageio.plugins.hdf4.BaseHDF4ImageReader";
 
     // writerSpiNames
-    static final String[] wSN = { null };
+    static final String[] wSN = {null};
 
     // StreamMetadataFormatNames and StreamMetadataFormatClassNames
     static final boolean supportsStandardStreamMetadataFormat = false;
@@ -66,9 +63,9 @@ public abstract class HDF4ImageReaderSpi extends BaseImageReaderSpi {
 
     static final String nativeStreamMetadataFormatClassName = null;
 
-    static final String[] extraStreamMetadataFormatNames = { null };
+    static final String[] extraStreamMetadataFormatNames = {null};
 
-    static final String[] extraStreamMetadataFormatClassNames = { null };
+    static final String[] extraStreamMetadataFormatClassNames = {null};
 
     // ImageMetadataFormatNames and ImageMetadataFormatClassNames
     static final boolean supportsStandardImageMetadataFormat = false;
@@ -77,9 +74,9 @@ public abstract class HDF4ImageReaderSpi extends BaseImageReaderSpi {
 
     static final String nativeImageMetadataFormatClassName = null;
 
-    static final String[] extraImageMetadataFormatNames = { null };
+    static final String[] extraImageMetadataFormatNames = {null};
 
-    static final String[] extraImageMetadataFormatClassNames = { null };
+    static final String[] extraImageMetadataFormatClassNames = {null};
 
     public HDF4ImageReaderSpi() {
         super(
@@ -102,17 +99,17 @@ public abstract class HDF4ImageReaderSpi extends BaseImageReaderSpi {
                 extraImageMetadataFormatNames,
                 extraImageMetadataFormatClassNames);
 
-        if (LOGGER.isLoggable(Level.FINE))
-            LOGGER.fine("HDF4TeraScanImageReaderSpi Constructor");
+        if (LOGGER.isLoggable(Level.FINE)) LOGGER.fine("HDF4TeraScanImageReaderSpi Constructor");
     }
 
     public HDF4ImageReaderSpi(final String readerCN) {
-    	super(vendorName,
+        super(
+                vendorName,
                 version,
                 formatNames,
                 suffixes,
                 MIMETypes,
-                readerCN, 
+                readerCN,
                 DIRECT_STANDARD_INPUT_TYPES,
                 wSN, // writer Spi Names
                 supportsStandardStreamMetadataFormat,
@@ -125,49 +122,44 @@ public abstract class HDF4ImageReaderSpi extends BaseImageReaderSpi {
                 nativeImageMetadataFormatClassName,
                 extraImageMetadataFormatNames,
                 extraImageMetadataFormatClassNames);
+    }
 
-	}
-
-	public boolean canDecodeInput(Object input) throws IOException {
+    public boolean canDecodeInput(Object input) throws IOException {
         boolean found = false;
-        
+
         if (input instanceof FileImageInputStreamExtImpl) {
             input = ((FileImageInputStreamExtImpl) input).getFile();
         }
-        // check if this is an 
+        // check if this is an
         if (input instanceof File) {
-        	// open up as a netcdf dataset
-            final NetcdfDataset dataset = NetCDFUtilities.getDataset(input);            
+            // open up as a netcdf dataset
+            final NetcdfDataset dataset = NetCDFUtilities.getDataset(input);
             if (dataset != null) {
-            	
-            	// first of all is it an HDF4??
-            	// TODO change this when we will be allowed to use >= 4.0.46
-            	if(!(dataset.getIosp() instanceof H4iosp))
-            		return false;
-            	
-            	// now, check if we can read it
-            	try{
-	            	found = isValidDataset(dataset);
-            	}
-            	finally {
-            		try{
-            			dataset.close();
-            		}
-            		catch (Throwable e) {
-						if(LOGGER.isLoggable(Level.FINE))
-							LOGGER.log(Level.FINE,e.getLocalizedMessage(),e);
-					}
-            	}
-        	}
+
+                // first of all is it an HDF4??
+                // TODO change this when we will be allowed to use >= 4.0.46
+                if (!(dataset.getIosp() instanceof H4iosp)) return false;
+
+                // now, check if we can read it
+                try {
+                    found = isValidDataset(dataset);
+                } finally {
+                    try {
+                        dataset.close();
+                    } catch (Throwable e) {
+                        if (LOGGER.isLoggable(Level.FINE)) LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
+                    }
+                }
+            }
         }
         return found;
     }
 
     protected boolean isValidDataset(final NetcdfDataset dataset) {
-		return false;
-	}
+        return false;
+    }
 
-	public ImageReader createReaderInstance(Object input) throws IOException {
+    public ImageReader createReaderInstance(Object input) throws IOException {
         return new HDF4ImageReaderProxy(this);
     }
 

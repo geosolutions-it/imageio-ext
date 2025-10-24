@@ -21,35 +21,30 @@ import it.geosolutions.imageio.ndplugin.BaseImageReader;
 import it.geosolutions.imageio.plugins.netcdf.BaseNetCDFImageReader;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities.KeyValuePair;
 import it.geosolutions.imageio.utilities.Utilities;
-
 import java.io.IOException;
-
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
-
 import org.w3c.dom.Node;
 
 public class HDF4TeraScanStreamMetadata extends IIOMetadata {
-    /**
-     * The name of the native metadata format for this object.
-     */
-    public static final String nativeMetadataFormatName = "it_geosolutions_imageio_plugins_hdf4_terascan_TeraScanstreamMetadata_1.0";
+    /** The name of the native metadata format for this object. */
+    public static final String nativeMetadataFormatName =
+            "it_geosolutions_imageio_plugins_hdf4_terascan_TeraScanstreamMetadata_1.0";
 
     private BaseImageReader imageReader;
 
-    public final static String GLOBAL_ATTRIBUTES = "GlobalAttributes";
+    public static final String GLOBAL_ATTRIBUTES = "GlobalAttributes";
 
     public HDF4TeraScanStreamMetadata(final BaseImageReader imageReader) {
         this.imageReader = imageReader;
     }
 
     /**
-     * Returns the XML DOM <code>Node</code> object that represents the root
-     * of a tree of metadata contained within this object on its native format.
-     * 
-     * @return a root node containing common metadata exposed on its native
-     *         format.
+     * Returns the XML DOM <code>Node</code> object that represents the root of a tree of metadata contained within this
+     * object on its native format.
+     *
+     * @return a root node containing common metadata exposed on its native format.
      */
     protected Node createCommonNativeTree() {
         // Create root node
@@ -67,19 +62,18 @@ public class HDF4TeraScanStreamMetadata extends IIOMetadata {
             final int numAttributes = innerReader.getNumGlobalAttributes();
             try {
                 for (int i = 0; i < numAttributes; i++) {
-                	 final KeyValuePair keyValuePair = innerReader.getGlobalAttribute(i);
-                     String attribName = keyValuePair.getKey();
-                     final String attribValue = keyValuePair.getValue();
+                    final KeyValuePair keyValuePair = innerReader.getGlobalAttribute(i);
+                    String attribName = keyValuePair.getKey();
+                    final String attribValue = keyValuePair.getValue();
                     // //
                     // Note: IIOMetadata doesn't allow to set attribute name
                     // containing "\". Therefore we replace that char
                     // //
-                    if (attribName.contains("\\"))
-                    	attribName = Utilities.adjustAttributeName(attribName);
+                    if (attribName.contains("\\")) attribName = Utilities.adjustAttributeName(attribName);
                     node.setAttribute(attribName, attribValue);
                 }
             } catch (IOException e) {
-                throw new IllegalArgumentException("Unable to parse attribute",e);
+                throw new IllegalArgumentException("Unable to parse attribute", e);
             }
 
             root.appendChild(node);
@@ -88,21 +82,16 @@ public class HDF4TeraScanStreamMetadata extends IIOMetadata {
     }
 
     /**
-     * Returns an XML DOM <code>Node</code> object that represents the root of
-     * a tree of common stream metadata contained within this object according
-     * to the conventions defined by a given metadata format name.
-     * 
-     * @param formatName
-     *                the name of the requested metadata format. Note that
-     *                actually, the only supported format name is the
-     *                {@link CoreCommonImageMetadata#nativeMetadataFormatName}.
-     *                Requesting other format names will result in an
-     *                <code>IllegalArgumentException</code>
+     * Returns an XML DOM <code>Node</code> object that represents the root of a tree of common stream metadata
+     * contained within this object according to the conventions defined by a given metadata format name.
+     *
+     * @param formatName the name of the requested metadata format. Note that actually, the only supported format name
+     *     is the {@link CoreCommonImageMetadata#nativeMetadataFormatName}. Requesting other format names will result in
+     *     an <code>IllegalArgumentException</code>
      */
     public Node getAsTree(String formatName) {
-        if (nativeMetadataFormatName.equalsIgnoreCase(formatName))
-            return createCommonNativeTree();
-        throw new IllegalArgumentException(formatName+ " is not a supported format name");
+        if (nativeMetadataFormatName.equalsIgnoreCase(formatName)) return createCommonNativeTree();
+        throw new IllegalArgumentException(formatName + " is not a supported format name");
     }
 
     @Override
@@ -111,14 +100,12 @@ public class HDF4TeraScanStreamMetadata extends IIOMetadata {
     }
 
     @Override
-    public void mergeTree(String formatName, Node root)
-            throws IIOInvalidTreeException {
-    	throw new UnsupportedOperationException("mergeTree operation is not allowed");
+    public void mergeTree(String formatName, Node root) throws IIOInvalidTreeException {
+        throw new UnsupportedOperationException("mergeTree operation is not allowed");
     }
 
     @Override
     public void reset() {
-    	throw new UnsupportedOperationException("reset operation is not allowed");
+        throw new UnsupportedOperationException("reset operation is not allowed");
     }
-
 }

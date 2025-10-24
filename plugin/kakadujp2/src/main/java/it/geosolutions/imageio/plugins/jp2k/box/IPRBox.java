@@ -18,22 +18,19 @@ package it.geosolutions.imageio.plugins.jp2k.box;
 
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadataNode;
-
 import org.w3c.dom.Node;
 
 /**
  * @author Simone Giannecchini, GeoSolutions.
- * @author Daniele Romagnoli, GeoSolutions.
- * 
- * @TODO Actually, this implementation does nothing since this box may be
- *       ignored by a JP2 compatible reader.
+ * @author Daniele Romagnoli, GeoSolutions. @TODO Actually, this implementation does nothing since this box may be
+ *     ignored by a JP2 compatible reader.
  */
 @SuppressWarnings("serial")
 public class IPRBox extends BaseJP2KBox {
 
-    public final static int BOX_TYPE = 0x6a703269;
+    public static final int BOX_TYPE = 0x6a703269;
 
-    public final static String NAME = "jp2i";
+    public static final String NAME = "jp2i";
 
     public static final String JP2K_MD_NAME = "JP2KIntellectualPropertyRightsBox";
 
@@ -70,9 +67,8 @@ public class IPRBox extends BaseJP2KBox {
     }
 
     @Override
-    protected void parse(byte[] data) {
-    }
-    
+    protected void parse(byte[] data) {}
+
     public IIOMetadataNode getNativeNode() {
         String name = BoxUtilities.getName(getType());
         IIOMetadataNode node = new IIOMetadataNode(name);

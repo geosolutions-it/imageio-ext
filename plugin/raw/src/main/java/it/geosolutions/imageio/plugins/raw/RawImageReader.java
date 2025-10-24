@@ -1,42 +1,42 @@
 /*
  * $RCSfile: RawImageReader.java,v $
  *
- * 
+ *
  * Copyright (c) 2005 Sun Microsystems, Inc. All  Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
- * are met: 
- * 
- * - Redistribution of source code must retain the above copyright 
+ * are met:
+ *
+ * - Redistribution of source code must retain the above copyright
  *   notice, this  list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in 
+ *   notice, this list of conditions and the following disclaimer in
  *   the documentation and/or other materials provided with the
  *   distribution.
- * 
- * Neither the name of Sun Microsystems, Inc. or the names of 
- * contributors may be used to endorse or promote products derived 
+ *
+ * Neither the name of Sun Microsystems, Inc. or the names of
+ * contributors may be used to endorse or promote products derived
  * from this software without specific prior written permission.
- * 
- * This software is provided "AS IS," without a warranty of any 
- * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND 
- * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, 
+ *
+ * This software is provided "AS IS," without a warranty of any
+ * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND
+ * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY
- * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL 
- * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF 
+ * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL
+ * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF
  * USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS
- * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR 
+ * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR
  * ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL,
  * CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND
  * REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR
  * INABILITY TO USE THIS SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGES. 
- * 
- * You acknowledge that this software is not designed or intended for 
- * use in the design, construction, operation or maintenance of any 
- * nuclear facility. 
+ * POSSIBILITY OF SUCH DAMAGES.
+ *
+ * You acknowledge that this software is not designed or intended for
+ * use in the design, construction, operation or maintenance of any
+ * nuclear facility.
  *
  * $Revision: 1.1 $
  * $Date: 2005/02/11 05:01:42 $
@@ -63,12 +63,6 @@
 package it.geosolutions.imageio.plugins.raw;
 
 import it.geosolutions.imageio.stream.input.RawImageInputStream;
-
-import javax.imageio.ImageReadParam;
-import javax.imageio.ImageReader;
-import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.spi.ImageReaderSpi;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -81,44 +75,47 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.spi.ImageReaderSpi;
 
-/** This class is the Java Image IO plugin reader for Raw images.
- *  It may subsample the image, clip the image, select sub-bands,
- *  and shift the decoded image origin if the proper decoding parameter
- *  are set in the provided <code>PNMImageReadParam</code>.
+/**
+ * This class is the Java Image IO plugin reader for Raw images. It may subsample the image, clip the image, select
+ * sub-bands, and shift the decoded image origin if the proper decoding parameter are set in the provided <code>
+ * PNMImageReadParam</code>.
  */
 public class RawImageReader extends ImageReader {
     /** The input stream where reads from */
     private RawImageInputStream iis = null;
 
-    /** Wrapper for the protected method <code>computeRegions</code>.  So it
-     *  can be access from the classes which are not in <code>ImageReader</code>
-     *  hierachy.
+    /**
+     * Wrapper for the protected method <code>computeRegions</code>. So it can be access from the classes which are not
+     * in <code>ImageReader</code> hierachy.
      */
-    public static void computeRegionsWrapper(ImageReadParam param,
-                                      int srcWidth,
-                                      int srcHeight,
-                                      BufferedImage image,
-                                      Rectangle srcRegion,
-                                      Rectangle destRegion) {
-        computeRegions(param, srcWidth, srcHeight,
-                       image, srcRegion, destRegion) ;
+    public static void computeRegionsWrapper(
+            ImageReadParam param,
+            int srcWidth,
+            int srcHeight,
+            BufferedImage image,
+            Rectangle srcRegion,
+            Rectangle destRegion) {
+        computeRegions(param, srcWidth, srcHeight, image, srcRegion, destRegion);
     }
 
-    /** Constructs <code>RawImageReader</code> from the provided
-     *  <code>ImageReaderSpi</code>.
-     */
+    /** Constructs <code>RawImageReader</code> from the provided <code>ImageReaderSpi</code>. */
     public RawImageReader(ImageReaderSpi originator) {
         super(originator);
     }
 
-    /** Overrides the method defined in the superclass.
-     *  @throws ClassCastException If the provided <code>input</code> is not
-     *          an instance of <code>RawImageInputImage</code>
+    /**
+     * Overrides the method defined in the superclass.
+     *
+     * @throws ClassCastException If the provided <code>input</code> is not an instance of <code>RawImageInputImage
+     *     </code>
      */
-    public void setInput(Object input,
-                         boolean seekForwardOnly,
-                         boolean ignoreMetadata) {
+    public void setInput(Object input, boolean seekForwardOnly, boolean ignoreMetadata) {
         super.setInput(input, seekForwardOnly, ignoreMetadata);
         iis = (RawImageInputStream) input; // Always works
     }
@@ -150,13 +147,12 @@ public class RawImageReader extends ImageReader {
     }
 
     private void checkIndex(int imageIndex) throws IOException {
-        if (imageIndex <0 || imageIndex >= getNumImages(true)) {
+        if (imageIndex < 0 || imageIndex >= getNumImages(true)) {
             throw new IndexOutOfBoundsException("Only one image exists in the stream.");
         }
     }
 
-    public Iterator getImageTypes(int imageIndex)
-        throws IOException {
+    public Iterator getImageTypes(int imageIndex) throws IOException {
         checkIndex(imageIndex);
         ArrayList list = new ArrayList(1);
         list.add(iis.getImageType());
@@ -167,8 +163,7 @@ public class RawImageReader extends ImageReader {
         return new ImageReadParam();
     }
 
-    public IIOMetadata getImageMetadata(int imageIndex)
-        throws IOException {
+    public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
         return null;
     }
 
@@ -181,17 +176,14 @@ public class RawImageReader extends ImageReader {
         return true;
     }
 
-    public BufferedImage read(int imageIndex, ImageReadParam param)
-        throws IOException {
-        if (param == null)
-            param = getDefaultReadParam();
+    public BufferedImage read(int imageIndex, ImageReadParam param) throws IOException {
+        if (param == null) param = getDefaultReadParam();
         checkIndex(imageIndex);
         clearAbortRequest();
         processImageStarted(imageIndex);
 
         BufferedImage bi = param.getDestination();
-        RawRenderedImage image =
-            new RawRenderedImage(iis, this,  param, imageIndex);
+        RawRenderedImage image = new RawRenderedImage(iis, this, param, imageIndex);
         Point offset = param.getDestinationOffset();
         WritableRaster raster;
 
@@ -201,21 +193,18 @@ public class RawImageReader extends ImageReader {
 
             // If the destination type is specified, use the color model of it.
             ImageTypeSpecifier type = param.getDestinationType();
-            if (type != null)
-                colorModel = type.getColorModel();
+            if (type != null) colorModel = type.getColorModel();
 
             raster = Raster.createWritableRaster(
-                sampleModel.createCompatibleSampleModel(image.getMinX()+
-                                                        image.getWidth(),
-                                                        image.getMinY() +
-                                                        image.getHeight()),
-                new Point(0, 0));
+                    sampleModel.createCompatibleSampleModel(
+                            image.getMinX() + image.getWidth(), image.getMinY() + image.getHeight()),
+                    new Point(0, 0));
 
-            bi = new BufferedImage(colorModel,
-                                   raster,
-                                   colorModel != null ?
-                                   colorModel.isAlphaPremultiplied() : false,
-                                   new Hashtable());
+            bi = new BufferedImage(
+                    colorModel,
+                    raster,
+                    colorModel != null ? colorModel.isAlphaPremultiplied() : false,
+                    new Hashtable());
         } else {
             raster = bi.getWritableTile(0, 0);
         }
@@ -225,35 +214,26 @@ public class RawImageReader extends ImageReader {
         image.readAsRaster(raster);
         image.clearDestImage();
 
-        if (abortRequested())
-            processReadAborted();
-        else
-            processImageComplete();
+        if (abortRequested()) processReadAborted();
+        else processImageComplete();
         return bi;
     }
 
-    public RenderedImage readAsRenderedImage(int imageIndex,
-                                            ImageReadParam param)
-                                            throws IOException {
-        if (param == null)
-            param = getDefaultReadParam();
+    public RenderedImage readAsRenderedImage(int imageIndex, ImageReadParam param) throws IOException {
+        if (param == null) param = getDefaultReadParam();
 
         checkIndex(imageIndex);
         clearAbortRequest();
         processImageStarted(0);
 
-        RenderedImage image =
-            new RawRenderedImage(iis, this, param, imageIndex);
+        RenderedImage image = new RawRenderedImage(iis, this, param, imageIndex);
 
-        if (abortRequested())
-            processReadAborted();
-        else
-            processImageComplete();
+        if (abortRequested()) processReadAborted();
+        else processImageComplete();
         return image;
     }
 
-    public Raster readRaster(int imageIndex,
-                             ImageReadParam param) throws IOException {
+    public Raster readRaster(int imageIndex, ImageReadParam param) throws IOException {
         BufferedImage bi = read(imageIndex, param);
         return bi.getData();
     }
@@ -267,32 +247,26 @@ public class RawImageReader extends ImageReader {
         iis = null;
     }
 
-    /** Wrapper for the protected method <code>processImageUpdate</code>
-     *  So it can be access from the classes which are not in
-     *  <code>ImageReader</code> hierachy.
+    /**
+     * Wrapper for the protected method <code>processImageUpdate</code> So it can be access from the classes which are
+     * not in <code>ImageReader</code> hierachy.
      */
-    public void processImageUpdateWrapper(BufferedImage theImage,
-                                      int minX, int minY,
-                                      int width, int height,
-                                      int periodX, int periodY,
-                                      int[] bands) {
-        processImageUpdate(theImage,
-                                  minX, minY,
-                                  width, height,
-                                  periodX, periodY,
-                                  bands);
+    public void processImageUpdateWrapper(
+            BufferedImage theImage, int minX, int minY, int width, int height, int periodX, int periodY, int[] bands) {
+        processImageUpdate(theImage, minX, minY, width, height, periodX, periodY, bands);
     }
 
-    /** Wrapper for the protected method <code>processImageProgress</code>
-     *  So it can be access from the classes which are not in
-     *  <code>ImageReader</code> hierachy.
+    /**
+     * Wrapper for the protected method <code>processImageProgress</code> So it can be access from the classes which are
+     * not in <code>ImageReader</code> hierachy.
      */
     public void processImageProgressWrapper(float percentageDone) {
         processImageProgress(percentageDone);
     }
 
-    /** This method wraps the protected method <code>abortRequested</code>
-     *  to allow the abortions be monitored by <code>J2KReadState</code>.
+    /**
+     * This method wraps the protected method <code>abortRequested</code> to allow the abortions be monitored by <code>
+     * J2KReadState</code>.
      */
     public boolean getAbortRequest() {
         return abortRequested();

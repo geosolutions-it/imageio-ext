@@ -17,28 +17,23 @@
 package it.geosolutions.imageio.plugins.arcgrid;
 
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
-
 import java.awt.image.RenderedImage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * {@link ArcGridImageReader} is a {@link GDALImageReader} able to create
- * {@link RenderedImage} from ASCII arcGrid files.
- * 
+ * {@link ArcGridImageReader} is a {@link GDALImageReader} able to create {@link RenderedImage} from ASCII arcGrid
+ * files.
+ *
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
- * 
  */
 public class ArcGridImageReader extends GDALImageReader {
 
-	private static final Logger LOGGER = Logger
-			.getLogger("it.geosolutions.imageio.plugins.arcgrid");
+    private static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.arcgrid");
 
-	public ArcGridImageReader(ArcGridImageReaderSpi originatingProvider) {
-		super(originatingProvider,0);
-		if (LOGGER.isLoggable(Level.FINE))
-			LOGGER.fine("ArcGridImageReader Constructor");
-	}
-
+    public ArcGridImageReader(ArcGridImageReaderSpi originatingProvider) {
+        super(originatingProvider, 0);
+        if (LOGGER.isLoggable(Level.FINE)) LOGGER.fine("ArcGridImageReader Constructor");
+    }
 }

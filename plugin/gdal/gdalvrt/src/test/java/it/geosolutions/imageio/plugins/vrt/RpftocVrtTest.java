@@ -20,30 +20,28 @@ import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
-import org.junit.Assert;
-import org.junit.Test;
-
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import javax.imageio.ImageReadParam;
 import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.ParameterBlockImageN;
 import org.eclipse.imagen.RenderedOp;
-import java.awt.image.Raster;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Testing reading capabilities for RPFTOC with {@link VRTImageReader}.
- * 
+ *
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
-public class RpftocVrtTest extends  AbstractGDALTest {
-    public final static String fileName = "A.TOC.vrt";
+public class RpftocVrtTest extends AbstractGDALTest {
+    public static final String fileName = "A.TOC.vrt";
 
     @Test
     public void read() throws FileNotFoundException, IOException {
-    	if (!isGDALAvailable) {
+        if (!isGDALAvailable) {
             return;
         }
         TestData.unzipFile(this, "rpftoc.zip");
@@ -60,8 +58,7 @@ public class RpftocVrtTest extends  AbstractGDALTest {
         final int ySubSampling = 2;
         final int xSubSamplingOffset = 0;
         final int ySubSamplingOffset = 0;
-        irp.setSourceSubsampling(xSubSampling, ySubSampling,
-                xSubSamplingOffset, ySubSamplingOffset);
+        irp.setSourceSubsampling(xSubSampling, ySubSampling, xSubSamplingOffset, ySubSamplingOffset);
         pbjImageRead = new ParameterBlockImageN("ImageRead");
         pbjImageRead.setParameter("Input", file);
         pbjImageRead.setParameter("readParam", irp);
@@ -69,10 +66,8 @@ public class RpftocVrtTest extends  AbstractGDALTest {
         // get a RenderedImage
         RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 
-        if (TestData.isInteractiveTest())
-            Viewer.visualizeAllInformation(image, "Subsampling Read");
-        else
-        {
+        if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(image, "Subsampling Read");
+        else {
             Assert.assertTrue(image.getWidth() == 768);
             Assert.assertTrue(image.getHeight() == 768);
         }

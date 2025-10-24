@@ -18,12 +18,10 @@ package it.geosolutions.imageio.plugins.arcgrid;
 
 import it.geosolutions.imageio.plugins.arcgrid.AsciiGridsImageMetadata.RasterSpaceType;
 import it.geosolutions.imageio.plugins.arcgrid.raster.AsciiGridRaster;
-
 import java.io.IOException;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.imageio.IIOImage;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
@@ -35,394 +33,361 @@ import javax.imageio.stream.ImageOutputStreamImpl;
 import org.eclipse.imagen.PlanarImage;
 import org.eclipse.imagen.iterator.RectIter;
 import org.eclipse.imagen.iterator.RectIterFactory;
-
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 /**
  * Class used for writing ASCII ArcGrid Format and ASCII GRASS Grid Format
- * 
+ *
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
 public final class AsciiGridsImageWriter extends ImageWriter {
-	
-	private static final Logger LOGGER = Logger.getLogger(AsciiGridsImageWriter.class.toString());
 
-	/** <code>true</code> if there are some listeners attached to this writer */
-	private boolean hasListeners;
+    private static final Logger LOGGER = Logger.getLogger(AsciiGridsImageWriter.class.toString());
 
-	public static final double EPS = 1E-3;
+    /** <code>true</code> if there are some listeners attached to this writer */
+    private boolean hasListeners;
 
-	/** The {@link AsciiGridsImageMetadata} associated to this writer. */
-	private AsciiGridsImageMetadata imageMetadata = null;
+    public static final double EPS = 1E-3;
 
-	/** The <code>ImageOutputStream</code> associated to this reader. */
-	private ImageOutputStream imageOutputStream;
+    /** The {@link AsciiGridsImageMetadata} associated to this writer. */
+    private AsciiGridsImageMetadata imageMetadata = null;
 
-	/** The {@link AsciiGridRaster} to write rasters to an ascii grid file. */
-	private AsciiGridRaster rasterWriter = null;
+    /** The <code>ImageOutputStream</code> associated to this reader. */
+    private ImageOutputStream imageOutputStream;
 
-	/** The input source RenderedImage */
-	private PlanarImage inputRenderedImage;
+    /** The {@link AsciiGridRaster} to write rasters to an ascii grid file. */
+    private AsciiGridRaster rasterWriter = null;
 
-	/** Tells me  if the related file is GRASS or ESRI*/
-	private AsciiGridRaster.AsciiGridRasterType rasterType;
+    /** The input source RenderedImage */
+    private PlanarImage inputRenderedImage;
 
-	/** The number of columns of the raster */
-	private int nColumns;
+    /** Tells me if the related file is GRASS or ESRI */
+    private AsciiGridRaster.AsciiGridRasterType rasterType;
 
-	/** The number of rows of the raster */
-	private int nRows;
+    /** The number of columns of the raster */
+    private int nColumns;
 
-	/** The size of a single cell of the grid along X */
-	private double cellsizeX;
+    /** The number of rows of the raster */
+    private int nRows;
 
-	/** The size of a single cell of the grid along Y */
-	private double cellsizeY;
+    /** The size of a single cell of the grid along X */
+    private double cellsizeX;
 
-	/**
-	 * The <code>String</code> representing the rasterSpaceType which is one
-	 * of "PixelIsPoint" / "PixelIsArea"
-	 */
-	private RasterSpaceType rasterSpaceType;
+    /** The size of a single cell of the grid along Y */
+    private double cellsizeY;
 
-	/**
-	 * The <code>String</code> to be written when a noData value is
-	 * encountered during pixel writing
-	 */
-	private String noDataValueString;
+    /** The <code>String</code> representing the rasterSpaceType which is one of "PixelIsPoint" / "PixelIsArea" */
+    private RasterSpaceType rasterSpaceType;
 
-	/** x coordinate of the grid origin (the lower left corner) */
-	private double xll;
+    /** The <code>String</code> to be written when a noData value is encountered during pixel writing */
+    private String noDataValueString;
 
-	/** y coordinate of the grid origin (the lower left corner) */
-	private double yll;
+    /** x coordinate of the grid origin (the lower left corner) */
+    private double xll;
 
-	public ImageWriteParam getDefaultWriteParam() {
-		return new AsciiGridsImageWriteParam(getLocale());
-	}
+    /** y coordinate of the grid origin (the lower left corner) */
+    private double yll;
 
-	/**
-	 * Constructor.
-	 * 
-	 * It builts up an {@link AsciiGridsImageWriter} by providing an
-	 * {@link ImageWriterSpi} as input
-	 * 
-	 * @param originatingProvider
-	 *            the originating service provider interface
-	 */
-	public AsciiGridsImageWriter(ImageWriterSpi originatingProvider) {
-		super(originatingProvider);
-	}
+    public ImageWriteParam getDefaultWriteParam() {
+        return new AsciiGridsImageWriteParam(getLocale());
+    }
 
-	/**
-	 * Sets the output for this {@link AsciiGridsImageWriter}.
-	 */
-	public void setOutput(Object output) {
-		super.setOutput(output); // validates output
-		if (output != null) {
-			if (!(output instanceof ImageOutputStream)) {
-				throw new IllegalArgumentException(
-						"Not a valid type of Output ");
-			}
-			imageOutputStream = (ImageOutputStreamImpl) output;
+    /**
+     * Constructor.
+     *
+     * <p>It builts up an {@link AsciiGridsImageWriter} by providing an {@link ImageWriterSpi} as input
+     *
+     * @param originatingProvider the originating service provider interface
+     */
+    public AsciiGridsImageWriter(ImageWriterSpi originatingProvider) {
+        super(originatingProvider);
+    }
 
-		} else {
-			imageOutputStream = null;
-//			throw new IllegalArgumentException("Not a valid type of Output ");
-		}
-		if (LOGGER.isLoggable(Level.FINE))
-			LOGGER.info("Setting Output");
-	}
+    /** Sets the output for this {@link AsciiGridsImageWriter}. */
+    public void setOutput(Object output) {
+        super.setOutput(output); // validates output
+        if (output != null) {
+            if (!(output instanceof ImageOutputStream)) {
+                throw new IllegalArgumentException("Not a valid type of Output ");
+            }
+            imageOutputStream = (ImageOutputStreamImpl) output;
 
-	/**
-	 * Writes the image to file. (First, it writes the Header, than all data
-	 * values)
-	 * 
-	 * @see javax.imageio.ImageWriter#write(javax.imageio.metadata.IIOMetadata,
-	 *      javax.imageio.IIOImage, javax.imageio.ImageWriteParam)
-	 */
-	public void write(IIOMetadata streamMetadata, IIOImage image,
-			ImageWriteParam param) throws IOException {
+        } else {
+            imageOutputStream = null;
+            //			throw new IllegalArgumentException("Not a valid type of Output ");
+        }
+        if (LOGGER.isLoggable(Level.FINE)) LOGGER.info("Setting Output");
+    }
 
-		hasListeners = (this.progressListeners != null && (!(this.progressListeners
-				.isEmpty()))) ? true : false;
+    /**
+     * Writes the image to file. (First, it writes the Header, than all data values)
+     *
+     * @see javax.imageio.ImageWriter#write(javax.imageio.metadata.IIOMetadata, javax.imageio.IIOImage,
+     *     javax.imageio.ImageWriteParam)
+     */
+    public void write(IIOMetadata streamMetadata, IIOImage image, ImageWriteParam param) throws IOException {
 
-		if (hasListeners) {
-			clearAbortRequest();
-			// Broadcast the start of the image write operation
-			processImageStarted(0);
-		}
+        hasListeners = (this.progressListeners != null && (!(this.progressListeners.isEmpty()))) ? true : false;
 
-		// Getting the source
-		inputRenderedImage = PlanarImage.wrapRenderedImage(image
-				.getRenderedImage());
+        if (hasListeners) {
+            clearAbortRequest();
+            // Broadcast the start of the image write operation
+            processImageStarted(0);
+        }
 
-		// Getting metadata to write the file header.
-		imageMetadata = (AsciiGridsImageMetadata) image.getMetadata();
-		// TODO: METADATA MANAGEMENT IF NO METADATA PROVIDED
+        // Getting the source
+        inputRenderedImage = PlanarImage.wrapRenderedImage(image.getRenderedImage());
 
-		final Node root = imageMetadata
-				.getAsTree(AsciiGridsImageMetadata.nativeMetadataFormatName);
+        // Getting metadata to write the file header.
+        imageMetadata = (AsciiGridsImageMetadata) image.getMetadata();
+        // TODO: METADATA MANAGEMENT IF NO METADATA PROVIDED
 
-		// retrieving from metadata, fields to be written in the header
-		retrieveMetadata(root);
+        final Node root = imageMetadata.getAsTree(AsciiGridsImageMetadata.nativeMetadataFormatName);
 
-		// Writing out the Header
-		writeHeader();
+        // retrieving from metadata, fields to be written in the header
+        retrieveMetadata(root);
 
-		// writing the raster
-		writeRaster();
+        // Writing out the Header
+        writeHeader();
 
-		// flush the data written out
-		imageOutputStream.flush();
+        // writing the raster
+        writeRaster();
 
-		if (hasListeners) {
-			// Checking the status of the write operation (aborted/completed)
-			if (rasterWriter.isAborting())
-				processWriteAborted();
-			else
-				processImageComplete();
-		}
+        // flush the data written out
+        imageOutputStream.flush();
 
-	}
+        if (hasListeners) {
+            // Checking the status of the write operation (aborted/completed)
+            if (rasterWriter.isAborting()) processWriteAborted();
+            else processImageComplete();
+        }
+    }
 
-	/**
-	 * Initialize all required fields which will be written to the header.
-	 * 
-	 * @param root
-	 *            The root node containing metadata
-	 * @throws IOException
-	 */
-	private void retrieveMetadata(Node root) throws IOException {
+    /**
+     * Initialize all required fields which will be written to the header.
+     *
+     * @param root The root node containing metadata
+     * @throws IOException
+     */
+    private void retrieveMetadata(Node root) throws IOException {
 
-		// //
-		//
-		// Grass
-		//
-		// //
-		final Node formatDescriptorNode = root.getFirstChild();
-		if(Boolean.valueOf(formatDescriptorNode.getAttributes().getNamedItem("GRASS").getNodeValue()).booleanValue()) 
-					rasterType = AsciiGridRaster.AsciiGridRasterType.GRASS;
-		else
-					rasterType = AsciiGridRaster.AsciiGridRasterType.ESRI;
+        // //
+        //
+        // Grass
+        //
+        // //
+        final Node formatDescriptorNode = root.getFirstChild();
+        if (Boolean.valueOf(formatDescriptorNode
+                        .getAttributes()
+                        .getNamedItem("GRASS")
+                        .getNodeValue())
+                .booleanValue()) rasterType = AsciiGridRaster.AsciiGridRasterType.GRASS;
+        else rasterType = AsciiGridRaster.AsciiGridRasterType.ESRI;
 
-		// //
-		//
-		// Grid description
-		//
-		// //
-		
-		final Node gridDescriptorNode = formatDescriptorNode.getNextSibling();
-		NamedNodeMap attributes = gridDescriptorNode.getAttributes();
-		nColumns = Integer.parseInt(attributes.getNamedItem("nColumns").getNodeValue());
-		nRows = Integer.parseInt(attributes.getNamedItem("nRows").getNodeValue());
-		rasterSpaceType = RasterSpaceType.valueOf(attributes
-				.getNamedItem("rasterSpaceType").getNodeValue());
-		noDataValueString = null;
-		
-		Node dummyNode = attributes.getNamedItem("noDataValue");
-		if (dummyNode != null) {
-			noDataValueString = dummyNode.getNodeValue();
-		}
+        // //
+        //
+        // Grid description
+        //
+        // //
 
-		// //
-		//
-		// Spatial dimensions
-		//
-		// //
-		final Node envelopDescriptorNode = gridDescriptorNode.getNextSibling();
-		cellsizeX = Double.parseDouble(envelopDescriptorNode.getAttributes()
-				.getNamedItem("cellsizeX").getNodeValue());
-		cellsizeY = Double.parseDouble(envelopDescriptorNode.getAttributes()
-				.getNamedItem("cellsizeY").getNodeValue());
-		xll = Double.parseDouble(envelopDescriptorNode.getAttributes()
-				.getNamedItem("xll").getNodeValue());
-		yll = Double.parseDouble(envelopDescriptorNode.getAttributes()
-				.getNamedItem("yll").getNodeValue());
+        final Node gridDescriptorNode = formatDescriptorNode.getNextSibling();
+        NamedNodeMap attributes = gridDescriptorNode.getAttributes();
+        nColumns = Integer.parseInt(attributes.getNamedItem("nColumns").getNodeValue());
+        nRows = Integer.parseInt(attributes.getNamedItem("nRows").getNodeValue());
+        rasterSpaceType = RasterSpaceType.valueOf(
+                attributes.getNamedItem("rasterSpaceType").getNodeValue());
+        noDataValueString = null;
 
-		// //
-		//
-		// Checking if the dimensions of the current image are different from
-		// the original dimensions as provided by the metadata. This might
-		// happen if we scale on reading or if we make a mistake when providing
-		// the metadata.
-		//
-		// As an alternative for ImageReadOp images with source subsampling we
-		// could look for the image read params.
-		//
-		// //
-		final int actualWidth = this.inputRenderedImage.getWidth();
-		final int actualHeight = this.inputRenderedImage.getHeight();
-		cellsizeX *= nColumns / actualWidth;
-		cellsizeY *= nRows / actualHeight;
-		if (rasterType.equals(AsciiGridRaster.AsciiGridRasterType.GRASS)){
-			// If ArcGrid (No GRASS) check to have square cell Size
-			if (resolutionCheck(cellsizeX, cellsizeX, EPS))
-				throw new IOException(
-						"The provided metadata are illegal!CellSizeX!=CellSizeY.");
-		}
+        Node dummyNode = attributes.getNamedItem("noDataValue");
+        if (dummyNode != null) {
+            noDataValueString = dummyNode.getNodeValue();
+        }
 
-	}
+        // //
+        //
+        // Spatial dimensions
+        //
+        // //
+        final Node envelopDescriptorNode = gridDescriptorNode.getNextSibling();
+        cellsizeX = Double.parseDouble(
+                envelopDescriptorNode.getAttributes().getNamedItem("cellsizeX").getNodeValue());
+        cellsizeY = Double.parseDouble(
+                envelopDescriptorNode.getAttributes().getNamedItem("cellsizeY").getNodeValue());
+        xll = Double.parseDouble(
+                envelopDescriptorNode.getAttributes().getNamedItem("xll").getNodeValue());
+        yll = Double.parseDouble(
+                envelopDescriptorNode.getAttributes().getNamedItem("yll").getNodeValue());
 
-	/**
-	 * Simple check for having squre pixels.
-	 * 
-	 * @param cellsizeX 
-	 * @param cellsizeY
-	 * @param eps tolerance for the check.
-	 * @return <code>true</code> if pixels are square (or almost square),
-	 *         <code>false</code> otherwise.
-	 */
-	public static boolean resolutionCheck(double cellsizeX, double cellsizeY,
-			double eps) {
-		return (Math.abs(cellsizeX - cellsizeY)/Math.min(cellsizeX, cellsizeY)) > eps;
-	}
+        // //
+        //
+        // Checking if the dimensions of the current image are different from
+        // the original dimensions as provided by the metadata. This might
+        // happen if we scale on reading or if we make a mistake when providing
+        // the metadata.
+        //
+        // As an alternative for ImageReadOp images with source subsampling we
+        // could look for the image read params.
+        //
+        // //
+        final int actualWidth = this.inputRenderedImage.getWidth();
+        final int actualHeight = this.inputRenderedImage.getHeight();
+        cellsizeX *= nColumns / actualWidth;
+        cellsizeY *= nRows / actualHeight;
+        if (rasterType.equals(AsciiGridRaster.AsciiGridRasterType.GRASS)) {
+            // If ArcGrid (No GRASS) check to have square cell Size
+            if (resolutionCheck(cellsizeX, cellsizeX, EPS))
+                throw new IOException("The provided metadata are illegal!CellSizeX!=CellSizeY.");
+        }
+    }
 
-	/**
-	 * Write the raster to file.
-	 * 
-	 * @throws IOException
-	 */
-	private void writeRaster() throws IOException {
-		// we need to cobble rasters of the same row together in order to
-		// respect the way our writer works.
+    /**
+     * Simple check for having squre pixels.
+     *
+     * @param cellsizeX
+     * @param cellsizeY
+     * @param eps tolerance for the check.
+     * @return <code>true</code> if pixels are square (or almost square), <code>false</code> otherwise.
+     */
+    public static boolean resolutionCheck(double cellsizeX, double cellsizeY, double eps) {
+        return (Math.abs(cellsizeX - cellsizeY) / Math.min(cellsizeX, cellsizeY)) > eps;
+    }
 
-		final RectIter iterator = RectIterFactory.create(inputRenderedImage,
-				null);
-		// writing
-		final Double noDataDouble = new Double(rasterWriter.getNoData());
-		final String noDataMarker = rasterWriter.getNoDataMarker();
-		rasterWriter.writeRaster(iterator, noDataDouble, noDataMarker);
-	}
+    /**
+     * Write the raster to file.
+     *
+     * @throws IOException
+     */
+    private void writeRaster() throws IOException {
+        // we need to cobble rasters of the same row together in order to
+        // respect the way our writer works.
 
-	/**
-	 * Instantiates a proper {@link AsciiGridRaster} (ArcGrid/GRASS) and write
-	 * the Header.
-	 * 
-	 * @throws IOException
-	 */
-	private void writeHeader() throws IOException {
-		rasterWriter = rasterType.createAsciiGridRaster(imageOutputStream, this);
-		
+        final RectIter iterator = RectIterFactory.create(inputRenderedImage, null);
+        // writing
+        final Double noDataDouble = new Double(rasterWriter.getNoData());
+        final String noDataMarker = rasterWriter.getNoDataMarker();
+        rasterWriter.writeRaster(iterator, noDataDouble, noDataMarker);
+    }
 
-		rasterWriter.writeHeader(Integer.toString(nColumns), Integer
-				.toString(nRows), Double.toString(xll), Double.toString(yll),
-				Double.toString(cellsizeX), Double.toString(cellsizeY),
-				rasterSpaceType.toString(), noDataValueString);
-	}
+    /**
+     * Instantiates a proper {@link AsciiGridRaster} (ArcGrid/GRASS) and write the Header.
+     *
+     * @throws IOException
+     */
+    private void writeHeader() throws IOException {
+        rasterWriter = rasterType.createAsciiGridRaster(imageOutputStream, this);
 
-	/**
-	 * @see javax.imageio.ImageWriter#getDefaultImageMetadata(javax.imageio.ImageTypeSpecifier,
-	 *      javax.imageio.ImageWriteParam)
-	 */
-	public IIOMetadata getDefaultImageMetadata(ImageTypeSpecifier its,
-			ImageWriteParam param) {
-		return null;
-	}
+        rasterWriter.writeHeader(
+                Integer.toString(nColumns),
+                Integer.toString(nRows),
+                Double.toString(xll),
+                Double.toString(yll),
+                Double.toString(cellsizeX),
+                Double.toString(cellsizeY),
+                rasterSpaceType.toString(),
+                noDataValueString);
+    }
 
-	/**
-	 * @see javax.imageio.ImageWriter#getDefaultIStreamMetadata(javax.imageio.ImageWriteParam)
-	 */
-	public IIOMetadata getDefaultStreamMetadata(ImageWriteParam param) {
-		return null;
-	}
+    /**
+     * @see javax.imageio.ImageWriter#getDefaultImageMetadata(javax.imageio.ImageTypeSpecifier,
+     *     javax.imageio.ImageWriteParam)
+     */
+    public IIOMetadata getDefaultImageMetadata(ImageTypeSpecifier its, ImageWriteParam param) {
+        return null;
+    }
 
-	/**
-	 * @see javax.imageio.ImageWriter#convertStreamMetadata(javax.imageio.metadata.IIOMetadata,
-	 *      javax.imageio.ImageWriteParam)
-	 */
-	public IIOMetadata convertStreamMetadata(IIOMetadata md,
-			ImageWriteParam param) {
-		return null;
-	}
+    /** @see javax.imageio.ImageWriter#getDefaultIStreamMetadata(javax.imageio.ImageWriteParam) */
+    public IIOMetadata getDefaultStreamMetadata(ImageWriteParam param) {
+        return null;
+    }
 
-	/**
-	 * @see javax.imageio.ImageWriter#convertImageMetadata(javax.imageio.metadata.IIOMetadata,
-	 *      javax.imageio.ImageTypeSpecifier, javax.imageio.ImageWriteParam)
-	 */
-	public IIOMetadata convertImageMetadata(IIOMetadata md,
-			ImageTypeSpecifier its, ImageWriteParam param) {
-		return md;
-	}
+    /**
+     * @see javax.imageio.ImageWriter#convertStreamMetadata(javax.imageio.metadata.IIOMetadata,
+     *     javax.imageio.ImageWriteParam)
+     */
+    public IIOMetadata convertStreamMetadata(IIOMetadata md, ImageWriteParam param) {
+        return null;
+    }
 
-	final class AsciiGridsImageWriteParam extends ImageWriteParam {
+    /**
+     * @see javax.imageio.ImageWriter#convertImageMetadata(javax.imageio.metadata.IIOMetadata,
+     *     javax.imageio.ImageTypeSpecifier, javax.imageio.ImageWriteParam)
+     */
+    public IIOMetadata convertImageMetadata(IIOMetadata md, ImageTypeSpecifier its, ImageWriteParam param) {
+        return md;
+    }
 
-		AsciiGridsImageWriteParam(Locale locale) {
-			super(locale);
-			compressionMode = MODE_DISABLED;
-			canWriteCompressed = true;
-		}
+    final class AsciiGridsImageWriteParam extends ImageWriteParam {
 
-		public void setCompressionMode(int mode) {
-			if (mode == MODE_EXPLICIT || mode == MODE_COPY_FROM_METADATA) {
-				throw new UnsupportedOperationException(
-						"mode == MODE_EXPLICIT || mode == MODE_COPY_FROM_METADATA");
-			}
+        AsciiGridsImageWriteParam(Locale locale) {
+            super(locale);
+            compressionMode = MODE_DISABLED;
+            canWriteCompressed = true;
+        }
 
-			super.setCompressionMode(mode); // This sets the instance variable.
-		}
+        public void setCompressionMode(int mode) {
+            if (mode == MODE_EXPLICIT || mode == MODE_COPY_FROM_METADATA) {
+                throw new UnsupportedOperationException("mode == MODE_EXPLICIT || mode == MODE_COPY_FROM_METADATA");
+            }
 
-		public void unsetCompression() {
-			super.unsetCompression(); // Performs checks.
-		}
-	}
+            super.setCompressionMode(mode); // This sets the instance variable.
+        }
 
-	/**
-	 * Cleans this {@link AsciiGridsImageWriter}.
-	 */
-	public void dispose() {
-		if (imageOutputStream != null)
-			try {
-				imageOutputStream.flush();
-				imageOutputStream.close();
-			} catch (IOException ioe) {
+        public void unsetCompression() {
+            super.unsetCompression(); // Performs checks.
+        }
+    }
 
-			}
-		imageOutputStream = null;
-		super.dispose();
-	}
+    /** Cleans this {@link AsciiGridsImageWriter}. */
+    public void dispose() {
+        if (imageOutputStream != null)
+            try {
+                imageOutputStream.flush();
+                imageOutputStream.close();
+            } catch (IOException ioe) {
 
-	public synchronized void abort() {
-		// super.abort();
-		if (rasterWriter != null)
-			rasterWriter.abort();
-	}
+            }
+        imageOutputStream = null;
+        super.dispose();
+    }
 
-	protected synchronized boolean abortRequested() {
-		return rasterWriter.isAborting();
-		// return super.abortRequested();
-	}
+    public synchronized void abort() {
+        // super.abort();
+        if (rasterWriter != null) rasterWriter.abort();
+    }
 
-	protected synchronized void clearAbortRequest() {
-		// super.clearAbortRequest();
-		if (rasterWriter != null)
-			rasterWriter.clearAbort();
-	}
+    protected synchronized boolean abortRequested() {
+        return rasterWriter.isAborting();
+        // return super.abortRequested();
+    }
 
-	public void processImageProgress(float percentageDone) {
-		super.processImageProgress(percentageDone);
-	}
+    protected synchronized void clearAbortRequest() {
+        // super.clearAbortRequest();
+        if (rasterWriter != null) rasterWriter.clearAbort();
+    }
 
-	public int getNColumns() {
-		return nColumns;
-	}
+    public void processImageProgress(float percentageDone) {
+        super.processImageProgress(percentageDone);
+    }
 
-	public int getNRows() {
-		return nRows;
-	}
+    public int getNColumns() {
+        return nColumns;
+    }
 
-	public boolean isHasListeners() {
-		return hasListeners;
-	}
+    public int getNRows() {
+        return nRows;
+    }
 
-	public void reset() {
-		super.reset();
-		imageOutputStream=null;
-		imageMetadata=null;
-		rasterWriter=null;
-		inputRenderedImage=null;
-	}
+    public boolean isHasListeners() {
+        return hasListeners;
+    }
 
+    public void reset() {
+        super.reset();
+        imageOutputStream = null;
+        imageMetadata = null;
+        rasterWriter = null;
+        inputRenderedImage = null;
+    }
 }

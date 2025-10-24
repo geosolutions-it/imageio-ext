@@ -30,7 +30,6 @@
 package it.geosolutions.imageio.compression.zipdeflate;
 
 import it.geosolutions.imageio.compression.Compressor;
-
 import java.util.zip.Deflater;
 
 public class ZipDeflateCompressor implements Compressor {
@@ -53,8 +52,7 @@ public class ZipDeflateCompressor implements Compressor {
     }
 
     @Override
-    public int compress(byte[] destData, int srcOffset, int srcLength,
-                        int destOffset, int destLength) {
+    public int compress(byte[] destData, int srcOffset, int srcLength, int destOffset, int destLength) {
         deflater.setInput(srcData, srcOffset, srcLength);
         deflater.finish();
         final int written = deflater.deflate(destData, destOffset, destLength);

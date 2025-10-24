@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-  <project xmlns="http://maven.apache.org/POM/4.0.0"
-           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                               http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                                http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
@@ -11,12 +8,10 @@
   </parent>
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-plugin</artifactId>
-  <packaging>pom</packaging>
   <version>2.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
   <name>GeoSolutions Image I/O-Extensions plugins</name>
-  <description>
-    Image I/O-Extensions plugin modules.
-  </description>
+  <description>Image I/O-Extensions plugin modules.</description>
   <dependencies>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
@@ -25,18 +20,20 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  
+
   <!-- =========================================================== -->
   <!--     Modules for the build in approximate dependency order   -->
   <!-- =========================================================== -->
   <profiles>
     <profile>
       <id>base</id>
-        <activation>
-         <property><name>all</name></property>
-         <activeByDefault>true</activeByDefault>
-        </activation>      
-       <modules>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+        <property>
+          <name>all</name>
+        </property>
+      </activation>
+      <modules>
         <module>arcgrid</module>
         <module>libdeflate</module>
         <module>tiff</module>
@@ -45,29 +42,35 @@
         <module>raw</module>
       </modules>
     </profile>
-	<profile>
+    <profile>
       <id>png</id>
-        <activation>
-         <property><name>all</name></property>
-        </activation>      
+      <activation>
+        <property>
+          <name>all</name>
+        </property>
+      </activation>
       <modules>
         <module>png</module>
       </modules>
     </profile>
     <profile>
       <id>nd</id>
-        <activation>
-         <property><name>all</name></property>
-        </activation>      
+      <activation>
+        <property>
+          <name>all</name>
+        </property>
+      </activation>
       <modules>
         <module>unidata-netcdf</module>
       </modules>
-    </profile> 
+    </profile>
     <profile>
       <id>releasebuild</id>
       <activation>
-         <property><name>all</name></property>
-        </activation>      
+        <property>
+          <name>all</name>
+        </property>
+      </activation>
       <modules>
         <module>kakadujp2</module>
         <module>arcgrid</module>
@@ -76,11 +79,11 @@
         <module>turbojpeg</module>
         <module>nitronitf</module>
         <module>unidata-netcdf</module>
-	<module>png</module>
+        <module>png</module>
         <module>cog</module>
         <module>libdeflate</module>
         <module>raw</module>
-	</modules>
+      </modules>
     </profile>
   </profiles>
 </project>

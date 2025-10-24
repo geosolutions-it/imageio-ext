@@ -22,8 +22,7 @@ import java.net.URL;
 /**
  * A simple wrapper for URI to allow for easier ImageInputStream selection via ImageIOExt.getImageInputStreamSPI()
  *
- * @author joshfix
- * Created on 2019-09-25
+ * @author joshfix Created on 2019-09-25
  */
 public class BasicAuthURI {
 
@@ -94,13 +93,21 @@ public class BasicAuthURI {
         this.useCache = useCache;
     }
 
-    public String getUser() { return user; }
+    public String getUser() {
+        return user;
+    }
 
-    public void setUser(String user) { this.user = user; }
+    public void setUser(String user) {
+        this.user = user;
+    }
 
-    public String getPassword() { return password; }
+    public String getPassword() {
+        return password;
+    }
 
-    public void setPassword(String password) { this.password = password; }
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     public BasicAuthURI useCache(boolean useCache) {
         setUseCache(useCache);

@@ -16,6 +16,9 @@
  */
 package it.geosolutions.imageioimpl.plugins.cog;
 
+import com.azure.storage.blob.BlobUrlParts;
+import com.azure.storage.blob.models.BlobRange;
+import it.geosolutions.imageio.core.BasicAuthURI;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -30,19 +33,11 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import com.azure.storage.blob.BlobUrlParts;
-import com.azure.storage.blob.models.BlobRange;
-
-import it.geosolutions.imageio.core.BasicAuthURI;
-
-
-/**
- * Reads URIs from Azure
- *  */
+/** Reads URIs from Azure */
 public class AzureRangeReader extends AbstractRangeReader {
 
     protected AzureClient client;
-    protected AzureConfigurationProperties  configProps;
+    protected AzureConfigurationProperties configProps;
     private String blobKey;
 
     private static final int CORE_POOL_SIZE = Integer.getInteger("azure.reader.core.poolsize", 64);
@@ -52,13 +47,11 @@ public class AzureRangeReader extends AbstractRangeReader {
     static final ThreadPoolExecutor EXECUTORS;
 
     static {
-        EXECUTORS = new ThreadPoolExecutor(CORE_POOL_SIZE, MAX_POOL_SIZE, THREAD_TIMEOUT,
-                TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<>());
+        EXECUTORS = new ThreadPoolExecutor(
+                CORE_POOL_SIZE, MAX_POOL_SIZE, THREAD_TIMEOUT, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
     }
 
-
-    private final static Logger LOGGER = Logger.getLogger(AzureRangeReader.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AzureRangeReader.class.getName());
 
     public AzureRangeReader(String url, int headerLength) {
         this(URI.create(url), headerLength);
@@ -85,23 +78,23 @@ public class AzureRangeReader extends AbstractRangeReader {
             BlobUrlParts parts = BlobUrlParts.parse(uri.toURL());
             return parts.getBlobName();
         } catch (IllegalStateException | MalformedURLException e) {
-            throw new RuntimeException("Unable to parse the provided uri " +
-                    path + "due to " + e.getLocalizedMessage());
+            throw new RuntimeException(
+                    "Unable to parse the provided uri " + path + "due to " + e.getLocalizedMessage());
         }
     }
 
     @Override
     public byte[] fetchHeader() {
         byte[] currentHeader = data.get(0L);
-        if ( currentHeader != null) {
+        if (currentHeader != null) {
             headerOffset = currentHeader.length;
         }
         BlobRange range = buildRange(headerOffset, headerLength);
         try {
             byte[] headerBytes = client.getBytes(blobKey, range);
             if (headerOffset != 0) {
-                byte [] oldHeader = data.get(0L);
-                byte [] newHeader = new byte[headerBytes.length + oldHeader.length];
+                byte[] oldHeader = data.get(0L);
+                byte[] newHeader = new byte[headerBytes.length + oldHeader.length];
                 System.arraycopy(oldHeader, 0, newHeader, 0, oldHeader.length);
                 System.arraycopy(headerBytes, 0, newHeader, oldHeader.length, headerBytes.length);
                 headerBytes = newHeader;
@@ -113,7 +106,6 @@ public class AzureRangeReader extends AbstractRangeReader {
             LOGGER.severe("Error reading header for " + uri);
             throw new RuntimeException(e);
         }
-
     }
 
     private BlobRange buildRange(long rangeStart, long rangeLength) {
@@ -122,13 +114,13 @@ public class AzureRangeReader extends AbstractRangeReader {
 
     @Override
     public Map<Long, byte[]> read(Collection<long[]> ranges) {
-        return read(ranges.toArray(new long[][]{}));
+        return read(ranges.toArray(new long[][] {}));
     }
 
     @Override
     public byte[] readHeader() {
         LOGGER.fine("reading header");
-        byte[] currentHeader  = HEADERS_CACHE.get(uri.toString());
+        byte[] currentHeader = HEADERS_CACHE.get(uri.toString());
 
         if (currentHeader != null) {
             return currentHeader;
@@ -143,7 +135,6 @@ public class AzureRangeReader extends AbstractRangeReader {
             LOGGER.severe("Error reading header for " + uri);
             throw new RuntimeException(e);
         }
-
     }
 
     @Override

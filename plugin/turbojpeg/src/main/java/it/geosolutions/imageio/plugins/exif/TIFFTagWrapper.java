@@ -19,49 +19,46 @@ package it.geosolutions.imageio.plugins.exif;
 import java.util.Arrays;
 
 /**
- * @author  Daniele Romagnoli, GeoSolutions SaS
- * 
- * A class holding TIFF Tag properties like TAG ID (number), count, type, value/offset, content 
- * 
+ * @author Daniele Romagnoli, GeoSolutions SaS
+ *     <p>A class holding TIFF Tag properties like TAG ID (number), count, type, value/offset, content
  * @see <a href="http://partners.adobe.com/public/developer/en/tiff/TIFF6.pdf">TIFF specification, page 15</a>
  */
-public class TIFFTagWrapper{
-    
+public class TIFFTagWrapper {
+
     /** the TAG ID number */
-    private int number; 
-    
+    private int number;
+
     /** the number of values */
     private int count;
-    
-    /** the TIFF field type */ 
+
+    /** the TIFF field type */
     private int type;
-    
+
     /** the value/offset */
-    private int value; 
-    
-    /** 
+    private int value;
+
+    /**
      * specific byte[] suffix and prefix for specific tag to be used to fully represent a field.
-     * 
-     * As an instance, each ascii value should be terminated by a null byte.
-     * In that case, the user will set a content made of bytes representing the text and 
-     * the suffix will be a byte[]{0}.
-     * 
-     * Another example: the UserComment allows to put a comment into exif. The user should
-     * simply specify the bytes representing the comment content. The prefix will be specified
-     * as requested by the specification. 
-     * See {@link EXIFUtilities#USER_COMMENT_ASCII_CHAR_CODE}
-     * @see <a href="http://www.awaresystems.be/imaging/tiff/tifftags/privateifd/exif/usercomment.html">
-     * UserComment character code prefix</a>
+     *
+     * <p>As an instance, each ascii value should be terminated by a null byte. In that case, the user will set a
+     * content made of bytes representing the text and the suffix will be a byte[]{0}.
+     *
+     * <p>Another example: the UserComment allows to put a comment into exif. The user should simply specify the bytes
+     * representing the comment content. The prefix will be specified as requested by the specification. See
+     * {@link EXIFUtilities#USER_COMMENT_ASCII_CHAR_CODE}
+     *
+     * @see <a href="http://www.awaresystems.be/imaging/tiff/tifftags/privateifd/exif/usercomment.html">UserComment
+     *     character code prefix</a>
      */
     private byte[] suffix;
+
     private byte[] prefix;
-    
-    /** 
-     * An object storing the Field value (currently as a byte[]), setup by the user representing the 
-     * raw content to be set without any prefix/suffix additional bytes requested by the specifications.  
+
+    /**
+     * An object storing the Field value (currently as a byte[]), setup by the user representing the raw content to be
+     * set without any prefix/suffix additional bytes requested by the specifications.
      */
-    private Object content;  
-    
+    private Object content;
 
     @Override
     public String toString() {
@@ -73,50 +70,48 @@ public class TIFFTagWrapper{
     public TIFFTagWrapper(final int tagNumber, final int type, final String content, final int value, final int count) {
         this(tagNumber, type, content, value, count, null, null);
     }
-    
+
     /**
      * A fully specified {@link TIFFTagWrapper} constructor.
-     * 
+     *
      * @param tagNumber the ID of the underlying TIFF Tag
      * @param type the type of the TIFF Field (BYTE, ASCII, SHORT, LONG, ...)
-     * @param content the content (currently, a byte[]) to be set for that field 
-     *  (without any prefix/suffix).
-     * @param valueOffset the value of this  
-     * @param count the number of values. (this value is ignored in case of not null content/prefix/suffix since
-     *   it will be computed on top of these byte arrays)
-     * @param prefix an optional byte[] to be inserted before the specified content to fully represent the field 
-     *    (as an instance, the UserComment content need to be prefixed by a 8 byte array representing the character code)
-     *     @see <a href="http://www.awaresystems.be/imaging/tiff/tifftags/privateifd/exif/usercomment.html">
-     * UserComment character code prefix</a>
-     * @param suffix an optional byte[] to be appended after the specified content to fully represent the field 
-     *    (as an instance, a byte[]{0} null char to be appended to an ASCII content)  
+     * @param content the content (currently, a byte[]) to be set for that field (without any prefix/suffix).
+     * @param valueOffset the value of this
+     * @param count the number of values. (this value is ignored in case of not null content/prefix/suffix since it will
+     *     be computed on top of these byte arrays)
+     * @param prefix an optional byte[] to be inserted before the specified content to fully represent the field (as an
+     *     instance, the UserComment content need to be prefixed by a 8 byte array representing the character code)
+     * @see <a href="http://www.awaresystems.be/imaging/tiff/tifftags/privateifd/exif/usercomment.html">UserComment
+     *     character code prefix</a>
+     * @param suffix an optional byte[] to be appended after the specified content to fully represent the field (as an
+     *     instance, a byte[]{0} null char to be appended to an ASCII content)
      */
     public TIFFTagWrapper(
-            final int tagNumber, 
-            final int type, 
-            final Object content, 
-            final int valueOffset, 
-            final int count, 
-            final byte[] prefix, 
+            final int tagNumber,
+            final int type,
+            final Object content,
+            final int valueOffset,
+            final int count,
+            final byte[] prefix,
             final byte[] suffix) {
         this.count = count;
         this.number = tagNumber;
         this.type = type;
         this.prefix = prefix != null ? prefix.clone() : null;
         this.suffix = suffix != null ? suffix.clone() : null;
-        
+
         if (content != null) {
-            this.content = content;    
-            this.count = (content instanceof byte[]) ? ((byte[]) content).length : 0 ;
-            if (suffix != null){
+            this.content = content;
+            this.count = (content instanceof byte[]) ? ((byte[]) content).length : 0;
+            if (suffix != null) {
                 this.count += suffix.length;
             }
-            if (prefix != null){
+            if (prefix != null) {
                 this.count += prefix.length;
             }
         }
         this.value = valueOffset;
-        
     }
 
     public Object getContent() {
@@ -174,5 +169,4 @@ public class TIFFTagWrapper{
     public void setNumber(int number) {
         this.number = number;
     }
-    
 }

@@ -17,16 +17,14 @@ package it.geosolutions.imageio.tiff;
 
 import static org.junit.Assert.*;
 
+import it.geosolutions.imageioimpl.plugins.tiff.gdal.GDALMetadata;
+import it.geosolutions.imageioimpl.plugins.tiff.gdal.GDALMetadataParser;
+import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
-import java.util.List;
-
-import it.geosolutions.imageioimpl.plugins.tiff.gdal.GDALMetadata;
-import it.geosolutions.imageioimpl.plugins.tiff.gdal.GDALMetadataParser;
-
 public class GDALMetadataParserTest {
-    
+
     @Test
     public void testParseXML() throws Exception {
         String xml = IOUtils.toString(getClass().getResourceAsStream("test-data/gdalmetadata.xml"), "UTF-8");
@@ -35,7 +33,7 @@ public class GDALMetadataParserTest {
         // check we got the list
         List<GDALMetadata.Item> items = metadata.getItems();
         assertEquals(19, items.size());
-        
+
         // check a few just to make sure all elements/attributes are getting parsed correctly
         assertEquals("Band_1", items.get(0).getName());
         assertEquals("Max Band_1", items.get(0).getValue());

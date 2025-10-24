@@ -17,7 +17,6 @@
 package it.geosolutions.imageio.plugins.jp2k.box;
 
 import it.geosolutions.imageio.plugins.jp2k.JP2KBox;
-
 import javax.imageio.metadata.IIOMetadataNode;
 
 /**
@@ -26,37 +25,37 @@ import javax.imageio.metadata.IIOMetadataNode;
  */
 public abstract class BaseJP2KBoxMetadataNode extends IIOMetadataNode {
 
-//    private final String boxLength;
+    //    private final String boxLength;
 
     private final String boxType;
 
-//    private final String extraLength;
-    
+    //    private final String extraLength;
+
     BaseJP2KBoxMetadataNode(final JP2KBox box) {
         super(BoxUtilities.getName(box.getType()));
-//        final int l = box.getLength();
-//        boxLength = Integer.toString(l);
+        //        final int l = box.getLength();
+        //        boxLength = Integer.toString(l);
         final int t = box.getType();
         boxType = BoxUtilities.getTypeString(t);
-//        final long exl = box.getExtraLength();
-//        extraLength = Long.toString(exl);
-//        setAttribute("Length", this.boxLength);
+        //        final long exl = box.getExtraLength();
+        //        extraLength = Long.toString(exl);
+        //        setAttribute("Length", this.boxLength);
         setAttribute("Type", this.boxType);
-//        if (l == 1) {
-//            setAttribute("ExtraLength", this.extraLength);
-//        }
+        //        if (l == 1) {
+        //            setAttribute("ExtraLength", this.extraLength);
+        //        }
     }
 
-//    public String getBoxLength() {
-//        return boxLength;
-//    }
+    //    public String getBoxLength() {
+    //        return boxLength;
+    //    }
 
     public String getBoxType() {
         return boxType;
     }
 
-//    public String getExtraLength() {
-//        return extraLength;
-//    }
+    //    public String getExtraLength() {
+    //        return extraLength;
+    //    }
 
 }

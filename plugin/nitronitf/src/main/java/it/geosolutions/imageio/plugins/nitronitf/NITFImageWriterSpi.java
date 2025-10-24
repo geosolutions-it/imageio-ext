@@ -1,7 +1,7 @@
 /* =========================================================================
  * This file is part of NITRO
  * =========================================================================
- * 
+ *
  * (C) Copyright 2004 - 2010, General Dynamics - Advanced Information Systems
  *
  * NITRO is free software; you can redistribute it and/or modify
@@ -14,24 +14,22 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public 
- * License along with this program; if not, If not, 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this program; if not, If not,
  * see <http://www.gnu.org/licenses/>.
  *
  */
 
 package it.geosolutions.imageio.plugins.nitronitf;
 
+import it.geosolutions.imageio.stream.AccessibleStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Locale;
-
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageWriterSpi;
-
-import it.geosolutions.imageio.stream.AccessibleStream;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,13 +38,14 @@ public class NITFImageWriterSpi extends ImageWriterSpi {
     private static final Log log = LogFactory.getLog(NITFImageWriterSpi.class);
 
     public NITFImageWriterSpi() {
-        super("NITRO", // vendorName
+        super(
+                "NITRO", // vendorName
                 "1.0", // version
-                new String[] { "NITF", "nitf", "NSIF" }, // names
-                new String[] { "ntf", "nitf", "nsf" }, // suffixes
-                new String[] { "image/x-ntf", "image/x-nitf" }, // MIMETypes
+                new String[] {"NITF", "nitf", "NSIF"}, // names
+                new String[] {"ntf", "nitf", "nsf"}, // suffixes
+                new String[] {"image/x-ntf", "image/x-nitf"}, // MIMETypes
                 NITFImageWriter.class.getName(), // writerClassName
-                new Class[] { File.class, AccessibleStream.class }, // outputTypes
+                new Class[] {File.class, AccessibleStream.class}, // outputTypes
                 null, // readerSpiNames
                 false, // supportsStandardStreamMetadataFormat
                 null, // nativeStreamMetadataFormatName
@@ -58,7 +57,7 @@ public class NITFImageWriterSpi extends ImageWriterSpi {
                 null, // nativeImageMetadataFormatClassName
                 null, // extraImageMetadataFormatNames
                 null // extraImageMetadataFormatClassNames
-        );
+                );
     }
 
     public static boolean isNITF(File file) {
@@ -72,8 +71,7 @@ public class NITFImageWriterSpi extends ImageWriterSpi {
             return false;
         } finally {
             try {
-                if (fin != null)
-                    fin.close();
+                if (fin != null) fin.close();
             } catch (IOException e) {
                 log.error(ExceptionUtils.getStackTrace(e));
             }
@@ -95,5 +93,4 @@ public class NITFImageWriterSpi extends ImageWriterSpi {
         // TODO RefactorMe
         return true;
     }
-
 }

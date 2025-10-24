@@ -3,8 +3,7 @@ package it.geosolutions.imageioimpl.plugins.cog;
 /**
  * POJO to store metadata about a single COG tile.
  *
- * @author joshfix
- * Created on 2019-09-24
+ * @author joshfix Created on 2019-09-24
  */
 public class TileRange implements Comparable<TileRange> {
 
@@ -63,9 +62,9 @@ public class TileRange implements Comparable<TileRange> {
     @Override
     public int hashCode() {
         int result = 1;
-        result = 31 * result + (int)start;
-        result = 31 * result + (int)byteLength;
-        result = 31 * result + (int)end;
+        result = 31 * result + (int) start;
+        result = 31 * result + (int) byteLength;
+        result = 31 * result + (int) end;
         result = 31 * result + index;
         return result;
     }
@@ -75,4 +74,3 @@ public class TileRange implements Comparable<TileRange> {
         return o.index > this.index ? 1 : 0;
     }
 }
-

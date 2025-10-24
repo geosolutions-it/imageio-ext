@@ -22,7 +22,7 @@ import java.awt.image.Raster;
 
 /**
  * A scanline provider that packs more than one pixel per output byte
- * 
+ *
  * @author Andrea Aime - GeoSolutions
  */
 public final class RasterByteRepackSingleBandProvider extends AbstractScanlineProvider {
@@ -30,17 +30,16 @@ public final class RasterByteRepackSingleBandProvider extends AbstractScanlinePr
     final byte[] bytes;
 
     public RasterByteRepackSingleBandProvider(Raster raster, int bitDepth, int scanlineLength) {
-        super(raster, bitDepth, scanlineLength,  8 / bitDepth);
+        super(raster, bitDepth, scanlineLength, 8 / bitDepth);
         this.bytes = ((DataBufferByte) raster.getDataBuffer()).getData();
     }
 
-    public RasterByteRepackSingleBandProvider(Raster raster, int bitDepth, int scanlineLength,
-            IndexColorModel palette) {
+    public RasterByteRepackSingleBandProvider(
+            Raster raster, int bitDepth, int scanlineLength, IndexColorModel palette) {
         super(raster, bitDepth, scanlineLength, 8 / bitDepth, palette);
         this.bytes = ((DataBufferByte) raster.getDataBuffer()).getData();
     }
 
-    
     public void next(final byte[] row, final int offset, final int length) {
         if (this.currentRow == height) {
             throw new IllegalStateException("All scanlines have been read already");
@@ -74,12 +73,11 @@ public final class RasterByteRepackSingleBandProvider extends AbstractScanlinePr
                 final int b6 = pxIdx < pxLimit ? bytes[pxIdx++] : 0;
                 final int b7 = pxIdx < pxLimit ? bytes[pxIdx++] : 0;
                 final int b8 = pxIdx < pxLimit ? bytes[pxIdx++] : 0;
-                row[i++] = (byte) (b8 | (b7 << 1) | (b6 << 2) | (b5 << 3) | (b4 << 4) | (b3 << 5)
-                        | (b2 << 6) | (b1 << 7));
+                row[i++] =
+                        (byte) (b8 | (b7 << 1) | (b6 << 2) | (b5 << 3) | (b4 << 4) | (b3 << 5) | (b2 << 6) | (b1 << 7));
             }
         }
 
         currentRow++;
     }
-
 }

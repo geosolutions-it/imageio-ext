@@ -25,7 +25,6 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import it.geosolutions.imageio.core.ExtCaches;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -36,13 +35,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Grabbing a {@link Storage} object and a {@link Blob} both incur in network call
- * penalties. This class caches both to avoid repeated accesses, the performance different
- * is significant.
+ * Grabbing a {@link Storage} object and a {@link Blob} both incur in network call penalties. This class caches both to
+ * avoid repeated accesses, the performance different is significant.
  */
 class BlobCache {
 
-    private final static Logger LOGGER = Logger.getLogger(BlobCache.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(BlobCache.class.getName());
 
     private static class BlobKey {
         Storage storage;
@@ -58,8 +56,7 @@ class BlobCache {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             BlobKey cacheKey = (BlobKey) o;
-            return Objects.equals(storage, cacheKey.storage) && Objects.equals(blobId,
-                    cacheKey.blobId);
+            return Objects.equals(storage, cacheKey.storage) && Objects.equals(blobId, cacheKey.blobId);
         }
 
         @Override
@@ -68,36 +65,37 @@ class BlobCache {
         }
     }
 
-    static final LoadingCache<BlobKey, Optional<Blob>> BLOB_CACHE =
-            CacheBuilder.newBuilder().weakValues().build(new CacheLoader<BlobKey,
-                    Optional<Blob>>() {
+    static final LoadingCache<BlobKey, Optional<Blob>> BLOB_CACHE = CacheBuilder.newBuilder()
+            .weakValues()
+            .build(new CacheLoader<BlobKey, Optional<Blob>>() {
                 @Override
                 public Optional<Blob> load(BlobKey key) {
                     return Optional.ofNullable(key.storage.get(key.blobId));
                 }
             });
 
-    static final LoadingCache<String, Storage> STORAGE_CACHE =
-            CacheBuilder.newBuilder().build(new CacheLoader<String,
-                    Storage>() {
+    static final LoadingCache<String, Storage> STORAGE_CACHE = CacheBuilder.newBuilder()
+            .build(new CacheLoader<String, Storage>() {
                 @Override
                 public Storage load(String key) {
                     try (InputStream is = new URL(key).openStream()) {
                         GoogleCredentials credentials = GoogleCredentials.fromStream(is);
-                        Storage storage =
-                                StorageOptions.newBuilder().setCredentials(credentials).build().getService();
+                        Storage storage = StorageOptions.newBuilder()
+                                .setCredentials(credentials)
+                                .build()
+                                .getService();
                         if (storage == null) {
-                            LOGGER.log(Level.SEVERE, "Failed to connect to Google Storage using " +
-                                    " explicitly provided credentials : " + key);
-                            throw new RuntimeException("Failed to create a Google Storage " +
-                                    "connection with the provided credentials");
+                            LOGGER.log(
+                                    Level.SEVERE,
+                                    "Failed to connect to Google Storage using " + " explicitly provided credentials : "
+                                            + key);
+                            throw new RuntimeException(
+                                    "Failed to create a Google Storage " + "connection with the provided credentials");
                         }
                         return storage;
                     } catch (IOException e) {
-                        throw new RuntimeException("Failed to create a Google Storage connection"
-                                , e);
+                        throw new RuntimeException("Failed to create a Google Storage connection", e);
                     }
-
                 }
             });
 
@@ -107,7 +105,6 @@ class BlobCache {
         ExtCaches.addListener(() -> {
             STORAGE_CACHE.invalidateAll();
             BLOB_CACHE.invalidateAll();
-
         });
     }
 

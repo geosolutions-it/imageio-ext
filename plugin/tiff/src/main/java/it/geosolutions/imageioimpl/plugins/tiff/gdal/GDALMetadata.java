@@ -22,7 +22,6 @@ import static java.util.stream.Collectors.toMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -65,8 +64,8 @@ public class GDALMetadata {
     }
 
     /**
-     * Utility methods extracting an offset array from the items, if available. Will throw runtime
-     * exceptions if the offset item values are not numbers.
+     * Utility methods extracting an offset array from the items, if available. Will throw runtime exceptions if the
+     * offset item values are not numbers.
      *
      * @return the offset array, or null if no items are present, or no offset was found
      */
@@ -75,8 +74,8 @@ public class GDALMetadata {
     }
 
     /**
-     * Utility methods extracting a scales array from the items, if available. Will throw runtime
-     * exceptions if the scales item values are not numbers.
+     * Utility methods extracting a scales array from the items, if available. Will throw runtime exceptions if the
+     * scales item values are not numbers.
      *
      * @return the offset array, or null if no items are present, or no offset was found
      */
@@ -89,14 +88,9 @@ public class GDALMetadata {
             return null;
         }
         // get items with offset role, and a band compatible with expectation
-        Map<Integer, Double> bandsToValues =
-                items.stream()
-                        .filter(
-                                i ->
-                                        Objects.equals(role, i.getRole())
-                                                && i.getSample() != null
-                                                && i.getSample() < bands)
-                        .collect(toMap(i -> i.getSample(), i -> parseDouble(i.getValue())));
+        Map<Integer, Double> bandsToValues = items.stream()
+                .filter(i -> Objects.equals(role, i.getRole()) && i.getSample() != null && i.getSample() < bands)
+                .collect(toMap(i -> i.getSample(), i -> parseDouble(i.getValue())));
         if (bandsToValues.isEmpty()) {
             return null;
         }
@@ -111,13 +105,17 @@ public class GDALMetadata {
 
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Item {
-        @XmlValue String value;
+        @XmlValue
+        String value;
 
-        @XmlAttribute String name;
+        @XmlAttribute
+        String name;
 
-        @XmlAttribute Integer sample;
+        @XmlAttribute
+        Integer sample;
 
-        @XmlAttribute String role;
+        @XmlAttribute
+        String role;
 
         public String getValue() {
             return value;

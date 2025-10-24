@@ -24,7 +24,6 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Logger;
-
 import ucar.ma2.Array;
 import ucar.ma2.ArrayByte;
 import ucar.ma2.ArrayDouble;
@@ -41,15 +40,12 @@ import ucar.nc2.Variable;
 
 public class NetCDFConverterUtilities {
 
-    public final static Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.plugins.netcdf");
+    public static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.netcdf");
 
-    private NetCDFConverterUtilities() {
-    }
+    private NetCDFConverterUtilities() {}
 
-    public static void setVariableAttributes(Variable variable,
-            NetcdfFileWriteable writableFile, final String newVarName,
-            String[] exceptions) {
+    public static void setVariableAttributes(
+            Variable variable, NetcdfFileWriteable writableFile, final String newVarName, String[] exceptions) {
         List<Attribute> attributes = variable.getAttributes();
         String name = newVarName;
         if (attributes != null) {
@@ -62,50 +58,33 @@ public class NetCDFConverterUtilities {
                             skip = true;
                             break;
                         }
-                if (skip)
-                    continue;
-                if (att.isArray())
-                    writableFile.addVariableAttribute(name, attribName, att
-                            .getValues());
-                else if (att.isString())
-                    writableFile.addVariableAttribute(name, attribName, att
-                            .getStringValue());
-                else
-                    writableFile.addVariableAttribute(name, attribName, att
-                            .getNumericValue());
+                if (skip) continue;
+                if (att.isArray()) writableFile.addVariableAttribute(name, attribName, att.getValues());
+                else if (att.isString()) writableFile.addVariableAttribute(name, attribName, att.getStringValue());
+                else writableFile.addVariableAttribute(name, attribName, att.getNumericValue());
             }
         }
     }
 
-    public static void setVariableAttributes(Variable variable,
-            NetcdfFileWriteable writableFile) {
+    public static void setVariableAttributes(Variable variable, NetcdfFileWriteable writableFile) {
         setVariableAttributes(variable, writableFile, variable.getName(), null);
     }
 
-    public static void setVariableAttributes(Variable variable,
-            NetcdfFileWriteable writableFile, final String newVarName) {
+    public static void setVariableAttributes(
+            Variable variable, NetcdfFileWriteable writableFile, final String newVarName) {
         setVariableAttributes(variable, writableFile, newVarName, null);
     }
 
-    public static void setVariableAttributes(Variable variable,
-            NetcdfFileWriteable writableFile, String[] exceptions) {
-        setVariableAttributes(variable, writableFile, variable.getName(),
-                exceptions);
+    public static void setVariableAttributes(Variable variable, NetcdfFileWriteable writableFile, String[] exceptions) {
+        setVariableAttributes(variable, writableFile, variable.getName(), exceptions);
     }
 
-    public static void copyGlobalAttributes(NetcdfFileWriteable writableFile,
-            List<Attribute> attributes) {
+    public static void copyGlobalAttributes(NetcdfFileWriteable writableFile, List<Attribute> attributes) {
         if (!attributes.isEmpty()) {
             for (final Attribute attrib : attributes) {
-                if (attrib.isArray())
-                    writableFile.addGlobalAttribute(attrib.getName(), attrib
-                            .getValues());
-                else if (attrib.isString())
-                    writableFile.addGlobalAttribute(attrib.getName(), attrib
-                            .getStringValue());
-                else
-                    writableFile.addGlobalAttribute(attrib.getName(), attrib
-                            .getNumericValue());
+                if (attrib.isArray()) writableFile.addGlobalAttribute(attrib.getName(), attrib.getValues());
+                else if (attrib.isString()) writableFile.addGlobalAttribute(attrib.getName(), attrib.getStringValue());
+                else writableFile.addGlobalAttribute(attrib.getName(), attrib.getNumericValue());
             }
         }
     }
@@ -129,28 +108,24 @@ public class NetCDFConverterUtilities {
         je = (int) ((jb - jd) / 30.6001);
         day = jb - jd - (int) (30.6001 * je);
         month = je - 1;
-        if (month > 12)
-            month = month - 12;
+        if (month > 12) month = month - 12;
         year = jc - 4715;
-        if (month > 2)
-            year--;
-        if (year <= 0)
-            year--;
+        if (month > 2) year--;
+        if (year <= 0) year--;
 
         // Calendar Months are 0 based
         return new GregorianCalendar(year, month - 1, day);
     }
 
-    public static GregorianCalendar fromModifiedJulian(final double injulian,
-            final String long_name, final String units) {
-        final SimpleDateFormat sdf = new SimpleDateFormat(
-                "dd-MMM-yyyy HH:mm:ss");
+    public static GregorianCalendar fromModifiedJulian(
+            final double injulian, final String long_name, final String units) {
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");
         sdf.setDateFormatSymbols(new DateFormatSymbols(Locale.US));
 
         Date startDate;
         try {
-            startDate = sdf.parse(long_name.substring(long_name.length()
-                    - "dd-MMM-yyyy HH:mm:ss".length(), long_name.length()));
+            startDate = sdf.parse(
+                    long_name.substring(long_name.length() - "dd-MMM-yyyy HH:mm:ss".length(), long_name.length()));
         } catch (ParseException e) {
             return null;
         }
@@ -184,32 +159,25 @@ public class NetCDFConverterUtilities {
         return calendar;
     }
 
-    public static Array getArray(final int dimension,
-            final DataType navLatDataType) {
-        if (dimension < 1)
-            throw new IllegalArgumentException(
-                    "dimension should be greater than zero");
-        int[] dim = new int[] { dimension };
-        if (navLatDataType == DataType.FLOAT)
-            return new ArrayFloat(dim);
-        else if (navLatDataType == DataType.DOUBLE)
-            return new ArrayDouble(dim);
-        else if (navLatDataType == DataType.BYTE)
-            return new ArrayByte(dim);
-        else if (navLatDataType == DataType.SHORT)
-            return new ArrayShort(dim);
-        else if (navLatDataType == DataType.INT)
-            return new ArrayInt(dim);
+    public static Array getArray(final int dimension, final DataType navLatDataType) {
+        if (dimension < 1) throw new IllegalArgumentException("dimension should be greater than zero");
+        int[] dim = new int[] {dimension};
+        if (navLatDataType == DataType.FLOAT) return new ArrayFloat(dim);
+        else if (navLatDataType == DataType.DOUBLE) return new ArrayDouble(dim);
+        else if (navLatDataType == DataType.BYTE) return new ArrayByte(dim);
+        else if (navLatDataType == DataType.SHORT) return new ArrayShort(dim);
+        else if (navLatDataType == DataType.INT) return new ArrayInt(dim);
         throw new IllegalArgumentException("Actually unsupported Datatype");
-
     }
 
-    public static void setData1D(Array originalData, Array destinationData,
-            final DataType navLatDataType, final int maxIndex,
+    public static void setData1D(
+            Array originalData,
+            Array destinationData,
+            final DataType navLatDataType,
+            final int maxIndex,
             final boolean flipData) {
         Index originalDataIndex = originalData.getIndex();
-        Index destinationDataIndex = flipData ? destinationData.getIndex()
-                : originalDataIndex;
+        Index destinationDataIndex = flipData ? destinationData.getIndex() : originalDataIndex;
 
         if (navLatDataType == DataType.FLOAT) {
             for (int pos = 0; pos < maxIndex; pos++) {
@@ -260,7 +228,7 @@ public class NetCDFConverterUtilities {
     }
 
     public static Array getRangeArray(DataType varDataType) {
-        int[] dim = new int[] { 2 };
+        int[] dim = new int[] {2};
         if (varDataType == DataType.FLOAT) {
             Array array = new ArrayFloat(dim);
             Index index = array.getIndex();
@@ -296,59 +264,49 @@ public class NetCDFConverterUtilities {
     }
 
     public static Array getArray(int[] dimensions, DataType varDataType) {
-        if (dimensions == null)
-            throw new IllegalArgumentException("Illegal dimensions");
+        if (dimensions == null) throw new IllegalArgumentException("Illegal dimensions");
         final int nDims = dimensions.length;
         switch (nDims) {
-        case 4:
-            if (varDataType == DataType.FLOAT) {
-                return new ArrayFloat.D4(dimensions[0], dimensions[1],
-                        dimensions[2], dimensions[3]);
-            } else if (varDataType == DataType.DOUBLE) {
-                return new ArrayDouble.D4(dimensions[0], dimensions[1],
-                        dimensions[2], dimensions[3]);
-            } else if (varDataType == DataType.BYTE) {
-                return new ArrayByte.D4(dimensions[0], dimensions[1],
-                        dimensions[2], dimensions[3]);
-            } else if (varDataType == DataType.SHORT) {
-                return new ArrayShort.D4(dimensions[0], dimensions[1],
-                        dimensions[2], dimensions[3]);
-            } else if (varDataType == DataType.INT) {
-                return new ArrayInt.D4(dimensions[0], dimensions[1],
-                        dimensions[2], dimensions[3]);
-            } else
-                throw new IllegalArgumentException(
-                        "Actually unsupported Datatype");
+            case 4:
+                if (varDataType == DataType.FLOAT) {
+                    return new ArrayFloat.D4(dimensions[0], dimensions[1], dimensions[2], dimensions[3]);
+                } else if (varDataType == DataType.DOUBLE) {
+                    return new ArrayDouble.D4(dimensions[0], dimensions[1], dimensions[2], dimensions[3]);
+                } else if (varDataType == DataType.BYTE) {
+                    return new ArrayByte.D4(dimensions[0], dimensions[1], dimensions[2], dimensions[3]);
+                } else if (varDataType == DataType.SHORT) {
+                    return new ArrayShort.D4(dimensions[0], dimensions[1], dimensions[2], dimensions[3]);
+                } else if (varDataType == DataType.INT) {
+                    return new ArrayInt.D4(dimensions[0], dimensions[1], dimensions[2], dimensions[3]);
+                } else throw new IllegalArgumentException("Actually unsupported Datatype");
 
-        case 3:
-            if (varDataType == DataType.FLOAT) {
-                return new ArrayFloat.D3(dimensions[0], dimensions[1],
-                        dimensions[2]);
-            } else if (varDataType == DataType.DOUBLE) {
-                return new ArrayDouble.D3(dimensions[0], dimensions[1],
-                        dimensions[2]);
-            } else if (varDataType == DataType.BYTE) {
-                return new ArrayByte.D3(dimensions[0], dimensions[1],
-                        dimensions[2]);
-            } else if (varDataType == DataType.SHORT) {
-                return new ArrayShort.D3(dimensions[0], dimensions[1],
-                        dimensions[2]);
-            } else if (varDataType == DataType.INT) {
-                return new ArrayInt.D3(dimensions[0], dimensions[1],
-                        dimensions[2]);
-            } else
-                throw new IllegalArgumentException(
-                        "Actually unsupported Datatype");
+            case 3:
+                if (varDataType == DataType.FLOAT) {
+                    return new ArrayFloat.D3(dimensions[0], dimensions[1], dimensions[2]);
+                } else if (varDataType == DataType.DOUBLE) {
+                    return new ArrayDouble.D3(dimensions[0], dimensions[1], dimensions[2]);
+                } else if (varDataType == DataType.BYTE) {
+                    return new ArrayByte.D3(dimensions[0], dimensions[1], dimensions[2]);
+                } else if (varDataType == DataType.SHORT) {
+                    return new ArrayShort.D3(dimensions[0], dimensions[1], dimensions[2]);
+                } else if (varDataType == DataType.INT) {
+                    return new ArrayInt.D3(dimensions[0], dimensions[1], dimensions[2]);
+                } else throw new IllegalArgumentException("Actually unsupported Datatype");
         }
-        throw new IllegalArgumentException(
-                "Unable to create a proper array unsupported Datatype");
+        throw new IllegalArgumentException("Unable to create a proper array unsupported Datatype");
     }
 
-    public static void writeData(NetcdfFileWriteable ncFileOut,
-            final String varName, Variable var, final Array originalVarData,
-            final Array destArray, final boolean findNewRange,
-            final boolean updateFillValue, final int[] loopLengths,
-            final boolean flipY) throws IOException, InvalidRangeException {
+    public static void writeData(
+            NetcdfFileWriteable ncFileOut,
+            final String varName,
+            Variable var,
+            final Array originalVarData,
+            final Array destArray,
+            final boolean findNewRange,
+            final boolean updateFillValue,
+            final int[] loopLengths,
+            final boolean flipY)
+            throws IOException, InvalidRangeException {
         final int nestedLoops = loopLengths.length;
         final boolean setDepth = nestedLoops > 3;
         final int timePositions = loopLengths[0]; // timeDim
@@ -367,11 +325,8 @@ public class NetCDFConverterUtilities {
 
         final DataType varDataType = var.getDataType();
         Attribute fv = null;
-        if (updateFillValue)
-            fv = var
-                    .findAttribute(NetCDFUtilities.DatasetAttribs.MISSING_VALUE);
-        else
-            fv = var.findAttribute(NetCDFUtilities.DatasetAttribs.FILL_VALUE);
+        if (updateFillValue) fv = var.findAttribute(NetCDFUtilities.DatasetAttribs.MISSING_VALUE);
+        else fv = var.findAttribute(NetCDFUtilities.DatasetAttribs.FILL_VALUE);
         Index varIndex = originalVarData.getIndex();
         Index destIndex = destArray.getIndex();
 
@@ -393,21 +348,17 @@ public class NetCDFConverterUtilities {
                     for (int levelPos = 0; levelPos < depthPositions; levelPos++) {
                         for (int yPos = 0; yPos < latPositions; yPos++) {
                             for (int xPos = 0; xPos < lonPositions; xPos++) {
-                                float sVal = originalVarData.getFloat(varIndex
-                                        .set(tPos, levelPos, yPos, xPos));
+                                float sVal = originalVarData.getFloat(varIndex.set(tPos, levelPos, yPos, xPos));
                                 if (findNewRange) {
-                                    if (sVal >= max && sVal != fillValue)
-                                        max = sVal;
-                                    if (sVal <= min && sVal != fillValue)
-                                        min = sVal;
+                                    if (sVal >= max && sVal != fillValue) max = sVal;
+                                    if (sVal <= min && sVal != fillValue) min = sVal;
                                 }
                                 int newYpos = yPos;
                                 // Flipping y
                                 if (flipY) {
                                     newYpos = latPositions - yPos - 1;
                                 }
-                                destArray.setFloat(destIndex.set(tPos,
-                                        levelPos, newYpos, xPos), sVal);
+                                destArray.setFloat(destIndex.set(tPos, levelPos, newYpos, xPos), sVal);
                             }
                         }
                     }
@@ -416,13 +367,10 @@ public class NetCDFConverterUtilities {
                 for (int tPos = 0; tPos < timePositions; tPos++) {
                     for (int yPos = 0; yPos < latPositions; yPos++) {
                         for (int xPos = 0; xPos < lonPositions; xPos++) {
-                            float sVal = originalVarData.getFloat(varIndex.set(
-                                    tPos, yPos, xPos));
+                            float sVal = originalVarData.getFloat(varIndex.set(tPos, yPos, xPos));
                             if (findNewRange) {
-                                if (sVal >= max && sVal != fillValue)
-                                    max = sVal;
-                                if (sVal <= min && sVal != fillValue)
-                                    min = sVal;
+                                if (sVal >= max && sVal != fillValue) max = sVal;
+                                if (sVal <= min && sVal != fillValue) min = sVal;
                             }
                             // Flipping y
                             int newYpos = yPos;
@@ -430,31 +378,27 @@ public class NetCDFConverterUtilities {
                             if (flipY) {
                                 newYpos = latPositions - yPos - 1;
                             }
-                            destArray.setFloat(destIndex.set(tPos, newYpos,
-                                    xPos), sVal);
+                            destArray.setFloat(destIndex.set(tPos, newYpos, xPos), sVal);
                         }
                     }
                 }
             }
             ncFileOut.write(varName, destArray);
             if (findNewRange) {
-                Array range = NetCDFConverterUtilities
-                        .getRangeArray(varDataType);
+                Array range = NetCDFConverterUtilities.getRangeArray(varDataType);
 
                 Index index = range.getIndex();
                 range.setFloat(index.set(0), min);
                 range.setFloat(index.set(1), max);
-                ncFileOut.updateAttribute(ncFileOut.findVariable(varName),
-                        new Attribute(
-                                NetCDFUtilities.DatasetAttribs.VALID_RANGE,
-                                range));
+                ncFileOut.updateAttribute(
+                        ncFileOut.findVariable(varName),
+                        new Attribute(NetCDFUtilities.DatasetAttribs.VALID_RANGE, range));
             }
-            
-            if (updateFillValue){
-                ncFileOut.updateAttribute(ncFileOut.findVariable(varName),
-                        new Attribute(
-                                NetCDFUtilities.DatasetAttribs.FILL_VALUE,
-                                new Float(fillValue)));
+
+            if (updateFillValue) {
+                ncFileOut.updateAttribute(
+                        ncFileOut.findVariable(varName),
+                        new Attribute(NetCDFUtilities.DatasetAttribs.FILL_VALUE, new Float(fillValue)));
             }
             // //
             //
@@ -474,22 +418,17 @@ public class NetCDFConverterUtilities {
                     for (int levelPos = 0; levelPos < depthPositions; levelPos++) {
                         for (int yPos = 0; yPos < latPositions; yPos++) {
                             for (int xPos = 0; xPos < lonPositions; xPos++) {
-                                double sVal = originalVarData
-                                        .getDouble(varIndex.set(tPos, levelPos,
-                                                yPos, xPos));
+                                double sVal = originalVarData.getDouble(varIndex.set(tPos, levelPos, yPos, xPos));
                                 if (findNewRange) {
-                                    if (sVal >= max && sVal != fillValue)
-                                        max = sVal;
-                                    if (sVal <= min && sVal != fillValue)
-                                        min = sVal;
+                                    if (sVal >= max && sVal != fillValue) max = sVal;
+                                    if (sVal <= min && sVal != fillValue) min = sVal;
                                 }
                                 int newYpos = yPos;
                                 // Flipping y
                                 if (flipY) {
                                     newYpos = latPositions - yPos - 1;
                                 }
-                                destArray.setDouble(destIndex.set(tPos,
-                                        levelPos, newYpos, xPos), sVal);
+                                destArray.setDouble(destIndex.set(tPos, levelPos, newYpos, xPos), sVal);
                             }
                         }
                     }
@@ -498,13 +437,10 @@ public class NetCDFConverterUtilities {
                 for (int tPos = 0; tPos < timePositions; tPos++) {
                     for (int yPos = 0; yPos < latPositions; yPos++) {
                         for (int xPos = 0; xPos < lonPositions; xPos++) {
-                            double sVal = originalVarData.getDouble(varIndex
-                                    .set(tPos, yPos, xPos));
+                            double sVal = originalVarData.getDouble(varIndex.set(tPos, yPos, xPos));
                             if (findNewRange) {
-                                if (sVal >= max && sVal != fillValue)
-                                    max = sVal;
-                                if (sVal <= min && sVal != fillValue)
-                                    min = sVal;
+                                if (sVal >= max && sVal != fillValue) max = sVal;
+                                if (sVal <= min && sVal != fillValue) min = sVal;
                             }
                             // Flipping y
                             int newYpos = yPos;
@@ -512,32 +448,28 @@ public class NetCDFConverterUtilities {
                             if (flipY) {
                                 newYpos = latPositions - yPos - 1;
                             }
-                            destArray.setDouble(destIndex.set(tPos, newYpos,
-                                    xPos), sVal);
+                            destArray.setDouble(destIndex.set(tPos, newYpos, xPos), sVal);
                         }
                     }
                 }
             }
             ncFileOut.write(varName, destArray);
             if (findNewRange) {
-                Array range = NetCDFConverterUtilities
-                        .getRangeArray(varDataType);
+                Array range = NetCDFConverterUtilities.getRangeArray(varDataType);
 
                 Index index = range.getIndex();
                 range.setDouble(index.set(0), min);
                 range.setDouble(index.set(1), max);
-                ncFileOut.updateAttribute(ncFileOut.findVariable(varName),
-                        new Attribute(
-                                NetCDFUtilities.DatasetAttribs.VALID_RANGE,
-                                range));
+                ncFileOut.updateAttribute(
+                        ncFileOut.findVariable(varName),
+                        new Attribute(NetCDFUtilities.DatasetAttribs.VALID_RANGE, range));
             }
-            if (updateFillValue){
-                ncFileOut.updateAttribute(ncFileOut.findVariable(varName),
-                        new Attribute(
-                                NetCDFUtilities.DatasetAttribs.FILL_VALUE,
-                                new Double(fillValue)));
+            if (updateFillValue) {
+                ncFileOut.updateAttribute(
+                        ncFileOut.findVariable(varName),
+                        new Attribute(NetCDFUtilities.DatasetAttribs.FILL_VALUE, new Double(fillValue)));
             }
-            
+
             // //
             //
             // BYTE
@@ -556,21 +488,17 @@ public class NetCDFConverterUtilities {
                     for (int levelPos = 0; levelPos < depthPositions; levelPos++) {
                         for (int yPos = 0; yPos < latPositions; yPos++) {
                             for (int xPos = 0; xPos < lonPositions; xPos++) {
-                                byte sVal = originalVarData.getByte(varIndex
-                                        .set(tPos, levelPos, yPos, xPos));
+                                byte sVal = originalVarData.getByte(varIndex.set(tPos, levelPos, yPos, xPos));
                                 if (findNewRange) {
-                                    if (sVal >= max && sVal != fillValue)
-                                        max = sVal;
-                                    if (sVal <= min && sVal != fillValue)
-                                        min = sVal;
+                                    if (sVal >= max && sVal != fillValue) max = sVal;
+                                    if (sVal <= min && sVal != fillValue) min = sVal;
                                 }
                                 int newYpos = yPos;
                                 // Flipping y
                                 if (flipY) {
                                     newYpos = latPositions - yPos - 1;
                                 }
-                                destArray.setByte(destIndex.set(tPos, levelPos,
-                                        newYpos, xPos), sVal);
+                                destArray.setByte(destIndex.set(tPos, levelPos, newYpos, xPos), sVal);
                             }
                         }
                     }
@@ -579,13 +507,10 @@ public class NetCDFConverterUtilities {
                 for (int tPos = 0; tPos < timePositions; tPos++) {
                     for (int yPos = 0; yPos < latPositions; yPos++) {
                         for (int xPos = 0; xPos < lonPositions; xPos++) {
-                            byte sVal = originalVarData.getByte(varIndex.set(
-                                    tPos, yPos, xPos));
+                            byte sVal = originalVarData.getByte(varIndex.set(tPos, yPos, xPos));
                             if (findNewRange) {
-                                if (sVal >= max && sVal != fillValue)
-                                    max = sVal;
-                                if (sVal <= min && sVal != fillValue)
-                                    min = sVal;
+                                if (sVal >= max && sVal != fillValue) max = sVal;
+                                if (sVal <= min && sVal != fillValue) min = sVal;
                             }
                             // Flipping y
                             int newYpos = yPos;
@@ -593,30 +518,26 @@ public class NetCDFConverterUtilities {
                             if (flipY) {
                                 newYpos = latPositions - yPos - 1;
                             }
-                            destArray.setByte(destIndex
-                                    .set(tPos, newYpos, xPos), sVal);
+                            destArray.setByte(destIndex.set(tPos, newYpos, xPos), sVal);
                         }
                     }
                 }
             }
             ncFileOut.write(varName, destArray);
             if (findNewRange) {
-                Array range = NetCDFConverterUtilities
-                        .getRangeArray(varDataType);
+                Array range = NetCDFConverterUtilities.getRangeArray(varDataType);
 
                 Index index = range.getIndex();
                 range.setByte(index.set(0), min);
                 range.setByte(index.set(1), max);
-                ncFileOut.updateAttribute(ncFileOut.findVariable(varName),
-                        new Attribute(
-                                NetCDFUtilities.DatasetAttribs.VALID_RANGE,
-                                range));
+                ncFileOut.updateAttribute(
+                        ncFileOut.findVariable(varName),
+                        new Attribute(NetCDFUtilities.DatasetAttribs.VALID_RANGE, range));
             }
-            if (updateFillValue){
-                ncFileOut.updateAttribute(ncFileOut.findVariable(varName),
-                        new Attribute(
-                                NetCDFUtilities.DatasetAttribs.FILL_VALUE,
-                                new Byte(fillValue)));
+            if (updateFillValue) {
+                ncFileOut.updateAttribute(
+                        ncFileOut.findVariable(varName),
+                        new Attribute(NetCDFUtilities.DatasetAttribs.FILL_VALUE, new Byte(fillValue)));
             }
 
             // //
@@ -637,21 +558,17 @@ public class NetCDFConverterUtilities {
                     for (int levelPos = 0; levelPos < depthPositions; levelPos++) {
                         for (int yPos = 0; yPos < latPositions; yPos++) {
                             for (int xPos = 0; xPos < lonPositions; xPos++) {
-                                short sVal = originalVarData.getShort(varIndex
-                                        .set(tPos, levelPos, yPos, xPos));
+                                short sVal = originalVarData.getShort(varIndex.set(tPos, levelPos, yPos, xPos));
                                 if (findNewRange) {
-                                    if (sVal >= max && sVal != fillValue)
-                                        max = sVal;
-                                    if (sVal <= min && sVal != fillValue)
-                                        min = sVal;
+                                    if (sVal >= max && sVal != fillValue) max = sVal;
+                                    if (sVal <= min && sVal != fillValue) min = sVal;
                                 }
                                 int newYpos = yPos;
                                 // Flipping y
                                 if (flipY) {
                                     newYpos = latPositions - yPos - 1;
                                 }
-                                destArray.setShort(destIndex.set(tPos,
-                                        levelPos, newYpos, xPos), sVal);
+                                destArray.setShort(destIndex.set(tPos, levelPos, newYpos, xPos), sVal);
                             }
                         }
                     }
@@ -660,13 +577,10 @@ public class NetCDFConverterUtilities {
                 for (int tPos = 0; tPos < timePositions; tPos++) {
                     for (int yPos = 0; yPos < latPositions; yPos++) {
                         for (int xPos = 0; xPos < lonPositions; xPos++) {
-                            short sVal = originalVarData.getShort(varIndex.set(
-                                    tPos, yPos, xPos));
+                            short sVal = originalVarData.getShort(varIndex.set(tPos, yPos, xPos));
                             if (findNewRange) {
-                                if (sVal >= max && sVal != fillValue)
-                                    max = sVal;
-                                if (sVal <= min && sVal != fillValue)
-                                    min = sVal;
+                                if (sVal >= max && sVal != fillValue) max = sVal;
+                                if (sVal <= min && sVal != fillValue) min = sVal;
                             }
                             // Flipping y
                             int newYpos = yPos;
@@ -674,30 +588,26 @@ public class NetCDFConverterUtilities {
                             if (flipY) {
                                 newYpos = latPositions - yPos - 1;
                             }
-                            destArray.setShort(destIndex.set(tPos, newYpos,
-                                    xPos), sVal);
+                            destArray.setShort(destIndex.set(tPos, newYpos, xPos), sVal);
                         }
                     }
                 }
             }
             ncFileOut.write(varName, destArray);
             if (findNewRange) {
-                Array range = NetCDFConverterUtilities
-                        .getRangeArray(varDataType);
+                Array range = NetCDFConverterUtilities.getRangeArray(varDataType);
 
                 Index index = range.getIndex();
                 range.setShort(index.set(0), min);
                 range.setShort(index.set(1), max);
-                ncFileOut.updateAttribute(ncFileOut.findVariable(varName),
-                        new Attribute(
-                                NetCDFUtilities.DatasetAttribs.VALID_RANGE,
-                                range));
+                ncFileOut.updateAttribute(
+                        ncFileOut.findVariable(varName),
+                        new Attribute(NetCDFUtilities.DatasetAttribs.VALID_RANGE, range));
             }
-            if (updateFillValue){
-                ncFileOut.updateAttribute(ncFileOut.findVariable(varName),
-                        new Attribute(
-                                NetCDFUtilities.DatasetAttribs.FILL_VALUE,
-                                new Short(fillValue)));
+            if (updateFillValue) {
+                ncFileOut.updateAttribute(
+                        ncFileOut.findVariable(varName),
+                        new Attribute(NetCDFUtilities.DatasetAttribs.FILL_VALUE, new Short(fillValue)));
             }
         }
 
@@ -719,21 +629,17 @@ public class NetCDFConverterUtilities {
                     for (int levelPos = 0; levelPos < depthPositions; levelPos++) {
                         for (int yPos = 0; yPos < latPositions; yPos++) {
                             for (int xPos = 0; xPos < lonPositions; xPos++) {
-                                int sVal = originalVarData.getInt(varIndex.set(
-                                        tPos, levelPos, yPos, xPos));
+                                int sVal = originalVarData.getInt(varIndex.set(tPos, levelPos, yPos, xPos));
                                 if (findNewRange) {
-                                    if (sVal >= max && sVal != fillValue)
-                                        max = sVal;
-                                    if (sVal <= min && sVal != fillValue)
-                                        min = sVal;
+                                    if (sVal >= max && sVal != fillValue) max = sVal;
+                                    if (sVal <= min && sVal != fillValue) min = sVal;
                                 }
                                 int newYpos = yPos;
                                 // Flipping y
                                 if (flipY) {
                                     newYpos = latPositions - yPos - 1;
                                 }
-                                destArray.setInt(destIndex.set(tPos, levelPos,
-                                        newYpos, xPos), sVal);
+                                destArray.setInt(destIndex.set(tPos, levelPos, newYpos, xPos), sVal);
                             }
                         }
                     }
@@ -742,13 +648,10 @@ public class NetCDFConverterUtilities {
                 for (int tPos = 0; tPos < timePositions; tPos++) {
                     for (int yPos = 0; yPos < latPositions; yPos++) {
                         for (int xPos = 0; xPos < lonPositions; xPos++) {
-                            int sVal = originalVarData.getInt(varIndex.set(
-                                    tPos, yPos, xPos));
+                            int sVal = originalVarData.getInt(varIndex.set(tPos, yPos, xPos));
                             if (findNewRange) {
-                                if (sVal >= max && sVal != fillValue)
-                                    max = sVal;
-                                if (sVal <= min && sVal != fillValue)
-                                    min = sVal;
+                                if (sVal >= max && sVal != fillValue) max = sVal;
+                                if (sVal <= min && sVal != fillValue) min = sVal;
                             }
                             // Flipping y
                             int newYpos = yPos;
@@ -756,39 +659,34 @@ public class NetCDFConverterUtilities {
                             if (flipY) {
                                 newYpos = latPositions - yPos - 1;
                             }
-                            destArray.setInt(
-                                    destIndex.set(tPos, newYpos, xPos), sVal);
+                            destArray.setInt(destIndex.set(tPos, newYpos, xPos), sVal);
                         }
                     }
                 }
             }
             ncFileOut.write(varName, destArray);
             if (findNewRange) {
-                Array range = NetCDFConverterUtilities
-                        .getRangeArray(varDataType);
+                Array range = NetCDFConverterUtilities.getRangeArray(varDataType);
 
                 Index index = range.getIndex();
                 range.setInt(index.set(0), min);
                 range.setInt(index.set(1), max);
-                ncFileOut.updateAttribute(ncFileOut.findVariable(varName),
-                        new Attribute(
-                                NetCDFUtilities.DatasetAttribs.VALID_RANGE,
-                                range));
+                ncFileOut.updateAttribute(
+                        ncFileOut.findVariable(varName),
+                        new Attribute(NetCDFUtilities.DatasetAttribs.VALID_RANGE, range));
             }
-            if (updateFillValue){
-                ncFileOut.updateAttribute(ncFileOut.findVariable(varName),
-                        new Attribute(
-                                NetCDFUtilities.DatasetAttribs.FILL_VALUE,
-                                new Integer(fillValue)));
+            if (updateFillValue) {
+                ncFileOut.updateAttribute(
+                        ncFileOut.findVariable(varName),
+                        new Attribute(NetCDFUtilities.DatasetAttribs.FILL_VALUE, new Integer(fillValue)));
             }
 
-        } else
-            throw new IllegalArgumentException("Unsupported DataType");
+        } else throw new IllegalArgumentException("Unsupported DataType");
     }
 
     /**
      * Return true if the provided variable has a
-     * 
+     *
      * @param var
      * @param dimensionName
      * @return
@@ -805,54 +703,43 @@ public class NetCDFConverterUtilities {
         return hasDimension;
     }
 
-    public static boolean isFillValueOutsideValidRange(Attribute validMax,
-            Attribute validMin, Attribute fillValue, DataType dataType) {
+    public static boolean isFillValueOutsideValidRange(
+            Attribute validMax, Attribute validMin, Attribute fillValue, DataType dataType) {
         if (dataType == DataType.FLOAT) {
             final float min = validMin.getNumericValue().floatValue();
             final float max = validMax.getNumericValue().floatValue();
             final float fill = fillValue.getNumericValue().floatValue();
-            if (fill == min || fill == max)
-                return false;
-            else
-                return true;
+            if (fill == min || fill == max) return false;
+            else return true;
         } else if (dataType == DataType.DOUBLE) {
             final double min = validMin.getNumericValue().doubleValue();
             final double max = validMax.getNumericValue().doubleValue();
             final double fill = fillValue.getNumericValue().doubleValue();
-            if (fill == min || fill == max)
-                return false;
-            else
-                return true;
+            if (fill == min || fill == max) return false;
+            else return true;
         } else if (dataType == DataType.BYTE) {
             final byte min = validMin.getNumericValue().byteValue();
             final byte max = validMax.getNumericValue().byteValue();
             final byte fill = fillValue.getNumericValue().byteValue();
-            if (fill == min || fill == max)
-                return false;
-            else
-                return true;
+            if (fill == min || fill == max) return false;
+            else return true;
         } else if (dataType == DataType.SHORT) {
             final short min = validMin.getNumericValue().shortValue();
             final short max = validMax.getNumericValue().shortValue();
             final short fill = fillValue.getNumericValue().shortValue();
-            if (fill == min || fill == max)
-                return false;
-            else
-                return true;
+            if (fill == min || fill == max) return false;
+            else return true;
         } else if (dataType == DataType.INT) {
             final int min = validMin.getNumericValue().intValue();
             final int max = validMax.getNumericValue().intValue();
             final int fill = fillValue.getNumericValue().intValue();
-            if (fill == min || fill == max)
-                return false;
-            else
-                return true;
+            if (fill == min || fill == max) return false;
+            else return true;
         }
         throw new IllegalArgumentException("Actually unsupported Datatype");
     }
 
-    public static boolean isFillValueOutsideValidRange(Attribute validRange,
-            Attribute fillValue, DataType dataType) {
+    public static boolean isFillValueOutsideValidRange(Attribute validRange, Attribute fillValue, DataType dataType) {
         Array range = validRange.getValues();
         Index index = range.getIndex();
 
@@ -860,42 +747,32 @@ public class NetCDFConverterUtilities {
             final float min = range.getFloat(index.set(0));
             final float max = range.getFloat(index.set(1));
             final float fill = fillValue.getNumericValue().floatValue();
-            if (fill == min || fill == max)
-                return false;
-            else
-                return true;
+            if (fill == min || fill == max) return false;
+            else return true;
         } else if (dataType == DataType.DOUBLE) {
             final double min = range.getDouble(index.set(0));
             final double max = range.getDouble(index.set(1));
             final double fill = fillValue.getNumericValue().doubleValue();
-            if (fill == min || fill == max)
-                return false;
-            else
-                return true;
+            if (fill == min || fill == max) return false;
+            else return true;
         } else if (dataType == DataType.BYTE) {
             final byte min = range.getByte(index.set(0));
             final byte max = range.getByte(index.set(1));
             final byte fill = fillValue.getNumericValue().byteValue();
-            if (fill == min || fill == max)
-                return false;
-            else
-                return true;
+            if (fill == min || fill == max) return false;
+            else return true;
         } else if (dataType == DataType.SHORT) {
             final short min = range.getShort(index.set(0));
             final short max = range.getShort(index.set(1));
             final short fill = fillValue.getNumericValue().shortValue();
-            if (fill == min || fill == max)
-                return false;
-            else
-                return true;
+            if (fill == min || fill == max) return false;
+            else return true;
         } else if (dataType == DataType.INT) {
             final int min = range.getInt(index.set(0));
             final int max = range.getInt(index.set(1));
             final int fill = fillValue.getNumericValue().intValue();
-            if (fill == min || fill == max)
-                return false;
-            else
-                return true;
+            if (fill == min || fill == max) return false;
+            else return true;
         }
         throw new IllegalArgumentException("Actually unsupported Datatype");
     }

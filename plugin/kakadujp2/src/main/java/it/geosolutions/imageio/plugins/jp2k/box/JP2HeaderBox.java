@@ -18,25 +18,21 @@ package it.geosolutions.imageio.plugins.jp2k.box;
 
 import javax.imageio.metadata.IIOMetadataNode;
 
-
-/**
- * This class is defined to represent an Image Header Box of JPEG JP2 file
- * format. 
- */
+/** This class is defined to represent an Image Header Box of JPEG JP2 file format. */
 @SuppressWarnings("serial")
 public class JP2HeaderBox extends DefaultJP2KBox {
 
     public static final int BOX_TYPE = 0x6A703268;
 
-    public final static String NAME = "jp2h";
+    public static final String NAME = "jp2h";
 
-    public final static String JP2K_MD_NAME = "JP2KJP2HeaderBox";
+    public static final String JP2K_MD_NAME = "JP2KJP2HeaderBox";
 
     /** Create a JP2 Header Box using the content data. */
     public JP2HeaderBox(byte[] data) {
         super(8 + data.length, BOX_TYPE, data);
     }
-    
+
     public IIOMetadataNode getNativeNode() {
         String name = BoxUtilities.getName(getType());
         IIOMetadataNode node = new IIOMetadataNode(name);

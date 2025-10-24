@@ -1,9 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
-  <project xmlns="http://maven.apache.org/POM/4.0.0"
-           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                               http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                                http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
+  <!-- ======================================================== -->
+  <!--                    Project Description                   -->
+  <!-- ======================================================== -->
+  <groupId>it.geosolutions.imageio-ext</groupId>
+  <artifactId>imageio-ext</artifactId>
+  <version>2.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>GeoSolutions Image I/O-Extensions Library Root Project</name>
+
+  <description>Container for tools and extensions to Image I/O project</description>
+  <inceptionYear>2006</inceptionYear>
+  <organization>
+    <name>GeoSolutions</name>
+    <url>https://www.geosolutionsgroup.com</url>
+  </organization>
+  <licenses>
+    <license>
+      <name>Lesser General Public License (LGPL)</name>
+      <url>http://www.gnu.org/copyleft/lesser.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <!-- ======================================================== -->
+  <!--                 Developers and contributors              -->
+  <!-- ======================================================== -->
+  <developers>
+    <developer>
+      <id>AlFa</id>
+      <name>Alessio Fabiani</name>
+      <email>alessio.fabiani@geo-solutions.it</email>
+      <organization>GeoSolutions</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>Simboss</id>
+      <name>Simone Giannecchini</name>
+      <email>simone.giannecchini@geo-solutions.it</email>
+      <organization>GeoSolutions</organization>
+      <roles>
+        <role>Java Developer</role>
+        <role>Project Architect</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>Daniele</id>
+      <name>Daniele Romagnoli</name>
+      <email>daniele.romagnoli@geo-solutions.it</email>
+      <organization>GeoSolutions</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+  </developers>
+
+  <!-- ========================================================== -->
+  <!--   Modules for the build in approximate dependency order    -->
+  <!-- ========================================================== -->
+  <modules>
+    <module>library</module>
+    <module>plugin</module>
+  </modules>
+
+  <scm>
+    <connection>scm:git:git://github.com/geosolutions-it/imageio-ext/</connection>
+    <url>https://github.com/geosolutions-it/imageio-ext/tree/master/</url>
+  </scm>
 
   <!--                    -->
   <!--    PROPERTIES      -->
@@ -29,412 +96,6 @@
     <spotless.apply.skip>false</spotless.apply.skip>
   </properties>
 
-  <!-- ======================================================== -->
-  <!--                    Project Description                   -->
-  <!-- ======================================================== -->
-  <groupId>it.geosolutions.imageio-ext</groupId>
-  <artifactId>imageio-ext</artifactId>
-  <packaging>pom</packaging>
-  <version>2.0-SNAPSHOT</version>
-  <name>GeoSolutions Image I/O-Extensions Library Root Project</name>
-
-  <scm>
-    <connection>
-      scm:git:git://github.com/geosolutions-it/imageio-ext/
-    </connection>
-    <url>https://github.com/geosolutions-it/imageio-ext/tree/master/</url>
-  </scm>
-
-  <description>Container for tools and extensions to Image I/O project</description>
-  <organization>
-    <name>GeoSolutions</name>
-    <url>https://www.geosolutionsgroup.com</url>
-  </organization>
-  <inceptionYear>2006</inceptionYear>
-  <licenses>
-    <license>
-      <name>Lesser General Public License (LGPL)</name>
-      <url>http://www.gnu.org/copyleft/lesser.txt</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-  
-  <!-- ======================================================== -->
-  <!--                 Deployment Repository                    -->
-  <!-- ======================================================== -->
-  
-  <profiles>
-   <profile>
-     <id>deployosgeo</id>
-       <distributionManagement>
-         <repository>
-             <uniqueVersion>false</uniqueVersion>
-             <id>nexus</id>
-             <name>OSGeo Release Repository</name>
-             <url>https://repo.osgeo.org/repository/geotools-releases/</url>
-         </repository>
-         <snapshotRepository>
-             <uniqueVersion>false</uniqueVersion>
-             <id>nexus</id>
-             <name>OSGeo Snapshot Repository</name>
-             <url>https://repo.osgeo.org/repository/geotools-snapshots/</url>
-         </snapshotRepository>
-       </distributionManagement>
-   </profile>
-  <!--..................................-->
-  <!--      GeoSolutions Repository     -->
-  <!--..................................-->
-   <profile>
-    <id>deploygeosolutions</id>
-     <distributionManagement>  
-      <repository>
-       <uniqueVersion>false</uniqueVersion>
-       <id>geosolutions</id>
-       <url>ftp://demo.geo-solutions.it</url>
-      </repository>
-    </distributionManagement>
-   </profile>
-     <!-- Profiles set on the command-line overwrite default properties. -->
-    <profile>
-      <id>extensive.tests</id>
-      <properties>
-        <extensive.tests>true</extensive.tests>
-      </properties>
-    </profile>
-    <profile>
-      <id>interactive.tests</id>
-      <properties>
-        <interactive.tests>true</interactive.tests>
-      </properties>
-    </profile>
-    <profile>
-	<id>release</id>
-		<activation>
-			<property>
-				<name>release</name>
-			</property>
-		</activation>
-		 <build>
-    <plugins>
-
-      <!-- grab an ImageIO-Ext dependency to figure out its version -->
-      <plugin>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-dependencies</id>
-            <phase>package</phase>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-              <includeGroupIds>it.geosolutions.imageio-ext</includeGroupIds>
-              <includeArtifactIds>imageio-ext-gdalframework</includeArtifactIds>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-    </build>
-    <modules>
-      <module>release</module>
-    </modules>
-  </profile>
-    <profile>
-      <!-- compiler options when building with JDK 8 -->
-      <id>jdk-8</id>
-      <activation>
-        <jdk>1.8</jdk>
-      </activation>
-      <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-      </properties>
-    </profile>
-    <profile>
-      <!-- compiler options when building with JDK 9+ -->
-      <id>jdk-9-plus</id>
-      <activation>
-        <jdk>[9,)</jdk>
-      </activation>
-      <properties>
-        <compiler.jvm.args>
-          --add-exports jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED
-          --add-exports jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED
-          --add-exports jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED
-          --add-exports jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED
-          --add-exports jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED
-          --add-exports jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED
-          --add-exports jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED
-          --add-exports jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED
-          --add-opens jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED
-          --add-opens jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED
-        </compiler.jvm.args>
-        <surefire.jvm.args>
-          --add-opens java.base/java.lang=ALL-UNNAMED
-          --add-opens java.base/java.util=ALL-UNNAMED
-          --add-opens java.desktop/java.awt.image=ALL-UNNAMED
-          --add-opens java.desktop/javax.imageio.stream=ALL-UNNAMED
-          --add-opens java.desktop/javax.imageio=ALL-UNNAMED
-          --add-exports java.desktop/com.sun.imageio.plugins.jpeg=ALL-UNNAMED
-          --add-exports java.desktop/com.sun.imageio.plugins.png=ALL-UNNAMED
-        </surefire.jvm.args>
-      </properties>
-    </profile>
-    <!-- code coverage -->
-    <profile>
-      <id>jacoco</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.jacoco</groupId>
-            <artifactId>jacoco-maven-plugin</artifactId>
-            <version>${jacoco.version}</version>
-            <executions>
-              <execution>
-                <id>pre-unit-test</id>
-                <goals>
-                  <goal>prepare-agent</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>post-unit-test</id>
-                <phase>test</phase>
-                <goals>
-                  <goal>report</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
-
-  <reporting>
-    <plugins>
-      <!-- ======================================================= -->
-      <!--     Javadoc generation.                                 -->
-      <!--                                                         -->
-      <!--     Notes:                                              -->
-      <!--       Do NOT enable deep copying of "doc-files"         -->
-      <!--       directories ("-docfilessubdirs" option), because  -->
-      <!--       it has the unwanted side effect to copy .svn      -->
-      <!--       directories as well.                              -->
-      <!--                                                         -->
-      <!--       Do NOT link source code, because it duplicates    -->
-      <!--       jxr-maven-plugin.                                 -->
-      <!--                                                         -->
-      <!--       <sourcepath/> and <subpackages/> elements do not  -->
-      <!--       seem to work with aggregated javadoc.             -->
-      <!--                                                         -->
-      <!-- ======================================================= -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        
-        <configuration>
-            <!-- Necessary to enable javadoc to handle J2SE 1.4 features. -->
-          <source>1.8</source>
-            <!-- Specifies whether or not the version text is included.-->
-          <version>false</version>
-            <!-- Omit qualifying package name before class names in output.-->
-          <noqualifier>all</noqualifier>
-            <!-- Shuts off non-error and non-warning messages.-->
-          <quiet>true</quiet>
-            <!-- The maximum Java heap size to be used to run javadoc. -->
-          <maxmemory>512M</maxmemory>
-            <!-- Specifies the encoding name of the source files.-->
-          <encoding>ISO-8859-1</encoding>
-            <!-- Whether to build an aggregated report at the root.-->
-          <aggregate>true</aggregate>
-          
-          <!-- Set an additional parameter for the command line. -->
-          <additionalparam>-keywords</additionalparam> 
-          <breakiterator>true</breakiterator>
-          <excludePackageNames>
-            org.geotools.resources:org.geotools.maven:com
-          </excludePackageNames>
-
-          <!-- Enables the Javadoc tool to interpret a simple, one-argument -->
-          <!-- custom block tag tagname in doc comments. Note: <placement/> -->
-          <!-- should be a combinaison of the letters Xaoptcmf.             -->
-          <tags>
-            <tag>
-              <name>todo</name>
-              <placement>a</placement>
-              <head>TODO:</head>
-            </tag>
-            <tag>
-              <name>todo:</name>
-              <placement>a</placement>
-              <head>TODO:</head>
-            </tag>
-            <tag>
-              <name>TODO</name>
-              <placement>a</placement>
-              <head>TODO:</head>
-            </tag>
-            <tag>
-              <name>task</name>
-              <placement>tfmc</placement>
-              <head>TODO:</head>
-            </tag>
-            <tag>
-              <name>UML</name>
-              <placement>a</placement>
-              <head>UML:</head>
-            </tag>
-            <tag>
-              <name>uml.property</name>
-              <placement>a</placement>
-              <head>UML property:</head>
-            </tag>
-          </tags>
-
-          <!-- Separates packages on the overview page into the    -->
-          <!-- groups  specified.                                  -->
-          <groups>
-            <group>
-              <title>GDAL Framework</title>
-              <packages>
-                it.geosolutions.imageio.gdalframework
-              </packages>
-            </group>
-            <group>
-              <title>Plugins</title>
-              <packages>
-                it.geosolutions.imageio.plugins.*
-              </packages>
-            </group>
-            <group>
-              <title>Custom Streams</title>
-              <packages>it.geosolutions.imageio.stream*:it.geosolutions.io*</packages>
-            </group>
-           </groups>
-        </configuration>
-      </plugin>
-
-      <!-- ======================================================= -->
-      <!--     Web site generation.                                -->
-      <!-- ======================================================= -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-plugin</artifactId>
-        <configuration>
-          <locales>en</locales>
-        </configuration>
-      </plugin>
-
-      <!-- basic project information -->
-      <plugin>
-       <artifactId>maven-project-info-reports-plugin</artifactId>
-      </plugin>
-      
-      <!-- jacoco plugin (test code coverage reports) -->
-      <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-        <version>${jacoco.version}</version>
-        <configuration>
-          <formats>
-            <format>HTML</format>
-            <format>XML</format>
-          </formats>
-        </configuration>
-      </plugin>
-
-    </plugins>
-  </reporting>
-   
-  <!-- ======================================================== -->
-  <!--                 Developers and contributors              -->
-  <!-- ======================================================== -->
-  <developers>
-    <developer>
-      <name>Alessio Fabiani</name>
-      <id>AlFa</id>
-      <email>alessio.fabiani@geo-solutions.it</email>
-      <organization>GeoSolutions</organization>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-    </developer>
-    <developer>
-      <name>Simone Giannecchini</name>
-      <id>Simboss</id>
-      <email>simone.giannecchini@geo-solutions.it</email>
-      <organization>GeoSolutions</organization>
-      <roles>
-        <role>Java Developer</role>
-        <role>Project Architect</role>
-      </roles>
-    </developer>
-    <developer>
-      <name>Daniele Romagnoli</name>
-      <id>Daniele</id>
-      <email>daniele.romagnoli@geo-solutions.it</email>
-      <organization>GeoSolutions</organization>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-    </developer>
-  </developers>
-
-  <!-- ======================================================== -->
-  <!--                     Plugin Repositories                  -->
-  <!-- ======================================================== -->
-  <pluginRepositories>
-    <pluginRepository>
-      <id>osgeo</id>
-      <name>OSGeo Nexus Maven Repository</name>
-      <url>https://repo.osgeo.org/repository/release/</url>
-      <snapshots><enabled>false</enabled></snapshots>
-      <releases><enabled>true</enabled></releases>
-    </pluginRepository>
-    <pluginRepository>
-      <id>osgeo-snapshot</id>
-      <name>OSGeo Nexus Maven Repository</name>
-      <url>https://repo.osgeo.org/repository/snapshot/</url>
-      <snapshots><enabled>true</enabled></snapshots>
-      <releases><enabled>false</enabled></releases>
-    </pluginRepository>
-  </pluginRepositories>
-
-  <!-- ======================================================== -->
-  <!--                         Repositories                     -->
-  <!-- ======================================================== -->
-  <repositories> 
-     <!-- Maven Central is assumed -->
-    <repository>
-      <id>geosolutions</id>
-      <name>GeoSolutions libraries repository</name>
-      <url>https://maven.geo-solutions.it/</url>
-    </repository>
-    <repository>
-      <id>jboss</id>
-      <name>jboss</name>
-      <url>https://repository.jboss.org/maven2/</url>
-    </repository>
-    <repository>
-      <id>osgeo</id>
-      <name>OSGeo Nexus Release Repository</name>
-      <url>https://repo.osgeo.org/repository/release/</url>
-      <!-- contains release (including third-party-dependences)                            -->
-      <!-- ucar (https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases) -->
-      <!-- geosolutions (http://maven.geo-solutions.it/)                                   -->
-      <snapshots><enabled>false</enabled></snapshots>
-      <releases><enabled>true</enabled></releases>
-    </repository>
-    <repository>
-      <id>osgeo-snapshot</id>
-      <name>OSGeo Nexus Snapshot Repository</name>
-      <url>https://repo.osgeo.org/repository/snapshot/</url>
-      <snapshots><enabled>true</enabled></snapshots>
-      <releases><enabled>false</enabled></releases>
-    </repository>
-  </repositories>
-
   <!--                                                                       -->
   <!--     Dependencies management.                                          -->
   <!--     If a POM declares one of those dependencies, then it will use     -->
@@ -443,35 +104,35 @@
   <!--                                                                       -->
   <dependencyManagement>
     <dependencies>
-     <!-- Tests or legacy -->
-     <dependency>
-       <groupId>org.eclipse.imagen</groupId>
-       <artifactId>imagen-core</artifactId>
-       <version>${imagen.version}</version>
-     </dependency>
-     <dependency>
-         <groupId>org.eclipse.imagen</groupId>
-         <artifactId>imageread</artifactId>
-         <version>${imagen.version}</version>
-     </dependency>
-     <dependency>
-         <groupId>org.eclipse.imagen</groupId>
-         <artifactId>rendered-image-browser</artifactId>
-         <version>${imagen.version}</version>
-     </dependency>
-     <dependency>
-         <groupId>org.eclipse.imagen</groupId>
-         <artifactId>bandmerge</artifactId>
-         <version>${imagen.version}</version>
-         <scope>test</scope>
-     </dependency>
-     <dependency>
-         <groupId>org.eclipse.imagen</groupId>
-         <artifactId>mosaic</artifactId>
-         <version>${imagen.version}</version>
-         <scope>test</scope>
-     </dependency>
-     <dependency>
+      <!-- Tests or legacy -->
+      <dependency>
+        <groupId>org.eclipse.imagen</groupId>
+        <artifactId>imagen-core</artifactId>
+        <version>${imagen.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.imagen</groupId>
+        <artifactId>imageread</artifactId>
+        <version>${imagen.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.imagen</groupId>
+        <artifactId>rendered-image-browser</artifactId>
+        <version>${imagen.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.imagen</groupId>
+        <artifactId>bandmerge</artifactId>
+        <version>${imagen.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.imagen</groupId>
+        <artifactId>mosaic</artifactId>
+        <version>${imagen.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>4.13.1</version>
@@ -493,59 +154,152 @@
        <artifactId>imageio-ext-gdal-bindings</artifactId>
        <version>${gdal.version}</version>
      </dependency-->
-     <dependency>
-       <groupId>it.geosolutions.imageio-ext</groupId>
-       <artifactId>imageio-ext-kakadujni</artifactId>
-       <version>${kakadu.version}</version>
-     </dependency>
-     <dependency>
-       <groupId>it.geosolutions.imageio-ext</groupId>
-       <artifactId>imageio-ext-kakadu</artifactId>
-       <version>${project.version}</version>
-     </dependency>
-     <dependency>
-       <groupId>it.geosolutions.imageio-ext</groupId>
-       <artifactId>imageio-ext-test-data</artifactId>
-       <version>${project.version}</version>
-     </dependency>
-     <dependency>
-      <groupId>it.geosolutions.imageio-ext</groupId>
-      <artifactId>imageio-ext-streams</artifactId>
-      <version>${project.version}</version>
-     </dependency>
-     <dependency>
-      <groupId>it.geosolutions.imageio-ext</groupId>
-      <artifactId>imageio-ext-utilities</artifactId>
-      <version>${project.version}</version>
-     </dependency>
-     <dependency>
-      <groupId>me.steinborn</groupId>
-      <artifactId>libdeflate-java-core</artifactId>
-      <version>${libdeflate.java.version}</version>
-     </dependency>
+      <dependency>
+        <groupId>it.geosolutions.imageio-ext</groupId>
+        <artifactId>imageio-ext-kakadujni</artifactId>
+        <version>${kakadu.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>it.geosolutions.imageio-ext</groupId>
+        <artifactId>imageio-ext-kakadu</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>it.geosolutions.imageio-ext</groupId>
+        <artifactId>imageio-ext-test-data</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>it.geosolutions.imageio-ext</groupId>
+        <artifactId>imageio-ext-streams</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>it.geosolutions.imageio-ext</groupId>
+        <artifactId>imageio-ext-utilities</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>me.steinborn</groupId>
+        <artifactId>libdeflate-java-core</artifactId>
+        <version>${libdeflate.java.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
-  
- <dependencies>
-  <!-- Tests or legacy -->
-  <dependency>
-    <groupId>org.eclipse.imagen</groupId>
-    <artifactId>imagen-core</artifactId>
-  </dependency>
-  <dependency>
-	<groupId>junit</groupId>
-	<artifactId>junit</artifactId>
-	<scope>test</scope>
-  </dependency>
-</dependencies>
 
+  <dependencies>
+    <!-- Tests or legacy -->
+    <dependency>
+      <groupId>org.eclipse.imagen</groupId>
+      <artifactId>imagen-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <!-- ======================================================== -->
+  <!--                         Repositories                     -->
+  <!-- ======================================================== -->
+  <repositories>
+    <!-- Maven Central is assumed -->
+    <repository>
+      <id>geosolutions</id>
+      <name>GeoSolutions libraries repository</name>
+      <url>https://maven.geo-solutions.it/</url>
+    </repository>
+    <repository>
+      <id>jboss</id>
+      <name>jboss</name>
+      <url>https://repository.jboss.org/maven2/</url>
+    </repository>
+    <repository>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <!-- contains release (including third-party-dependences)                            -->
+      <!-- ucar (https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases) -->
+      <!-- geosolutions (http://maven.geo-solutions.it/)                                   -->
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>osgeo</id>
+      <name>OSGeo Nexus Release Repository</name>
+      <url>https://repo.osgeo.org/repository/release/</url>
+    </repository>
+    <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>osgeo-snapshot</id>
+      <name>OSGeo Nexus Snapshot Repository</name>
+      <url>https://repo.osgeo.org/repository/snapshot/</url>
+    </repository>
+  </repositories>
+
+  <!-- ======================================================== -->
+  <!--                     Plugin Repositories                  -->
+  <!-- ======================================================== -->
+  <pluginRepositories>
+    <pluginRepository>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>osgeo</id>
+      <name>OSGeo Nexus Maven Repository</name>
+      <url>https://repo.osgeo.org/repository/release/</url>
+    </pluginRepository>
+    <pluginRepository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>osgeo-snapshot</id>
+      <name>OSGeo Nexus Maven Repository</name>
+      <url>https://repo.osgeo.org/repository/snapshot/</url>
+    </pluginRepository>
+  </pluginRepositories>
 
   <!-- ======================================================== -->
   <!--                                                          -->
   <!--                   Build Configuration                    -->
   <!--                                                          -->
   <!-- ======================================================== -->
- <build>
+  <build>
+
+    <!-- ======================================================== -->
+    <!--              Extensions settings for Deployment          -->
+    <!-- ======================================================== -->
+    <extensions>
+
+      <!--.............................................-->
+      <!--       geo-solutions (using wagon ftp)       -->
+      <!--.............................................-->
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-ftp</artifactId>
+        <version>1.0-beta-2</version>
+      </extension>
+
+      <!--....................................-->
+      <!--        (using wagon webdav)        -->
+      <!--....................................-->
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-webdav</artifactId>
+        <version>1.0-beta-2</version>
+      </extension>
+    </extensions>
     <!-- ========================================================= -->
     <!--   Maven plugins dependencies management.                  -->
     <!--   It should not be needed since Maven select by default   -->
@@ -560,14 +314,14 @@
     <pluginManagement>
       <plugins>
         <plugin>
-           <groupId>org.apache.maven.plugins</groupId>
-           <artifactId>maven-eclipse-plugin</artifactId>
-           <version>2.10</version>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-eclipse-plugin</artifactId>
+          <version>2.10</version>
         </plugin>
         <plugin>
-           <groupId>org.apache.maven.plugins</groupId>
-           <artifactId>maven-compiler-plugin</artifactId>
-           <version>3.14.0</version>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.14.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -611,7 +365,7 @@
         </plugin>
       </plugins>
     </pluginManagement>
-   
+
     <plugins>
       <!-- ======================================================= -->
       <!--                      Compilation.                       -->
@@ -620,10 +374,14 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>11</source>  <!-- The -source argument for the Java compiler. -->
-          <target>11</target>  <!-- The -target argument for the Java compiler. -->
-          <debug>true</debug>   <!-- Whether to include debugging information.   -->
-          <encoding>ISO-8859-1</encoding> <!-- The -encoding argument for the Java compiler. -->
+          <source>11</source>
+          <!-- The -source argument for the Java compiler. -->
+          <target>11</target>
+          <!-- The -target argument for the Java compiler. -->
+          <debug>true</debug>
+          <!-- Whether to include debugging information.   -->
+          <encoding>ISO-8859-1</encoding>
+          <!-- The -encoding argument for the Java compiler. -->
         </configuration>
       </plugin>
       <!-- ======================================================= -->
@@ -638,37 +396,37 @@
           </includes>
           <forkCount>1</forkCount>
           <argLine>-Xmx${test.maxHeapSize} -enableassertions -Dtest.extensive=${extensive.tests} -Dtest.interactive=${interactive.tests} -Djava.awt.headless=${java.awt.headless}  -XX:+IgnoreUnrecognizedVMOptions --illegal-access=debug ${surefire.jvm.args}</argLine>
-         </configuration>
+        </configuration>
       </plugin>
-      
+
       <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-source-plugin</artifactId>
-          <inherited>true</inherited>
-          <configuration>
-           <attach>true</attach>
-          </configuration>
-          <executions>
-           <execution>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
             <id>attach-sources</id>
             <goals>
-             <goal>jar</goal>
+              <goal>jar</goal>
             </goals>
-           </execution>
-          </executions>
-     </plugin>
-     <!-- artifact assembly -->
-     <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-assembly-plugin</artifactId>
-          <configuration>
-           <descriptors>
+          </execution>
+        </executions>
+        <inherited>true</inherited>
+        <configuration>
+          <attach>true</attach>
+        </configuration>
+      </plugin>
+      <!-- artifact assembly -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptors>
             <descriptor>release/src.xml</descriptor>
             <descriptor>release/javadoc.xml</descriptor>
-           </descriptors>
-           <finalName>imageio-ext-${project.version}</finalName>
-           <outputDirectory>${project.build.directory}/release</outputDirectory>
-          </configuration>
+          </descriptors>
+          <finalName>imageio-ext-${project.version}</finalName>
+          <outputDirectory>${project.build.directory}/release</outputDirectory>
+        </configuration>
       </plugin>
 
       <!-- doc-include-spotless-plugin-start (marker comment for documentation literalinclude directive) -->
@@ -719,39 +477,284 @@
         </configuration>
       </plugin>
 
-      
     </plugins>
-   
-  <!-- ======================================================== -->
-  <!--              Extensions settings for Deployment          -->
-  <!-- ======================================================== -->
-   <extensions>
-    
-    <!--.............................................-->
-    <!--       geo-solutions (using wagon ftp)       -->
-    <!--.............................................-->
-      <extension>                                  
-       <groupId>org.apache.maven.wagon</groupId>   
-       <artifactId>wagon-ftp</artifactId>           
-       <version>1.0-beta-2</version>               
-      </extension>                                
-   
-    <!--....................................-->
-    <!--        (using wagon webdav)        -->
-    <!--....................................-->
-      <extension>
-       <groupId>org.apache.maven.wagon</groupId>
-       <artifactId>wagon-webdav</artifactId>
-       <version>1.0-beta-2</version>
-     </extension>
-   </extensions>
   </build>
-  
-  <!-- ========================================================== -->
-  <!--   Modules for the build in approximate dependency order    -->
-  <!-- ========================================================== -->
-  <modules>
-    <module>library</module>
-    <module>plugin</module>
-  </modules>
+
+  <reporting>
+    <plugins>
+      <!-- ======================================================= -->
+      <!--     Javadoc generation.                                 -->
+      <!--                                                         -->
+      <!--     Notes:                                              -->
+      <!--       Do NOT enable deep copying of "doc-files"         -->
+      <!--       directories ("-docfilessubdirs" option), because  -->
+      <!--       it has the unwanted side effect to copy .svn      -->
+      <!--       directories as well.                              -->
+      <!--                                                         -->
+      <!--       Do NOT link source code, because it duplicates    -->
+      <!--       jxr-maven-plugin.                                 -->
+      <!--                                                         -->
+      <!--       <sourcepath/> and <subpackages/> elements do not  -->
+      <!--       seem to work with aggregated javadoc.             -->
+      <!--                                                         -->
+      <!-- ======================================================= -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+
+        <configuration>
+          <!-- Necessary to enable javadoc to handle J2SE 1.4 features. -->
+          <source>1.8</source>
+          <!-- Specifies whether or not the version text is included.-->
+          <version>false</version>
+          <!-- Omit qualifying package name before class names in output.-->
+          <noqualifier>all</noqualifier>
+          <!-- Shuts off non-error and non-warning messages.-->
+          <quiet>true</quiet>
+          <!-- The maximum Java heap size to be used to run javadoc. -->
+          <maxmemory>512M</maxmemory>
+          <!-- Specifies the encoding name of the source files.-->
+          <encoding>ISO-8859-1</encoding>
+          <!-- Whether to build an aggregated report at the root.-->
+          <aggregate>true</aggregate>
+
+          <!-- Set an additional parameter for the command line. -->
+          <additionalparam>-keywords</additionalparam>
+          <breakiterator>true</breakiterator>
+          <excludePackageNames>org.geotools.resources:org.geotools.maven:com</excludePackageNames>
+
+          <!-- Enables the Javadoc tool to interpret a simple, one-argument -->
+          <!-- custom block tag tagname in doc comments. Note: <placement/> -->
+          <!-- should be a combinaison of the letters Xaoptcmf.             -->
+          <tags>
+            <tag>
+              <name>todo</name>
+              <placement>a</placement>
+              <head>TODO:</head>
+            </tag>
+            <tag>
+              <name>todo:</name>
+              <placement>a</placement>
+              <head>TODO:</head>
+            </tag>
+            <tag>
+              <name>TODO</name>
+              <placement>a</placement>
+              <head>TODO:</head>
+            </tag>
+            <tag>
+              <name>task</name>
+              <placement>tfmc</placement>
+              <head>TODO:</head>
+            </tag>
+            <tag>
+              <name>UML</name>
+              <placement>a</placement>
+              <head>UML:</head>
+            </tag>
+            <tag>
+              <name>uml.property</name>
+              <placement>a</placement>
+              <head>UML property:</head>
+            </tag>
+          </tags>
+
+          <!-- Separates packages on the overview page into the    -->
+          <!-- groups  specified.                                  -->
+          <groups>
+            <group>
+              <title>GDAL Framework</title>
+              <packages>it.geosolutions.imageio.gdalframework</packages>
+            </group>
+            <group>
+              <title>Plugins</title>
+              <packages>it.geosolutions.imageio.plugins.*</packages>
+            </group>
+            <group>
+              <title>Custom Streams</title>
+              <packages>it.geosolutions.imageio.stream*:it.geosolutions.io*</packages>
+            </group>
+          </groups>
+        </configuration>
+      </plugin>
+
+      <!-- ======================================================= -->
+      <!--     Web site generation.                                -->
+      <!-- ======================================================= -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <configuration>
+          <locales>en</locales>
+        </configuration>
+      </plugin>
+
+      <!-- basic project information -->
+      <plugin>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+      </plugin>
+
+      <!-- jacoco plugin (test code coverage reports) -->
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco.version}</version>
+        <configuration>
+          <formats>
+            <format>HTML</format>
+            <format>XML</format>
+          </formats>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </reporting>
+
+  <!-- ======================================================== -->
+  <!--                 Deployment Repository                    -->
+  <!-- ======================================================== -->
+
+  <profiles>
+    <profile>
+      <id>deployosgeo</id>
+      <distributionManagement>
+        <repository>
+          <uniqueVersion>false</uniqueVersion>
+          <id>nexus</id>
+          <name>OSGeo Release Repository</name>
+          <url>https://repo.osgeo.org/repository/geotools-releases/</url>
+        </repository>
+        <snapshotRepository>
+          <uniqueVersion>false</uniqueVersion>
+          <id>nexus</id>
+          <name>OSGeo Snapshot Repository</name>
+          <url>https://repo.osgeo.org/repository/geotools-snapshots/</url>
+        </snapshotRepository>
+      </distributionManagement>
+    </profile>
+    <!--..................................-->
+    <!--      GeoSolutions Repository     -->
+    <!--..................................-->
+    <profile>
+      <id>deploygeosolutions</id>
+      <distributionManagement>
+        <repository>
+          <uniqueVersion>false</uniqueVersion>
+          <id>geosolutions</id>
+          <url>ftp://demo.geo-solutions.it</url>
+        </repository>
+      </distributionManagement>
+    </profile>
+    <!-- Profiles set on the command-line overwrite default properties. -->
+    <profile>
+      <id>extensive.tests</id>
+      <properties>
+        <extensive.tests>true</extensive.tests>
+      </properties>
+    </profile>
+    <profile>
+      <id>interactive.tests</id>
+      <properties>
+        <interactive.tests>true</interactive.tests>
+      </properties>
+    </profile>
+    <profile>
+      <id>release</id>
+      <activation>
+        <property>
+          <name>release</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+
+          <!-- grab an ImageIO-Ext dependency to figure out its version -->
+          <plugin>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>copy-dependencies</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>copy-dependencies</goal>
+                </goals>
+                <configuration>
+                  <includeGroupIds>it.geosolutions.imageio-ext</includeGroupIds>
+                  <includeArtifactIds>imageio-ext-gdalframework</includeArtifactIds>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+      <modules>
+        <module>release</module>
+      </modules>
+    </profile>
+    <profile>
+      <!-- compiler options when building with JDK 8 -->
+      <id>jdk-8</id>
+      <activation>
+        <jdk>1.8</jdk>
+      </activation>
+      <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+      </properties>
+    </profile>
+    <profile>
+      <!-- compiler options when building with JDK 9+ -->
+      <id>jdk-9-plus</id>
+      <activation>
+        <jdk>[9,)</jdk>
+      </activation>
+      <properties>
+        <compiler.jvm.args>--add-exports jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED
+          --add-exports jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED
+          --add-exports jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED
+          --add-exports jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED
+          --add-exports jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED
+          --add-exports jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED
+          --add-exports jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED
+          --add-exports jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED
+          --add-opens jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED
+          --add-opens jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</compiler.jvm.args>
+        <surefire.jvm.args>--add-opens java.base/java.lang=ALL-UNNAMED
+          --add-opens java.base/java.util=ALL-UNNAMED
+          --add-opens java.desktop/java.awt.image=ALL-UNNAMED
+          --add-opens java.desktop/javax.imageio.stream=ALL-UNNAMED
+          --add-opens java.desktop/javax.imageio=ALL-UNNAMED
+          --add-exports java.desktop/com.sun.imageio.plugins.jpeg=ALL-UNNAMED
+          --add-exports java.desktop/com.sun.imageio.plugins.png=ALL-UNNAMED</surefire.jvm.args>
+      </properties>
+    </profile>
+    <!-- code coverage -->
+    <profile>
+      <id>jacoco</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>${jacoco.version}</version>
+            <executions>
+              <execution>
+                <id>pre-unit-test</id>
+                <goals>
+                  <goal>prepare-agent</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>post-unit-test</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>report</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

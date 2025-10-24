@@ -17,14 +17,12 @@
 package it.geosolutions.imageio.plugins.jp2k;
 
 import it.geosolutions.imageio.imageioimpl.EnhancedImageReadParam;
-
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageTypeSpecifier;
 
 /**
- * Class extending {@link ImageReadParam} with add for support of JP2 specific
- * parameters.
- * 
+ * Class extending {@link ImageReadParam} with add for support of JP2 specific parameters.
+ *
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
  */
@@ -40,16 +38,14 @@ public class JP2KKakaduImageReadParam extends EnhancedImageReadParam {
         retVal.setDestinationOffset(getDestinationOffset());
         retVal.setDestinationType(getDestinationType());
         retVal.setSourceBands(getSourceBands());
-        retVal.setSourceProgressivePasses(getSourceMinProgressivePass(),
-                getSourceNumProgressivePasses());
+        retVal.setSourceProgressivePasses(getSourceMinProgressivePass(), getSourceNumProgressivePasses());
         retVal.setSourceRegion(getSourceRegion());
         try {
             retVal.setSourceRenderSize(getSourceRenderSize());
         } catch (Throwable t) {
         }
-        retVal.setSourceSubsampling(getSourceXSubsampling(),
-                getSourceYSubsampling(), getSubsamplingXOffset(),
-                getSubsamplingYOffset());
+        retVal.setSourceSubsampling(
+                getSourceXSubsampling(), getSourceYSubsampling(), getSubsamplingXOffset(), getSubsamplingYOffset());
         return retVal;
     }
 
@@ -57,18 +53,14 @@ public class JP2KKakaduImageReadParam extends EnhancedImageReadParam {
 
     public static final int INTERPOLATION_BILINEAR = 2;
 
-    /**
-     * @uml.property name="interpolationType"
-     */
+    /** @uml.property name="interpolationType" */
     private int interpolationType;
 
     /**
-     * Represents the number of available quality layers We set this to -1 by
-     * default. If this value does not change, the reader makes no restrictions
-     * on the number of quality layers which will be used during read
-     * operations. Otherwise, setting this field allows the reader to use only
-     * the specified number of quality layers.
-     * 
+     * Represents the number of available quality layers We set this to -1 by default. If this value does not change,
+     * the reader makes no restrictions on the number of quality layers which will be used during read operations.
+     * Otherwise, setting this field allows the reader to use only the specified number of quality layers.
+     *
      * @uml.property name="qualityLayers"
      */
     private int qualityLayers;
@@ -81,7 +73,6 @@ public class JP2KKakaduImageReadParam extends EnhancedImageReadParam {
         interpolationType = INTERPOLATION_NEAREST;
         // resolutionLevel=0;
         qualityLayers = -1;
-
     }
 
     // /**
@@ -107,9 +98,8 @@ public class JP2KKakaduImageReadParam extends EnhancedImageReadParam {
 
     /**
      * Sets <code>qualityLayers</code>.
-     * 
-     * @param qualityLayers
-     *                the quality layers involved within the read operation.
+     *
+     * @param qualityLayers the quality layers involved within the read operation.
      * @see #getQualityLayers()
      * @uml.property name="qualityLayers"
      */
@@ -119,7 +109,7 @@ public class JP2KKakaduImageReadParam extends EnhancedImageReadParam {
 
     /**
      * Gets <code>qualityLayers</code>.
-     * 
+     *
      * @return the number of quality layers.
      * @see #setQualityLayers(int)
      * @uml.property name="qualityLayers"
@@ -130,9 +120,8 @@ public class JP2KKakaduImageReadParam extends EnhancedImageReadParam {
 
     /**
      * Gets <code>InterpolationType</code>.
-     * 
-     * @return the interpolation algorithm which will be used when image need to
-     *         be warped
+     *
+     * @return the interpolation algorithm which will be used when image need to be warped
      * @uml.property name="interpolationType"
      */
     public final int getInterpolationType() {
@@ -141,10 +130,10 @@ public class JP2KKakaduImageReadParam extends EnhancedImageReadParam {
 
     /**
      * Sets <code>InterpolationType</code>.
-     * 
-     * @param interpolationType
-     *                the interpolation type used during <code>WarpAffine</code>
-     *                operation interpolationType should be one of: -<em>INTERPOLATION_NEAREST</em> -<em>INTERPOLATION_BILINEAR</em> -<em>INTERPOLATION_BICUBIC</em> -<em>INTERPOLATION_BICUBIC2</em>
+     *
+     * @param interpolationType the interpolation type used during <code>WarpAffine</code> operation interpolationType
+     *     should be one of: -<em>INTERPOLATION_NEAREST</em> -<em>INTERPOLATION_BILINEAR</em>
+     *     -<em>INTERPOLATION_BICUBIC</em> -<em>INTERPOLATION_BICUBIC2</em>
      * @uml.property name="interpolationType"
      */
     public final void setInterpolationType(final int interpolationType) {
@@ -152,19 +141,18 @@ public class JP2KKakaduImageReadParam extends EnhancedImageReadParam {
     }
 
     protected void initialize(ImageReadParam param) {
-        if (param.hasController()) 
-            setController(param.getController());
+        if (param.hasController()) setController(param.getController());
         setSourceRegion(param.getSourceRegion());
         setSourceBands(param.getSourceBands());
         setDestinationBands(param.getDestinationBands());
         setDestination(param.getDestination());
         setDestinationOffset(param.getDestinationOffset());
-        setSourceSubsampling(param.getSourceXSubsampling(), param
-                .getSourceYSubsampling(), param.getSubsamplingXOffset(), param
-                .getSubsamplingYOffset());
+        setSourceSubsampling(
+                param.getSourceXSubsampling(),
+                param.getSourceYSubsampling(),
+                param.getSubsamplingXOffset(),
+                param.getSubsamplingYOffset());
         final ImageTypeSpecifier type = param.getDestinationType();
-        if (type != null)
-        	setDestinationType(type);
-
+        if (type != null) setDestinationType(type);
     }
 }

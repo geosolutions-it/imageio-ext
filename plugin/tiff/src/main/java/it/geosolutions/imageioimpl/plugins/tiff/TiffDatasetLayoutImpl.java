@@ -19,18 +19,16 @@ package it.geosolutions.imageioimpl.plugins.tiff;
 import it.geosolutions.imageio.maskband.DatasetLayout;
 import it.geosolutions.imageio.maskband.DefaultDatasetLayoutImpl;
 import it.geosolutions.imageioimpl.plugins.tiff.TIFFStreamMetadata.MetadataNode;
-
 import java.io.File;
 import java.io.IOException;
-
 import javax.imageio.metadata.IIOMetadata;
-
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * {@link DatasetLayout} implementation which is able to parse {@link TIFFStreamMetadata} in order to get information about TIFF image structure
- * 
+ * {@link DatasetLayout} implementation which is able to parse {@link TIFFStreamMetadata} in order to get information
+ * about TIFF image structure
+ *
  * @author Nicola Lagomarsini
  */
 public class TiffDatasetLayoutImpl extends DefaultDatasetLayoutImpl implements DatasetLayout {
@@ -165,9 +163,8 @@ public class TiffDatasetLayoutImpl extends DefaultDatasetLayoutImpl implements D
 
     /**
      * Creates a new {@link DatasetLayout} instance created from parsing input reader Stream Metadata.
-     * 
+     *
      * @param metadata {@link IIOMetadata} object to parse
-     * 
      * @return a {@link DatasetLayout} instance parsed from input StreamMetadata
      */
     public static DatasetLayout parseLayout(IIOMetadata metadata) throws IOException {
@@ -200,35 +197,32 @@ public class TiffDatasetLayoutImpl extends DefaultDatasetLayoutImpl implements D
             MetadataNode mnode = MetadataNode.getFromName(nodeName);
             // Setting Attribute value
             switch (mnode) {
-            case N_INT_MASK:
-                layout.setNumInternalMasks(Integer.parseInt(value));
-                break;
-            case N_EXT_MASK:
-                layout.setNumExternalMasks(Integer.parseInt(value));
-                break;
-            case N_INT_OVR:
-                layout.setNumInternalOverviews(Integer.parseInt(value));
-                break;
-            case N_EXT_OVR:
-                layout.setNumExternalOverviews(Integer.parseInt(value));
-                break;
-            case N_EXT_OVR_MASK:
-                layout.setNumExternalMaskOverviews(Integer.parseInt(value));
-                break;
-            case EXT_MASK_FILE:
-                layout.setExternalMasks((value != null && !value.isEmpty()) ? new File(value)
-                        : null);
-                break;
-            case EXT_OVR_FILE:
-                layout.setExternalOverviews((value != null && !value.isEmpty()) ? new File(value)
-                        : null);
-                break;
-            case EXT_OVR_MASK_FILE:
-                layout.setExternalMaskOverviews((value != null && !value.isEmpty()) ? new File(
-                        value) : null);
-                break;
-            default:
-                break;
+                case N_INT_MASK:
+                    layout.setNumInternalMasks(Integer.parseInt(value));
+                    break;
+                case N_EXT_MASK:
+                    layout.setNumExternalMasks(Integer.parseInt(value));
+                    break;
+                case N_INT_OVR:
+                    layout.setNumInternalOverviews(Integer.parseInt(value));
+                    break;
+                case N_EXT_OVR:
+                    layout.setNumExternalOverviews(Integer.parseInt(value));
+                    break;
+                case N_EXT_OVR_MASK:
+                    layout.setNumExternalMaskOverviews(Integer.parseInt(value));
+                    break;
+                case EXT_MASK_FILE:
+                    layout.setExternalMasks((value != null && !value.isEmpty()) ? new File(value) : null);
+                    break;
+                case EXT_OVR_FILE:
+                    layout.setExternalOverviews((value != null && !value.isEmpty()) ? new File(value) : null);
+                    break;
+                case EXT_OVR_MASK_FILE:
+                    layout.setExternalMaskOverviews((value != null && !value.isEmpty()) ? new File(value) : null);
+                    break;
+                default:
+                    break;
             }
         }
         return layout;

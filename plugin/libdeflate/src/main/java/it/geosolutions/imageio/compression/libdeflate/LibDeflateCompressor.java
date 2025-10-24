@@ -33,9 +33,7 @@ import it.geosolutions.imageio.compression.Compressor;
 import me.steinborn.libdeflate.CompressionType;
 import me.steinborn.libdeflate.LibdeflateCompressor;
 
-/**
- * Compressor implementation based on libdeflate java library
- */
+/** Compressor implementation based on libdeflate java library */
 public class LibDeflateCompressor implements Compressor {
 
     int deflateLevel;
@@ -44,14 +42,13 @@ public class LibDeflateCompressor implements Compressor {
     private byte[] srcData;
 
     public LibDeflateCompressor(int deflateLevel) {
-    this.deflateLevel = deflateLevel;
+        this.deflateLevel = deflateLevel;
     }
 
     @Override
     public void setInput(byte[] srcData) {
         this.compressor = new LibdeflateCompressor(deflateLevel);
         this.srcData = srcData;
-
     }
 
     @Override

@@ -1,7 +1,7 @@
-/*		 
+/*
  * fastutil: Fast & compact type-specific collections for Java
  *
- * Copyright (C) 2005, 2006 Sebastiano Vigna 
+ * Copyright (C) 2005, 2006 Sebastiano Vigna
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -37,45 +37,32 @@
 package it.geosolutions.io.input;
 
 import it.geosolutions.io.RepositionableStream;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
 
 /**
  * Lightweight, unsynchronised, aligned input stream buffering class.
- * 
- * <P>
- * This class provides buffering for input streams, but it does so with purposes
- * and an internal logic that are radically different from the ones adopted in
- * {@link java.io.BufferedInputStream}.
- * 
- * <P>
- * There is no support for marking. All methods are unsychronised. Moreover, it
- * is guaranteed that <em>all reads performed by this class will be
- * multiples of the given buffer size</em>.
- * If, for instance, you use the default buffer size, reads will be performed on
- * the underlying input stream in multiples of 16384 bytes. This is very
- * important on operating systems that optimize disk reads on disk block
- * boundaries.
- * 
- * <P>
- * As an additional feature, this class implements the {@link
- * RepositionableStream} interface. An instance of this class will try to cast
- * the underlying byte stream to a {@link RepositionableStream} and to fetch by
- * reflection the {@link java.nio.channels.FileChannel} underlying the given
- * output stream, in this order. If either reference can be successfully
- * fetched, you can use {@link #position(long)} to reposition the stream. Note
- * that even in this case, it is still guaranteed that all reads will be
- * performed on buffer boundaries, that is, as if the stream was divided in
+ *
+ * <p>This class provides buffering for input streams, but it does so with purposes and an internal logic that are
+ * radically different from the ones adopted in {@link java.io.BufferedInputStream}.
+ *
+ * <p>There is no support for marking. All methods are unsychronised. Moreover, it is guaranteed that <em>all reads
+ * performed by this class will be multiples of the given buffer size</em>. If, for instance, you use the default buffer
+ * size, reads will be performed on the underlying input stream in multiples of 16384 bytes. This is very important on
+ * operating systems that optimize disk reads on disk block boundaries.
+ *
+ * <p>As an additional feature, this class implements the {@link RepositionableStream} interface. An instance of this
+ * class will try to cast the underlying byte stream to a {@link RepositionableStream} and to fetch by reflection the
+ * {@link java.nio.channels.FileChannel} underlying the given output stream, in this order. If either reference can be
+ * successfully fetched, you can use {@link #position(long)} to reposition the stream. Note that even in this case, it
+ * is still guaranteed that all reads will be performed on buffer boundaries, that is, as if the stream was divided in
  * blocks of the size of the buffer.
- * 
  */
-public class FastBufferedInputStream extends InputStream implements
-        RepositionableStream {
+public class FastBufferedInputStream extends InputStream implements RepositionableStream {
 
     /** The default size of the internal buffer in bytes (8Ki). */
-    public final static int DEFAULT_BUFFER_SIZE = 4 * 1024;
+    public static final int DEFAULT_BUFFER_SIZE = 4 * 1024;
 
     /** The underlying input stream. */
     protected InputStream is;
@@ -96,28 +83,22 @@ public class FastBufferedInputStream extends InputStream implements
     private RepositionableStream rs;
 
     /**
-     * Creates a new fast buffered input stream by wrapping a given input stream
-     * with a given buffer size.
-     * 
-     * @param is
-     *                an input stream to wrap.
-     * @param bufSize
-     *                the size in bytes of the internal buffer.
+     * Creates a new fast buffered input stream by wrapping a given input stream with a given buffer size.
+     *
+     * @param is an input stream to wrap.
+     * @param bufSize the size in bytes of the internal buffer.
      */
-
     public FastBufferedInputStream(final InputStream is, final int bufSize) {
         this.is = is;
         buffer = new byte[bufSize];
 
-        if (is instanceof RepositionableStream)
-            rs = (RepositionableStream) is;
+        if (is instanceof RepositionableStream) rs = (RepositionableStream) is;
 
         if (rs == null) {
 
             try {
-                fileChannel = (FileChannel) (is.getClass().getMethod(
-                        "getChannel", new Class[] {})).invoke(is,
-                        new Object[] {});
+                fileChannel = (FileChannel)
+                        (is.getClass().getMethod("getChannel", new Class[] {})).invoke(is, new Object[] {});
             } catch (IllegalAccessException e) {
             } catch (IllegalArgumentException e) {
             } catch (NoSuchMethodException e) {
@@ -128,11 +109,10 @@ public class FastBufferedInputStream extends InputStream implements
     }
 
     /**
-     * Creates a new fast buffered input stream by wrapping a given input stream
-     * with a buffer of {@link #DEFAULT_BUFFER_SIZE} bytes.
-     * 
-     * @param is
-     *                an input stream to wrap.
+     * Creates a new fast buffered input stream by wrapping a given input stream with a buffer of
+     * {@link #DEFAULT_BUFFER_SIZE} bytes.
+     *
+     * @param is an input stream to wrap.
      */
     public FastBufferedInputStream(final InputStream is) {
         this(is, DEFAULT_BUFFER_SIZE);
@@ -168,8 +148,7 @@ public class FastBufferedInputStream extends InputStream implements
         final int residual = length % buffer.length;
         int result;
 
-        if ((result = is.read(b, offset, length - residual)) < length
-                - residual)
+        if ((result = is.read(b, offset, length - residual)) < length - residual)
             return result < 0 ? (head != 0 ? head : -1) : result + head;
 
         avail = is.read(buffer);
@@ -195,10 +174,8 @@ public class FastBufferedInputStream extends InputStream implements
 
         final int residual = (int) (newPosition % buffer.length);
 
-        if (rs != null)
-            rs.position(newPosition - residual);
-        else if (fileChannel != null)
-            fileChannel.position(newPosition - residual);
+        if (rs != null) rs.position(newPosition - residual);
+        else if (fileChannel != null) fileChannel.position(newPosition - residual);
         else
             throw new UnsupportedOperationException(
                     "position() can only be called if the underlying byte stream implements the RepositionableStream interface or if the getChannel() method of the underlying byte stream exists and returns a FileChannel");
@@ -209,10 +186,8 @@ public class FastBufferedInputStream extends InputStream implements
     }
 
     public long position() throws IOException {
-        if (rs != null)
-            return rs.position() - avail;
-        else if (fileChannel != null)
-            return fileChannel.position() - avail;
+        if (rs != null) return rs.position() - avail;
+        else if (fileChannel != null) return fileChannel.position() - avail;
         else
             throw new UnsupportedOperationException(
                     "position() can only be called if the underlying byte stream implements the RepositionableStream interface or if the getChannel() method of the underlying byte stream exists and returns a FileChannel");
@@ -248,28 +223,21 @@ public class FastBufferedInputStream extends InputStream implements
     }
 
     public void close() throws IOException {
-        if (is == null)
-            return;
-        if (is != System.in)
-            is.close();
+        if (is == null) return;
+        if (is != System.in) is.close();
         is = null;
         buffer = null;
     }
 
     /**
-     * Resets the internal logic of this fast buffered input stream, clearing
-     * the buffer.
-     * 
-     * <p>
-     * The underlying input stream is not modified, but its position cannot be
-     * easily predicted, due to buffering. This method is thus mainly useful for
-     * reading files that are being written by other process (in practice, it
+     * Resets the internal logic of this fast buffered input stream, clearing the buffer.
+     *
+     * <p>The underlying input stream is not modified, but its position cannot be easily predicted, due to buffering.
+     * This method is thus mainly useful for reading files that are being written by other process (in practice, it
      * makes the current buffer invalid).
      */
-
     public void reset() {
-        if (is == null)
-            return;
+        if (is == null) return;
         avail = pos = 0;
     }
 }

@@ -1,34 +1,34 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>it.geosolutions.imageio-ext</groupId> 
-    <artifactId>imageio-ext-library</artifactId> 
+    <groupId>it.geosolutions.imageio-ext</groupId>
+    <artifactId>imageio-ext-library</artifactId>
     <version>2.0-SNAPSHOT</version>
   </parent>
-  <groupId>it.geosolutions.imageio-ext</groupId> 
+  <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-netcdf-core</artifactId>
-  <name>Image I/O-Extensions - NetCDF Library support</name>
-  <packaging>jar</packaging>
   <version>2.0-SNAPSHOT</version>
-   
-   <!--repositories>
+  <packaging>jar</packaging>
+  <name>Image I/O-Extensions - NetCDF Library support</name>
+
+  <!--repositories>
     <repository>
       <id>ulisse</id>
       <name>Ulisse libraries repository</name>
       <url>http://ulisse.pin.unifi.it:8080/archiva/repository/ext.public.rel/</url>
     </repository>
   </repositories-->
-   
-   <dependencies>
+
+  <dependencies>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-streams</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-        <groupId>it.geosolutions.imageio-ext</groupId>
-        <artifactId>imageio-ext-test-data</artifactId>
+      <groupId>it.geosolutions.imageio-ext</groupId>
+      <artifactId>imageio-ext-test-data</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
@@ -48,19 +48,19 @@
       <artifactId>netcdf-java</artifactId>
       <version>4.0.41</version>
     </dependency>
-     <dependency>
+    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <version>1.5.6</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-    <!-- required to read files remotely over HTTP -->
+      <!-- required to read files remotely over HTTP -->
       <groupId>commons-httpclient</groupId>
       <artifactId>commons-httpclient</artifactId>
       <version>3.1</version>
       <scope>runtime</scope>
     </dependency>
-       
+
   </dependencies>
 </project>

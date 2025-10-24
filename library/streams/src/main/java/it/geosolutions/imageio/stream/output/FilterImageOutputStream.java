@@ -17,21 +17,18 @@
 package it.geosolutions.imageio.stream.output;
 
 import it.geosolutions.imageio.stream.AccessibleStream;
-
 import java.io.IOException;
 import java.nio.ByteOrder;
-
 import javax.imageio.stream.IIOByteBuffer;
 import javax.imageio.stream.ImageOutputStream;
 import javax.imageio.stream.ImageOutputStreamImpl;
 
 /**
  * Decorator class for decorating {@link ImageOutputStream} subclasses.
- * 
+ *
  * @author Simone Giannecchini, GeoSolutions
  */
-public class FilterImageOutputStream extends ImageOutputStreamImpl implements
-        ImageOutputStream, AccessibleStream {
+public class FilterImageOutputStream extends ImageOutputStreamImpl implements ImageOutputStream, AccessibleStream {
 
     protected ImageOutputStream ios;
 
@@ -241,7 +238,6 @@ public class FilterImageOutputStream extends ImageOutputStreamImpl implements
 
     public void seek(long pos) throws IOException {
         ios.seek(pos);
-
     }
 
     public int read(byte[] b) throws IOException {
@@ -306,7 +302,7 @@ public class FilterImageOutputStream extends ImageOutputStreamImpl implements
 
     /**
      * Allows us to access the underlying ImageOutputStream.
-     * 
+     *
      * @return the underlying {@link ImageOutputStream}.
      */
     public ImageOutputStream getTarget() {
@@ -316,5 +312,4 @@ public class FilterImageOutputStream extends ImageOutputStreamImpl implements
     public Class<ImageOutputStream> getBinding() {
         return ImageOutputStream.class;
     }
-
 }

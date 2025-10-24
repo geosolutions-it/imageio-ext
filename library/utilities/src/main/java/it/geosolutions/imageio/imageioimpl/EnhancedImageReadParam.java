@@ -19,10 +19,9 @@ package it.geosolutions.imageio.imageioimpl;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
-
 import javax.imageio.ImageReadParam;
 
-public class EnhancedImageReadParam extends ImageReadParam implements Cloneable{
+public class EnhancedImageReadParam extends ImageReadParam implements Cloneable {
 
     // the bands parameter define the order and which bands should be returned
     // with respect to standard ImageReadParam's sourceBands and destinationBands
@@ -49,45 +48,42 @@ public class EnhancedImageReadParam extends ImageReadParam implements Cloneable{
 
     /**
      * Performs a narrow clone of this {@link EnhancedImageReadParam}.
-     * 
+     *
      * @param param the {@link EnhancedImageReadParam} instance containing the clone.
      * @return the narrow clone of this {@link ImageReadParam}.
      */
     protected Object narrowClone(EnhancedImageReadParam param) {
         param.setDestination(this.getDestination());
         int[] destBands = this.getDestinationBands();
-        if (destBands != null)
-            param.setDestinationBands((int[]) destBands.clone());
+        if (destBands != null) param.setDestinationBands((int[]) destBands.clone());
         int[] bands = this.getBands();
-        if (bands != null)
-            param.setBands((int[]) bands.clone());
+        if (bands != null) param.setBands((int[]) bands.clone());
         Point p = this.getDestinationOffset();
         if (p != null) {
             param.setDestinationOffset((Point) p.clone());
         }
 
-        if (this.getDestinationType() != null)
-            param.setDestinationType(this.getDestinationType());
+        if (this.getDestinationType() != null) param.setDestinationType(this.getDestinationType());
         int[] srcBands = this.getSourceBands();
-        if (srcBands != null)
-            param.setSourceBands((int[]) srcBands.clone());
+        if (srcBands != null) param.setSourceBands((int[]) srcBands.clone());
 
-        param.setSourceProgressivePasses(this.getSourceMinProgressivePass(),
-                this.getSourceNumProgressivePasses());
+        param.setSourceProgressivePasses(this.getSourceMinProgressivePass(), this.getSourceNumProgressivePasses());
         Rectangle srcRegion = this.getSourceRegion();
         if (srcRegion != null) {
             param.setSourceRegion((Rectangle) srcRegion.clone());
         }
 
-        param.setSourceSubsampling(this.getSourceXSubsampling(), this
-                .getSourceYSubsampling(), this.getSubsamplingXOffset(), this
-                .getSubsamplingYOffset());
+        param.setSourceSubsampling(
+                this.getSourceXSubsampling(),
+                this.getSourceYSubsampling(),
+                this.getSubsamplingXOffset(),
+                this.getSubsamplingYOffset());
         param.setController(this.getController());
         Dimension d = this.getSourceRenderSize();
         if (d != null) {
             param.setSourceRenderSize((Dimension) d.clone());
         }
-        
+
         Rectangle destinationRegion = this.getDestinationRegion();
         if (destinationRegion != null) {
             param.setDestinationRegion((Rectangle) destinationRegion.clone());

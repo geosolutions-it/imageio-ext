@@ -17,27 +17,23 @@
 package it.geosolutions.imageio.plugins.rpftoc;
 
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
-
 import java.awt.image.RenderedImage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * {@link RPFTOCImageReader} is a {@link GDALImageReader} able to create
- * {@link RenderedImage} from RPFTOC files.
- * 
+ * {@link RPFTOCImageReader} is a {@link GDALImageReader} able to create {@link RenderedImage} from RPFTOC files.
+ *
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  * @author Erik Konijnenburg
  */
 public class RPFTOCImageReader extends GDALImageReader {
 
-    private static final Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.plugins.rpftoc");
+    private static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.rpftoc");
 
     public RPFTOCImageReader(RPFTOCImageReaderSpi originatingProvider) {
         super(originatingProvider, 0);
-        if (LOGGER.isLoggable(Level.FINE))
-            LOGGER.fine("RPFTOCImageReaderSpi Constructor");
+        if (LOGGER.isLoggable(Level.FINE)) LOGGER.fine("RPFTOCImageReaderSpi Constructor");
     }
 }

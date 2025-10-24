@@ -16,8 +16,8 @@
  */
 package it.geosolutions.imageioimpl.plugins.png;
 
+import ar.com.hjg.pngj.FilterType;
 import it.geosolutions.imageio.plugins.png.PNGWriter;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -34,15 +34,11 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import javax.imageio.ImageIO;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-
-import ar.com.hjg.pngj.FilterType;
 
 @RunWith(Parameterized.class)
 public class CustomByteIndexImageTypesTest {
@@ -59,12 +55,13 @@ public class CustomByteIndexImageTypesTest {
     @Parameters(name = "colors{0}/size{1}")
     public static Collection<Object[]> parameters() {
         List<Object[]> result = new ArrayList<Object[]>();
-        for (int ncolors : new int[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 
-                19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 
-                107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 
-                197, 199, 211, 223, 227, 229, 233, 239, 241, 255, 256}) {
+        for (int ncolors : new int[] {
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67,
+            71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181,
+            191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 255, 256
+        }) {
             for (int size = 1; size <= 8; size++) {
-                result.add(new Object[] { ncolors, size });
+                result.add(new Object[] {ncolors, size});
             }
         }
 
@@ -78,16 +75,16 @@ public class CustomByteIndexImageTypesTest {
             colors[i] = (byte) i;
         }
         int nbits;
-        if(ncolors <= 2) {
+        if (ncolors <= 2) {
             nbits = 1;
         } else {
             nbits = (int) Math.ceil(Math.log(ncolors) / Math.log(2));
-            if((nbits & (nbits - 1)) != 0) {
+            if ((nbits & (nbits - 1)) != 0) {
                 int nextPower = (int) (Math.floor(Math.log(nbits) / Math.log(2)) + 1);
                 nbits = (int) Math.pow(2, nextPower);
             }
         }
-        
+
         IndexColorModel icm = new IndexColorModel(nbits, ncolors, colors, colors, colors);
         SampleModel sm = new MultiPixelPackedSampleModel(DataBuffer.TYPE_BYTE, size, size, nbits);
         int pixelsPerByte = 8 / nbits;
@@ -104,7 +101,7 @@ public class CustomByteIndexImageTypesTest {
         graphics.dispose();
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        float quality = 5f/9 - 1;
+        float quality = 5f / 9 - 1;
         new PNGWriter().writePNG(bi, bos, -quality, FilterType.FILTER_NONE);
 
         BufferedImage read = ImageIO.read(new ByteArrayInputStream(bos.toByteArray()));

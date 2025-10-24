@@ -19,13 +19,10 @@ package it.geosolutions.imageio.plugins.jp2k.box;
 import javax.imageio.metadata.IIOMetadataNode;
 
 /**
- * This class is defined to represent an Image Header Box of JPEG JP2 file
- * format. An Image Header Box has a length, and a fixed type of "ihdr". The
- * content of an image header box contains the width/height, number of image
- * components, the bit depth (coded with sign/unsign information), the
- * compression type (7 for JP2 file), the flag to indicate the color space is
- * known or not, and a flag to indicate whether the intellectual property
- * information included in this file.
+ * This class is defined to represent an Image Header Box of JPEG JP2 file format. An Image Header Box has a length, and
+ * a fixed type of "ihdr". The content of an image header box contains the width/height, number of image components, the
+ * bit depth (coded with sign/unsign information), the compression type (7 for JP2 file), the flag to indicate the color
+ * space is known or not, and a flag to indicate whether the intellectual property information included in this file.
  */
 @SuppressWarnings("serial")
 public class ImageHeaderBoxMetadataNode extends BaseJP2KBoxMetadataNode {
@@ -37,7 +34,7 @@ public class ImageHeaderBoxMetadataNode extends BaseJP2KBoxMetadataNode {
     private String numComponents;
 
     private String bitDepth;
-    
+
     private String bitDepthInterpretation;
 
     private String compressionType;
@@ -53,7 +50,7 @@ public class ImageHeaderBoxMetadataNode extends BaseJP2KBoxMetadataNode {
         final byte bdepth = box.getBitDepth();
         bitDepth = Byte.toString(bdepth);
         final byte bdepthInterp = box.getBitDepthInterpretation();
-        bitDepthInterpretation =  Byte.toString(bdepthInterp);
+        bitDepthInterpretation = Byte.toString(bdepthInterp);
         final byte ct = box.getCompressionType();
         compressionType = Byte.toString(ct);
         final int h = box.getHeight();

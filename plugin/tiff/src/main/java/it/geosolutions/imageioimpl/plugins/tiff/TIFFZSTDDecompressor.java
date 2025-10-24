@@ -31,12 +31,9 @@ package it.geosolutions.imageioimpl.plugins.tiff;
 
 import io.airlift.compress.zstd.ZstdDecompressor;
 import it.geosolutions.imageio.plugins.tiff.TIFFDecompressor;
-
 import java.io.IOException;
 
-/**
- * Decompressor for ZSTD compression
- */
+/** Decompressor for ZSTD compression */
 public class TIFFZSTDDecompressor extends TIFFDecompressor {
 
     private final int predictor;
@@ -49,26 +46,25 @@ public class TIFFZSTDDecompressor extends TIFFDecompressor {
     @Override
     public void decodeRaw(byte[] b, int dstOffset, int bitsPerPixel, int scanlineStride) throws IOException {
         PredictorDecompressor predictorDecompressor = new PredictorDecompressor(
-                predictor, bitsPerSample, sampleFormat,
-                planar ? 1 : samplesPerPixel, stream.getByteOrder());
+                predictor, bitsPerSample, sampleFormat, planar ? 1 : samplesPerPixel, stream.getByteOrder());
         predictorDecompressor.validate();
 
         stream.seek(offset);
         byte[] srcData = new byte[byteCount];
         stream.readFully(srcData);
 
-        int bytesPerRow = (srcWidth*bitsPerPixel + 7)/8;
+        int bytesPerRow = (srcWidth * bitsPerPixel + 7) / 8;
         byte[] buf;
         int bufOffset;
-        if(bytesPerRow == scanlineStride) {
+        if (bytesPerRow == scanlineStride) {
             buf = b;
             bufOffset = dstOffset;
         } else {
-            buf = new byte[bytesPerRow*srcHeight];
+            buf = new byte[bytesPerRow * srcHeight];
             bufOffset = 0;
         }
 
-        zstdDecompressor.decompress(srcData, 0, byteCount, buf, bufOffset, bytesPerRow*srcHeight);
+        zstdDecompressor.decompress(srcData, 0, byteCount, buf, bufOffset, bytesPerRow * srcHeight);
         predictorDecompressor.decompress(buf, bufOffset, dstOffset, srcHeight, srcWidth, bytesPerRow);
 
         if (bytesPerRow != scanlineStride) {

@@ -1,42 +1,42 @@
 /*
  * $RCSfile: TIFFPackBitsUtil.java,v $
  *
- * 
+ *
  * Copyright (c) 2005 Sun Microsystems, Inc. All  Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
- * are met: 
- * 
- * - Redistribution of source code must retain the above copyright 
+ * are met:
+ *
+ * - Redistribution of source code must retain the above copyright
  *   notice, this  list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in 
+ *   notice, this list of conditions and the following disclaimer in
  *   the documentation and/or other materials provided with the
  *   distribution.
- * 
- * Neither the name of Sun Microsystems, Inc. or the names of 
- * contributors may be used to endorse or promote products derived 
+ *
+ * Neither the name of Sun Microsystems, Inc. or the names of
+ * contributors may be used to endorse or promote products derived
  * from this software without specific prior written permission.
- * 
- * This software is provided "AS IS," without a warranty of any 
- * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND 
- * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, 
+ *
+ * This software is provided "AS IS," without a warranty of any
+ * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND
+ * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY
- * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL 
- * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF 
+ * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL
+ * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF
  * USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS
- * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR 
+ * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR
  * ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL,
  * CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND
  * REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR
  * INABILITY TO USE THIS SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGES. 
- * 
- * You acknowledge that this software is not designed or intended for 
- * use in the design, construction, operation or maintenance of any 
- * nuclear facility. 
+ * POSSIBILITY OF SUCH DAMAGES.
+ *
+ * You acknowledge that this software is not designed or intended for
+ * use in the design, construction, operation or maintenance of any
+ * nuclear facility.
  *
  * $Revision: 1.1 $
  * $Date: 2005/02/11 05:01:49 $
@@ -73,13 +73,7 @@
  */
 package it.geosolutions.imageioimpl.plugins.tiff;
 
-import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
-import it.geosolutions.imageio.plugins.tiff.TIFFTag;
-
-import java.awt.Rectangle;
 import java.io.IOException;
-import javax.imageio.ImageReader;
-
 
 public class TIFFPackBitsUtil {
 
@@ -88,26 +82,24 @@ public class TIFFPackBitsUtil {
     byte[] dstData = new byte[8192];
     int dstIndex = 0;
 
-    public TIFFPackBitsUtil() {
-    }
+    public TIFFPackBitsUtil() {}
 
     private void ensureCapacity(int bytesToAdd) {
         if (dstIndex + bytesToAdd > dstData.length) {
-            byte[] newDstData = new byte[Math.max((int)(dstData.length*1.2f),
-                                                  dstIndex + bytesToAdd)];
+            byte[] newDstData = new byte[Math.max((int) (dstData.length * 1.2f), dstIndex + bytesToAdd)];
             System.arraycopy(dstData, 0, newDstData, 0, dstData.length);
             dstData = newDstData;
         }
     }
 
     public byte[] decode(byte[] srcData) throws IOException {
-	int inIndex = 0;
+        int inIndex = 0;
         while (inIndex < srcData.length) {
             byte b = srcData[inIndex++];
-            
+
             if (b >= 0 && b <= 127) { // second test not needed?
                 // Literal run packet
-                
+
                 ensureCapacity(b + 1);
                 for (int i = 0; i < b + 1; i++) {
                     dstData[dstIndex++] = srcData[inIndex++];
@@ -124,10 +116,9 @@ public class TIFFPackBitsUtil {
                 ++inIndex;
             }
         }
-        
+
         byte[] newDstData = new byte[dstIndex];
         System.arraycopy(dstData, 0, newDstData, 0, dstIndex);
         return newDstData;
     }
 }
-

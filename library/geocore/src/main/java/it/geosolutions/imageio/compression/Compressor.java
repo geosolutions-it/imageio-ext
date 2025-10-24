@@ -32,30 +32,29 @@ package it.geosolutions.imageio.compression;
 /**
  * Interface for byte array Compressor.
  *
- * Compressor should be first initialized using setInput with a source data byte array.
- * Afterwards, the compress method should be called to compress source data and result stored
- * on destData.
+ * <p>Compressor should be first initialized using setInput with a source data byte array. Afterwards, the compress
+ * method should be called to compress source data and result stored on destData.
  */
 public interface Compressor {
 
     void setInput(byte[] srcData);
 
     /**
-     * Indicates that compression should end with the current contents of the input buffer.
-     * Some implementations may need it.
+     * Indicates that compression should end with the current contents of the input buffer. Some implementations may
+     * need it.
      */
-    default void finish() {};
+    default void finish() {}
+    ;
 
     /**
-     * Compress the input source data section selected by srcOffset and srcLength and
-     * store the on destData, given destOffset and destLength.
+     * Compress the input source data section selected by srcOffset and srcLength and store the on destData, given
+     * destOffset and destLength.
      */
     int compress(byte[] destData, int srcOffset, int srcLength, int destOffset, int destlength);
 
     /**
-     * Indicates that the compression is done and the compressor should do the needed final
-     * operations, i.e. reset/clean/close/disposal.
-     * Do not reuse the compressor after calling done.
+     * Indicates that the compression is done and the compressor should do the needed final operations, i.e.
+     * reset/clean/close/disposal. Do not reuse the compressor after calling done.
      */
     void done();
 }

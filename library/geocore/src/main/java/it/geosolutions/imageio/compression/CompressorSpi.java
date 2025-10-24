@@ -29,10 +29,7 @@
  */
 package it.geosolutions.imageio.compression;
 
-/**
- * Compressor Service Provider Interface, providing a Compressor,
- * given a compression level and a CompressionType
- */
+/** Compressor Service Provider Interface, providing a Compressor, given a compression level and a CompressionType */
 public interface CompressorSpi extends CompressionPrioritySpi {
 
     /** Return the minimum compression level being supported by this SPI */
@@ -43,5 +40,4 @@ public interface CompressorSpi extends CompressionPrioritySpi {
 
     /** Create a Compressor given a compression level and compression type */
     Compressor createCompressor(int level, CompressionType type);
-
 }

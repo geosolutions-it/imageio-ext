@@ -30,7 +30,6 @@
 package it.geosolutions.imageio.compression.zipdeflate;
 
 import it.geosolutions.imageio.compression.Decompressor;
-
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
@@ -45,7 +44,6 @@ public class ZipDeflateDecompressor implements Decompressor {
     @Override
     public void setInput(byte[] srcData) {
         inflater.setInput(srcData);
-
     }
 
     @Override

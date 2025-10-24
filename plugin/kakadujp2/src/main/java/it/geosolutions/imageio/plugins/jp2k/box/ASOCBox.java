@@ -17,7 +17,6 @@
 package it.geosolutions.imageio.plugins.jp2k.box;
 
 import javax.imageio.metadata.IIOInvalidTreeException;
-
 import org.w3c.dom.Node;
 
 /**
@@ -27,16 +26,16 @@ import org.w3c.dom.Node;
 @SuppressWarnings("serial")
 public class ASOCBox extends DefaultJP2KBox {
 
-    public final static int BOX_TYPE = 0x61736F63;
+    public static final int BOX_TYPE = 0x61736F63;
 
-    public final static String NAME = "asoc";
+    public static final String NAME = "asoc";
 
-    public final static String JP2K_MD_NAME = "JP2KAsocBox";
+    public static final String JP2K_MD_NAME = "JP2KAsocBox";
 
     public ASOCBox(Node node) throws IIOInvalidTreeException {
         super(node);
     }
-    
+
     public ASOCBox(byte[] data) {
         super(8 + data.length, BOX_TYPE, data);
     }
@@ -47,7 +46,5 @@ public class ASOCBox extends DefaultJP2KBox {
     }
 
     @Override
-    protected void parse(byte[] data) {
-        
-    }
+    protected void parse(byte[] data) {}
 }

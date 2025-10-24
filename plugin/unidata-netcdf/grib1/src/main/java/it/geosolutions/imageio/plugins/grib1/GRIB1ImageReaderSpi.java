@@ -17,34 +17,31 @@ package it.geosolutions.imageio.plugins.grib1;
 
 import it.geosolutions.imageio.ndplugin.BaseImageReaderSpi;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.logging.Level;
-
 import javax.imageio.ImageReader;
-
 import ucar.nc2.NetcdfFile;
 
 /**
  * Service provider interface for the GRIB1 Image
- * 
+ *
  * @author Daniele Romagnoli, GeoSolutions
  */
 public class GRIB1ImageReaderSpi extends BaseImageReaderSpi {
-    static final String[] suffixes = { "grib", "grb" };
+    static final String[] suffixes = {"grib", "grb"};
 
-    static final String[] formatNames = { "GRIB1" };
+    static final String[] formatNames = {"GRIB1"};
 
-    static final String[] MIMETypes = { "image/grib", "image/grb" };
+    static final String[] MIMETypes = {"image/grib", "image/grb"};
 
     static final String version = "1.0";
 
     static final String readerCN = "it.geosolutions.imageio.plugins.grib1.GRIB1ImageReader";
 
     // writerSpiNames
-    static final String[] wSN = { null };
+    static final String[] wSN = {null};
 
     // StreamMetadataFormatNames and StreamMetadataFormatClassNames
     static final boolean supportsStandardStreamMetadataFormat = false;
@@ -53,9 +50,9 @@ public class GRIB1ImageReaderSpi extends BaseImageReaderSpi {
 
     static final String nativeStreamMetadataFormatClassName = null;
 
-    static final String[] extraStreamMetadataFormatNames = { null };
+    static final String[] extraStreamMetadataFormatNames = {null};
 
-    static final String[] extraStreamMetadataFormatClassNames = { null };
+    static final String[] extraStreamMetadataFormatClassNames = {null};
 
     // ImageMetadataFormatNames and ImageMetadataFormatClassNames
     static final boolean supportsStandardImageMetadataFormat = false;
@@ -64,9 +61,9 @@ public class GRIB1ImageReaderSpi extends BaseImageReaderSpi {
 
     static final String nativeImageMetadataFormatClassName = null;
 
-    static final String[] extraImageMetadataFormatNames = { null };
+    static final String[] extraImageMetadataFormatNames = {null};
 
-    static final String[] extraImageMetadataFormatClassNames = { null };
+    static final String[] extraImageMetadataFormatClassNames = {null};
 
     public GRIB1ImageReaderSpi() {
         super(
@@ -99,8 +96,7 @@ public class GRIB1ImageReaderSpi extends BaseImageReaderSpi {
         File input = null;
         if (source instanceof FileImageInputStreamExtImpl) {
             input = ((FileImageInputStreamExtImpl) source).getFile();
-            if (LOGGER.isLoggable(Level.FINE))
-                LOGGER.fine("Found a valid FileImageInputStream");
+            if (LOGGER.isLoggable(Level.FINE)) LOGGER.fine("Found a valid FileImageInputStream");
         }
 
         if (source instanceof File) {
@@ -111,17 +107,14 @@ public class GRIB1ImageReaderSpi extends BaseImageReaderSpi {
             try {
                 file = NetcdfFile.open(input.getPath());
                 if (file != null) {
-                    if (LOGGER.isLoggable(Level.FINE))
-                        LOGGER.fine("File successfully opened");
+                    if (LOGGER.isLoggable(Level.FINE)) LOGGER.fine("File successfully opened");
                     canDecode = true;
                 }
             } catch (IOException ioe) {
                 canDecode = false;
             } finally {
-                if (file != null)
-                    file.close();
+                if (file != null) file.close();
             }
-
         }
         return canDecode;
     }
@@ -133,5 +126,4 @@ public class GRIB1ImageReaderSpi extends BaseImageReaderSpi {
     public String getDescription(Locale locale) {
         return "GRIB1 Image Reader, version " + version;
     }
-
 }

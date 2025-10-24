@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-  <project xmlns="http://maven.apache.org/POM/4.0.0"
-           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                               http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                                http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
@@ -11,13 +8,11 @@
   </parent>
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-gdal-plugin</artifactId>
-  <packaging>pom</packaging>
   <version>2.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
   <name>GeoSolutions Image I/O-Extensions GDAL plugins</name>
-  <description>
-    Image I/O-Extensions GDAL plugin modules.
-  </description>
-  
+  <description>Image I/O-Extensions GDAL plugin modules.</description>
+
   <!-- ===================================================================== -->
   <!--     Dependencies management.                                          -->
   <!-- ===================================================================== -->
@@ -32,13 +27,13 @@
       <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-gdalframework</artifactId>
       <version>${project.version}</version>
-    </dependency>    
+    </dependency>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-gdalframework</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
       <type>test-jar</type>
+      <scope>test</scope>
     </dependency>
   </dependencies>
   <!-- =========================================================== -->
@@ -47,7 +42,7 @@
   <profiles>
     <profile>
       <id>base</id>
-       <modules>
+      <modules>
         <module>gdalenvisat</module>
         <module>gdaldoq1</module>
         <module>gdaldoq2</module>
@@ -71,8 +66,10 @@
     <profile>
       <id>full</id>
       <activation>
-         <property><name>all</name></property>
-      </activation>      
+        <property>
+          <name>all</name>
+        </property>
+      </activation>
       <modules>
         <module>gdaldoq1</module>
         <module>gdaldoq2</module>
@@ -99,8 +96,8 @@
         <module>gdalwcs</module>
         <module>gdalvrt</module>
         <module>gdalsrp</module>
-       </modules>
-    </profile> 
+      </modules>
+    </profile>
     <profile>
       <id>releasebuild</id>
       <modules>
@@ -128,7 +125,7 @@
         <module>gdalwcs</module>
         <module>gdalvrt</module>
         <module>gdalsrp</module>
-       </modules>
+      </modules>
     </profile>
   </profiles>
 </project>

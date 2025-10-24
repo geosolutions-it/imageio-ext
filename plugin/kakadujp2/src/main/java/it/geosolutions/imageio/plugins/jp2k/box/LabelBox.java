@@ -22,31 +22,29 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * This class is defined to represent a Label Box of JPEG JP2 file
- * format. 
- * 
+ * This class is defined to represent a Label Box of JPEG JP2 file format.
+ *
  * @author Simone Giannecchini, GeoSolutions
  */
 @SuppressWarnings("serial")
 public class LabelBox extends BaseJP2KBox {
 
-    public final static int BOX_TYPE = 0x6c626c20;
+    public static final int BOX_TYPE = 0x6c626c20;
 
-    public final static String NAME = "lbl\040";
+    public static final String NAME = "lbl\040";
 
-    public final static String JP2K_MD_NAME = "JP2KLabelBox";
+    public static final String JP2K_MD_NAME = "JP2KLabelBox";
 
     /**
      * Cache the element names for this box's xml definition
-     * 
+     *
      * @uml.property name="elementNames"
      */
-    private static String[] elementNames = { "Text" };
+    private static String[] elementNames = {"Text"};
 
     /**
-     * This method will be called by the getNativeNodeForSimpleBox of the class
-     * Box to get the element names.
-     * 
+     * This method will be called by the getNativeNodeForSimpleBox of the class Box to get the element names.
+     *
      * @uml.property name="elementNames"
      */
     public static String[] getElementNames() {
@@ -89,17 +87,15 @@ public class LabelBox extends BaseJP2KBox {
     }
 
     /**
-     * Creates an <code>IIOMetadataNode</code> from this Label box.
-     * The format of this node is defined in the XML dtd and xsd for the JP2
-     * image file.
+     * Creates an <code>IIOMetadataNode</code> from this Label box. The format of this node is defined in the XML dtd
+     * and xsd for the JP2 image file.
      */
     public IIOMetadataNode getNativeNode() {
         return getNativeNodeForSimpleBox();
     }
 
     protected synchronized byte[] compose() {
-        if (localData != null)
-            return localData;
+        if (localData != null) return localData;
         localData = text.getBytes();
         return localData;
     }

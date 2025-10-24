@@ -20,29 +20,26 @@ import javax.imageio.metadata.IIOMetadataNode;
 
 /**
  * @author Simone Giannecchini, GeoSolutions.
- * @author Daniele Romagnoli, GeoSolutions.
- * 
- * @TODO Actually, this implementation does nothing since this box may be
- *       ignored by a JP2 compatible reader.
+ * @author Daniele Romagnoli, GeoSolutions. @TODO Actually, this implementation does nothing since this box may be
+ *     ignored by a JP2 compatible reader.
  */
 @SuppressWarnings("serial")
 public class CodestreamHeaderBox extends BaseJP2KBox {
 
-    public final static int BOX_TYPE = 0x6A706368;
+    public static final int BOX_TYPE = 0x6A706368;
 
-    public final static String NAME = "jpch";
+    public static final String NAME = "jpch";
 
-    public final static String JP2K_MD_NAME = "JP2KCodestreamHeaderBox";
+    public static final String JP2K_MD_NAME = "JP2KCodestreamHeaderBox";
 
     public CodestreamHeaderBox(int length, int type, byte[] data) {
         super(length, type, data);
         // TODO Auto-generated constructor stub
     }
-    
+
     public CodestreamHeaderBox(byte[] data) {
         super(8 + data.length, BOX_TYPE, data);
     }
-    
 
     @Override
     protected byte[] compose() {
@@ -50,13 +47,11 @@ public class CodestreamHeaderBox extends BaseJP2KBox {
     }
 
     @Override
-    protected void parse(byte[] data) {
-    }
-    
+    protected void parse(byte[] data) {}
+
     public IIOMetadataNode getNativeNode() {
         String name = BoxUtilities.getName(getType());
         IIOMetadataNode node = new IIOMetadataNode(name);
         return node;
     }
-
 }

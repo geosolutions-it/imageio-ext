@@ -17,18 +17,14 @@
 package it.geosolutions.imageio.plugins.jp2k.box;
 
 import javax.imageio.metadata.IIOInvalidTreeException;
-
 import org.w3c.dom.Node;
 
 /**
  * Default implementation of a BaseJP2KBox.
- * 
- * <p>
- * This class actually does nothing.
- * </p>
- * 
+ *
+ * <p>This class actually does nothing.
+ *
  * @author Simone Giannecchini, GeoSolutions.
- * 
  */
 class DefaultJP2KBox extends BaseJP2KBox {
 
@@ -45,7 +41,7 @@ class DefaultJP2KBox extends BaseJP2KBox {
     public DefaultJP2KBox(Node node) throws IIOInvalidTreeException {
         super(node);
     }
-    
+
     @Override
     protected void parse(byte[] data) {
         // do nothing

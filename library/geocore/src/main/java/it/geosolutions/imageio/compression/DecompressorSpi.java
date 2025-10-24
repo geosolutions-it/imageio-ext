@@ -29,10 +29,7 @@
  */
 package it.geosolutions.imageio.compression;
 
-/**
- * Decompressor Service Provider Interface, providing a Decompressor,
- * given a CompressionType
- */
+/** Decompressor Service Provider Interface, providing a Decompressor, given a CompressionType */
 public interface DecompressorSpi extends CompressionPrioritySpi {
 
     /** Create a Decompressor given a requested compression type */

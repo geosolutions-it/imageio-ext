@@ -22,34 +22,36 @@ import java.awt.image.Raster;
 
 /**
  * Base class providing common traits to all scanline providers
- * 
+ *
  * @author Andrea Aime - GeoSolutions
  */
 public abstract class AbstractScanlineProvider implements ScanlineProvider {
 
     protected final int width;
-    
+
     protected final int height;
-    
+
     protected final int scanlineLength;
 
     protected final ScanlineCursor cursor;
 
     protected final IndexColorModel palette;
-    
+
     protected final byte bitDepth;
-    
+
     protected int currentRow = 0;
 
     public AbstractScanlineProvider(Raster raster, int bitDepth, int scanlineLength, int pixelStride) {
         this(raster, (byte) bitDepth, scanlineLength, pixelStride, null);
     }
-    
-    public AbstractScanlineProvider(Raster raster, int bitDepth, int scanlineLength, int pixelStride, IndexColorModel palette) {
+
+    public AbstractScanlineProvider(
+            Raster raster, int bitDepth, int scanlineLength, int pixelStride, IndexColorModel palette) {
         this(raster, (byte) bitDepth, scanlineLength, pixelStride, palette);
     }
-    
-    protected AbstractScanlineProvider(Raster raster, byte bitDepth, int scanlineLength, int pixelStride, IndexColorModel palette) {
+
+    protected AbstractScanlineProvider(
+            Raster raster, byte bitDepth, int scanlineLength, int pixelStride, IndexColorModel palette) {
         this.width = raster.getWidth();
         this.height = raster.getHeight();
         this.bitDepth = bitDepth;
@@ -58,34 +60,28 @@ public abstract class AbstractScanlineProvider implements ScanlineProvider {
         this.scanlineLength = scanlineLength;
     }
 
-    
     public final int getWidth() {
         return width;
     }
 
-    
     public final int getHeight() {
         return height;
     }
 
-    
     public final byte getBitDepth() {
         return bitDepth;
     }
 
-    
     public final IndexColorModel getPalette() {
         return palette;
     }
 
-    
     public final int getScanlineLength() {
         return scanlineLength;
     }
-    
+
     public void readFromPngRaw(byte[] raw, int len, int offset, int step) {
         throw new UnsupportedOperationException("This bridge works write only");
-
     }
 
     public void endReadFromPngRaw() {
@@ -98,13 +94,11 @@ public abstract class AbstractScanlineProvider implements ScanlineProvider {
     }
 
     /**
-     * Compute the pixelStride for the provided raster.
-     * The actual raster pixelStride will be returned in case the raster number of bands
-     * is not equal to the pixelStride.
-     * Otherwise the expected pixelStride will be returned.
-     * The expectedPixelStrides array can optionally have size = 2 (instead of 1).
-     * The second value will be returned in case the raster has alpha.
-     **/
+     * Compute the pixelStride for the provided raster. The actual raster pixelStride will be returned in case the
+     * raster number of bands is not equal to the pixelStride. Otherwise the expected pixelStride will be returned. The
+     * expectedPixelStrides array can optionally have size = 2 (instead of 1). The second value will be returned in case
+     * the raster has alpha.
+     */
     public static int computePixelStride(Raster raster, int[] expectedPixelStrides, boolean hasAlpha) {
         int pixelStride = ((ComponentSampleModel) raster.getSampleModel()).getPixelStride();
         if (raster.getNumBands() != pixelStride) {
@@ -114,15 +108,11 @@ public abstract class AbstractScanlineProvider implements ScanlineProvider {
     }
 
     /**
-     * Compute the pixelStride for the provided raster.
-     * The actual raster pixelStride will be returned in case the raster number of bands
-     * is not equal to the pixelStride.
-     * Otherwise the expected PixelStride will be returned assuming the raster has
-     * no alpha.
-     **/
+     * Compute the pixelStride for the provided raster. The actual raster pixelStride will be returned in case the
+     * raster number of bands is not equal to the pixelStride. Otherwise the expected PixelStride will be returned
+     * assuming the raster has no alpha.
+     */
     public static int computePixelStride(Raster raster, int[] expectedPixelStrides) {
         return computePixelStride(raster, expectedPixelStrides, false);
     }
-
-
 }

@@ -19,10 +19,9 @@ package it.geosolutions.imageio.plugins.jp2k.box;
 import javax.imageio.metadata.IIOMetadataNode;
 
 /**
- * This class is designed to represent a Channel Definition Box of JPEG JP2 file
- * format. A Channel Definition Box has a length, and a fixed type of "cdef".
- * Its content defines the type of the image channels: color channel, alpha
- * channel or premultiplied alpha channel.
+ * This class is designed to represent a Channel Definition Box of JPEG JP2 file format. A Channel Definition Box has a
+ * length, and a fixed type of "cdef". Its content defines the type of the image channels: color channel, alpha channel
+ * or premultiplied alpha channel.
  *
  * @author Simone Giannecchini, GeoSolutions
  * @author Daniele Romagnoli, GeoSolutions

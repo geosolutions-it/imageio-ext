@@ -1,42 +1,42 @@
 /*
  * $RCSfile: EXIFTIFFTagSet.java,v $
  *
- * 
+ *
  * Copyright (c) 2005 Sun Microsystems, Inc. All  Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
- * are met: 
- * 
- * - Redistribution of source code must retain the above copyright 
+ * are met:
+ *
+ * - Redistribution of source code must retain the above copyright
  *   notice, this  list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in 
+ *   notice, this list of conditions and the following disclaimer in
  *   the documentation and/or other materials provided with the
  *   distribution.
- * 
- * Neither the name of Sun Microsystems, Inc. or the names of 
- * contributors may be used to endorse or promote products derived 
+ *
+ * Neither the name of Sun Microsystems, Inc. or the names of
+ * contributors may be used to endorse or promote products derived
  * from this software without specific prior written permission.
- * 
- * This software is provided "AS IS," without a warranty of any 
- * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND 
- * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, 
+ *
+ * This software is provided "AS IS," without a warranty of any
+ * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND
+ * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY
- * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL 
- * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF 
+ * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL
+ * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF
  * USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS
- * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR 
+ * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR
  * ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL,
  * CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND
  * REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR
  * INABILITY TO USE THIS SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGES. 
- * 
- * You acknowledge that this software is not designed or intended for 
- * use in the design, construction, operation or maintenance of any 
- * nuclear facility. 
+ * POSSIBILITY OF SUCH DAMAGES.
+ *
+ * You acknowledge that this software is not designed or intended for
+ * use in the design, construction, operation or maintenance of any
+ * nuclear facility.
  *
  * $Revision: 1.4 $
  * $Date: 2005/10/28 16:56:45 $
@@ -77,15 +77,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A class representing the tags found in an EXIF IFD.  EXIF is a
- * standard for annotating images used by most digital camera
- * manufacturers.  The EXIF specification may be found at
- * <a href="http://www.exif.org/Exif2-2.PDF">
- * <code>http://www.exif.org/Exif2-2.PDF</code>
- * </a>.
+ * A class representing the tags found in an EXIF IFD. EXIF is a standard for annotating images used by most digital
+ * camera manufacturers. The EXIF specification may be found at <a href="http://www.exif.org/Exif2-2.PDF"><code>
+ * http://www.exif.org/Exif2-2.PDF</code> </a>.
  *
- * <p> The definitions of the data types referenced by the field
- * definitions may be found in the {@link TIFFTag
+ * <p>The definitions of the data types referenced by the field definitions may be found in the {@link TIFFTag
  * <code>TIFFTag</code>} class.
  */
 public class EXIFTIFFTagSet extends TIFFTagSet {
@@ -95,8 +91,7 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
     /**
      * A tag pointing to a GPS info IFD (type LONG).
      *
-     * @deprecated Superseded by
-     * {@link EXIFParentTIFFTagSet#TAG_GPS_INFO_IFD_POINTER}
+     * @deprecated Superseded by {@link EXIFParentTIFFTagSet#TAG_GPS_INFO_IFD_POINTER}
      */
     public static final int TAG_GPS_INFO_IFD_POINTER = 34853;
 
@@ -104,9 +99,8 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
     public static final int TAG_INTEROPERABILITY_IFD_POINTER = 40965;
 
     /**
-     * A tag containing the EXIF version number (type UNDEFINED, count =
-     * 4).  Conformance to the EXIF 2.1 standard is indicated using
-     * the ASCII value "0210" (with no terminating NUL).
+     * A tag containing the EXIF version number (type UNDEFINED, count = 4). Conformance to the EXIF 2.1 standard is
+     * indicated using the ASCII value "0210" (with no terminating NUL).
      *
      * @see #EXIF_VERSION_2_1
      * @see #EXIF_VERSION_2_2
@@ -115,32 +109,26 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
 
     /**
      * An array of bytes containing the values <code>{'0', '2', '1',
-     * '0'}</code> to be used with the "EXIFVersion" tag to indicate
-     * EXIF version 2.1.
+     * '0'}</code> to be used with the "EXIFVersion" tag to indicate EXIF version 2.1.
      *
      * @see #TAG_EXIF_VERSION
      */
-    public static byte[] EXIF_VERSION_2_1 = { '0', '2', '1', '0' };
+    public static byte[] EXIF_VERSION_2_1 = {'0', '2', '1', '0'};
 
     /**
      * An array of bytes containing the values <code>{'0', '2', '2',
-     * '0'}</code> to be used with the "EXIFVersion" tag to indicate
-     * EXIF version 2.2.
+     * '0'}</code> to be used with the "EXIFVersion" tag to indicate EXIF version 2.2.
      *
      * @see #TAG_EXIF_VERSION
      */
-    public static byte[] EXIF_VERSION_2_2 = { '0', '2', '2', '0' };
+    public static byte[] EXIF_VERSION_2_2 = {'0', '2', '2', '0'};
 
-    /**
-     * A tag indicating the FlashPix version number (type UNDEFINED,
-     * count = 4).
-     */
+    /** A tag indicating the FlashPix version number (type UNDEFINED, count = 4). */
     public static final int TAG_FLASHPIX_VERSION = 40960;
 
     /**
-     * A tag indicating the color space information (type SHORT).  The
-     * legal values are given by the <code>COLOR_SPACE_*</code>
-     * constants.
+     * A tag indicating the color space information (type SHORT). The legal values are given by the <code>COLOR_SPACE_*
+     * </code> constants.
      *
      * @see #COLOR_SPACE_SRGB
      * @see #COLOR_SPACE_UNCALIBRATED
@@ -162,8 +150,7 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
     public static final int COLOR_SPACE_UNCALIBRATED = 0xFFFF;
 
     /**
-     * A tag containing the components configuration information (type
-     * UNDEFINED, count = 4).
+     * A tag containing the components configuration information (type UNDEFINED, count = 4).
      *
      * @see #COMPONENTS_CONFIGURATION_DOES_NOT_EXIST
      * @see #COMPONENTS_CONFIGURATION_Y
@@ -224,96 +211,62 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
      */
     public static final int COMPONENTS_CONFIGURATION_B = 6;
 
-    /**
-     * A tag indicating the number of compressed bits per pixel
-     * (type RATIONAL).
-     */
+    /** A tag indicating the number of compressed bits per pixel (type RATIONAL). */
     public static final int TAG_COMPRESSED_BITS_PER_PIXEL = 37122;
 
     /**
-     * A tag indicating the pixel X dimension (type SHORT or LONG).
-     * This value records the valid width of the meaningful image for
-     * a compressed file, whether or not there is padding or a restart
-     * marker.
+     * A tag indicating the pixel X dimension (type SHORT or LONG). This value records the valid width of the meaningful
+     * image for a compressed file, whether or not there is padding or a restart marker.
      */
     public static final int TAG_PIXEL_X_DIMENSION = 40962;
 
     /**
-     * A tag indicating the pixel Y dimension (type SHORT or LONG).
-     * This value records the valid height of the meaningful image for
-     * a compressed file, whether or not there is padding or a restart
-     * marker.
+     * A tag indicating the pixel Y dimension (type SHORT or LONG). This value records the valid height of the
+     * meaningful image for a compressed file, whether or not there is padding or a restart marker.
      */
     public static final int TAG_PIXEL_Y_DIMENSION = 40963;
 
-    /**
-     * A tag indicating a manufacturer-defined maker note (type
-     * UNDEFINED).
-     */
+    /** A tag indicating a manufacturer-defined maker note (type UNDEFINED). */
     public static final int TAG_MAKER_NOTE = 37500;
 
     /**
-     * A tag indicating a manufacturer-defined marker note (type
-     * UNDEFINED).
+     * A tag indicating a manufacturer-defined marker note (type UNDEFINED).
      *
      * @deprecated Superseded by {@link #TAG_MAKER_NOTE}.
      */
     public static final int TAG_MARKER_NOTE = TAG_MAKER_NOTE;
 
     /**
-     * A tag indicating a user comment (type UNDEFINED).  The first 8
-     * bytes are used to specify the character encoding.
+     * A tag indicating a user comment (type UNDEFINED). The first 8 bytes are used to specify the character encoding.
      */
     public static final int TAG_USER_COMMENT = 37510;
 
-    /**
-     * A tag indicating the name of a related sound file (type ASCII).
-     */
+    /** A tag indicating the name of a related sound file (type ASCII). */
     public static final int TAG_RELATED_SOUND_FILE = 40964;
 
-    /**
-     * A tag indicating the date and time when the original image was
-     * generated (type ASCII).
-     */
+    /** A tag indicating the date and time when the original image was generated (type ASCII). */
     public static final int TAG_DATE_TIME_ORIGINAL = 36867;
 
-    /**
-     * A tag indicating the date and time when the image was stored as
-     * digital data (type ASCII).
-     */
+    /** A tag indicating the date and time when the image was stored as digital data (type ASCII). */
     public static final int TAG_DATE_TIME_DIGITIZED = 36868;
 
-    /**
-     * A tag used to record fractions of seconds for the "DateTime" tag
-     * (type ASCII).
-     */
+    /** A tag used to record fractions of seconds for the "DateTime" tag (type ASCII). */
     public static final int TAG_SUB_SEC_TIME = 37520;
 
-    /**
-     * A tag used to record fractions of seconds for the
-     * "DateTimeOriginal" tag (type ASCII).
-     */
+    /** A tag used to record fractions of seconds for the "DateTimeOriginal" tag (type ASCII). */
     public static final int TAG_SUB_SEC_TIME_ORIGINAL = 37521;
 
-    /**
-     * A tag used to record fractions of seconds for the
-     * "DateTimeDigitized" tag (type ASCII).
-     */
+    /** A tag used to record fractions of seconds for the "DateTimeDigitized" tag (type ASCII). */
     public static final int TAG_SUB_SEC_TIME_DIGITIZED = 37522;
 
-    /**
-     * A tag indicating the exposure time, in seconds (type RATIONAL).
-     */
+    /** A tag indicating the exposure time, in seconds (type RATIONAL). */
     public static final int TAG_EXPOSURE_TIME = 33434;
 
-    /**
-     * A tag indicating the F number (type RATIONAL).
-     */
+    /** A tag indicating the F number (type RATIONAL). */
     public static final int TAG_F_NUMBER = 33437;
 
     /**
-     * A tag indicating the class of the programs used to set exposure
-     * when the picture was taken (type SHORT).
+     * A tag indicating the class of the programs used to set exposure when the picture was taken (type SHORT).
      *
      * @see #EXPOSURE_PROGRAM_NOT_DEFINED
      * @see #EXPOSURE_PROGRAM_MANUAL
@@ -399,57 +352,39 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
     public static final int EXPOSURE_PROGRAM_MAX_RESERVED = 255;
 
     /**
-     * A tag indicating the spectral sensitivity of each channel of
-     * the camera used (type ASCII).  The tag value is an ASCII string
-     * compatible with the ASTM standard.
+     * A tag indicating the spectral sensitivity of each channel of the camera used (type ASCII). The tag value is an
+     * ASCII string compatible with the ASTM standard.
      */
     public static final int TAG_SPECTRAL_SENSITIVITY = 34852;
 
     /**
-     * A tag indicating the ISO speed and ISO latitude of the camera
-     * or input device, as specified in ISO 12232<sup>xiv</sup> (type
-     * SHORT).
+     * A tag indicating the ISO speed and ISO latitude of the camera or input device, as specified in ISO
+     * 12232<sup>xiv</sup> (type SHORT).
      */
-    public static final int TAG_ISO_SPEED_RATINGS= 34855;
+    public static final int TAG_ISO_SPEED_RATINGS = 34855;
 
     /**
-     * A tag indicating the optoelectric conversion function,
-     * specified in ISO 14254<sup>xv</sup> (type UNDEFINED).  OECF is
-     * the relationship between the camera optical input and the image
-     * values.
+     * A tag indicating the optoelectric conversion function, specified in ISO 14254<sup>xv</sup> (type UNDEFINED). OECF
+     * is the relationship between the camera optical input and the image values.
      */
     public static final int TAG_OECF = 34856;
 
-    /**
-     * A tag indicating the shutter speed (type SRATIONAL).
-     */
+    /** A tag indicating the shutter speed (type SRATIONAL). */
     public static final int TAG_SHUTTER_SPEED_VALUE = 37377;
 
-    /**
-     * A tag indicating the lens aperture (type RATIONAL).
-     */
+    /** A tag indicating the lens aperture (type RATIONAL). */
     public static final int TAG_APERTURE_VALUE = 37378;
 
-    /**
-     * A tag indicating the value of brightness (type SRATIONAL).
-     */
+    /** A tag indicating the value of brightness (type SRATIONAL). */
     public static final int TAG_BRIGHTNESS_VALUE = 37379;
 
-    /**
-     * A tag indicating the exposure bias (type SRATIONAL).
-     */
+    /** A tag indicating the exposure bias (type SRATIONAL). */
     public static final int TAG_EXPOSURE_BIAS_VALUE = 37380;
 
-    /**
-     * A tag indicating the smallest F number of the lens (type
-     * RATIONAL).
-     */
+    /** A tag indicating the smallest F number of the lens (type RATIONAL). */
     public static final int TAG_MAX_APERTURE_VALUE = 37381;
 
-    /**
-     * A tag indicating the distance to the subject, in meters (type
-     * RATIONAL).
-     */
+    /** A tag indicating the distance to the subject, in meters (type RATIONAL). */
     public static final int TAG_SUBJECT_DISTANCE = 37382;
 
     /**
@@ -703,8 +638,7 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
     public static final int LIGHT_SOURCE_OTHER = 255;
 
     /**
-     * A tag indicating the flash firing status and flash return
-     * status (type SHORT).
+     * A tag indicating the flash firing status and flash return status (type SHORT).
      *
      * @see #FLASH_DID_NOT_FIRE
      * @see #FLASH_FIRED
@@ -714,72 +648,66 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
     public static final int TAG_FLASH = 37385;
 
     /**
-     * A value to be used with the "Flash" tag, indicating that the
-     * flash did not fire.
+     * A value to be used with the "Flash" tag, indicating that the flash did not fire.
      *
      * @see #TAG_FLASH
      */
     public static final int FLASH_DID_NOT_FIRE = 0x0;
 
     /**
-     * A value to be used with the "Flash" tag, indicating that the
-     * flash fired, but the strobe return status is unknown.
+     * A value to be used with the "Flash" tag, indicating that the flash fired, but the strobe return status is
+     * unknown.
      *
      * @see #TAG_FLASH
      */
     public static final int FLASH_FIRED = 0x1;
 
     /**
-     * A value to be used with the "Flash" tag, indicating that the
-     * flash fired, but the strobe return light was not detected.
+     * A value to be used with the "Flash" tag, indicating that the flash fired, but the strobe return light was not
+     * detected.
      *
      * @see #TAG_FLASH
      */
     public static final int FLASH_STROBE_RETURN_LIGHT_NOT_DETECTED = 0x5;
 
     /**
-     * A value to be used with the "Flash" tag, indicating that the
-     * flash fired, and the strobe return light was detected.
+     * A value to be used with the "Flash" tag, indicating that the flash fired, and the strobe return light was
+     * detected.
      *
      * @see #TAG_FLASH
      */
     public static final int FLASH_STROBE_RETURN_LIGHT_DETECTED = 0x7;
 
     /**
-     * A mask to be used with the "Flash" tag, indicating that the
-     * flash fired.
+     * A mask to be used with the "Flash" tag, indicating that the flash fired.
      *
      * @see #TAG_FLASH
      */
     public static final int FLASH_MASK_FIRED = 0x1;
 
     /**
-     * A mask to be used with the "Flash" tag, indicating strobe return
-     * light not detected.
+     * A mask to be used with the "Flash" tag, indicating strobe return light not detected.
      *
      * @see #TAG_FLASH
      */
     public static final int FLASH_MASK_RETURN_NOT_DETECTED = 0x4;
 
     /**
-     * A mask to be used with the "Flash" tag, indicating strobe return
-     * light detected.
+     * A mask to be used with the "Flash" tag, indicating strobe return light detected.
      *
      * @see #TAG_FLASH
      */
     public static final int FLASH_MASK_RETURN_DETECTED = 0x6;
 
     /**
-     * A mask to be used with the "Flash" tag, indicating compulsory flash
-     * firing mode.
+     * A mask to be used with the "Flash" tag, indicating compulsory flash firing mode.
      *
      * @see #TAG_FLASH
      */
     public static final int FLASH_MASK_MODE_FLASH_FIRING = 0x8;
 
     /**
-     * A mask to be used with the "Flash" tag, indicating compulsory flash
-     * suppression mode.
+     * A mask to be used with the "Flash" tag, indicating compulsory flash suppression mode.
      *
      * @see #TAG_FLASH
      */
@@ -793,65 +721,51 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
     public static final int FLASH_MASK_MODE_AUTO = 0x18;
 
     /**
-     * A mask to be used with the "Flash" tag, indicating no flash function
-     * present.
+     * A mask to be used with the "Flash" tag, indicating no flash function present.
      *
      * @see #TAG_FLASH
      */
     public static final int FLASH_MASK_FUNCTION_NOT_PRESENT = 0x20;
 
     /**
-     * A mask to be used with the "Flash" tag, indicating red-eye reduction
-     * supported.
+     * A mask to be used with the "Flash" tag, indicating red-eye reduction supported.
      *
      * @see #TAG_FLASH
      */
     public static final int FLASH_MASK_RED_EYE_REDUCTION = 0x40;
 
-    /**
-     * A tag indicating the actual focal length of the lens, in
-     * millimeters (type RATIONAL).
-     */
+    /** A tag indicating the actual focal length of the lens, in millimeters (type RATIONAL). */
     public static final int TAG_FOCAL_LENGTH = 37386;
 
-    /**
-     * A tag indicating the location and area of the main subject in
-     * the overall scene.
-     */
+    /** A tag indicating the location and area of the main subject in the overall scene. */
     public static final int TAG_SUBJECT_AREA = 37396;
 
     /**
-     * A tag indicating the strobe energy at the time the image was
-     * captured, as measured in Beam Candle Power Seconds (BCPS) (type
-     * RATIONAL).
+     * A tag indicating the strobe energy at the time the image was captured, as measured in Beam Candle Power Seconds
+     * (BCPS) (type RATIONAL).
      */
     public static final int TAG_FLASH_ENERGY = 41483;
 
     /**
-     * A tag indicating the camera or input device spatial frequency
-     * table and SFR values in the direction of image width, image
-     * height, and diagonal direction, as specified in ISO
-     * 12233<sup>xvi</sup> (type UNDEFINED).
+     * A tag indicating the camera or input device spatial frequency table and SFR values in the direction of image
+     * width, image height, and diagonal direction, as specified in ISO 12233<sup>xvi</sup> (type UNDEFINED).
      */
     public static final int TAG_SPATIAL_FREQUENCY_RESPONSE = 41484;
 
     /**
-     * Indicates the number of pixels in the image width (X) direction
-     * per FocalPlaneResolutionUnit on the camera focal plane (type
-     * RATIONAL).
+     * Indicates the number of pixels in the image width (X) direction per FocalPlaneResolutionUnit on the camera focal
+     * plane (type RATIONAL).
      */
     public static final int TAG_FOCAL_PLANE_X_RESOLUTION = 41486;
 
     /**
-     * Indicate the number of pixels in the image height (Y) direction
-     * per FocalPlaneResolutionUnit on the camera focal plane (type
-     * RATIONAL).
+     * Indicate the number of pixels in the image height (Y) direction per FocalPlaneResolutionUnit on the camera focal
+     * plane (type RATIONAL).
      */
     public static final int TAG_FOCAL_PLANE_Y_RESOLUTION = 41487;
 
     /**
-     * Indicates the unit for measuring FocalPlaneXResolution and
-     * FocalPlaneYResolution (type SHORT).
+     * Indicates the unit for measuring FocalPlaneXResolution and FocalPlaneYResolution (type SHORT).
      *
      * @see #FOCAL_PLANE_RESOLUTION_UNIT_NONE
      * @see #FOCAL_PLANE_RESOLUTION_UNIT_INCH
@@ -881,21 +795,18 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
     public static final int FOCAL_PLANE_RESOLUTION_UNIT_CENTIMETER = 3;
 
     /**
-     * A tag indicating the column and row of the center pixel of the
-     * main subject in the scene (type SHORT, count = 2).
+     * A tag indicating the column and row of the center pixel of the main subject in the scene (type SHORT, count = 2).
      */
     public static final int TAG_SUBJECT_LOCATION = 41492;
 
     /**
-     * A tag indicating the exposure index selected on the camera or
-     * input device at the time the image was captured (type
-     * RATIONAL).
+     * A tag indicating the exposure index selected on the camera or input device at the time the image was captured
+     * (type RATIONAL).
      */
     public static final int TAG_EXPOSURE_INDEX = 41493;
 
     /**
-     * A tag indicating the sensor type on the camera or input device
-     * (type SHORT).
+     * A tag indicating the sensor type on the camera or input device (type SHORT).
      *
      * @see #SENSING_METHOD_NOT_DEFINED
      * @see #SENSING_METHOD_ONE_CHIP_COLOR_AREA_SENSOR
@@ -985,16 +896,12 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
     public static final int SCENE_TYPE_DSC = 1;
 
     /**
-     * A tag indicating the color filter array geometric pattern of
-     * the image sensor when a one-chip color area sensor if used
-     * (type UNDEFINED).
+     * A tag indicating the color filter array geometric pattern of the image sensor when a one-chip color area sensor
+     * if used (type UNDEFINED).
      */
     public static final int TAG_CFA_PATTERN = 41730;
 
-    /**
-     * A tag indicating the use of special processing on image data,
-     * such as rendering geared to output.
-     */
+    /** A tag indicating the use of special processing on image data, such as rendering geared to output. */
     public static final int TAG_CUSTOM_RENDERED = 41985;
 
     /**
@@ -1011,9 +918,7 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
      */
     public static final int CUSTOM_RENDERED_CUSTOM = 1;
 
-    /**
-     * A tag indicating the exposure mode set when the image was shot.
-     */
+    /** A tag indicating the exposure mode set when the image was shot. */
     public static final int TAG_EXPOSURE_MODE = 41986;
 
     /**
@@ -1037,9 +942,7 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
      */
     public static final int EXPOSURE_MODE_AUTO_BRACKET = 2;
 
-    /**
-     * A tag indicating the white balance mode set when the image was shot.
-     */
+    /** A tag indicating the white balance mode set when the image was shot. */
     public static final int TAG_WHITE_BALANCE = 41987;
 
     /**
@@ -1056,20 +959,13 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
      */
     public static final int WHITE_BALANCE_MANUAL = 1;
 
-    /**
-     * A tag indicating the digital zoom ratio when the image was shot.
-     */
+    /** A tag indicating the digital zoom ratio when the image was shot. */
     public static final int TAG_DIGITAL_ZOOM_RATIO = 41988;
 
-    /**
-     * A tag indicating the equivalent focal length assuming a 35mm film
-     * camera, in millimeters.
-     */
+    /** A tag indicating the equivalent focal length assuming a 35mm film camera, in millimeters. */
     public static final int TAG_FOCAL_LENGTH_IN_35MM_FILM = 41989;
 
-    /**
-     * A tag indicating the type of scene that was shot.
-     */
+    /** A tag indicating the type of scene that was shot. */
     public static final int TAG_SCENE_CAPTURE_TYPE = 41990;
 
     /**
@@ -1100,9 +996,7 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
      */
     public static final int SCENE_CAPTURE_TYPE_NIGHT_SCENE = 3;
 
-    /**
-     * A tag indicating the degree of overall image gain adjustment.
-     */
+    /** A tag indicating the degree of overall image gain adjustment. */
     public static final int TAG_GAIN_CONTROL = 41991;
 
     /**
@@ -1140,10 +1034,7 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
      */
     public static final int GAIN_CONTROL_HIGH_GAIN_DOWN = 4;
 
-    /**
-     * A tag indicating the direction of contrast processing applied
-     * by the camera when the image was shot.
-     */
+    /** A tag indicating the direction of contrast processing applied by the camera when the image was shot. */
     public static final int TAG_CONTRAST = 41992;
 
     /**
@@ -1167,10 +1058,7 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
      */
     public static final int CONTRAST_HARD = 2;
 
-    /**
-     * A tag indicating the direction of saturation processing
-     * applied by the camera when the image was shot.
-     */
+    /** A tag indicating the direction of saturation processing applied by the camera when the image was shot. */
     public static final int TAG_SATURATION = 41993;
 
     /**
@@ -1194,10 +1082,7 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
      */
     public static final int SATURATION_HIGH = 2;
 
-    /**
-     * A tag indicating the direction of sharpness processing
-     * applied by the camera when the image was shot.
-     */
+    /** A tag indicating the direction of sharpness processing applied by the camera when the image was shot. */
     public static final int TAG_SHARPNESS = 41994;
 
     /**
@@ -1221,15 +1106,10 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
      */
     public static final int SHARPNESS_HARD = 2;
 
-    /**
-     * A tag indicating information on the picture-taking conditions
-     * of a particular camera model.
-     */
+    /** A tag indicating information on the picture-taking conditions of a particular camera model. */
     public static final int TAG_DEVICE_SETTING_DESCRIPTION = 41995;
 
-    /**
-     * A tag indicating the distance to the subject.
-     */
+    /** A tag indicating the distance to the subject. */
     public static final int TAG_SUBJECT_DISTANCE_RANGE = 41996;
 
     /**
@@ -1260,9 +1140,7 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
      */
     public static final int SUBJECT_DISTANCE_RANGE_DISTANT_VIEW = 3;
 
-    /**
-     * A tag indicating an identifier assigned uniquely to each image.
-     */
+    /** A tag indicating an identifier assigned uniquely to each image. */
     public static final int TAG_IMAGE_UNIQUE_ID = 42016;
 
     // EXIF 2.1 private
@@ -1297,35 +1175,29 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
     //    26 - GPSDestDistance                    (RATIONAL/1)
 
     // EXIF Interoperability Information ???
-    
+
     //     0 - Interoperability Index             (ASCII/any)
 
     // EXIF tags
 
     static class EXIFVersion extends TIFFTag {
-        
+
         public EXIFVersion() {
-            super("EXIFversion",
-                  TAG_EXIF_VERSION,
-                  1 << TIFFTag.TIFF_UNDEFINED);
+            super("EXIFversion", TAG_EXIF_VERSION, 1 << TIFFTag.TIFF_UNDEFINED);
         }
     }
 
     static class FlashPixVersion extends TIFFTag {
 
         public FlashPixVersion() {
-            super("FlashPixVersion",
-                  TAG_FLASHPIX_VERSION,
-                  1 << TIFFTag.TIFF_UNDEFINED);
+            super("FlashPixVersion", TAG_FLASHPIX_VERSION, 1 << TIFFTag.TIFF_UNDEFINED);
         }
     }
 
     static class ColorSpace extends TIFFTag {
 
         public ColorSpace() {
-            super("ColorSpace",
-                  TAG_COLOR_SPACE,
-                  1 << TIFFTag.TIFF_SHORT);
+            super("ColorSpace", TAG_COLOR_SPACE, 1 << TIFFTag.TIFF_SHORT);
 
             addValueName(COLOR_SPACE_SRGB, "sRGB");
             addValueName(COLOR_SPACE_UNCALIBRATED, "Uncalibrated");
@@ -1335,12 +1207,9 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
     static class ComponentsConfiguration extends TIFFTag {
 
         public ComponentsConfiguration() {
-            super("ComponentsConfiguration",
-                  TAG_COMPONENTS_CONFIGURATION,
-                  1 << TIFFTag.TIFF_UNDEFINED);
-            
-            addValueName(COMPONENTS_CONFIGURATION_DOES_NOT_EXIST,
-                         "DoesNotExist");
+            super("ComponentsConfiguration", TAG_COMPONENTS_CONFIGURATION, 1 << TIFFTag.TIFF_UNDEFINED);
+
+            addValueName(COMPONENTS_CONFIGURATION_DOES_NOT_EXIST, "DoesNotExist");
             addValueName(COMPONENTS_CONFIGURATION_Y, "Y");
             addValueName(COMPONENTS_CONFIGURATION_CB, "Cb");
             addValueName(COMPONENTS_CONFIGURATION_CR, "Cr");
@@ -1353,138 +1222,105 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
     static class CompressedBitsPerPixel extends TIFFTag {
 
         public CompressedBitsPerPixel() {
-            super("CompressedBitsPerPixel",
-                  TAG_COMPRESSED_BITS_PER_PIXEL,
-                  1 << TIFFTag.TIFF_RATIONAL);
+            super("CompressedBitsPerPixel", TAG_COMPRESSED_BITS_PER_PIXEL, 1 << TIFFTag.TIFF_RATIONAL);
         }
     }
 
     static class PixelXDimension extends TIFFTag {
 
         public PixelXDimension() {
-            super("PixelXDimension",
-                  TAG_PIXEL_X_DIMENSION,
-                  (1 << TIFFTag.TIFF_SHORT) |
-                  (1 << TIFFTag.TIFF_LONG));
+            super("PixelXDimension", TAG_PIXEL_X_DIMENSION, (1 << TIFFTag.TIFF_SHORT) | (1 << TIFFTag.TIFF_LONG));
         }
     }
 
     static class PixelYDimension extends TIFFTag {
 
         public PixelYDimension() {
-            super("PixelYDimension",
-                  TAG_PIXEL_Y_DIMENSION,
-                  (1 << TIFFTag.TIFF_SHORT) |
-                  (1 << TIFFTag.TIFF_LONG));
+            super("PixelYDimension", TAG_PIXEL_Y_DIMENSION, (1 << TIFFTag.TIFF_SHORT) | (1 << TIFFTag.TIFF_LONG));
         }
     }
 
     static class MakerNote extends TIFFTag {
 
         public MakerNote() {
-            super("MakerNote",
-                  TAG_MAKER_NOTE,
-                  1 << TIFFTag.TIFF_UNDEFINED);
+            super("MakerNote", TAG_MAKER_NOTE, 1 << TIFFTag.TIFF_UNDEFINED);
         }
     }
 
     static class UserComment extends TIFFTag {
 
         public UserComment() {
-            super("UserComment",
-                  TAG_USER_COMMENT,
-                  1 << TIFFTag.TIFF_UNDEFINED);
+            super("UserComment", TAG_USER_COMMENT, 1 << TIFFTag.TIFF_UNDEFINED);
         }
     }
 
     static class RelatedSoundFile extends TIFFTag {
 
         public RelatedSoundFile() {
-            super("RelatedSoundFile",
-                  TAG_RELATED_SOUND_FILE,
-                  1 << TIFFTag.TIFF_ASCII);
+            super("RelatedSoundFile", TAG_RELATED_SOUND_FILE, 1 << TIFFTag.TIFF_ASCII);
         }
     }
 
     static class DateTimeOriginal extends TIFFTag {
 
         public DateTimeOriginal() {
-            super("DateTimeOriginal",
-                  TAG_DATE_TIME_ORIGINAL,
-                  1 << TIFFTag.TIFF_ASCII);
+            super("DateTimeOriginal", TAG_DATE_TIME_ORIGINAL, 1 << TIFFTag.TIFF_ASCII);
         }
     }
 
     static class DateTimeDigitized extends TIFFTag {
 
         public DateTimeDigitized() {
-            super("DateTimeDigitized",
-                  TAG_DATE_TIME_DIGITIZED,
-                  1 << TIFFTag.TIFF_ASCII);
+            super("DateTimeDigitized", TAG_DATE_TIME_DIGITIZED, 1 << TIFFTag.TIFF_ASCII);
         }
     }
 
     static class SubSecTime extends TIFFTag {
 
         public SubSecTime() {
-            super("SubSecTime",
-                  TAG_SUB_SEC_TIME,
-                  1 << TIFFTag.TIFF_ASCII);
+            super("SubSecTime", TAG_SUB_SEC_TIME, 1 << TIFFTag.TIFF_ASCII);
         }
     }
 
     static class SubSecTimeOriginal extends TIFFTag {
 
         public SubSecTimeOriginal() {
-            super("SubSecTimeOriginal",
-                  TAG_SUB_SEC_TIME_ORIGINAL,
-                  1 << TIFFTag.TIFF_ASCII);
+            super("SubSecTimeOriginal", TAG_SUB_SEC_TIME_ORIGINAL, 1 << TIFFTag.TIFF_ASCII);
         }
     }
 
     static class SubSecTimeDigitized extends TIFFTag {
 
         public SubSecTimeDigitized() {
-            super("SubSecTimeDigitized",
-                  TAG_SUB_SEC_TIME_DIGITIZED,
-                  1 << TIFFTag.TIFF_ASCII);
+            super("SubSecTimeDigitized", TAG_SUB_SEC_TIME_DIGITIZED, 1 << TIFFTag.TIFF_ASCII);
         }
     }
 
     static class ExposureTime extends TIFFTag {
 
         public ExposureTime() {
-            super("ExposureTime",
-                  TAG_EXPOSURE_TIME,
-                  1 << TIFFTag.TIFF_RATIONAL);
+            super("ExposureTime", TAG_EXPOSURE_TIME, 1 << TIFFTag.TIFF_RATIONAL);
         }
     }
 
     static class FNumber extends TIFFTag {
 
         public FNumber() {
-            super("FNumber",
-                  TAG_F_NUMBER,
-                  1 << TIFFTag.TIFF_RATIONAL);
+            super("FNumber", TAG_F_NUMBER, 1 << TIFFTag.TIFF_RATIONAL);
         }
     }
 
     static class ExposureProgram extends TIFFTag {
 
         public ExposureProgram() {
-            super("ExposureProgram",
-                  TAG_EXPOSURE_PROGRAM,
-                  1 << TIFFTag.TIFF_SHORT);
+            super("ExposureProgram", TAG_EXPOSURE_PROGRAM, 1 << TIFFTag.TIFF_SHORT);
 
             addValueName(EXPOSURE_PROGRAM_NOT_DEFINED, "Not Defined");
             addValueName(EXPOSURE_PROGRAM_MANUAL, "Manual");
             addValueName(EXPOSURE_PROGRAM_NORMAL_PROGRAM, "Normal Program");
-            addValueName(EXPOSURE_PROGRAM_APERTURE_PRIORITY,
-                         "Aperture Priority");
-            addValueName(EXPOSURE_PROGRAM_SHUTTER_PRIORITY,
-                         "Shutter Priority");
-            addValueName(EXPOSURE_PROGRAM_CREATIVE_PROGRAM,
-                         "Creative Program");
+            addValueName(EXPOSURE_PROGRAM_APERTURE_PRIORITY, "Aperture Priority");
+            addValueName(EXPOSURE_PROGRAM_SHUTTER_PRIORITY, "Shutter Priority");
+            addValueName(EXPOSURE_PROGRAM_CREATIVE_PROGRAM, "Creative Program");
             addValueName(EXPOSURE_PROGRAM_ACTION_PROGRAM, "Action Program");
             addValueName(EXPOSURE_PROGRAM_PORTRAIT_MODE, "Portrait Mode");
             addValueName(EXPOSURE_PROGRAM_LANDSCAPE_MODE, "Landscape Mode");
@@ -1493,95 +1329,74 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
 
     static class SpectralSensitivity extends TIFFTag {
         public SpectralSensitivity() {
-            super("SpectralSensitivity",
-                  TAG_SPECTRAL_SENSITIVITY,
-                  1 << TIFFTag.TIFF_ASCII);
+            super("SpectralSensitivity", TAG_SPECTRAL_SENSITIVITY, 1 << TIFFTag.TIFF_ASCII);
         }
     }
 
     static class ISOSpeedRatings extends TIFFTag {
 
         public ISOSpeedRatings() {
-            super("ISOSpeedRatings",
-                  TAG_ISO_SPEED_RATINGS,
-                  1 << TIFFTag.TIFF_SHORT);
+            super("ISOSpeedRatings", TAG_ISO_SPEED_RATINGS, 1 << TIFFTag.TIFF_SHORT);
         }
     }
 
     static class OECF extends TIFFTag {
 
         public OECF() {
-            super("OECF",
-                  TAG_OECF,
-                  1 << TIFFTag.TIFF_UNDEFINED);
+            super("OECF", TAG_OECF, 1 << TIFFTag.TIFF_UNDEFINED);
         }
     }
 
     static class ShutterSpeedValue extends TIFFTag {
 
         public ShutterSpeedValue() {
-            super("ShutterSpeedValue",
-                  TAG_SHUTTER_SPEED_VALUE,
-                  1 << TIFFTag.TIFF_SRATIONAL);
+            super("ShutterSpeedValue", TAG_SHUTTER_SPEED_VALUE, 1 << TIFFTag.TIFF_SRATIONAL);
         }
     }
 
     static class ApertureValue extends TIFFTag {
 
         public ApertureValue() {
-            super("ApertureValue",
-                  TAG_APERTURE_VALUE,
-                  1 << TIFFTag.TIFF_RATIONAL);
+            super("ApertureValue", TAG_APERTURE_VALUE, 1 << TIFFTag.TIFF_RATIONAL);
         }
     }
 
     static class BrightnessValue extends TIFFTag {
 
         public BrightnessValue() {
-            super("BrightnessValue",
-                  TAG_BRIGHTNESS_VALUE,
-                  1 << TIFFTag.TIFF_SRATIONAL);
+            super("BrightnessValue", TAG_BRIGHTNESS_VALUE, 1 << TIFFTag.TIFF_SRATIONAL);
         }
     }
 
     static class ExposureBiasValue extends TIFFTag {
 
         public ExposureBiasValue() {
-            super("ExposureBiasValue",
-                  TAG_EXPOSURE_BIAS_VALUE,
-                  1 << TIFFTag.TIFF_SRATIONAL);
+            super("ExposureBiasValue", TAG_EXPOSURE_BIAS_VALUE, 1 << TIFFTag.TIFF_SRATIONAL);
         }
     }
 
     static class MaxApertureValue extends TIFFTag {
 
         public MaxApertureValue() {
-            super("MaxApertureValue",
-                  TAG_MAX_APERTURE_VALUE,
-                  1 << TIFFTag.TIFF_RATIONAL);
+            super("MaxApertureValue", TAG_MAX_APERTURE_VALUE, 1 << TIFFTag.TIFF_RATIONAL);
         }
     }
 
     static class SubjectDistance extends TIFFTag {
 
         public SubjectDistance() {
-            super("SubjectDistance",
-                  TAG_SUBJECT_DISTANCE,
-                  1 << TIFFTag.TIFF_RATIONAL);
+            super("SubjectDistance", TAG_SUBJECT_DISTANCE, 1 << TIFFTag.TIFF_RATIONAL);
         }
     }
 
     static class MeteringMode extends TIFFTag {
 
         public MeteringMode() {
-            super("MeteringMode",
-                  TAG_METERING_MODE,
-                  1 << TIFFTag.TIFF_SHORT);
-            
+            super("MeteringMode", TAG_METERING_MODE, 1 << TIFFTag.TIFF_SHORT);
+
             addValueName(METERING_MODE_UNKNOWN, "Unknown");
             addValueName(METERING_MODE_AVERAGE, "Average");
-            addValueName(METERING_MODE_CENTER_WEIGHTED_AVERAGE,
-                         "CenterWeightedAverage");
+            addValueName(METERING_MODE_CENTER_WEIGHTED_AVERAGE, "CenterWeightedAverage");
             addValueName(METERING_MODE_SPOT, "Spot");
             addValueName(METERING_MODE_MULTI_SPOT, "MultiSpot");
             addValueName(METERING_MODE_PATTERN, "Pattern");
@@ -1593,9 +1408,7 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
     static class LightSource extends TIFFTag {
 
         public LightSource() {
-            super("LightSource",
-                  TAG_LIGHT_SOURCE,
-                  1 << TIFFTag.TIFF_SHORT);
+            super("LightSource", TAG_LIGHT_SOURCE, 1 << TIFFTag.TIFF_SHORT);
 
             addValueName(LIGHT_SOURCE_UNKNOWN, "Unknown");
             addValueName(LIGHT_SOURCE_DAYLIGHT, "Daylight");
@@ -1614,79 +1427,61 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
     static class Flash extends TIFFTag {
 
         public Flash() {
-            super("Flash",
-                  TAG_FLASH,
-                  1 << TIFFTag.TIFF_SHORT);
-        
+            super("Flash", TAG_FLASH, 1 << TIFFTag.TIFF_SHORT);
+
             addValueName(FLASH_DID_NOT_FIRE, "Flash Did Not Fire");
             addValueName(FLASH_FIRED, "Flash Fired");
-            addValueName(FLASH_STROBE_RETURN_LIGHT_NOT_DETECTED,
-                         "Strobe Return Light Not Detected");
-            addValueName(FLASH_STROBE_RETURN_LIGHT_DETECTED,
-                         "Strobe Return Light Detected");
+            addValueName(FLASH_STROBE_RETURN_LIGHT_NOT_DETECTED, "Strobe Return Light Not Detected");
+            addValueName(FLASH_STROBE_RETURN_LIGHT_DETECTED, "Strobe Return Light Detected");
         }
     }
 
     static class FocalLength extends TIFFTag {
 
         public FocalLength() {
-            super("FocalLength",
-                  TAG_FOCAL_LENGTH,
-                  1 << TIFFTag.TIFF_RATIONAL);
+            super("FocalLength", TAG_FOCAL_LENGTH, 1 << TIFFTag.TIFF_RATIONAL);
         }
     }
 
     static class SubjectArea extends TIFFTag {
 
         public SubjectArea() {
-            super("SubjectArea",
-                  TAG_SUBJECT_AREA,
-                  1 << TIFFTag.TIFF_SHORT);
+            super("SubjectArea", TAG_SUBJECT_AREA, 1 << TIFFTag.TIFF_SHORT);
         }
     }
 
     static class FlashEnergy extends TIFFTag {
 
         public FlashEnergy() {
-            super("FlashEnergy",
-                  TAG_FLASH_ENERGY,
-                  1 << TIFFTag.TIFF_RATIONAL);
+            super("FlashEnergy", TAG_FLASH_ENERGY, 1 << TIFFTag.TIFF_RATIONAL);
         }
     }
 
     static class SpatialFrequencyResponse extends TIFFTag {
 
         public SpatialFrequencyResponse() {
-            super("SpatialFrequencyResponse",
-                  TAG_SPATIAL_FREQUENCY_RESPONSE,
-                  1 << TIFFTag.TIFF_UNDEFINED);
+            super("SpatialFrequencyResponse", TAG_SPATIAL_FREQUENCY_RESPONSE, 1 << TIFFTag.TIFF_UNDEFINED);
         }
     }
 
     static class FocalPlaneXResolution extends TIFFTag {
 
         public FocalPlaneXResolution() {
-            super("FocalPlaneXResolution",
-                  TAG_FOCAL_PLANE_X_RESOLUTION,
-                  1 << TIFFTag.TIFF_RATIONAL);
+            super("FocalPlaneXResolution", TAG_FOCAL_PLANE_X_RESOLUTION, 1 << TIFFTag.TIFF_RATIONAL);
         }
     }
 
     static class FocalPlaneYResolution extends TIFFTag {
 
         public FocalPlaneYResolution() {
-            super("FocalPlaneYResolution",
-                  TAG_FOCAL_PLANE_Y_RESOLUTION,
-                  1 << TIFFTag.TIFF_RATIONAL);
+            super("FocalPlaneYResolution", TAG_FOCAL_PLANE_Y_RESOLUTION, 1 << TIFFTag.TIFF_RATIONAL);
         }
     }
 
     static class FocalPlaneResolutionUnit extends TIFFTag {
 
         public FocalPlaneResolutionUnit() {
-            super("FocalPlaneResolutionUnit",
-                  TAG_FOCAL_PLANE_RESOLUTION_UNIT,
-                  1 << TIFFTag.TIFF_SHORT);
+            super("FocalPlaneResolutionUnit", TAG_FOCAL_PLANE_RESOLUTION_UNIT, 1 << TIFFTag.TIFF_SHORT);
 
             addValueName(FOCAL_PLANE_RESOLUTION_UNIT_NONE, "None");
             addValueName(FOCAL_PLANE_RESOLUTION_UNIT_INCH, "Inch");
@@ -1697,49 +1492,36 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
     static class SubjectLocation extends TIFFTag {
 
         public SubjectLocation() {
-            super("SubjectLocation",
-                  TAG_SUBJECT_LOCATION,
-                  1 << TIFFTag.TIFF_SHORT);
+            super("SubjectLocation", TAG_SUBJECT_LOCATION, 1 << TIFFTag.TIFF_SHORT);
         }
     }
 
     static class ExposureIndex extends TIFFTag {
 
         public ExposureIndex() {
-            super("ExposureIndex",
-                  TAG_EXPOSURE_INDEX,
-                  1 << TIFFTag.TIFF_RATIONAL);
+            super("ExposureIndex", TAG_EXPOSURE_INDEX, 1 << TIFFTag.TIFF_RATIONAL);
         }
     }
 
     static class SensingMethod extends TIFFTag {
 
         public SensingMethod() {
-            super("SensingMethod",
-                  TAG_SENSING_METHOD,
-                  1 << TIFFTag.TIFF_SHORT);
-            
+            super("SensingMethod", TAG_SENSING_METHOD, 1 << TIFFTag.TIFF_SHORT);
+
             addValueName(SENSING_METHOD_NOT_DEFINED, "Not Defined");
-            addValueName(SENSING_METHOD_ONE_CHIP_COLOR_AREA_SENSOR,
-                         "One-chip color area sensor");
-            addValueName(SENSING_METHOD_TWO_CHIP_COLOR_AREA_SENSOR,
-                         "Two-chip color area sensor");
-            addValueName(SENSING_METHOD_THREE_CHIP_COLOR_AREA_SENSOR,
-                         "Three-chip color area sensor");
-            addValueName(SENSING_METHOD_COLOR_SEQUENTIAL_AREA_SENSOR,
-                         "Color sequential area sensor");
+            addValueName(SENSING_METHOD_ONE_CHIP_COLOR_AREA_SENSOR, "One-chip color area sensor");
+            addValueName(SENSING_METHOD_TWO_CHIP_COLOR_AREA_SENSOR, "Two-chip color area sensor");
+            addValueName(SENSING_METHOD_THREE_CHIP_COLOR_AREA_SENSOR, "Three-chip color area sensor");
+            addValueName(SENSING_METHOD_COLOR_SEQUENTIAL_AREA_SENSOR, "Color sequential area sensor");
             addValueName(SENSING_METHOD_TRILINEAR_SENSOR, "Trilinear sensor");
-            addValueName(SENSING_METHOD_COLOR_SEQUENTIAL_LINEAR_SENSOR,
-                         "Color sequential linear sensor");
+            addValueName(SENSING_METHOD_COLOR_SEQUENTIAL_LINEAR_SENSOR, "Color sequential linear sensor");
         }
     }
 
     static class FileSource extends TIFFTag {
 
         public FileSource() {
-            super("FileSource",
-                  TAG_FILE_SOURCE,
-                  1 << TIFFTag.TIFF_UNDEFINED);
+            super("FileSource", TAG_FILE_SOURCE, 1 << TIFFTag.TIFF_UNDEFINED);
 
             addValueName(FILE_SOURCE_DSC, "DSC");
         }
@@ -1748,9 +1530,7 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
     static class SceneType extends TIFFTag {
 
         public SceneType() {
-            super("SceneType",
-                  TAG_SCENE_TYPE,
-                  1 << TIFFTag.TIFF_UNDEFINED);
+            super("SceneType", TAG_SCENE_TYPE, 1 << TIFFTag.TIFF_UNDEFINED);
 
             addValueName(SCENE_TYPE_DSC, "A directly photographed image");
         }
@@ -1759,18 +1539,14 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
     static class CFAPattern extends TIFFTag {
 
         public CFAPattern() {
-            super("CFAPattern",
-                  TAG_CFA_PATTERN,
-                  1 << TIFFTag.TIFF_UNDEFINED);
+            super("CFAPattern", TAG_CFA_PATTERN, 1 << TIFFTag.TIFF_UNDEFINED);
         }
     }
 
     static class CustomRendered extends TIFFTag {
 
         public CustomRendered() {
-            super("CustomRendered",
-                  TAG_CUSTOM_RENDERED,
-                  1 << TIFFTag.TIFF_SHORT);
+            super("CustomRendered", TAG_CUSTOM_RENDERED, 1 << TIFFTag.TIFF_SHORT);
 
             addValueName(CUSTOM_RENDERED_NORMAL, "Normal process");
             addValueName(CUSTOM_RENDERED_CUSTOM, "Custom process");
@@ -1780,9 +1556,7 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
     static class ExposureMode extends TIFFTag {
 
         public ExposureMode() {
-            super("ExposureMode",
-                  TAG_EXPOSURE_MODE,
-                  1 << TIFFTag.TIFF_SHORT);
+            super("ExposureMode", TAG_EXPOSURE_MODE, 1 << TIFFTag.TIFF_SHORT);
 
             addValueName(EXPOSURE_MODE_AUTO_EXPOSURE, "Auto exposure");
             addValueName(EXPOSURE_MODE_MANUAL_EXPOSURE, "Manual exposure");
@@ -1793,9 +1567,7 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
     static class WhiteBalance extends TIFFTag {
 
         public WhiteBalance() {
-            super("WhiteBalance",
-                  TAG_WHITE_BALANCE,
-                  1 << TIFFTag.TIFF_SHORT);
+            super("WhiteBalance", TAG_WHITE_BALANCE, 1 << TIFFTag.TIFF_SHORT);
 
             addValueName(WHITE_BALANCE_AUTO, "Auto white balance");
             addValueName(WHITE_BALANCE_MANUAL, "Manual white balance");
@@ -1805,27 +1577,21 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
     static class DigitalZoomRatio extends TIFFTag {
 
         public DigitalZoomRatio() {
-            super("DigitalZoomRatio",
-                  TAG_DIGITAL_ZOOM_RATIO,
-                  1 << TIFFTag.TIFF_RATIONAL);
+            super("DigitalZoomRatio", TAG_DIGITAL_ZOOM_RATIO, 1 << TIFFTag.TIFF_RATIONAL);
         }
     }
 
     static class FocalLengthIn35mmFilm extends TIFFTag {
 
         public FocalLengthIn35mmFilm() {
-            super("FocalLengthIn35mmFilm",
-                  TAG_FOCAL_LENGTH_IN_35MM_FILM,
-                  1 << TIFFTag.TIFF_SHORT);
+            super("FocalLengthIn35mmFilm", TAG_FOCAL_LENGTH_IN_35MM_FILM, 1 << TIFFTag.TIFF_SHORT);
         }
     }
 
     static class SceneCaptureType extends TIFFTag {
 
         public SceneCaptureType() {
-            super("SceneCaptureType",
-                  TAG_SCENE_CAPTURE_TYPE,
-                  1 << TIFFTag.TIFF_SHORT);
+            super("SceneCaptureType", TAG_SCENE_CAPTURE_TYPE, 1 << TIFFTag.TIFF_SHORT);
 
             addValueName(SCENE_CAPTURE_TYPE_STANDARD, "Standard");
             addValueName(SCENE_CAPTURE_TYPE_LANDSCAPE, "Landscape");
@@ -1837,9 +1603,7 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
     static class GainControl extends TIFFTag {
 
         public GainControl() {
-            super("GainControl",
-                  TAG_GAIN_CONTROL,
-                  1 << TIFFTag.TIFF_SHORT);
+            super("GainControl", TAG_GAIN_CONTROL, 1 << TIFFTag.TIFF_SHORT);
 
             addValueName(GAIN_CONTROL_NONE, "None");
             addValueName(GAIN_CONTROL_LOW_GAIN_UP, "Low gain up");
@@ -1852,9 +1616,7 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
     static class Contrast extends TIFFTag {
 
         public Contrast() {
-            super("Contrast",
-                  TAG_CONTRAST,
-                  1 << TIFFTag.TIFF_SHORT);
+            super("Contrast", TAG_CONTRAST, 1 << TIFFTag.TIFF_SHORT);
 
             addValueName(CONTRAST_NORMAL, "Normal");
             addValueName(CONTRAST_SOFT, "Soft");
@@ -1865,9 +1627,7 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
     static class Saturation extends TIFFTag {
 
         public Saturation() {
-            super("Saturation",
-                  TAG_SATURATION,
-                  1 << TIFFTag.TIFF_SHORT);
+            super("Saturation", TAG_SATURATION, 1 << TIFFTag.TIFF_SHORT);
 
             addValueName(SATURATION_NORMAL, "Normal");
             addValueName(SATURATION_LOW, "Low saturation");
@@ -1878,9 +1638,7 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
     static class Sharpness extends TIFFTag {
 
         public Sharpness() {
-            super("Sharpness",
-                  TAG_SHARPNESS,
-                  1 << TIFFTag.TIFF_SHORT);
+            super("Sharpness", TAG_SHARPNESS, 1 << TIFFTag.TIFF_SHORT);
 
             addValueName(SHARPNESS_NORMAL, "Normal");
             addValueName(SHARPNESS_SOFT, "Soft");
@@ -1891,18 +1649,14 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
     static class DeviceSettingDescription extends TIFFTag {
 
         public DeviceSettingDescription() {
-            super("DeviceSettingDescription",
-                  TAG_DEVICE_SETTING_DESCRIPTION,
-                  1 << TIFFTag.TIFF_UNDEFINED);
+            super("DeviceSettingDescription", TAG_DEVICE_SETTING_DESCRIPTION, 1 << TIFFTag.TIFF_UNDEFINED);
         }
     }
 
     static class SubjectDistanceRange extends TIFFTag {
 
         public SubjectDistanceRange() {
-            super("SubjectDistanceRange",
-                  TAG_SUBJECT_DISTANCE_RANGE,
-                  1 << TIFFTag.TIFF_SHORT);
+            super("SubjectDistanceRange", TAG_SUBJECT_DISTANCE_RANGE, 1 << TIFFTag.TIFF_SHORT);
 
             addValueName(SUBJECT_DISTANCE_RANGE_UNKNOWN, "unknown");
             addValueName(SUBJECT_DISTANCE_RANGE_MACRO, "Macro");
@@ -1914,18 +1668,17 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
     static class ImageUniqueID extends TIFFTag {
 
         public ImageUniqueID() {
-            super("ImageUniqueID",
-                  TAG_IMAGE_UNIQUE_ID,
-                  1 << TIFFTag.TIFF_ASCII);
+            super("ImageUniqueID", TAG_IMAGE_UNIQUE_ID, 1 << TIFFTag.TIFF_ASCII);
         }
     }
 
     static class InteroperabilityIFD extends TIFFTag {
         public InteroperabilityIFD() {
-            super("InteroperabilityIFD",
-                  TAG_INTEROPERABILITY_IFD_POINTER,
-                  1 << TIFFTag.TIFF_LONG,
-                  EXIFInteroperabilityTagSet.getInstance());
+            super(
+                    "InteroperabilityIFD",
+                    TAG_INTEROPERABILITY_IFD_POINTER,
+                    1 << TIFFTag.TIFF_LONG,
+                    EXIFInteroperabilityTagSet.getInstance());
         }
     }
 
@@ -2002,7 +1755,7 @@ public class EXIFTIFFTagSet extends TIFFTagSet {
      *
      * @return an <code>EXIFTIFFTagSet</code> instance.
      */
-    public synchronized static EXIFTIFFTagSet getInstance() {
+    public static synchronized EXIFTIFFTagSet getInstance() {
         if (theInstance == null) {
             initTags();
             theInstance = new EXIFTIFFTagSet();

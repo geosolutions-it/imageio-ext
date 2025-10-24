@@ -18,17 +18,15 @@ package it.geosolutions.imageio.stream.input;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
-
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageInputStreamImpl;
 
 /**
  * Decorator class for the {@link ImageInputStream} subclasses.
- * 
+ *
  * @author Simone Giannecchini, GeoSolutions
  */
-public abstract class FilterImageInputStream extends ImageInputStreamImpl
-        implements ImageInputStream {
+public abstract class FilterImageInputStream extends ImageInputStreamImpl implements ImageInputStream {
 
     protected ImageInputStream iis;
 

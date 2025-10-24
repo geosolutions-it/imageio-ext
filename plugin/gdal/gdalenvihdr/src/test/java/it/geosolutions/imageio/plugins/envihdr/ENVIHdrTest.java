@@ -19,25 +19,23 @@ package it.geosolutions.imageio.plugins.envihdr;
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.resources.TestData;
-
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import javax.imageio.ImageReader;
-
 import org.junit.Assert;
 import org.junit.Test;
+
 public class ENVIHdrTest extends AbstractGDALTest {
 
     /**
      * Test Read without exploiting JAI-ImageIO Tools
-     * 
+     *
      * @throws FileNotFoundException
      * @throws IOException
      */
-	@Test
+    @Test
     public void testManualRead() throws IOException, FileNotFoundException {
         if (!isGDALAvailable) {
             return;
@@ -48,10 +46,8 @@ public class ENVIHdrTest extends AbstractGDALTest {
         ImageReader reader = new ENVIHdrImageReaderSpi().createReaderInstance();
         reader.setInput(file);
         final RenderedImage image = reader.read(0);
-        if (TestData.isInteractiveTest())
-            Viewer.visualizeAllInformation(image,fileName);
-        else
-            Assert.assertNotNull(image);
+        if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(image, fileName);
+        else Assert.assertNotNull(image);
         reader.dispose();
     }
 }

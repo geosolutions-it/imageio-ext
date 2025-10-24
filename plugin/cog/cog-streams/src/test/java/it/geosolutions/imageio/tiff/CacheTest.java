@@ -22,10 +22,9 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Tests cache.  CogImageInputStreams are tested in the cog-reader module.
+ * Tests cache. CogImageInputStreams are tested in the cog-reader module.
  *
- * @author joshfix
- * Created on 2019-08-22
+ * @author joshfix Created on 2019-08-22
  */
 public class CacheTest {
 
@@ -44,5 +43,4 @@ public class CacheTest {
         Assert.assertEquals(content.length, fetchedContent.length);
         Assert.assertEquals(content[0], fetchedContent[0]);
     }
-
 }

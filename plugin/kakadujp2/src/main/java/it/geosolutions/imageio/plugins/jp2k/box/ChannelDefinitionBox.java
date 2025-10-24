@@ -1,42 +1,42 @@
 /*
  * $RCSfile: ChannelDefinitionBox.java,v $
  *
- * 
+ *
  * Copyright (c) 2005 Sun Microsystems, Inc. All  Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
- * are met: 
- * 
- * - Redistribution of source code must retain the above copyright 
+ * are met:
+ *
+ * - Redistribution of source code must retain the above copyright
  *   notice, this  list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in 
+ *   notice, this list of conditions and the following disclaimer in
  *   the documentation and/or other materials provided with the
  *   distribution.
- * 
- * Neither the name of Sun Microsystems, Inc. or the names of 
- * contributors may be used to endorse or promote products derived 
+ *
+ * Neither the name of Sun Microsystems, Inc. or the names of
+ * contributors may be used to endorse or promote products derived
  * from this software without specific prior written permission.
- * 
- * This software is provided "AS IS," without a warranty of any 
- * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND 
- * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, 
+ *
+ * This software is provided "AS IS," without a warranty of any
+ * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND
+ * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY
- * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL 
- * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF 
+ * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL
+ * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF
  * USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS
- * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR 
+ * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR
  * ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL,
  * CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND
  * REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR
  * INABILITY TO USE THIS SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGES. 
- * 
- * You acknowledge that this software is not designed or intended for 
- * use in the design, construction, operation or maintenance of any 
- * nuclear facility. 
+ * POSSIBILITY OF SUCH DAMAGES.
+ *
+ * You acknowledge that this software is not designed or intended for
+ * use in the design, construction, operation or maintenance of any
+ * nuclear facility.
  *
  * $Revision: 1.1 $
  * $Date: 2005/02/11 05:01:31 $
@@ -61,18 +61,15 @@
 package it.geosolutions.imageio.plugins.jp2k.box;
 
 import java.awt.image.ColorModel;
-
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadataNode;
-
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * This class is designed to represent a Channel Definition Box of JPEG JP2 file format. 
- * A Channel Definition Box has a length, and a fixed type of "cdef". 
- * Its content defines the type of the image channels: color channel, alpha channel or 
- * premultiplied alpha channel.
+ * This class is designed to represent a Channel Definition Box of JPEG JP2 file format. A Channel Definition Box has a
+ * length, and a fixed type of "cdef". Its content defines the type of the image channels: color channel, alpha channel
+ * or premultiplied alpha channel.
  *
  * @author Simone Giannecchini, GeoSolutions
  * @author Daniele Romagnoli, GeoSolutions
@@ -80,41 +77,32 @@ import org.w3c.dom.NodeList;
 @SuppressWarnings("serial")
 public class ChannelDefinitionBox extends BaseJP2KBox {
 
-    public final static int BOX_TYPE = 0x63646566;
+    public static final int BOX_TYPE = 0x63646566;
 
-    public final static String NAME = "cdef";
+    public static final String NAME = "cdef";
 
-    public final static String JP2K_MD_NAME = "JP2KChannelDefinitionBox";
+    public static final String JP2K_MD_NAME = "JP2KChannelDefinitionBox";
 
     /** The cached data elements. */
     private short num;
 
     private short[] channels;
 
-    /**
-     * @uml.property name="types"
-     */
+    /** @uml.property name="types" */
     private int[] types;
 
     private short[] associations;
 
     private byte[] localData;
 
-    /**
-     * Computes the length of this box from the provided <code>ColorModel</code>.
-     */
+    /** Computes the length of this box from the provided <code>ColorModel</code>. */
     private static int computeLength(ColorModel colorModel) {
         int length = colorModel.getComponentSize().length - 1;
-        return 10 + (colorModel.isAlphaPremultiplied() ? length * 18
-                : length * 12);
+        return 10 + (colorModel.isAlphaPremultiplied() ? length * 18 : length * 12);
     }
 
-    /**
-     * Fills the channel definitions into the arrays based on the number of
-     * components and isPremultiplied.
-     */
-    public static void fillBasedOnBands(int numComps, boolean isPremultiplied,
-            short[] c, int[] t, short[] a) {
+    /** Fills the channel definitions into the arrays based on the number of components and isPremultiplied. */
+    public static void fillBasedOnBands(int numComps, boolean isPremultiplied, short[] c, int[] t, short[] a) {
         int num = numComps * (isPremultiplied ? 3 : 2);
         if (isPremultiplied) {
             for (int i = numComps * 2; i < num; i++) {
@@ -135,10 +123,7 @@ public class ChannelDefinitionBox extends BaseJP2KBox {
         }
     }
 
-    /**
-     * Constructs a <code>ChannelDefinitionBox</code> based on the provided
-     * <code>ColorModel</code>.
-     */
+    /** Constructs a <code>ChannelDefinitionBox</code> based on the provided <code>ColorModel</code>. */
     public ChannelDefinitionBox(ColorModel colorModel) {
         super(computeLength(colorModel), BOX_TYPE, null);
 
@@ -150,24 +135,16 @@ public class ChannelDefinitionBox extends BaseJP2KBox {
         associations = new short[num];
 
         // fills the arrays.
-        fillBasedOnBands(length, colorModel.isAlphaPremultiplied(), channels,
-                types, associations);
+        fillBasedOnBands(length, colorModel.isAlphaPremultiplied(), channels, types, associations);
     }
 
-    /**
-     * Constructs a <code>ChannelDefinitionBox</code> based on the provided
-     * content in byte array.
-     */
+    /** Constructs a <code>ChannelDefinitionBox</code> based on the provided content in byte array. */
     public ChannelDefinitionBox(byte[] data) {
         super(8 + data.length, BOX_TYPE, data);
     }
 
-    /**
-     * Constructs a <code>ChannelDefinitionBox</code> based on the provided
-     * channel definitions.
-     */
-    public ChannelDefinitionBox(short[] channel, int[] types,
-            short[] associations) {
+    /** Constructs a <code>ChannelDefinitionBox</code> based on the provided channel definitions. */
+    public ChannelDefinitionBox(short[] channel, int[] types, short[] associations) {
         super(10 + channel.length * 6, BOX_TYPE, null);
         this.num = (short) channel.length;
         this.channels = channel;
@@ -175,10 +152,7 @@ public class ChannelDefinitionBox extends BaseJP2KBox {
         this.associations = associations;
     }
 
-    /**
-     * Constructs a <code>ChannelDefinitionBox</code> based on the provided
-     * <code>org.w3c.dom.Node</code>.
-     */
+    /** Constructs a <code>ChannelDefinitionBox</code> based on the provided <code>org.w3c.dom.Node</code>. */
     public ChannelDefinitionBox(Node node) throws IIOInvalidTreeException {
         super(node);
         NodeList children = node.getChildNodes();
@@ -203,8 +177,7 @@ public class ChannelDefinitionBox extends BaseJP2KBox {
                     child = children1.item(j);
                     name = child.getNodeName();
                     if ("ChannelNumber".equals(name)) {
-                        channels[index] = BoxUtilities
-                                .getShortElementValue(child);
+                        channels[index] = BoxUtilities.getShortElementValue(child);
                     }
 
                     if ("ChannelType".equals(name)) {
@@ -212,8 +185,7 @@ public class ChannelDefinitionBox extends BaseJP2KBox {
                     }
 
                     if ("Association".equals(name)) {
-                        associations[index++] = BoxUtilities
-                                .getShortElementValue(child);
+                        associations[index++] = BoxUtilities.getShortElementValue(child);
                     }
                 }
             }
@@ -240,29 +212,27 @@ public class ChannelDefinitionBox extends BaseJP2KBox {
     }
 
     /**
-	 * Returns the channel types.
-	 * @uml.property  name="types"
-	 */
+     * Returns the channel types.
+     *
+     * @uml.property name="types"
+     */
     public int[] getTypes() {
         return types;
     }
 
     /**
-     * Returns the association which associates a color channel to a color
-     * component in the color space of the image.
+     * Returns the association which associates a color channel to a color component in the color space of the image.
      */
     public short[] getAssociation() {
         return associations;
     }
 
     /**
-     * Creates an <code>IIOMetadataNode</code> from this channel definition
-     * box. The format of this node is defined in the XML dtd and xsd for the
-     * JP2 image file.
+     * Creates an <code>IIOMetadataNode</code> from this channel definition box. The format of this node is defined in
+     * the XML dtd and xsd for the JP2 image file.
      */
     public IIOMetadataNode getNativeNode() {
-        IIOMetadataNode node = new IIOMetadataNode(BoxUtilities
-                .getName(getType()));
+        IIOMetadataNode node = new IIOMetadataNode(BoxUtilities.getName(getType()));
         setDefaultAttributes(node);
 
         IIOMetadataNode child = new IIOMetadataNode("NumberOfDefinition");
@@ -294,8 +264,7 @@ public class ChannelDefinitionBox extends BaseJP2KBox {
     }
 
     protected byte[] compose() {
-        if (localData != null)
-            return localData;
+        if (localData != null) return localData;
         int len = num * 6 + 2;
         localData = new byte[len];
         localData[0] = (byte) (num >> 8);
@@ -317,5 +286,4 @@ public class ChannelDefinitionBox extends BaseJP2KBox {
     public short getNum() {
         return num;
     }
-    
 }

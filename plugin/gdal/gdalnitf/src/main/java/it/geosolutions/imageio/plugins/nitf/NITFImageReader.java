@@ -17,26 +17,22 @@
 package it.geosolutions.imageio.plugins.nitf;
 
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
-
 import java.awt.image.RenderedImage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * {@link NITFImageReader} is a {@link GDALImageReader} able to create
- * {@link RenderedImage} from NITF files.
- * 
+ * {@link NITFImageReader} is a {@link GDALImageReader} able to create {@link RenderedImage} from NITF files.
+ *
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class NITFImageReader extends GDALImageReader {
 
-    private static final Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.plugins.nitf");
+    private static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.nitf");
 
     public NITFImageReader(NITFImageReaderSpi originatingProvider) {
         super(originatingProvider, 0);
-        if (LOGGER.isLoggable(Level.FINE))
-            LOGGER.fine("NITFImageReader Constructor");
+        if (LOGGER.isLoggable(Level.FINE)) LOGGER.fine("NITFImageReader Constructor");
     }
 }

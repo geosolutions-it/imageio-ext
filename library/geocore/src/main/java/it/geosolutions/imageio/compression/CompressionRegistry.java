@@ -30,17 +30,14 @@
 package it.geosolutions.imageio.compression;
 
 import it.geosolutions.imageio.registry.ImageIOEXTRegistry;
-
 import java.util.*;
 
-/**
- * A Registry for CompressorSpi, DecompressorSpi registering SPIs found on the classpath
- */
+/** A Registry for CompressorSpi, DecompressorSpi registering SPIs found on the classpath */
 public class CompressionRegistry extends ImageIOEXTRegistry {
 
     private static final List<Class<?>> INITIAL_TYPES = new ArrayList(2);
 
-    private final static CompressionRegistry DEFAULT_INSTANCE;
+    private static final CompressionRegistry DEFAULT_INSTANCE;
 
     public CompressionRegistry() {
         super(INITIAL_TYPES.iterator());
@@ -61,13 +58,13 @@ public class CompressionRegistry extends ImageIOEXTRegistry {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         Iterator categories = this.getSubTypes();
 
-        while(categories.hasNext()) {
-            Class _class = (Class)categories.next();
+        while (categories.hasNext()) {
+            Class _class = (Class) categories.next();
             Iterator iterator = ServiceLoader.load(_class, cl).iterator();
 
-            while(iterator.hasNext()) {
+            while (iterator.hasNext()) {
                 try {
-                    CompressionPrioritySpi spi = (CompressionPrioritySpi)iterator.next();
+                    CompressionPrioritySpi spi = (CompressionPrioritySpi) iterator.next();
                     this.registerSPI(spi);
                 } catch (ServiceConfigurationError sce) {
                     if (System.getSecurityManager() == null) {

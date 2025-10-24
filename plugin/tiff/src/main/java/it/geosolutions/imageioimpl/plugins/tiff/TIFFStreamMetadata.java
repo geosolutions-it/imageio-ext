@@ -1,42 +1,42 @@
 /*
  * $RCSfile: TIFFStreamMetadata.java,v $
  *
- * 
+ *
  * Copyright (c) 2005 Sun Microsystems, Inc. All  Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
- * are met: 
- * 
- * - Redistribution of source code must retain the above copyright 
+ * are met:
+ *
+ * - Redistribution of source code must retain the above copyright
  *   notice, this  list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in 
+ *   notice, this list of conditions and the following disclaimer in
  *   the documentation and/or other materials provided with the
  *   distribution.
- * 
- * Neither the name of Sun Microsystems, Inc. or the names of 
- * contributors may be used to endorse or promote products derived 
+ *
+ * Neither the name of Sun Microsystems, Inc. or the names of
+ * contributors may be used to endorse or promote products derived
  * from this software without specific prior written permission.
- * 
- * This software is provided "AS IS," without a warranty of any 
- * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND 
- * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, 
+ *
+ * This software is provided "AS IS," without a warranty of any
+ * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND
+ * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY
- * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL 
- * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF 
+ * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL
+ * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF
  * USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS
- * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR 
+ * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR
  * ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL,
  * CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND
  * REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR
  * INABILITY TO USE THIS SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGES. 
- * 
- * You acknowledge that this software is not designed or intended for 
- * use in the design, construction, operation or maintenance of any 
- * nuclear facility. 
+ * POSSIBILITY OF SUCH DAMAGES.
+ *
+ * You acknowledge that this software is not designed or intended for
+ * use in the design, construction, operation or maintenance of any
+ * nuclear facility.
  *
  * $Revision: 1.1 $
  * $Date: 2005/02/11 05:01:50 $
@@ -74,30 +74,25 @@
 package it.geosolutions.imageioimpl.plugins.tiff;
 
 import it.geosolutions.imageio.maskband.DatasetLayout;
-
 import java.io.File;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
-
+import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
-import javax.imageio.metadata.IIOInvalidTreeException;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-/**
- * {@link IIOMetadata} subclass containing Metadata associated to the whole TIFF file.
- */
+/** {@link IIOMetadata} subclass containing Metadata associated to the whole TIFF file. */
 public class TIFFStreamMetadata extends IIOMetadata {
 
     // package scope
-    protected static final String nativeMetadataFormatName =
-        "com_sun_media_imageio_plugins_tiff_stream_1.0";
+    protected static final String nativeMetadataFormatName = "com_sun_media_imageio_plugins_tiff_stream_1.0";
 
     protected static final String nativeMetadataFormatClassName =
-        "it.geosolutions.imageioimpl.plugins.tiff.TIFFStreamMetadataFormat";
+            "it.geosolutions.imageioimpl.plugins.tiff.TIFFStreamMetadataFormat";
 
     /** Node name associated to the External mask File */
     public static final String EXTERNAL_MASK_FILE = "externalMaskFile";
@@ -128,7 +123,7 @@ public class TIFFStreamMetadata extends IIOMetadata {
 
     /**
      * Enum used for defining the various node of the Metadata Tree
-     * 
+     *
      * @author Nicola Lagomarsini GeoSolutions
      */
     public enum MetadataNode {
@@ -218,50 +213,46 @@ public class TIFFStreamMetadata extends IIOMetadata {
         EXT_MASK_FILE(EXTERNAL_MASK_FILE) {
             @Override
             public String handleMetadata(TIFFStreamMetadata metadata, String value) {
-                metadata.dtLayout.setExternalMasks((value != null && !value.isEmpty()) ? new File(
-                        value) : null);
+                metadata.dtLayout.setExternalMasks((value != null && !value.isEmpty()) ? new File(value) : null);
                 return null;
             }
         },
         EXT_OVR_FILE(EXTERNAL_OVERVIEW_FILE) {
             @Override
             public String handleMetadata(TIFFStreamMetadata metadata, String value) {
-                metadata.dtLayout
-                        .setExternalMaskOverviews((value != null && !value.isEmpty()) ? new File(
-                                value) : null);
+                metadata.dtLayout.setExternalMaskOverviews(
+                        (value != null && !value.isEmpty()) ? new File(value) : null);
                 return null;
             }
         },
         EXT_OVR_MASK_FILE(EXTERNAL_MASK_OVERVIEW_FILE) {
             @Override
             public String handleMetadata(TIFFStreamMetadata metadata, String value) {
-                metadata.dtLayout
-                        .setExternalOverviews((value != null && !value.isEmpty()) ? new File(value)
-                                : null);
+                metadata.dtLayout.setExternalOverviews((value != null && !value.isEmpty()) ? new File(value) : null);
                 return null;
             }
         };
 
-        /** Node Name*/
+        /** Node Name */
         private String name;
 
         private MetadataNode(String name) {
             this.setName(name);
         }
 
-        /** Getter for the Node Name*/
+        /** Getter for the Node Name */
         public String getName() {
             return name;
         }
 
-        /** Setter for the Node Name*/
+        /** Setter for the Node Name */
         public void setName(String name) {
             this.name = name;
         }
 
         /**
          * This method allows to handle the input value inside the input {@link TIFFStreamMetadata}.
-         * 
+         *
          * @param metadata
          * @param value
          * @return
@@ -270,7 +261,7 @@ public class TIFFStreamMetadata extends IIOMetadata {
 
         /**
          * Static method which returns a {@link MetadataNode} from the input node name
-         * 
+         *
          * @param name
          * @return
          */
@@ -300,21 +291,16 @@ public class TIFFStreamMetadata extends IIOMetadata {
         names.add(EXTERNAL_MASK_OVERVIEW_FILE);
     }
 
-    private static final String bigEndianString =
-        ByteOrder.BIG_ENDIAN.toString();
-    private static final String littleEndianString =
-        ByteOrder.LITTLE_ENDIAN.toString();
+    private static final String bigEndianString = ByteOrder.BIG_ENDIAN.toString();
+    private static final String littleEndianString = ByteOrder.LITTLE_ENDIAN.toString();
 
     public ByteOrder byteOrder = ByteOrder.BIG_ENDIAN;
 
-    /** {@link DatasetLayout} associated to the Metadata*/
+    /** {@link DatasetLayout} associated to the Metadata */
     public TiffDatasetLayoutImpl dtLayout = new TiffDatasetLayoutImpl();
 
     public TIFFStreamMetadata() {
-        super(false,
-              nativeMetadataFormatName,
-              nativeMetadataFormatClassName,
-              null, null);
+        super(false, nativeMetadataFormatName, nativeMetadataFormatClassName, null, null);
     }
 
     public boolean isReadOnly() {
@@ -322,8 +308,7 @@ public class TIFFStreamMetadata extends IIOMetadata {
     }
 
     // Shorthand for throwing an IIOInvalidTreeException
-    private static void fatal(Node node, String reason)
-        throws IIOInvalidTreeException {
+    private static void fatal(Node node, String reason) throws IIOInvalidTreeException {
         throw new IIOInvalidTreeException(reason, node);
     }
 
@@ -337,25 +322,24 @@ public class TIFFStreamMetadata extends IIOMetadata {
 
         // Setting Internal Mask number
         IIOMetadataNode numInternalMasksNode = new IIOMetadataNode(NUM_INTERNAL_MASKS);
-        numInternalMasksNode.setAttribute("value", Integer.valueOf(dtLayout.getNumInternalMasks())
-                .toString());
+        numInternalMasksNode.setAttribute(
+                "value", Integer.valueOf(dtLayout.getNumInternalMasks()).toString());
         // Setting External Mask number
         IIOMetadataNode numExternalMasksNode = new IIOMetadataNode(NUM_EXTERNAL_MASKS);
-        numExternalMasksNode.setAttribute("value", Integer.valueOf(dtLayout.getNumExternalMasks())
-                .toString());
+        numExternalMasksNode.setAttribute(
+                "value", Integer.valueOf(dtLayout.getNumExternalMasks()).toString());
         // Setting Internal Overview number
         IIOMetadataNode numInternalOverviewsNode = new IIOMetadataNode(NUM_INTERNAL_OVERVIEWS);
-        numInternalOverviewsNode.setAttribute("value",
-                Integer.valueOf(dtLayout.getNumInternalOverviews()).toString());
+        numInternalOverviewsNode.setAttribute(
+                "value", Integer.valueOf(dtLayout.getNumInternalOverviews()).toString());
         // Setting Internal Overview number
         IIOMetadataNode numExternalOverviewsNode = new IIOMetadataNode(NUM_EXTERNAL_OVERVIEWS);
-        numExternalOverviewsNode.setAttribute("value",
-                Integer.valueOf(dtLayout.getNumExternalOverviews()).toString());
+        numExternalOverviewsNode.setAttribute(
+                "value", Integer.valueOf(dtLayout.getNumExternalOverviews()).toString());
         // Setting External Mask Overview number
-        IIOMetadataNode numExternalMaskOverviewsNode = new IIOMetadataNode(
-                NUM_EXTERNAL_MASK_OVERVIEWS);
-        numExternalMaskOverviewsNode.setAttribute("value",
-                Integer.valueOf(dtLayout.getNumExternalMaskOverviews()).toString());
+        IIOMetadataNode numExternalMaskOverviewsNode = new IIOMetadataNode(NUM_EXTERNAL_MASK_OVERVIEWS);
+        numExternalMaskOverviewsNode.setAttribute(
+                "value", Integer.valueOf(dtLayout.getNumExternalMaskOverviews()).toString());
         // Setting external file path
         IIOMetadataNode externalMaskFileNode = new IIOMetadataNode(EXTERNAL_MASK_FILE);
         File file = dtLayout.getExternalMasks();
@@ -365,11 +349,9 @@ public class TIFFStreamMetadata extends IIOMetadata {
         file = dtLayout.getExternalOverviews();
         externalOverviewFileNode.setAttribute("value", file != null ? file.getAbsolutePath() : "");
         // Setting Internal Overview number
-        IIOMetadataNode externalMaskOverviewFileNode = new IIOMetadataNode(
-                EXTERNAL_MASK_OVERVIEW_FILE);
+        IIOMetadataNode externalMaskOverviewFileNode = new IIOMetadataNode(EXTERNAL_MASK_OVERVIEW_FILE);
         file = dtLayout.getExternalMaskOverviews();
-        externalMaskOverviewFileNode.setAttribute("value", file != null ? file.getAbsolutePath()
-                : "");
+        externalMaskOverviewFileNode.setAttribute("value", file != null ? file.getAbsolutePath() : "");
 
         // Setting Child nodes
         root.appendChild(numInternalMasksNode);
@@ -428,7 +410,7 @@ public class TIFFStreamMetadata extends IIOMetadata {
 
     /**
      * Method for checking if the {@link Node} object is related to the Metadata Tree
-     * 
+     *
      * @param child
      * @return
      */
@@ -452,8 +434,7 @@ public class TIFFStreamMetadata extends IIOMetadata {
         return null;
     }
 
-    public void mergeTree(String formatName, Node root)
-        throws IIOInvalidTreeException {
+    public void mergeTree(String formatName, Node root) throws IIOInvalidTreeException {
         if (formatName.equals(nativeMetadataFormatName)) {
             if (root == null) {
                 throw new IllegalArgumentException("root == null!");

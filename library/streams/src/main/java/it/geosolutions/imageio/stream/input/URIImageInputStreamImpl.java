@@ -18,32 +18,27 @@ package it.geosolutions.imageio.stream.input;
 
 import java.io.IOException;
 import java.net.URI;
-
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageInputStreamImpl;
 
 /**
- * An implementation of {@link ImageInputStream} that gets its input from a
- * {@link URI}.
- * 
- * Note that this class doesn't actually allow read operations. It is actually
- * only used to allow defining an {@link ImageInputStream} for a URI.
- * 
+ * An implementation of {@link ImageInputStream} that gets its input from a {@link URI}.
+ *
+ * <p>Note that this class doesn't actually allow read operations. It is actually only used to allow defining an
+ * {@link ImageInputStream} for a URI.
+ *
  * @author Daniele Romagnoli, GeoSolutions
  */
-public class URIImageInputStreamImpl extends ImageInputStreamImpl implements
-        URIImageInputStream {
+public class URIImageInputStreamImpl extends ImageInputStreamImpl implements URIImageInputStream {
 
     private URI uri;
 
     public int read() throws IOException {
-        throw new UnsupportedOperationException(
-                "read method is actually unsupported.");
+        throw new UnsupportedOperationException("read method is actually unsupported.");
     }
 
     public int read(byte[] b, int off, int len) throws IOException {
-        throw new UnsupportedOperationException(
-                "read method is actually unsupported.");
+        throw new UnsupportedOperationException("read method is actually unsupported.");
     }
 
     public URI getUri() {
