@@ -22,7 +22,7 @@ import java.awt.image.Raster;
 
 /**
  * A scanline provider optimized for a Raster with 16 bit gray + 16 bits alpha
- * 
+ *
  * @author Andrea Aime - GeoSolutions
  */
 public final class RasterShortGrayAlphaProvider extends AbstractScanlineProvider {
@@ -38,12 +38,11 @@ public final class RasterShortGrayAlphaProvider extends AbstractScanlineProvider
         this.alphaFirst = bandOffsets[0] != 0;
     }
 
-    
     public void next(final byte[] scanline, final int offset, final int length) {
         int shortsIdx = cursor.next();
         int i = offset;
         final int max = offset + length;
-        if(alphaFirst) {
+        if (alphaFirst) {
             while (i < max) {
                 final short alpha = shorts[shortsIdx++];
                 final short gray = shorts[shortsIdx++];
@@ -51,7 +50,7 @@ public final class RasterShortGrayAlphaProvider extends AbstractScanlineProvider
                 scanline[i++] = (byte) (gray & 0xFF);
                 scanline[i++] = (byte) ((alpha >> 8) & 0xFF);
                 scanline[i++] = (byte) (alpha & 0xFF);
-            } 
+            }
         } else {
             while (i < max) {
                 final short gray = shorts[shortsIdx++];
@@ -63,5 +62,4 @@ public final class RasterShortGrayAlphaProvider extends AbstractScanlineProvider
             }
         }
     }
-
 }

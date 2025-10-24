@@ -17,27 +17,22 @@
 package it.geosolutions.imageio.ndplugin;
 
 import it.geosolutions.imageio.core.CoreCommonImageMetadata;
-
 import java.io.IOException;
 import java.util.Iterator;
-
 import javax.imageio.ImageTypeSpecifier;
-
 import org.w3c.dom.Node;
 
 /**
- * A basic abstract class containing common metadata such as basic raster
- * properties
- * 
- * TODO  @TODO: Add UOM management (Maybe, it is more appropriate to do on the upper
- *        class).
- *        
+ * A basic abstract class containing common metadata such as basic raster properties
+ *
+ * <p>TODO @TODO: Add UOM management (Maybe, it is more appropriate to do on the upper class).
+ *
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
  */
 public abstract class BaseImageMetadata extends CoreCommonImageMetadata {
 
-    public final static String ATTRIBUTES_NODE = "Attributes";
+    public static final String ATTRIBUTES_NODE = "Attributes";
 
     protected final BaseImageReader imageReader;
 
@@ -47,18 +42,14 @@ public abstract class BaseImageMetadata extends CoreCommonImageMetadata {
 
     /**
      * <code>BaseImageMetadata</code> constructor.
-     * 
-     * @param reader
-     *                the reader used to obtain metadata.
-     * @param name
-     *                the name to be set for the dataset represented by this
-     *                common metadata object.
+     *
+     * @param reader the reader used to obtain metadata.
+     * @param name the name to be set for the dataset represented by this common metadata object.
      */
     protected BaseImageMetadata(BaseImageReader reader, int imageIndex) {
-        super(false, nativeMetadataFormatName, nativeMetadataFormatClassName,null, null);
-    	if (reader == null)
-            throw new NullPointerException("The provided reader is null");
-        
+        super(false, nativeMetadataFormatName, nativeMetadataFormatClassName, null, null);
+        if (reader == null) throw new NullPointerException("The provided reader is null");
+
         this.imageIndex = imageIndex;
         imageReader = reader;
 
@@ -96,13 +87,11 @@ public abstract class BaseImageMetadata extends CoreCommonImageMetadata {
 
     @Override
     protected synchronized Node createCommonNativeTree() {
-        if (this.commonNativeTree == null)
-            commonNativeTree = super.createCommonNativeTree();
+        if (this.commonNativeTree == null) commonNativeTree = super.createCommonNativeTree();
         return commonNativeTree;
-
     }
 
-	public BaseImageReader getImageReader() {
-		return imageReader;
-	}
+    public BaseImageReader getImageReader() {
+        return imageReader;
+    }
 }

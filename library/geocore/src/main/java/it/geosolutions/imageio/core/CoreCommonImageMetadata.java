@@ -23,46 +23,34 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
-
 import org.w3c.dom.Node;
 
 /**
- * Class needed to store all available information of a 2D Dataset with the add
- * of additional information. For convenience and future re-use this class also
- * represents an {@link IIOMetadata}. A wide set of getters method allow to
- * retrieve several information directly from the metadata instance, without
- * need of getting the XML DOM nodes tree.
- * 
+ * Class needed to store all available information of a 2D Dataset with the add of additional information. For
+ * convenience and future re-use this class also represents an {@link IIOMetadata}. A wide set of getters method allow
+ * to retrieve several information directly from the metadata instance, without need of getting the XML DOM nodes tree.
+ *
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
  */
 public abstract class CoreCommonImageMetadata extends IIOMetadata {
 
-    /**
-     * The name of the native metadata format for this object.
-     */
+    /** The name of the native metadata format for this object. */
     public static final String nativeMetadataFormatName = "it_geosolutions_imageio_core_commonImageMetadata_1.0";
 
     /**
-     * The name of the class implementing <code>IIOMetadataFormat</code> and
-     * representing the native metadata format for this object.
+     * The name of the class implementing <code>IIOMetadataFormat</code> and representing the native metadata format for
+     * this object.
      */
     public static final String nativeMetadataFormatClassName = "it.geosolutions.imageio.core.CommonImageMetadataFormat";
 
-    /**
-     * the name of the driver which has opened the dataset represented by this
-     * common metadata object.
-     */
+    /** the name of the driver which has opened the dataset represented by this common metadata object. */
     private String driverName;
 
-    /**
-     * The description of the driver which has opened the dataset represented by
-     * this common metadata object.
-     */
+    /** The description of the driver which has opened the dataset represented by this common metadata object. */
     private String driverDescription;
 
     /** The dataset name */
@@ -83,17 +71,18 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     /** The grid to world transformation. */
     private double[] geoTransformation;
 
-     /**
-     * The list of Ground Control Points. <BR>
-     * Any Ground Control Point has the following fields:<BR>
+    /**
+     * The list of Ground Control Points. <br>
+     * Any Ground Control Point has the following fields:<br>
+     *
      * <UL>
-     * <LI>ID: Unique Identifier</LI>
-     * <LI>Info: Informational message/description</LI>
-     * <LI>x: GCPPixel -----> Pixel (x) location of GCP on Raster</LI>
-     * <LI>y: GCPLine ------> Line(y) location of GCP on Raster</LI>
-     * <LI>lon: GCPX -------> X position of GCP in Georeferenced Space</LI>
-     * <LI>lat: GCPY -------> Y position of GCP in Georeferenced Space</LI>
-     * <LI>elevation: GCPZ -> elevation of GCP in Georeferenced Space</LI>
+     *   <LI>ID: Unique Identifier
+     *   <LI>Info: Informational message/description
+     *   <LI>x: GCPPixel -----> Pixel (x) location of GCP on Raster
+     *   <LI>y: GCPLine ------> Line(y) location of GCP on Raster
+     *   <LI>lon: GCPX -------> X position of GCP in Georeferenced Space
+     *   <LI>lat: GCPY -------> Y position of GCP in Georeferenced Space
+     *   <LI>elevation: GCPZ -> elevation of GCP in Georeferenced Space
      * </UL>
      */
     private List<GCP> gcps = Collections.emptyList();
@@ -117,7 +106,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     private SampleModel sampleModel;
 
     // ////////////////////////////////////////////////
-    // 
+    //
     // Band Properties
     //
     // ////////////////////////////////////////////////
@@ -146,24 +135,26 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     /** Array to store the color interpretation for each band */
     private int[] colorInterpretations;
 
-    /**
-     * Private constructor
-     */
+    /** Private constructor */
     protected CoreCommonImageMetadata(
-    		final boolean standardMetadataFormatSupported,
-    		final String nativeMetadataFormatName,
-    		final String nativeMetadataFormatClassName,
-    		final String[] extraMetadataFormatNames,
-    		final String[] extraMetadataFormatClassNames) {
-        super(standardMetadataFormatSupported, nativeMetadataFormatName,nativeMetadataFormatClassName, extraMetadataFormatNames,extraMetadataFormatClassNames);
+            final boolean standardMetadataFormatSupported,
+            final String nativeMetadataFormatName,
+            final String nativeMetadataFormatClassName,
+            final String[] extraMetadataFormatNames,
+            final String[] extraMetadataFormatClassNames) {
+        super(
+                standardMetadataFormatSupported,
+                nativeMetadataFormatName,
+                nativeMetadataFormatClassName,
+                extraMetadataFormatNames,
+                extraMetadataFormatClassNames);
     }
 
     /**
-     * Returns the XML DOM <code>Node</code> object that represents the root
-     * of a tree of metadata contained within this object on its native format.
-     * 
-     * @return a root node containing common metadata exposed on its native
-     *         format.
+     * Returns the XML DOM <code>Node</code> object that represents the root of a tree of metadata contained within this
+     * object on its native format.
+     *
+     * @return a root node containing common metadata exposed on its native format.
      */
     protected Node createCommonNativeTree() {
         // Create root node
@@ -252,29 +243,31 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
         // //
         for (int i = 0; i < numBands; i++) {
             node = new IIOMetadataNode("BandInfo");
+            node.setAttribute("index", Integer.toString(i));
             node.setAttribute(
-            		"index", 
-            		Integer.toString(i));
+                    "colorInterpretation",
+                    colorInterpretations != null && colorInterpretations.length > i
+                            ? Integer.toBinaryString(colorInterpretations[i])
+                            : "");
             node.setAttribute(
-            		"colorInterpretation", 
-            		colorInterpretations != null&& colorInterpretations.length > i ? Integer .toBinaryString(colorInterpretations[i]) : "");
+                    "noData",
+                    noDataValues != null && noDataValues.length > i && noDataValues[i] != null
+                            ? noDataValues[i].toString()
+                            : null);
             node.setAttribute(
-            		"noData",
-            		noDataValues != null && noDataValues.length > i&& noDataValues[i] != null ? noDataValues[i].toString() : null);
+                    "maximum",
+                    maximums != null && maximums.length > i && maximums[i] != null ? maximums[i].toString() : null);
             node.setAttribute(
-            		"maximum", 
-            		maximums != null&& maximums.length > i && maximums[i] != null ? maximums[i].toString() : null);
+                    "minimum",
+                    minimums != null && minimums.length > i && minimums[i] != null ? minimums[i].toString() : null);
             node.setAttribute(
-            		"minimum", 
-            		minimums != null && minimums.length > i && minimums[i] != null ? minimums[i].toString() : null);
+                    "scale", scales != null && scales.length > i && scales[i] != null ? scales[i].toString() : null);
             node.setAttribute(
-            		"scale", 
-            		scales != null && scales.length > i&& scales[i] != null ? scales[i].toString() : null);
+                    "offset",
+                    offsets != null && offsets.length > i && offsets[i] != null ? offsets[i].toString() : null);
             node.setAttribute(
-            		"offset", 
-            		offsets != null && offsets.length > i&& offsets[i] != null ? offsets[i].toString() : null);
-            node.setAttribute(
-            		"numOverviews", numOverviews != null&& numOverviews.length > i ? Integer.toString(numOverviews[i]) : null);
+                    "numOverviews",
+                    numOverviews != null && numOverviews.length > i ? Integer.toString(numOverviews[i]) : null);
             bandsNode.appendChild(node);
         }
 
@@ -289,11 +282,11 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
             final boolean hasAlpha = icm.hasAlpha();
             IIOMetadataNode node1 = new IIOMetadataNode("ColorTable");
             node1.setAttribute("sizeOfLocalColorTable", Integer.toString(mapSize));
-            final byte rgb[][] = new byte[3 + (hasAlpha? 1:0)][mapSize];
+            final byte rgb[][] = new byte[3 + (hasAlpha ? 1 : 0)][mapSize];
             icm.getReds(rgb[0]);
             icm.getGreens(rgb[1]);
             icm.getBlues(rgb[2]);
-            if (hasAlpha){
+            if (hasAlpha) {
                 icm.getAlphas(rgb[3]);
             }
             for (int i = 0; i < mapSize; i++) {
@@ -302,7 +295,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
                 nodeEntry.setAttribute("red", Byte.toString(rgb[0][i]));
                 nodeEntry.setAttribute("green", Byte.toString(rgb[1][i]));
                 nodeEntry.setAttribute("blue", Byte.toString(rgb[2][i]));
-                if (hasAlpha){
+                if (hasAlpha) {
                     nodeEntry.setAttribute("alpha", Byte.toString(rgb[3][i]));
                 }
                 node1.appendChild(nodeEntry);
@@ -314,93 +307,69 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     }
 
     /**
-     * Returns an XML DOM <code>Node</code> object that represents the root of
-     * a tree of common stream metadata contained within this object according
-     * to the conventions defined by a given metadata format name.
-     * 
-     * @param formatName
-     *                the name of the requested metadata format. Note that
-     *                actually, the only supported format name is the
-     *                {@link CoreCommonImageMetadata#nativeMetadataFormatName}.
-     *                Requesting other format names will result in an
-     *                <code>IllegalArgumentException</code>
+     * Returns an XML DOM <code>Node</code> object that represents the root of a tree of common stream metadata
+     * contained within this object according to the conventions defined by a given metadata format name.
+     *
+     * @param formatName the name of the requested metadata format. Note that actually, the only supported format name
+     *     is the {@link CoreCommonImageMetadata#nativeMetadataFormatName}. Requesting other format names will result in
+     *     an <code>IllegalArgumentException</code>
      */
     public Node getAsTree(String formatName) {
-        if (nativeMetadataFormatName.equalsIgnoreCase(formatName))
-            return createCommonNativeTree();
-        throw new IllegalArgumentException(formatName+ " is not a supported format name");
+        if (nativeMetadataFormatName.equalsIgnoreCase(formatName)) return createCommonNativeTree();
+        throw new IllegalArgumentException(formatName + " is not a supported format name");
     }
 
     /**
-     * Returns <code>true</code> since this object does not support the
-     * <code>mergeTree</code>, <code>setFromTree</code>, and
-     * <code>reset</code> methods.
-     * 
-     * @return <code>true</code> since this <code>IIOMetadata</code> object
-     *         cannot be modified.
+     * Returns <code>true</code> since this object does not support the <code>mergeTree</code>, <code>setFromTree</code>
+     * , and <code>reset</code> methods.
+     *
+     * @return <code>true</code> since this <code>IIOMetadata</code> object cannot be modified.
      */
     public boolean isReadOnly() {
         return true;
     }
 
     /**
-     * Method unsupported. Calling this method will throws an
-     * <code>UnsupportedOperationException</code>
-     * 
+     * Method unsupported. Calling this method will throws an <code>UnsupportedOperationException</code>
+     *
      * @see javax.imageio.metadata.IIOMetadata#mergeTree()
-     * 
      * @see #isReadOnly()
      */
-    public void mergeTree(String formatName, Node root)
-            throws IIOInvalidTreeException {
+    public void mergeTree(String formatName, Node root) throws IIOInvalidTreeException {
         throw new UnsupportedOperationException("mergeTree operation is not allowed");
     }
 
     /**
-     * Method unsupported. Calling this method will throws an
-     * <code>UnsupportedOperationException</code>
-     * 
+     * Method unsupported. Calling this method will throws an <code>UnsupportedOperationException</code>
+     *
      * @see javax.imageio.metadata.IIOMetadata#reset()
-     * 
      * @see #isReadOnly()
      */
     public void reset() {
-        throw new UnsupportedOperationException( "reset operation is not allowed");
+        throw new UnsupportedOperationException("reset operation is not allowed");
     }
 
     // ////////////////////////////////////////////////////////////////////////
     //
     // Dataset and Driver Properties
-    // 
+    //
     // ////////////////////////////////////////////////////////////////////////
-    /**
-     * Returns the name of the dataset which is the source for this
-     * <code>IIOMetadata</code>
-     */
+    /** Returns the name of the dataset which is the source for this <code>IIOMetadata</code> */
     public String getDatasetName() {
         return datasetName;
     }
 
-    /**
-     * Returns the description of the dataset which is the source for this
-     * <code>IIOMetadata</code>
-     */
+    /** Returns the description of the dataset which is the source for this <code>IIOMetadata</code> */
     public String getDescription() {
         return datasetDescription;
     }
 
-    /**
-     * Returns the name of the GDAL driver used to open the source dataset for
-     * this <code>IIOMetadata</code>
-     */
+    /** Returns the name of the GDAL driver used to open the source dataset for this <code>IIOMetadata</code> */
     public String getDriverName() {
         return driverName;
     }
 
-    /**
-     * Returns the description of the GDAL driver used to open the source
-     * dataset for this <code>IIOMetadata</code>
-     */
+    /** Returns the description of the GDAL driver used to open the source dataset for this <code>IIOMetadata</code> */
     public String getDriverDescription() {
         return driverDescription;
     }
@@ -408,12 +377,9 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     // ////////////////////////////////////////////////////////////////////////
     //
     // Raster Properties
-    // 
+    //
     // ////////////////////////////////////////////////////////////////////////
-    /**
-     * Returns the number of bands of the dataset which is the source for this
-     * <code>IIOMetadata</code>
-     */
+    /** Returns the number of bands of the dataset which is the source for this <code>IIOMetadata</code> */
     public int getNumBands() {
         return numBands;
     }
@@ -438,35 +404,33 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
         return tileWidth;
     }
 
-    /**
-     * Returns the <code>ColorModel</code> for the dataset held by this
-     * object.
-     */
+    /** Returns the <code>ColorModel</code> for the dataset held by this object. */
     public ColorModel getColorModel() {
         return colorModel;
     }
 
-    /**
-     * Returns the <code>SampleModel</code> for the dataset held by this
-     * object.
-     */
+    /** Returns the <code>SampleModel</code> for the dataset held by this object. */
     public SampleModel getSampleModel() {
         return sampleModel;
     }
 
     /**
      * Returns the data for this dataset, as a range. May be <code>null</code>
+     *
      * @deprecated Use {@link #getNoDataValues()}
      */
     @Deprecated
     public double[] getNoData() {
         if (noDataValues != null)
-            return Arrays.stream(noDataValues).mapToDouble(d -> d == null ? Double.NaN : d).toArray();
+            return Arrays.stream(noDataValues)
+                    .mapToDouble(d -> d == null ? Double.NaN : d)
+                    .toArray();
         return null;
     }
 
     /**
      * Sets the nodata for this dataset. May be <code>null</code>
+     *
      * @param noData
      * @deprecated Use {@link #setNoDataValues(Double[])}
      */
@@ -477,7 +441,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     // ////////////////////////////////////////////////////////////////////////
     //
     // Referencing
-    // 
+    //
     // ////////////////////////////////////////////////////////////////////////
     /** Returns the projection */
     public String getProjection() {
@@ -511,15 +475,14 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     // ////////////////////////////////////////////////////////////////////////
     //
     // Bands Properties
-    // 
+    //
     // ////////////////////////////////////////////////////////////////////////
     public Double[] getMaximums() {
         return maximums == null ? null : maximums.clone();
     }
 
     protected void setMaximums(Double[] maximums) {
-        if (this.maximums!=null)
-            throw new UnsupportedOperationException("maximums have already been defined");
+        if (this.maximums != null) throw new UnsupportedOperationException("maximums have already been defined");
         this.maximums = maximums;
     }
 
@@ -528,8 +491,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     }
 
     protected void setMinimums(Double[] minimums) {
-        if (this.minimums!=null)
-            throw new UnsupportedOperationException("minimums have already been defined");
+        if (this.minimums != null) throw new UnsupportedOperationException("minimums have already been defined");
         this.minimums = minimums;
     }
 
@@ -538,7 +500,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     }
 
     public void setNoDataValues(Double[] noDataValues) {
-        if (this.noDataValues!=null)
+        if (this.noDataValues != null)
             throw new UnsupportedOperationException("noDataValues have already been defined");
         this.noDataValues = noDataValues;
     }
@@ -548,8 +510,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     }
 
     public void setScales(Double[] scales) {
-        if (this.scales!=null)
-            throw new UnsupportedOperationException("scales have already been defined");
+        if (this.scales != null) throw new UnsupportedOperationException("scales have already been defined");
         this.scales = scales;
     }
 
@@ -558,8 +519,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     }
 
     public void setOffsets(final Double[] offsets) {
-        if (this.offsets!=null)
-            throw new UnsupportedOperationException("offsets have already been defined");
+        if (this.offsets != null) throw new UnsupportedOperationException("offsets have already been defined");
         this.offsets = offsets;
     }
 
@@ -570,14 +530,12 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     protected void setNumOverviews(final int[] numOverviews) {
         this.numOverviews = numOverviews.clone();
     }
-    
+
     /**
      * Returns the number of overviews for the specified band
-     * 
-     * @param bandIndex
-     *                the index of the required band
-     * @throws IllegalArgumentException
-     *                 in case the specified band number is out of range
+     *
+     * @param bandIndex the index of the required band
+     * @throws IllegalArgumentException in case the specified band number is out of range
      */
     public int getNumOverviews(final int bandIndex) {
         checkBandIndex(bandIndex);
@@ -586,11 +544,9 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
 
     /**
      * Returns the colorInterpretation for the specified band
-     * 
-     * @param bandIndex
-     *                the index of the required band
-     * @throws IllegalArgumentException
-     *                 in case the specified band number is out of range
+     *
+     * @param bandIndex the index of the required band
+     * @throws IllegalArgumentException in case the specified band number is out of range
      */
     public int getColorInterpretations(final int bandIndex) {
         checkBandIndex(bandIndex);
@@ -599,125 +555,97 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
 
     /**
      * Returns the maximum value for the specified band
-     * 
-     * @param bandIndex
-     *                the index of the required band
-     * @throws IllegalArgumentException
-     *                 in case the specified band number is out of range or
-     *                 maximum value has not been found
+     *
+     * @param bandIndex the index of the required band
+     * @throws IllegalArgumentException in case the specified band number is out of range or maximum value has not been
+     *     found
      */
-    public double getMaximum(final int bandIndex)
-            throws IllegalArgumentException {
+    public double getMaximum(final int bandIndex) throws IllegalArgumentException {
         checkBandIndex(bandIndex);
         if (maximums != null) {
             Double maximum = maximums[bandIndex];
-            if (maximum != null)
-                return maximum.doubleValue();
+            if (maximum != null) return maximum.doubleValue();
         }
-        throw new IllegalArgumentException(
-                "no maximum value available for the specified band "
-                        + bandIndex);
+        throw new IllegalArgumentException("no maximum value available for the specified band " + bandIndex);
     }
 
     /**
      * Returns the minimum value for the specified band
-     * 
-     * @param bandIndex
-     *                the index of the required band
-     * @throws IllegalArgumentException
-     *                 in case the specified band number is out of range or
-     *                 minimum value has not been found
+     *
+     * @param bandIndex the index of the required band
+     * @throws IllegalArgumentException in case the specified band number is out of range or minimum value has not been
+     *     found
      */
-    public double getMinimum(final int bandIndex)
-            throws IllegalArgumentException {
+    public double getMinimum(final int bandIndex) throws IllegalArgumentException {
         checkBandIndex(bandIndex);
         if (minimums != null) {
             Double minimum = minimums[bandIndex];
-            if (minimum != null)
-                return minimum.doubleValue();
+            if (minimum != null) return minimum.doubleValue();
         }
-        throw new IllegalArgumentException(
-                "no minimum value available for the specified band "
-                        + bandIndex);
+        throw new IllegalArgumentException("no minimum value available for the specified band " + bandIndex);
     }
 
     /**
      * Returns the scale value for the specified band
-     * 
-     * @param bandIndex
-     *                the index of the required band
-     * @throws IllegalArgumentException
-     *                 in case the specified band number is out of range or
-     *                 scale value has not been found
+     *
+     * @param bandIndex the index of the required band
+     * @throws IllegalArgumentException in case the specified band number is out of range or scale value has not been
+     *     found
      */
     public double getScale(final int bandIndex) throws IllegalArgumentException {
         checkBandIndex(bandIndex);
         if (scales != null) {
             Double scale = scales[bandIndex];
-            if (scale != null)
-                return scale.doubleValue();
+            if (scale != null) return scale.doubleValue();
         }
-        throw new IllegalArgumentException(
-                "no scale value available for the specified band " + bandIndex);
+        throw new IllegalArgumentException("no scale value available for the specified band " + bandIndex);
     }
 
     /**
      * Returns the offset value for the specified band
-     * 
-     * @param bandIndex
-     *                the index of the required band
-     * @throws IllegalArgumentException
-     *                 in case the specified band number is out of range or
-     *                 offset value has not been found
+     *
+     * @param bandIndex the index of the required band
+     * @throws IllegalArgumentException in case the specified band number is out of range or offset value has not been
+     *     found
      */
-    public double getOffset(final int bandIndex)
-            throws IllegalArgumentException {
+    public double getOffset(final int bandIndex) throws IllegalArgumentException {
         checkBandIndex(bandIndex);
         if (offsets != null) {
             Double offset = offsets[bandIndex];
-            if (offset != null)
-                return offset.doubleValue();
+            if (offset != null) return offset.doubleValue();
         }
-        throw new IllegalArgumentException(
-                "no Offset value available for the specified band " + bandIndex);
+        throw new IllegalArgumentException("no Offset value available for the specified band " + bandIndex);
     }
 
     /**
      * Returns the noDataValue value for the specified band
-     * 
-     * @param bandIndex
-     *                the index of the required band
-     * @throws IllegalArgumentException
-     *                 in case the specified band number is out of range or
-     *                 noDataValue has not been found
+     *
+     * @param bandIndex the index of the required band
+     * @throws IllegalArgumentException in case the specified band number is out of range or noDataValue has not been
+     *     found
      */
-    public double getNoDataValue(final int bandIndex)
-            throws IllegalArgumentException {
+    public double getNoDataValue(final int bandIndex) throws IllegalArgumentException {
         checkBandIndex(bandIndex);
         if (noDataValues != null) {
             Double noDataValue = noDataValues[bandIndex];
-            if (noDataValue != null)
-                return noDataValue.doubleValue();
+            if (noDataValue != null) return noDataValue.doubleValue();
         }
-        throw new IllegalArgumentException(
-                "no noDataValue available for the specified band " + bandIndex);
+        throw new IllegalArgumentException("no noDataValue available for the specified band " + bandIndex);
     }
 
     /**
-     * Check the validity of the specified band index. Band indexes are in the
-     * range [0, numBands -1 ]
-     * 
-     * @param bandIndex
-     *                the band index to be validated.
-     * @throws IllegalArgumentException
-     *                 in case the specified band index isn't in the valid range
+     * Check the validity of the specified band index. Band indexes are in the range [0, numBands -1 ]
+     *
+     * @param bandIndex the band index to be validated.
+     * @throws IllegalArgumentException in case the specified band index isn't in the valid range
      */
-    private void checkBandIndex(final int bandIndex)
-            throws IllegalArgumentException {
+    private void checkBandIndex(final int bandIndex) throws IllegalArgumentException {
         if (bandIndex < 0 || bandIndex > numBands) {
             final StringBuilder sb = new StringBuilder("Specified band index (")
-                    .append(bandIndex).append( ") is out of range. It should be in the range [0,")
-                    .append(numBands - 1).append("]");
+                    .append(bandIndex)
+                    .append(") is out of range. It should be in the range [0,")
+                    .append(numBands - 1)
+                    .append("]");
             throw new IllegalArgumentException(sb.toString());
         }
     }
@@ -783,7 +711,7 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     }
 
     protected void setGeoTransformation(double[] geoTransformation) {
-        if (this.geoTransformation!=null)
+        if (this.geoTransformation != null)
             throw new UnsupportedOperationException("geoTransformation have already been defined");
         this.geoTransformation = geoTransformation;
     }
@@ -793,9 +721,8 @@ public abstract class CoreCommonImageMetadata extends IIOMetadata {
     }
 
     protected void setColorInterpretations(int[] colorInterpretations) {
-        if (this.colorInterpretations!=null)
+        if (this.colorInterpretations != null)
             throw new UnsupportedOperationException("colorInterpretations have already been defined");
         this.colorInterpretations = colorInterpretations;
     }
-
 }

@@ -17,9 +17,8 @@
 package it.geosolutions.imageio.plugins.nitronitf.wrapper;
 
 /**
- * Wrapper class for an identifiable NITF object. Main identification fields are Id, title and
- * dateTime.
- * 
+ * Wrapper class for an identifiable NITF object. Main identification fields are Id, title and dateTime.
+ *
  * @author Daniele Romagnoli, GeoSolutions s.a.s.
  */
 public class IdentifiableNITFObjectWrapper extends NITFObjectWrapper {
@@ -57,5 +56,4 @@ public class IdentifiableNITFObjectWrapper extends NITFObjectWrapper {
     private String id;
 
     private String dateTime;
-
 }

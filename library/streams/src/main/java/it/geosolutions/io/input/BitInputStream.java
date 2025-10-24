@@ -1,8 +1,7 @@
 /**
- * GribRecordBMS.java  1.0  01/01/2001
+ * GribRecordBMS.java 1.0 01/01/2001
  *
- * (C) Benjamin Stark
- * Simone Giannecchini (simboss@tiscali.it) 2005
+ * <p>(C) Benjamin Stark Simone Giannecchini (simboss@tiscali.it) 2005
  */
 package it.geosolutions.io.input;
 
@@ -11,22 +10,17 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * This class is an input stream wrapper that can read a specific number of
- * bytes and bits from an input stream.
+ * This class is an input stream wrapper that can read a specific number of bytes and bits from an input stream.
  *
- * @author  Benjamin Stark
- * @author  Simone Giannecchini
+ * @author Benjamin Stark
+ * @author Simone Giannecchini
  * @version 1.1
  */
 public final class BitInputStream extends FilterInputStream {
-    /**
-     * Buffer for one byte which will be processed bit by bit.
-     */
+    /** Buffer for one byte which will be processed bit by bit. */
     private int bitBuf = 0;
 
-    /**
-     * Current bit position in <tt>bitBuf</tt>.
-     */
+    /** Current bit position in <tt>bitBuf</tt>. */
     private int bitPos = 0;
 
     /**
@@ -43,8 +37,7 @@ public final class BitInputStream extends FilterInputStream {
      *
      * @return unsigned 8 bit value as integer
      */
-    public int readUI8()
-        throws IOException {
+    public int readUI8() throws IOException {
         int ui8 = in.read();
 
         if (ui8 < 0) {
@@ -58,11 +51,9 @@ public final class BitInputStream extends FilterInputStream {
      * Read specific number of unsigned bytes from the input stream.
      *
      * @param length number of bytes to read and return as integers
-     *
      * @return unsigned bytes as integer values
      */
-    public int[] readUI8(final int length)
-        throws IOException {
+    public int[] readUI8(final int length) throws IOException {
         int[] data = new int[length];
         int read = 0;
 
@@ -81,11 +72,9 @@ public final class BitInputStream extends FilterInputStream {
      * Read specific number of bytes from the input stream.
      *
      * @param length number of bytes to read
-     *
      * @return array of read bytes
      */
-    public byte[] read(final int length)
-        throws IOException {
+    public byte[] read(final int length) throws IOException {
         final byte[] data = new byte[length];
 
         final int numRead = this.read(data);
@@ -106,11 +95,9 @@ public final class BitInputStream extends FilterInputStream {
      * Read an unsigned value from the given number of bits.
      *
      * @param numBits number of bits used for the unsigned value
-     *
      * @return value read from <tt>numBits</tt> bits as long
      */
-    public long readUBits(final int numBits)
-        throws IOException {
+    public long readUBits(final int numBits) throws IOException {
         if (numBits == 0) {
             return 0;
         }
@@ -122,7 +109,7 @@ public final class BitInputStream extends FilterInputStream {
             this.bitBuf = in.read();
             this.bitPos = 8;
         }
-        int shift=0;
+        int shift = 0;
         while (true) {
             shift = bitsLeft - this.bitPos;
 
@@ -134,8 +121,7 @@ public final class BitInputStream extends FilterInputStream {
                 // Get the next byte from the input stream
                 this.bitBuf = in.read();
                 this.bitPos = 8;
-            }
-            else {
+            } else {
                 // Consume a portion of the buffer
                 result |= (this.bitBuf >> -shift);
                 this.bitPos -= bitsLeft;
@@ -150,13 +136,11 @@ public final class BitInputStream extends FilterInputStream {
      * Read a signed value from the given number of bits
      *
      * @param numBits number of bits used for the signed value
-     *
      * @return value read from <tt>numBits</tt> bits as integer
      */
-    public int readSBits(final int numBits)
-        throws IOException {
+    public int readSBits(final int numBits) throws IOException {
         // Get the number as an unsigned value.
-    	long uBits = readUBits(numBits);
+        long uBits = readUBits(numBits);
 
         // Is the number negative?
         if ((uBits & (1L << (numBits - 1))) != 0) {

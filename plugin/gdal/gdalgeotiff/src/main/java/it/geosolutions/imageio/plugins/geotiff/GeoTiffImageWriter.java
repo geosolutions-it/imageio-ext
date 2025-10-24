@@ -17,7 +17,6 @@
 package it.geosolutions.imageio.plugins.geotiff;
 
 import it.geosolutions.imageio.gdalframework.GDALImageWriter;
-
 import javax.imageio.ImageWriteParam;
 
 /**
@@ -32,5 +31,4 @@ public class GeoTiffImageWriter extends GDALImageWriter {
     public ImageWriteParam getDefaultWriteParam() {
         return new GeoTiffImageWriteParam();
     }
-
 }

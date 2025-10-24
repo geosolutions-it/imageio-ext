@@ -1,42 +1,42 @@
 /*
  * $RCSfile: FaxTIFFTagSet.java,v $
  *
- * 
+ *
  * Copyright (c) 2005 Sun Microsystems, Inc. All  Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
- * are met: 
- * 
- * - Redistribution of source code must retain the above copyright 
+ * are met:
+ *
+ * - Redistribution of source code must retain the above copyright
  *   notice, this  list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in 
+ *   notice, this list of conditions and the following disclaimer in
  *   the documentation and/or other materials provided with the
  *   distribution.
- * 
- * Neither the name of Sun Microsystems, Inc. or the names of 
- * contributors may be used to endorse or promote products derived 
+ *
+ * Neither the name of Sun Microsystems, Inc. or the names of
+ * contributors may be used to endorse or promote products derived
  * from this software without specific prior written permission.
- * 
- * This software is provided "AS IS," without a warranty of any 
- * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND 
- * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, 
+ *
+ * This software is provided "AS IS," without a warranty of any
+ * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND
+ * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY
- * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL 
- * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF 
+ * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL
+ * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF
  * USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS
- * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR 
+ * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR
  * ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL,
  * CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND
  * REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR
  * INABILITY TO USE THIS SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGES. 
- * 
- * You acknowledge that this software is not designed or intended for 
- * use in the design, construction, operation or maintenance of any 
- * nuclear facility. 
+ * POSSIBILITY OF SUCH DAMAGES.
+ *
+ * You acknowledge that this software is not designed or intended for
+ * use in the design, construction, operation or maintenance of any
+ * nuclear facility.
  *
  * $Revision: 1.1 $
  * $Date: 2005/02/11 05:01:17 $
@@ -77,9 +77,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A class representing the extra tags found in a
- * <a href="http://palimpsest.stanford.edu/bytopic/imaging/std/tiff-f.html">
- * TIFF-F</a> (RFC 2036) file.
+ * A class representing the extra tags found in a <a
+ * href="http://palimpsest.stanford.edu/bytopic/imaging/std/tiff-f.html">TIFF-F</a> (RFC 2036) file.
  */
 public class FaxTIFFTagSet extends TIFFTagSet {
 
@@ -91,8 +90,7 @@ public class FaxTIFFTagSet extends TIFFTagSet {
     public static final int TAG_BAD_FAX_LINES = 326;
 
     /**
-     * Tag indicating the number of lines of clean fax data (type
-     * SHORT).
+     * Tag indicating the number of lines of clean fax data (type SHORT).
      *
      * @see #CLEAN_FAX_DATA_NO_ERRORS
      * @see #CLEAN_FAX_DATA_ERRORS_CORRECTED
@@ -121,10 +119,7 @@ public class FaxTIFFTagSet extends TIFFTagSet {
      */
     public static final int CLEAN_FAX_DATA_ERRORS_UNCORRECTED = 2;
 
-    /**
-     * Tag indicating the number of consecutive bad lines (type
-     * SHORT or LONG).
-     */
+    /** Tag indicating the number of consecutive bad lines (type SHORT or LONG). */
     public static final int TAG_CONSECUTIVE_BAD_LINES = 328;
 
     // TIFF-F extensions (RFC 2306)
@@ -132,38 +127,27 @@ public class FaxTIFFTagSet extends TIFFTagSet {
     // XXX TIFF-F suggested extensions (FaxImageFlags, etc.)?
 
     static class BadFaxLines extends TIFFTag {
-        
+
         public BadFaxLines() {
-            super("BadFaxLines",
-                  TAG_BAD_FAX_LINES,
-                  1 << TIFF_SHORT |
-                  1 << TIFF_LONG);
+            super("BadFaxLines", TAG_BAD_FAX_LINES, 1 << TIFF_SHORT | 1 << TIFF_LONG);
         }
     }
 
     static class CleanFaxData extends TIFFTag {
 
         public CleanFaxData() {
-            super("CleanFaxData",
-                  TAG_CLEAN_FAX_DATA,
-                  1 << TIFF_SHORT);
+            super("CleanFaxData", TAG_CLEAN_FAX_DATA, 1 << TIFF_SHORT);
 
-            addValueName(CLEAN_FAX_DATA_NO_ERRORS,
-                         "No errors");
-            addValueName(CLEAN_FAX_DATA_ERRORS_CORRECTED,
-                         "Errors corrected");
-            addValueName(CLEAN_FAX_DATA_ERRORS_UNCORRECTED,
-                         "Errors uncorrected");
+            addValueName(CLEAN_FAX_DATA_NO_ERRORS, "No errors");
+            addValueName(CLEAN_FAX_DATA_ERRORS_CORRECTED, "Errors corrected");
+            addValueName(CLEAN_FAX_DATA_ERRORS_UNCORRECTED, "Errors uncorrected");
         }
     }
 
     static class ConsecutiveBadFaxLines extends TIFFTag {
 
         public ConsecutiveBadFaxLines() {
-            super("ConsecutiveBadFaxLines",
-                  TAG_CONSECUTIVE_BAD_LINES,
-                  1 << TIFF_SHORT |
-                  1 << TIFF_LONG);
+            super("ConsecutiveBadFaxLines", TAG_CONSECUTIVE_BAD_LINES, 1 << TIFF_SHORT | 1 << TIFF_LONG);
         }
     }
 
@@ -186,7 +170,7 @@ public class FaxTIFFTagSet extends TIFFTagSet {
      *
      * @return a <code>FaxTIFFTagSet</code> instance.
      */
-    public synchronized static FaxTIFFTagSet getInstance() {
+    public static synchronized FaxTIFFTagSet getInstance() {
         if (theInstance == null) {
             initTags();
             theInstance = new FaxTIFFTagSet();

@@ -1,42 +1,42 @@
 /*
  * $RCSfile: TIFFJPEGDecompressor.java,v $
  *
- * 
+ *
  * Copyright (c) 2005 Sun Microsystems, Inc. All  Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
- * are met: 
- * 
- * - Redistribution of source code must retain the above copyright 
+ * are met:
+ *
+ * - Redistribution of source code must retain the above copyright
  *   notice, this  list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in 
+ *   notice, this list of conditions and the following disclaimer in
  *   the documentation and/or other materials provided with the
  *   distribution.
- * 
- * Neither the name of Sun Microsystems, Inc. or the names of 
- * contributors may be used to endorse or promote products derived 
+ *
+ * Neither the name of Sun Microsystems, Inc. or the names of
+ * contributors may be used to endorse or promote products derived
  * from this software without specific prior written permission.
- * 
- * This software is provided "AS IS," without a warranty of any 
- * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND 
- * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, 
+ *
+ * This software is provided "AS IS," without a warranty of any
+ * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND
+ * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY
- * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL 
- * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF 
+ * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL
+ * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF
  * USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS
- * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR 
+ * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR
  * ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL,
  * CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND
  * REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR
  * INABILITY TO USE THIS SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGES. 
- * 
- * You acknowledge that this software is not designed or intended for 
- * use in the design, construction, operation or maintenance of any 
- * nuclear facility. 
+ * POSSIBILITY OF SUCH DAMAGES.
+ *
+ * You acknowledge that this software is not designed or intended for
+ * use in the design, construction, operation or maintenance of any
+ * nuclear facility.
  *
  * $Revision: 1.2 $
  * $Date: 2006/04/11 22:10:36 $
@@ -76,21 +76,20 @@ package it.geosolutions.imageioimpl.plugins.tiff;
 import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
 import it.geosolutions.imageio.plugins.tiff.TIFFDecompressor;
 import it.geosolutions.imageio.plugins.tiff.TIFFField;
-
-import java.io.IOException;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Iterator;
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
-import javax.imageio.stream.MemoryCacheImageInputStream;
+import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
-
+import javax.imageio.stream.MemoryCacheImageInputStream;
 
 public class TIFFJPEGDecompressor extends TIFFDecompressor {
-	
-	private static final String TURBO_JPEG_DECOMPRESSOR = "it.geosolutions.imageio.plugins.turbojpeg.TurboJpegImageReader";
-	
+
+    private static final String TURBO_JPEG_DECOMPRESSOR =
+            "it.geosolutions.imageio.plugins.turbojpeg.TurboJpegImageReader";
+
     private static final boolean DEBUG = false; // XXX false for release.
 
     // Start of Image
@@ -99,7 +98,7 @@ public class TIFFJPEGDecompressor extends TIFFDecompressor {
     // End of Image
     protected static final int EOI = 0xD9;
 
-    //private static ImageReaderSpi jpegReaderSPI = null;//XXX
+    // private static ImageReaderSpi jpegReaderSPI = null;//XXX
 
     protected ImageReader JPEGReader = null;
     protected ImageReadParam JPEGParam;
@@ -154,8 +153,8 @@ public class TIFFJPEGDecompressor extends TIFFDecompressor {
 
     public void beginDecoding() {
         // Initialize the JPEG reader if needed.
-        if(this.JPEGReader == null) {
-            if(DEBUG) System.out.println("Initializing JPEGReader");
+        if (this.JPEGReader == null) {
+            if (DEBUG) System.out.println("Initializing JPEGReader");
 
             /* XXX
             if(this.jpegReaderSPI != null) {
@@ -171,28 +170,27 @@ public class TIFFJPEGDecompressor extends TIFFDecompressor {
             // Get all JPEG readers.
             Iterator iter = ImageIO.getImageReadersByFormatName("jpeg");
 
-            if(!iter.hasNext()) {
+            if (!iter.hasNext()) {
                 // XXX The exception thrown should be an IIOException.
                 throw new IllegalStateException("No JPEG readers found!");
             }
 
             // Initialize reader to the first one.
-            this.JPEGReader = (ImageReader)iter.next();
+            this.JPEGReader = (ImageReader) iter.next();
 
             String className = JPEGReader.getClass().getName();
-            if(DEBUG) System.out.println("Using "+ className);
-            
-            if (className.equalsIgnoreCase(TURBO_JPEG_DECOMPRESSOR)){
-            	useTurbo = true;
+            if (DEBUG) System.out.println("Using " + className);
+
+            if (className.equalsIgnoreCase(TURBO_JPEG_DECOMPRESSOR)) {
+                useTurbo = true;
             }
-            
+
             this.JPEGParam = JPEGReader.getDefaultReadParam();
         }
 
         // Get the JPEGTables field.
-        TIFFImageMetadata tmetadata = (TIFFImageMetadata)metadata;
-        TIFFField f =
-            tmetadata.getTIFFField(BaselineTIFFTagSet.TAG_JPEG_TABLES);
+        TIFFImageMetadata tmetadata = (TIFFImageMetadata) metadata;
+        TIFFField f = tmetadata.getTIFFField(BaselineTIFFTagSet.TAG_JPEG_TABLES);
 
         if (f != null) {
             this.hasJPEGTables = true;
@@ -202,31 +200,27 @@ public class TIFFJPEGDecompressor extends TIFFDecompressor {
         }
     }
 
-    public void decodeRaw(byte[] b,
-                          int dstOffset,
-                          int bitsPerPixel,
-                          int scanlineStride) throws IOException {
+    public void decodeRaw(byte[] b, int dstOffset, int bitsPerPixel, int scanlineStride) throws IOException {
         // Seek to the data position for this segment.
         stream.seek(offset);
 
         // Set the stream variable depending on presence of JPEGTables.
         ImageInputStream is;
-        int dataLength = 0; 
-        if(this.hasJPEGTables) {
-            if(DEBUG) System.out.println("Reading abbreviated stream.");
+        int dataLength = 0;
+        if (this.hasJPEGTables) {
+            if (DEBUG) System.out.println("Reading abbreviated stream.");
             // The current strip or tile is an abbreviated JPEG stream.
 
             // Reallocate memory if there is not enough already.
             dataLength = tables.length + byteCount;
-            if(data.length < dataLength) {
+            if (data.length < dataLength) {
                 data = new byte[dataLength];
             }
 
             // Copy the tables ignoring any EOI and subsequent bytes.
             int dataOffset = tables.length;
-            for(int i = tables.length - 2; i > 0; i--) {
-                if((tables[i] & 0xff) == 0xff &&
-                   (tables[i+1] & 0xff) == EOI) {
+            for (int i = tables.length - 2; i > 0; i--) {
+                if ((tables[i] & 0xff) == 0xff && (tables[i + 1] & 0xff) == EOI) {
                     dataOffset = i;
                     break;
                 }
@@ -234,24 +228,23 @@ public class TIFFJPEGDecompressor extends TIFFDecompressor {
             System.arraycopy(tables, 0, data, 0, dataOffset);
 
             // Check for SOI and skip it if present.
-            byte byte1 = (byte)stream.read();
-            byte byte2 = (byte)stream.read();
-            if(!((byte1 & 0xff) == 0xff && (byte2 & 0xff) == SOI)) {
-                data[dataOffset++] = (byte)byte1;
-                data[dataOffset++] = (byte)byte2;
+            byte byte1 = (byte) stream.read();
+            byte byte2 = (byte) stream.read();
+            if (!((byte1 & 0xff) == 0xff && (byte2 & 0xff) == SOI)) {
+                data[dataOffset++] = (byte) byte1;
+                data[dataOffset++] = (byte) byte2;
             }
 
             // Read remaining data.
             stream.readFully(data, dataOffset, byteCount - 2);
 
             if (useTurbo) {
-            	JPEGReader.setInput(data);
-            }
-            else {
+                JPEGReader.setInput(data);
+            } else {
                 // Create ImageInputStream.
                 ByteArrayInputStream bais = new ByteArrayInputStream(data);
 
-            	is = new MemoryCacheImageInputStream(bais);
+                is = new MemoryCacheImageInputStream(bais);
                 // Set the stream on the reader.
                 JPEGReader.setInput(is, false, true);
             }
@@ -266,7 +259,7 @@ public class TIFFJPEGDecompressor extends TIFFDecompressor {
             stream.readFully(data, 0, byteCount);
             JPEGReader.setInput(data);
         } else {
-            if(DEBUG) System.out.println("Reading complete stream.");
+            if (DEBUG) System.out.println("Reading complete stream.");
             // The current strip or tile is a complete JPEG stream.
             is = stream;
             // Set the stream on the reader.
@@ -281,13 +274,12 @@ public class TIFFJPEGDecompressor extends TIFFDecompressor {
             // Read the strip or tile.
             JPEGReader.read(0, JPEGParam);
         }
-        
     }
 
     @Override
     public void dispose() {
         super.dispose();
-        if(JPEGReader != null) {
+        if (JPEGReader != null) {
             JPEGReader.dispose();
             JPEGReader = null;
         }

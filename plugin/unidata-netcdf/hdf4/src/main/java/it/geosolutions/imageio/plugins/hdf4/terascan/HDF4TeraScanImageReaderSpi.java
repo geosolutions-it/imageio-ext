@@ -17,18 +17,15 @@
 package it.geosolutions.imageio.plugins.hdf4.terascan;
 
 import it.geosolutions.imageio.plugins.hdf4.HDF4ImageReaderSpi;
-
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.imageio.ImageReader;
-
 import ucar.nc2.dataset.NetcdfDataset;
 
 /**
  * Service provider interface for the TeraScan-HDF Image
- * 
+ *
  * @author Daniele Romagnoli
  */
 public class HDF4TeraScanImageReaderSpi extends HDF4ImageReaderSpi {
@@ -40,25 +37,26 @@ public class HDF4TeraScanImageReaderSpi extends HDF4ImageReaderSpi {
     public HDF4TeraScanImageReaderSpi() {
         super(readerCN);
 
-        if (LOGGER.isLoggable(Level.FINE))
-            LOGGER.fine("HDF4TeraScanImageReaderSpi Constructor");
+        if (LOGGER.isLoggable(Level.FINE)) LOGGER.fine("HDF4TeraScanImageReaderSpi Constructor");
     }
 
     protected boolean isValidDataset(final NetcdfDataset dataset) {
-        
-    	boolean found = false;
-    	// TERASCAN
-    	final int productsNum = HDF4TeraScanProperties.terascanProducts.getNProducts();
-    	for (int i = 0; i < productsNum; i++) {
-    		if (dataset.findVariable(HDF4TeraScanProperties.terascanProducts.get(i).getProductName())!=null){
-    			found = true;
-    			break;
-    		}
-    	}
-    	return found;
-	}
 
-	public ImageReader createReaderInstance(Object input) throws IOException {
+        boolean found = false;
+        // TERASCAN
+        final int productsNum = HDF4TeraScanProperties.terascanProducts.getNProducts();
+        for (int i = 0; i < productsNum; i++) {
+            if (dataset.findVariable(
+                            HDF4TeraScanProperties.terascanProducts.get(i).getProductName())
+                    != null) {
+                found = true;
+                break;
+            }
+        }
+        return found;
+    }
+
+    public ImageReader createReaderInstance(Object input) throws IOException {
         return new HDF4TeraScanImageReader(this);
     }
 }

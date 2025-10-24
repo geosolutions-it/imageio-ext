@@ -29,18 +29,15 @@
  */
 package it.geosolutions.imageio.compression.libdeflate;
 
+import it.geosolutions.imageio.compression.AbstractCompressionSpi;
 import it.geosolutions.imageio.compression.CompressionType;
 import it.geosolutions.imageio.compression.Decompressor;
 import it.geosolutions.imageio.compression.DecompressorSpi;
-import it.geosolutions.imageio.compression.AbstractCompressionSpi;
-import me.steinborn.libdeflate.Libdeflate;
-
 import java.util.Collections;
 import java.util.Set;
+import me.steinborn.libdeflate.Libdeflate;
 
-/**
- * Decompressor SPI based on libdeflate java library
- */
+/** Decompressor SPI based on libdeflate java library */
 public class LibDeflateDecompressorSpi extends AbstractCompressionSpi implements DecompressorSpi {
 
     static Set<CompressionType> SUPPORTED_TYPES = Collections.singleton(CompressionType.DEFLATE);

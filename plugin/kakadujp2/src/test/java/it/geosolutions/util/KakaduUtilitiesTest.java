@@ -10,7 +10,7 @@ import static org.mockito.Mockito.verify;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-
+import kdu_jni.Jp2_channels;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -24,13 +24,11 @@ import org.powermock.core.classloader.annotations.SuppressStaticInitializationFo
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 
-import kdu_jni.Jp2_channels;
-
 @RunWith(PowerMockRunner.class)
-//delegate to standard runner so assumeTrue works
+// delegate to standard runner so assumeTrue works
 @PowerMockRunnerDelegate(BlockJUnit4ClassRunner.class)
-//suppress System.loadLibrary in static initialization of these classes
-@SuppressStaticInitializationFor({ "kdu_jni.Kdu_global", "kdu_jni.Jp2_channels" })
+// suppress System.loadLibrary in static initialization of these classes
+@SuppressStaticInitializationFor({"kdu_jni.Kdu_global", "kdu_jni.Jp2_channels"})
 public class KakaduUtilitiesTest {
 
     private static int JNI_VERSION;
@@ -51,7 +49,8 @@ public class KakaduUtilitiesTest {
             }
             return null;
         }
-    };
+    }
+    ;
 
     private SetColorMappingCapturer colorMappingCapturer;
     private Jp2_channels channels;
@@ -74,7 +73,8 @@ public class KakaduUtilitiesTest {
         assertEquals(expectedCallsAndArgs, args);
     }
 
-    @Ignore @Test
+    @Ignore
+    @Test
     public void testInitializeRGBChannels_KduV7Plus() throws Exception {
         assumeTrue(format("JNI version=%d, expected >= 7, ignoring", JNI_VERSION), JNI_VERSION >= 7);
 
@@ -84,8 +84,8 @@ public class KakaduUtilitiesTest {
         List<List<Object>> args = colorMappingCapturer.invocationArguments;
         assertEquals(3, args.size());
 
-        List<List<Object>> expectedCallsAndArgs = asList(asList(0, 0, 0, 0, 0), asList(1, 0, 1, 0, 0),
-                asList(2, 0, 2, 0, 0));
+        List<List<Object>> expectedCallsAndArgs =
+                asList(asList(0, 0, 0, 0, 0), asList(1, 0, 1, 0, 0), asList(2, 0, 2, 0, 0));
         assertEquals(expectedCallsAndArgs, args);
     }
 }

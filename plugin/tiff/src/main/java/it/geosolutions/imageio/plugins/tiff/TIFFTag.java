@@ -1,42 +1,42 @@
 /*
  * $RCSfile: TIFFTag.java,v $
  *
- * 
+ *
  * Copyright (c) 2005 Sun Microsystems, Inc. All  Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
- * are met: 
- * 
- * - Redistribution of source code must retain the above copyright 
+ * are met:
+ *
+ * - Redistribution of source code must retain the above copyright
  *   notice, this  list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in 
+ *   notice, this list of conditions and the following disclaimer in
  *   the documentation and/or other materials provided with the
  *   distribution.
- * 
- * Neither the name of Sun Microsystems, Inc. or the names of 
- * contributors may be used to endorse or promote products derived 
+ *
+ * Neither the name of Sun Microsystems, Inc. or the names of
+ * contributors may be used to endorse or promote products derived
  * from this software without specific prior written permission.
- * 
- * This software is provided "AS IS," without a warranty of any 
- * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND 
- * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, 
+ *
+ * This software is provided "AS IS," without a warranty of any
+ * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND
+ * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY
- * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL 
- * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF 
+ * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL
+ * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF
  * USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS
- * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR 
+ * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR
  * ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL,
  * CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND
  * REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR
  * INABILITY TO USE THIS SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGES. 
- * 
- * You acknowledge that this software is not designed or intended for 
- * use in the design, construction, operation or maintenance of any 
- * nuclear facility. 
+ * POSSIBILITY OF SUCH DAMAGES.
+ *
+ * You acknowledge that this software is not designed or intended for
+ * use in the design, construction, operation or maintenance of any
+ * nuclear facility.
  *
  * $Revision: 1.4 $
  * $Date: 2006/04/11 22:10:35 $
@@ -73,21 +73,16 @@
  */
 package it.geosolutions.imageio.plugins.tiff;
 
-import java.util.Map;
 import java.util.HashMap;
-import javax.imageio.metadata.IIOMetadataNode;
-import org.w3c.dom.Node;
+import java.util.Map;
 
 /**
- * A class defining the notion of a TIFF tag.  A TIFF tag is a key
- * that may appear in an Image File Directory (IFD).  In the IFD
- * each tag has some data associated with it, which may consist of zero
- * or more values of a given data type. The combination of a tag and a
- * value is known as an IFD Entry or TIFF Field.
+ * A class defining the notion of a TIFF tag. A TIFF tag is a key that may appear in an Image File Directory (IFD). In
+ * the IFD each tag has some data associated with it, which may consist of zero or more values of a given data type. The
+ * combination of a tag and a value is known as an IFD Entry or TIFF Field.
  *
- * <p> The actual tag values used in the root IFD of a standard ("baseline")
- * tiff stream are defined in the {@link BaselineTIFFTagSet
- * <code>BaselineTIFFTagSet</code>} class.
+ * <p>The actual tag values used in the root IFD of a standard ("baseline") tiff stream are defined in the
+ * {@link BaselineTIFFTagSet <code>BaselineTIFFTagSet</code>} class.
  *
  * @see BaselineTIFFTagSet
  * @see TIFFField
@@ -98,81 +93,63 @@ public class TIFFTag {
     // TIFF 6.0 + Adobe PageMaker(R) 6.0 TIFF Technical Notes 1 IFD data type
 
     /** Flag for 8 bit unsigned integers. */
-    public static final int TIFF_BYTE        =  1;
+    public static final int TIFF_BYTE = 1;
 
     /** Flag for null-terminated ASCII strings. */
-    public static final int TIFF_ASCII       =  2;
+    public static final int TIFF_ASCII = 2;
 
     /** Flag for 16 bit unsigned integers. */
-    public static final int TIFF_SHORT       =  3;
+    public static final int TIFF_SHORT = 3;
 
     /** Flag for 32 bit unsigned integers. */
-    public static final int TIFF_LONG        =  4;
+    public static final int TIFF_LONG = 4;
 
     /** Flag for pairs of 32 bit unsigned integers. */
-    public static final int TIFF_RATIONAL    =  5;
+    public static final int TIFF_RATIONAL = 5;
 
     /** Flag for 8 bit signed integers. */
-    public static final int TIFF_SBYTE       =  6;
+    public static final int TIFF_SBYTE = 6;
 
     /** Flag for 8 bit uninterpreted bytes. */
-    public static final int TIFF_UNDEFINED   =  7;
+    public static final int TIFF_UNDEFINED = 7;
 
     /** Flag for 16 bit signed integers. */
-    public static final int TIFF_SSHORT      =  8;
+    public static final int TIFF_SSHORT = 8;
 
     /** Flag for 32 bit signed integers. */
-    public static final int TIFF_SLONG       =  9;
+    public static final int TIFF_SLONG = 9;
 
     /** Flag for pairs of 32 bit signed integers. */
-    public static final int TIFF_SRATIONAL   = 10;
+    public static final int TIFF_SRATIONAL = 10;
 
     /** Flag for 32 bit IEEE floats. */
-    public static final int TIFF_FLOAT       = 11;
+    public static final int TIFF_FLOAT = 11;
 
     /** Flag for 64 bit IEEE doubles. */
-    public static final int TIFF_DOUBLE      = 12;
+    public static final int TIFF_DOUBLE = 12;
 
-    /**
-     * Flag for IFD pointer defined in TIFF Tech Note 1 in
-     * TIFF Specification Supplement 1.
-     */
+    /** Flag for IFD pointer defined in TIFF Tech Note 1 in TIFF Specification Supplement 1. */
     public static final int TIFF_IFD_POINTER = 13;
- 
-    /**
-     * Flag for unsigned 8 byte integer.
-     */
+
+    /** Flag for unsigned 8 byte integer. */
     public static final int TIFF_LONG8 = 16;
-    
-    /**
-     * Flag for signed 8 byte integer.
-     */
+
+    /** Flag for signed 8 byte integer. */
     public static final int TIFF_SLONG8 = 17;
-    
-    /**
-     * Flag for new unsigned 8 byte IFD offset.
-     */
+
+    /** Flag for new unsigned 8 byte IFD offset. */
     public static final int TIFF_IFD8 = 18;
-    
-    /**
-     * Flag for TAGs to be lazily loaded.
-     */
+
+    /** Flag for TAGs to be lazily loaded. */
     public static final int TIFF_LAZY_LONG = 14;
 
-    
-    /**
-     * Flag for TAGs to be lazily loaded.
-     */
+    /** Flag for TAGs to be lazily loaded. */
     public static final int TIFF_LAZY_LONG8 = 15;
 
-    /**
-     * The numerically smallest constant representing a TIFF data type.
-     */
+    /** The numerically smallest constant representing a TIFF data type. */
     public static final int MIN_DATATYPE = TIFF_BYTE;
 
-    /**
-     * The numerically largest constant representing a TIFF data type.
-     */
+    /** The numerically largest constant representing a TIFF data type. */
     public static final int MAX_DATATYPE = TIFF_IFD8;
 
     private static final int[] sizeOfType = {
@@ -188,7 +165,7 @@ public class TIFFTag {
         4, //  9 = slong
         8, // 10 = srational
         4, // 11 = float
-        8, // 12 = double 
+        8, // 12 = double
         4, // 13 = IFD_POINTER
         4, // 14 = n/a (//TIFF_LAZY_LONG)
         8, // 15 = n/a (//TIFF_LAZY_LONG8)
@@ -201,52 +178,52 @@ public class TIFFTag {
 
     // Tech notes: http://partners.adobe.com/asn/developer/pdfs/tn/TIFFPM6.pdf
 
-//     // Tech note 1: TIFF Trees
-//     // Adds additional data type 13 = "IFD" (like LONG)
-//     public static final int TAG_SUB_IFDS = 330; // IFD or LONG)
+    //     // Tech note 1: TIFF Trees
+    //     // Adds additional data type 13 = "IFD" (like LONG)
+    //     public static final int TAG_SUB_IFDS = 330; // IFD or LONG)
 
-//     // Tech note 2: Clipping Path
-//     public static final int TAG_CLIP_PATH = 343; // BYTE
-//     public static final int TAG_X_CLIP_PATH_UNITS = 344; // DWORD
-//     public static final int TAG_Y_CLIP_PATH_UNITS = 345; // DWORD
-        
-//     // Tech note 3: Indexed Images
-//     public static final int TAG_INDEXED = 346; // SHORT
-    
-//     // Tech note 4: ICC L*a*b*
-//     // New PhotometricInterpretation = 9
+    //     // Tech note 2: Clipping Path
+    //     public static final int TAG_CLIP_PATH = 343; // BYTE
+    //     public static final int TAG_X_CLIP_PATH_UNITS = 344; // DWORD
+    //     public static final int TAG_Y_CLIP_PATH_UNITS = 345; // DWORD
 
-//     // Adobe
+    //     // Tech note 3: Indexed Images
+    //     public static final int TAG_INDEXED = 346; // SHORT
 
-//     // PageMaker stuff
-//     public static final int TAG_IMAGE_ID = 32781; // ASCII
-//     public static final int TAG_OPI_PROXY = 351; // SHORT
+    //     // Tech note 4: ICC L*a*b*
+    //     // New PhotometricInterpretation = 9
 
-//     // Photoshop stuff
-//     public static final int TAG_IMAGE_SOURCE_DATA = 37724; // UNDEFINED
-//     // 34377 - Image Resource Blocks
-    
-//     // GeoTIFF
-//     public static final int TAG_MODEL_PIXEL_SCALE = 33550;
-//     public static final int TAG_MODEL_TRANSFORMATION = 34264;
-//     public static final int TAG_MODEL_TIEPOINT = 33922;
-//     public static final int TAG_GEO_KEY_DIRECTORY = 34735;
-//     public static final int TAG_GEO_DOUBLE_PARAMS = 34736;
-//     public static final int TAG_GEO_ASCII_PARAMS = 34737;
-//     public static final int TAG_INTERGRAPH_MATRIX = 33920;
+    //     // Adobe
 
-//     // 33918 - Intergraph
-//     // See http://remotesensing.org/lists/libtiff_archive/msg00557.html    
+    //     // PageMaker stuff
+    //     public static final int TAG_IMAGE_ID = 32781; // ASCII
+    //     public static final int TAG_OPI_PROXY = 351; // SHORT
 
-//     // Helios ICC profile tagging
-    
-//     // 34841 - HELIOS ICC profile reference       (ASCII)
+    //     // Photoshop stuff
+    //     public static final int TAG_IMAGE_SOURCE_DATA = 37724; // UNDEFINED
+    //     // 34377 - Image Resource Blocks
 
-//     // eiSTream Annotation Specification , Version 1.00.06
-//     // Formerly Wang?
+    //     // GeoTIFF
+    //     public static final int TAG_MODEL_PIXEL_SCALE = 33550;
+    //     public static final int TAG_MODEL_TRANSFORMATION = 34264;
+    //     public static final int TAG_MODEL_TIEPOINT = 33922;
+    //     public static final int TAG_GEO_KEY_DIRECTORY = 34735;
+    //     public static final int TAG_GEO_DOUBLE_PARAMS = 34736;
+    //     public static final int TAG_GEO_ASCII_PARAMS = 34737;
+    //     public static final int TAG_INTERGRAPH_MATRIX = 33920;
 
-//     // 32932 - eiStream Annotation Data           (BYTE/any)
-//     // 32934 - ???
+    //     // 33918 - Intergraph
+    //     // See http://remotesensing.org/lists/libtiff_archive/msg00557.html
+
+    //     // Helios ICC profile tagging
+
+    //     // 34841 - HELIOS ICC profile reference       (ASCII)
+
+    //     // eiSTream Annotation Specification , Version 1.00.06
+    //     // Formerly Wang?
+
+    //     // 32932 - eiStream Annotation Data           (BYTE/any)
+    //     // 32934 - ???
 
     int number;
 
@@ -260,31 +237,23 @@ public class TIFFTag {
     Map valueNames = null;
 
     /**
-     * Constructs a <code>TIFFTag</code> with a given name, tag number, set
-     * of legal data types, and <code>TIFFTagSet</code> to which it refers.
-     * The <code>tagSet</code> parameter will generally be
-     * non-<code>null</code> only if this <code>TIFFTag</code> corresponds
-     * to a pointer to a TIFF IFD. In this case <code>tagSet</code> will
-     * represent the set of <code>TIFFTag</code>s which appear in the IFD
-     * pointed to. A <code>TIFFTag</code> represents an IFD pointer if and
-     * only if <code>tagSet</code> is non-<code>null</code> or the data
-     * type <code>TIFF_IFD_POINTER</code> is legal.
+     * Constructs a <code>TIFFTag</code> with a given name, tag number, set of legal data types, and <code>TIFFTagSet
+     * </code> to which it refers. The <code>tagSet</code> parameter will generally be non-<code>null</code> only if
+     * this <code>TIFFTag</code> corresponds to a pointer to a TIFF IFD. In this case <code>tagSet</code> will represent
+     * the set of <code>TIFFTag</code>s which appear in the IFD pointed to. A <code>TIFFTag</code> represents an IFD
+     * pointer if and only if <code>tagSet</code> is non-<code>null</code> or the data type <code>TIFF_IFD_POINTER
+     * </code> is legal.
      *
-     * <p> If there are mnemonic names to be associated with the legal
-     * data values for the tag, {@link #addValueName(int, String)
-     * <code>addValueName()</code>} should be called on the new instance
-     * for each name.</p>
+     * <p>If there are mnemonic names to be associated with the legal data values for the tag, {@link #addValueName(int,
+     * String) <code>addValueName()</code>} should be called on the new instance for each name.
      *
-     * <p> See the documentation for {@link #getDataTypes()
-     * <code>getDataTypes()</code>} for an explanation of how the set
-     * of data types is to be converted into a bit mask.</p>
+     * <p>See the documentation for {@link #getDataTypes() <code>getDataTypes()</code>} for an explanation of how the
+     * set of data types is to be converted into a bit mask.
      *
      * @param name the name of the tag; may be <code>null</code>.
      * @param number the number used to represent the tag.
-     * @param dataTypes a bit mask indicating the set of legal data
-     * types for this tag.
-     * @param tagSet the <code>TIFFTagSet</code> to which this tag
-     * belongs; may be <code>null</code>.
+     * @param dataTypes a bit mask indicating the set of legal data types for this tag.
+     * @param tagSet the <code>TIFFTagSet</code> to which this tag belongs; may be <code>null</code>.
      */
     public TIFFTag(String name, int number, int dataTypes, TIFFTagSet tagSet) {
         this.name = name;
@@ -294,15 +263,12 @@ public class TIFFTag {
     }
 
     /**
-     * Constructs  a  <code>TIFFTag</code>  with  a  given  name,  tag
-     * number,  and set  of  legal  data  types.  The  tag  will  have  no
-     * associated <code>TIFFTagSet</code>.
+     * Constructs a <code>TIFFTag</code> with a given name, tag number, and set of legal data types. The tag will have
+     * no associated <code>TIFFTagSet</code>.
      *
      * @param name the name of the tag; may be <code>null</code>.
      * @param number the number used to represent the tag.
-     * @param dataTypes a bit mask indicating the set of legal data
-     * types for this tag.
-     *
+     * @param dataTypes a bit mask indicating the set of legal data types for this tag.
      * @see #TIFFTag(String, int, int, TIFFTagSet)
      */
     public TIFFTag(String name, int number, int dataTypes) {
@@ -310,22 +276,18 @@ public class TIFFTag {
     }
 
     /**
-     * Returns the number of bytes used to store a value of the given
-     * data type.
+     * Returns the number of bytes used to store a value of the given data type.
      *
      * @param dataType the data type to be queried.
-     *
      * @return the number of bytes used to store the given data type.
-     *
-     * @throws IllegalArgumentException if <code>datatype</code> is
-     * less than <code>MIN_DATATYPE</code> or greater than
-     * <code>MAX_DATATYPE</code>.
+     * @throws IllegalArgumentException if <code>datatype</code> is less than <code>MIN_DATATYPE</code> or greater than
+     *     <code>MAX_DATATYPE</code>.
      */
     public static int getSizeOfType(int dataType) {
-        if (dataType < MIN_DATATYPE ||dataType > MAX_DATATYPE) {
+        if (dataType < MIN_DATATYPE || dataType > MAX_DATATYPE) {
             throw new IllegalArgumentException("dataType out of range!");
         }
-            
+
         return sizeOfType[dataType];
     }
 
@@ -348,35 +310,26 @@ public class TIFFTag {
     }
 
     /**
-     * Returns a bit mask indicating the set of data types that may
-     * be used to store the data associated with the tag.
-     * For example, a tag that can store both SHORT and LONG values
-     * would return a value of:
+     * Returns a bit mask indicating the set of data types that may be used to store the data associated with the tag.
+     * For example, a tag that can store both SHORT and LONG values would return a value of:
      *
      * <pre>
      * (1 << TIFFTag.TIFF_SHORT) | (1 << TIFFTag.TIFF_LONG)
      * </pre>
      *
-     * @return an <code>int</code> containing a bitmask encoding the
-     * set of valid data types.
+     * @return an <code>int</code> containing a bitmask encoding the set of valid data types.
      */
     public int getDataTypes() {
         return dataTypes;
     }
 
     /**
-     * Returns <code>true</code> if the given data type
-     * may be used for the data associated with this tag.
+     * Returns <code>true</code> if the given data type may be used for the data associated with this tag.
      *
-     * @param dataType the data type to be queried, one of
-     * <code>TIFF_BYTE</code>, <code>TIFF_SHORT</code>, etc.
-     *
-     * @return a <code>boolean</code> indicating whether the given
-     * data type may be used with this tag.
-     *
-     * @throws IllegalArgumentException if <code>datatype</code> is
-     * less than <code>MIN_DATATYPE</code> or greater than
-     * <code>MAX_DATATYPE</code>.
+     * @param dataType the data type to be queried, one of <code>TIFF_BYTE</code>, <code>TIFF_SHORT</code>, etc.
+     * @return a <code>boolean</code> indicating whether the given data type may be used with this tag.
+     * @throws IllegalArgumentException if <code>datatype</code> is less than <code>MIN_DATATYPE</code> or greater than
+     *     <code>MAX_DATATYPE</code>.
      */
     public boolean isDataTypeOK(int dataType) {
         if (dataType < MIN_DATATYPE || dataType > MAX_DATATYPE) {
@@ -395,14 +348,12 @@ public class TIFFTag {
     }
 
     /**
-     * Returns <code>true</code> if this tag is used to point to an IFD
-     * structure containing additional tags.  This condition will be
-     * satisfied if and only if either
-     * <code>getTagSet()&nbsp;!=&nbsp;null</code> or
-     * <code>isDataTypeOK(TIFF_IFD_POINTER)&nbsp;==&nbsp;true</code>.
+     * Returns <code>true</code> if this tag is used to point to an IFD structure containing additional tags. This
+     * condition will be satisfied if and only if either <code>getTagSet()&nbsp;!=&nbsp;null</code> or <code>
+     * isDataTypeOK(TIFF_IFD_POINTER)&nbsp;==&nbsp;true</code>.
      *
-     * <p>Many TIFF extensions use this mechanism in order to limit the
-     * number of new tags that may appear in the root IFD.</p>
+     * <p>Many TIFF extensions use this mechanism in order to limit the number of new tags that may appear in the root
+     * IFD.
      *
      * @return <code>true</code> if this tag points to an IFD.
      */
@@ -411,8 +362,8 @@ public class TIFFTag {
     }
 
     /**
-     * Returns <code>true</code> if there are mnemonic names associated with
-     * the set of legal values for the data associated with this tag.
+     * Returns <code>true</code> if there are mnemonic names associated with the set of legal values for the data
+     * associated with this tag.
      *
      * @return <code>true</code> if mnemonic value names are available.
      */
@@ -421,8 +372,7 @@ public class TIFFTag {
     }
 
     /**
-     * Adds a mnemonic name for a particular value that this tag's
-     * data may take on.
+     * Adds a mnemonic name for a particular value that this tag's data may take on.
      *
      * @param value the data value.
      * @param name the name to associate with the value.
@@ -433,22 +383,18 @@ public class TIFFTag {
         }
         valueNames.put(new Integer(value), name);
     }
-    
+
     /**
-     * Returns the mnemonic name associated with a particular value
-     * that this tag's data may take on, or <code>null</code> if
-     * no name is present.
+     * Returns the mnemonic name associated with a particular value that this tag's data may take on, or <code>null
+     * </code> if no name is present.
      *
      * @param value the data value.
-     *
-     * @return the mnemonic name associated with the value, as a
-     * <code>String</code>.
+     * @return the mnemonic name associated with the value, as a <code>String</code>.
      */
     public String getValueName(int value) {
         if (valueNames == null) {
             return null;
         }
-        return (String)valueNames.get(new Integer(value));
+        return (String) valueNames.get(new Integer(value));
     }
-    
 }

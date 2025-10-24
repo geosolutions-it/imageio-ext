@@ -16,19 +16,15 @@
  */
 package it.geosolutions.imageioimpl.plugins.png;
 
+import ar.com.hjg.pngj.FilterType;
 import it.geosolutions.imageio.plugins.png.PNGWriter;
-
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-
 import javax.imageio.ImageIO;
-
 import org.junit.Test;
-
-import ar.com.hjg.pngj.FilterType;
 
 public class BufferedImageChildTest {
 
@@ -46,22 +42,22 @@ public class BufferedImageChildTest {
         graphics.dispose();
         return bi;
     }
-    
+
     @Test
     public void testSmallerSameOrigin() throws Exception {
         testSubImage(0, 0, 25, 25);
     }
-    
+
     @Test
     public void testSmallerTranslateX() throws Exception {
         testSubImage(25, 0, 25, 25);
     }
-    
+
     @Test
     public void testSmallerTranslateY() throws Exception {
         testSubImage(0, 25, 25, 25);
     }
-    
+
     @Test
     public void testSmallerTranslateXY() throws Exception {
         testSubImage(25, 25, 25, 25);
@@ -73,14 +69,12 @@ public class BufferedImageChildTest {
         BufferedImage subimage = bi.getSubimage(x, y, w, h);
         // ImageAssert.showImage("Subimage", 2000, subimage);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        float quality = 4f/9 - 1;
+        float quality = 4f / 9 - 1;
         new PNGWriter().writePNG(subimage, bos, -quality, FilterType.FILTER_NONE);
         ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
         BufferedImage readBack = ImageIO.read(bis);
         // ImageAssert.showImage("ReadBack", 2000, readBack);
-        
+
         ImageAssert.assertImagesEqual(subimage, readBack);
     }
-    
-    
 }

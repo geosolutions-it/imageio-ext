@@ -18,12 +18,9 @@ package it.geosolutions.io.input.adapter;
 
 import java.io.IOException;
 import java.io.InputStream;
-
 import javax.imageio.stream.ImageInputStream;
 
-/**
- * @author Simone Giannecchini, GeoSolutions
- */
+/** @author Simone Giannecchini, GeoSolutions */
 public final class InputStreamAdapter extends InputStream {
 
     ImageInputStream stream;
@@ -60,9 +57,7 @@ public final class InputStreamAdapter extends InputStream {
         return stream.skipBytes(n);
     }
 
-    /**
-     * Return the underlying {@link ImageInputStream}
-     */
+    /** Return the underlying {@link ImageInputStream} */
     public ImageInputStream getWrappedStream() {
         return stream;
     }

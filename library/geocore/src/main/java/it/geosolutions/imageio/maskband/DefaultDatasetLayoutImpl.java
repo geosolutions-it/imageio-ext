@@ -20,7 +20,7 @@ import java.io.File;
 
 /**
  * Default implementation for {@link DatasetLayout} interface setting default values for interface methods.
- * 
+ *
  * @author Nicola Lagomarsini GeoSolutions S.A.S.
  */
 public class DefaultDatasetLayoutImpl implements DatasetLayout {

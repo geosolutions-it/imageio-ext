@@ -1,42 +1,42 @@
 /*
  * $RCSfile: TIFFFieldNode.java,v $
  *
- * 
+ *
  * Copyright (c) 2006 Sun Microsystems, Inc. All  Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
- * are met: 
- * 
- * - Redistribution of source code must retain the above copyright 
+ * are met:
+ *
+ * - Redistribution of source code must retain the above copyright
  *   notice, this  list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in 
+ *   notice, this list of conditions and the following disclaimer in
  *   the documentation and/or other materials provided with the
  *   distribution.
- * 
- * Neither the name of Sun Microsystems, Inc. or the names of 
- * contributors may be used to endorse or promote products derived 
+ *
+ * Neither the name of Sun Microsystems, Inc. or the names of
+ * contributors may be used to endorse or promote products derived
  * from this software without specific prior written permission.
- * 
- * This software is provided "AS IS," without a warranty of any 
- * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND 
- * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, 
+ *
+ * This software is provided "AS IS," without a warranty of any
+ * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND
+ * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY
- * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL 
- * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF 
+ * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL
+ * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF
  * USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS
- * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR 
+ * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR
  * ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL,
  * CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND
  * REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR
  * INABILITY TO USE THIS SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGES. 
- * 
- * You acknowledge that this software is not designed or intended for 
- * use in the design, construction, operation or maintenance of any 
- * nuclear facility. 
+ * POSSIBILITY OF SUCH DAMAGES.
+ *
+ * You acknowledge that this software is not designed or intended for
+ * use in the design, construction, operation or maintenance of any
+ * nuclear facility.
  *
  * $Revision: 1.2 $
  * $Date: 2006/04/18 20:47:02 $
@@ -77,48 +77,40 @@ import it.geosolutions.imageio.plugins.tiff.TIFFDirectory;
 import it.geosolutions.imageio.plugins.tiff.TIFFField;
 import it.geosolutions.imageio.plugins.tiff.TIFFTag;
 import it.geosolutions.imageio.plugins.tiff.TIFFTagSet;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import javax.imageio.metadata.IIOMetadataNode;
-
 import org.w3c.dom.Node;
 
-
 /**
- * The <code>Node</code> representation of a <code>TIFFField</code>
- * wherein the child node is procedural rather than buffered.
+ * The <code>Node</code> representation of a <code>TIFFField</code> wherein the child node is procedural rather than
+ * buffered.
  *
  * @since 1.1-beta
  */
 public class TIFFFieldNode extends IIOMetadataNode {
     private static String getNodeName(TIFFField f) {
-        return f.getData() instanceof TIFFDirectory ?
-            "TIFFIFD" : "TIFFField";
+        return f.getData() instanceof TIFFDirectory ? "TIFFIFD" : "TIFFField";
     }
 
     private boolean isIFD;
-    
-    private final static Set<String> ATTRIBUTES_EXCLUSION_SET;
-    private final static boolean EXCLUDE_ATTRIBUTES;
-    
+
+    private static final Set<String> ATTRIBUTES_EXCLUSION_SET;
+    private static final boolean EXCLUDE_ATTRIBUTES;
+
     static {
-        if (!Boolean.getBoolean("it.geosolutions.tiff.metadata.debug"))
-        {
+        if (!Boolean.getBoolean("it.geosolutions.tiff.metadata.debug")) {
             ATTRIBUTES_EXCLUSION_SET = new HashSet<String>();
             ATTRIBUTES_EXCLUSION_SET.add("TileOffsets");
             ATTRIBUTES_EXCLUSION_SET.add("TileByteCounts");
             ATTRIBUTES_EXCLUSION_SET.add("StripOffsets");
             ATTRIBUTES_EXCLUSION_SET.add("StripByteCounts");
             EXCLUDE_ATTRIBUTES = true;
-        }
-        else
-        {
+        } else {
             ATTRIBUTES_EXCLUSION_SET = null;
-            EXCLUDE_ATTRIBUTES = false; 
+            EXCLUDE_ATTRIBUTES = false;
         }
     }
 
@@ -139,21 +131,21 @@ public class TIFFFieldNode extends IIOMetadataNode {
         int tagNumber = tag.getNumber();
         String tagName = tag.getName();
 
-        if(isIFD) {
-            if(tagNumber != 0) {
+        if (isIFD) {
+            if (tagNumber != 0) {
                 setAttribute("parentTagNumber", Integer.toString(tagNumber));
             }
-            if(tagName != null) {
+            if (tagName != null) {
                 setAttribute("parentTagName", tagName);
             }
 
-            TIFFDirectory dir = (TIFFDirectory)field.getData();
+            TIFFDirectory dir = (TIFFDirectory) field.getData();
             TIFFTagSet[] tagSets = dir.getTagSets();
-            if(tagSets != null) {
+            if (tagSets != null) {
                 String tagSetNames = "";
-                for(int i = 0; i < tagSets.length; i++) {
+                for (int i = 0; i < tagSets.length; i++) {
                     tagSetNames += tagSets[i].getClass().getName();
-                    if(i != tagSets.length - 1) {
+                    if (i != tagSets.length - 1) {
                         tagSetNames += ",";
                     }
                 }
@@ -166,16 +158,16 @@ public class TIFFFieldNode extends IIOMetadataNode {
     }
 
     private synchronized void initialize() {
-        if(isInitialized == Boolean.TRUE) return;
+        if (isInitialized == Boolean.TRUE) return;
 
-        if(isIFD) {
-            TIFFDirectory dir = (TIFFDirectory)field.getData();
+        if (isIFD) {
+            TIFFDirectory dir = (TIFFDirectory) field.getData();
             TIFFField[] fields = dir.getTIFFFields();
-            if(fields != null) {
+            if (fields != null) {
                 TIFFTagSet[] tagSets = dir.getTagSets();
                 List tagSetList = Arrays.asList(tagSets);
                 int numFields = fields.length;
-                for(int i = 0; i < numFields; i++) {
+                for (int i = 0; i < numFields; i++) {
                     TIFFField f = fields[i];
                     int tagNumber = f.getTagNumber();
                     TIFFTag tag = TIFFIFD.getTag(tagNumber, tagSetList);
@@ -203,22 +195,17 @@ public class TIFFFieldNode extends IIOMetadataNode {
                 }
                 child.setAttribute("value", sb.toString());
             } else {
-                child = new IIOMetadataNode("TIFF" +
-                                            field.getTypeName(field.getType()) +
-                                            "s");
+                child = new IIOMetadataNode("TIFF" + field.getTypeName(field.getType()) + "s");
 
                 TIFFTag tag = field.getTag();
                 String tName = tag.getName();
                 boolean proceed = true;
-                if (EXCLUDE_ATTRIBUTES && tName != null && ATTRIBUTES_EXCLUSION_SET.contains(tName))
-                {
+                if (EXCLUDE_ATTRIBUTES && tName != null && ATTRIBUTES_EXCLUSION_SET.contains(tName)) {
                     proceed = false;
                 }
                 for (int i = 0; i < count && proceed; i++) {
-                    IIOMetadataNode cchild =
-                        new IIOMetadataNode("TIFF" +
-                                            field.getTypeName(field.getType()));
-                
+                    IIOMetadataNode cchild = new IIOMetadataNode("TIFF" + field.getTypeName(field.getType()));
+
                     cchild.setAttribute("value", field.getValueAsString(i));
                     if (tag.hasValueNames() && field.isIntegral()) {
                         int value = field.getAsInt(i);
@@ -227,7 +214,7 @@ public class TIFFFieldNode extends IIOMetadataNode {
                             cchild.setAttribute("description", name);
                         }
                     }
-                
+
                     child.appendChild(cchild);
                 }
             }
@@ -279,14 +266,12 @@ public class TIFFFieldNode extends IIOMetadataNode {
         return super.getNextSibling();
     }
 
-    public Node insertBefore(Node newChild, 
-                             Node refChild) {
+    public Node insertBefore(Node newChild, Node refChild) {
         initialize();
         return super.insertBefore(newChild, refChild);
     }
 
-    public Node replaceChild(Node newChild, 
-                             Node oldChild) {
+    public Node replaceChild(Node newChild, Node oldChild) {
         initialize();
         return super.replaceChild(newChild, oldChild);
     }

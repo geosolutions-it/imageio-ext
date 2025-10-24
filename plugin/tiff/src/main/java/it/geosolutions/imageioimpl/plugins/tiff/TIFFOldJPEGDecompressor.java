@@ -1,42 +1,42 @@
 /*
  * $RCSfile: TIFFOldJPEGDecompressor.java,v $
  *
- * 
+ *
  * Copyright (c) 2005 Sun Microsystems, Inc. All  Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
- * are met: 
- * 
- * - Redistribution of source code must retain the above copyright 
+ * are met:
+ *
+ * - Redistribution of source code must retain the above copyright
  *   notice, this  list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in 
+ *   notice, this list of conditions and the following disclaimer in
  *   the documentation and/or other materials provided with the
  *   distribution.
- * 
- * Neither the name of Sun Microsystems, Inc. or the names of 
- * contributors may be used to endorse or promote products derived 
+ *
+ * Neither the name of Sun Microsystems, Inc. or the names of
+ * contributors may be used to endorse or promote products derived
  * from this software without specific prior written permission.
- * 
- * This software is provided "AS IS," without a warranty of any 
- * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND 
- * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, 
+ *
+ * This software is provided "AS IS," without a warranty of any
+ * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND
+ * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY
- * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL 
- * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF 
+ * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL
+ * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF
  * USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS
- * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR 
+ * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR
  * ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL,
  * CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND
  * REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR
  * INABILITY TO USE THIS SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGES. 
- * 
- * You acknowledge that this software is not designed or intended for 
- * use in the design, construction, operation or maintenance of any 
- * nuclear facility. 
+ * POSSIBILITY OF SUCH DAMAGES.
+ *
+ * You acknowledge that this software is not designed or intended for
+ * use in the design, construction, operation or maintenance of any
+ * nuclear facility.
  *
  * $Revision: 1.4 $
  * $Date: 2007/09/14 01:14:56 $
@@ -74,29 +74,15 @@
 package it.geosolutions.imageioimpl.plugins.tiff;
 
 import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
-import it.geosolutions.imageio.plugins.tiff.TIFFDecompressor;
 import it.geosolutions.imageio.plugins.tiff.TIFFField;
-
-import java.awt.Point;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.Iterator;
+import java.io.IOException;
 import javax.imageio.IIOException;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.ImageReadParam;
-import javax.imageio.plugins.jpeg.JPEGHuffmanTable;
-import javax.imageio.plugins.jpeg.JPEGImageReadParam;
-import javax.imageio.plugins.jpeg.JPEGQTable;
-import javax.imageio.stream.MemoryCacheImageInputStream;
 import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.MemoryCacheImageInputStream;
 
-
-/**
- * <code>TIFFDecompressor</code> for "Old JPEG" compression.
- */
+/** <code>TIFFDecompressor</code> for "Old JPEG" compression. */
 public class TIFFOldJPEGDecompressor extends TIFFJPEGDecompressor {
 
     private static final boolean DEBUG = false; // XXX 'false' for release
@@ -216,33 +202,30 @@ public class TIFFOldJPEGDecompressor extends TIFFJPEGDecompressor {
     //         zackthecat.tif from libtiff test data.
     //
     private synchronized void initialize() throws IOException {
-        if(isInitialized) {
+        if (isInitialized) {
             return;
         }
 
         // Get the TIFF metadata object.
-        TIFFImageMetadata tim = (TIFFImageMetadata)metadata;
+        TIFFImageMetadata tim = (TIFFImageMetadata) metadata;
 
         // Get the JPEGInterchangeFormat field.
-        TIFFField JPEGInterchangeFormatField =
-            tim.getTIFFField(BaselineTIFFTagSet.TAG_JPEG_INTERCHANGE_FORMAT);
+        TIFFField JPEGInterchangeFormatField = tim.getTIFFField(BaselineTIFFTagSet.TAG_JPEG_INTERCHANGE_FORMAT);
 
         // Get the tile or strip offsets.
-        TIFFField segmentOffsetField =
-            tim.getTIFFField(BaselineTIFFTagSet.TAG_TILE_OFFSETS);
-        if(segmentOffsetField == null) {
-            segmentOffsetField =
-                tim.getTIFFField(BaselineTIFFTagSet.TAG_STRIP_OFFSETS);
-            if(segmentOffsetField == null) {
+        TIFFField segmentOffsetField = tim.getTIFFField(BaselineTIFFTagSet.TAG_TILE_OFFSETS);
+        if (segmentOffsetField == null) {
+            segmentOffsetField = tim.getTIFFField(BaselineTIFFTagSet.TAG_STRIP_OFFSETS);
+            if (segmentOffsetField == null) {
                 segmentOffsetField = JPEGInterchangeFormatField;
             }
         }
         long[] segmentOffsets = segmentOffsetField.getAsLongs();
 
-            // Determine whether the image has more than one strip or tile.
+        // Determine whether the image has more than one strip or tile.
         boolean isTiled = segmentOffsets.length > 1;
 
-        if(!isTiled) {
+        if (!isTiled) {
             //
             // If the image has only a single strip or tile and it looks
             // as if a complete JPEG stream is present then set the value
@@ -252,58 +235,55 @@ public class TIFFOldJPEGDecompressor extends TIFFJPEGDecompressor {
 
             stream.seek(offset);
             stream.mark();
-            if(stream.read() == 0xff && stream.read() == SOI) {
+            if (stream.read() == 0xff && stream.read() == SOI) {
                 // Tile or strip offset points to SOI.
                 JPEGStreamOffset = new Long(offset);
 
                 // Set initialization flag and return.
-                if(DEBUG) System.out.println("OLD JPEG CASE 1");
-                ((TIFFImageReader)reader).forwardWarningMessage("SOI marker detected at start of strip or tile.");
+                if (DEBUG) System.out.println("OLD JPEG CASE 1");
+                ((TIFFImageReader) reader).forwardWarningMessage("SOI marker detected at start of strip or tile.");
                 isInitialized = true;
                 stream.reset();
                 return;
             }
             stream.reset();
 
-            if(JPEGInterchangeFormatField != null) {
+            if (JPEGInterchangeFormatField != null) {
                 // Get the value of JPEGInterchangeFormat.
-                long jpegInterchangeOffset =
-                    JPEGInterchangeFormatField.getAsLong(0);
+                long jpegInterchangeOffset = JPEGInterchangeFormatField.getAsLong(0);
 
                 // Check that the value of JPEGInterchangeFormat points to SOI.
                 stream.mark();
                 stream.seek(jpegInterchangeOffset);
-                if(stream.read() == 0xff && stream.read() == SOI)
+                if (stream.read() == 0xff && stream.read() == SOI)
                     // JPEGInterchangeFormat offset points to SOI.
                     JPEGStreamOffset = new Long(jpegInterchangeOffset);
-                else
-                    ((TIFFImageReader)reader).forwardWarningMessage("JPEGInterchangeFormat does not point to SOI");
+                else ((TIFFImageReader) reader).forwardWarningMessage("JPEGInterchangeFormat does not point to SOI");
                 stream.reset();
 
                 // Get the JPEGInterchangeFormatLength field.
                 TIFFField JPEGInterchangeFormatLengthField =
-                    tim.getTIFFField(BaselineTIFFTagSet.TAG_JPEG_INTERCHANGE_FORMAT_LENGTH);
+                        tim.getTIFFField(BaselineTIFFTagSet.TAG_JPEG_INTERCHANGE_FORMAT_LENGTH);
 
-                if(JPEGInterchangeFormatLengthField == null) {
-                    if(DEBUG) System.out.println("OLD JPEG CASE 2");
-                    ((TIFFImageReader)reader).forwardWarningMessage("JPEGInterchangeFormatLength field is missing");
+                if (JPEGInterchangeFormatLengthField == null) {
+                    if (DEBUG) System.out.println("OLD JPEG CASE 2");
+                    ((TIFFImageReader) reader).forwardWarningMessage("JPEGInterchangeFormatLength field is missing");
                 } else {
                     // Get the JPEGInterchangeFormatLength field's value.
-                    long jpegInterchangeLength =
-                        JPEGInterchangeFormatLengthField.getAsLong(0);
+                    long jpegInterchangeLength = JPEGInterchangeFormatLengthField.getAsLong(0);
 
-                    if(jpegInterchangeOffset < segmentOffsets[0] &&
-                       (jpegInterchangeOffset + jpegInterchangeLength) >
-                       segmentOffsets[0]) {
-                        if(DEBUG) System.out.println("OLD JPEG CASE 3");
+                    if (jpegInterchangeOffset < segmentOffsets[0]
+                            && (jpegInterchangeOffset + jpegInterchangeLength) > segmentOffsets[0]) {
+                        if (DEBUG) System.out.println("OLD JPEG CASE 3");
                     } else {
-                        if(DEBUG) System.out.println("OLD JPEG CASE 3A");
-                        ((TIFFImageReader)reader).forwardWarningMessage("JPEGInterchangeFormatLength field value is invalid");
+                        if (DEBUG) System.out.println("OLD JPEG CASE 3A");
+                        ((TIFFImageReader) reader)
+                                .forwardWarningMessage("JPEGInterchangeFormatLength field value is invalid");
                     }
                 }
 
                 // Return if JPEGInterchangeFormat pointed to SOI.
-                if(JPEGStreamOffset != null) {
+                if (JPEGStreamOffset != null) {
                     isInitialized = true;
                     return;
                 }
@@ -311,9 +291,8 @@ public class TIFFOldJPEGDecompressor extends TIFFJPEGDecompressor {
         }
 
         // Get the subsampling factors.
-        TIFFField YCbCrSubsamplingField =
-            tim.getTIFFField(BaselineTIFFTagSet.TAG_Y_CB_CR_SUBSAMPLING);
-        if(YCbCrSubsamplingField != null) {
+        TIFFField YCbCrSubsamplingField = tim.getTIFFField(BaselineTIFFTagSet.TAG_Y_CB_CR_SUBSAMPLING);
+        if (YCbCrSubsamplingField != null) {
             subsamplingX = YCbCrSubsamplingField.getAsChars()[0];
             subsamplingY = YCbCrSubsamplingField.getAsChars()[1];
         }
@@ -322,31 +301,27 @@ public class TIFFOldJPEGDecompressor extends TIFFJPEGDecompressor {
         // Initialize the 'tables' instance variable either for later
         // use in prepending to individual abbreviated strips or tiles.
         //
-        if(JPEGInterchangeFormatField != null) {
+        if (JPEGInterchangeFormatField != null) {
             // Get the value of JPEGInterchangeFormat.
-            long jpegInterchangeOffset =
-                JPEGInterchangeFormatField.getAsLong(0);
+            long jpegInterchangeOffset = JPEGInterchangeFormatField.getAsLong(0);
 
             // Get the JPEGInterchangeFormatLength field.
             TIFFField JPEGInterchangeFormatLengthField =
-                tim.getTIFFField(BaselineTIFFTagSet.TAG_JPEG_INTERCHANGE_FORMAT_LENGTH);
+                    tim.getTIFFField(BaselineTIFFTagSet.TAG_JPEG_INTERCHANGE_FORMAT_LENGTH);
 
-            if(JPEGInterchangeFormatLengthField != null) {
+            if (JPEGInterchangeFormatLengthField != null) {
                 // Get the JPEGInterchangeFormatLength field's value.
-                long jpegInterchangeLength =
-                    JPEGInterchangeFormatLengthField.getAsLong(0);
+                long jpegInterchangeLength = JPEGInterchangeFormatLengthField.getAsLong(0);
 
-                if(jpegInterchangeLength >= 2 &&
-                   jpegInterchangeOffset + jpegInterchangeLength <=
-                   segmentOffsets[0]) {
+                if (jpegInterchangeLength >= 2 && jpegInterchangeOffset + jpegInterchangeLength <= segmentOffsets[0]) {
                     // Determine the length excluding any terminal EOI marker
                     // and allocate table memory.
                     stream.mark();
-                    stream.seek(jpegInterchangeOffset+jpegInterchangeLength-2);
-                    if(stream.read() == 0xff && stream.read() == EOI) {
-                        this.tables = new byte[(int)(jpegInterchangeLength-2)];
+                    stream.seek(jpegInterchangeOffset + jpegInterchangeLength - 2);
+                    if (stream.read() == 0xff && stream.read() == EOI) {
+                        this.tables = new byte[(int) (jpegInterchangeLength - 2)];
                     } else {
-                        this.tables = new byte[(int)jpegInterchangeLength];
+                        this.tables = new byte[(int) jpegInterchangeLength];
                     }
                     stream.reset();
 
@@ -356,22 +331,25 @@ public class TIFFOldJPEGDecompressor extends TIFFJPEGDecompressor {
                     stream.readFully(tables);
                     stream.reset();
 
-                    if(DEBUG) System.out.println("OLD JPEG CASE 4");
-                    ((TIFFImageReader)reader).forwardWarningMessage("Incorrect JPEG interchange format: using JPEGInterchangeFormat offset to derive tables.");
+                    if (DEBUG) System.out.println("OLD JPEG CASE 4");
+                    ((TIFFImageReader) reader)
+                            .forwardWarningMessage(
+                                    "Incorrect JPEG interchange format: using JPEGInterchangeFormat offset to derive tables.");
                 } else {
-                    ((TIFFImageReader)reader).forwardWarningMessage("JPEGInterchangeFormat+JPEGInterchangeFormatLength > offset to first strip or tile.");
+                    ((TIFFImageReader) reader)
+                            .forwardWarningMessage(
+                                    "JPEGInterchangeFormat+JPEGInterchangeFormatLength > offset to first strip or tile.");
                 }
             }
         }
 
-        if(this.tables == null) {
+        if (this.tables == null) {
             //
             // Create tables-only stream in tables[] consisting of
             // SOI+DQTs+DHTs
             //
 
-            ByteArrayOutputStream baos =
-                new ByteArrayOutputStream();//XXX length
+            ByteArrayOutputStream baos = new ByteArrayOutputStream(); // XXX length
 
             // Save stream length;
             long streamLength = stream.length();
@@ -381,27 +359,25 @@ public class TIFFOldJPEGDecompressor extends TIFFJPEGDecompressor {
             baos.write(SOI);
 
             // Quantization Tables
-            TIFFField f =
-                tim.getTIFFField(BaselineTIFFTagSet.TAG_JPEG_Q_TABLES);
-            if(f == null) {
+            TIFFField f = tim.getTIFFField(BaselineTIFFTagSet.TAG_JPEG_Q_TABLES);
+            if (f == null) {
                 throw new IIOException("JPEGQTables field missing!");
             }
             long[] off = f.getAsLongs();
 
-            for(int i = 0; i < off.length; i++) {
+            for (int i = 0; i < off.length; i++) {
                 baos.write(0xff); // Marker ID
                 baos.write(DQT);
 
-                char markerLength = (char)67;
+                char markerLength = (char) 67;
                 baos.write((markerLength >>> 8) & 0xff); // Length
                 baos.write(markerLength & 0xff);
 
                 baos.write(i); // Table ID and precision
 
                 byte[] qtable = new byte[64];
-                if(streamLength != -1 && off[i] > streamLength) {
-                    throw new IIOException("JPEGQTables offset for index "+
-                                           i+" is not in the stream!");
+                if (streamLength != -1 && off[i] > streamLength) {
+                    throw new IIOException("JPEGQTables offset for index " + i + " is not in the stream!");
                 }
                 stream.seek(off[i]);
                 stream.readFully(qtable);
@@ -410,38 +386,34 @@ public class TIFFOldJPEGDecompressor extends TIFFJPEGDecompressor {
             }
 
             // Huffman Tables (k == 0 ? DC : AC).
-            for(int k = 0; k < 2; k++) {
-                int tableTagNumber = k == 0 ? 
-                    BaselineTIFFTagSet.TAG_JPEG_DC_TABLES :
-                    BaselineTIFFTagSet.TAG_JPEG_AC_TABLES;
+            for (int k = 0; k < 2; k++) {
+                int tableTagNumber =
+                        k == 0 ? BaselineTIFFTagSet.TAG_JPEG_DC_TABLES : BaselineTIFFTagSet.TAG_JPEG_AC_TABLES;
                 f = tim.getTIFFField(tableTagNumber);
                 String fieldName =
-                    tableTagNumber ==
-                    BaselineTIFFTagSet.TAG_JPEG_DC_TABLES ?
-                    "JPEGDCTables" : "JPEGACTables";
+                        tableTagNumber == BaselineTIFFTagSet.TAG_JPEG_DC_TABLES ? "JPEGDCTables" : "JPEGACTables";
 
-                if(f == null) {
-                    throw new IIOException(fieldName+" field missing!");
+                if (f == null) {
+                    throw new IIOException(fieldName + " field missing!");
                 }
                 off = f.getAsLongs();
 
-                for(int i = 0; i < off.length; i++) {
+                for (int i = 0; i < off.length; i++) {
                     baos.write(0xff); // Marker ID
                     baos.write(DHT);
 
                     byte[] blengths = new byte[16];
-                    if(streamLength != -1 && off[i] > streamLength) {
-                        throw new IIOException(fieldName+" offset for index "+
-                                               i+" is not in the stream!");
+                    if (streamLength != -1 && off[i] > streamLength) {
+                        throw new IIOException(fieldName + " offset for index " + i + " is not in the stream!");
                     }
                     stream.seek(off[i]);
                     stream.readFully(blengths);
                     int numCodes = 0;
-                    for(int j = 0; j < 16; j++) {
-                        numCodes += blengths[j]&0xff;
+                    for (int j = 0; j < 16; j++) {
+                        numCodes += blengths[j] & 0xff;
                     }
 
-                    char markerLength = (char)(19 + numCodes);
+                    char markerLength = (char) (19 + numCodes);
 
                     baos.write((markerLength >>> 8) & 0xff); // Length
                     baos.write(markerLength & 0xff);
@@ -457,58 +429,55 @@ public class TIFFOldJPEGDecompressor extends TIFFJPEGDecompressor {
             }
 
             // SOF0
-            baos.write((byte)0xff); // Marker identifier
-            baos.write((byte)SOF0);
-            short sval = (short)(8 + 3*samplesPerPixel); // Length
-            baos.write((byte)((sval >>> 8) & 0xff));
-            baos.write((byte)(sval & 0xff));
-            baos.write((byte)8); // Data precision
-            sval = (short)srcHeight; // Tile/strip height
-            baos.write((byte)((sval >>> 8) & 0xff));
-            baos.write((byte)(sval & 0xff));
-            sval = (short)srcWidth; // Tile/strip width
-            baos.write((byte)((sval >>> 8) & 0xff));
-            baos.write((byte)(sval & 0xff));
-            baos.write((byte)samplesPerPixel); // Number of components
-            if(samplesPerPixel == 1) {
-                baos.write((byte)1); // Component ID
-                baos.write((byte)0x11); // Subsampling factor
-                baos.write((byte)0); // Quantization table ID
+            baos.write((byte) 0xff); // Marker identifier
+            baos.write((byte) SOF0);
+            short sval = (short) (8 + 3 * samplesPerPixel); // Length
+            baos.write((byte) ((sval >>> 8) & 0xff));
+            baos.write((byte) (sval & 0xff));
+            baos.write((byte) 8); // Data precision
+            sval = (short) srcHeight; // Tile/strip height
+            baos.write((byte) ((sval >>> 8) & 0xff));
+            baos.write((byte) (sval & 0xff));
+            sval = (short) srcWidth; // Tile/strip width
+            baos.write((byte) ((sval >>> 8) & 0xff));
+            baos.write((byte) (sval & 0xff));
+            baos.write((byte) samplesPerPixel); // Number of components
+            if (samplesPerPixel == 1) {
+                baos.write((byte) 1); // Component ID
+                baos.write((byte) 0x11); // Subsampling factor
+                baos.write((byte) 0); // Quantization table ID
             } else { // 3
-                for(int i = 0; i < 3; i++) {
-                    baos.write((byte)(i + 1)); // Component ID
-                    baos.write((i != 0) ?
-                               (byte)0x11 :
-                               (byte)(((subsamplingX & 0x0f) << 4) |
-                                      (subsamplingY & 0x0f)));
+                for (int i = 0; i < 3; i++) {
+                    baos.write((byte) (i + 1)); // Component ID
+                    baos.write((i != 0) ? (byte) 0x11 : (byte) (((subsamplingX & 0x0f) << 4) | (subsamplingY & 0x0f)));
 
-                    baos.write((byte)i); // Quantization table ID
+                    baos.write((byte) i); // Quantization table ID
                 }
-            };
-
+            }
+            ;
 
             // DRI (optional).
             f = tim.getTIFFField(BaselineTIFFTagSet.TAG_JPEG_RESTART_INTERVAL);
-            if(f != null) {
+            if (f != null) {
                 char restartInterval = f.getAsChars()[0];
 
-                if(restartInterval != 0) {
-                    baos.write((byte)0xff); // Marker identifier
-                    baos.write((byte)DRI);
+                if (restartInterval != 0) {
+                    baos.write((byte) 0xff); // Marker identifier
+                    baos.write((byte) DRI);
 
                     sval = 4;
-                    baos.write((byte)((sval >>> 8) & 0xff)); // Length
-                    baos.write((byte)(sval & 0xff));
+                    baos.write((byte) ((sval >>> 8) & 0xff)); // Length
+                    baos.write((byte) (sval & 0xff));
 
                     // RestartInterval
-                    baos.write((byte)((restartInterval >>> 8) & 0xff));
-                    baos.write((byte)(restartInterval & 0xff));
+                    baos.write((byte) ((restartInterval >>> 8) & 0xff));
+                    baos.write((byte) (restartInterval & 0xff));
                 }
             }
 
             tables = baos.toByteArray();
 
-            if(DEBUG) System.out.println("OLD JPEG CASE 5");
+            if (DEBUG) System.out.println("OLD JPEG CASE 5");
         }
 
         //
@@ -516,9 +485,8 @@ public class TIFFOldJPEGDecompressor extends TIFFJPEGDecompressor {
         //
         int idx = 0;
         int idxMax = tables.length - 1;
-        while(idx < idxMax) {
-            if((tables[idx]&0xff) == 0xff &&
-               (tables[idx+1]&0xff) == SOF0) {
+        while (idx < idxMax) {
+            if ((tables[idx] & 0xff) == 0xff && (tables[idx + 1] & 0xff) == SOF0) {
                 SOFPosition = idx;
                 break;
             }
@@ -528,42 +496,40 @@ public class TIFFOldJPEGDecompressor extends TIFFJPEGDecompressor {
         //
         // If no SOF marker, add one.
         //
-        if(SOFPosition == -1) {
-            byte[] tmpTables =
-                new byte[tables.length + 10 + 3*samplesPerPixel];
+        if (SOFPosition == -1) {
+            byte[] tmpTables = new byte[tables.length + 10 + 3 * samplesPerPixel];
             System.arraycopy(tables, 0, tmpTables, 0, tables.length);
             int tmpOffset = tables.length;
             SOFPosition = tables.length;
             tables = tmpTables;
 
-            tables[tmpOffset++] = (byte)0xff; // Marker identifier
-            tables[tmpOffset++] = (byte)SOF0;
-            short sval = (short)(8 + 3*samplesPerPixel); // Length
-            tables[tmpOffset++] = (byte)((sval >>> 8) & 0xff);
-            tables[tmpOffset++] = (byte)(sval & 0xff);
-            tables[tmpOffset++] = (byte)8; // Data precision
-            sval = (short)srcHeight; // Tile/strip height
-            tables[tmpOffset++] = (byte)((sval >>> 8) & 0xff);
-            tables[tmpOffset++] = (byte)(sval & 0xff);
-            sval = (short)srcWidth; // Tile/strip width
-            tables[tmpOffset++] = (byte)((sval >>> 8) & 0xff);
-            tables[tmpOffset++] = (byte)(sval & 0xff);
-            tables[tmpOffset++] = (byte)samplesPerPixel; // Number of components
-            if(samplesPerPixel == 1) {
-                tables[tmpOffset++] = (byte)1; // Component ID
-                tables[tmpOffset++] = (byte)0x11; // Subsampling factor
-                tables[tmpOffset++] = (byte)0; // Quantization table ID
+            tables[tmpOffset++] = (byte) 0xff; // Marker identifier
+            tables[tmpOffset++] = (byte) SOF0;
+            short sval = (short) (8 + 3 * samplesPerPixel); // Length
+            tables[tmpOffset++] = (byte) ((sval >>> 8) & 0xff);
+            tables[tmpOffset++] = (byte) (sval & 0xff);
+            tables[tmpOffset++] = (byte) 8; // Data precision
+            sval = (short) srcHeight; // Tile/strip height
+            tables[tmpOffset++] = (byte) ((sval >>> 8) & 0xff);
+            tables[tmpOffset++] = (byte) (sval & 0xff);
+            sval = (short) srcWidth; // Tile/strip width
+            tables[tmpOffset++] = (byte) ((sval >>> 8) & 0xff);
+            tables[tmpOffset++] = (byte) (sval & 0xff);
+            tables[tmpOffset++] = (byte) samplesPerPixel; // Number of components
+            if (samplesPerPixel == 1) {
+                tables[tmpOffset++] = (byte) 1; // Component ID
+                tables[tmpOffset++] = (byte) 0x11; // Subsampling factor
+                tables[tmpOffset++] = (byte) 0; // Quantization table ID
             } else { // 3
-                for(int i = 0; i < 3; i++) {
-                    tables[tmpOffset++] = (byte)(i + 1); // Component ID
-                    tables[tmpOffset++] = (i != 0) ?
-                        (byte)0x11 :
-                        (byte)(((subsamplingX & 0x0f) << 4) |
-                               (subsamplingY & 0x0f));
+                for (int i = 0; i < 3; i++) {
+                    tables[tmpOffset++] = (byte) (i + 1); // Component ID
+                    tables[tmpOffset++] =
+                            (i != 0) ? (byte) 0x11 : (byte) (((subsamplingX & 0x0f) << 4) | (subsamplingY & 0x0f));
 
-                    tables[tmpOffset++] = (byte)i; // Quantization table ID
+                    tables[tmpOffset++] = (byte) i; // Quantization table ID
                 }
-            };
+            }
+            ;
         }
 
         //
@@ -571,44 +537,43 @@ public class TIFFOldJPEGDecompressor extends TIFFJPEGDecompressor {
         //
         stream.mark();
         stream.seek(segmentOffsets[0]);
-        if(stream.read() == 0xff && stream.read() == SOS) {
+        if (stream.read() == 0xff && stream.read() == SOS) {
             //
             // If the first segment starts with an SOS marker save it.
             //
-            int SOSLength = (stream.read()<<8)|stream.read();
-            SOSMarker = new byte[SOSLength+2];
-            SOSMarker[0] = (byte)0xff;
-            SOSMarker[1] = (byte)SOS;
-            SOSMarker[2] = (byte)((SOSLength & 0xff00) >> 8);
-            SOSMarker[3] = (byte)(SOSLength & 0xff);
+            int SOSLength = (stream.read() << 8) | stream.read();
+            SOSMarker = new byte[SOSLength + 2];
+            SOSMarker[0] = (byte) 0xff;
+            SOSMarker[1] = (byte) SOS;
+            SOSMarker[2] = (byte) ((SOSLength & 0xff00) >> 8);
+            SOSMarker[3] = (byte) (SOSLength & 0xff);
             stream.readFully(SOSMarker, 4, SOSLength - 2);
         } else {
             //
             // Manufacture an SOS marker.
             //
-            SOSMarker = new byte[2 + 6 + 2*samplesPerPixel];
+            SOSMarker = new byte[2 + 6 + 2 * samplesPerPixel];
             int SOSMarkerIndex = 0;
-            SOSMarker[SOSMarkerIndex++] = (byte)0xff; // Marker identifier
-            SOSMarker[SOSMarkerIndex++] = (byte)SOS;
-            short sval = (short)(6 + 2*samplesPerPixel); // Length
-            SOSMarker[SOSMarkerIndex++] = (byte)((sval >>> 8) & 0xff);
-            SOSMarker[SOSMarkerIndex++] = (byte)(sval & 0xff);
+            SOSMarker[SOSMarkerIndex++] = (byte) 0xff; // Marker identifier
+            SOSMarker[SOSMarkerIndex++] = (byte) SOS;
+            short sval = (short) (6 + 2 * samplesPerPixel); // Length
+            SOSMarker[SOSMarkerIndex++] = (byte) ((sval >>> 8) & 0xff);
+            SOSMarker[SOSMarkerIndex++] = (byte) (sval & 0xff);
             // Number of components in scan
-            SOSMarker[SOSMarkerIndex++] = (byte)samplesPerPixel;
-            if(samplesPerPixel == 1) {
-                SOSMarker[SOSMarkerIndex++] = (byte)1; // Component ID
-                SOSMarker[SOSMarkerIndex++] = (byte)0; // Huffman table ID
+            SOSMarker[SOSMarkerIndex++] = (byte) samplesPerPixel;
+            if (samplesPerPixel == 1) {
+                SOSMarker[SOSMarkerIndex++] = (byte) 1; // Component ID
+                SOSMarker[SOSMarkerIndex++] = (byte) 0; // Huffman table ID
             } else { // 3
-                for(int i = 0; i < 3; i++) {
-                    SOSMarker[SOSMarkerIndex++] =
-                        (byte)(i + 1); // Component ID
-                    SOSMarker[SOSMarkerIndex++] =
-                        (byte)((i << 4) | i); // Huffman table IDs
+                for (int i = 0; i < 3; i++) {
+                    SOSMarker[SOSMarkerIndex++] = (byte) (i + 1); // Component ID
+                    SOSMarker[SOSMarkerIndex++] = (byte) ((i << 4) | i); // Huffman table IDs
                 }
-            };
-            SOSMarker[SOSMarkerIndex++] = (byte)0;
-            SOSMarker[SOSMarkerIndex++] = (byte)0x3f;
-            SOSMarker[SOSMarkerIndex++] = (byte)0;
+            }
+            ;
+            SOSMarker[SOSMarkerIndex++] = (byte) 0;
+            SOSMarker[SOSMarkerIndex++] = (byte) 0x3f;
+            SOSMarker[SOSMarkerIndex++] = (byte) 0;
         }
         stream.reset();
 
@@ -623,36 +588,32 @@ public class TIFFOldJPEGDecompressor extends TIFFJPEGDecompressor {
     // The strategy for cases 4-5 is to concatenate a tables stream created
     // in initialize() with the entropy coded data in each strip or tile.
     //
-    public void decodeRaw(byte[] b,
-                          int dstOffset,
-                          int bitsPerPixel,
-                          int scanlineStride) throws IOException {
+    public void decodeRaw(byte[] b, int dstOffset, int bitsPerPixel, int scanlineStride) throws IOException {
 
         initialize();
 
-        TIFFImageMetadata tim = (TIFFImageMetadata)metadata;
+        TIFFImageMetadata tim = (TIFFImageMetadata) metadata;
 
-        if(JPEGStreamOffset != null) {
+        if (JPEGStreamOffset != null) {
             stream.seek(JPEGStreamOffset.longValue());
             JPEGReader.setInput(stream, false, true);
         } else {
             // Determine buffer length and allocate.
             int tableLength = tables.length;
-            int bufLength =
-                tableLength + SOSMarker.length + byteCount + 2; // 2 for EOI.
+            int bufLength = tableLength + SOSMarker.length + byteCount + 2; // 2 for EOI.
             byte[] buf = new byte[bufLength];
-            if(tables != null) {
+            if (tables != null) {
                 System.arraycopy(tables, 0, buf, 0, tableLength);
             }
             int bufOffset = tableLength;
 
             // Update the SOF dimensions.
-            short sval = (short)srcHeight; // Tile/strip height
-            buf[SOFPosition + 5] = (byte)((sval >>> 8) & 0xff);
-            buf[SOFPosition + 6] = (byte)(sval & 0xff);
-            sval = (short)srcWidth; // Tile/strip width
-            buf[SOFPosition + 7] = (byte)((sval >>> 8) & 0xff);
-            buf[SOFPosition + 8] = (byte)(sval & 0xff);
+            short sval = (short) srcHeight; // Tile/strip height
+            buf[SOFPosition + 5] = (byte) ((sval >>> 8) & 0xff);
+            buf[SOFPosition + 6] = (byte) (sval & 0xff);
+            sval = (short) srcWidth; // Tile/strip width
+            buf[SOFPosition + 7] = (byte) ((sval >>> 8) & 0xff);
+            buf[SOFPosition + 8] = (byte) (sval & 0xff);
 
             // Seek to data.
             stream.seek(offset);
@@ -660,11 +621,10 @@ public class TIFFOldJPEGDecompressor extends TIFFJPEGDecompressor {
             // Add SOS marker if data segment does not start with one.
             byte[] twoBytes = new byte[2];
             stream.readFully(twoBytes);
-            if(!((twoBytes[0]&0xff) == 0xff && (twoBytes[1]&0xff) == SOS)) {
+            if (!((twoBytes[0] & 0xff) == 0xff && (twoBytes[1] & 0xff) == SOS)) {
                 // Segment does not start with SOS marker;
                 // use the pre-calculated SOS marker.
-                System.arraycopy(SOSMarker, 0, buf, bufOffset,
-                                 SOSMarker.length);
+                System.arraycopy(SOSMarker, 0, buf, bufOffset, SOSMarker.length);
                 bufOffset += SOSMarker.length;
             }
 
@@ -675,11 +635,10 @@ public class TIFFOldJPEGDecompressor extends TIFFJPEGDecompressor {
             bufOffset += byteCount - 2;
 
             // EOI.
-            buf[bufOffset++] = (byte)0xff; // Marker identifier
-            buf[bufOffset++] = (byte)EOI;
+            buf[bufOffset++] = (byte) 0xff; // Marker identifier
+            buf[bufOffset++] = (byte) EOI;
 
-            ByteArrayInputStream bais =
-                new ByteArrayInputStream(buf, 0, bufOffset);
+            ByteArrayInputStream bais = new ByteArrayInputStream(buf, 0, bufOffset);
             ImageInputStream is = new MemoryCacheImageInputStream(bais);
 
             JPEGReader.setInput(is, true, true);
@@ -693,7 +652,7 @@ public class TIFFOldJPEGDecompressor extends TIFFJPEGDecompressor {
     @Override
     public void dispose() {
         super.dispose();
-        if(JPEGReader != null) {
+        if (JPEGReader != null) {
             JPEGReader.dispose();
             JPEGReader = null;
         }

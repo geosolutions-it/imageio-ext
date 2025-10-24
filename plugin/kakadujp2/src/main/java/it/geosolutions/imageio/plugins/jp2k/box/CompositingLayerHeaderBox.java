@@ -20,19 +20,17 @@ import javax.imageio.metadata.IIOMetadataNode;
 
 /**
  * @author Simone Giannecchini, GeoSolutions.
- * @author Daniele Romagnoli, GeoSolutions.
- * 
- * @TODO Actually, this implementation does nothing since this box may be
- *       ignored by a JP2 compatible reader.
+ * @author Daniele Romagnoli, GeoSolutions. @TODO Actually, this implementation does nothing since this box may be
+ *     ignored by a JP2 compatible reader.
  */
 @SuppressWarnings("serial")
 public class CompositingLayerHeaderBox extends BaseJP2KBox {
 
-    public final static int BOX_TYPE = 0x6A706C68;
+    public static final int BOX_TYPE = 0x6A706C68;
 
-    public final static String NAME = "jplh";
+    public static final String NAME = "jplh";
 
-    public final static String JP2K_MD_NAME = "JP2KCompositingLayerHeaderBox";
+    public static final String JP2K_MD_NAME = "JP2KCompositingLayerHeaderBox";
 
     public CompositingLayerHeaderBox(int length, int type, byte[] data) {
         super(length, type, data);
@@ -49,16 +47,13 @@ public class CompositingLayerHeaderBox extends BaseJP2KBox {
     }
 
     @Override
-    protected void parse(byte[] data) {
-    }
-    
+    protected void parse(byte[] data) {}
+
     public IIOMetadataNode getNativeNode() {
         String name = BoxUtilities.getName(getType());
-        if (name == null)
-            name = "unknown";
+        if (name == null) name = "unknown";
 
         IIOMetadataNode node = new IIOMetadataNode(name);
         return node;
     }
-
 }

@@ -42,21 +42,19 @@ import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
 import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageWriter;
 import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageWriterSpi;
 import it.geosolutions.resources.TestData;
-import me.steinborn.libdeflate.Libdeflate;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import javax.imageio.*;
-import javax.imageio.stream.FileImageInputStream;
-import javax.imageio.stream.FileImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Locale;
-
+import javax.imageio.*;
+import javax.imageio.stream.FileImageInputStream;
+import javax.imageio.stream.FileImageOutputStream;
+import me.steinborn.libdeflate.Libdeflate;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * Testing SPI registration and priority for deflate compression on TIFF I/O.
@@ -71,7 +69,7 @@ public class TIFFSPICompressionTest extends Assert {
         CompressionRegistry registryInstance = CompressionRegistry.getDefaultInstance();
 
         Iterator<CompressorSpi> cSpis = registryInstance.getSPIs(CompressorSpi.class, true);
-        while(cSpis.hasNext()) {
+        while (cSpis.hasNext()) {
             CompressorSpi spi = cSpis.next();
             if (spi instanceof LibDeflateCompressorSpi) {
                 LibDeflateCompressorSpi compSpi = ((LibDeflateCompressorSpi) spi);
@@ -84,7 +82,7 @@ public class TIFFSPICompressionTest extends Assert {
 
         // We are setting lower priority for libdeflate decompressor
         Iterator<DecompressorSpi> dSpis = registryInstance.getSPIs(DecompressorSpi.class, true);
-        while(dSpis.hasNext()) {
+        while (dSpis.hasNext()) {
             DecompressorSpi spi = dSpis.next();
             if (spi instanceof LibDeflateDecompressorSpi) {
                 ((LibDeflateDecompressorSpi) spi).setPriority(20);
@@ -100,12 +98,13 @@ public class TIFFSPICompressionTest extends Assert {
     public void testPriorities() throws IOException {
 
         Compressor compressor = CompressionFinder.getCompressor(7, CompressionType.DEFLATE);
-        Class<? extends Compressor> compressorClass = Libdeflate.isAvailable() ? LibDeflateCompressor.class : ZipDeflateCompressor.class;
+        Class<? extends Compressor> compressorClass =
+                Libdeflate.isAvailable() ? LibDeflateCompressor.class : ZipDeflateCompressor.class;
         assertEquals(compressor.getClass(), compressorClass);
 
-
         Decompressor decompressor = CompressionFinder.getDecompressor(CompressionType.DEFLATE);
-        Class<? extends Decompressor> decompressorClass = Libdeflate.isAvailable() ? LibDeflateDecompressor.class : ZipDeflateDecompressor.class;
+        Class<? extends Decompressor> decompressorClass =
+                Libdeflate.isAvailable() ? LibDeflateDecompressor.class : ZipDeflateDecompressor.class;
         assertEquals(decompressor.getClass(), decompressorClass);
     }
 
@@ -128,7 +127,6 @@ public class TIFFSPICompressionTest extends Assert {
         writeParam.setCompressionType("Deflate");
         writeParam.setCompressionQuality(0.3f);
 
-
         writer.setOutput(new FileImageOutputStream(outputFile));
         writer.write(null, new IIOImage(image, null, null), writeParam);
         writer.dispose();
@@ -138,14 +136,14 @@ public class TIFFSPICompressionTest extends Assert {
         reader2.setInput(new FileImageInputStream(outputFile));
         BufferedImage bi1 = reader2.read(0, null);
         Raster original = image.getData();
-        Raster copy =  bi1.getData();
+        Raster copy = bi1.getData();
 
-        for (int i=0; i< bi1.getWidth(); i++) {
-            for (int j=0; j < bi1.getHeight(); j++) {
-                for (int b=0; b<original.getNumBands(); b++) {
+        for (int i = 0; i < bi1.getWidth(); i++) {
+            for (int j = 0; j < bi1.getHeight(); j++) {
+                for (int b = 0; b < original.getNumBands(); b++) {
                     int pixel = original.getSample(i, j, b);
-                    int pixelD = copy.getSample(i,j,b);
-                    if (pixel !=  pixelD) {
+                    int pixelD = copy.getSample(i, j, b);
+                    if (pixel != pixelD) {
                         throw new IllegalArgumentException("Images are different");
                     }
                 }

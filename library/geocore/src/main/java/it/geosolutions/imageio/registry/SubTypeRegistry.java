@@ -55,7 +55,7 @@ class SubTypeRegistry {
         map.put(spi.getClass(), spi);
         partiallyOrderedSet.add(spi);
         if (spi instanceof RegisterablePlugin) {
-            RegisterablePlugin plugin = (RegisterablePlugin)spi;
+            RegisterablePlugin plugin = (RegisterablePlugin) spi;
             plugin.onRegistration(registry, subType);
         }
         return !exists;
@@ -67,7 +67,7 @@ class SubTypeRegistry {
             map.remove(spi.getClass());
             partiallyOrderedSet.remove(spi);
             if (spi instanceof RegisterablePlugin) {
-                RegisterablePlugin rs = (RegisterablePlugin)spi;
+                RegisterablePlugin rs = (RegisterablePlugin) spi;
                 rs.onDeregistration(registry, subType);
             }
             return true;
@@ -95,7 +95,7 @@ class SubTypeRegistry {
     public synchronized void clear() {
         Iterator iter = map.values().iterator();
 
-        while(true) {
+        while (true) {
             Object provider;
             do {
                 if (!iter.hasNext()) {
@@ -104,9 +104,11 @@ class SubTypeRegistry {
                 }
                 provider = iter.next();
                 iter.remove();
-            } while(!(provider instanceof RegisterablePlugin));
+            } while (!(provider instanceof RegisterablePlugin));
         }
     }
 
-    public synchronized void finalize() { clear(); }
+    public synchronized void finalize() {
+        clear();
+    }
 }

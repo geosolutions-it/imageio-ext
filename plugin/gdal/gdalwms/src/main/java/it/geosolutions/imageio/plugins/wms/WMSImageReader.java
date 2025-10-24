@@ -17,26 +17,22 @@
 package it.geosolutions.imageio.plugins.wms;
 
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
-
 import java.awt.image.RenderedImage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * {@link WMSImageReader} is a {@link GDALImageReader} able to create
- * {@link RenderedImage} from WMS services.
- * 
+ * {@link WMSImageReader} is a {@link GDALImageReader} able to create {@link RenderedImage} from WMS services.
+ *
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class WMSImageReader extends GDALImageReader {
 
-    private static final Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.plugins.wms");
+    private static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.wms");
 
     public WMSImageReader(WMSImageReaderSpi originatingProvider) {
         super(originatingProvider, 0);
-        if (LOGGER.isLoggable(Level.FINE))
-            LOGGER.fine("WMSImageReader Constructor");
+        if (LOGGER.isLoggable(Level.FINE)) LOGGER.fine("WMSImageReader Constructor");
     }
 }

@@ -22,31 +22,28 @@ import it.geosolutions.imageioimpl.plugins.cog.*;
 import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReader;
 import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
 import it.geosolutions.imageioimpl.plugins.tiff.TiffDatasetLayoutImpl;
-import org.junit.Assert;
-import org.junit.Test;
-
-import javax.imageio.ImageReadParam;
-import javax.imageio.stream.FileImageInputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import javax.imageio.ImageReadParam;
+import javax.imageio.stream.FileImageInputStream;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Tests reading COGs with both caching and non-caching CogImageInputStreams.
  *
- * @author joshfix
- * Created on 2019-08-22
+ * @author joshfix Created on 2019-08-22
  */
 public class CogHTTPReadOnlineTest {
 
     private static final String cogUrl = "https://gs-cog.s3.eu-central-1.amazonaws.com/land_topo_cog_jpeg_8192.tif";
 
-    private static final String cogUrl2 = "https://s3-us-west-2.amazonaws.com/sentinel-cogs/sentinel-s2-l2a-cogs/5/C/MK/2018/10/S2B_5CMK_20181020_0_L2A/B01.tif";
+    private static final String cogUrl2 =
+            "https://s3-us-west-2.amazonaws.com/sentinel-cogs/sentinel-s2-l2a-cogs/5/C/MK/2018/10/S2B_5CMK_20181020_0_L2A/B01.tif";
 
-    /**
-     * Read the first tiles of the stream
-     */
+    /** Read the first tiles of the stream */
     @Test
     public void readCogFirstTiles() throws IOException {
         DefaultCogImageInputStream cogStream = new DefaultCogImageInputStream(cogUrl2);
@@ -67,9 +64,7 @@ public class CogHTTPReadOnlineTest {
         Assert.assertEquals(height, cogImage.getHeight());
     }
 
-    /**
-     * Read an isolated piece of data.
-     */
+    /** Read an isolated piece of data. */
     @Test
     public void readCogPiece() throws IOException {
         DefaultCogImageInputStream cogStream = new DefaultCogImageInputStream(cogUrl2);
@@ -90,9 +85,7 @@ public class CogHTTPReadOnlineTest {
         Assert.assertEquals(height, cogImage.getHeight());
     }
 
-    /**
-     * Read a piece of an overview.
-     */
+    /** Read a piece of an overview. */
     @Test
     public void readCogOverview() throws IOException {
         DefaultCogImageInputStream cogStream = new DefaultCogImageInputStream(cogUrl);
@@ -113,9 +106,7 @@ public class CogHTTPReadOnlineTest {
         Assert.assertEquals(height, cogImage.getHeight());
     }
 
-    /**
-     * Read a whole overview (the latest)
-     */
+    /** Read a whole overview (the latest) */
     @Test
     public void readWholeOverview() throws IOException {
         DefaultCogImageInputStream cogStream = new DefaultCogImageInputStream(cogUrl);
@@ -130,9 +121,7 @@ public class CogHTTPReadOnlineTest {
         Assert.assertEquals(256, cogImage.getHeight());
     }
 
-    /**
-     * Read a COG with Header not contained in a single read.
-     */
+    /** Read a COG with Header not contained in a single read. */
     @Test
     public void testFetchHeader() throws IOException {
         DefaultCogImageInputStream cogStream = new DefaultCogImageInputStream(cogUrl2);
@@ -189,10 +178,10 @@ public class CogHTTPReadOnlineTest {
         Assert.assertEquals(height, cogImage.getHeight());
     }
 
-
     @Test
     public void readCogJpegMask() throws IOException {
-        DefaultCogImageInputStream cogStream = new DefaultCogImageInputStream("http://localhost/tc_81235068/homedepot_spokane_wa_section1_concrete_final_20230921_ortho_COG.tif");
+        DefaultCogImageInputStream cogStream = new DefaultCogImageInputStream(
+                "http://localhost/tc_81235068/homedepot_spokane_wa_section1_concrete_final_20230921_ortho_COG.tif");
         CogImageReader reader = new CogImageReader(new CogImageReaderSpi());
         reader.setInput(cogStream);
 
@@ -215,9 +204,9 @@ public class CogHTTPReadOnlineTest {
 
     @Test
     public void readLocalJpegMask() throws IOException {
-        final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi()
-                .createReaderInstance();
-        reader.setInput(new FileImageInputStream(new File("/var/www/html/tc_81235068/homedepot_spokane_wa_section1_concrete_final_20230921_ortho_COG.tif")));
+        final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi().createReaderInstance();
+        reader.setInput(new FileImageInputStream(new File(
+                "/var/www/html/tc_81235068/homedepot_spokane_wa_section1_concrete_final_20230921_ortho_COG.tif")));
 
         DatasetLayout dtLayout = TiffDatasetLayoutImpl.parseLayout(reader.getStreamMetadata());
         System.out.println(dtLayout);
@@ -239,5 +228,4 @@ public class CogHTTPReadOnlineTest {
         Assert.assertEquals(width, cogImage.getWidth());
         Assert.assertEquals(height, cogImage.getHeight());
     }
-
 }

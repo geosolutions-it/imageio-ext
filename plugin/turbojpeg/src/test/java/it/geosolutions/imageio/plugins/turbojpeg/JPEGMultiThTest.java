@@ -16,8 +16,9 @@
  */
 package it.geosolutions.imageio.plugins.turbojpeg;
 
-import it.geosolutions.imageio.utilities.ImageOutputStreamAdapter2;
+import static org.junit.Assume.*;
 
+import it.geosolutions.imageio.utilities.ImageOutputStreamAdapter2;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,27 +30,21 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
-
 import javax.imageio.IIOImage;
 import javax.imageio.ImageWriteParam;
-
 import org.junit.Ignore;
 import org.junit.Test;
-import static org.junit.Assume.*;
 
-/**
- * @author Daniele Romagnoli, GeoSolutions SAS
- * 
- */
+/** @author Daniele Romagnoli, GeoSolutions SAS */
 public class JPEGMultiThTest extends BaseTest {
 
-    private static final Logger LOGGER = Logger.getLogger(JPEGMultiThTest.class.toString());    
-    
+    private static final Logger LOGGER = Logger.getLogger(JPEGMultiThTest.class.toString());
+
     private static ImageWriteParam param = new TurboJpegImageWriteParam();
 
     /**
      * TODO JUNIT tests
-     * 
+     *
      * @param args
      * @throws IOException
      */
@@ -72,8 +67,8 @@ public class JPEGMultiThTest extends BaseTest {
             final int LOOP = 1000;
             List<Callable<String>> queue = new ArrayList<Callable<String>>(LOOP);
             for (int i = 0; i < LOOP; i++) {
-                Callable<String> a = new WritingTest(SAMPLE_IMAGE, OUTPUT_FOLDER + "___" + i
-                        + "___" + Math.random() + ".jpeg");
+                Callable<String> a =
+                        new WritingTest(SAMPLE_IMAGE, OUTPUT_FOLDER + "___" + i + "___" + Math.random() + ".jpeg");
                 queue.add(a);
             }
             ex.invokeAll(queue);
@@ -101,7 +96,6 @@ public class JPEGMultiThTest extends BaseTest {
         public WritingTest(RenderedImage bi, final String outputFile) {
             this.bi = bi;
             file = outputFile;
-
         }
 
         public String call() {
@@ -121,22 +115,21 @@ public class JPEGMultiThTest extends BaseTest {
 
                 return "ERROR";
             } finally {
-                if (writer1 != null){
+                if (writer1 != null) {
                     try {
-                        writer1.dispose();   
-                    } catch (Throwable t){
-                        
+                        writer1.dispose();
+                    } catch (Throwable t) {
+
                     }
                 }
-                if (out1 != null){
+                if (out1 != null) {
                     try {
-                        out1.close();   
-                    } catch (Throwable t){
-                        
+                        out1.close();
+                    } catch (Throwable t) {
+
                     }
                 }
             }
         }
     }
-
 }

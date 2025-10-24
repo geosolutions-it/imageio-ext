@@ -19,19 +19,19 @@ package it.geosolutions.imageio.cog;
 import it.geosolutions.imageio.plugins.cog.CogImageReadParam;
 import it.geosolutions.imageioimpl.plugins.cog.HttpRangeReader;
 import it.geosolutions.imageioimpl.plugins.cog.RangeReader;
+import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Map;
-
 /**
  * Testing HTTP range reading capabilities.
- * 
+ *
  * @author joshfix
  */
 public class HttpRangeReaderOnlineTest {
 
-    private static final String cogUrl = "https://s3-us-west-2.amazonaws.com/sentinel-cogs/sentinel-s2-l2a-cogs/5/C/MK/2018/10/S2B_5CMK_20181020_0_L2A/B01.tif";
+    private static final String cogUrl =
+            "https://s3-us-west-2.amazonaws.com/sentinel-cogs/sentinel-s2-l2a-cogs/5/C/MK/2018/10/S2B_5CMK_20181020_0_L2A/B01.tif";
 
     @Test
     public void readRanges() {
@@ -39,8 +39,8 @@ public class HttpRangeReaderOnlineTest {
         byte[] header = rangeReader.readHeader();
         Assert.assertEquals(CogImageReadParam.DEFAULT_HEADER_LENGTH, header.length);
 
-        long[] range1 = new long[]{20000, 21000};
-        long[] range2 = new long[]{30000, 31000};
+        long[] range1 = new long[] {20000, 21000};
+        long[] range2 = new long[] {30000, 31000};
         Map<Long, byte[]> data = rangeReader.read(range1, range2);
 
         // verify the first range was read
@@ -66,6 +66,5 @@ public class HttpRangeReaderOnlineTest {
             }
         }
         Assert.assertTrue(nonZeroValueFound);
-
     }
 }

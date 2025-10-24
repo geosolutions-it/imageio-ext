@@ -16,26 +16,20 @@
  */
 package it.geosolutions.imageio.plugins.jp2k.box;
 
-
 /**
- * This class is defined to represent a Capture Resolution Box of JPEG JP2 file format.
- * A Resolution Box has a length, and a fixed type of "resc" (capture
- * resolution) 
- * 
+ * This class is defined to represent a Capture Resolution Box of JPEG JP2 file format. A Resolution Box has a length,
+ * and a fixed type of "resc" (capture resolution)
  */
 @SuppressWarnings("serial")
 public class CaptureResolutionBox extends ResolutionBox {
 
-    public final static int BOX_TYPE_CAPTURE = 0x72657363;
+    public static final int BOX_TYPE_CAPTURE = 0x72657363;
 
-    public final static String CAP_NAME = "resc";
+    public static final String CAP_NAME = "resc";
 
-    public final static String JP2_MD_CAP_NAME = "JP2KCaptureResolutionBox";
+    public static final String JP2_MD_CAP_NAME = "JP2KCaptureResolutionBox";
 
-    /**
-     * Constructs a <code>ResolutionBox</code> from the provided type and
-     * content data array.
-     */
+    /** Constructs a <code>ResolutionBox</code> from the provided type and content data array. */
     public CaptureResolutionBox(byte[] data) {
         super(BOX_TYPE_CAPTURE, data);
     }

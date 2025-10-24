@@ -17,27 +17,22 @@
 package it.geosolutions.imageio.plugins.dted;
 
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
-
 import java.awt.image.RenderedImage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * {@link DTEDImageReader} is a {@link GDALImageReader} able to create
- * {@link RenderedImage} from DTED files.
- * 
+ * {@link DTEDImageReader} is a {@link GDALImageReader} able to create {@link RenderedImage} from DTED files.
+ *
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class DTEDImageReader extends GDALImageReader {
 
-    private static final Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.plugins.dted");
+    private static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.dted");
 
     public DTEDImageReader(DTEDImageReaderSpi originatingProvider) {
         super(originatingProvider, 0);
-        if (LOGGER.isLoggable(Level.FINE))
-            LOGGER.fine("DTEDImageReader Constructor");
+        if (LOGGER.isLoggable(Level.FINE)) LOGGER.fine("DTEDImageReader Constructor");
     }
-
 }

@@ -18,46 +18,36 @@ package it.geosolutions.imageio.plugins.ecw;
 
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
 import it.geosolutions.imageio.gdalframework.GDALImageReaderSpi;
-
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * {@link ECWImageReader} is a {@link GDALImageReader} able to create
- * {@link RenderedImage} from ECW files and ECWP protocol.
- * 
+ * {@link ECWImageReader} is a {@link GDALImageReader} able to create {@link RenderedImage} from ECW files and ECWP
+ * protocol.
+ *
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
  */
 public class ECWImageReader extends GDALImageReader {
 
-    private static final Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.plugins.ecw");
+    private static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.ecw");
 
     public ECWImageReader(ECWImageReaderSpi originatingProvider) {
         super(originatingProvider, 0);
-        if (LOGGER.isLoggable(Level.FINE))
-            LOGGER.fine("ECWImageReader Constructor");
+        if (LOGGER.isLoggable(Level.FINE)) LOGGER.fine("ECWImageReader Constructor");
     }
 
-    public void setInput(Object input, boolean seekForwardOnly,
-            boolean ignoreMetadata) {
-        if (LOGGER.isLoggable(Level.FINE))
-            LOGGER.fine("Setting Input");
+    public void setInput(Object input, boolean seekForwardOnly, boolean ignoreMetadata) {
+        if (LOGGER.isLoggable(Level.FINE)) LOGGER.fine("Setting Input");
         if (input != null && input instanceof ECWPImageInputStream) {
             try {
-                boolean isDecodable = ((GDALImageReaderSpi) this
-                        .getOriginatingProvider()).canDecodeInput(input);
-                if (isDecodable)
-                    super.setInput(input, seekForwardOnly, ignoreMetadata);
+                boolean isDecodable = ((GDALImageReaderSpi) this.getOriginatingProvider()).canDecodeInput(input);
+                if (isDecodable) super.setInput(input, seekForwardOnly, ignoreMetadata);
             } catch (IOException e) {
-                throw new IllegalArgumentException(
-                        "Failed to create a valid input stream ", e);
+                throw new IllegalArgumentException("Failed to create a valid input stream ", e);
             }
-        } else
-            super.setInput(input, seekForwardOnly, ignoreMetadata);
+        } else super.setInput(input, seekForwardOnly, ignoreMetadata);
     }
-
 }

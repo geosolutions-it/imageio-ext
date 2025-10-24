@@ -43,8 +43,8 @@ public class ImageAssert {
                 int rgbOriginal = original.getRGB(x, y);
                 int rgbActual = image.getRGB(x, y);
                 if (rgbOriginal != rgbActual) {
-                    fail("Comparison failed at x:" + x + ", y: " + y + ", expected "
-                            + colorToString(rgbOriginal) + ", got " + colorToString(rgbActual));
+                    fail("Comparison failed at x:" + x + ", y: " + y + ", expected " + colorToString(rgbOriginal)
+                            + ", got " + colorToString(rgbActual));
                 }
             }
         }
@@ -52,12 +52,10 @@ public class ImageAssert {
 
     private static String colorToString(int rgb) {
         Color c = new Color(rgb);
-        return "RGBA[" + c.getRed() + ", " + c.getGreen() + ", " + c.getBlue() + ", "
-                + c.getAlpha() + "]";
+        return "RGBA[" + c.getRed() + ", " + c.getGreen() + ", " + c.getBlue() + ", " + c.getAlpha() + "]";
     }
 
-    public static void showImage(String title, long timeOut, final BufferedImage image)
-            throws InterruptedException {
+    public static void showImage(String title, long timeOut, final BufferedImage image) throws InterruptedException {
         final String headless = System.getProperty("java.awt.headless", "false");
         if (!headless.equalsIgnoreCase("true")) {
             try {
@@ -81,7 +79,6 @@ public class ImageAssert {
                     public void paint(Graphics g) {
                         g.drawImage(image, 0, 0, this);
                     }
-
                 };
 
                 frame.add(p);
@@ -95,5 +92,4 @@ public class ImageAssert {
             }
         }
     }
-
 }

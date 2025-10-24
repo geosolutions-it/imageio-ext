@@ -17,16 +17,12 @@
 package it.geosolutions.util;
 
 import java.util.logging.Logger;
-
 import kdu_jni.KduException;
 import kdu_jni.Kdu_message;
 
-/**
- * Class used to handle kakadu system messages.
- */
+/** Class used to handle kakadu system messages. */
 class Kdu_sysout_message extends Kdu_message {
-    private static Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.jp2k");
+    private static Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.jp2k");
 
     private boolean raiseExceptionOnEndOfMessage;
 
@@ -38,14 +34,13 @@ class Kdu_sysout_message extends Kdu_message {
 
     public void Put_text(String text) {
         // Implements the C++ callback function `kdu_message::put_text'
-        //TODO: Revert to Logger version although we need to group single characters
+        // TODO: Revert to Logger version although we need to group single characters
         // to avoid text fragmentation.
         System.out.print(text);
     }
 
     public void Flush(boolean endOfMessage) throws KduException {
         // Implements the C++ callback function `kdu_message::flush'.
-        if (endOfMessage && raiseExceptionOnEndOfMessage)
-            throw new KduException("In `Kdu_sysout_message'.");
+        if (endOfMessage && raiseExceptionOnEndOfMessage) throw new KduException("In `Kdu_sysout_message'.");
     }
 }

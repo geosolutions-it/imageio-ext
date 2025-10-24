@@ -29,10 +29,7 @@
  */
 package it.geosolutions.imageio.compression;
 
-/**
- * Compressor SPI class reporting the min and max compression levels being supported
- * by the provided Compressor.
- */
+/** Compressor SPI class reporting the min and max compression levels being supported by the provided Compressor. */
 public abstract class AbstractCompressorSpi extends AbstractCompressionSpi implements CompressorSpi {
 
     // TODO: Should we use double for future support of other types of compression?
@@ -57,7 +54,4 @@ public abstract class AbstractCompressorSpi extends AbstractCompressionSpi imple
     public void setMaxLevel(int maxLevel) {
         this.maxLevel = maxLevel;
     }
-
-
-
 }

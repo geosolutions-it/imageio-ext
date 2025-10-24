@@ -22,12 +22,12 @@ import java.awt.image.Raster;
 
 /**
  * A scanline provider optimized for Raster objects containig a 8bit BGR or ABGR image
- * 
+ *
  * @author Andrea Aime - GeoSolutions
  */
 public final class RasterByteABGRProvider extends AbstractScanlineProvider {
 
-    final static int[] PIXEL_STRIDES = new int[]{3,4};
+    static final int[] PIXEL_STRIDES = new int[] {3, 4};
     final byte[] bytes;
     final boolean bgrOrder;
     final boolean hasAlpha;
@@ -36,7 +36,11 @@ public final class RasterByteABGRProvider extends AbstractScanlineProvider {
     final int numBands;
 
     public RasterByteABGRProvider(Raster raster, boolean hasAlpha) {
-        super(raster, 8, raster.getWidth() * (computePixelStride(raster, PIXEL_STRIDES, hasAlpha)), computePixelStride(raster, PIXEL_STRIDES, hasAlpha));
+        super(
+                raster,
+                8,
+                raster.getWidth() * (computePixelStride(raster, PIXEL_STRIDES, hasAlpha)),
+                computePixelStride(raster, PIXEL_STRIDES, hasAlpha));
         this.hasAlpha = hasAlpha;
         this.bytes = ((DataBufferByte) raster.getDataBuffer()).getData();
         ComponentSampleModel sm = (ComponentSampleModel) raster.getSampleModel();
@@ -62,12 +66,11 @@ public final class RasterByteABGRProvider extends AbstractScanlineProvider {
                     // row[i+0] = R
                     row[i + j] = bytes[bytesIdx + bandOffsets[j]];
                 }
-                // Pixel stride may be longer than numBands due to bandSelect 
+                // Pixel stride may be longer than numBands due to bandSelect
                 // sharing same dataBuffer of the original image
-                bytesIdx += pixelStride; 
+                bytesIdx += pixelStride;
                 i += numBands;
             }
         }
     }
-
 }

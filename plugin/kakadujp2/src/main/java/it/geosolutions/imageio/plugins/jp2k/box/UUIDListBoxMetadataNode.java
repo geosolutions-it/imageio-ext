@@ -17,13 +17,11 @@
 package it.geosolutions.imageio.plugins.jp2k.box;
 
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
-
 import javax.imageio.metadata.IIOMetadataNode;
 
 /**
- * This class is defined to represent a UUID list Box of JPEG JP2 file format.
- * This type of box has a length, a type of "ulst". Its contents include the
- * number of UUID entry and a list of 16-byte UUIDs.
+ * This class is defined to represent a UUID list Box of JPEG JP2 file format. This type of box has a length, a type of
+ * "ulst". Its contents include the number of UUID entry and a list of 16-byte UUIDs.
  */
 @SuppressWarnings("serial")
 public class UUIDListBoxMetadataNode extends BaseJP2KBoxMetadataNode {
@@ -47,9 +45,8 @@ public class UUIDListBoxMetadataNode extends BaseJP2KBoxMetadataNode {
 
         for (int i = 0; i < nUid; i++) {
             child = new IIOMetadataNode("UUID");
-            if (uuids[i]!=null)
-                child.setUserObject(uuids[i].clone());
-            uuid[i]= ImageIOUtilities.convertObjectToString(uuids[i]);
+            if (uuids[i] != null) child.setUserObject(uuids[i].clone());
+            uuid[i] = ImageIOUtilities.convertObjectToString(uuids[i]);
             child.setNodeValue(uuid[i]);
             appendChild(child);
         }
@@ -60,9 +57,7 @@ public class UUIDListBoxMetadataNode extends BaseJP2KBoxMetadataNode {
     }
 
     public String getUuid(final int index) {
-        if (index > nUid - 1)
-            throw new IllegalArgumentException("Number of UUID is "
-                    + numberUUID);
+        if (index > nUid - 1) throw new IllegalArgumentException("Number of UUID is " + numberUUID);
         return uuid[index];
     }
 }

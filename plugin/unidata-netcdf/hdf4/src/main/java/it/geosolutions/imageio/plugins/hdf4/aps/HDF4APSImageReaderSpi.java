@@ -18,18 +18,15 @@ package it.geosolutions.imageio.plugins.hdf4.aps;
 
 import it.geosolutions.imageio.plugins.hdf4.HDF4ImageReaderSpi;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities;
-
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.imageio.ImageReader;
-
 import ucar.nc2.dataset.NetcdfDataset;
 
 /**
  * Service provider interface for the APS-HDF Image
- * 
+ *
  * @author Daniele Romagnoli
  */
 public class HDF4APSImageReaderSpi extends HDF4ImageReaderSpi {
@@ -41,21 +38,20 @@ public class HDF4APSImageReaderSpi extends HDF4ImageReaderSpi {
     public HDF4APSImageReaderSpi() {
         super(readerCN);
 
-        if (LOGGER.isLoggable(Level.FINE))
-            LOGGER.fine("HDF4TeraScanImageReaderSpi Constructor");
+        if (LOGGER.isLoggable(Level.FINE)) LOGGER.fine("HDF4TeraScanImageReaderSpi Constructor");
     }
 
     protected boolean isValidDataset(final NetcdfDataset dataset) {
-    	
-    	boolean found = false;
-    	// APS
-    	final String attrib = NetCDFUtilities.getGlobalAttributeAsString(dataset, HDF4APSProperties.STD_FA_CREATESOFTWARE); 
-        if (attrib != null && attrib.length()>0 && attrib.startsWith("APS"))
-        	found = true;
-        return found;
-	}
 
-	public ImageReader createReaderInstance(Object input) throws IOException {
+        boolean found = false;
+        // APS
+        final String attrib =
+                NetCDFUtilities.getGlobalAttributeAsString(dataset, HDF4APSProperties.STD_FA_CREATESOFTWARE);
+        if (attrib != null && attrib.length() > 0 && attrib.startsWith("APS")) found = true;
+        return found;
+    }
+
+    public ImageReader createReaderInstance(Object input) throws IOException {
         return new HDF4APSImageReader(this);
     }
 }

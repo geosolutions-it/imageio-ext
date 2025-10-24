@@ -21,9 +21,7 @@ import javax.swing.event.TreeModelListener;
 /**
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
- *
  */
 interface JP2KTreeChecker extends TreeModelListener {
     public void checkTreeConsistency();
-
 }

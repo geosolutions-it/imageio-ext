@@ -23,25 +23,19 @@ import java.io.Serializable;
 import java.util.Map;
 
 /**
- * A default implementation of {@link java.util.Map.Entry} which map an arbitrary
- * key-value pairs. This entry is immutable by default.
- * 
+ * A default implementation of {@link java.util.Map.Entry} which map an arbitrary key-value pairs. This entry is
+ * immutable by default.
+ *
  * @author Martin Desruisseaux
  */
-public class MapEntry<K,V> implements Map.Entry<K,V>, Serializable {
-    /**
-     * For cross-version compatibility.
-     */
+public class MapEntry<K, V> implements Map.Entry<K, V>, Serializable {
+    /** For cross-version compatibility. */
     private static final long serialVersionUID = 8627698052283756776L;
 
-    /**
-     * The key.
-     */
+    /** The key. */
     private final K key;
 
-    /**
-     * The value.
-     */
+    /** The value. */
     private final V value;
 
     /**
@@ -51,28 +45,23 @@ public class MapEntry<K,V> implements Map.Entry<K,V>, Serializable {
      * @param value The value.
      */
     public MapEntry(final K key, final V value) {
-        this.key   = key;
+        this.key = key;
         this.value = value;
     }
 
-    /**
-     * Returns the key corresponding to this entry.
-     */
+    /** Returns the key corresponding to this entry. */
     public K getKey() {
         return key;
     }
 
-    /**
-     * Returns the value corresponding to this entry.
-     */
+    /** Returns the value corresponding to this entry. */
     public V getValue() {
         return value;
     }
 
     /**
-     * Replaces the value corresponding to this entry with the specified
-     * value (optional operation). The default implementation throws an
-     * {@link UnsupportedOperationException}.
+     * Replaces the value corresponding to this entry with the specified value (optional operation). The default
+     * implementation throws an {@link UnsupportedOperationException}.
      */
     public V setValue(final V value) {
         throw new UnsupportedOperationException();
@@ -87,19 +76,17 @@ public class MapEntry<K,V> implements Map.Entry<K,V>, Serializable {
     public boolean equals(final Object object) {
         if (object instanceof Map.Entry) {
             final Map.Entry that = (Map.Entry) object;
-            return ImageIOUtilities.equals(this.getKey(),   that.getKey()) &&
-                   ImageIOUtilities.equals(this.getValue(), that.getValue());
+            return ImageIOUtilities.equals(this.getKey(), that.getKey())
+                    && ImageIOUtilities.equals(this.getValue(), that.getValue());
         }
         return false;
     }
 
-    /**
-     * Returns the hash code value for this map entry
-     */
+    /** Returns the hash code value for this map entry */
     @Override
     public int hashCode() {
         int code = 0;
-        if (key   != null) code  =   key.hashCode();
+        if (key != null) code = key.hashCode();
         if (value != null) code ^= value.hashCode();
         return code;
     }

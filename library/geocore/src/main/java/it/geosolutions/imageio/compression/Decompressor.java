@@ -34,25 +34,23 @@ import java.util.zip.DataFormatException;
 /**
  * Interface for byte array Decompressor.
  *
- * Decompressor should be first initialized calling setInput on a source data buffer to be decompressed.
- * Afterwards, the decompress method should be called to decompress the provided source into
- * destData buffer.
+ * <p>Decompressor should be first initialized calling setInput on a source data buffer to be decompressed. Afterwards,
+ * the decompress method should be called to decompress the provided source into destData buffer.
  */
 public interface Decompressor {
 
     /** Set the input source data buffer to be decompressed */
-    void setInput(byte [] srcData);
+    void setInput(byte[] srcData);
 
     /**
-     * Decompress the source data and put result in the dest data buffer, starting from offset
-     * position, with a maximum number of uncompressed bytes
+     * Decompress the source data and put result in the dest data buffer, starting from offset position, with a maximum
+     * number of uncompressed bytes
      */
     void decompress(byte[] destData, int offset, int maxUncompressedSize) throws DataFormatException;
 
     /**
-     * indicates that the decompression is done and the decompressor should do the needed final
-     * operations, i.e. reset/clean/close/disposal.
-     * Do not reuse the decompressor after calling done.
+     * indicates that the decompression is done and the decompressor should do the needed final operations, i.e.
+     * reset/clean/close/disposal. Do not reuse the decompressor after calling done.
      */
     void done();
 }

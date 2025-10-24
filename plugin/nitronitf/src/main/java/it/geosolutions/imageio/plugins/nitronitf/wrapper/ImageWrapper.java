@@ -18,22 +18,18 @@ package it.geosolutions.imageio.plugins.nitronitf.wrapper;
 
 import it.geosolutions.imageio.plugins.nitronitf.NITFUtilities;
 import it.geosolutions.imageio.plugins.nitronitf.NITFUtilities.WriteCompression;
-
 import java.awt.image.RenderedImage;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * Wrapper class related to an ImageSegment of a NITF file.
- * 
+ *
  * @author Daniele Romagnoli, GeoSolutions s.a.s.
  */
 public class ImageWrapper extends IdentifiableNITFObjectWrapper {
 
-    /**
-     * Image Band wrapper, storing the ISUBCAT, IREP fields of a Band Info
-     */
+    /** Image Band wrapper, storing the ISUBCAT, IREP fields of a Band Info */
     public static class ImageBand {
 
         public String getSubCategory() {
@@ -56,82 +52,67 @@ public class ImageWrapper extends IdentifiableNITFObjectWrapper {
             this.subCategory = subCategory;
             this.representation = representation;
         }
-        
-        public ImageBand() {
-            
-        }
+
+        public ImageBand() {}
 
         String subCategory;
 
         String representation;
     }
 
-    /**
-     * Supported ICORDS values
-     */
+    /** Supported ICORDS values */
     public enum ICords {
-        G, N, S
+        G,
+        N,
+        S
     }
 
-    /**
-     * Supported IREP values
-     */
+    /** Supported IREP values */
     public enum Representation {
-        MONO, MULTI, RGB, NODISPLY
+        MONO,
+        MULTI,
+        RGB,
+        NODISPLY
     }
 
-    /**
-     * Supported ICAT values
-     */
+    /** Supported ICAT values */
     public enum Category {
-        VIS, MS, CLOUD
+        VIS,
+        MS,
+        CLOUD
     }
 
-    /**
-     * TODO: once the mapping framework is available, we should deal with metadata objects
-     */
+    /** TODO: once the mapping framework is available, we should deal with metadata objects */
     public ImageWrapper() {
         super();
     }
 
-    /**
-     * The underlying renderedImage to be stored within the related ImageSegment
-     */
+    /** The underlying renderedImage to be stored within the related ImageSegment */
     private RenderedImage image;
 
-    /**
-     * The {@link WriteCompression} to be used to compress the image in the ImageSegment
-     */
+    /** The {@link WriteCompression} to be used to compress the image in the ImageSegment */
     private WriteCompression compression;
 
-    /**
-     * The ISORCE field of the ImageSubHeader
-     */
+    /** The ISORCE field of the ImageSubHeader */
     private String source;
 
-    /**
-     * The ICOM fields of the ImageSubHeader
-     */
+    /** The ICOM fields of the ImageSubHeader */
     private List<String> comments;
 
-    /**
-     * The Image Representation to be used for the IREP filed of the ImageSubHeader
-     */
+    /** The Image Representation to be used for the IREP filed of the ImageSubHeader */
     private Representation representation;
 
-    /**
-     * The Image Category to be used for the ICAT filed of the ImageSubHeader
-     */
+    /** The Image Category to be used for the ICAT filed of the ImageSubHeader */
     private Category imageCategory;
 
     private String imageCoordinateSystem;
-    
+
     private String imageMagnification;
 
     private String igeolo;
-    
+
     private String pixelJustification = NITFUtilities.Consts.DEFAULT_PJUST;
-    
+
     private ImageBand[] bands;
 
     private Map<String, Map<String, String>> tres;
@@ -231,5 +212,4 @@ public class ImageWrapper extends IdentifiableNITFObjectWrapper {
     public void setTres(Map<String, Map<String, String>> tres) {
         this.tres = tres;
     }
-
 }

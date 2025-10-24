@@ -16,6 +16,12 @@
  */
 package it.geosolutions.imageioimpl.plugins.cog;
 
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
@@ -25,24 +31,15 @@ import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.S3AsyncClientBuilder;
 import software.amazon.awssdk.utils.ThreadFactoryBuilder;
 
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
 /**
- * Utility class to assist building S3 async client.  S3 clients should be singletons and re-used.  We should also
+ * Utility class to assist building S3 async client. S3 clients should be singletons and re-used. We should also
  * maintain one client per region.
  *
- * @author joshfix
- * Created on 2019-09-19
+ * @author joshfix Created on 2019-09-19
  */
 public class S3ClientFactory {
 
-    private S3ClientFactory() {
-    }
+    private S3ClientFactory() {}
 
     private static Map<String, S3AsyncClient> s3AsyncClients = new HashMap<>();
 
@@ -58,12 +55,14 @@ public class S3ClientFactory {
         String password = configProps.getPassword();
         if (user != null && password != null) {
             if ("".equals(user) && "".equals(password)) {
-                builder.credentialsProvider(() -> AnonymousCredentialsProvider.create().resolveCredentials());
+                builder.credentialsProvider(
+                        () -> AnonymousCredentialsProvider.create().resolveCredentials());
             } else {
                 builder.credentialsProvider(() -> AwsBasicCredentials.create(user, password));
             }
         } else {
-            builder.credentialsProvider(() -> DefaultCredentialsProvider.create().resolveCredentials());
+            builder.credentialsProvider(
+                    () -> DefaultCredentialsProvider.create().resolveCredentials());
         }
 
         if (configProps.getEndpoint() != null) {
@@ -78,10 +77,8 @@ public class S3ClientFactory {
         }
 
         // configure executor / thread pool
-        builder.asyncConfiguration(b -> b.advancedOption(SdkAdvancedAsyncClientOption
-                        .FUTURE_COMPLETION_EXECUTOR,
-                getExecutor(configProps)
-        ));
+        builder.asyncConfiguration(b ->
+                b.advancedOption(SdkAdvancedAsyncClientOption.FUTURE_COMPLETION_EXECUTOR, getExecutor(configProps)));
 
         builder.forcePathStyle(configProps.getForcePathStyle());
 
@@ -98,7 +95,8 @@ public class S3ClientFactory {
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue<>(10_000),
                 new ThreadFactoryBuilder()
-                        .threadNamePrefix("sdk-async-response-" + configProps.getRegion()).build());
+                        .threadNamePrefix("sdk-async-response-" + configProps.getRegion())
+                        .build());
 
         // Allow idle core threads to time out
         executor.allowCoreThreadTimeOut(true);

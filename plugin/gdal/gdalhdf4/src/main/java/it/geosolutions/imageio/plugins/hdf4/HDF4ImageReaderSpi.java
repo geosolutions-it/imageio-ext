@@ -17,32 +17,30 @@
 package it.geosolutions.imageio.plugins.hdf4;
 
 import it.geosolutions.imageio.gdalframework.GDALImageReaderSpi;
-
+import it.geosolutions.imageio.stream.AccessibleStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import it.geosolutions.imageio.stream.AccessibleStream;
-
 import javax.imageio.ImageReader;
 
 /**
  * Service provider interface for the HDF4 Datasets
- * 
+ *
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
  */
 public class HDF4ImageReaderSpi extends GDALImageReaderSpi {
 
-    static final String[] suffixes = { "hdf", "hdf4" };
+    static final String[] suffixes = {"hdf", "hdf4"};
 
-    static final String[] formatNames = { "HDF", "HDF4", "HDF-EOS" };
+    static final String[] formatNames = {"HDF", "HDF4", "HDF-EOS"};
 
-    static final String[] MIMETypes = { "image/hdf" };
+    static final String[] MIMETypes = {"image/hdf"};
 
     static final String version = "1.0";
-    
+
     static final String description = "HDF4 Image Reader, version " + version;
 
     static final String readerCN = "it.geosolutions.imageio.plugins.hdf4.HDF4ImageReader";
@@ -50,7 +48,7 @@ public class HDF4ImageReaderSpi extends GDALImageReaderSpi {
     static final String vendorName = "GeoSolutions";
 
     // writerSpiNames
-    static final String[] wSN = { null };
+    static final String[] wSN = {null};
 
     // StreamMetadataFormatNames and StreamMetadataFormatClassNames
     static final boolean supportsStandardStreamMetadataFormat = false;
@@ -59,9 +57,9 @@ public class HDF4ImageReaderSpi extends GDALImageReaderSpi {
 
     static final String nativeStreamMetadataFormatClassName = null;
 
-    static final String[] extraStreamMetadataFormatNames = { null };
+    static final String[] extraStreamMetadataFormatNames = {null};
 
-    static final String[] extraStreamMetadataFormatClassNames = { null };
+    static final String[] extraStreamMetadataFormatClassNames = {null};
 
     // ImageMetadataFormatNames and ImageMetadataFormatClassNames
     static final boolean supportsStandardImageMetadataFormat = false;
@@ -70,9 +68,9 @@ public class HDF4ImageReaderSpi extends GDALImageReaderSpi {
 
     static final String nativeImageMetadataFormatClassName = null;
 
-    static final String[] extraImageMetadataFormatNames = { null };
+    static final String[] extraImageMetadataFormatNames = {null};
 
-    static final String[] extraImageMetadataFormatClassNames = { null };
+    static final String[] extraImageMetadataFormatClassNames = {null};
 
     public HDF4ImageReaderSpi() {
         super(
@@ -82,7 +80,7 @@ public class HDF4ImageReaderSpi extends GDALImageReaderSpi {
                 suffixes,
                 MIMETypes,
                 readerCN, // readerClassName
-                new Class[] { File.class, AccessibleStream.class },
+                new Class[] {File.class, AccessibleStream.class},
                 wSN, // writer Spi Names
                 supportsStandardStreamMetadataFormat,
                 nativeStreamMetadataFormatName,
@@ -93,31 +91,28 @@ public class HDF4ImageReaderSpi extends GDALImageReaderSpi {
                 nativeImageMetadataFormatName,
                 nativeImageMetadataFormatClassName,
                 extraImageMetadataFormatNames,
-                extraImageMetadataFormatClassNames, getSupportedFormatsList());
-
+                extraImageMetadataFormatClassNames,
+                getSupportedFormatsList());
     }
 
     /**
      * Returns an instance of the HDF4ImageReader
-     * 
+     *
      * @see javax.imageio.spi.ImageReaderSpi#createReaderInstance(java.lang.Object)
      */
     public ImageReader createReaderInstance(Object source) throws IOException {
         return new HDF4ImageReader(this);
     }
 
-    /**
-     * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
-     */
+    /** @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale) */
     public String getDescription(Locale locale) {
         return description;
     }
 
-    private final static List<String> getSupportedFormatsList() {
+    private static final List<String> getSupportedFormatsList() {
         final List<String> l = new ArrayList<String>();
         l.add("HDF4");
         l.add("HDF4Image");
         return l;
     }
-
 }

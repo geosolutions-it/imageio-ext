@@ -51,7 +51,6 @@ final class ScanlineCursor {
         // (which happens in the case of a sub-image sharing the same data buffer as its parent)
         int pixelTranslate = raster.getSampleModelTranslateX() * pixelStride;
         this.position -= pixelTranslate;
-
     }
 
     /**
@@ -62,9 +61,8 @@ final class ScanlineCursor {
     public int next() {
         final int result = position;
         if (result >= maxPosition) {
-            throw new IllegalStateException(
-                    "We got past the end of the buffer, current position is " + position
-                            + " and max position value is " + maxPosition);
+            throw new IllegalStateException("We got past the end of the buffer, current position is " + position
+                    + " and max position value is " + maxPosition);
         }
         position += scanlineStride;
         return result;
@@ -90,5 +88,4 @@ final class ScanlineCursor {
             return raster.getDataBuffer().getSize() / raster.getHeight();
         }
     }
-
 }

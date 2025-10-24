@@ -17,7 +17,6 @@
 package it.geosolutions.imageio.plugins.jp2kakadu;
 
 import it.geosolutions.imageio.gdalframework.GDALImageWriter;
-
 import javax.imageio.ImageWriteParam;
 
 /**
@@ -27,23 +26,19 @@ import javax.imageio.ImageWriteParam;
 public class JP2GDALKakaduImageWriter extends GDALImageWriter {
 
     /**
-     * Constructs a <code>JP2GDALKakaduImageWriter<code> using a 
+     * Constructs a <code>JP2GDALKakaduImageWriter<code> using a
      * {@link JP2GDALKakaduImageWriterSpi}.
-     * 
+     *
      * @param originatingProvider
-     *            The {@link JP2GDALKakaduImageWriterSpi} to use for building 
+     *            The {@link JP2GDALKakaduImageWriterSpi} to use for building
      *            this <code>JP2GDALKakaduImageWriter<code>.
      */
-    public JP2GDALKakaduImageWriter(
-            JP2GDALKakaduImageWriterSpi originatingProvider) {
+    public JP2GDALKakaduImageWriter(JP2GDALKakaduImageWriterSpi originatingProvider) {
         super(originatingProvider);
     }
 
-    /**
-     * Build a default {@link JP2GDALKakaduImageWriteParam}
-     */
+    /** Build a default {@link JP2GDALKakaduImageWriteParam} */
     public ImageWriteParam getDefaultWriteParam() {
         return new JP2GDALKakaduImageWriteParam();
     }
-
 }

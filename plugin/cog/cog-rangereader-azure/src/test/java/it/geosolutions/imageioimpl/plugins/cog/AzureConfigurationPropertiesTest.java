@@ -20,18 +20,18 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Test;
-
 import it.geosolutions.imageio.core.BasicAuthURI;
+import org.junit.Test;
 
 public class AzureConfigurationPropertiesTest {
 
     @Test
     public void testPartsFromUrl() {
-        String azureUrl = "https://fakeaccount.blob.core.windows.net/cogtestdata/testvirtualfolder/land_topo_cog_jpeg_1024.tif";
+        String azureUrl =
+                "https://fakeaccount.blob.core.windows.net/cogtestdata/testvirtualfolder/land_topo_cog_jpeg_1024.tif";
 
         AzureConfigurationProperties props = new AzureConfigurationProperties(new BasicAuthURI(azureUrl));
-        
+
         assertTrue(props.isUseHTTPS());
         assertEquals("fakeaccount", props.getAccountName());
         assertEquals("cogtestdata", props.getContainer());
@@ -42,12 +42,13 @@ public class AzureConfigurationPropertiesTest {
 
     @Test
     public void testAccountKeyFromBaicAuthURI() {
-        String azureUrl = "https://fakeaccount.blob.core.windows.net/cogtestdata/testvirtualfolder/land_topo_cog_jpeg_1024.tif";
+        String azureUrl =
+                "https://fakeaccount.blob.core.windows.net/cogtestdata/testvirtualfolder/land_topo_cog_jpeg_1024.tif";
         BasicAuthURI uri = new BasicAuthURI(azureUrl);
         uri.setUser("testAccountName");
         uri.setPassword("testAccountKey");
         AzureConfigurationProperties props = new AzureConfigurationProperties(uri);
-        
+
         assertTrue(props.isUseHTTPS());
         assertEquals("testAccountName", props.getAccountName());
         assertEquals("testAccountKey", props.getAccountKey());

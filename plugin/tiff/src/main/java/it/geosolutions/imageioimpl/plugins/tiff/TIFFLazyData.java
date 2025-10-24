@@ -29,46 +29,42 @@
  */
 package it.geosolutions.imageioimpl.plugins.tiff;
 
-import java.io.IOException;
-
 import it.geosolutions.imageio.plugins.tiff.TIFFTag;
-
+import java.io.IOException;
 import javax.imageio.stream.ImageInputStream;
+
 /**
- * Lazy loading for large tiff fields. We use this approach for loading much less data for a single
- * request, namely for tile position and lengths which in bigtiff can be enormous.
- * <p>
- * To perform this we retain an open stream to the data and we jump to read as less information as possible
- * 
- * @author Daniele Romagnoli, GeoSolutions SAS
+ * Lazy loading for large tiff fields. We use this approach for loading much less data for a single request, namely for
+ * tile position and lengths which in bigtiff can be enormous.
  *
+ * <p>To perform this we retain an open stream to the data and we jump to read as less information as possible
+ *
+ * @author Daniele Romagnoli, GeoSolutions SAS
  */
 public class TIFFLazyData {
 
     private ImageInputStream stream;
-    
+
     private long startPosition;
-    
+
     private int count;
-    
+
     private int size;
 
-    public TIFFLazyData(ImageInputStream stream, int type,
-            int count) throws IOException {
-    	// checks
-    	if (stream == null) {
-    		throw new IllegalArgumentException("Provided stream argument is null.");
-    	}
-    	if (count < 0) {
-    		throw new IllegalArgumentException("Provided count is negative.");
-    	}
+    public TIFFLazyData(ImageInputStream stream, int type, int count) throws IOException {
+        // checks
+        if (stream == null) {
+            throw new IllegalArgumentException("Provided stream argument is null.");
+        }
+        if (count < 0) {
+            throw new IllegalArgumentException("Provided count is negative.");
+        }
         this.size = TIFFTag.getSizeOfType(type);
-    	this.stream = stream;
+        this.stream = stream;
         this.startPosition = stream.getStreamPosition();
         this.count = count;
-
     }
-    
+
     public long getAsLong(final int index) {
         checkIndex(index);
         long val;
@@ -80,10 +76,10 @@ public class TIFFLazyData {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    
+
         return val;
     }
-    
+
     public long getAsLong8(final int index) {
         checkIndex(index);
         long val;
@@ -95,7 +91,7 @@ public class TIFFLazyData {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    
+
         return val;
     }
 

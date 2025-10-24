@@ -24,7 +24,7 @@ import org.junit.Test;
 
 /**
  * Testing ability to build tile range metadata.
- * 
+ *
  * @author joshfix
  */
 public class CogTileInfoTest {
@@ -45,9 +45,8 @@ public class CogTileInfoTest {
         Assert.assertEquals(tile1Index, info.getTileIndex(tile1Offset + (tile1ByteLength / 2)));
 
         // test that getting a tile range by an offset or by index results in the same TileRange object
-        TileRange tileRange1 = info.getTileRange((long)(tile1Offset + (tile1ByteLength / 2)));
+        TileRange tileRange1 = info.getTileRange((long) (tile1Offset + (tile1ByteLength / 2)));
         TileRange tileRange2 = info.getTileRange(tile1Index);
         Assert.assertEquals(tileRange1, tileRange2);
-
     }
 }

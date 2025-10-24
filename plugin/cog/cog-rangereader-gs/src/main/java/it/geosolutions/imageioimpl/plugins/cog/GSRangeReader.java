@@ -20,15 +20,12 @@ import com.google.cloud.ReadChannel;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import it.geosolutions.imageio.core.BasicAuthURI;
-
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.ByteBuffer;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -41,10 +38,11 @@ import java.util.logging.Logger;
 
 /**
  * Reads URIs from Google Storage with the formats:
+ *
  * <ul>
- *   <li><code>gs://[bucket]/[name]</code></li>
- *   <li><code>https://storage.cloud.google.com/[bucket]/[name]</code></li>
- *   <li><code>https://storage.googleapis.com/[bucket]/[name]</code></li>
+ *   <li><code>gs://[bucket]/[name]</code>
+ *   <li><code>https://storage.cloud.google.com/[bucket]/[name]</code>
+ *   <li><code>https://storage.googleapis.com/[bucket]/[name]</code>
  * </ul>
  *
  * <p>API documentation:
@@ -61,7 +59,7 @@ public class GSRangeReader extends AbstractRangeReader {
 
     private static final Logger LOGGER = Logger.getLogger(GSRangeReader.class.getName());
 
-    // Google Storage seems to love concurrent access, so pump it up by default 
+    // Google Storage seems to love concurrent access, so pump it up by default
     private static final int CORE_POOL_SIZE = Integer.getInteger("gs.reader.core.poolsize", 64);
     private static final int MAX_POOL_SIZE = Integer.getInteger("gs.reader.max.poolsize", 128);
     private static final int THREAD_TIMEOUT = Integer.getInteger("gs.reader.timeout.ms", 10000);
@@ -69,9 +67,8 @@ public class GSRangeReader extends AbstractRangeReader {
     static final ThreadPoolExecutor EXECUTORS;
 
     static {
-        EXECUTORS = new ThreadPoolExecutor(CORE_POOL_SIZE, MAX_POOL_SIZE, THREAD_TIMEOUT,
-                TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<>());
+        EXECUTORS = new ThreadPoolExecutor(
+                CORE_POOL_SIZE, MAX_POOL_SIZE, THREAD_TIMEOUT, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
     }
 
     private final BlobId id;
@@ -150,8 +147,7 @@ public class GSRangeReader extends AbstractRangeReader {
             synchronized (this) {
                 if (this.blob == null) {
                     this.blob = BlobCache.getBlob(authUri.getUser(), id);
-                    if (blob == null)
-                        throw new IllegalArgumentException("No blob exist at " + id);
+                    if (blob == null) throw new IllegalArgumentException("No blob exist at " + id);
                 }
             }
         }
@@ -160,7 +156,7 @@ public class GSRangeReader extends AbstractRangeReader {
 
     @Override
     public Map<Long, byte[]> read(Collection<long[]> ranges) {
-        return read(ranges.toArray(new long[][]{}));
+        return read(ranges.toArray(new long[][] {}));
     }
 
     @Override
@@ -219,15 +215,12 @@ public class GSRangeReader extends AbstractRangeReader {
      * @param data
      * @param downloads
      */
-    protected void awaitCompletion(Map<Long, byte[]>
-                                           data, Map<Long,
-            CompletableFuture<byte[]>> downloads) {
+    protected void awaitCompletion(Map<Long, byte[]> data, Map<Long, CompletableFuture<byte[]>> downloads) {
         boolean stillWaiting = true;
         List<Long> completed = new ArrayList<>(downloads.size());
         while (stillWaiting) {
             boolean allDone = true;
-            for (Map.Entry<Long, CompletableFuture<byte[]>> entry :
-                    downloads.entrySet()) {
+            for (Map.Entry<Long, CompletableFuture<byte[]>> entry : downloads.entrySet()) {
                 long key = entry.getKey();
                 CompletableFuture<byte[]> future = entry.getValue();
                 if (future.isDone()) {
@@ -236,8 +229,7 @@ public class GSRangeReader extends AbstractRangeReader {
                             data.put(key, future.get());
                             completed.add(key);
                         } catch (Exception e) {
-                            LOGGER.warning("Unable to write data from S3 to the destination " +
-                                    "ByteBuffer. "
+                            LOGGER.warning("Unable to write data from S3 to the destination " + "ByteBuffer. "
                                     + e.getMessage());
                         }
                     }

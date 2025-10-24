@@ -17,8 +17,6 @@
 package it.geosolutions.imageioimpl.plugins.cog;
 
 import it.geosolutions.imageio.core.BasicAuthURI;
-import okhttp3.*;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
@@ -30,26 +28,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import okhttp3.*;
 
 /**
  * RangeReader implementation to asynchronously read multiple ranges from an HTTP endpoint.
  *
- * @author joshfix
- * Created on 2019-08-21
+ * @author joshfix Created on 2019-08-21
  */
 public class HttpRangeReader extends AbstractRangeReader {
 
     protected OkHttpClient client;
     private String credentials;
 
-    private final static int MAX_RETRIES;
+    private static final int MAX_RETRIES;
 
     static {
         String maxRetries = System.getProperty("it.geosolutions.cog.http.maxretries", "5");
         MAX_RETRIES = Integer.parseInt(maxRetries);
     }
 
-    private final static Logger LOGGER = Logger.getLogger(HttpRangeReader.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(HttpRangeReader.class.getName());
 
     public HttpRangeReader(String url, int headerLength) {
         this(URI.create(url), headerLength);
@@ -60,7 +58,7 @@ public class HttpRangeReader extends AbstractRangeReader {
     }
 
     public HttpRangeReader(URI uri, int headerLength) {
-        this (new BasicAuthURI(uri), headerLength);
+        this(new BasicAuthURI(uri), headerLength);
     }
 
     public HttpRangeReader(BasicAuthURI uri, int headerLength) {
@@ -74,17 +72,17 @@ public class HttpRangeReader extends AbstractRangeReader {
     @Override
     public byte[] readHeader() {
         LOGGER.fine("reading header");
-        byte[] currentHeader  = HEADERS_CACHE.get(uri.toString());
+        byte[] currentHeader = HEADERS_CACHE.get(uri.toString());
 
         if (currentHeader != null) {
             return currentHeader;
         }
-        Request request = buildRequest(new long[]{headerOffset, (headerOffset + headerLength - 1)}, null);
+        Request request = buildRequest(new long[] {headerOffset, (headerOffset + headerLength - 1)}, null);
 
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
-                throw new IOException("Unable to read header for " + uri + ". "
-                        + "Code: " + response.code() + ". Reason: " + response.message());
+                throw new IOException("Unable to read header for " + uri + ". " + "Code: " + response.code()
+                        + ". Reason: " + response.message());
             }
 
             // get the header bytes
@@ -101,23 +99,23 @@ public class HttpRangeReader extends AbstractRangeReader {
     public byte[] fetchHeader() {
         LOGGER.fine("Fetching header");
         byte[] currentHeader = data.get(0L);
-        if ( currentHeader != null) {
+        if (currentHeader != null) {
             headerOffset = currentHeader.length;
         }
 
-        Request request = buildRequest(new long[]{headerOffset, (headerOffset + headerLength - 1)}, null);
+        Request request = buildRequest(new long[] {headerOffset, (headerOffset + headerLength - 1)}, null);
 
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
-                throw new IOException("Unable to read header for " + uri + ". "
-                        + "Code: " + response.code() + ". Reason: " + response.message());
+                throw new IOException("Unable to read header for " + uri + ". " + "Code: " + response.code()
+                        + ". Reason: " + response.message());
             }
 
             // get the header bytes
             byte[] headerBytes = response.body().bytes();
             if (headerOffset != 0) {
-                byte [] oldHeader = data.get(0L);
-                byte [] newHeader = new byte[headerBytes.length + oldHeader.length];
+                byte[] oldHeader = data.get(0L);
+                byte[] newHeader = new byte[headerBytes.length + oldHeader.length];
                 System.arraycopy(oldHeader, 0, newHeader, 0, oldHeader.length);
                 System.arraycopy(headerBytes, 0, newHeader, oldHeader.length, headerBytes.length);
                 headerBytes = newHeader;
@@ -133,7 +131,7 @@ public class HttpRangeReader extends AbstractRangeReader {
 
     @Override
     public Map<Long, byte[]> read(Collection<long[]> ranges) {
-        return read(ranges.toArray(new long[][]{}));
+        return read(ranges.toArray(new long[][] {}));
     }
 
     @Override
@@ -172,7 +170,6 @@ public class HttpRangeReader extends AbstractRangeReader {
             data.put(range, values.get(range));
         }
         return values;
-
     }
 
     /**
@@ -202,7 +199,7 @@ public class HttpRangeReader extends AbstractRangeReader {
                 } else if (status == AsyncHttpCallback.Status.FAILED) {
                     // Re-enqueue
                     if (attempts < MAX_RETRIES) {
-                        long[] range = new long[]{callback.getStartPosition(), callback.getEndPosition()};
+                        long[] range = new long[] {callback.getStartPosition(), callback.getEndPosition()};
                         callback.resetStatus();
                         Call call = client.newCall(buildRequest(range, "*/*"));
                         call.enqueue(callback);
@@ -219,9 +216,8 @@ public class HttpRangeReader extends AbstractRangeReader {
 
     protected Request buildRequest(long[] range, String accept) {
         LOGGER.fine("Building request for range " + range[0] + '-' + range[1] + " to " + uri.toString());
-        Request.Builder requestBuilder = new Request.Builder()
-                .url(uri.toString())
-                .header("range", "bytes=" + range[0] + "-" + range[1]);
+        Request.Builder requestBuilder =
+                new Request.Builder().url(uri.toString()).header("range", "bytes=" + range[0] + "-" + range[1]);
         if (accept != null && !accept.isEmpty()) {
             requestBuilder.header("Accept", accept);
         }
@@ -232,5 +228,4 @@ public class HttpRangeReader extends AbstractRangeReader {
 
         return requestBuilder.build();
     }
-
 }

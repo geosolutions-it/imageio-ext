@@ -18,12 +18,9 @@ package it.geosolutions.io.output.adapter;
 
 import java.io.IOException;
 import java.io.OutputStream;
-
 import javax.imageio.stream.ImageOutputStream;
 
-/**
- * @author Simone Giannecchini, GeoSolutions
- */
+/** @author Simone Giannecchini, GeoSolutions */
 public final class OutputStreamAdapter extends OutputStream {
 
     ImageOutputStream stream;
@@ -38,17 +35,13 @@ public final class OutputStreamAdapter extends OutputStream {
     }
 
     /**
-     * Flushes this output stream and forces any buffered output bytes to be
-     * written out. The general contract of <code>flush</code> is that calling
-     * it is an indication that, if any bytes previously written have been
-     * buffered by the implementation of the output stream, such bytes should
-     * immediately be written to their intended destination.
-     * <p>
-     * The <code>flush</code> method of <code>OutputStream</code> does
-     * nothing.
-     * 
-     * @exception IOException
-     *                    if an I/O error occurs.
+     * Flushes this output stream and forces any buffered output bytes to be written out. The general contract of <code>
+     * flush</code> is that calling it is an indication that, if any bytes previously written have been buffered by the
+     * implementation of the output stream, such bytes should immediately be written to their intended destination.
+     *
+     * <p>The <code>flush</code> method of <code>OutputStream</code> does nothing.
+     *
+     * @exception IOException if an I/O error occurs.
      */
     public void flush() throws IOException {
         stream.flush();
@@ -66,9 +59,7 @@ public final class OutputStreamAdapter extends OutputStream {
         stream.write(b);
     }
 
-    /**
-     * Return the underlying {@link ImageOutputStream}
-     */
+    /** Return the underlying {@link ImageOutputStream} */
     public ImageOutputStream getWrappedStream() {
         return stream;
     }

@@ -1,42 +1,42 @@
 /*
  * $RCSfile: TIFFImageReader.java,v $
  *
- * 
+ *
  * Copyright (c) 2005 Sun Microsystems, Inc. All  Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
- * are met: 
- * 
- * - Redistribution of source code must retain the above copyright 
+ * are met:
+ *
+ * - Redistribution of source code must retain the above copyright
  *   notice, this  list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in 
+ *   notice, this list of conditions and the following disclaimer in
  *   the documentation and/or other materials provided with the
  *   distribution.
- * 
- * Neither the name of Sun Microsystems, Inc. or the names of 
- * contributors may be used to endorse or promote products derived 
+ *
+ * Neither the name of Sun Microsystems, Inc. or the names of
+ * contributors may be used to endorse or promote products derived
  * from this software without specific prior written permission.
- * 
- * This software is provided "AS IS," without a warranty of any 
- * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND 
- * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, 
+ *
+ * This software is provided "AS IS," without a warranty of any
+ * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND
+ * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY
- * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL 
- * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF 
+ * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL
+ * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF
  * USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS
- * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR 
+ * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR
  * ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL,
  * CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND
  * REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR
  * INABILITY TO USE THIS SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGES. 
- * 
- * You acknowledge that this software is not designed or intended for 
- * use in the design, construction, operation or maintenance of any 
- * nuclear facility. 
+ * POSSIBILITY OF SUCH DAMAGES.
+ *
+ * You acknowledge that this software is not designed or intended for
+ * use in the design, construction, operation or maintenance of any
+ * nuclear facility.
  *
  * $Revision: 1.13 $
  * $Date: 2007/12/19 20:17:02 $
@@ -85,16 +85,6 @@ import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.imageioimpl.plugins.tiff.gdal.GDALMetadata;
 import it.geosolutions.imageioimpl.plugins.tiff.gdal.GDALMetadataParser;
-import org.w3c.dom.Node;
-
-import javax.imageio.IIOException;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReadParam;
-import javax.imageio.ImageReader;
-import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.spi.ImageReaderSpi;
-import javax.imageio.stream.ImageInputStream;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.color.ColorSpace;
@@ -121,40 +111,48 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
+import javax.imageio.IIOException;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.stream.ImageInputStream;
+import org.w3c.dom.Node;
 
 public class TIFFImageReader extends ImageReader {
 
-    private final static Logger LOGGER = Logger.getLogger(TIFFImageReader.class.toString());
+    private static final Logger LOGGER = Logger.getLogger(TIFFImageReader.class.toString());
 
     /**
      * This class can be used to cache basic information about a tiff page.
-     * <p>
-     * Notice that we hold {@link IIOMetadata} using {@link SoftReference}s since 
-     * they might be big so we might want to reclaim the least used ones.
-     * 
-     * @author Simone Giannecchini, GeoSoltions S.A.S.
      *
+     * <p>Notice that we hold {@link IIOMetadata} using {@link SoftReference}s since they might be big so we might want
+     * to reclaim the least used ones.
+     *
+     * @author Simone Giannecchini, GeoSoltions S.A.S.
      */
-    protected final static class PageInfo {
+    protected static final class PageInfo {
 
         private SoftReference<TIFFImageMetadata> imageMetadata;
 
         protected PageInfo(
                 TIFFImageMetadata imageMetadata,
-                boolean bigtiff, 
-                int[] bitsPerSample, 
-                char[] colorMap, 
+                boolean bigtiff,
+                int[] bitsPerSample,
+                char[] colorMap,
                 int compression,
-                int height, 
-                int numBands, 
-                int photometricInterpretation, 
+                int height,
+                int numBands,
+                int photometricInterpretation,
                 int width,
-                int tileOrStripWidth, 
-                int tileOrStripHeight, 
+                int tileOrStripWidth,
+                int tileOrStripHeight,
                 int planarConfiguration,
-                boolean isImageTiled, 
-                int samplesPerPixel, 
-                int[] sampleFormat, 
+                boolean isImageTiled,
+                int samplesPerPixel,
+                int[] sampleFormat,
                 int[] extraSamples,
                 Double noData,
                 Double[] offsets,
@@ -213,52 +211,30 @@ public class TIFFImageReader extends ImageReader {
          */
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (!(obj instanceof PageInfo))
-                return false;
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (!(obj instanceof PageInfo)) return false;
             PageInfo other = (PageInfo) obj;
-            if (bigtiff != other.bigtiff)
-                return false;
-            if (!Arrays.equals(bitsPerSample, other.bitsPerSample))
-                return false;
-            if (!Arrays.equals(colorMap, other.colorMap))
-                return false;
-            if (compression != other.compression)
-                return false;
-            if (!Arrays.equals(extraSamples, other.extraSamples))
-                return false;
-            if (height != other.height)
-                return false;
-            if (isImageTiled != other.isImageTiled)
-                return false;
+            if (bigtiff != other.bigtiff) return false;
+            if (!Arrays.equals(bitsPerSample, other.bitsPerSample)) return false;
+            if (!Arrays.equals(colorMap, other.colorMap)) return false;
+            if (compression != other.compression) return false;
+            if (!Arrays.equals(extraSamples, other.extraSamples)) return false;
+            if (height != other.height) return false;
+            if (isImageTiled != other.isImageTiled) return false;
             if (noData == null) {
-                if (other.noData != null)
-                    return false;
-            } else if (!noData.equals(other.noData))
-                return false;
-            if (numBands != other.numBands)
-                return false;
-            if (photometricInterpretation != other.photometricInterpretation)
-                return false;
-            if (planarConfiguration != other.planarConfiguration)
-                return false;
-            if (!Arrays.equals(sampleFormat, other.sampleFormat))
-                return false;
-            if (samplesPerPixel != other.samplesPerPixel)
-                return false;
-            if (tileOrStripHeight != other.tileOrStripHeight)
-                return false;
-            if (tileOrStripWidth != other.tileOrStripWidth)
-                return false;
-            if (width != other.width)
-                return false;
-            if (!Arrays.equals(offsets, other.offsets))
-                return false;
-            if (!Arrays.equals(scales, other.scales))
-                return false;
+                if (other.noData != null) return false;
+            } else if (!noData.equals(other.noData)) return false;
+            if (numBands != other.numBands) return false;
+            if (photometricInterpretation != other.photometricInterpretation) return false;
+            if (planarConfiguration != other.planarConfiguration) return false;
+            if (!Arrays.equals(sampleFormat, other.sampleFormat)) return false;
+            if (samplesPerPixel != other.samplesPerPixel) return false;
+            if (tileOrStripHeight != other.tileOrStripHeight) return false;
+            if (tileOrStripWidth != other.tileOrStripWidth) return false;
+            if (width != other.width) return false;
+            if (!Arrays.equals(offsets, other.offsets)) return false;
+            if (!Arrays.equals(scales, other.scales)) return false;
 
             return true;
         }
@@ -276,7 +252,7 @@ public class TIFFImageReader extends ImageReader {
                     + photometricInterpretation + ", planarConfiguration=" + planarConfiguration
                     + ", sampleFormat=" + Arrays.toString(sampleFormat) + ", samplesPerPixel="
                     + samplesPerPixel + ", tileOrStripHeight=" + tileOrStripHeight
-                    + ", tileOrStripWidth=" + tileOrStripWidth + ", width=" + width 
+                    + ", tileOrStripWidth=" + tileOrStripWidth + ", width=" + width
                     + ", noData=" + noData
                     + ", offsets=" + Arrays.toString(offsets)
                     + ", scales=" + Arrays.toString(scales)
@@ -298,12 +274,12 @@ public class TIFFImageReader extends ImageReader {
         private int photometricInterpretation;
 
         private int width = -1;
-        
+
         private int tileOrStripWidth = -1, tileOrStripHeight = -1;
 
         private int planarConfiguration = BaselineTIFFTagSet.PLANAR_CONFIGURATION_CHUNKY;
 
-        private boolean isImageTiled= false;
+        private boolean isImageTiled = false;
 
         private int samplesPerPixel;
 
@@ -311,34 +287,33 @@ public class TIFFImageReader extends ImageReader {
 
         private int[] extraSamples;
 
-        private Double noData = null; //Using a Double to allow null value.
+        private Double noData = null; // Using a Double to allow null value.
 
         private Double[] scales;
 
         private Double[] offsets;
-
     }
 
     private static final boolean DEBUG = false; // XXX 'false' for release!!!
 
-    /** Constant Value for External Mask suffix*/
+    /** Constant Value for External Mask suffix */
     private static final String MASK_SUFFIX = ".msk";
 
-    /** Constant Value for External Overview suffix*/
+    /** Constant Value for External Overview suffix */
     private static final String OVR_SUFFIX = ".ovr";
 
     private int magic = -1;
-    
+
     private Map<Integer, PageInfo> pagesInfo = new HashMap<Integer, PageInfo>();
 
     private boolean bigtiff = false;
-        
+
     // The current ImageInputStream source.
     protected ImageInputStream stream = null;
 
     // True if the file header has been read.
     protected boolean gotTiffHeader = false;
-    
+
     // true if we already have parsed metadata for this element
     protected boolean initialized = false;
 
@@ -352,10 +327,10 @@ public class TIFFImageReader extends ImageReader {
 
     // Metadata for image at 'currIndex', or null.
     protected TIFFImageMetadata imageMetadata = null;
-    
+
     /**
-     * A <code>List</code> of <code>Long</code>s indicating the stream positions of the start of the
-     * IFD for each image. Entries are added as needed.
+     * A <code>List</code> of <code>Long</code>s indicating the stream positions of the start of the IFD for each image.
+     * Entries are added as needed.
      */
     List<Long> imageStartPosition = new ArrayList<Long>();
 
@@ -399,8 +374,7 @@ public class TIFFImageReader extends ImageReader {
     protected int pixelsRead;
     protected int pixelsToRead;
 
-
-    private boolean isImageTiled= false;
+    private boolean isImageTiled = false;
 
     protected Double noData = null;
 
@@ -409,25 +383,23 @@ public class TIFFImageReader extends ImageReader {
     private Double[] offsets;
 
     // BAND MASK RELATED FIELDS
-    /** {@link DatasetLayout} implementation containing info about overviews and masks*/
+    /** {@link DatasetLayout} implementation containing info about overviews and masks */
     private TiffDatasetLayoutImpl layout;
 
-    /** External File containing TIFF masks*/
+    /** External File containing TIFF masks */
     private File externalMask;
 
-    /** External File containing TIFF Overviews*/
+    /** External File containing TIFF Overviews */
     private File externalOverviews;
 
-    /** External File containing TIFF masks overviews*/
+    /** External File containing TIFF masks overviews */
     private File maskOverviews;
 
     public TIFFImageReader(ImageReaderSpi originatingProvider) {
         super(originatingProvider);
     }
 
-    public void setInput(Object input,
-                         boolean seekForwardOnly,
-                         boolean ignoreMetadata) {
+    public void setInput(Object input, boolean seekForwardOnly, boolean ignoreMetadata) {
         super.setInput(input, seekForwardOnly, ignoreMetadata);
 
         // Clear all local values based on the previous stream contents.
@@ -435,10 +407,9 @@ public class TIFFImageReader extends ImageReader {
 
         if (input != null) {
             if (!(input instanceof ImageInputStream)) {
-                throw new IllegalArgumentException
-                    ("input not an ImageInputStream!"); 
+                throw new IllegalArgumentException("input not an ImageInputStream!");
             }
-            this.stream = (ImageInputStream)input;
+            this.stream = (ImageInputStream) input;
             // Check for external masks/overviews
             if (!ImageIOUtilities.isSkipExternalFilesLookup() && input instanceof FileImageInputStreamExtImpl) {
 
@@ -487,7 +458,7 @@ public class TIFFImageReader extends ImageReader {
 
         // Create an object to store the stream metadata
         this.streamMetadata = new TIFFStreamMetadata();
-        
+
         try {
             int byteOrder = stream.readUnsignedShort();
             if (byteOrder == 0x4d4d) {
@@ -497,62 +468,55 @@ public class TIFFImageReader extends ImageReader {
                 streamMetadata.byteOrder = ByteOrder.LITTLE_ENDIAN;
                 stream.setByteOrder(ByteOrder.LITTLE_ENDIAN);
             } else {
-                processWarningOccurred(
-                           "Bad byte order in header, assuming little-endian");
+                processWarningOccurred("Bad byte order in header, assuming little-endian");
                 streamMetadata.byteOrder = ByteOrder.LITTLE_ENDIAN;
                 stream.setByteOrder(ByteOrder.LITTLE_ENDIAN);
             }
-          
+
             magic = stream.readUnsignedShort();
             if (magic != 42 && magic != 43) {
-                processWarningOccurred(
-                                     "Bad magic number in header, continuing");
+                processWarningOccurred("Bad magic number in header, continuing");
             }
-            
-            if (magic == 43)
-                bigtiff=true;
-            else 
-                bigtiff=false;
-            
+
+            if (magic == 43) bigtiff = true;
+            else bigtiff = false;
+
             // Seek to start of first IFD
             long offset = -1;
-            
-            switch(magic) {
-            case 42:
-                offset = stream.readUnsignedInt();
-                break;
-            case 43:
-                int alwaysEight = stream.readUnsignedShort();
-                if (alwaysEight != 8){
+
+            switch (magic) {
+                case 42:
+                    offset = stream.readUnsignedInt();
+                    break;
+                case 43:
+                    int alwaysEight = stream.readUnsignedShort();
+                    if (alwaysEight != 8) {
                         processWarningOccurred("No BigTiff file format");
-                }
-                int alwaysZero = stream.readUnsignedShort();
-                if (alwaysZero != 0){
+                    }
+                    int alwaysZero = stream.readUnsignedShort();
+                    if (alwaysZero != 0) {
                         processWarningOccurred("No BigTiff file format");
-                }
-                
-                offset = stream.readLong();
-                break;
+                    }
+
+                    offset = stream.readLong();
+                    break;
             }
- 
+
             if (offset >= 0) {
                 imageStartPosition.add(Long.valueOf(offset));
                 stream.seek(offset);
-            } else 
-                processWarningOccurred("Error calculating offset");
-                     
-            
+            } else processWarningOccurred("Error calculating offset");
+
         } catch (IOException e) {
             throw new IIOException("I/O error reading header!", e);
         }
-        
-        
+
         gotTiffHeader = true;
     }
 
     /**
      * Method used for populating reader's {@link DatasetLayout}
-     * 
+     *
      * @throws IIOException
      */
     private void defineDatasetLayout() throws IIOException {
@@ -592,11 +556,11 @@ public class TIFFImageReader extends ImageReader {
                 // Checking if the data is LONG
                 if (data instanceof long[]) {
                     long ldata = ((long[]) data)[0];
-                    numMasks += ((ldata & BaselineTIFFTagSet.NEW_SUBFILE_TYPE_TRANSPARENCY) > 0) ? 1
-                            : 0;
-                    numOverviews += ((ldata & BaselineTIFFTagSet.NEW_SUBFILE_TYPE_REDUCED_RESOLUTION) > 0) ? 1
-                            : 0;
-                    numMaskOverView += ((ldata & BaselineTIFFTagSet.NEW_SUBFILE_TYPE_REDUCED_RESOLUTION) > 0 && (ldata & BaselineTIFFTagSet.NEW_SUBFILE_TYPE_TRANSPARENCY) > 0) ? 1
+                    numMasks += ((ldata & BaselineTIFFTagSet.NEW_SUBFILE_TYPE_TRANSPARENCY) > 0) ? 1 : 0;
+                    numOverviews += ((ldata & BaselineTIFFTagSet.NEW_SUBFILE_TYPE_REDUCED_RESOLUTION) > 0) ? 1 : 0;
+                    numMaskOverView += ((ldata & BaselineTIFFTagSet.NEW_SUBFILE_TYPE_REDUCED_RESOLUTION) > 0
+                                    && (ldata & BaselineTIFFTagSet.NEW_SUBFILE_TYPE_TRANSPARENCY) > 0)
+                            ? 1
                             : 0;
                 }
             }
@@ -609,9 +573,8 @@ public class TIFFImageReader extends ImageReader {
     }
 
     /**
-     * Method which checks if external masks or overviews are present and, if so, 
-     * updates the {@link DatasetLayout}
-     * 
+     * Method which checks if external masks or overviews are present and, if so, updates the {@link DatasetLayout}
+     *
      * @throws IIOException
      */
     private void defineExternalMasks() throws IIOException {
@@ -634,7 +597,7 @@ public class TIFFImageReader extends ImageReader {
 
     /**
      * Simple method for accessing the number of images inside an input file
-     * 
+     *
      * @param inputFile Input {@link File} to check
      * @return An integer defining the number of images contained in the input file
      * @throws IIOException
@@ -679,7 +642,7 @@ public class TIFFImageReader extends ImageReader {
         }
         return numImg;
     }
-    
+
     private int locateImage(int imageIndex) throws IIOException {
         readHeader();
 
@@ -692,48 +655,47 @@ public class TIFFImageReader extends ImageReader {
             stream.seek(l);
 
             // Skip IFDs until at desired index or last image found
-            switch(magic) {
-            case 42:
-                while (index < imageIndex) {
-                    int count = stream.readUnsignedShort();
-                    stream.skipBytes(12 * count);
+            switch (magic) {
+                case 42:
+                    while (index < imageIndex) {
+                        int count = stream.readUnsignedShort();
+                        stream.skipBytes(12 * count);
 
-                    long offset = stream.readUnsignedInt();
-                    if (offset == 0) {
-                        if(DEBUG)
-                            System.out.println("Offset 0 in locate");
-                        currIndex=index;
-                        imageMetadata = null;
-                        // the current image index has changed, we got to reinitialized
-                        initialized = false;                        
-                        return index;
+                        long offset = stream.readUnsignedInt();
+                        if (offset == 0) {
+                            if (DEBUG) System.out.println("Offset 0 in locate");
+                            currIndex = index;
+                            imageMetadata = null;
+                            // the current image index has changed, we got to reinitialized
+                            initialized = false;
+                            return index;
+                        }
+
+                        imageStartPosition.add(Long.valueOf(offset));
+                        stream.seek(offset);
+                        ++index;
                     }
+                    break;
 
-                    imageStartPosition.add(Long.valueOf(offset));
-                    stream.seek(offset);
-                    ++index;
-                }
-                break;
-            
-            case 43:
-                while (index < imageIndex) {
-                    long count = stream.readLong();
-                    stream.skipBytes(20*count);
+                case 43:
+                    while (index < imageIndex) {
+                        long count = stream.readLong();
+                        stream.skipBytes(20 * count);
 
-                    long offset = stream.readLong();
-                    if (offset == 0) {
-                        currIndex=index;
-                        imageMetadata = null;
-                        // the current image index has changed, we got to reinitialized
-                        initialized = false;                        
-                        return index;
+                        long offset = stream.readLong();
+                        if (offset == 0) {
+                            currIndex = index;
+                            imageMetadata = null;
+                            // the current image index has changed, we got to reinitialized
+                            initialized = false;
+                            return index;
+                        }
+
+                        imageStartPosition.add(Long.valueOf(offset));
+                        stream.seek(offset);
+                        ++index;
                     }
-                    
-                    imageStartPosition.add(Long.valueOf(offset));
-                    stream.seek(offset);
-                    ++index;
-                }
-                break;
+                    break;
             }
         } catch (IOException e) {
             throw new IIOException("Couldn't seek!", e);
@@ -755,8 +717,7 @@ public class TIFFImageReader extends ImageReader {
             throw new IllegalStateException("Input not set!");
         }
         if (seekForwardOnly && allowSearch) {
-            throw new IllegalStateException
-                ("seekForwardOnly and allowSearch can't both be true!");
+            throw new IllegalStateException("seekForwardOnly and allowSearch can't both be true!");
         }
 
         if (numImages > 0) {
@@ -781,6 +742,7 @@ public class TIFFImageReader extends ImageReader {
 
     /**
      * Throw an IndexOutOfBoundsException if index < minIndex, and bump minIndex if required.
+     *
      * @param imageIndex
      */
     private void checkIndex(int imageIndex) {
@@ -792,17 +754,21 @@ public class TIFFImageReader extends ImageReader {
         }
     }
 
-    /** 
-     * Verify that imageIndex is in bounds, find the image IFD, read the image metadata, initialize instance variables from the metadata.
+    /**
+     * Verify that imageIndex is in bounds, find the image IFD, read the image metadata, initialize instance variables
+     * from the metadata.
+     *
      * @param imageIndex
      * @throws IIOException
      */
     private void seekToImage(int imageIndex) throws IIOException {
         seekToImage(imageIndex, true);
     }
-    
-    /** 
-     * Verify that imageIndex is in bounds, find the image IFD, read the image metadata, initialize instance variables from the metadata.
+
+    /**
+     * Verify that imageIndex is in bounds, find the image IFD, read the image metadata, initialize instance variables
+     * from the metadata.
+     *
      * @param imageIndex
      * @param optimized
      * @throws IIOException
@@ -815,31 +781,30 @@ public class TIFFImageReader extends ImageReader {
         if (index != imageIndex) {
             throw new IndexOutOfBoundsException("imageIndex out of bounds!");
         }
-        
-        final Integer i= Integer.valueOf(index);
-        //optimized branch
-        if(!optimized){
-            
+
+        final Integer i = Integer.valueOf(index);
+        // optimized branch
+        if (!optimized) {
+
             readMetadata();
             initializeFromMetadata();
-        	return;
+            return;
         }
         // in case we have cache the info for this page
-        if(pagesInfo.containsKey(i)){
+        if (pagesInfo.containsKey(i)) {
             // initialize from cachedinfo only if needed
             // TODO Improve
-            if(imageMetadata == null || !initialized) {// this means the curindex has changed
+            if (imageMetadata == null || !initialized) { // this means the curindex has changed
                 final PageInfo info = pagesInfo.get(i);
                 final TIFFImageMetadata metadata = info.imageMetadata.get();
                 if (metadata != null) {
                     initializeFromCachedInfo(info, metadata);
                     return;
                 }
-                pagesInfo.put(i,null);
-                    
+                pagesInfo.put(i, null);
             }
         }
-        
+
         readMetadata();
         initializeFromMetadata();
     }
@@ -870,17 +835,16 @@ public class TIFFImageReader extends ImageReader {
         if (imageMetadata != null) {
             return;
         }
-        
+
         if (stream == null) {
             throw new IllegalStateException("Input not set!");
         }
-        
+
         try {
             // Create an object to store the image metadata
             List<BaselineTIFFTagSet> tagSets;
             if (imageReadParam instanceof TIFFImageReadParam) {
-                tagSets =
-                    ((TIFFImageReadParam)imageReadParam).getAllowedTagSets();
+                tagSets = ((TIFFImageReadParam) imageReadParam).getAllowedTagSets();
             } else {
                 tagSets = new ArrayList<BaselineTIFFTagSet>(1);
                 tagSets.add(BaselineTIFFTagSet.getInstance());
@@ -899,83 +863,72 @@ public class TIFFImageReader extends ImageReader {
 
     // Returns tile width if image is tiled, else image width
     private int getTileOrStripWidth() {
-        TIFFField f =
-                imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_TILE_WIDTH);
+        TIFFField f = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_TILE_WIDTH);
         return (f == null) ? width : f.getAsInt(0);
     }
 
     // Returns tile height if image is tiled, else strip height
     private int getTileOrStripHeight() {
-        int h =-1;
-        TIFFField f =
-            imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_TILE_LENGTH);
+        int h = -1;
+        TIFFField f = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_TILE_LENGTH);
         if (f != null) {
-            h= f.getAsInt(0);
-        }else{
-        
+            h = f.getAsInt(0);
+        } else {
+
             f = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_ROWS_PER_STRIP);
             // Default for ROWS_PER_STRIP is 2^32 - 1, i.e., infinity
-                h = (f == null) ? -1 : f.getAsInt(0);
+            h = (f == null) ? -1 : f.getAsInt(0);
         }
         return (h == -1) ? height : h;
     }
 
     private int getPlanarConfiguration() {
-        TIFFField f =
-        imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_PLANAR_CONFIGURATION);
+        TIFFField f = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_PLANAR_CONFIGURATION);
         if (f != null) {
             int planarConfigurationValue = f.getAsInt(0);
-            if(planarConfigurationValue ==
-               BaselineTIFFTagSet.PLANAR_CONFIGURATION_PLANAR) {
+            if (planarConfigurationValue == BaselineTIFFTagSet.PLANAR_CONFIGURATION_PLANAR) {
                 // Some writers (e.g. Kofax standard Multi-Page TIFF
                 // Storage Filter v2.01.000; cf. bug 4929147) do not
                 // correctly set the value of this field. Attempt to
                 // ascertain whether the value is correctly Planar.
-                if(compression ==
-                   BaselineTIFFTagSet.COMPRESSION_OLD_JPEG &&
-                   imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_JPEG_INTERCHANGE_FORMAT) !=
-                   null) {
+                if (compression == BaselineTIFFTagSet.COMPRESSION_OLD_JPEG
+                        && imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_JPEG_INTERCHANGE_FORMAT) != null) {
                     // JPEG interchange format cannot have
                     // PlanarConfiguration value Chunky so reset.
-                    processWarningOccurred("PlanarConfiguration \"Planar\" value inconsistent with JPEGInterchangeFormat; resetting to \"Chunky\".");
-                    planarConfigurationValue =
-                        BaselineTIFFTagSet.PLANAR_CONFIGURATION_CHUNKY;
+                    processWarningOccurred(
+                            "PlanarConfiguration \"Planar\" value inconsistent with JPEGInterchangeFormat; resetting to \"Chunky\".");
+                    planarConfigurationValue = BaselineTIFFTagSet.PLANAR_CONFIGURATION_CHUNKY;
                 } else {
-                    TIFFField offsetField =
-                        imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_TILE_OFFSETS);
+                    TIFFField offsetField = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_TILE_OFFSETS);
                     if (offsetField == null) {
                         // Tiles
-                        offsetField =
-                            imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_STRIP_OFFSETS);
+                        offsetField = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_STRIP_OFFSETS);
                         int tw = tileOrStripWidth;
                         int th = tileOrStripHeight;
-                        int tAcross = (width + tw - 1)/tw;
-                        int tDown = (height + th - 1)/th;
-                        int tilesPerImage = tAcross*tDown;
+                        int tAcross = (width + tw - 1) / tw;
+                        int tDown = (height + th - 1) / th;
+                        int tilesPerImage = tAcross * tDown;
                         long[] offsetArray = offsetField.getAsLongs();
-                        if(offsetArray != null &&
-                           offsetArray.length == tilesPerImage) {
+                        if (offsetArray != null && offsetArray.length == tilesPerImage) {
                             // Length of offsets array is
                             // TilesPerImage for Chunky and
                             // SamplesPerPixel*TilesPerImage for Planar.
-                            processWarningOccurred("PlanarConfiguration \"Planar\" value inconsistent with TileOffsets field value count; resetting to \"Chunky\".");
-                            planarConfigurationValue =
-                                BaselineTIFFTagSet.PLANAR_CONFIGURATION_CHUNKY;
+                            processWarningOccurred(
+                                    "PlanarConfiguration \"Planar\" value inconsistent with TileOffsets field value count; resetting to \"Chunky\".");
+                            planarConfigurationValue = BaselineTIFFTagSet.PLANAR_CONFIGURATION_CHUNKY;
                         }
                     } else {
                         // Strips
                         int rowsPerStrip = tileOrStripHeight;
-                        int stripsPerImage =
-                            (height + rowsPerStrip - 1)/rowsPerStrip;
+                        int stripsPerImage = (height + rowsPerStrip - 1) / rowsPerStrip;
                         long[] offsetArray = offsetField.getAsLongs();
-                        if(offsetArray != null &&
-                           offsetArray.length == stripsPerImage) {
+                        if (offsetArray != null && offsetArray.length == stripsPerImage) {
                             // Length of offsets array is
                             // StripsPerImage for Chunky and
                             // SamplesPerPixel*StripsPerImage for Planar.
-                            processWarningOccurred("PlanarConfiguration \"Planar\" value inconsistent with StripOffsets field value count; resetting to \"Chunky\".");
-                            planarConfigurationValue =
-                                BaselineTIFFTagSet.PLANAR_CONFIGURATION_CHUNKY;
+                            processWarningOccurred(
+                                    "PlanarConfiguration \"Planar\" value inconsistent with StripOffsets field value count; resetting to \"Chunky\".");
+                            planarConfigurationValue = BaselineTIFFTagSet.PLANAR_CONFIGURATION_CHUNKY;
                         }
                     }
                 }
@@ -987,8 +940,7 @@ public class TIFFImageReader extends ImageReader {
     }
 
     protected long getTileOrStripOffset(int tileIndex) throws IIOException {
-        TIFFField f =
-            imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_TILE_OFFSETS);
+        TIFFField f = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_TILE_OFFSETS);
         if (f == null) {
             f = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_STRIP_OFFSETS);
         }
@@ -996,48 +948,45 @@ public class TIFFImageReader extends ImageReader {
             f = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_JPEG_INTERCHANGE_FORMAT);
         }
 
-        if(f == null) {
-            throw new IIOException
-                ("Missing required strip or tile offsets field.");
+        if (f == null) {
+            throw new IIOException("Missing required strip or tile offsets field.");
         }
 
         return f.getAsLong(tileIndex);
     }
 
     protected long getTileOrStripByteCount(int tileIndex) throws IOException {
-        TIFFField f =
-           imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_TILE_BYTE_COUNTS);
+        TIFFField f = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_TILE_BYTE_COUNTS);
         if (f == null) {
-            f =
-          imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_STRIP_BYTE_COUNTS);
+            f = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_STRIP_BYTE_COUNTS);
         }
         if (f == null) {
             f = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_JPEG_INTERCHANGE_FORMAT_LENGTH);
         }
 
         long tileOrStripByteCount;
-        if(f != null) {
+        if (f != null) {
             tileOrStripByteCount = f.getAsLong(tileIndex);
         } else {
-            processWarningOccurred("TIFF directory contains neither StripByteCounts nor TileByteCounts field: attempting to calculate from strip or tile width and height.");
+            processWarningOccurred(
+                    "TIFF directory contains neither StripByteCounts nor TileByteCounts field: attempting to calculate from strip or tile width and height.");
 
             // Initialize to number of bytes per strip or tile assuming
             // no compression.
             int bitsPerPixel = bitsPerSample[0];
-            for(int i = 1; i < samplesPerPixel; i++) {
+            for (int i = 1; i < samplesPerPixel; i++) {
                 bitsPerPixel += bitsPerSample[i];
             }
-            int bytesPerRow = (tileOrStripWidth*bitsPerPixel + 7)/8;
-            tileOrStripByteCount = bytesPerRow*tileOrStripHeight;
+            int bytesPerRow = (tileOrStripWidth * bitsPerPixel + 7) / 8;
+            tileOrStripByteCount = bytesPerRow * tileOrStripHeight;
 
             // Clamp to end of stream if possible.
             long streamLength = stream.length();
-            if(streamLength != -1) {
-                tileOrStripByteCount =
-                    Math.min(tileOrStripByteCount,
-                             streamLength - getTileOrStripOffset(tileIndex));
+            if (streamLength != -1) {
+                tileOrStripByteCount = Math.min(tileOrStripByteCount, streamLength - getTileOrStripOffset(tileIndex));
             } else {
-                processWarningOccurred("Stream length is unknown: cannot clamp estimated strip or tile byte count to EOF.");
+                processWarningOccurred(
+                        "Stream length is unknown: cannot clamp estimated strip or tile byte count to EOF.");
             }
         }
 
@@ -1045,8 +994,7 @@ public class TIFFImageReader extends ImageReader {
     }
 
     protected int getCompression() {
-        TIFFField f =
-            imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_COMPRESSION);
+        TIFFField f = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_COMPRESSION);
         if (f == null) {
             processWarningOccurred("Compression field is missing; assuming no compression");
             return BaselineTIFFTagSet.COMPRESSION_NONE;
@@ -1067,6 +1015,7 @@ public class TIFFImageReader extends ImageReader {
 
     /**
      * Initializes these instance variables from the image metadata:
+     *
      * <pre>
      * compression
      * width
@@ -1083,18 +1032,17 @@ public class TIFFImageReader extends ImageReader {
      * </pre>
      */
     private void initializeFromMetadata() {
-        if(initialized)
-            return;
+        if (initialized) return;
 
         //
         // Planar Config
         //
         this.planarConfiguration = getPlanarConfiguration();
-        
+
         //
         // Compression
         //
-        compression=getCompression();
+        compression = getCompression();
 
         // Whether key dimensional information is absent.
         boolean isMissingDimension = false;
@@ -1120,20 +1068,19 @@ public class TIFFImageReader extends ImageReader {
             processWarningOccurred("ImageLength field is missing.");
             isMissingDimension = true;
         }
-        
+
         //
         // Tiling
         //
         tileOrStripWidth = getTileOrStripWidth();
         tileOrStripHeight = getTileOrStripHeight();
-        f =imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_TILE_WIDTH);
+        f = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_TILE_WIDTH);
         isImageTiled = f != null;
-        
+
         //
         // SamplesPerPixel
         //
-        f =
-          imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_SAMPLES_PER_PIXEL);
+        f = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_SAMPLES_PER_PIXEL);
         if (f != null) {
             samplesPerPixel = f.getAsInt(0);
         } else {
@@ -1144,30 +1091,28 @@ public class TIFFImageReader extends ImageReader {
         // If any dimension is missing and there is a JPEG stream available
         // get the information from it.
         int defaultBitDepth = 1;
-        if(isMissingDimension &&
-           (f = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_JPEG_INTERCHANGE_FORMAT)) != null) {
+        if (isMissingDimension
+                && (f = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_JPEG_INTERCHANGE_FORMAT)) != null) {
             Iterator<ImageReader> iter = ImageIO.getImageReadersByFormatName("JPEG");
-            if(iter != null && iter.hasNext()) {
+            if (iter != null && iter.hasNext()) {
                 ImageReader jreader = iter.next();
                 try {
                     stream.mark();
                     stream.seek(f.getAsLong(0));
                     jreader.setInput(stream);
-                    if(imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_IMAGE_WIDTH) == null) {
+                    if (imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_IMAGE_WIDTH) == null) {
                         this.width = jreader.getWidth(0);
                     }
-                    if(imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_IMAGE_LENGTH) == null) {
+                    if (imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_IMAGE_LENGTH) == null) {
                         this.height = jreader.getHeight(0);
                     }
                     ImageTypeSpecifier imageType = jreader.getRawImageType(0);
-                    if(imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_SAMPLES_PER_PIXEL) == null) {
-                        this.samplesPerPixel =
-                            imageType.getSampleModel().getNumBands();
+                    if (imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_SAMPLES_PER_PIXEL) == null) {
+                        this.samplesPerPixel = imageType.getSampleModel().getNumBands();
                     }
                     stream.reset();
-                    defaultBitDepth =
-                        imageType.getColorModel().getComponentSize(0);
-                } catch(IOException e) {
+                    defaultBitDepth = imageType.getColorModel().getComponentSize(0);
+                } catch (IOException e) {
                     // Ignore it and proceed: an error will occur later.
                 }
                 jreader.dispose();
@@ -1196,29 +1141,20 @@ public class TIFFImageReader extends ImageReader {
         //
         // PhotometricInterpretation
         //
-        f =
-        imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_PHOTOMETRIC_INTERPRETATION);
+        f = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_PHOTOMETRIC_INTERPRETATION);
         if (f == null) {
-            if (compression == BaselineTIFFTagSet.COMPRESSION_CCITT_RLE ||
-                compression == BaselineTIFFTagSet.COMPRESSION_CCITT_T_4 ||
-                compression == BaselineTIFFTagSet.COMPRESSION_CCITT_T_6) {
-                processWarningOccurred
-                    ("PhotometricInterpretation field is missing; "+
-                     "assuming WhiteIsZero");
-                photometricInterpretation =
-                   BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_WHITE_IS_ZERO;
-            } else if(this.colorMap != null) {
-                photometricInterpretation =
-                    BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_PALETTE_COLOR;
-            } else if(samplesPerPixel == 3 || samplesPerPixel == 4) {
-                photometricInterpretation =
-                    BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_RGB;
+            if (compression == BaselineTIFFTagSet.COMPRESSION_CCITT_RLE
+                    || compression == BaselineTIFFTagSet.COMPRESSION_CCITT_T_4
+                    || compression == BaselineTIFFTagSet.COMPRESSION_CCITT_T_6) {
+                processWarningOccurred("PhotometricInterpretation field is missing; " + "assuming WhiteIsZero");
+                photometricInterpretation = BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_WHITE_IS_ZERO;
+            } else if (this.colorMap != null) {
+                photometricInterpretation = BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_PALETTE_COLOR;
+            } else if (samplesPerPixel == 3 || samplesPerPixel == 4) {
+                photometricInterpretation = BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_RGB;
             } else {
-                processWarningOccurred
-                    ("PhotometricInterpretation field is missing; "+
-                     "assuming BlackIsZero");
-                photometricInterpretation =
-                   BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_BLACK_IS_ZERO;
+                processWarningOccurred("PhotometricInterpretation field is missing; " + "assuming BlackIsZero");
+                photometricInterpretation = BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_BLACK_IS_ZERO;
             }
         } else {
             photometricInterpretation = f.getAsInt(0);
@@ -1243,16 +1179,11 @@ public class TIFFImageReader extends ImageReader {
 
         for (int i = 0; i < samplesPerPixel; i++) {
             sampleFormat[i] = replicateFirst ? first : f.getAsInt(i);
-            if (sampleFormat[i] !=
-                  BaselineTIFFTagSet.SAMPLE_FORMAT_UNSIGNED_INTEGER &&
-                sampleFormat[i] !=
-                  BaselineTIFFTagSet.SAMPLE_FORMAT_SIGNED_INTEGER &&
-                sampleFormat[i] !=
-                  BaselineTIFFTagSet.SAMPLE_FORMAT_FLOATING_POINT &&
-                sampleFormat[i] !=
-                  BaselineTIFFTagSet.SAMPLE_FORMAT_UNDEFINED) {
-                processWarningOccurred(
-          "Illegal value for SAMPLE_FORMAT, assuming SAMPLE_FORMAT_UNDEFINED");
+            if (sampleFormat[i] != BaselineTIFFTagSet.SAMPLE_FORMAT_UNSIGNED_INTEGER
+                    && sampleFormat[i] != BaselineTIFFTagSet.SAMPLE_FORMAT_SIGNED_INTEGER
+                    && sampleFormat[i] != BaselineTIFFTagSet.SAMPLE_FORMAT_FLOATING_POINT
+                    && sampleFormat[i] != BaselineTIFFTagSet.SAMPLE_FORMAT_UNDEFINED) {
+                processWarningOccurred("Illegal value for SAMPLE_FORMAT, assuming SAMPLE_FORMAT_UNDEFINED");
                 sampleFormat[i] = BaselineTIFFTagSet.SAMPLE_FORMAT_UNDEFINED;
             }
         }
@@ -1270,14 +1201,13 @@ public class TIFFImageReader extends ImageReader {
             replicateFirst = true;
             first = f.getAsInt(0);
         }
-        
+
         for (int i = 0; i < samplesPerPixel; i++) {
             // Replicate initial value if not enough values provided
             bitsPerSample[i] = replicateFirst ? first : f.getAsInt(i);
 
             if (DEBUG) {
-                System.out.println("bitsPerSample[" + i + "] = "
-                                   + bitsPerSample[i]);
+                System.out.println("bitsPerSample[" + i + "] = " + bitsPerSample[i]);
             }
         }
 
@@ -1290,7 +1220,7 @@ public class TIFFImageReader extends ImageReader {
             extraSamples = f.getAsInts();
         }
 
-        // 
+        //
         // NoData (if any, leveraging on GDAL tag)
         //
         this.noData = null;
@@ -1299,9 +1229,9 @@ public class TIFFImageReader extends ImageReader {
             String value = f.getAsString(0);
             if ("nan".equalsIgnoreCase(value)) {
                 noData = Double.NaN;
-            } else if("inf".equalsIgnoreCase(value)) {
+            } else if ("inf".equalsIgnoreCase(value)) {
                 noData = Double.POSITIVE_INFINITY;
-            } else if("-inf".equalsIgnoreCase(value)) {
+            } else if ("-inf".equalsIgnoreCase(value)) {
                 noData = Double.NEGATIVE_INFINITY;
             } else {
                 noData = Double.parseDouble(value);
@@ -1323,24 +1253,24 @@ public class TIFFImageReader extends ImageReader {
                 Double[] scales = gdalMetadata.getScales(numBands);
                 this.offsets = offsets;
                 this.scales = scales;
-            } catch(Exception e) {
+            } catch (Exception e) {
                 if (LOGGER.isLoggable(Level.FINE)) {
                     LOGGER.log(Level.FINE, "Skipping GDAL metadata parsing due to errors", e);
                 }
             }
         }
-        
+
         // signal that this image is initialized
         initialized = true;
-        
+
         // cache the page info for later reuse
         pagesInfo.put(
-                currIndex, 
+                currIndex,
                 new PageInfo(
                         imageMetadata,
-                        bigtiff, 
-                        bitsPerSample, 
-                        colorMap, 
+                        bigtiff,
+                        bitsPerSample,
+                        colorMap,
                         compression,
                         height,
                         numBands,
@@ -1356,45 +1286,39 @@ public class TIFFImageReader extends ImageReader {
                         noData,
                         offsets,
                         scales));
-
     }
 
     public Iterator<ImageTypeSpecifier> getImageTypes(int imageIndex) throws IIOException {
-        
+
         Integer imageIndexInteger = Integer.valueOf(imageIndex);
-        if(imageTypeMap.containsKey(imageIndexInteger)) 
+        if (imageTypeMap.containsKey(imageIndexInteger))
             // Return the cached ITS List.
             return imageTypeMap.get(imageIndexInteger).iterator();
         // Create a new ITS List.
-        final List<ImageTypeSpecifier> l= new ArrayList<ImageTypeSpecifier>();
+        final List<ImageTypeSpecifier> l = new ArrayList<ImageTypeSpecifier>();
 
         // Create the ITS and cache if for later use so that this method
         // always returns an Iterator containing the same ITS objects.
         seekToImage(imageIndex, true);
-        ImageTypeSpecifier itsRaw = 
-            TIFFDecompressor.getRawImageTypeSpecifier
-                (photometricInterpretation,
-                 compression,
-                 samplesPerPixel,
-                 bitsPerSample,
-                 sampleFormat,
-                 extraSamples,
-                 colorMap);
+        ImageTypeSpecifier itsRaw = TIFFDecompressor.getRawImageTypeSpecifier(
+                photometricInterpretation,
+                compression,
+                samplesPerPixel,
+                bitsPerSample,
+                sampleFormat,
+                extraSamples,
+                colorMap);
 
         // Check for an ICCProfile field.
-        TIFFField iccProfileField =
-            imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_ICC_PROFILE);
+        TIFFField iccProfileField = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_ICC_PROFILE);
 
         // If an ICCProfile field is present change the ImageTypeSpecifier
         // to use it if the data layout is component type.
-        if(iccProfileField != null &&
-           itsRaw.getColorModel() instanceof ComponentColorModel) {
+        if (iccProfileField != null && itsRaw.getColorModel() instanceof ComponentColorModel) {
             // Create a ColorSpace from the profile.
             byte[] iccProfileValue = iccProfileField.getAsBytes();
-            ICC_Profile iccProfile =
-                ICC_Profile.getInstance(iccProfileValue);
-            ICC_ColorSpace iccColorSpace =
-                new ICC_ColorSpace(iccProfile);
+            ICC_Profile iccProfile = ICC_Profile.getInstance(iccProfileValue);
+            ICC_ColorSpace iccColorSpace = new ICC_ColorSpace(iccProfile);
 
             // Get the raw sample and color information.
             ColorModel cmRaw = itsRaw.getColorModel();
@@ -1408,22 +1332,20 @@ public class TIFFImageReader extends ImageReader {
 
             // Replace the ColorModel with the ICC ColorModel if the
             // numbers of samples and color components are amenable.
-            if(numBands == numComponents ||
-               numBands == numComponents + 1) {
+            if (numBands == numComponents || numBands == numComponents + 1) {
                 // Set alpha flags.
                 boolean hasAlpha = numComponents != numBands;
-                boolean isAlphaPre =
-                    hasAlpha && cmRaw.isAlphaPremultiplied();
+                boolean isAlphaPre = hasAlpha && cmRaw.isAlphaPremultiplied();
 
                 // Create a ColorModel of the same class and with
                 // the same transfer type.
-                ColorModel iccColorModel =
-                    new ComponentColorModel(iccColorSpace,
-                                            cmRaw.getComponentSize(),
-                                            hasAlpha,
-                                            isAlphaPre,
-                                            cmRaw.getTransparency(),
-                                            cmRaw.getTransferType());
+                ColorModel iccColorModel = new ComponentColorModel(
+                        iccColorSpace,
+                        cmRaw.getComponentSize(),
+                        hasAlpha,
+                        isAlphaPre,
+                        cmRaw.getTransparency(),
+                        cmRaw.getTransferType());
 
                 // Prepend the ICC profile-based ITS to the List. The
                 // ColorModel and SampleModel are guaranteed to be
@@ -1435,9 +1357,8 @@ public class TIFFImageReader extends ImageReader {
                 // Append the raw ITS to the List if and only if its
                 // ColorSpace has the same type and number of components
                 // as the ICC ColorSpace.
-                if(csRaw.getType() == iccColorSpace.getType() &&
-                   csRaw.getNumComponents() ==
-                   iccColorSpace.getNumComponents()) {
+                if (csRaw.getType() == iccColorSpace.getType()
+                        && csRaw.getNumComponents() == iccColorSpace.getNumComponents()) {
                     l.add(itsRaw);
                 }
             } else { // ICCProfile not compatible with SampleModel.
@@ -1452,15 +1373,12 @@ public class TIFFImageReader extends ImageReader {
         // Cache the ITS List.
         imageTypeMap.put(imageIndexInteger, l);
         return l.iterator();
-
     }
 
     public IIOMetadata getImageMetadata(int imageIndex) throws IIOException {
         seekToImage(imageIndex, true);
-        TIFFImageMetadata im =
-            new TIFFImageMetadata(imageMetadata.getRootIFD().getTagSetList());
-        Node root =
-            imageMetadata.getAsTree(TIFFImageMetadata.nativeMetadataFormatName);
+        TIFFImageMetadata im = new TIFFImageMetadata(imageMetadata.getRootIFD().getTagSetList());
+        Node root = imageMetadata.getAsTree(TIFFImageMetadata.nativeMetadataFormatName);
         im.setFromTree(TIFFImageMetadata.nativeMetadataFormatName, root);
         if (noData != null) {
             im.setNoDataValues(new Double[] {noData, noData});
@@ -1481,7 +1399,7 @@ public class TIFFImageReader extends ImageReader {
     }
 
     public boolean isRandomAccessEasy(int imageIndex) throws IOException {
-        if(currIndex != -1) {
+        if (currIndex != -1) {
             seekToImage(currIndex);
             return compression == BaselineTIFFTagSet.COMPRESSION_NONE;
         } else {
@@ -1523,20 +1441,18 @@ public class TIFFImageReader extends ImageReader {
         return tileOrStripHeight;
     }
 
-    public BufferedImage readTile(int imageIndex, int tileX, int tileY)
-        throws IOException {
+    public BufferedImage readTile(int imageIndex, int tileX, int tileY) throws IOException {
 
         int w = getWidth(imageIndex);
         int h = getHeight(imageIndex);
         int tw = getTileWidth(imageIndex);
         int th = getTileHeight(imageIndex);
 
-        int x = tw*tileX;
-        int y = th*tileY;
+        int x = tw * tileX;
+        int y = th * tileY;
 
-        if(tileX < 0 || tileY < 0 || x >= w || y >= h) {
-            throw new IllegalArgumentException
-                ("Tile indices are out of bounds!");
+        if (tileX < 0 || tileY < 0 || x >= w || y >= h) {
+            throw new IllegalArgumentException("Tile indices are out of bounds!");
         }
 
         if (x + tw > w) {
@@ -1559,8 +1475,7 @@ public class TIFFImageReader extends ImageReader {
         return false;
     }
 
-    public Raster readRaster(int imageIndex, ImageReadParam param)
-        throws IOException {
+    public Raster readRaster(int imageIndex, ImageReadParam param) throws IOException {
         // Enable this?
         throw new UnsupportedOperationException();
     }
@@ -1573,7 +1488,7 @@ public class TIFFImageReader extends ImageReader {
         if (num < 0) {
             num -= den - 1;
         }
-        return num/den;
+        return num / den;
     }
 
     // ceil(num/den)
@@ -1581,11 +1496,10 @@ public class TIFFImageReader extends ImageReader {
         if (num > 0) {
             num += den - 1;
         }
-        return num/den;
+        return num / den;
     }
 
-    protected void prepareRead(int imageIndex, ImageReadParam param)
-        throws IOException {
+    protected void prepareRead(int imageIndex, ImageReadParam param) throws IOException {
         if (stream == null) {
             throw new IllegalStateException("Input not set!");
         }
@@ -1599,7 +1513,7 @@ public class TIFFImageReader extends ImageReader {
 
         // ensure everything is initialized
         seekToImage(imageIndex);
-        
+
         // see if band selection with enhanced read param has been performed (allows for duplicate bands)
         ImageTypeSpecifier theImageType = null;
         if (param instanceof EnhancedImageReadParam) {
@@ -1624,9 +1538,9 @@ public class TIFFImageReader extends ImageReader {
             // Initialize the destination image
             if (theImageType == null) {
                 Iterator<ImageTypeSpecifier> imageTypes = getImageTypes(imageIndex);
-                theImageType = param.getDestinationType() != null ?
-                        param.getDestinationType() :
-                        ImageIOUtilities.getDestinationType(param, imageTypes);
+                theImageType = param.getDestinationType() != null
+                        ? param.getDestinationType()
+                        : ImageIOUtilities.getDestinationType(param, imageTypes);
             }
 
             this.destinationBands = param.getDestinationBands();
@@ -1639,8 +1553,7 @@ public class TIFFImageReader extends ImageReader {
             }
 
             if (sourceBands.length != destinationBands.length) {
-                throw new IllegalArgumentException(
-                        "sourceBands.length != destinationBands.length");
+                throw new IllegalArgumentException("sourceBands.length != destinationBands.length");
             }
         }
 
@@ -1648,18 +1561,17 @@ public class TIFFImageReader extends ImageReader {
         for (int i = 0; i < sourceBands.length; i++) {
             int sb = sourceBands[i];
             if (sb < 0 || sb >= numBands) {
-                throw new IllegalArgumentException(
-                                                  "Source band out of range!");
+                throw new IllegalArgumentException("Source band out of range!");
             }
             int db = destinationBands[i];
             if (db < 0 || db >= theImageType.getSampleModel().getNumBands()) {
-                throw new IllegalArgumentException(
-                                             "Destination band out of range!");
+                throw new IllegalArgumentException("Destination band out of range!");
             }
         }
     }
 
-    private static ImageTypeSpecifier getBandSelectedImageType(int numBands, Iterator<ImageTypeSpecifier> imageTypes) throws IIOException {
+    private static ImageTypeSpecifier getBandSelectedImageType(int numBands, Iterator<ImageTypeSpecifier> imageTypes)
+            throws IIOException {
         ImageTypeSpecifier theImageType;
         Object o = imageTypes.next();
         if (!(o instanceof ImageTypeSpecifier)) {
@@ -1669,37 +1581,32 @@ public class TIFFImageReader extends ImageReader {
         return ImageIOUtilities.getBandSelectedType(numBands, its.getSampleModel());
     }
 
-    public RenderedImage readAsRenderedImage(int imageIndex,
-                                             ImageReadParam param)
-        throws IOException {
+    public RenderedImage readAsRenderedImage(int imageIndex, ImageReadParam param) throws IOException {
         prepareRead(imageIndex, param);
-        return new TIFFRenderedImage(this, imageIndex, imageReadParam,
-                                     width, height);
+        return new TIFFRenderedImage(this, imageIndex, imageReadParam, width, height);
     }
 
-    private void decodeTile(BufferedImage theImage, TIFFDecompressor decompressor, int ti, int tj, int band) throws IOException {
-        if(DEBUG) {
-            System.out.println("decodeTile("+ti+","+tj+","+band+")");
+    private void decodeTile(BufferedImage theImage, TIFFDecompressor decompressor, int ti, int tj, int band)
+            throws IOException {
+        if (DEBUG) {
+            System.out.println("decodeTile(" + ti + "," + tj + "," + band + ")");
         }
 
         // Compute the region covered by the strip or tile
-        Rectangle tileRect = new Rectangle(ti*tileOrStripWidth,
-                                           tj*tileOrStripHeight,
-                                           tileOrStripWidth,
-                                           tileOrStripHeight);
+        Rectangle tileRect =
+                new Rectangle(ti * tileOrStripWidth, tj * tileOrStripHeight, tileOrStripWidth, tileOrStripHeight);
 
         // Clip against the image bounds if the image is not tiled. If it
         // is tiled, the tile may legally extend beyond the image bounds.
-        if(!this.isImageTiled) {
-            tileRect =
-                tileRect.intersection(new Rectangle(0, 0, width, height));
+        if (!this.isImageTiled) {
+            tileRect = tileRect.intersection(new Rectangle(0, 0, width, height));
         }
 
         // Return if the intersection is empty.
-        if(tileRect.width <= 0 || tileRect.height <= 0) {
+        if (tileRect.width <= 0 || tileRect.height <= 0) {
             return;
         }
-        
+
         int srcMinX = tileRect.x;
         int srcMinY = tileRect.y;
         int srcWidth = tileRect.width;
@@ -1707,76 +1614,67 @@ public class TIFFImageReader extends ImageReader {
 
         // Determine dest region that can be derived from the
         // source region
-        
+
         dstMinX = iceil(srcMinX - sourceXOffset, srcXSubsampling);
-        int dstMaxX = ifloor(srcMinX + srcWidth - 1 - sourceXOffset,
-                         srcXSubsampling);
-        
+        int dstMaxX = ifloor(srcMinX + srcWidth - 1 - sourceXOffset, srcXSubsampling);
+
         dstMinY = iceil(srcMinY - sourceYOffset, srcYSubsampling);
-        int dstMaxY = ifloor(srcMinY + srcHeight - 1 - sourceYOffset,
-                             srcYSubsampling);
-        
+        int dstMaxY = ifloor(srcMinY + srcHeight - 1 - sourceYOffset, srcYSubsampling);
+
         dstWidth = dstMaxX - dstMinX + 1;
         dstHeight = dstMaxY - dstMinY + 1;
-        
+
         dstMinX += dstXOffset;
         dstMinY += dstYOffset;
-        
+
         // Clip against image bounds
-        
-        Rectangle dstRect = new Rectangle(dstMinX, dstMinY,
-                                          dstWidth, dstHeight);
-        dstRect =
-            dstRect.intersection(theImage.getRaster().getBounds());
-        
+
+        Rectangle dstRect = new Rectangle(
+                dstMinX, dstMinY,
+                dstWidth, dstHeight);
+        dstRect = dstRect.intersection(theImage.getRaster().getBounds());
+
         dstMinX = dstRect.x;
         dstMinY = dstRect.y;
         dstWidth = dstRect.width;
         dstHeight = dstRect.height;
-        
+
         if (dstWidth <= 0 || dstHeight <= 0) {
             return;
         }
-        
+
         // Backwards map dest region to source to determine
         // active source region
-        
-        int activeSrcMinX = (dstMinX - dstXOffset)*srcXSubsampling +
-            sourceXOffset;
-        int sxmax = 
-            (dstMinX + dstWidth - 1 - dstXOffset)*srcXSubsampling +
-            sourceXOffset;
+
+        int activeSrcMinX = (dstMinX - dstXOffset) * srcXSubsampling + sourceXOffset;
+        int sxmax = (dstMinX + dstWidth - 1 - dstXOffset) * srcXSubsampling + sourceXOffset;
         int activeSrcWidth = sxmax - activeSrcMinX + 1;
-        
-        int activeSrcMinY = (dstMinY - dstYOffset)*srcYSubsampling +
-            sourceYOffset;
-        int symax =
-            (dstMinY + dstHeight - 1 - dstYOffset)*srcYSubsampling +
-            sourceYOffset;
+
+        int activeSrcMinY = (dstMinY - dstYOffset) * srcYSubsampling + sourceYOffset;
+        int symax = (dstMinY + dstHeight - 1 - dstYOffset) * srcYSubsampling + sourceYOffset;
         int activeSrcHeight = symax - activeSrcMinY + 1;
-        
+
         decompressor.setSrcMinX(srcMinX);
         decompressor.setSrcMinY(srcMinY);
         decompressor.setSrcWidth(srcWidth);
         decompressor.setSrcHeight(srcHeight);
-        
+
         decompressor.setDstMinX(dstMinX);
         decompressor.setDstMinY(dstMinY);
         decompressor.setDstWidth(dstWidth);
         decompressor.setDstHeight(dstHeight);
-        
+
         decompressor.setActiveSrcMinX(activeSrcMinX);
         decompressor.setActiveSrcMinY(activeSrcMinY);
         decompressor.setActiveSrcWidth(activeSrcWidth);
         decompressor.setActiveSrcHeight(activeSrcHeight);
 
-        int tileIndex = tj*tilesAcross + ti;
+        int tileIndex = tj * tilesAcross + ti;
 
-        if (planarConfiguration ==
-            BaselineTIFFTagSet.PLANAR_CONFIGURATION_PLANAR) {
-            tileIndex += band*tilesAcross*tilesDown;
+        if (planarConfiguration == BaselineTIFFTagSet.PLANAR_CONFIGURATION_PLANAR) {
+            tileIndex += band * tilesAcross * tilesDown;
         }
-        
+
         long offset = getTileOrStripOffset(tileIndex);
         long byteCount = getTileOrStripByteCount(tileIndex);
 
@@ -1788,9 +1686,9 @@ public class TIFFImageReader extends ImageReader {
         // that the decompressor will handle it.
         //
         long streamLength = stream.length();
-        if(streamLength > 0 && offset + byteCount > streamLength) {
+        if (streamLength > 0 && offset + byteCount > streamLength) {
             processWarningOccurred("Attempting to process truncated stream.");
-            if(Math.max(byteCount = streamLength - offset, 0) == 0) {
+            if (Math.max(byteCount = streamLength - offset, 0) == 0) {
                 processWarningOccurred("No bytes in strip/tile: skipping.");
                 return;
             }
@@ -1798,8 +1696,8 @@ public class TIFFImageReader extends ImageReader {
 
         decompressor.setStream(stream);
         decompressor.setOffset(offset);
-        decompressor.setByteCount((int)byteCount);
-        ((TIFFDecompressor)decompressor).setNoData(noData);
+        decompressor.setByteCount((int) byteCount);
+        ((TIFFDecompressor) decompressor).setNoData(noData);
         decompressor.beginDecoding();
 
         stream.mark();
@@ -1809,22 +1707,16 @@ public class TIFFImageReader extends ImageReader {
 
     private void reportProgress(BufferedImage theImage) {
         // Report image progress/update to listeners after each tile
-        pixelsRead += dstWidth*dstHeight;
-        processImageProgress(100.0f*pixelsRead/pixelsToRead);
-        processImageUpdate(theImage,
-                           dstMinX, dstMinY, dstWidth, dstHeight,
-                           1, 1,
-                           destinationBands);
+        pixelsRead += dstWidth * dstHeight;
+        processImageProgress(100.0f * pixelsRead / pixelsToRead);
+        processImageUpdate(theImage, dstMinX, dstMinY, dstWidth, dstHeight, 1, 1, destinationBands);
     }
 
-    public BufferedImage read(int imageIndex, ImageReadParam param)
-        throws IOException {
+    public BufferedImage read(int imageIndex, ImageReadParam param) throws IOException {
         prepareRead(imageIndex, param);
 
         // prepare for reading
-        BufferedImage theImage = getDestination(param,
-                                       getImageTypes(imageIndex),
-                                       width, height, noData);
+        BufferedImage theImage = getDestination(param, getImageTypes(imageIndex), width, height, noData);
 
         srcXSubsampling = imageReadParam.getSourceXSubsampling();
         srcYSubsampling = imageReadParam.getSourceYSubsampling();
@@ -1837,107 +1729,76 @@ public class TIFFImageReader extends ImageReader {
         Rectangle srcRegion = new Rectangle(0, 0, 0, 0);
         Rectangle destRegion = new Rectangle(0, 0, 0, 0);
 
-        computeRegions(imageReadParam, width, height, theImage,
-                       srcRegion, destRegion);
+        computeRegions(imageReadParam, width, height, theImage, srcRegion, destRegion);
 
         // Initial source pixel, taking source region and source
         // subsamplimg offsets into account
         sourceXOffset = srcRegion.x;
         sourceYOffset = srcRegion.y;
 
-        pixelsToRead = destRegion.width*destRegion.height;
+        pixelsToRead = destRegion.width * destRegion.height;
         pixelsRead = 0;
 
         processImageStarted(imageIndex);
         processImageProgress(0.0f);
 
-        tilesAcross = (width + tileOrStripWidth - 1)/tileOrStripWidth;
-        tilesDown = (height + tileOrStripHeight - 1)/tileOrStripHeight;
+        tilesAcross = (width + tileOrStripWidth - 1) / tileOrStripWidth;
+        tilesDown = (height + tileOrStripHeight - 1) / tileOrStripHeight;
 
         // Attempt to get decompressor and color converted from the read param
-        
+
         TIFFDecompressor decompressor = null;
-            try {
-                decompressor = getDecompressor(theImage);
-                TIFFColorConverter colorConverter = getColorConverter(theImage, decompressor);
+        try {
+            decompressor = getDecompressor(theImage);
+            TIFFColorConverter colorConverter = getColorConverter(theImage, decompressor);
 
-                decompressor.setReader(this);
-                decompressor.setMetadata(imageMetadata);
-                decompressor.setImage(theImage);
+            decompressor.setReader(this);
+            decompressor.setMetadata(imageMetadata);
+            decompressor.setImage(theImage);
 
-                decompressor.setPhotometricInterpretation(photometricInterpretation);
-                decompressor.setCompression(compression);
-                decompressor.setSamplesPerPixel(samplesPerPixel);
-                decompressor.setBitsPerSample(bitsPerSample);
-                decompressor.setSampleFormat(sampleFormat);
-                decompressor.setExtraSamples(extraSamples);
-                decompressor.setColorMap(colorMap);
+            decompressor.setPhotometricInterpretation(photometricInterpretation);
+            decompressor.setCompression(compression);
+            decompressor.setSamplesPerPixel(samplesPerPixel);
+            decompressor.setBitsPerSample(bitsPerSample);
+            decompressor.setSampleFormat(sampleFormat);
+            decompressor.setExtraSamples(extraSamples);
+            decompressor.setColorMap(colorMap);
 
-                decompressor.setColorConverter(colorConverter);
+            decompressor.setColorConverter(colorConverter);
 
-                decompressor.setSourceXOffset(sourceXOffset);
-                decompressor.setSourceYOffset(sourceYOffset);
-                decompressor.setSubsampleX(srcXSubsampling);
-                decompressor.setSubsampleY(srcYSubsampling);
+            decompressor.setSourceXOffset(sourceXOffset);
+            decompressor.setSourceYOffset(sourceYOffset);
+            decompressor.setSubsampleX(srcXSubsampling);
+            decompressor.setSubsampleY(srcYSubsampling);
 
-                decompressor.setDstXOffset(dstXOffset);
-                decompressor.setDstYOffset(dstYOffset);
+            decompressor.setDstXOffset(dstXOffset);
+            decompressor.setDstYOffset(dstYOffset);
 
-                decompressor.setSourceBands(sourceBands);
-                decompressor.setDestinationBands(destinationBands);
+            decompressor.setSourceBands(sourceBands);
+            decompressor.setDestinationBands(destinationBands);
 
-                // Compute bounds on the tile indices for this source region.
-                int minTileX =
-                        TIFFImageWriter.XToTileX(srcRegion.x, 0, tileOrStripWidth);
-                int minTileY =
-                        TIFFImageWriter.YToTileY(srcRegion.y, 0, tileOrStripHeight);
-                int maxTileX =
-                        TIFFImageWriter.XToTileX(srcRegion.x + srcRegion.width - 1,
-                                0, tileOrStripWidth);
-                int maxTileY =
-                        TIFFImageWriter.YToTileY(srcRegion.y + srcRegion.height - 1,
-                                0, tileOrStripHeight);
+            // Compute bounds on the tile indices for this source region.
+            int minTileX = TIFFImageWriter.XToTileX(srcRegion.x, 0, tileOrStripWidth);
+            int minTileY = TIFFImageWriter.YToTileY(srcRegion.y, 0, tileOrStripHeight);
+            int maxTileX = TIFFImageWriter.XToTileX(srcRegion.x + srcRegion.width - 1, 0, tileOrStripWidth);
+            int maxTileY = TIFFImageWriter.YToTileY(srcRegion.y + srcRegion.height - 1, 0, tileOrStripHeight);
 
-                boolean isAbortRequested = false;
-                if (planarConfiguration ==
-                        BaselineTIFFTagSet.PLANAR_CONFIGURATION_PLANAR) {
+            boolean isAbortRequested = false;
+            if (planarConfiguration == BaselineTIFFTagSet.PLANAR_CONFIGURATION_PLANAR) {
 
-                    decompressor.setPlanar(true);
+                decompressor.setPlanar(true);
 
-                    int[] sb = new int[1];
-                    int[] db = new int[1];
-                    for (int tj = minTileY; tj <= maxTileY; tj++) {
-                        for (int ti = minTileX; ti <= maxTileX; ti++) {
-                            for (int band = 0; band < sourceBands.length; band++) {
-                                sb[0] = sourceBands[band];
-                                decompressor.setSourceBands(sb);
-                                db[0] = destinationBands[band];
-                                decompressor.setDestinationBands(db);
-                                //XXX decompressor.beginDecoding();
+                int[] sb = new int[1];
+                int[] db = new int[1];
+                for (int tj = minTileY; tj <= maxTileY; tj++) {
+                    for (int ti = minTileX; ti <= maxTileX; ti++) {
+                        for (int band = 0; band < sourceBands.length; band++) {
+                            sb[0] = sourceBands[band];
+                            decompressor.setSourceBands(sb);
+                            db[0] = destinationBands[band];
+                            decompressor.setDestinationBands(db);
+                            // XXX decompressor.beginDecoding();
 
-                                // The method abortRequested() is synchronized
-                                // so check it only once per loop just before
-                                // doing any actual decoding.
-                                if (abortRequested()) {
-                                    isAbortRequested = true;
-                                    break;
-                                }
-
-                                decodeTile(theImage, decompressor, ti, tj, sb[0]);
-                            }
-
-                            if (isAbortRequested) break;
-
-                            reportProgress(theImage);
-                        }
-
-                        if (isAbortRequested) break;
-                    }
-                } else {
-                    //XXX decompressor.beginDecoding();
-
-                    for (int tj = minTileY; tj <= maxTileY; tj++) {
-                        for (int ti = minTileX; ti <= maxTileX; ti++) {
                             // The method abortRequested() is synchronized
                             // so check it only once per loop just before
                             // doing any actual decoding.
@@ -1946,42 +1807,62 @@ public class TIFFImageReader extends ImageReader {
                                 break;
                             }
 
-                            decodeTile(theImage, decompressor, ti, tj, -1);
-
-                            reportProgress(theImage);
+                            decodeTile(theImage, decompressor, ti, tj, sb[0]);
                         }
 
                         if (isAbortRequested) break;
+
+                        reportProgress(theImage);
                     }
-                }
 
-                if (isAbortRequested) {
-                    processReadAborted();
-                } else {
-                    processImageComplete();
+                    if (isAbortRequested) break;
                 }
+            } else {
+                // XXX decompressor.beginDecoding();
 
-                return theImage;
+                for (int tj = minTileY; tj <= maxTileY; tj++) {
+                    for (int ti = minTileX; ti <= maxTileX; ti++) {
+                        // The method abortRequested() is synchronized
+                        // so check it only once per loop just before
+                        // doing any actual decoding.
+                        if (abortRequested()) {
+                            isAbortRequested = true;
+                            break;
+                        }
+
+                        decodeTile(theImage, decompressor, ti, tj, -1);
+
+                        reportProgress(theImage);
+                    }
+
+                    if (isAbortRequested) break;
+                }
+            }
+
+            if (isAbortRequested) {
+                processReadAborted();
+            } else {
+                processImageComplete();
+            }
+
+            return theImage;
         } finally {
-           if (decompressor != null) decompressor.dispose();
+            if (decompressor != null) decompressor.dispose();
         }
     }
 
     private TIFFDecompressor getDecompressor(BufferedImage theImage) throws IIOException {
         TIFFDecompressor decompressor = null;
         if (imageReadParam instanceof TIFFImageReadParam) {
-            TIFFImageReadParam tparam =
-                    (TIFFImageReadParam) imageReadParam;
+            TIFFImageReadParam tparam = (TIFFImageReadParam) imageReadParam;
             decompressor = tparam.getTIFFDecompressor();
         }
 
         // If we didn't find one, use a standard decompressor
         if (decompressor == null) {
-            if (compression ==
-                    BaselineTIFFTagSet.COMPRESSION_NONE) {
+            if (compression == BaselineTIFFTagSet.COMPRESSION_NONE) {
                 // Get the fillOrder field.
-                TIFFField fillOrderField =
-                        imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_FILL_ORDER);
+                TIFFField fillOrderField = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_FILL_ORDER);
 
                 // Set the decompressor based on the fill order.
                 if (fillOrderField != null && fillOrderField.getAsInt(0) == 2) {
@@ -1989,8 +1870,7 @@ public class TIFFImageReader extends ImageReader {
                 } else {
                     decompressor = new TIFFNullDecompressor();
                 }
-            } else if (compression ==
-                    BaselineTIFFTagSet.COMPRESSION_CCITT_T_6) {
+            } else if (compression == BaselineTIFFTagSet.COMPRESSION_CCITT_T_6) {
 
                 // Fall back to the Java decompressor.
                 if (decompressor == null) {
@@ -1999,8 +1879,7 @@ public class TIFFImageReader extends ImageReader {
                     }
                     decompressor = new TIFFFaxDecompressor();
                 }
-            } else if (compression ==
-                    BaselineTIFFTagSet.COMPRESSION_CCITT_T_4) {
+            } else if (compression == BaselineTIFFTagSet.COMPRESSION_CCITT_T_4) {
                 // Fall back to the Java decompressor.
                 if (decompressor == null) {
                     if (DEBUG) {
@@ -2008,85 +1887,61 @@ public class TIFFImageReader extends ImageReader {
                     }
                     decompressor = new TIFFFaxDecompressor();
                 }
-            } else if (compression ==
-                    BaselineTIFFTagSet.COMPRESSION_CCITT_RLE) {
+            } else if (compression == BaselineTIFFTagSet.COMPRESSION_CCITT_RLE) {
                 decompressor = new TIFFFaxDecompressor();
-            } else if (compression ==
-                    BaselineTIFFTagSet.COMPRESSION_PACKBITS) {
+            } else if (compression == BaselineTIFFTagSet.COMPRESSION_PACKBITS) {
                 if (DEBUG) {
                     System.out.println("Using TIFFPackBitsDecompressor");
                 }
                 decompressor = new TIFFPackBitsDecompressor();
-            } else if (compression ==
-                    BaselineTIFFTagSet.COMPRESSION_LZW) {
+            } else if (compression == BaselineTIFFTagSet.COMPRESSION_LZW) {
                 if (DEBUG) {
                     System.out.println("Using TIFFLZWDecompressor");
                 }
-                TIFFField predictorField =
-                        imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_PREDICTOR);
-                int predictor = ((predictorField == null) ?
-                        BaselineTIFFTagSet.PREDICTOR_NONE :
-                        predictorField.getAsInt(0));
+                TIFFField predictorField = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_PREDICTOR);
+                int predictor =
+                        ((predictorField == null) ? BaselineTIFFTagSet.PREDICTOR_NONE : predictorField.getAsInt(0));
                 decompressor = new TIFFLZWDecompressor(predictor);
-            } else if (compression ==
-                    BaselineTIFFTagSet.COMPRESSION_JPEG) {
+            } else if (compression == BaselineTIFFTagSet.COMPRESSION_JPEG) {
                 decompressor = new TIFFJPEGDecompressor();
-            } else if (compression ==
-                    BaselineTIFFTagSet.COMPRESSION_ZLIB ||
-                    compression ==
-                            BaselineTIFFTagSet.COMPRESSION_DEFLATE) {
-                TIFFField predictorField =
-                        imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_PREDICTOR);
-                int predictor = ((predictorField == null) ?
-                        BaselineTIFFTagSet.PREDICTOR_NONE :
-                        predictorField.getAsInt(0));
+            } else if (compression == BaselineTIFFTagSet.COMPRESSION_ZLIB
+                    || compression == BaselineTIFFTagSet.COMPRESSION_DEFLATE) {
+                TIFFField predictorField = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_PREDICTOR);
+                int predictor =
+                        ((predictorField == null) ? BaselineTIFFTagSet.PREDICTOR_NONE : predictorField.getAsInt(0));
                 decompressor = new TIFFDeflateDecompressor(predictor);
-            } else if (compression ==
-                    BaselineTIFFTagSet.COMPRESSION_OLD_JPEG) {
-                TIFFField JPEGProcField =
-                        imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_JPEG_PROC);
+            } else if (compression == BaselineTIFFTagSet.COMPRESSION_OLD_JPEG) {
+                TIFFField JPEGProcField = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_JPEG_PROC);
                 if (JPEGProcField == null) {
-                    processWarningOccurred
-                            ("JPEGProc field missing; assuming baseline sequential JPEG process.");
-                } else if (JPEGProcField.getAsInt(0) !=
-                        BaselineTIFFTagSet.JPEG_PROC_BASELINE) {
-                    throw new IIOException
-                            ("Old-style JPEG supported for baseline sequential JPEG process only!");
+                    processWarningOccurred("JPEGProc field missing; assuming baseline sequential JPEG process.");
+                } else if (JPEGProcField.getAsInt(0) != BaselineTIFFTagSet.JPEG_PROC_BASELINE) {
+                    throw new IIOException("Old-style JPEG supported for baseline sequential JPEG process only!");
                 }
                 decompressor = new TIFFOldJPEGDecompressor();
-                //throw new IIOException("Old-style JPEG not supported!");
+                // throw new IIOException("Old-style JPEG not supported!");
             } else if (compression == PrivateTIFFTagSet.COMPRESSION_ZSTD) {
-                TIFFField predictorField =
-                        imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_PREDICTOR);
-                int predictor = ((predictorField == null) ?
-                        BaselineTIFFTagSet.PREDICTOR_NONE :
-                        predictorField.getAsInt(0));
+                TIFFField predictorField = imageMetadata.getTIFFField(BaselineTIFFTagSet.TAG_PREDICTOR);
+                int predictor =
+                        ((predictorField == null) ? BaselineTIFFTagSet.PREDICTOR_NONE : predictorField.getAsInt(0));
                 decompressor = new TIFFZSTDDecompressor(predictor);
             } else {
-                throw new IIOException
-                        ("Unsupported compression type (tag number = " +
-                                compression + ")!");
+                throw new IIOException("Unsupported compression type (tag number = " + compression + ")!");
             }
 
-            if (photometricInterpretation ==
-                    BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_Y_CB_CR &&
-                    compression != BaselineTIFFTagSet.COMPRESSION_JPEG &&
-                    compression != BaselineTIFFTagSet.COMPRESSION_OLD_JPEG) {
+            if (photometricInterpretation == BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_Y_CB_CR
+                    && compression != BaselineTIFFTagSet.COMPRESSION_JPEG
+                    && compression != BaselineTIFFTagSet.COMPRESSION_OLD_JPEG) {
                 boolean convertYCbCrToRGB =
-                        theImage.getColorModel().getColorSpace().getType() ==
-                                ColorSpace.TYPE_RGB;
+                        theImage.getColorModel().getColorSpace().getType() == ColorSpace.TYPE_RGB;
                 TIFFDecompressor wrappedDecompressor =
-                        decompressor instanceof TIFFNullDecompressor ?
-                                null : decompressor;
-                decompressor =
-                        new TIFFYCbCrDecompressor(wrappedDecompressor,
-                                convertYCbCrToRGB);
+                        decompressor instanceof TIFFNullDecompressor ? null : decompressor;
+                decompressor = new TIFFYCbCrDecompressor(wrappedDecompressor, convertYCbCrToRGB);
             }
         }
 
         if (DEBUG && decompressor != null) {
-            System.out.println("\nDecompressor class = " +
-                    decompressor.getClass().getName() + "\n");
+            System.out.println(
+                    "\nDecompressor class = " + decompressor.getClass().getName() + "\n");
         }
 
         return decompressor;
@@ -2095,21 +1950,17 @@ public class TIFFImageReader extends ImageReader {
     private TIFFColorConverter getColorConverter(BufferedImage theImage, TIFFDecompressor decompressor) {
         TIFFColorConverter colorConverter = null;
         if (imageReadParam instanceof TIFFImageReadParam) {
-            TIFFImageReadParam tparam =
-                    (TIFFImageReadParam) imageReadParam;
+            TIFFImageReadParam tparam = (TIFFImageReadParam) imageReadParam;
             colorConverter = tparam.getColorConverter();
         }
         if (colorConverter == null) {
-            if (photometricInterpretation ==
-                    BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_CIELAB &&
-                    theImage.getColorModel().getColorSpace().getType() ==
-                            ColorSpace.TYPE_RGB) {
+            if (photometricInterpretation == BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_CIELAB
+                    && theImage.getColorModel().getColorSpace().getType() == ColorSpace.TYPE_RGB) {
                 colorConverter = new TIFFCIELabColorConverter();
-            } else if (photometricInterpretation ==
-                    BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_Y_CB_CR &&
-                    !(decompressor instanceof TIFFYCbCrDecompressor) &&
-                    compression != BaselineTIFFTagSet.COMPRESSION_JPEG &&
-                    compression != BaselineTIFFTagSet.COMPRESSION_OLD_JPEG) {
+            } else if (photometricInterpretation == BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_Y_CB_CR
+                    && !(decompressor instanceof TIFFYCbCrDecompressor)
+                    && compression != BaselineTIFFTagSet.COMPRESSION_JPEG
+                    && compression != BaselineTIFFTagSet.COMPRESSION_OLD_JPEG) {
                 colorConverter = new TIFFYCbCrColorConverter(imageMetadata);
             }
         }
@@ -2142,22 +1993,18 @@ public class TIFFImageReader extends ImageReader {
         planarConfiguration = BaselineTIFFTagSet.PLANAR_CONFIGURATION_CHUNKY;
     }
 
-    /**
-     * Package scope method to allow decompressors, for example, to
-     * emit warning messages.
-     */
+    /** Package scope method to allow decompressors, for example, to emit warning messages. */
     void forwardWarningMessage(String warning) {
         processWarningOccurred(warning);
     }
-    
-    protected static BufferedImage getDestination(ImageReadParam param,
-                                                  Iterator<ImageTypeSpecifier> imageTypes,
-                                                  int width, int height, Double noData)
+
+    protected static BufferedImage getDestination(
+            ImageReadParam param, Iterator<ImageTypeSpecifier> imageTypes, int width, int height, Double noData)
             throws IIOException {
         if (imageTypes == null || !imageTypes.hasNext()) {
             throw new IllegalArgumentException("imageTypes null or empty!");
-        }        
-        
+        }
+
         BufferedImage dest = null;
         ImageTypeSpecifier imageType = null;
 
@@ -2168,7 +2015,7 @@ public class TIFFImageReader extends ImageReader {
             if (dest != null) {
                 return dest;
             }
-        
+
             // No image, get the image type
             imageType = param.getDestinationType();
         }
@@ -2181,41 +2028,34 @@ public class TIFFImageReader extends ImageReader {
             } else {
                 Object o = imageTypes.next();
                 if (!(o instanceof ImageTypeSpecifier)) {
-                    throw new IllegalArgumentException
-                            ("Non-ImageTypeSpecifier retrieved from imageTypes!");
+                    throw new IllegalArgumentException("Non-ImageTypeSpecifier retrieved from imageTypes!");
                 }
                 imageType = (ImageTypeSpecifier) o;
             }
-        } 
+        }
 
-        Rectangle srcRegion = new Rectangle(0,0,0,0);
-        Rectangle destRegion = new Rectangle(0,0,0,0);
-        computeRegions(param,
-                       width,
-                       height,
-                       null,
-                       srcRegion,
-                       destRegion);
-        
+        Rectangle srcRegion = new Rectangle(0, 0, 0, 0);
+        Rectangle destRegion = new Rectangle(0, 0, 0, 0);
+        computeRegions(param, width, height, null, srcRegion, destRegion);
+
         int destWidth = destRegion.x + destRegion.width;
         int destHeight = destRegion.y + destRegion.height;
         // Create a new image based on the type specifier
-        
-        if ((long)destWidth*destHeight > Integer.MAX_VALUE) {
-            throw new IllegalArgumentException
-                ("width*height > Integer.MAX_VALUE!");
+
+        if ((long) destWidth * destHeight > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException("width*height > Integer.MAX_VALUE!");
         }
 
         SampleModel sampleModel = imageType.getSampleModel(destWidth, destHeight);
         ColorModel colorModel = imageType.getColorModel();
-        WritableRaster raster = Raster.createWritableRaster(sampleModel,  new Point(0, 0));
+        WritableRaster raster = Raster.createWritableRaster(sampleModel, new Point(0, 0));
         Hashtable properties = new Hashtable();
-        if ( noData != null ) {
+        if (noData != null) {
             properties.put("GC_NODATA", noData);
         }
         return new BufferedImage(colorModel, raster, colorModel.isAlphaPremultiplied(), properties);
     }
-    
+
     @Override
     public void dispose() {
         this.layout = null;
@@ -2224,5 +2064,4 @@ public class TIFFImageReader extends ImageReader {
         this.imageReadParam = null;
         this.stream = null;
     }
-
 }

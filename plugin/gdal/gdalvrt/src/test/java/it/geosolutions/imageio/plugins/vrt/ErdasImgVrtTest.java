@@ -21,15 +21,6 @@ import it.geosolutions.imageio.gdalframework.GDALUtilities;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
-import org.eclipse.imagen.ImageLayout;
-import org.junit.Assert;
-import org.junit.Test;
-
-import org.eclipse.imagen.ImageN;
-import org.eclipse.imagen.ParameterBlockImageN;
-import org.eclipse.imagen.RenderedOp;
-
-import javax.imageio.ImageReadParam;
 import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.image.ColorModel;
@@ -39,19 +30,26 @@ import java.awt.image.SampleModel;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import javax.imageio.ImageReadParam;
+import org.eclipse.imagen.ImageLayout;
+import org.eclipse.imagen.ImageN;
+import org.eclipse.imagen.ParameterBlockImageN;
+import org.eclipse.imagen.RenderedOp;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Testing reading capabilities for ERDAS Imagine with {@link VRTImageReader}.
- * 
+ *
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class ErdasImgVrtTest extends AbstractGDALTest {
-    public final static String fileName = "sample-erdas.img.vrt";
+    public static final String fileName = "sample-erdas.img.vrt";
 
     /**
      * Test read exploiting common ImageN operations (Crop-Translate-Rotate)
-     * 
+     *
      * @throws FileNotFoundException
      * @throws IOException
      */
@@ -72,10 +70,8 @@ public class ErdasImgVrtTest extends AbstractGDALTest {
         // get a RenderedImage
         RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
 
-        if (TestData.isInteractiveTest())
-            Viewer.visualizeAllInformation(image, "Read");
-        else
-            Assert.assertNotNull(image.getTiles());
+        if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(image, "Read");
+        else Assert.assertNotNull(image.getTiles());
         ImageIOUtilities.disposeImage(image);
     }
 
@@ -93,12 +89,11 @@ public class ErdasImgVrtTest extends AbstractGDALTest {
         pbjImageRead = new ParameterBlockImageN("ImageRead");
         pbjImageRead.setParameter("Input", file);
         ImageReadParam param = new ImageReadParam();
-        param.setSourceBands(new int[] { 2 });
+        param.setSourceBands(new int[] {2});
 
-        SampleModel originalSampleModel = new ComponentSampleModel(
-                DataBuffer.TYPE_FLOAT, 256, 256, 3, 256 * 3, new int[] {0,1,2});
-        SampleModel sm = new ComponentSampleModel(
-                DataBuffer.TYPE_FLOAT, 256, 256, 1, 256, new int[] {0});
+        SampleModel originalSampleModel =
+                new ComponentSampleModel(DataBuffer.TYPE_FLOAT, 256, 256, 3, 256 * 3, new int[] {0, 1, 2});
+        SampleModel sm = new ComponentSampleModel(DataBuffer.TYPE_FLOAT, 256, 256, 1, 256, new int[] {0});
 
         ColorModel cm = GDALUtilities.extractColorModel(null, originalSampleModel, 1);
 
@@ -119,13 +114,10 @@ public class ErdasImgVrtTest extends AbstractGDALTest {
         Assert.assertEquals(1, sm.getNumBands());
         Assert.assertEquals(1, cm.getNumComponents());
         Assert.assertEquals(ColorSpace.TYPE_GRAY, colorSpace.getType());
-        Assert.assertEquals(400*200*1, image.getData().getDataBuffer().getSize());
+        Assert.assertEquals(400 * 200 * 1, image.getData().getDataBuffer().getSize());
 
-        if (TestData.isInteractiveTest())
-            Viewer.visualizeAllInformation(image, "Read");
-        else
-            Assert.assertNotNull(image.getTiles());
+        if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(image, "Read");
+        else Assert.assertNotNull(image.getTiles());
         ImageIOUtilities.disposeImage(image);
     }
-
 }

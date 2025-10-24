@@ -16,42 +16,29 @@
  */
 package it.geosolutions.imageio.plugins.vrt;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
-import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.pam.PAMDataset;
-import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
-import org.junit.Assert;
-import org.junit.Test;
-
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReadParam;
-import javax.imageio.ImageReader;
-import javax.imageio.metadata.IIOMetadata;
-import org.eclipse.imagen.ImageN;
-import org.eclipse.imagen.ParameterBlockImageN;
-import org.eclipse.imagen.RenderedOp;
-import java.awt.Rectangle;
-import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.metadata.IIOMetadata;
+import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-/**
- * Test reading RasterAttributeTable embedded inside VRT file
- */
+/** Test reading RasterAttributeTable embedded inside VRT file */
 public class RasterAttributeTableTest extends AbstractGDALTest {
     public RasterAttributeTableTest() {
         super();
     }
-
 
     @Test
     public void readImageIO() throws FileNotFoundException, IOException {
@@ -59,7 +46,6 @@ public class RasterAttributeTableTest extends AbstractGDALTest {
             return;
         }
         final File file = TestData.file(this, "095b_dem_90m.asc.vrt");
-
 
         final Iterator<ImageReader> it = ImageIO.getImageReaders(file);
         assertTrue(it.hasNext());
@@ -82,11 +68,20 @@ public class RasterAttributeTableTest extends AbstractGDALTest {
         // Check each field
         List<PAMDataset.PAMRasterBand.FieldDefn> fields = rat.getFieldDefn();
         assertEquals(3, fields.size());
-        assertField(fields.get(0), "con_min", PAMDataset.PAMRasterBand.FieldType.Real,
+        assertField(
+                fields.get(0),
+                "con_min",
+                PAMDataset.PAMRasterBand.FieldType.Real,
                 PAMDataset.PAMRasterBand.FieldUsage.Min);
-        assertField(fields.get(1), "con_max", PAMDataset.PAMRasterBand.FieldType.Real,
+        assertField(
+                fields.get(1),
+                "con_max",
+                PAMDataset.PAMRasterBand.FieldType.Real,
                 PAMDataset.PAMRasterBand.FieldUsage.Max);
-        assertField(fields.get(2), "test", PAMDataset.PAMRasterBand.FieldType.String,
+        assertField(
+                fields.get(2),
+                "test",
+                PAMDataset.PAMRasterBand.FieldType.String,
                 PAMDataset.PAMRasterBand.FieldUsage.Generic);
 
         // Check rows
@@ -103,13 +98,13 @@ public class RasterAttributeTableTest extends AbstractGDALTest {
         reader.dispose();
     }
 
-
-    private void assertField(PAMDataset.PAMRasterBand.FieldDefn fieldDefn, String name,
-                             PAMDataset.PAMRasterBand.FieldType type,
-                             PAMDataset.PAMRasterBand.FieldUsage usage) {
+    private void assertField(
+            PAMDataset.PAMRasterBand.FieldDefn fieldDefn,
+            String name,
+            PAMDataset.PAMRasterBand.FieldType type,
+            PAMDataset.PAMRasterBand.FieldUsage usage) {
         assertEquals(name, fieldDefn.getName());
         assertEquals(type, fieldDefn.getType());
         assertEquals(usage, fieldDefn.getUsage());
     }
 }
-

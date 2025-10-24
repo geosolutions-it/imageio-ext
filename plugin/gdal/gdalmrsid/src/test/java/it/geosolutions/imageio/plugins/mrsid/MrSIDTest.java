@@ -22,7 +22,6 @@ import it.geosolutions.imageio.gdalframework.GDALUtilities;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
-
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -36,7 +35,6 @@ import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
@@ -47,44 +45,38 @@ import org.eclipse.imagen.ImageN;
 import org.eclipse.imagen.ParameterBlockImageN;
 import org.eclipse.imagen.RasterFactory;
 import org.eclipse.imagen.RenderedOp;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import org.eclipse.imagen.media.imageread.ImageReadDescriptor;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Testing reading capabilities for {@link MrSIDImageReader}.
- * 
- * In case you get direct buffer memory problems use the following hint
- * -XX:MaxDirectMemorySize=128M
- * 
+ *
+ * <p>In case you get direct buffer memory problems use the following hint -XX:MaxDirectMemorySize=128M
+ *
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class MrSIDTest extends AbstractGDALTest {
 
     protected static final String fileName = "n13250i.sid";
-	/** A simple flag set to true in case the MrSID driver is available */
-    private final static boolean isMrSidAvailable;
-    
-    static{
-        if (isGDALAvailable) {  
+    /** A simple flag set to true in case the MrSID driver is available */
+    private static final boolean isMrSidAvailable;
+
+    static {
+        if (isGDALAvailable) {
             isMrSidAvailable = GDALUtilities.isDriverAvailable("MrSID");
         } else {
             isMrSidAvailable = false;
         }
-        if (!isMrSidAvailable){
+        if (!isMrSidAvailable) {
             AbstractGDALTest.missingDriverMessage("MrSID");
         }
     }
 
-
     /**
      * Test retrieving all available metadata properties
-     * 
+     *
      * @throws FileNotFoundException
      * @throws IOException
      */
@@ -98,40 +90,36 @@ public class MrSIDTest extends AbstractGDALTest {
             final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN("ImageRead");
             pbjImageRead.setParameter("Input", file);
             RenderedOp image = ImageN.create("ImageRead", pbjImageRead);
-            IIOMetadata metadata = (IIOMetadata) image
-                    .getProperty(ImageReadDescriptor.PROPERTY_NAME_METADATA_IMAGE);
+            IIOMetadata metadata = (IIOMetadata) image.getProperty(ImageReadDescriptor.PROPERTY_NAME_METADATA_IMAGE);
             Assert.assertTrue(metadata instanceof GDALCommonIIOImageMetadata);
             Assert.assertTrue(metadata instanceof MrSIDIIOImageMetadata);
             GDALCommonIIOImageMetadata commonMetadata = (GDALCommonIIOImageMetadata) metadata;
-            ImageIOUtilities
-                    .displayImageIOMetadata(commonMetadata
-                            .getAsTree(GDALCommonIIOImageMetadata.nativeMetadataFormatName));
-            ImageIOUtilities.displayImageIOMetadata(commonMetadata
-                    .getAsTree(MrSIDIIOImageMetadata.mrsidImageMetadataName));
-            if (TestData.isInteractiveTest())
-                Viewer.visualizeAllInformation(image, "", TestData.isInteractiveTest());
+            ImageIOUtilities.displayImageIOMetadata(
+                    commonMetadata.getAsTree(GDALCommonIIOImageMetadata.nativeMetadataFormatName));
+            ImageIOUtilities.displayImageIOMetadata(
+                    commonMetadata.getAsTree(MrSIDIIOImageMetadata.mrsidImageMetadataName));
+            if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(image, "", TestData.isInteractiveTest());
             else {
-            	ImageIOUtilities.disposeImage(image);
+                ImageIOUtilities.disposeImage(image);
             }
         } catch (FileNotFoundException fnfe) {
             warningMessage();
         }
-        
+
         try {
             final File file = TestData.file(this, fileName);
-            ImageReader reader= new MrSIDImageReaderSpi().createReaderInstance();
+            ImageReader reader = new MrSIDImageReaderSpi().createReaderInstance();
             reader.setInput(ImageIO.createImageInputStream(file));
-            Assert.assertEquals(618,reader.getWidth(0));
-            Assert.assertEquals(1265,reader.getHeight(0));
+            Assert.assertEquals(618, reader.getWidth(0));
+            Assert.assertEquals(1265, reader.getHeight(0));
             IIOMetadata metadata = (IIOMetadata) reader.getImageMetadata(0);
             Assert.assertTrue(metadata instanceof GDALCommonIIOImageMetadata);
             Assert.assertTrue(metadata instanceof MrSIDIIOImageMetadata);
             GDALCommonIIOImageMetadata commonMetadata = (GDALCommonIIOImageMetadata) metadata;
-            ImageIOUtilities
-                    .displayImageIOMetadata(commonMetadata
-                            .getAsTree(GDALCommonIIOImageMetadata.nativeMetadataFormatName));
-            ImageIOUtilities.displayImageIOMetadata(commonMetadata
-                    .getAsTree(MrSIDIIOImageMetadata.mrsidImageMetadataName));
+            ImageIOUtilities.displayImageIOMetadata(
+                    commonMetadata.getAsTree(GDALCommonIIOImageMetadata.nativeMetadataFormatName));
+            ImageIOUtilities.displayImageIOMetadata(
+                    commonMetadata.getAsTree(MrSIDIIOImageMetadata.mrsidImageMetadataName));
             reader.dispose();
         } catch (FileNotFoundException fnfe) {
             warningMessage();
@@ -140,7 +128,7 @@ public class MrSIDTest extends AbstractGDALTest {
 
     /**
      * Test read exploiting common ImageN operations (Crop-Translate-Rotate)
-     * 
+     *
      * @throws FileNotFoundException
      * @throws IOException
      */
@@ -163,26 +151,21 @@ public class MrSIDTest extends AbstractGDALTest {
             final int ySubSampling = 2;
             final int xSubSamplingOffset = 0;
             final int ySubSamplingOffset = 0;
-            irp.setSourceSubsampling(xSubSampling, ySubSampling,
-                    xSubSamplingOffset, ySubSamplingOffset);
+            irp.setSourceSubsampling(xSubSampling, ySubSampling, xSubSamplingOffset, ySubSamplingOffset);
 
             // re-tile on the fly to 512x512
             final ImageLayout l = new ImageLayout();
-            l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512)
-                    .setTileWidth(512);
+            l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512).setTileWidth(512);
 
             pbjImageRead = new ParameterBlockImageN("ImageRead");
             pbjImageRead.setParameter("Input", file);
             pbjImageRead.setParameter("readParam", irp);
 
             // get a RenderedImage
-            RenderedOp image = ImageN.create("ImageRead", pbjImageRead,
-                    new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, l));
+            RenderedOp image = ImageN.create("ImageRead", pbjImageRead, new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, l));
 
-            if (TestData.isInteractiveTest())
-                Viewer.visualizeAllInformation(image, "Subsampling Read");
-            else
-            	Assert.assertNotNull(image.getTiles());
+            if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(image, "Subsampling Read");
+            else Assert.assertNotNull(image.getTiles());
 
             // ////////////////////////////////////////////////////////////////
             // preparing to crop
@@ -190,10 +173,8 @@ public class MrSIDTest extends AbstractGDALTest {
             final ParameterBlockImageN pbjCrop = new ParameterBlockImageN("Crop");
             pbjCrop.addSource(image);
 
-            Float xCrop = new Float(image.getWidth() * 3 / 4.0
-                    + image.getMinX());
-            Float yCrop = new Float(image.getHeight() * 3 / 4.0
-                    + image.getMinY());
+            Float xCrop = new Float(image.getWidth() * 3 / 4.0 + image.getMinX());
+            Float yCrop = new Float(image.getHeight() * 3 / 4.0 + image.getMinY());
             Float cropWidth = new Float(image.getWidth() / 4.0);
             Float cropHeigth = new Float(image.getHeight() / 4.0);
 
@@ -203,16 +184,13 @@ public class MrSIDTest extends AbstractGDALTest {
             pbjCrop.setParameter("height", cropHeigth);
 
             final RenderedOp croppedImage = ImageN.create("Crop", pbjCrop);
-            if (TestData.isInteractiveTest())
-                Viewer.visualizeAllInformation(croppedImage, "Cropped Image");
-            else
-            	Assert.assertNotNull(croppedImage.getTiles());
+            if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(croppedImage, "Cropped Image");
+            else Assert.assertNotNull(croppedImage.getTiles());
 
             // ////////////////////////////////////////////////////////////////
             // preparing to translate
             // ////////////////////////////////////////////////////////////////
-            final ParameterBlockImageN pbjTranslate = new ParameterBlockImageN(
-                    "Translate");
+            final ParameterBlockImageN pbjTranslate = new ParameterBlockImageN("Translate");
             pbjTranslate.addSource(croppedImage);
 
             Float xTrans = new Float(-croppedImage.getMinX());
@@ -221,12 +199,9 @@ public class MrSIDTest extends AbstractGDALTest {
             pbjTranslate.setParameter("xTrans", xTrans);
             pbjTranslate.setParameter("yTrans", yTrans);
 
-            final RenderedOp translatedImage = ImageN.create("Translate",
-                    pbjTranslate);
-            if (TestData.isInteractiveTest())
-                Viewer.visualizeAllInformation(translatedImage, "Translated Image");
-            else
-            	Assert.assertNotNull(image.getTiles());
+            final RenderedOp translatedImage = ImageN.create("Translate", pbjTranslate);
+            if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(translatedImage, "Translated Image");
+            else Assert.assertNotNull(image.getTiles());
 
             // ////////////////////////////////////////////////////////////////
             // preparing to rotate
@@ -244,11 +219,10 @@ public class MrSIDTest extends AbstractGDALTest {
             pbjRotate.setParameter("angle", angle);
 
             final RenderedOp rotatedImage = ImageN.create("Rotate", pbjRotate);
-            if (TestData.isInteractiveTest())
-                Viewer.visualizeAllInformation(rotatedImage, "Rotated Image");
+            if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(rotatedImage, "Rotated Image");
             else {
-            	Assert.assertNotNull(image.getTiles());
-            	ImageIOUtilities.disposeImage(image);
+                Assert.assertNotNull(image.getTiles());
+                ImageIOUtilities.disposeImage(image);
             }
         } catch (FileNotFoundException fnfe) {
             warningMessage();
@@ -256,9 +230,8 @@ public class MrSIDTest extends AbstractGDALTest {
     }
 
     /**
-     * Test read exploiting the setSourceBands and setDestinationType on
-     * imageReadParam
-     * 
+     * Test read exploiting the setSourceBands and setDestinationType on imageReadParam
+     *
      * @throws FileNotFoundException
      * @throws IOException
      */
@@ -268,8 +241,7 @@ public class MrSIDTest extends AbstractGDALTest {
             return;
         }
         try {
-            ImageReader reader = new MrSIDImageReaderSpi()
-                    .createReaderInstance();
+            ImageReader reader = new MrSIDImageReaderSpi().createReaderInstance();
             final File file = TestData.file(this, fileName);
             reader.setInput(file);
 
@@ -278,8 +250,8 @@ public class MrSIDTest extends AbstractGDALTest {
             // Getting image properties
             //
             // //
-            ImageTypeSpecifier spec = (ImageTypeSpecifier) reader
-                    .getImageTypes(0).next();
+            ImageTypeSpecifier spec =
+                    (ImageTypeSpecifier) reader.getImageTypes(0).next();
             SampleModel sm = spec.getSampleModel();
             final int width = reader.getWidth(0);
             final int height = reader.getHeight(0);
@@ -290,15 +262,15 @@ public class MrSIDTest extends AbstractGDALTest {
             //
             // //
             ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
-            ColorModel cm = RasterFactory.createComponentColorModel(sm
-                    .getDataType(), // dataType
+            ColorModel cm = RasterFactory.createComponentColorModel(
+                    sm.getDataType(), // dataType
                     cs, // color space
                     false, // has alpha
                     false, // is alphaPremultiplied
                     Transparency.OPAQUE); // transparency
 
             // //
-            // 
+            //
             // Setting Image Read Parameters
             //
             // //
@@ -308,16 +280,16 @@ public class MrSIDTest extends AbstractGDALTest {
             param.setSourceSubsampling(ssx, ssy, 0, 0);
             final Rectangle sourceRegion = new Rectangle(50, 50, 300, 300);
             param.setSourceRegion(sourceRegion);
-            param.setSourceBands(new int[] { 0 });
+            param.setSourceBands(new int[] {0});
             Rectangle intersRegion = new Rectangle(0, 0, width, height);
             intersRegion = intersRegion.intersection(sourceRegion);
 
             int subsampledWidth = (intersRegion.width + ssx - 1) / ssx;
             int subsampledHeight = (intersRegion.height + ssy - 1) / ssy;
-            param.setDestinationType(new ImageTypeSpecifier(cm, sm
-                    .createCompatibleSampleModel(subsampledWidth,
-                            subsampledHeight).createSubsetSampleModel(
-                            new int[] { 0 })));
+            param.setDestinationType(new ImageTypeSpecifier(
+                    cm,
+                    sm.createCompatibleSampleModel(subsampledWidth, subsampledHeight)
+                            .createSubsetSampleModel(new int[] {0})));
 
             // //
             //
@@ -335,18 +307,15 @@ public class MrSIDTest extends AbstractGDALTest {
             //
             // //
             final ImageLayout l = new ImageLayout();
-            l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(256)
-                    .setTileWidth(256);
-            RenderedOp image = ImageN.create("ImageRead", pbjImageRead,
-                    new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, l));
+            l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(256).setTileWidth(256);
+            RenderedOp image = ImageN.create("ImageRead", pbjImageRead, new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, l));
 
-            if (TestData.isInteractiveTest())
-                Viewer.visualizeAllInformation(image, "SourceBand selection");
+            if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(image, "SourceBand selection");
             else {
-            	Assert.assertNotNull(image.getTiles());
-            	ImageIOUtilities.disposeImage(image);
+                Assert.assertNotNull(image.getTiles());
+                ImageIOUtilities.disposeImage(image);
             }
-            
+
         } catch (FileNotFoundException fnfe) {
             warningMessage();
         }
@@ -354,7 +323,7 @@ public class MrSIDTest extends AbstractGDALTest {
 
     /**
      * Test read exploiting the setDestination on imageReadParam
-     * 
+     *
      * @throws FileNotFoundException
      * @throws IOException
      */
@@ -364,26 +333,22 @@ public class MrSIDTest extends AbstractGDALTest {
             return;
         }
         try {
-            ImageReader reader = new MrSIDImageReaderSpi()
-                    .createReaderInstance();
+            ImageReader reader = new MrSIDImageReaderSpi().createReaderInstance();
 
             final File file = TestData.file(this, fileName);
             reader.setInput(file);
-            ImageTypeSpecifier spec = (ImageTypeSpecifier) reader
-                    .getImageTypes(0).next();
+            ImageTypeSpecifier spec =
+                    (ImageTypeSpecifier) reader.getImageTypes(0).next();
             final int width = reader.getWidth(0);
             final int halfWidth = width / 2;
             final int height = reader.getHeight(0);
             final int halfHeight = height / 2;
 
             final ImageReadParam irp = new ImageReadParam();
-            irp.setSourceRegion(new Rectangle(halfWidth, halfHeight, halfWidth,
-                    halfHeight));
-            WritableRaster raster = Raster.createWritableRaster(spec
-                    .getSampleModel()
-                    .createCompatibleSampleModel(width, height), null);
-            final BufferedImage bi = new BufferedImage(spec.getColorModel(),
-                    raster, false, null);
+            irp.setSourceRegion(new Rectangle(halfWidth, halfHeight, halfWidth, halfHeight));
+            WritableRaster raster =
+                    Raster.createWritableRaster(spec.getSampleModel().createCompatibleSampleModel(width, height), null);
+            final BufferedImage bi = new BufferedImage(spec.getColorModel(), raster, false, null);
 
             irp.setDestination(bi);
             irp.setDestinationOffset(new Point(halfWidth, halfHeight));
@@ -391,15 +356,12 @@ public class MrSIDTest extends AbstractGDALTest {
             irp.setSourceRegion(new Rectangle(0, 0, halfWidth, halfHeight));
             irp.setDestinationOffset(new Point(0, 0));
             reader.read(0, irp);
-            irp.setSourceRegion(new Rectangle(halfWidth, halfHeight / 2,
-                    halfWidth, halfHeight / 4));
+            irp.setSourceRegion(new Rectangle(halfWidth, halfHeight / 2, halfWidth, halfHeight / 4));
             irp.setDestinationOffset(new Point(halfWidth, halfHeight / 2));
             reader.read(0, irp);
 
-            if (TestData.isInteractiveTest())
-                Viewer.visualizeAllInformation(bi, "MrSID Destination settings");
-            else
-            	Assert.assertNotNull(bi);
+            if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(bi, "MrSID Destination settings");
+            else Assert.assertNotNull(bi);
 
             reader.dispose();
         } catch (FileNotFoundException fnfe) {

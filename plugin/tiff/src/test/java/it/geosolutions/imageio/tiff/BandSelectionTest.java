@@ -16,21 +16,13 @@
  */
 package it.geosolutions.imageio.tiff;
 
-import org.eclipse.imagen.media.imageread.ImageReadDescriptor;
+import static org.junit.Assert.assertEquals;
+
 import it.geosolutions.imageio.plugins.tiff.TIFFImageReadParam;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReader;
 import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
 import it.geosolutions.resources.TestData;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-
-import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.stream.FileImageInputStream;
-import org.eclipse.imagen.PlanarImage;
-import org.eclipse.imagen.RenderedOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
@@ -39,12 +31,19 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
-
-import static org.junit.Assert.assertEquals;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.stream.FileImageInputStream;
+import org.eclipse.imagen.PlanarImage;
+import org.eclipse.imagen.RenderedOp;
+import org.eclipse.imagen.media.imageread.ImageReadDescriptor;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 /**
- * Tests band selection with a variety of file layouts (pixel vs band interleaved) and
- * compressions (since decompressors are informed of band selection).
+ * Tests band selection with a variety of file layouts (pixel vs band interleaved) and compressions (since decompressors
+ * are informed of band selection).
  */
 @RunWith(Parameterized.class)
 public class BandSelectionTest {
@@ -56,15 +55,14 @@ public class BandSelectionTest {
         REFERENCE_IMAGE = TIFFReadTest.readTiff(TestData.file(BandSelectionTest.class, "sampleRGBA.tif"));
     }
 
-
     private final boolean enhancedBandSelection;
     private final boolean deferredLoading;
 
     @Parameterized.Parameters(name = "Enhanced read: {0} - Deferred load: {1} ")
     public static List<Object[]> useEnhancedBandSelection() {
-        return Arrays.asList(new Object[][]{{false, false},{true, false }, {false, true}, {true, true}});
+        return Arrays.asList(new Object[][] {{false, false}, {true, false}, {false, true}, {true, true}});
     }
-    
+
     public BandSelectionTest(boolean enhancedBandSelection, boolean deferredLoading) {
         this.enhancedBandSelection = enhancedBandSelection;
         this.deferredLoading = deferredLoading;
@@ -162,8 +160,7 @@ public class BandSelectionTest {
     }
 
     private BufferedImage readWithBandSelect(File file, int[] bands) throws Exception {
-        final TIFFImageReader reader =
-                (TIFFImageReader) new TIFFImageReaderSpi().createReaderInstance();
+        final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi().createReaderInstance();
 
         try (FileImageInputStream is = new FileImageInputStream(file)) {
             TIFFImageReadParam param = (TIFFImageReadParam) reader.getDefaultReadParam();
@@ -175,23 +172,22 @@ public class BandSelectionTest {
                 param.setSourceBands(bands);
                 param.setDestinationBands(IntStream.range(0, bands.length).toArray());
             }
-            
+
             if (deferredLoading || !enhancedBandSelection) {
-                ImageTypeSpecifier its = ImageIOUtilities.getBandSelectedType(bands.length,
-                        REFERENCE_IMAGE.getSampleModel());
+                ImageTypeSpecifier its =
+                        ImageIOUtilities.getBandSelectedType(bands.length, REFERENCE_IMAGE.getSampleModel());
                 param.setDestinationType(its);
             }
-            
+
             // direct read
             if (!deferredLoading) {
                 reader.setInput(is);
                 return reader.read(0, param);
             }
 
-            // deferred read, to go through the ImageN machinery figuring out the deferred image layout 
+            // deferred read, to go through the ImageN machinery figuring out the deferred image layout
             // (and then making it a BufferedImage so that we can dispose the reader safely)
-            RenderedOp op = ImageReadDescriptor.create(is, 0, false, false, false, null,
-                    null, param, reader, null);
+            RenderedOp op = ImageReadDescriptor.create(is, 0, false, false, false, null, null, param, reader, null);
             return PlanarImage.wrapRenderedImage(op).getAsBufferedImage();
         } finally {
             if (reader != null) {

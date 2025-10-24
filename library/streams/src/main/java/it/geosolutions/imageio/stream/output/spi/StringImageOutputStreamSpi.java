@@ -18,7 +18,6 @@ package it.geosolutions.imageio.stream.output.spi;
 
 import it.geosolutions.imageio.stream.output.FileImageOutputStreamExtImpl;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -28,22 +27,19 @@ import java.net.URL;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.imageio.spi.ImageOutputStreamSpi;
 import javax.imageio.stream.ImageOutputStream;
 
 /**
- * A Special {@link ImageOutputStreamSpi} Service Provider Interface which is
- * able to provide an {@link ImageOutputStream} object for writing to a
- * {@link URL} in case such a URL is writable of course.
- * 
+ * A Special {@link ImageOutputStreamSpi} Service Provider Interface which is able to provide an
+ * {@link ImageOutputStream} object for writing to a {@link URL} in case such a URL is writable of course.
+ *
  * @author Simone Giannecchini, GeoSolutions
  */
 public class StringImageOutputStreamSpi extends ImageOutputStreamSpi {
 
     /** Logger. */
-    private final static Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.stream.output");
+    private static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.stream.output");
 
     private static final String vendorName = "GeoSolutions";
 
@@ -53,7 +49,6 @@ public class StringImageOutputStreamSpi extends ImageOutputStreamSpi {
 
     public StringImageOutputStreamSpi() {
         super(vendorName, version, outputClass);
-
     }
 
     public String getDescription(Locale locale) {
@@ -61,22 +56,16 @@ public class StringImageOutputStreamSpi extends ImageOutputStreamSpi {
     }
 
     /**
-     * Returns an instance of the {@link ImageOutputStream} implementation
-     * associated with this service provider.
-     * 
+     * Returns an instance of the {@link ImageOutputStream} implementation associated with this service provider.
+     *
      * @return an ImageOutputStream instance.
-     * 
-     * @throws IllegalArgumentException
-     *                 if input is not an instance of the correct class or is
-     *                 null.
+     * @throws IllegalArgumentException if input is not an instance of the correct class or is null.
      */
-    public ImageOutputStream createOutputStreamInstance(Object output,
-            boolean useCache, File cacheDir) {
+    public ImageOutputStream createOutputStreamInstance(Object output, boolean useCache, File cacheDir) {
 
         // is it a String?
         if (!(output instanceof String)) {
-            if (LOGGER.isLoggable(Level.FINE))
-                LOGGER.fine("Provided input is not a String.");
+            if (LOGGER.isLoggable(Level.FINE)) LOGGER.fine("Provided input is not a String.");
             return null;
         }
 
@@ -92,8 +81,7 @@ public class StringImageOutputStreamSpi extends ImageOutputStreamSpi {
         try {
             tempURL = new URL(outputURL);
         } catch (MalformedURLException e) {
-            if (LOGGER.isLoggable(Level.FINE))
-                LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
+            if (LOGGER.isLoggable(Level.FINE)) LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
             return null;
         }
         if (tempURL.getProtocol().compareToIgnoreCase("eraf") == 0) {
@@ -102,14 +90,11 @@ public class StringImageOutputStreamSpi extends ImageOutputStreamSpi {
                 tempFile = ImageIOUtilities.urlToFile(tempURL);
                 return new FileImageOutputStreamExtImpl(tempFile);
             } catch (UnsupportedEncodingException e) {
-                if (LOGGER.isLoggable(Level.FINE))
-                    LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
+                if (LOGGER.isLoggable(Level.FINE)) LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
             } catch (FileNotFoundException e) {
-                if (LOGGER.isLoggable(Level.FINE))
-                    LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
+                if (LOGGER.isLoggable(Level.FINE)) LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
             } catch (IOException e) {
-                if (LOGGER.isLoggable(Level.FINE))
-                    LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
+                if (LOGGER.isLoggable(Level.FINE)) LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
             }
         }
         return null;

@@ -20,17 +20,15 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.Locale;
-
 import javax.imageio.IIOParamController;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
 
 /**
  * An abstract class which works as an adapter of {@link ImageWriteParam}
- * 
+ *
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
- * 
  */
 public abstract class GDALImageWriteParam extends ImageWriteParam {
     private final ImageWriteParam adaptee;
@@ -158,18 +156,15 @@ public abstract class GDALImageWriteParam extends ImageWriteParam {
     }
 
     public boolean activateController() {
-        throw new UnsupportedOperationException(
-                "This operation is not currently supported by this API");
+        throw new UnsupportedOperationException("This operation is not currently supported by this API");
     }
 
     public IIOParamController getController() {
-        throw new UnsupportedOperationException(
-                "This operation is not currently supported by this API");
+        throw new UnsupportedOperationException("This operation is not currently supported by this API");
     }
 
     public IIOParamController getDefaultController() {
-        throw new UnsupportedOperationException(
-                "This operation is not currently supported by this API");
+        throw new UnsupportedOperationException("This operation is not currently supported by this API");
     }
 
     public Point getDestinationOffset() {
@@ -209,12 +204,11 @@ public abstract class GDALImageWriteParam extends ImageWriteParam {
     }
 
     public void setController(IIOParamController controller) {
-        throw new UnsupportedOperationException(
-                "This operation is not currently supported by this API");
+        throw new UnsupportedOperationException("This operation is not currently supported by this API");
     }
 
     public void setDestinationOffset(Point destinationOffset) {
-        adaptee.setDestinationOffset(destinationOffset);// only for tests
+        adaptee.setDestinationOffset(destinationOffset); // only for tests
         // throw new UnsupportedOperationException(
         // "This operation is not currently supported by this API");
     }
@@ -227,26 +221,19 @@ public abstract class GDALImageWriteParam extends ImageWriteParam {
         adaptee.setSourceRegion(sourceRegion);
     }
 
-    public void setSourceSubsampling(int sourceXSubsampling,
-            int sourceYSubsampling, int subsamplingXOffset,
-            int subsamplingYOffset) {
-        adaptee.setSourceSubsampling(sourceXSubsampling, sourceYSubsampling,
-                subsamplingXOffset, subsamplingYOffset);
+    public void setSourceSubsampling(
+            int sourceXSubsampling, int sourceYSubsampling, int subsamplingXOffset, int subsamplingYOffset) {
+        adaptee.setSourceSubsampling(sourceXSubsampling, sourceYSubsampling, subsamplingXOffset, subsamplingYOffset);
     }
 
-    /**
-     * 
-     */
-    public GDALImageWriteParam(final ImageWriteParam adaptee,
-            final GDALCreateOptionsHandler optionsHandler) {
+    /** */
+    public GDALImageWriteParam(final ImageWriteParam adaptee, final GDALCreateOptionsHandler optionsHandler) {
         this(adaptee, optionsHandler, Locale.getDefault());
     }
 
-    /**
-     * @param locale
-     */
-    public GDALImageWriteParam(final ImageWriteParam adaptee,
-            final GDALCreateOptionsHandler optionsHandler, Locale locale) {
+    /** @param locale */
+    public GDALImageWriteParam(
+            final ImageWriteParam adaptee, final GDALCreateOptionsHandler optionsHandler, Locale locale) {
         super(locale);
         this.adaptee = adaptee;
         this.createOptionsHandler = optionsHandler;
@@ -259,5 +246,4 @@ public abstract class GDALImageWriteParam extends ImageWriteParam {
     public GDALCreateOptionsHandler getCreateOptionsHandler() {
         return createOptionsHandler;
     }
-
 }

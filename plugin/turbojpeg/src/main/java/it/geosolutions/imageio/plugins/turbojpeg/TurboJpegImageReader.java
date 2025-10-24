@@ -25,28 +25,26 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
-
 import org.libjpegturbo.turbojpeg.TJ;
 import org.libjpegturbo.turbojpeg.TJDecompressor;
 
 /**
  * @author Emanuele Tajariol, GeoSolutions SaS
- * @author Daniele Romagnoli, GeoSolutions SaS An {@link ImageReader} for JPEG decompression using the TurboJPEG library. It can accept (as setInput
- *         method) both an ImageInputStream as any other {@link ImageReader}, as well as byte[] object. The last one is useful when the reader is
- *         initialized by a TiffImageReader having internally JPEG compressed tiles. It can pass down the byte[] array instead of doing any copy,
- *         repeated read of a buffer (Which should be faster)
+ * @author Daniele Romagnoli, GeoSolutions SaS An {@link ImageReader} for JPEG decompression using the TurboJPEG
+ *     library. It can accept (as setInput method) both an ImageInputStream as any other {@link ImageReader}, as well as
+ *     byte[] object. The last one is useful when the reader is initialized by a TiffImageReader having internally JPEG
+ *     compressed tiles. It can pass down the byte[] array instead of doing any copy, repeated read of a buffer (Which
+ *     should be faster)
  */
 public class TurboJpegImageReader extends ImageReader {
 
-    private static final Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.plugins.turbojpeg");
+    private static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.turbojpeg");
 
     private int INITIAL_JPG_BUFFER_SIZE = 1 * 1024 * 1024;
 
@@ -106,13 +104,12 @@ public class TurboJpegImageReader extends ImageReader {
         return height;
     }
 
-    private static final List<ImageTypeSpecifier> FIXEDIMGETYPES = Collections
-            .unmodifiableList(Arrays.asList(
-                    ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB),
-                    ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_ARGB),
-                    ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_3BYTE_BGR),
-                    ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_4BYTE_ABGR),
-                    ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_BYTE_GRAY)));
+    private static final List<ImageTypeSpecifier> FIXEDIMGETYPES = Collections.unmodifiableList(Arrays.asList(
+            ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB),
+            ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_ARGB),
+            ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_3BYTE_BGR),
+            ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_4BYTE_ABGR),
+            ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_BYTE_GRAY)));
 
     @Override
     public Iterator<ImageTypeSpecifier> getImageTypes(int imageIndex) throws IOException {
@@ -139,11 +136,11 @@ public class TurboJpegImageReader extends ImageReader {
             throw new IllegalArgumentException("Missing data array");
         }
 
-        BufferedImage bi = new BufferedImage(width, height,
-                       subsamp == TJ.SAMP_GRAY ? BufferedImage.TYPE_BYTE_GRAY : BufferedImage.TYPE_3BYTE_BGR);
+        BufferedImage bi = new BufferedImage(
+                width, height, subsamp == TJ.SAMP_GRAY ? BufferedImage.TYPE_BYTE_GRAY : BufferedImage.TYPE_3BYTE_BGR);
 
         // Using local variables to avoid changing the internal state
-        
+
         try {
             decompressor.setJPEGImage(data, data.length);
             decompressor.decompress(bi, flags);
@@ -196,8 +193,7 @@ public class TurboJpegImageReader extends ImageReader {
             subsamp = decompressor.getSubsamp();
 
         } catch (Exception ex) {
-            throw new RuntimeException("Error creating jpegturbo decompressor: " + ex.getMessage(),
-                    ex);
+            throw new RuntimeException("Error creating jpegturbo decompressor: " + ex.getMessage(), ex);
         }
         super.setInput(input, seekForwardOnly, ignoreMetadata);
         // CHECKME: should we mark the position?
@@ -226,9 +222,7 @@ public class TurboJpegImageReader extends ImageReader {
                 } catch (Exception ex) {
                     // Eat exception. There is nothing else we can do
                     if (LOGGER.isLoggable(Level.FINE)) {
-                        LOGGER.fine(
-                                "Exception occurred while closing the decompressor: "
-                                        + ex.getLocalizedMessage());
+                        LOGGER.fine("Exception occurred while closing the decompressor: " + ex.getLocalizedMessage());
                     }
                 }
             }
@@ -249,18 +243,18 @@ public class TurboJpegImageReader extends ImageReader {
             sb.append(" destOff:").append(param.getDestinationOffset());
 
             ImageTypeSpecifier its = param.getDestinationType();
-            if(its != null) {
+            if (its != null) {
                 sb.append(" its:").append(its.getSampleModel());
-                if(its.getSampleModel() != null ) {
+                if (its.getSampleModel() != null) {
                     sb.append(" its.sm.datatype:").append(its.getSampleModel().getDataType());
                     sb.append(" its.sm.numbands:").append(its.getSampleModel().getNumBands());
                 }
             }
 
             BufferedImage bi = param.getDestination();
-            if(bi != null) {
+            if (bi != null) {
                 sb.append(" bi.sm:").append(bi.getSampleModel());
-                if(bi.getSampleModel() != null) {
+                if (bi.getSampleModel() != null) {
                     sb.append(" bi.sm.datatype:").append(bi.getSampleModel().getDataType());
                     sb.append(" bi.sm.numbands:").append(bi.getSampleModel().getNumBands());
                 }

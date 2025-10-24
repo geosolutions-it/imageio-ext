@@ -17,19 +17,15 @@
 package it.geosolutions.imageio.stream.output;
 
 import it.geosolutions.imageio.stream.AccessibleStream;
-
 import java.io.IOException;
 import java.io.OutputStream;
-
 import javax.imageio.stream.ImageOutputStreamImpl;
 
-/**
- * @author Simone Giannecchini, GeoSolutions
- */
-public class ImageOutputStreamAdapter extends ImageOutputStreamImpl implements AccessibleStream<OutputStream>{
+/** @author Simone Giannecchini, GeoSolutions */
+public class ImageOutputStreamAdapter extends ImageOutputStreamImpl implements AccessibleStream<OutputStream> {
 
-    // Supporting marking is a big issue. I should overline this somehow 
-    
+    // Supporting marking is a big issue. I should overline this somehow
+
     @Override
     public void flushBefore(long arg0) throws IOException {
         throw new UnsupportedOperationException("Operation not supported.");
@@ -84,57 +80,45 @@ public class ImageOutputStreamAdapter extends ImageOutputStreamImpl implements A
     public long skipBytes(long arg0) throws IOException {
         throw new UnsupportedOperationException("Operation not supported.");
     }
-    
+
     private OutputStream os;
 
     public ImageOutputStreamAdapter(OutputStream os) {
         this.os = os;
     }
 
-    /**
-     * @see javax.imageio.stream.ImageOutputStreamImpl#write(int)
-     */
+    /** @see javax.imageio.stream.ImageOutputStreamImpl#write(int) */
     public void write(int b) throws IOException {
         os.write(b);
     }
 
-    /**
-     * @see javax.imageio.stream.ImageOutputStreamImpl#write(byte[], int, int)
-     */
+    /** @see javax.imageio.stream.ImageOutputStreamImpl#write(byte[], int, int) */
     public void write(byte[] b, int off, int len) throws IOException {
         os.write(b, off, len);
     }
 
-    /**
-     * @see javax.imageio.stream.ImageInputStreamImpl#read()
-     */
+    /** @see javax.imageio.stream.ImageInputStreamImpl#read() */
     public int read() throws IOException {
         throw new UnsupportedOperationException("Operation not supported.");
     }
 
-    /**
-     * @see javax.imageio.stream.ImageInputStreamImpl#read(byte[], int, int)
-     */
+    /** @see javax.imageio.stream.ImageInputStreamImpl#read(byte[], int, int) */
     public int read(byte[] b, int off, int len) throws IOException {
         throw new UnsupportedOperationException("Operation not supported.");
     }
 
-    /**
-     * @see javax.imageio.stream.ImageInputStreamImpl#flush()
-     */
+    /** @see javax.imageio.stream.ImageInputStreamImpl#flush() */
     public void flush() throws IOException {
         os.flush();
     }
 
-    /**
-     * @see javax.imageio.stream.ImageInputStreamImpl#close()
-     */
+    /** @see javax.imageio.stream.ImageInputStreamImpl#close() */
     public void close() throws IOException {
-    	try{
-    		super.close();
-    	}finally{
-    		os.close();
-    	}
+        try {
+            super.close();
+        } finally {
+            os.close();
+        }
     }
 
     public OutputStream getTarget() {

@@ -1,42 +1,42 @@
 /*
  * $RCSfile: TIFFDeflateDecompressor.java,v $
  *
- * 
+ *
  * Copyright (c) 2005 Sun Microsystems, Inc. All  Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
- * are met: 
- * 
- * - Redistribution of source code must retain the above copyright 
+ * are met:
+ *
+ * - Redistribution of source code must retain the above copyright
  *   notice, this  list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in 
+ *   notice, this list of conditions and the following disclaimer in
  *   the documentation and/or other materials provided with the
  *   distribution.
- * 
- * Neither the name of Sun Microsystems, Inc. or the names of 
- * contributors may be used to endorse or promote products derived 
+ *
+ * Neither the name of Sun Microsystems, Inc. or the names of
+ * contributors may be used to endorse or promote products derived
  * from this software without specific prior written permission.
- * 
- * This software is provided "AS IS," without a warranty of any 
- * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND 
- * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, 
+ *
+ * This software is provided "AS IS," without a warranty of any
+ * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND
+ * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY
- * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL 
- * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF 
+ * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL
+ * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF
  * USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS
- * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR 
+ * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR
  * ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL,
  * CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND
  * REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR
  * INABILITY TO USE THIS SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGES. 
- * 
- * You acknowledge that this software is not designed or intended for 
- * use in the design, construction, operation or maintenance of any 
- * nuclear facility. 
+ * POSSIBILITY OF SUCH DAMAGES.
+ *
+ * You acknowledge that this software is not designed or intended for
+ * use in the design, construction, operation or maintenance of any
+ * nuclear facility.
  *
  * $Revision: 1.1 $
  * $Date: 2005/02/11 05:01:45 $
@@ -73,17 +73,14 @@
  */
 package it.geosolutions.imageioimpl.plugins.tiff;
 
-import it.geosolutions.imageio.compression.CompressionType;
 import it.geosolutions.imageio.compression.CompressionFinder;
+import it.geosolutions.imageio.compression.CompressionType;
 import it.geosolutions.imageio.compression.Decompressor;
-
-import java.io.IOException;
-import java.util.zip.DataFormatException;
-
-import javax.imageio.IIOException;
-
 import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
 import it.geosolutions.imageio.plugins.tiff.TIFFDecompressor;
+import java.io.IOException;
+import java.util.zip.DataFormatException;
+import javax.imageio.IIOException;
 
 public class TIFFDeflateDecompressor extends TIFFDecompressor {
 
@@ -92,13 +89,13 @@ public class TIFFDeflateDecompressor extends TIFFDecompressor {
     Decompressor deflateDecompressor;
 
     public TIFFDeflateDecompressor(int predictor) throws IIOException {
-        if (predictor != BaselineTIFFTagSet.PREDICTOR_NONE &&
-            predictor != BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING &&
-            predictor != BaselineTIFFTagSet.PREDICTOR_FLOATING_POINT) {
+        if (predictor != BaselineTIFFTagSet.PREDICTOR_NONE
+                && predictor != BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING
+                && predictor != BaselineTIFFTagSet.PREDICTOR_FLOATING_POINT) {
             throw new IIOException("Illegal value for Predictor in TIFF file");
         }
 
-        if(DEBUG) {
+        if (DEBUG) {
             System.out.println("Using horizontal differencing predictor");
         }
 
@@ -106,14 +103,11 @@ public class TIFFDeflateDecompressor extends TIFFDecompressor {
         deflateDecompressor = CompressionFinder.getDecompressor(CompressionType.DEFLATE);
     }
 
-    public synchronized void decodeRaw(byte[] b,
-                                       int dstOffset,
-                                       int bitsPerPixel,
-                                       int scanlineStride) throws IOException {
+    public synchronized void decodeRaw(byte[] b, int dstOffset, int bitsPerPixel, int scanlineStride)
+            throws IOException {
 
         PredictorDecompressor predictorDecompressor = new PredictorDecompressor(
-                predictor, bitsPerSample, sampleFormat,
-                planar ? 1 : samplesPerPixel, stream.getByteOrder());
+                predictor, bitsPerSample, sampleFormat, planar ? 1 : samplesPerPixel, stream.getByteOrder());
         predictorDecompressor.validate();
 
         // Seek to current tile data offset.
@@ -123,30 +117,29 @@ public class TIFFDeflateDecompressor extends TIFFDecompressor {
         byte[] srcData = new byte[byteCount];
         stream.readFully(srcData);
 
-        int bytesPerRow = (srcWidth*bitsPerPixel + 7)/8;
+        int bytesPerRow = (srcWidth * bitsPerPixel + 7) / 8;
         byte[] buf;
         int bufOffset;
-        if(bytesPerRow == scanlineStride) {
+        if (bytesPerRow == scanlineStride) {
             buf = b;
             bufOffset = dstOffset;
         } else {
-            buf = new byte[bytesPerRow*srcHeight];
+            buf = new byte[bytesPerRow * srcHeight];
             bufOffset = 0;
         }
 
         deflateDecompressor.setInput(srcData);
         try {
-            deflateDecompressor.decompress(buf, bufOffset, bytesPerRow*srcHeight);
+            deflateDecompressor.decompress(buf, bufOffset, bytesPerRow * srcHeight);
         } catch (DataFormatException dfe) {
-            throw new IIOException("Data format exception during deflate decompression",
-                    dfe);
+            throw new IIOException("Data format exception during deflate decompression", dfe);
         } finally {
             deflateDecompressor.done();
         }
-       predictorDecompressor.decompress(buf, bufOffset, dstOffset, srcHeight, srcWidth, bytesPerRow);
+        predictorDecompressor.decompress(buf, bufOffset, dstOffset, srcHeight, srcWidth, bytesPerRow);
 
-        if(bytesPerRow != scanlineStride) {
-            if(DEBUG) {
+        if (bytesPerRow != scanlineStride) {
+            if (DEBUG) {
                 System.out.println("bytesPerRow != scanlineStride");
             }
             int off = 0;

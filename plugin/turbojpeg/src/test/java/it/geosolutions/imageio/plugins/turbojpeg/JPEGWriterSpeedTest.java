@@ -16,8 +16,9 @@
  */
 package it.geosolutions.imageio.plugins.turbojpeg;
 
-import it.geosolutions.imageio.utilities.ImageOutputStreamAdapter2;
+import static org.junit.Assume.*;
 
+import it.geosolutions.imageio.utilities.ImageOutputStreamAdapter2;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -25,39 +26,37 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.imageio.IIOImage;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageOutputStream;
-
 import org.junit.Ignore;
 import org.junit.Test;
-import static org.junit.Assume.*;
 
 public class JPEGWriterSpeedTest extends BaseTest {
 
-    private static final Logger LOGGER = Logger.getLogger(JPEGWriterSpeedTest.class.toString());    
-    
+    private static final Logger LOGGER = Logger.getLogger(JPEGWriterSpeedTest.class.toString());
+
     private static final int LOOP = 20;
-    
+
     static {
-        if (SAMPLE_IMAGE != null){
+        if (SAMPLE_IMAGE != null) {
             LOGGER.info("If enabled, tests are made of " + LOOP + " iterations on top of a "
                     + SAMPLE_IMAGE.getWidth() + "*" + SAMPLE_IMAGE.getHeight() + " ("
                     + SAMPLE_IMAGE.getSampleModel().getNumBands() + " bands) image");
         }
     }
-    
+
     @Test
     @Ignore
-    public void testJPEGJDK() throws FileNotFoundException, IOException, SecurityException,
-            NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+    public void testJPEGJDK()
+            throws FileNotFoundException, IOException, SecurityException, NoSuchFieldException,
+                    IllegalArgumentException, IllegalAccessException {
 
         assumeTrue(!SKIP_TESTS);
-        
+
         String fileName = null;
         ImageOutputStream out1 = null;
         try {
@@ -110,37 +109,37 @@ public class JPEGWriterSpeedTest extends BaseTest {
 
     @Test
     @Ignore
-    public void testJPEGTurbo() throws FileNotFoundException, IOException, SecurityException,
-            NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+    public void testJPEGTurbo()
+            throws FileNotFoundException, IOException, SecurityException, NoSuchFieldException,
+                    IllegalArgumentException, IllegalAccessException {
 
         assumeTrue(!SKIP_TESTS);
-        
+
         if (!TurboJpegUtilities.isTurboJpegAvailable()) {
             LOGGER.warning(ERROR_LIB_MESSAGE);
             return;
         }
-        
+
         ImageWriterSpi spi = turboSPI;
         String fileName = null;
         OutputStream os = null;
         ImageOutputStream out1 = null;
-            
+
         TurboJpegImageWriteParam param = new TurboJpegImageWriteParam();
         param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
         param.setCompressionQuality(0.75f);
-//        EXIFMetadata exif = initExif();
-//        param.setExif(exif);
-        
+        //        EXIFMetadata exif = initExif();
+        //        param.setExif(exif);
+
         try {
 
             fileName = OUTPUT_FOLDER
-                    + ((SAMPLE_IMAGE.getSampleModel().getNumBands() == 1) ? "GRAY"
-                            : "RGBTurbo") + INPUT_FILE.getName() + ".jpeg";
+                    + ((SAMPLE_IMAGE.getSampleModel().getNumBands() == 1) ? "GRAY" : "RGBTurbo") + INPUT_FILE.getName()
+                    + ".jpeg";
             final File file = new File(fileName);
             os = new FileOutputStream(file);
             out1 = new ImageOutputStreamAdapter2(os);
 
-            
             TurboJpegImageWriter writer1 = (TurboJpegImageWriter) spi.createWriterInstance();
             writer1.setOutput(out1);
             writer1.write(null, new IIOImage(SAMPLE_IMAGE, null, null), param);
@@ -179,13 +178,9 @@ public class JPEGWriterSpeedTest extends BaseTest {
         }
     }
 
-    /**
-     * @param total
-     */
+    /** @param total */
     protected static void reportTime(String encoder, long total, final int LOOP) {
-        LOGGER.info("JPEG " + encoder + " TOTAL TIME = " + ((total) / 1000000)
-                + "(ms) ; AVERAGE TIME = " + (total / (1000 * LOOP)) + "(micros)");
-
+        LOGGER.info("JPEG " + encoder + " TOTAL TIME = " + ((total) / 1000000) + "(ms) ; AVERAGE TIME = "
+                + (total / (1000 * LOOP)) + "(micros)");
     }
-    
 }

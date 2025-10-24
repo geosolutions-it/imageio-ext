@@ -16,43 +16,38 @@
  */
 package it.geosolutions.imageio.plugins.jp2k.box;
 
-
 /**
- * This class is defined to create the contiguous codestream box of JP2 file
- * format.
- * 
- * <p>
- * NOTE: this box can be used to extract the entire codestram from within a jp2k file, 
- * however I would not expect to expose this inside metadata :-)
+ * This class is defined to create the contiguous codestream box of JP2 file format.
+ *
+ * <p>NOTE: this box can be used to extract the entire codestram from within a jp2k file, however I would not expect to
+ * expose this inside metadata :-)
  */
 @SuppressWarnings("serial")
 public class ContiguousCodestreamBox extends DefaultJP2KBox {
 
     /**
      * Cache the element names for this box's xml definition
-     * 
+     *
      * @uml.property name="elementNames"
      */
-    private static String[] elementNames = { "Content" };
+    private static String[] elementNames = {"Content"};
 
     /**
-     * This method will be called by the getNativeNodeForSimpleBox of the class
-     * Box to get the element names.
-     * 
+     * This method will be called by the getNativeNodeForSimpleBox of the class Box to get the element names.
+     *
      * @uml.property name="elementNames"
      */
     public static String[] getElementNames() {
         return elementNames;
     }
-    
+
     public ContiguousCodestreamBox(byte[] data) {
         super(8 + data.length, BOX_TYPE, data);
     }
 
-    public final static int BOX_TYPE = 0x6a703263;
+    public static final int BOX_TYPE = 0x6a703263;
 
-    public final static String NAME = "jp2c";
+    public static final String NAME = "jp2c";
 
-    public final static String JP2K_MD_NAME = "JPEG2000ContiguousCodestreamBox";
-
+    public static final String JP2K_MD_NAME = "JPEG2000ContiguousCodestreamBox";
 }

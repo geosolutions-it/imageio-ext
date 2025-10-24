@@ -20,10 +20,10 @@ import javax.swing.tree.MutableTreeNode;
 
 /**
  * Basic interface for a {@link JP2KBox}.
- * 
+ *
  * @author Simone Giannecchini, GeoSolutions.
  */
-public interface JP2KBox extends MutableTreeNode, Cloneable{
+public interface JP2KBox extends MutableTreeNode, Cloneable {
 
     /** Returns the box length. */
     public abstract int getLength();
@@ -36,10 +36,10 @@ public interface JP2KBox extends MutableTreeNode, Cloneable{
 
     /**
      * Returns the box content in byte array.
-     * 
+     *
      * @return a byte array with the box content or null if this is a super box.
      */
     public byte[] getContent();
-    
+
     public abstract Object clone();
 }

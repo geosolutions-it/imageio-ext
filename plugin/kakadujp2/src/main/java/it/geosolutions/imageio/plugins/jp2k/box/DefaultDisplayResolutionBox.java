@@ -16,25 +16,20 @@
  */
 package it.geosolutions.imageio.plugins.jp2k.box;
 
-
 /**
- * This class is defined to represent a Default Display Resolution Box 
- * of JPEG JP2 file format. A Resolution Box has a length, and a fixed type of 
- * "resd" (default display resolution).
+ * This class is defined to represent a Default Display Resolution Box of JPEG JP2 file format. A Resolution Box has a
+ * length, and a fixed type of "resd" (default display resolution).
  */
 @SuppressWarnings("serial")
 public class DefaultDisplayResolutionBox extends ResolutionBox {
 
-    public final static int BOX_TYPE_DEFAULT_DISPLAY = 0x72657364;
+    public static final int BOX_TYPE_DEFAULT_DISPLAY = 0x72657364;
 
-    public final static String DEF_NAME = "resd";
+    public static final String DEF_NAME = "resd";
 
-    public final static String JP2_MD_DEF_DISP_NAME = "JP2KDefaultDisplayResolutionBox";
+    public static final String JP2_MD_DEF_DISP_NAME = "JP2KDefaultDisplayResolutionBox";
 
-    /**
-     * Constructs a <code>ResolutionBox</code> from the provided type and
-     * content data array.
-     */
+    /** Constructs a <code>ResolutionBox</code> from the provided type and content data array. */
     public DefaultDisplayResolutionBox(byte[] data) {
         super(BOX_TYPE_DEFAULT_DISPLAY, data);
     }

@@ -1,42 +1,42 @@
 /*
  * $RCSfile: TIFFImageMetadata.java,v $
  *
- * 
+ *
  * Copyright (c) 2005 Sun Microsystems, Inc. All  Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
- * are met: 
- * 
- * - Redistribution of source code must retain the above copyright 
+ * are met:
+ *
+ * - Redistribution of source code must retain the above copyright
  *   notice, this  list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in 
+ *   notice, this list of conditions and the following disclaimer in
  *   the documentation and/or other materials provided with the
  *   distribution.
- * 
- * Neither the name of Sun Microsystems, Inc. or the names of 
- * contributors may be used to endorse or promote products derived 
+ *
+ * Neither the name of Sun Microsystems, Inc. or the names of
+ * contributors may be used to endorse or promote products derived
  * from this software without specific prior written permission.
- * 
- * This software is provided "AS IS," without a warranty of any 
- * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND 
- * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, 
+ *
+ * This software is provided "AS IS," without a warranty of any
+ * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND
+ * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY
- * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL 
- * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF 
+ * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL
+ * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF
  * USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS
- * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR 
+ * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR
  * ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL,
  * CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND
  * REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR
  * INABILITY TO USE THIS SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGES. 
- * 
- * You acknowledge that this software is not designed or intended for 
- * use in the design, construction, operation or maintenance of any 
- * nuclear facility. 
+ * POSSIBILITY OF SUCH DAMAGES.
+ *
+ * You acknowledge that this software is not designed or intended for
+ * use in the design, construction, operation or maintenance of any
+ * nuclear facility.
  *
  * $Revision: 1.11 $
  * $Date: 2006/07/21 22:56:55 $
@@ -79,9 +79,6 @@ import it.geosolutions.imageio.plugins.tiff.EXIFParentTIFFTagSet;
 import it.geosolutions.imageio.plugins.tiff.TIFFField;
 import it.geosolutions.imageio.plugins.tiff.TIFFTag;
 import it.geosolutions.imageio.plugins.tiff.TIFFTagSet;
-
-import java.awt.image.ColorModel;
-import java.awt.image.SampleModel;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -91,9 +88,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.Vector;
-import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
 import javax.imageio.metadata.IIOMetadataNode;
@@ -102,68 +96,54 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-
 public class TIFFImageMetadata extends CoreCommonImageMetadata {
 
     // package scope
 
-    public static final String nativeMetadataFormatName =
-        "it_geosolutions_imageioimpl_plugins_tiff_image_1.0";
+    public static final String nativeMetadataFormatName = "it_geosolutions_imageioimpl_plugins_tiff_image_1.0";
 
     public static final String nativeMetadataFormatClassName =
-        "it.geosolutions.imageioimpl.plugins.tiff.TIFFImageMetadataFormat";
-    
+            "it.geosolutions.imageioimpl.plugins.tiff.TIFFImageMetadataFormat";
+
     List tagSets;
 
     TIFFIFD rootIFD;
 
     public TIFFImageMetadata(List tagSets) {
-        super(true,
-              nativeMetadataFormatName,
-              nativeMetadataFormatClassName,
-              null, null);
-        
+        super(true, nativeMetadataFormatName, nativeMetadataFormatClassName, null, null);
+
         this.tagSets = tagSets;
-        this.rootIFD = new TIFFIFD(tagSets);        
+        this.rootIFD = new TIFFIFD(tagSets);
     }
 
     public TIFFImageMetadata(TIFFIFD ifd) {
-        super(true,
-              nativeMetadataFormatName,
-              nativeMetadataFormatClassName,
-              null, null);
+        super(true, nativeMetadataFormatName, nativeMetadataFormatClassName, null, null);
         this.tagSets = ifd.getTagSetList();
         this.rootIFD = ifd;
     }
 
-    public void initializeFromStream(ImageInputStream stream,
-                                     boolean ignoreUnknownFields)
-        throws IOException {
-    	initializeFromStream(stream, ignoreUnknownFields, false);
+    public void initializeFromStream(ImageInputStream stream, boolean ignoreUnknownFields) throws IOException {
+        initializeFromStream(stream, ignoreUnknownFields, false);
     }
 
-    public void initializeFromStream(ImageInputStream stream,
-            						boolean ignoreUnknownFields, boolean isBTIFF)
-    throws IOException {
-    	rootIFD.initialize(stream, ignoreUnknownFields, isBTIFF);
+    public void initializeFromStream(ImageInputStream stream, boolean ignoreUnknownFields, boolean isBTIFF)
+            throws IOException {
+        rootIFD.initialize(stream, ignoreUnknownFields, isBTIFF);
     }
-    
+
     public void addShortOrLongField(int tagNumber, int value) {
         TIFFField field = new TIFFField(rootIFD.getTag(tagNumber), value);
         rootIFD.addTIFFField(field);
     }
 
-
     public boolean isReadOnly() {
         return false;
     }
 
-    private Node getIFDAsTree(TIFFIFD ifd,
-                              String parentTagName, int parentTagNumber) {
+    private Node getIFDAsTree(TIFFIFD ifd, String parentTagName, int parentTagNumber) {
         IIOMetadataNode IFDRoot = new IIOMetadataNode("TIFFIFD");
         if (parentTagNumber != 0) {
-            IFDRoot.setAttribute("parentTagNumber",
-                                 Integer.toString(parentTagNumber));
+            IFDRoot.setAttribute("parentTagNumber", Integer.toString(parentTagNumber));
         }
         if (parentTagName != null) {
             IFDRoot.setAttribute("parentTagName", parentTagName);
@@ -174,19 +154,19 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
             Iterator iter = tagSets.iterator();
             String tagSetNames = "";
             while (iter.hasNext()) {
-                TIFFTagSet tagSet = (TIFFTagSet)iter.next();
+                TIFFTagSet tagSet = (TIFFTagSet) iter.next();
                 tagSetNames += tagSet.getClass().getName();
                 if (iter.hasNext()) {
                     tagSetNames += ",";
                 }
             }
-            
+
             IFDRoot.setAttribute("tagSets", tagSetNames);
         }
 
         Iterator iter = ifd.iterator();
         while (iter.hasNext()) {
-            TIFFField f = (TIFFField)iter.next();
+            TIFFField f = (TIFFField) iter.next();
             int tagNumber = f.getTagNumber();
             TIFFTag tag = TIFFIFD.getTag(tagNumber, tagSets);
 
@@ -194,7 +174,7 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
             if (tag == null) {
                 node = f.getAsNativeNode();
             } else if (tag.isIFDPointer()) {
-                TIFFIFD subIFD = (TIFFIFD)f.getData();
+                TIFFIFD subIFD = (TIFFIFD) f.getData();
 
                 // Recurse
                 node = getIFDAsTree(subIFD, tag.getName(), tag.getNumber());
@@ -213,8 +193,7 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
     public Node getAsTree(String formatName) {
         if (formatName.equals(nativeMetadataFormatName)) {
             return getNativeTree();
-        } else if (formatName.equals
-                   (IIOMetadataFormatImpl.standardMetadataFormatName)) {
+        } else if (formatName.equals(IIOMetadataFormatImpl.standardMetadataFormatName)) {
             return getStandardTree();
         } else {
             throw new IllegalArgumentException("Not a recognized format!");
@@ -255,14 +234,12 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
         if (f != null) {
             photometricInterpretation = f.getAsInt(0);
 
-            isPaletteColor =
-                photometricInterpretation ==
-                BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_PALETTE_COLOR;
+            isPaletteColor = photometricInterpretation == BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_PALETTE_COLOR;
         }
 
         // Determine the number of channels.
         int numChannels = -1;
-        if(isPaletteColor) {
+        if (isPaletteColor) {
             numChannels = 3;
         } else {
             f = getTIFFField(BaselineTIFFTagSet.TAG_SAMPLES_PER_PIXEL);
@@ -270,20 +247,18 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
                 numChannels = f.getAsInt(0);
             } else { // f == null
                 f = getTIFFField(BaselineTIFFTagSet.TAG_BITS_PER_SAMPLE);
-                if(f != null) {
+                if (f != null) {
                     numChannels = f.getCount();
                 }
             }
         }
 
-        if(photometricInterpretation != -1) {
-            if (photometricInterpretation >= 0 &&
-                photometricInterpretation < colorSpaceNames.length) {
+        if (photometricInterpretation != -1) {
+            if (photometricInterpretation >= 0 && photometricInterpretation < colorSpaceNames.length) {
                 node = new IIOMetadataNode("ColorSpaceType");
                 String csName;
-                if(photometricInterpretation ==
-                   BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_CMYK &&
-                   numChannels == 3) {
+                if (photometricInterpretation == BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_CMYK
+                        && numChannels == 3) {
                     csName = "CMY";
                 } else {
                     csName = colorSpaceNames[photometricInterpretation];
@@ -291,16 +266,17 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
                 node.setAttribute("name", csName);
                 chroma_node.appendChild(node);
             }
-            
+
             node = new IIOMetadataNode("BlackIsZero");
-            node.setAttribute("value",
-                              (photometricInterpretation ==
-                   BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_WHITE_IS_ZERO)
-                              ? "FALSE" : "TRUE");
+            node.setAttribute(
+                    "value",
+                    (photometricInterpretation == BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_WHITE_IS_ZERO)
+                            ? "FALSE"
+                            : "TRUE");
             chroma_node.appendChild(node);
         }
 
-        if(numChannels != -1) {
+        if (numChannels != -1) {
             node = new IIOMetadataNode("NumChannels");
             node.setAttribute("value", Integer.toString(numChannels));
             chroma_node.appendChild(node);
@@ -314,21 +290,20 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
             boolean hasAlpha = false;
 
             node = new IIOMetadataNode("Palette");
-            int len = f.getCount()/(hasAlpha ? 4 : 3);
+            int len = f.getCount() / (hasAlpha ? 4 : 3);
             for (int i = 0; i < len; i++) {
-                IIOMetadataNode entry =
-                    new IIOMetadataNode("PaletteEntry");
+                IIOMetadataNode entry = new IIOMetadataNode("PaletteEntry");
                 entry.setAttribute("index", Integer.toString(i));
 
-                int r = (f.getAsInt(i)*255)/65535;
-                int g = (f.getAsInt(len + i)*255)/65535;
-                int b = (f.getAsInt(2*len + i)*255)/65535;
+                int r = (f.getAsInt(i) * 255) / 65535;
+                int g = (f.getAsInt(len + i) * 255) / 65535;
+                int b = (f.getAsInt(2 * len + i) * 255) / 65535;
 
                 entry.setAttribute("red", Integer.toString(r));
                 entry.setAttribute("green", Integer.toString(g));
                 entry.setAttribute("blue", Integer.toString(b));
                 if (hasAlpha) {
-		    int alpha = 0;
+                    int alpha = 0;
                     entry.setAttribute("alpha", Integer.toString(alpha));
                 }
                 node.appendChild(entry);
@@ -350,17 +325,15 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
             String compressionTypeName = null;
             int compression = f.getAsInt(0);
             boolean isLossless = true; // obligate initialization.
-            if(compression == BaselineTIFFTagSet.COMPRESSION_NONE) {
+            if (compression == BaselineTIFFTagSet.COMPRESSION_NONE) {
                 compressionTypeName = "None";
                 isLossless = true;
             } else {
                 int[] compressionNumbers = TIFFImageWriter.compressionNumbers;
-                for(int i = 0; i < compressionNumbers.length; i++) {
-                    if(compression == compressionNumbers[i]) {
-                        compressionTypeName =
-                            TIFFImageWriter.compressionTypes[i];
-                        isLossless =
-                            TIFFImageWriter.isCompressionLossless[i];
+                for (int i = 0; i < compressionNumbers.length; i++) {
+                    if (compression == compressionNumbers[i]) {
+                        compressionTypeName = TIFFImageWriter.compressionTypes[i];
+                        isLossless = TIFFImageWriter.isCompressionLossless[i];
                         break;
                     }
                 }
@@ -388,7 +361,7 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
         if (times == 1) {
             return s;
         }
-        StringBuffer sb = new StringBuffer((s.length() + 1)*times - 1);
+        StringBuffer sb = new StringBuffer((s.length() + 1) * times - 1);
         sb.append(s);
         for (int i = 1; i < times; i++) {
             sb.append(" ");
@@ -406,15 +379,12 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
         boolean isPaletteColor = false;
         f = getTIFFField(BaselineTIFFTagSet.TAG_PHOTOMETRIC_INTERPRETATION);
         if (f != null) {
-            isPaletteColor =
-                f.getAsInt(0) ==
-                BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_PALETTE_COLOR;
+            isPaletteColor = f.getAsInt(0) == BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_PALETTE_COLOR;
         }
 
         f = getTIFFField(BaselineTIFFTagSet.TAG_PLANAR_CONFIGURATION);
         String planarConfiguration = "PixelInterleaved";
-        if (f != null &&
-            f.getAsInt(0) == BaselineTIFFTagSet.PLANAR_CONFIGURATION_PLANAR) {
+        if (f != null && f.getAsInt(0) == BaselineTIFFTagSet.PLANAR_CONFIGURATION_PLANAR) {
             planarConfiguration = "PlaneInterleaved";
         }
 
@@ -427,21 +397,17 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
             int photometricInterpretation = f.getAsInt(0);
             String sampleFormat = "UnsignedIntegral";
 
-            if (photometricInterpretation ==
-                BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_PALETTE_COLOR) {
+            if (photometricInterpretation == BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_PALETTE_COLOR) {
                 sampleFormat = "Index";
             } else {
                 f = getTIFFField(BaselineTIFFTagSet.TAG_SAMPLE_FORMAT);
                 if (f != null) {
                     int format = f.getAsInt(0);
-                    if (format ==
-                        BaselineTIFFTagSet.SAMPLE_FORMAT_SIGNED_INTEGER) {
+                    if (format == BaselineTIFFTagSet.SAMPLE_FORMAT_SIGNED_INTEGER) {
                         sampleFormat = "SignedIntegral";
-                    } else if (format ==
-                        BaselineTIFFTagSet.SAMPLE_FORMAT_UNSIGNED_INTEGER) {
+                    } else if (format == BaselineTIFFTagSet.SAMPLE_FORMAT_UNSIGNED_INTEGER) {
                         sampleFormat = "UnsignedIntegral";
-                    } else if (format ==
-                               BaselineTIFFTagSet.SAMPLE_FORMAT_FLOATING_POINT) {
+                    } else if (format == BaselineTIFFTagSet.SAMPLE_FORMAT_FLOATING_POINT) {
                         sampleFormat = "Real";
                     } else {
                         sampleFormat = null; // don't know
@@ -457,24 +423,19 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
 
         f = getTIFFField(BaselineTIFFTagSet.TAG_BITS_PER_SAMPLE);
         int[] bitsPerSample = null;
-        if(f != null) {
+        if (f != null) {
             bitsPerSample = f.getAsInts();
         } else {
             f = getTIFFField(BaselineTIFFTagSet.TAG_COMPRESSION);
-            int compression = f != null ?
-                f.getAsInt(0) : BaselineTIFFTagSet.COMPRESSION_NONE;
-            if(getTIFFField(EXIFParentTIFFTagSet.TAG_EXIF_IFD_POINTER) !=
-               null ||
-               compression == BaselineTIFFTagSet.COMPRESSION_JPEG ||
-               compression == BaselineTIFFTagSet.COMPRESSION_OLD_JPEG ||
-               getTIFFField(BaselineTIFFTagSet.TAG_JPEG_INTERCHANGE_FORMAT) !=
-               null) {
+            int compression = f != null ? f.getAsInt(0) : BaselineTIFFTagSet.COMPRESSION_NONE;
+            if (getTIFFField(EXIFParentTIFFTagSet.TAG_EXIF_IFD_POINTER) != null
+                    || compression == BaselineTIFFTagSet.COMPRESSION_JPEG
+                    || compression == BaselineTIFFTagSet.COMPRESSION_OLD_JPEG
+                    || getTIFFField(BaselineTIFFTagSet.TAG_JPEG_INTERCHANGE_FORMAT) != null) {
                 f = getTIFFField(BaselineTIFFTagSet.TAG_PHOTOMETRIC_INTERPRETATION);
-                if(f != null &&
-                   (f.getAsInt(0) ==
-                    BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_WHITE_IS_ZERO ||
-                    f.getAsInt(0) ==
-                    BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_BLACK_IS_ZERO)) {
+                if (f != null
+                        && (f.getAsInt(0) == BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_WHITE_IS_ZERO
+                                || f.getAsInt(0) == BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_BLACK_IS_ZERO)) {
                     bitsPerSample = new int[] {8};
                 } else {
                     bitsPerSample = new int[] {8, 8, 8};
@@ -491,31 +452,27 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
             sb.append(Integer.toString(bitsPerSample[i]));
         }
         node = new IIOMetadataNode("BitsPerSample");
-        if(isPaletteColor) {
+        if (isPaletteColor) {
             node.setAttribute("value", repeat(sb.toString(), 3));
         } else {
             node.setAttribute("value", sb.toString());
         }
         data_node.appendChild(node);
 
-            // SampleMSB
+        // SampleMSB
         f = getTIFFField(BaselineTIFFTagSet.TAG_FILL_ORDER);
-        int fillOrder = f != null ?
-            f.getAsInt(0) : BaselineTIFFTagSet.FILL_ORDER_LEFT_TO_RIGHT;
+        int fillOrder = f != null ? f.getAsInt(0) : BaselineTIFFTagSet.FILL_ORDER_LEFT_TO_RIGHT;
         sb = new StringBuffer();
         for (int i = 0; i < bitsPerSample.length; i++) {
             if (i > 0) {
                 sb.append(" ");
             }
-            int maxBitIndex = bitsPerSample[i] == 1 ?
-                7 : bitsPerSample[i] - 1;
-            int msb =
-                fillOrder == BaselineTIFFTagSet.FILL_ORDER_LEFT_TO_RIGHT ?
-                maxBitIndex : 0;
+            int maxBitIndex = bitsPerSample[i] == 1 ? 7 : bitsPerSample[i] - 1;
+            int msb = fillOrder == BaselineTIFFTagSet.FILL_ORDER_LEFT_TO_RIGHT ? maxBitIndex : 0;
             sb.append(Integer.toString(msb));
         }
         node = new IIOMetadataNode("SampleMSB");
-        if(isPaletteColor) {
+        if (isPaletteColor) {
             node.setAttribute("value", repeat(sb.toString(), 3));
         } else {
             node.setAttribute("value", sb.toString());
@@ -526,15 +483,7 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
     }
 
     private static final String[] orientationNames = {
-        null,
-        "Normal",
-        "FlipH",
-        "Rotate180",
-        "FlipV", 
-        "FlipHRotate90",
-        "Rotate270",
-        "FlipVRotate90",
-        "Rotate90",
+        null, "Normal", "FlipH", "Rotate180", "FlipV", "FlipHRotate90", "Rotate270", "FlipVRotate90", "Rotate90",
     };
 
     public IIOMetadataNode getStandardDimensionNode() {
@@ -548,12 +497,12 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
 
         f = getTIFFField(BaselineTIFFTagSet.TAG_X_RESOLUTION);
         if (f != null) {
-            xres = (long[])f.getAsRational(0).clone();
+            xres = (long[]) f.getAsRational(0).clone();
         }
 
         f = getTIFFField(BaselineTIFFTagSet.TAG_Y_RESOLUTION);
         if (f != null) {
-            yres = (long[])f.getAsRational(0).clone();
+            yres = (long[]) f.getAsRational(0).clone();
         }
 
         if (xres != null && yres != null) {
@@ -563,7 +512,7 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
             // (xres_denom/xres_num)/(yres_denom/yres_num) =
             // (xres_denom/xres_num)*(yres_num/yres_denom) =
             // (xres_denom*yres_num)/(xres_num*yres_denom)
-            float ratio = (float)((double)xres[1]*yres[0])/(xres[0]*yres[1]);
+            float ratio = (float) ((double) xres[1] * yres[0]) / (xres[0] * yres[1]);
             node.setAttribute("value", Float.toString(ratio));
             dimension_node.appendChild(node);
         }
@@ -573,12 +522,10 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
             f = getTIFFField(BaselineTIFFTagSet.TAG_RESOLUTION_UNIT);
 
             // Set resolution unit.
-            int resolutionUnit = f != null ?
-                f.getAsInt(0) : BaselineTIFFTagSet.RESOLUTION_UNIT_INCH;
+            int resolutionUnit = f != null ? f.getAsInt(0) : BaselineTIFFTagSet.RESOLUTION_UNIT_INCH;
 
             // Have size if either centimeters or inches.
-            boolean gotPixelSize =
-                resolutionUnit != BaselineTIFFTagSet.RESOLUTION_UNIT_NONE;
+            boolean gotPixelSize = resolutionUnit != BaselineTIFFTagSet.RESOLUTION_UNIT_NONE;
 
             // Convert pixels/inch to pixels/centimeter.
             if (resolutionUnit == BaselineTIFFTagSet.RESOLUTION_UNIT_INCH) {
@@ -594,60 +541,55 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
                     yres[1] *= 254;
                 }
             }
-            
+
             if (gotPixelSize) {
                 if (xres != null) {
-                    float horizontalPixelSize = (float)(10.0*xres[1]/xres[0]);
+                    float horizontalPixelSize = (float) (10.0 * xres[1] / xres[0]);
                     node = new IIOMetadataNode("HorizontalPixelSize");
-                    node.setAttribute("value",
-                                      Float.toString(horizontalPixelSize));
+                    node.setAttribute("value", Float.toString(horizontalPixelSize));
                     dimension_node.appendChild(node);
                 }
-                
+
                 if (yres != null) {
-                    float verticalPixelSize = (float)(10.0*yres[1]/yres[0]);
+                    float verticalPixelSize = (float) (10.0 * yres[1] / yres[0]);
                     node = new IIOMetadataNode("VerticalPixelSize");
-                    node.setAttribute("value",
-                                      Float.toString(verticalPixelSize));
+                    node.setAttribute("value", Float.toString(verticalPixelSize));
                     dimension_node.appendChild(node);
                 }
             }
         }
 
         f = getTIFFField(BaselineTIFFTagSet.TAG_RESOLUTION_UNIT);
-        int resolutionUnit = f != null ?
-            f.getAsInt(0) : BaselineTIFFTagSet.RESOLUTION_UNIT_INCH;
-        if(resolutionUnit == BaselineTIFFTagSet.RESOLUTION_UNIT_INCH ||
-           resolutionUnit == BaselineTIFFTagSet.RESOLUTION_UNIT_CENTIMETER) {
+        int resolutionUnit = f != null ? f.getAsInt(0) : BaselineTIFFTagSet.RESOLUTION_UNIT_INCH;
+        if (resolutionUnit == BaselineTIFFTagSet.RESOLUTION_UNIT_INCH
+                || resolutionUnit == BaselineTIFFTagSet.RESOLUTION_UNIT_CENTIMETER) {
             f = getTIFFField(BaselineTIFFTagSet.TAG_X_POSITION);
-            if(f != null) {
-                long[] xpos = (long[])f.getAsRational(0);
-                float xPosition = (float)xpos[0]/(float)xpos[1];
+            if (f != null) {
+                long[] xpos = (long[]) f.getAsRational(0);
+                float xPosition = (float) xpos[0] / (float) xpos[1];
                 // Convert to millimeters.
-                if(resolutionUnit == BaselineTIFFTagSet.RESOLUTION_UNIT_INCH) {
+                if (resolutionUnit == BaselineTIFFTagSet.RESOLUTION_UNIT_INCH) {
                     xPosition *= 254F;
                 } else {
                     xPosition *= 10F;
                 }
                 node = new IIOMetadataNode("HorizontalPosition");
-                node.setAttribute("value",
-                                  Float.toString(xPosition));
+                node.setAttribute("value", Float.toString(xPosition));
                 dimension_node.appendChild(node);
             }
 
             f = getTIFFField(BaselineTIFFTagSet.TAG_Y_POSITION);
-            if(f != null) {
-                long[] ypos = (long[])f.getAsRational(0);
-                float yPosition = (float)ypos[0]/(float)ypos[1];
+            if (f != null) {
+                long[] ypos = (long[]) f.getAsRational(0);
+                float yPosition = (float) ypos[0] / (float) ypos[1];
                 // Convert to millimeters.
-                if(resolutionUnit == BaselineTIFFTagSet.RESOLUTION_UNIT_INCH) {
+                if (resolutionUnit == BaselineTIFFTagSet.RESOLUTION_UNIT_INCH) {
                     yPosition *= 254F;
                 } else {
                     yPosition *= 10F;
                 }
                 node = new IIOMetadataNode("VerticalPosition");
-                node.setAttribute("value",
-                                  Float.toString(yPosition));
+                node.setAttribute("value", Float.toString(yPosition));
                 dimension_node.appendChild(node);
             }
         }
@@ -676,20 +618,17 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
         document_node.appendChild(node);
 
         f = getTIFFField(BaselineTIFFTagSet.TAG_NEW_SUBFILE_TYPE);
-        if(f != null) {
+        if (f != null) {
             int newSubFileType = f.getAsInt(0);
             String value = null;
-            if((newSubFileType &
-                BaselineTIFFTagSet.NEW_SUBFILE_TYPE_TRANSPARENCY) != 0) {
+            if ((newSubFileType & BaselineTIFFTagSet.NEW_SUBFILE_TYPE_TRANSPARENCY) != 0) {
                 value = "TransparencyMask";
-            } else if((newSubFileType &
-                       BaselineTIFFTagSet.NEW_SUBFILE_TYPE_REDUCED_RESOLUTION) != 0) {
+            } else if ((newSubFileType & BaselineTIFFTagSet.NEW_SUBFILE_TYPE_REDUCED_RESOLUTION) != 0) {
                 value = "ReducedResolution";
-            } else if((newSubFileType &
-                       BaselineTIFFTagSet.NEW_SUBFILE_TYPE_SINGLE_PAGE) != 0) {
+            } else if ((newSubFileType & BaselineTIFFTagSet.NEW_SUBFILE_TYPE_SINGLE_PAGE) != 0) {
                 value = "SinglePage";
             }
-            if(value != null) {
+            if (value != null) {
                 node = new IIOMetadataNode("SubimageInterpretation");
                 node.setAttribute("value", value);
                 document_node.appendChild(node);
@@ -697,11 +636,11 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
         }
 
         f = getTIFFField(BaselineTIFFTagSet.TAG_DATE_TIME);
-	if (f != null) {
-	    String s = f.getAsString(0);
+        if (f != null) {
+            String s = f.getAsString(0);
 
             // DateTime should be formatted as "YYYY:MM:DD hh:mm:ss".
-            if(s.length() == 19) {
+            if (s.length() == 19) {
                 node = new IIOMetadataNode("ImageCreationTime");
 
                 // Files with incorrect DateTime format have been
@@ -717,11 +656,11 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
                     node.setAttribute("minute", s.substring(14, 16));
                     node.setAttribute("second", s.substring(17, 19));
                     appendNode = true;
-                } catch(IndexOutOfBoundsException e) {
+                } catch (IndexOutOfBoundsException e) {
                     appendNode = false;
                 }
 
-                if(appendNode) {
+                if (appendNode) {
                     document_node.appendChild(node);
                 }
             }
@@ -749,11 +688,11 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
             BaselineTIFFTagSet.TAG_COPYRIGHT
         };
 
-        for(int i = 0; i < textFieldTagNumbers.length; i++) {
+        for (int i = 0; i < textFieldTagNumbers.length; i++) {
             f = getTIFFField(textFieldTagNumbers[i]);
-            if(f != null) {
+            if (f != null) {
                 String value = f.getAsString(0);
-                if(text_node == null) {
+                if (text_node == null) {
                     text_node = new IIOMetadataNode("Text");
                 }
                 node = new IIOMetadataNode("TextEntry");
@@ -767,8 +706,7 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
     }
 
     public IIOMetadataNode getStandardTransparencyNode() {
-        IIOMetadataNode transparency_node =
-            new IIOMetadataNode("Transparency");
+        IIOMetadataNode transparency_node = new IIOMetadataNode("Transparency");
         IIOMetadataNode node = null; // scratch node
 
         TIFFField f;
@@ -777,15 +715,13 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
         String value = "none";
 
         f = getTIFFField(BaselineTIFFTagSet.TAG_EXTRA_SAMPLES);
-        if(f != null) {
+        if (f != null) {
             int[] extraSamples = f.getAsInts();
-            for(int i = 0; i < extraSamples.length; i++) {
-                if(extraSamples[i] ==
-                   BaselineTIFFTagSet.EXTRA_SAMPLES_ASSOCIATED_ALPHA) {
+            for (int i = 0; i < extraSamples.length; i++) {
+                if (extraSamples[i] == BaselineTIFFTagSet.EXTRA_SAMPLES_ASSOCIATED_ALPHA) {
                     value = "premultiplied";
                     break;
-                } else if(extraSamples[i] ==
-                          BaselineTIFFTagSet.EXTRA_SAMPLES_UNASSOCIATED_ALPHA) {
+                } else if (extraSamples[i] == BaselineTIFFTagSet.EXTRA_SAMPLES_UNASSOCIATED_ALPHA) {
                     value = "nonpremultiplied";
                     break;
                 }
@@ -799,8 +735,7 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
     }
 
     // Shorthand for throwing an IIOInvalidTreeException
-    private static void fatal(Node node, String reason)
-        throws IIOInvalidTreeException {
+    private static void fatal(Node node, String reason) throws IIOInvalidTreeException {
         throw new IIOInvalidTreeException(reason, node);
     }
 
@@ -814,8 +749,8 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
         }
 
         int[] intArray = new int[intList.size()];
-        for(int i = 0; i < intArray.length; i++) {
-            intArray[i] = ((Integer)intList.get(i)).intValue();
+        for (int i = 0; i < intArray.length; i++) {
+            intArray[i] = ((Integer) intList.get(i)).intValue();
         }
 
         return intArray;
@@ -831,46 +766,42 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
         }
 
         char[] charArray = new char[intList.size()];
-        for(int i = 0; i < charArray.length; i++) {
-            charArray[i] = (char)((Integer)intList.get(i)).intValue();
+        for (int i = 0; i < charArray.length; i++) {
+            charArray[i] = (char) ((Integer) intList.get(i)).intValue();
         }
 
         return charArray;
     }
 
-    private void mergeStandardTree(Node root)
-        throws IIOInvalidTreeException {
+    private void mergeStandardTree(Node root) throws IIOInvalidTreeException {
         TIFFField f;
         TIFFTag tag;
 
         Node node = root;
-        if (!node.getNodeName()
-            .equals(IIOMetadataFormatImpl.standardMetadataFormatName)) {
-            fatal(node, "Root must be " +
-                  IIOMetadataFormatImpl.standardMetadataFormatName);
+        if (!node.getNodeName().equals(IIOMetadataFormatImpl.standardMetadataFormatName)) {
+            fatal(node, "Root must be " + IIOMetadataFormatImpl.standardMetadataFormatName);
         }
 
         // Obtain the sample format and set the palette flag if appropriate.
         String sampleFormat = null;
         Node dataNode = getChildNode(root, "Data");
         boolean isPaletteColor = false;
-        if(dataNode != null) {
+        if (dataNode != null) {
             Node sampleFormatNode = getChildNode(dataNode, "SampleFormat");
-            if(sampleFormatNode != null) {
+            if (sampleFormatNode != null) {
                 sampleFormat = getAttribute(sampleFormatNode, "value");
                 isPaletteColor = sampleFormat.equals("Index");
             }
         }
 
         // If palette flag not set check for palette.
-        if(!isPaletteColor) {
+        if (!isPaletteColor) {
             Node chromaNode = getChildNode(root, "Chroma");
-            if(chromaNode != null &&
-               getChildNode(chromaNode, "Palette") != null) {
+            if (chromaNode != null && getChildNode(chromaNode, "Palette") != null) {
                 isPaletteColor = true;
             }
         }
-        
+
         node = node.getFirstChild();
         while (node != null) {
             String name = node.getNodeName();
@@ -886,8 +817,7 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
                         colorSpaceType = getAttribute(child, "name");
                     } else if (childName.equals("NumChannels")) {
                         tag = rootIFD.getTag(BaselineTIFFTagSet.TAG_SAMPLES_PER_PIXEL);
-                        int samplesPerPixel = isPaletteColor ?
-                            1 : Integer.parseInt(getAttribute(child, "value"));
+                        int samplesPerPixel = isPaletteColor ? 1 : Integer.parseInt(getAttribute(child, "value"));
                         f = new TIFFField(tag, samplesPerPixel);
                         rootIFD.addTIFFField(f);
                     } else if (childName.equals("BlackIsZero")) {
@@ -896,51 +826,40 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
                         Node entry = child.getFirstChild();
                         HashMap palette = new HashMap();
                         int maxIndex = -1;
-                        while(entry != null) {
+                        while (entry != null) {
                             String entryName = entry.getNodeName();
-                            if(entryName.equals("PaletteEntry")) {
+                            if (entryName.equals("PaletteEntry")) {
                                 String idx = getAttribute(entry, "index");
                                 int id = Integer.parseInt(idx);
-                                if(id > maxIndex) {
+                                if (id > maxIndex) {
                                     maxIndex = id;
                                 }
-                                char red =
-                                    (char)Integer.parseInt(getAttribute(entry,
-                                                                        "red"));
-                                char green =
-                                    (char)Integer.parseInt(getAttribute(entry,
-                                                                        "green"));
-                                char blue =
-                                    (char)Integer.parseInt(getAttribute(entry,
-                                                                        "blue"));
-                                palette.put(new Integer(id),
-                                            new char[] {red, green, blue});
+                                char red = (char) Integer.parseInt(getAttribute(entry, "red"));
+                                char green = (char) Integer.parseInt(getAttribute(entry, "green"));
+                                char blue = (char) Integer.parseInt(getAttribute(entry, "blue"));
+                                palette.put(new Integer(id), new char[] {red, green, blue});
 
                                 gotPalette = true;
                             }
                             entry = entry.getNextSibling();
                         }
 
-                        if(gotPalette) {
+                        if (gotPalette) {
                             int mapSize = maxIndex + 1;
-                            int paletteLength = 3*mapSize;
+                            int paletteLength = 3 * mapSize;
                             char[] paletteEntries = new char[paletteLength];
                             Iterator paletteIter = palette.keySet().iterator();
-                            while(paletteIter.hasNext()) {
-                                Integer index = (Integer)paletteIter.next();
-                                char[] rgb = (char[])palette.get(index);
+                            while (paletteIter.hasNext()) {
+                                Integer index = (Integer) paletteIter.next();
+                                char[] rgb = (char[]) palette.get(index);
                                 int idx = index.intValue();
-                                paletteEntries[idx] =
-                                    (char)((rgb[0]*65535)/255);
-                                paletteEntries[mapSize + idx] =
-                                    (char)((rgb[1]*65535)/255);
-                                paletteEntries[2*mapSize + idx] =
-                                    (char)((rgb[2]*65535)/255);
+                                paletteEntries[idx] = (char) ((rgb[0] * 65535) / 255);
+                                paletteEntries[mapSize + idx] = (char) ((rgb[1] * 65535) / 255);
+                                paletteEntries[2 * mapSize + idx] = (char) ((rgb[2] * 65535) / 255);
                             }
 
                             tag = rootIFD.getTag(BaselineTIFFTagSet.TAG_COLOR_MAP);
-                            f = new TIFFField(tag, TIFFTag.TIFF_SHORT,
-                                              paletteLength, paletteEntries);
+                            f = new TIFFField(tag, TIFFTag.TIFF_SHORT, paletteLength, paletteEntries);
                             rootIFD.addTIFFField(f);
                         }
                     }
@@ -949,51 +868,43 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
                 }
 
                 int photometricInterpretation = -1;
-                if((colorSpaceType == null || colorSpaceType.equals("GRAY")) &&
-                   blackIsZero != null &&
-                   blackIsZero.equalsIgnoreCase("FALSE")) {
-                    photometricInterpretation =
-                        BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_WHITE_IS_ZERO;
-                } else if(colorSpaceType != null) {
-                    if(colorSpaceType.equals("GRAY")) {
+                if ((colorSpaceType == null || colorSpaceType.equals("GRAY"))
+                        && blackIsZero != null
+                        && blackIsZero.equalsIgnoreCase("FALSE")) {
+                    photometricInterpretation = BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_WHITE_IS_ZERO;
+                } else if (colorSpaceType != null) {
+                    if (colorSpaceType.equals("GRAY")) {
                         boolean isTransparency = false;
-                        if(root instanceof IIOMetadataNode) {
-                            IIOMetadataNode iioRoot = (IIOMetadataNode)root;
-                            NodeList siNodeList =
-                                iioRoot.getElementsByTagName("SubimageInterpretation");
-                            if(siNodeList.getLength() == 1) {
+                        if (root instanceof IIOMetadataNode) {
+                            IIOMetadataNode iioRoot = (IIOMetadataNode) root;
+                            NodeList siNodeList = iioRoot.getElementsByTagName("SubimageInterpretation");
+                            if (siNodeList.getLength() == 1) {
                                 Node siNode = siNodeList.item(0);
                                 String value = getAttribute(siNode, "value");
-                                if(value.equals("TransparencyMask")) {
+                                if (value.equals("TransparencyMask")) {
                                     isTransparency = true;
                                 }
                             }
                         }
-                        if(isTransparency) {
-                            photometricInterpretation =
-                                BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_TRANSPARENCY_MASK;
+                        if (isTransparency) {
+                            photometricInterpretation = BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_TRANSPARENCY_MASK;
                         } else {
-                            photometricInterpretation =
-                                BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_BLACK_IS_ZERO;
+                            photometricInterpretation = BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_BLACK_IS_ZERO;
                         }
-                    } else if(colorSpaceType.equals("RGB")) {
-                        photometricInterpretation =
-                            gotPalette ?
-                            BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_PALETTE_COLOR :
-                            BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_RGB;
-                    } else if(colorSpaceType.equals("YCbCr")) {
-                        photometricInterpretation =
-                            BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_Y_CB_CR;
-                    } else if(colorSpaceType.equals("CMYK")) {
-                        photometricInterpretation =
-                            BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_CMYK;
-                    } else if(colorSpaceType.equals("Lab")) {
-                        photometricInterpretation =
-                            BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_CIELAB;
+                    } else if (colorSpaceType.equals("RGB")) {
+                        photometricInterpretation = gotPalette
+                                ? BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_PALETTE_COLOR
+                                : BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_RGB;
+                    } else if (colorSpaceType.equals("YCbCr")) {
+                        photometricInterpretation = BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_Y_CB_CR;
+                    } else if (colorSpaceType.equals("CMYK")) {
+                        photometricInterpretation = BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_CMYK;
+                    } else if (colorSpaceType.equals("Lab")) {
+                        photometricInterpretation = BaselineTIFFTagSet.PHOTOMETRIC_INTERPRETATION_CIELAB;
                     }
                 }
 
-                if(photometricInterpretation != -1) {
+                if (photometricInterpretation != -1) {
                     tag = rootIFD.getTag(BaselineTIFFTagSet.TAG_PHOTOMETRIC_INTERPRETATION);
                     f = new TIFFField(tag, photometricInterpretation);
                     rootIFD.addTIFFField(f);
@@ -1004,24 +915,20 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
                     String childName = child.getNodeName();
                     if (childName.equals("CompressionTypeName")) {
                         int compression = -1;
-                        String compressionTypeName =
-                            getAttribute(child, "value");
-                        if(compressionTypeName.equalsIgnoreCase("None")) {
-                            compression =
-                                BaselineTIFFTagSet.COMPRESSION_NONE;
+                        String compressionTypeName = getAttribute(child, "value");
+                        if (compressionTypeName.equalsIgnoreCase("None")) {
+                            compression = BaselineTIFFTagSet.COMPRESSION_NONE;
                         } else {
-                            String[] compressionNames =
-                                TIFFImageWriter.compressionTypes;
-                            for(int i = 0; i < compressionNames.length; i++) {
-                                if(compressionNames[i].equalsIgnoreCase(compressionTypeName)) {
-                                    compression =
-                                        TIFFImageWriter.compressionNumbers[i];
+                            String[] compressionNames = TIFFImageWriter.compressionTypes;
+                            for (int i = 0; i < compressionNames.length; i++) {
+                                if (compressionNames[i].equalsIgnoreCase(compressionTypeName)) {
+                                    compression = TIFFImageWriter.compressionNumbers[i];
                                     break;
                                 }
                             }
                         }
 
-                        if(compression != -1) {
+                        if (compression != -1) {
                             tag = rootIFD.getTag(BaselineTIFFTagSet.TAG_COMPRESSION);
                             f = new TIFFField(tag, compression);
                             rootIFD.addTIFFField(f);
@@ -1040,14 +947,12 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
                     if (childName.equals("PlanarConfiguration")) {
                         String pc = getAttribute(child, "value");
                         int planarConfiguration = -1;
-                        if(pc.equals("PixelInterleaved")) {
-                            planarConfiguration =
-                                BaselineTIFFTagSet.PLANAR_CONFIGURATION_CHUNKY;
-                        } else if(pc.equals("PlaneInterleaved")) {
-                            planarConfiguration =
-                                BaselineTIFFTagSet.PLANAR_CONFIGURATION_PLANAR;
+                        if (pc.equals("PixelInterleaved")) {
+                            planarConfiguration = BaselineTIFFTagSet.PLANAR_CONFIGURATION_CHUNKY;
+                        } else if (pc.equals("PlaneInterleaved")) {
+                            planarConfiguration = BaselineTIFFTagSet.PLANAR_CONFIGURATION_PLANAR;
                         }
-                        if(planarConfiguration != -1) {
+                        if (planarConfiguration != -1) {
                             tag = rootIFD.getTag(BaselineTIFFTagSet.TAG_PLANAR_CONFIGURATION);
                             f = new TIFFField(tag, planarConfiguration);
                             rootIFD.addTIFFField(f);
@@ -1056,13 +961,10 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
                         String bps = getAttribute(child, "value");
                         char[] bitsPerSample = listToCharArray(bps);
                         tag = rootIFD.getTag(BaselineTIFFTagSet.TAG_BITS_PER_SAMPLE);
-                        if(isPaletteColor) {
-                            f = new TIFFField(tag, TIFFTag.TIFF_SHORT, 1,
-                                              new char[] {bitsPerSample[0]});
+                        if (isPaletteColor) {
+                            f = new TIFFField(tag, TIFFTag.TIFF_SHORT, 1, new char[] {bitsPerSample[0]});
                         } else {
-                            f = new TIFFField(tag, TIFFTag.TIFF_SHORT,
-                                              bitsPerSample.length,
-                                              bitsPerSample);
+                            f = new TIFFField(tag, TIFFTag.TIFF_SHORT, bitsPerSample.length, bitsPerSample);
                         }
                         rootIFD.addTIFFField(f);
                     } else if (childName.equals("SampleMSB")) {
@@ -1072,17 +974,16 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
                         String sMSB = getAttribute(child, "value");
                         int[] sampleMSB = listToIntArray(sMSB);
                         boolean isRightToLeft = true;
-                        for(int i = 0; i < sampleMSB.length; i++) {
-                            if(sampleMSB[i] != 0) {
+                        for (int i = 0; i < sampleMSB.length; i++) {
+                            if (sampleMSB[i] != 0) {
                                 isRightToLeft = false;
                                 break;
                             }
                         }
-                        int fillOrder = isRightToLeft ?
-                            BaselineTIFFTagSet.FILL_ORDER_RIGHT_TO_LEFT :
-                            BaselineTIFFTagSet.FILL_ORDER_LEFT_TO_RIGHT;
-                        tag =
-                            rootIFD.getTag(BaselineTIFFTagSet.TAG_FILL_ORDER);
+                        int fillOrder = isRightToLeft
+                                ? BaselineTIFFTagSet.FILL_ORDER_RIGHT_TO_LEFT
+                                : BaselineTIFFTagSet.FILL_ORDER_LEFT_TO_RIGHT;
+                        tag = rootIFD.getTag(BaselineTIFFTagSet.TAG_FILL_ORDER);
                         f = new TIFFField(tag, fillOrder);
                         rootIFD.addTIFFField(f);
                     }
@@ -1092,10 +993,10 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
             } else if (name.equals("Dimension")) {
                 float pixelAspectRatio = -1.0f;
                 boolean gotPixelAspectRatio = false;
-                
+
                 float horizontalPixelSize = -1.0f;
                 boolean gotHorizontalPixelSize = false;
-                
+
                 float verticalPixelSize = -1.0f;
                 boolean gotVerticalPixelSize = false;
 
@@ -1119,13 +1020,13 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
                         for (int i = 0; i < orientationNames.length; i++) {
                             if (orientation.equals(orientationNames[i])) {
                                 char[] oData = new char[1];
-                                oData[0] = (char)i;
+                                oData[0] = (char) i;
 
                                 f = new TIFFField(
-                            rootIFD.getTag(BaselineTIFFTagSet.TAG_ORIENTATION),
-                            TIFFTag.TIFF_SHORT,
-                            1,
-                            oData);
+                                        rootIFD.getTag(BaselineTIFFTagSet.TAG_ORIENTATION),
+                                        TIFFTag.TIFF_SHORT,
+                                        1,
+                                        oData);
 
                                 rootIFD.addTIFFField(f);
                                 break;
@@ -1153,22 +1054,17 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
                     child = child.getNextSibling();
                 }
 
-                sizeIsAbsolute = gotHorizontalPixelSize ||
-                    gotVerticalPixelSize;
+                sizeIsAbsolute = gotHorizontalPixelSize || gotVerticalPixelSize;
 
                 // Fill in pixel size data from aspect ratio
                 if (gotPixelAspectRatio) {
                     if (gotHorizontalPixelSize && !gotVerticalPixelSize) {
-                        verticalPixelSize =
-                            horizontalPixelSize/pixelAspectRatio;
+                        verticalPixelSize = horizontalPixelSize / pixelAspectRatio;
                         gotVerticalPixelSize = true;
-                    } else if (gotVerticalPixelSize &&
-                               !gotHorizontalPixelSize) {
-                        horizontalPixelSize =
-                            verticalPixelSize*pixelAspectRatio;
+                    } else if (gotVerticalPixelSize && !gotHorizontalPixelSize) {
+                        horizontalPixelSize = verticalPixelSize * pixelAspectRatio;
                         gotHorizontalPixelSize = true;
-                    } else if (!gotHorizontalPixelSize &&
-                               !gotVerticalPixelSize) {
+                    } else if (!gotHorizontalPixelSize && !gotVerticalPixelSize) {
                         horizontalPixelSize = pixelAspectRatio;
                         verticalPixelSize = 1.0f;
                         gotHorizontalPixelSize = true;
@@ -1178,79 +1074,62 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
 
                 // Compute pixels/centimeter
                 if (gotHorizontalPixelSize) {
-                    float xResolution =
-                        (sizeIsAbsolute ? 10.0f : 1.0f)/horizontalPixelSize;
+                    float xResolution = (sizeIsAbsolute ? 10.0f : 1.0f) / horizontalPixelSize;
                     long[][] hData = new long[1][2];
                     hData[0] = new long[2];
-                    hData[0][0] = (long)(xResolution*10000.0f);
-                    hData[0][1] = (long)10000;
-                    
+                    hData[0][0] = (long) (xResolution * 10000.0f);
+                    hData[0][1] = (long) 10000;
+
                     f = new TIFFField(
-                           rootIFD.getTag(BaselineTIFFTagSet.TAG_X_RESOLUTION),
-                           TIFFTag.TIFF_RATIONAL,
-                           1,
-                           hData);
+                            rootIFD.getTag(BaselineTIFFTagSet.TAG_X_RESOLUTION), TIFFTag.TIFF_RATIONAL, 1, hData);
                     rootIFD.addTIFFField(f);
                 }
 
                 if (gotVerticalPixelSize) {
-                    float yResolution =
-                        (sizeIsAbsolute ? 10.0f : 1.0f)/verticalPixelSize;
+                    float yResolution = (sizeIsAbsolute ? 10.0f : 1.0f) / verticalPixelSize;
                     long[][] vData = new long[1][2];
                     vData[0] = new long[2];
-                    vData[0][0] = (long)(yResolution*10000.0f);
-                    vData[0][1] = (long)10000;
-                    
+                    vData[0][0] = (long) (yResolution * 10000.0f);
+                    vData[0][1] = (long) 10000;
+
                     f = new TIFFField(
-                           rootIFD.getTag(BaselineTIFFTagSet.TAG_Y_RESOLUTION),
-                           TIFFTag.TIFF_RATIONAL,
-                           1,
-                           vData);
+                            rootIFD.getTag(BaselineTIFFTagSet.TAG_Y_RESOLUTION), TIFFTag.TIFF_RATIONAL, 1, vData);
                     rootIFD.addTIFFField(f);
                 }
-                
+
                 // Emit ResolutionUnit tag
                 char[] res = new char[1];
-                res[0] = (char)(sizeIsAbsolute ?
-                                BaselineTIFFTagSet.RESOLUTION_UNIT_CENTIMETER :
-                                BaselineTIFFTagSet.RESOLUTION_UNIT_NONE);
+                res[0] = (char)
+                        (sizeIsAbsolute
+                                ? BaselineTIFFTagSet.RESOLUTION_UNIT_CENTIMETER
+                                : BaselineTIFFTagSet.RESOLUTION_UNIT_NONE);
 
-                f = new TIFFField(
-                        rootIFD.getTag(BaselineTIFFTagSet.TAG_RESOLUTION_UNIT),
-                        TIFFTag.TIFF_SHORT,
-                        1,
-                        res);
+                f = new TIFFField(rootIFD.getTag(BaselineTIFFTagSet.TAG_RESOLUTION_UNIT), TIFFTag.TIFF_SHORT, 1, res);
                 rootIFD.addTIFFField(f);
 
                 // Position
-                if(sizeIsAbsolute) {
-                    if(gotHorizontalPosition) {
+                if (sizeIsAbsolute) {
+                    if (gotHorizontalPosition) {
                         // Convert from millimeters to centimeters via
                         // numerator multiplier = denominator/10.
                         long[][] hData = new long[1][2];
-                        hData[0][0] = (long)(horizontalPosition*10000.0f);
-                        hData[0][1] = (long)100000;
+                        hData[0][0] = (long) (horizontalPosition * 10000.0f);
+                        hData[0][1] = (long) 100000;
 
                         f = new TIFFField(
-                           rootIFD.getTag(BaselineTIFFTagSet.TAG_X_POSITION),
-                           TIFFTag.TIFF_RATIONAL,
-                           1,
-                           hData);
+                                rootIFD.getTag(BaselineTIFFTagSet.TAG_X_POSITION), TIFFTag.TIFF_RATIONAL, 1, hData);
                         rootIFD.addTIFFField(f);
                     }
 
-                    if(gotVerticalPosition) {
+                    if (gotVerticalPosition) {
                         // Convert from millimeters to centimeters via
                         // numerator multiplier = denominator/10.
                         long[][] vData = new long[1][2];
-                        vData[0][0] = (long)(verticalPosition*10000.0f);
-                        vData[0][1] = (long)100000;
+                        vData[0][0] = (long) (verticalPosition * 10000.0f);
+                        vData[0][1] = (long) 100000;
 
                         f = new TIFFField(
-                           rootIFD.getTag(BaselineTIFFTagSet.TAG_Y_POSITION),
-                           TIFFTag.TIFF_RATIONAL,
-                           1,
-                           vData);
+                                rootIFD.getTag(BaselineTIFFTagSet.TAG_Y_POSITION), TIFFTag.TIFF_RATIONAL, 1, vData);
                         rootIFD.addTIFFField(f);
                     }
                 }
@@ -1262,19 +1141,15 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
                     if (childName.equals("SubimageInterpretation")) {
                         String si = getAttribute(child, "value");
                         int newSubFileType = -1;
-                        if(si.equals("TransparencyMask")) {
-                            newSubFileType =
-                                BaselineTIFFTagSet.NEW_SUBFILE_TYPE_TRANSPARENCY;
-                        } else if(si.equals("ReducedResolution")) {
-                            newSubFileType =
-                                BaselineTIFFTagSet.NEW_SUBFILE_TYPE_REDUCED_RESOLUTION;
-                        } else if(si.equals("SinglePage")) {
-                            newSubFileType =
-                                BaselineTIFFTagSet.NEW_SUBFILE_TYPE_SINGLE_PAGE;
+                        if (si.equals("TransparencyMask")) {
+                            newSubFileType = BaselineTIFFTagSet.NEW_SUBFILE_TYPE_TRANSPARENCY;
+                        } else if (si.equals("ReducedResolution")) {
+                            newSubFileType = BaselineTIFFTagSet.NEW_SUBFILE_TYPE_REDUCED_RESOLUTION;
+                        } else if (si.equals("SinglePage")) {
+                            newSubFileType = BaselineTIFFTagSet.NEW_SUBFILE_TYPE_SINGLE_PAGE;
                         }
-                        if(newSubFileType != -1) {
-                            tag =
-                                rootIFD.getTag(BaselineTIFFTagSet.TAG_NEW_SUBFILE_TYPE);
+                        if (newSubFileType != -1) {
+                            tag = rootIFD.getTag(BaselineTIFFTagSet.TAG_NEW_SUBFILE_TYPE);
                             f = new TIFFField(tag, newSubFileType);
                             rootIFD.addTIFFField(f);
                         }
@@ -1291,27 +1166,27 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
                         StringBuffer sb = new StringBuffer();
                         sb.append(year);
                         sb.append(":");
-                        if(month.length() == 1) {
+                        if (month.length() == 1) {
                             sb.append("0");
                         }
                         sb.append(month);
                         sb.append(":");
-                        if(day.length() == 1) {
+                        if (day.length() == 1) {
                             sb.append("0");
                         }
                         sb.append(day);
                         sb.append(" ");
-                        if(hour.length() == 1) {
+                        if (hour.length() == 1) {
                             sb.append("0");
                         }
                         sb.append(hour);
                         sb.append(":");
-                        if(minute.length() == 1) {
+                        if (minute.length() == 1) {
                             sb.append("0");
                         }
                         sb.append(minute);
                         sb.append(":");
-                        if(second.length() == 1) {
+                        if (second.length() == 1) {
                             sb.append("0");
                         }
                         sb.append(second);
@@ -1319,11 +1194,7 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
                         String[] dt = new String[1];
                         dt[0] = sb.toString();
 
-                        f = new TIFFField(
-                              rootIFD.getTag(BaselineTIFFTagSet.TAG_DATE_TIME),
-                              TIFFTag.TIFF_ASCII,
-                              1,
-                              dt);
+                        f = new TIFFField(rootIFD.getTag(BaselineTIFFTagSet.TAG_DATE_TIME), TIFFTag.TIFF_ASCII, 1, dt);
                         rootIFD.addTIFFField(f);
                     }
 
@@ -1336,56 +1207,44 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
                 String theTitle = null;
                 while (child != null) {
                     String childName = child.getNodeName();
-                    if(childName.equals("TextEntry")) {
+                    if (childName.equals("TextEntry")) {
                         int tagNumber = -1;
                         NamedNodeMap childAttrs = child.getAttributes();
                         Node keywordNode = childAttrs.getNamedItem("keyword");
-                        if(keywordNode != null) {
+                        if (keywordNode != null) {
                             String keyword = keywordNode.getNodeValue();
                             String value = getAttribute(child, "value");
-                            if(!keyword.equals("") && !value.equals("")) {
-                                if(keyword.equalsIgnoreCase("DocumentName")) {
-                                    tagNumber =
-                                        BaselineTIFFTagSet.TAG_DOCUMENT_NAME;
-                                } else if(keyword.equalsIgnoreCase("ImageDescription")) {
-                                    tagNumber =
-                                        BaselineTIFFTagSet.TAG_IMAGE_DESCRIPTION;
-                                } else if(keyword.equalsIgnoreCase("Make")) {
-                                    tagNumber =
-                                        BaselineTIFFTagSet.TAG_MAKE;
-                                } else if(keyword.equalsIgnoreCase("Model")) {
-                                    tagNumber =
-                                        BaselineTIFFTagSet.TAG_MODEL;
-                                } else if(keyword.equalsIgnoreCase("PageName")) {
-                                    tagNumber =
-                                        BaselineTIFFTagSet.TAG_PAGE_NAME;
-                                } else if(keyword.equalsIgnoreCase("Software")) {
-                                    tagNumber =
-                                        BaselineTIFFTagSet.TAG_SOFTWARE;
-                                } else if(keyword.equalsIgnoreCase("Artist")) {
-                                    tagNumber =
-                                        BaselineTIFFTagSet.TAG_ARTIST;
-                                } else if(keyword.equalsIgnoreCase("HostComputer")) {
-                                    tagNumber =
-                                        BaselineTIFFTagSet.TAG_HOST_COMPUTER;
-                                } else if(keyword.equalsIgnoreCase("InkNames")) {
-                                    tagNumber =
-                                        BaselineTIFFTagSet.TAG_INK_NAMES;
-                                } else if(keyword.equalsIgnoreCase("Copyright")) {
-                                    tagNumber =
-                                        BaselineTIFFTagSet.TAG_COPYRIGHT;
-                                } else if(keyword.equalsIgnoreCase("author")) {
+                            if (!keyword.equals("") && !value.equals("")) {
+                                if (keyword.equalsIgnoreCase("DocumentName")) {
+                                    tagNumber = BaselineTIFFTagSet.TAG_DOCUMENT_NAME;
+                                } else if (keyword.equalsIgnoreCase("ImageDescription")) {
+                                    tagNumber = BaselineTIFFTagSet.TAG_IMAGE_DESCRIPTION;
+                                } else if (keyword.equalsIgnoreCase("Make")) {
+                                    tagNumber = BaselineTIFFTagSet.TAG_MAKE;
+                                } else if (keyword.equalsIgnoreCase("Model")) {
+                                    tagNumber = BaselineTIFFTagSet.TAG_MODEL;
+                                } else if (keyword.equalsIgnoreCase("PageName")) {
+                                    tagNumber = BaselineTIFFTagSet.TAG_PAGE_NAME;
+                                } else if (keyword.equalsIgnoreCase("Software")) {
+                                    tagNumber = BaselineTIFFTagSet.TAG_SOFTWARE;
+                                } else if (keyword.equalsIgnoreCase("Artist")) {
+                                    tagNumber = BaselineTIFFTagSet.TAG_ARTIST;
+                                } else if (keyword.equalsIgnoreCase("HostComputer")) {
+                                    tagNumber = BaselineTIFFTagSet.TAG_HOST_COMPUTER;
+                                } else if (keyword.equalsIgnoreCase("InkNames")) {
+                                    tagNumber = BaselineTIFFTagSet.TAG_INK_NAMES;
+                                } else if (keyword.equalsIgnoreCase("Copyright")) {
+                                    tagNumber = BaselineTIFFTagSet.TAG_COPYRIGHT;
+                                } else if (keyword.equalsIgnoreCase("author")) {
                                     theAuthor = value;
-                                } else if(keyword.equalsIgnoreCase("description")) {
+                                } else if (keyword.equalsIgnoreCase("description")) {
                                     theDescription = value;
-                                } else if(keyword.equalsIgnoreCase("title")) {
+                                } else if (keyword.equalsIgnoreCase("title")) {
                                     theTitle = value;
                                 }
-                                if(tagNumber != -1) {
-                                    f = new TIFFField(rootIFD.getTag(tagNumber),
-                                                      TIFFTag.TIFF_ASCII,
-                                                      1,
-                                                      new String[] {value});
+                                if (tagNumber != -1) {
+                                    f = new TIFFField(
+                                            rootIFD.getTag(tagNumber), TIFFTag.TIFF_ASCII, 1, new String[] {value});
                                     rootIFD.addTIFFField(f);
                                 }
                             }
@@ -1393,97 +1252,94 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
                     }
                     child = child.getNextSibling();
                 } // child != null
-                if(theAuthor != null &&
-                   getTIFFField(BaselineTIFFTagSet.TAG_ARTIST) == null) {
-                    f = new TIFFField(rootIFD.getTag(BaselineTIFFTagSet.TAG_ARTIST),
-                                      TIFFTag.TIFF_ASCII,
-                                      1,
-                                      new String[] {theAuthor});
+                if (theAuthor != null && getTIFFField(BaselineTIFFTagSet.TAG_ARTIST) == null) {
+                    f = new TIFFField(
+                            rootIFD.getTag(BaselineTIFFTagSet.TAG_ARTIST), TIFFTag.TIFF_ASCII, 1, new String[] {
+                                theAuthor
+                            });
                     rootIFD.addTIFFField(f);
                 }
-                if(theDescription != null &&
-                   getTIFFField(BaselineTIFFTagSet.TAG_IMAGE_DESCRIPTION) == null) {
-                    f = new TIFFField(rootIFD.getTag(BaselineTIFFTagSet.TAG_IMAGE_DESCRIPTION),
-                                      TIFFTag.TIFF_ASCII,
-                                      1,
-                                      new String[] {theDescription});
+                if (theDescription != null && getTIFFField(BaselineTIFFTagSet.TAG_IMAGE_DESCRIPTION) == null) {
+                    f = new TIFFField(
+                            rootIFD.getTag(BaselineTIFFTagSet.TAG_IMAGE_DESCRIPTION),
+                            TIFFTag.TIFF_ASCII,
+                            1,
+                            new String[] {theDescription});
                     rootIFD.addTIFFField(f);
                 }
-                if(theTitle != null &&
-                   getTIFFField(BaselineTIFFTagSet.TAG_DOCUMENT_NAME) == null) {
-                    f = new TIFFField(rootIFD.getTag(BaselineTIFFTagSet.TAG_DOCUMENT_NAME),
-                                      TIFFTag.TIFF_ASCII,
-                                      1,
-                                      new String[] {theTitle});
+                if (theTitle != null && getTIFFField(BaselineTIFFTagSet.TAG_DOCUMENT_NAME) == null) {
+                    f = new TIFFField(
+                            rootIFD.getTag(BaselineTIFFTagSet.TAG_DOCUMENT_NAME), TIFFTag.TIFF_ASCII, 1, new String[] {
+                                theTitle
+                            });
                     rootIFD.addTIFFField(f);
                 }
             } else if (name.equals("Transparency")) {
-                 Node child = node.getFirstChild();
-                 while (child != null) {
-                     String childName = child.getNodeName();
+                Node child = node.getFirstChild();
+                while (child != null) {
+                    String childName = child.getNodeName();
 
-                     if (childName.equals("Alpha")) {
-                         String alpha = getAttribute(child, "value");
+                    if (childName.equals("Alpha")) {
+                        String alpha = getAttribute(child, "value");
 
-                         f = null;
-                         if (alpha.equals("premultiplied")) {
-                             f = new TIFFField(
-                          rootIFD.getTag(BaselineTIFFTagSet.TAG_EXTRA_SAMPLES),
-                          BaselineTIFFTagSet.EXTRA_SAMPLES_ASSOCIATED_ALPHA);
-                         } else if (alpha.equals("nonpremultiplied")) {
-                             f = new TIFFField(
-                          rootIFD.getTag(BaselineTIFFTagSet.TAG_EXTRA_SAMPLES),
-                          BaselineTIFFTagSet.EXTRA_SAMPLES_UNASSOCIATED_ALPHA);
-                         }
-                         if (f != null) {
-                             rootIFD.addTIFFField(f);
-                         }
-                     }
+                        f = null;
+                        if (alpha.equals("premultiplied")) {
+                            f = new TIFFField(
+                                    rootIFD.getTag(BaselineTIFFTagSet.TAG_EXTRA_SAMPLES),
+                                    BaselineTIFFTagSet.EXTRA_SAMPLES_ASSOCIATED_ALPHA);
+                        } else if (alpha.equals("nonpremultiplied")) {
+                            f = new TIFFField(
+                                    rootIFD.getTag(BaselineTIFFTagSet.TAG_EXTRA_SAMPLES),
+                                    BaselineTIFFTagSet.EXTRA_SAMPLES_UNASSOCIATED_ALPHA);
+                        }
+                        if (f != null) {
+                            rootIFD.addTIFFField(f);
+                        }
+                    }
 
                     child = child.getNextSibling();
-                 }
+                }
             }
 
             node = node.getNextSibling();
         }
 
         // Set SampleFormat.
-        if(sampleFormat != null) {
+        if (sampleFormat != null) {
             // Derive the value.
             int sf = -1;
-            if(sampleFormat.equals("SignedIntegral")) {
+            if (sampleFormat.equals("SignedIntegral")) {
                 sf = BaselineTIFFTagSet.SAMPLE_FORMAT_SIGNED_INTEGER;
-            } else if(sampleFormat.equals("UnsignedIntegral")) {
+            } else if (sampleFormat.equals("UnsignedIntegral")) {
                 sf = BaselineTIFFTagSet.SAMPLE_FORMAT_UNSIGNED_INTEGER;
-            } else if(sampleFormat.equals("Real")) {
+            } else if (sampleFormat.equals("Real")) {
                 sf = BaselineTIFFTagSet.SAMPLE_FORMAT_FLOATING_POINT;
-            } else if(sampleFormat.equals("Index")) {
+            } else if (sampleFormat.equals("Index")) {
                 sf = BaselineTIFFTagSet.SAMPLE_FORMAT_UNSIGNED_INTEGER;
             }
 
-            if(sf != -1) {
+            if (sf != -1) {
                 // Derive the count.
                 int count = 1;
 
                 // Try SamplesPerPixel first.
                 f = getTIFFField(BaselineTIFFTagSet.TAG_SAMPLES_PER_PIXEL);
-                if(f != null) {
+                if (f != null) {
                     count = f.getAsInt(0);
                 } else {
                     // Try BitsPerSample.
                     f = getTIFFField(BaselineTIFFTagSet.TAG_BITS_PER_SAMPLE);
-                    if(f != null) {
+                    if (f != null) {
                         count = f.getCount();
                     }
                 }
 
                 char[] sampleFormatArray = new char[count];
-                Arrays.fill(sampleFormatArray, (char)sf);
+                Arrays.fill(sampleFormatArray, (char) sf);
 
                 // Add SampleFormat.
                 tag = rootIFD.getTag(BaselineTIFFTagSet.TAG_SAMPLE_FORMAT);
-                f = new TIFFField(tag, TIFFTag.TIFF_SHORT,
-                                  sampleFormatArray.length, sampleFormatArray);
+                f = new TIFFField(tag, TIFFTag.TIFF_SHORT, sampleFormatArray.length, sampleFormatArray);
                 rootIFD.addTIFFField(f);
             }
         }
@@ -1497,12 +1353,12 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
 
     private Node getChildNode(Node node, String childName) {
         Node childNode = null;
-        if(node.hasChildNodes()) {
+        if (node.hasChildNodes()) {
             NodeList childNodes = node.getChildNodes();
             int length = childNodes.getLength();
-            for(int i = 0; i < length; i++) {
+            for (int i = 0; i < length; i++) {
                 Node item = childNodes.item(i);
-                if(item.getNodeName().equals(childName)) {
+                if (item.getNodeName().equals(childName)) {
                     childNode = item;
                     break;
                 }
@@ -1523,13 +1379,12 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
             StringTokenizer st = new StringTokenizer(tagSetNames, ",");
             while (st.hasMoreTokens()) {
                 String className = st.nextToken();
-                
+
                 Object o = null;
                 try {
                     Class setClass = Class.forName(className);
-                    Method getInstanceMethod =
-                        setClass.getMethod("getInstance", (Class[])null);
-                    o = getInstanceMethod.invoke(null, (Object[])null);
+                    Method getInstanceMethod = setClass.getMethod("getInstance", (Class[]) null);
+                    o = getInstanceMethod.invoke(null, (Object[]) null);
                 } catch (NoSuchMethodException e) {
                     throw new RuntimeException(e);
                 } catch (IllegalAccessException e) {
@@ -1538,14 +1393,12 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
                     throw new RuntimeException(e);
                 } catch (ClassNotFoundException e) {
                     throw new RuntimeException(e);
-                } 
-                
+                }
+
                 if (!(o instanceof TIFFTagSet)) {
-                    fatal(node, "Specified tag set class \"" + 
-                          className +
-                          "\" is not an instance of TIFFTagSet");
+                    fatal(node, "Specified tag set class \"" + className + "\" is not an instance of TIFFTagSet");
                 } else {
-                    tagSets.add((TIFFTagSet)o);
+                    tagSets.add((TIFFTagSet) o);
                 }
             }
         }
@@ -1562,15 +1415,14 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
                 String parentTagName = getAttribute(node, "parentTagName");
                 String parentTagNumber = getAttribute(node, "parentTagNumber");
                 TIFFTag tag = null;
-                if(parentTagName != null) {
+                if (parentTagName != null) {
                     tag = TIFFIFD.getTag(parentTagName, tagSets);
-                } else if(parentTagNumber != null) {
-                    int tagNumber =
-                        Integer.valueOf(parentTagNumber).intValue();
+                } else if (parentTagNumber != null) {
+                    int tagNumber = Integer.valueOf(parentTagNumber).intValue();
                     tag = TIFFIFD.getTag(tagNumber, tagSets);
                 }
 
-                if(tag == null) {
+                if (tag == null) {
                     tag = new TIFFTag("unknown", 0, 0, null);
                 }
 
@@ -1588,7 +1440,7 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
                 TIFFTagSet tagSet = null;
                 Iterator iter = tagSets.iterator();
                 while (iter.hasNext()) {
-                    TIFFTagSet t = (TIFFTagSet)iter.next();
+                    TIFFTagSet t = (TIFFTagSet) iter.next();
                     if (t.getTag(number) != null) {
                         tagSet = t;
                         break;
@@ -1597,9 +1449,7 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
 
                 f = TIFFField.createFromMetadataNode(tagSet, node);
             } else {
-                fatal(node,
-                      "Expected either \"TIFFIFD\" or \"TIFFField\" node, got "
-                      + name);
+                fatal(node, "Expected either \"TIFFIFD\" or \"TIFFField\" node, got " + name);
             }
 
             ifd.addTIFFField(f);
@@ -1614,38 +1464,36 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
         if (!node.getNodeName().equals(nativeMetadataFormatName)) {
             fatal(node, "Root must be " + nativeMetadataFormatName);
         }
-        
+
         node = node.getFirstChild();
         if (node == null || !node.getNodeName().equals("TIFFIFD")) {
             fatal(root, "Root must have \"TIFFIFD\" child");
-        } 
+        }
         TIFFIFD ifd = parseIFD(node);
 
         List rootIFDTagSets = rootIFD.getTagSetList();
         Iterator tagSetIter = ifd.getTagSetList().iterator();
-        while(tagSetIter.hasNext()) {
+        while (tagSetIter.hasNext()) {
             Object o = tagSetIter.next();
-            if(o instanceof TIFFTagSet && !rootIFDTagSets.contains(o)) {
-                rootIFD.addTagSet((TIFFTagSet)o);
+            if (o instanceof TIFFTagSet && !rootIFDTagSets.contains(o)) {
+                rootIFD.addTagSet((TIFFTagSet) o);
             }
         }
 
         Iterator ifdIter = ifd.iterator();
-        while(ifdIter.hasNext()) {
-            TIFFField field = (TIFFField)ifdIter.next();
+        while (ifdIter.hasNext()) {
+            TIFFField field = (TIFFField) ifdIter.next();
             rootIFD.addTIFFField(field);
         }
     }
 
-    public void mergeTree(String formatName, Node root)
-        throws IIOInvalidTreeException{
+    public void mergeTree(String formatName, Node root) throws IIOInvalidTreeException {
         if (formatName.equals(nativeMetadataFormatName)) {
             if (root == null) {
                 throw new IllegalArgumentException("root == null!");
             }
             mergeNativeTree(root);
-        } else if (formatName.equals
-                   (IIOMetadataFormatImpl.standardMetadataFormatName)) {
+        } else if (formatName.equals(IIOMetadataFormatImpl.standardMetadataFormatName)) {
             if (root == null) {
                 throw new IllegalArgumentException("root == null!");
             }
@@ -1672,9 +1520,8 @@ public class TIFFImageMetadata extends CoreCommonImageMetadata {
     }
 
     /**
-     * Returns a <code>TIFFImageMetadata</code> wherein all fields in the
-     * root IFD from the <code>BaselineTIFFTagSet</code> are copied by value
-     * and all other fields copied by reference.
+     * Returns a <code>TIFFImageMetadata</code> wherein all fields in the root IFD from the <code>BaselineTIFFTagSet
+     * </code> are copied by value and all other fields copied by reference.
      */
     public TIFFImageMetadata getShallowClone() {
         return new TIFFImageMetadata(rootIFD.getShallowClone());

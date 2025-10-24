@@ -22,12 +22,12 @@ import java.awt.image.Raster;
 
 /**
  * A scanline provider optimized for Raster objects containing a 8bit gray and alpha bands
- * 
+ *
  * @author Andrea Aime - GeoSolutions
  */
 public final class RasterByteGrayAlphaProvider extends AbstractScanlineProvider {
 
-    final static int[] PIXEL_STRIDES = new int[]{2};
+    static final int[] PIXEL_STRIDES = new int[] {2};
 
     final byte[] bytes;
 
@@ -40,7 +40,11 @@ public final class RasterByteGrayAlphaProvider extends AbstractScanlineProvider 
     int numBands;
 
     public RasterByteGrayAlphaProvider(Raster raster) {
-        super(raster, 8, raster.getWidth() * computePixelStride(raster, PIXEL_STRIDES), computePixelStride(raster, PIXEL_STRIDES));
+        super(
+                raster,
+                8,
+                raster.getWidth() * computePixelStride(raster, PIXEL_STRIDES),
+                computePixelStride(raster, PIXEL_STRIDES));
         this.bytes = ((DataBufferByte) raster.getDataBuffer()).getData();
         ComponentSampleModel sm = (ComponentSampleModel) raster.getSampleModel();
         this.bandOffsets = sm.getBandOffsets();

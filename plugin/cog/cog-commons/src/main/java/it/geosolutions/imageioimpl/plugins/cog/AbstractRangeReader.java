@@ -19,7 +19,6 @@ package it.geosolutions.imageioimpl.plugins.cog;
 import it.geosolutions.imageio.core.BasicAuthURI;
 import it.geosolutions.imageio.core.ExtCaches;
 import it.geosolutions.imageio.utilities.SoftValueHashMap;
-
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -28,19 +27,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-/**
- * @author joshfix
- * Created on 2019-08-21
- */
+/** @author joshfix Created on 2019-08-21 */
 public abstract class AbstractRangeReader implements RangeReader {
 
     /**
-     * Streams (and rangeReader too) get repeatedly initialized on the same URI.
-     * Let's cache the header since some COG datasets might have long
-     * tileBytes/tileCount TAG which slow down the repeated accesses.
+     * Streams (and rangeReader too) get repeatedly initialized on the same URI. Let's cache the header since some COG
+     * datasets might have long tileBytes/tileCount TAG which slow down the repeated accesses.
      */
-    protected final static Map<String, byte[]> HEADERS_CACHE = new SoftValueHashMap<>();
-    
+    protected static final Map<String, byte[]> HEADERS_CACHE = new SoftValueHashMap<>();
+
     static {
         ExtCaches.addListener(() -> HEADERS_CACHE.clear());
     }
@@ -51,7 +46,7 @@ public abstract class AbstractRangeReader implements RangeReader {
     protected int headerLength;
     protected int headerOffset = 0;
 
-    private final static Logger LOGGER = Logger.getLogger(AbstractRangeReader.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AbstractRangeReader.class.getName());
 
     public AbstractRangeReader(BasicAuthURI authUri, int headerLength) {
         this.authUri = authUri;
@@ -60,10 +55,9 @@ public abstract class AbstractRangeReader implements RangeReader {
         this.headerLength = headerLength;
     }
 
-
     /**
-     * By default, the implementation just
-     * calls {@link URI#toURL()}, subclass should override to handle their specific protocol.
+     * By default, the implementation just calls {@link URI#toURL()}, subclass should override to handle their specific
+     * protocol.
      */
     @Override
     public URL getURL() throws MalformedURLException {
@@ -71,8 +65,7 @@ public abstract class AbstractRangeReader implements RangeReader {
     }
 
     /**
-     * Prevents making new range requests for image data that overlap with the header range that
-     * has already been read
+     * Prevents making new range requests for image data that overlap with the header range that has already been read
      *
      * @param ranges
      * @return
@@ -88,13 +81,12 @@ public abstract class AbstractRangeReader implements RangeReader {
                 if (ranges[i][1] <= dataLength - 1) {
                     // this range is fully inside the header which was already read; discard this
                     // range
-                    LOGGER.fine("Removed range " + ranges[i][0] + "-" + ranges[i][1] + " as it " +
-                            "lies fully within"
+                    LOGGER.fine("Removed range " + ranges[i][0] + "-" + ranges[i][1] + " as it " + "lies fully within"
                             + " the data already read in the header request");
                 } else {
                     // this range starts inside the header range, but ends outside of it.
                     // add a new range that starts at the end of the header range
-                    long[] newRange = new long[]{dataLength - 1, ranges[i][1]};
+                    long[] newRange = new long[] {dataLength - 1, ranges[i][1]};
 
                     // Adjust the data's header size in case the related range have been adjusted
                     byte[] headersData = data.get(0L);
@@ -107,8 +99,7 @@ public abstract class AbstractRangeReader implements RangeReader {
 
                     newRanges.add(newRange);
                     LOGGER.fine("Modified range " + ranges[i][0] + "-" + ranges[i][1]
-                            + " to " + dataLength + "-" + ranges[i][1] + " as it overlaps with " +
-                            "data previously"
+                            + " to " + dataLength + "-" + ranges[i][1] + " as it overlaps with " + "data previously"
                             + " read in the header request");
                 }
             } else {
@@ -118,7 +109,7 @@ public abstract class AbstractRangeReader implements RangeReader {
         }
 
         if (modified) {
-            return newRanges.toArray(new long[][]{});
+            return newRanges.toArray(new long[][] {});
         } else {
             LOGGER.fine("No ranges modified.");
             return ranges;
@@ -139,4 +130,3 @@ public abstract class AbstractRangeReader implements RangeReader {
         HEADERS_CACHE.clear();
     }
 }
-

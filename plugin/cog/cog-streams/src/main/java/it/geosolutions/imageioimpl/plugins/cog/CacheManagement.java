@@ -16,6 +16,9 @@
  */
 package it.geosolutions.imageioimpl.plugins.cog;
 
+import java.net.URL;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
 import org.ehcache.config.CacheConfiguration;
@@ -28,18 +31,12 @@ import org.ehcache.expiry.Duration;
 import org.ehcache.expiry.Expirations;
 import org.ehcache.xml.XmlConfiguration;
 
-import java.net.URL;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
-
 /**
  * Creates caches for tiles and headers, and provides methods to check keys and retrieve cached data.
  *
- * @author joshfix
- * Created on 2019-09-19
+ * @author joshfix Created on 2019-09-19
  */
 public enum CacheManagement implements CogTileCacheProvider {
-
     DEFAULT;
 
     public static final String TILE_CACHE = "tile_cache";
@@ -89,18 +86,17 @@ public enum CacheManagement implements CogTileCacheProvider {
             resourcePoolsBuilder.offheap(config.getOffHeapSize(), MemoryUnit.B);
         }
 
-        manager.createCache(TILE_CACHE,
-                buildCacheConfiguration(TileCacheEntryKey.class, byte[].class, resourcePoolsBuilder));
-        manager.createCache(HEADER_CACHE,
-                buildCacheConfiguration(String.class, byte[].class, resourcePoolsBuilder));
+        manager.createCache(
+                TILE_CACHE, buildCacheConfiguration(TileCacheEntryKey.class, byte[].class, resourcePoolsBuilder));
+        manager.createCache(HEADER_CACHE, buildCacheConfiguration(String.class, byte[].class, resourcePoolsBuilder));
 
         return manager;
     }
 
-    public <K extends Class, V extends Class> CacheConfiguration<K, V> buildCacheConfiguration(K keyType, V valueType,
-                                                                                               ResourcePoolsBuilder resourcePoolsBuilder) {
-        CacheConfigurationBuilder cacheConfigurationBuilder = CacheConfigurationBuilder
-                .newCacheConfigurationBuilder(keyType, valueType, resourcePoolsBuilder);
+    public <K extends Class, V extends Class> CacheConfiguration<K, V> buildCacheConfiguration(
+            K keyType, V valueType, ResourcePoolsBuilder resourcePoolsBuilder) {
+        CacheConfigurationBuilder cacheConfigurationBuilder =
+                CacheConfigurationBuilder.newCacheConfigurationBuilder(keyType, valueType, resourcePoolsBuilder);
 
         if (config.getTimeToLive() > 0) {
             cacheConfigurationBuilder.withExpiry(
@@ -114,10 +110,7 @@ public enum CacheManagement implements CogTileCacheProvider {
         return cacheConfigurationBuilder.build();
     }
 
-
-    /**
-     * Get the logger from this method because when needed the class hasn't been loaded yet
-     */
+    /** Get the logger from this method because when needed the class hasn't been loaded yet */
     private static Logger logger() {
         if (LOGGER == null) {
             LOGGER = Logger.getLogger(CacheManagement.class.getCanonicalName());
