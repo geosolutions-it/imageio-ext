@@ -46,7 +46,7 @@
         <log4j.version>1.2.14</log4j.version>
         <commons-logging.version>1.1.1</commons-logging.version>
         <commons-lang.version>2.4</commons-lang.version>
-        <commons-io.version>2.7</commons-io.version>
+        <commons-io.version>2.14.0</commons-io.version>
     </properties>
 
     <dependencies>
