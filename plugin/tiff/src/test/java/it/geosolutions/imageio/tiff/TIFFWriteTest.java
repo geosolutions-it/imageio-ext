@@ -308,7 +308,7 @@ public class TIFFWriteTest extends Assert {
         writer.setOutput(new FileImageOutputStream(outputFile));
 
         final IIOMetadata streamMetadata = writer.getDefaultStreamMetadata(writeParam);
-        final ImageTypeSpecifier imageTypeSpecifier = new ImageTypeSpecifier(image);
+        final ImageTypeSpecifier imageTypeSpecifier = ImageTypeSpecifier.createFromRenderedImage(image);
         IIOMetadata imageMetadata = writer.getDefaultImageMetadata(imageTypeSpecifier, writeParam);
         writer.prepareWriteEmpty(streamMetadata, imageTypeSpecifier, image.getWidth(), image.getHeight(), imageMetadata, null, writeParam);
         writer.endWriteEmpty();
