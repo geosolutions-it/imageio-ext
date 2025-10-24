@@ -1,3 +1,4 @@
+.pmd
 .project
 .classpath
 .settings
@@ -8,3 +9,4 @@ target
 *.class
 *.pyc
 *.iml
+.spotless-index
