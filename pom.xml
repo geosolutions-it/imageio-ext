@@ -276,39 +276,6 @@
   <!--                                                          -->
   <!-- ======================================================== -->
   <build>
-
-    <!-- ======================================================== -->
-    <!--              Extensions settings for Deployment          -->
-    <!-- ======================================================== -->
-    <extensions>
-
-      <!--....................................-->
-      <!-- java.net maven2 (using wagon svn)  -->
-      <!--....................................-->
-      <!-- <extension>                             -->
-      <!--  <groupId>org.jvnet.wagon-svn</groupId> -->
-      <!--  <artifactId>wagon-svn</artifactId>     -->
-      <!--  <version>RELEASE</version>             -->
-      <!-- </extension>                            -->
-
-      <!--.............................................-->
-      <!--       geo-solutions (using wagon ftp)       -->
-      <!--.............................................-->
-      <extension>
-        <groupId>org.apache.maven.wagon</groupId>
-        <artifactId>wagon-ftp</artifactId>
-        <version>1.0-beta-2</version>
-      </extension>
-
-      <!--....................................-->
-      <!--        (using wagon webdav)        -->
-      <!--....................................-->
-      <extension>
-        <groupId>org.apache.maven.wagon</groupId>
-        <artifactId>wagon-webdav</artifactId>
-        <version>1.0-beta-2</version>
-      </extension>
-    </extensions>
     <!-- ========================================================= -->
     <!--   Maven plugins dependencies management.                  -->
     <!--   It should not be needed since Maven select by default   -->
@@ -358,16 +325,6 @@
           <version>3.11.2</version>
         </plugin>
         <plugin>
-          <groupId>com.diffplug.spotless</groupId>
-          <artifactId>spotless-maven-plugin</artifactId>
-          <version>3.0.0</version>
-        </plugin>
-        <plugin>
-          <groupId>com.github.ekryd.sortpom</groupId>
-          <artifactId>sortpom-maven-plugin</artifactId>
-          <version>2.15.0</version>
-        </plugin>
-        <plugin>
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
           <version>0.8.14</version>
@@ -411,6 +368,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
+        <inherited>true</inherited>
+        <configuration>
+          <attach>true</attach>
+        </configuration>
         <executions>
           <execution>
             <id>attach-sources</id>
@@ -419,10 +380,6 @@
             </goals>
           </execution>
         </executions>
-        <inherited>true</inherited>
-        <configuration>
-          <attach>true</attach>
-        </configuration>
       </plugin>
       <!-- artifact assembly -->
       <plugin>
@@ -442,18 +399,11 @@
       <plugin>
         <groupId>com.diffplug.spotless</groupId>
         <artifactId>spotless-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>validate</phase>
-            <goals>
-              <goal>${spotless.action}</goal>
-            </goals>
-          </execution>
-        </executions>
+        <version>2.43.0</version>
         <configuration>
           <java>
             <palantirJavaFormat>
-              <version>2.74.0</version>
+              <version>2.50.0</version>
               <formatJavadoc>true</formatJavadoc>
             </palantirJavaFormat>
           </java>
@@ -462,20 +412,21 @@
             <indexFile>${project.basedir}/.spotless-index</indexFile>
           </upToDateChecking>
         </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>${spotless.action}</goal>
+            </goals>
+            <phase>validate</phase>
+          </execution>
+        </executions>
       </plugin>
 
       <!-- doc-include-sortpom-plugin-start (marker comment for documentation literalinclude directive) -->
       <plugin>
         <groupId>com.github.ekryd.sortpom</groupId>
         <artifactId>sortpom-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>verify</phase>
-            <goals>
-              <goal>${pom.fmt.action}</goal>
-            </goals>
-          </execution>
-        </executions>
+        <version>3.3.0</version>
         <configuration>
           <skip>${pom.fmt.skip}</skip>
           <keepBlankLines>true</keepBlankLines>
@@ -484,9 +435,50 @@
           <verifyFail>stop</verifyFail>
           <verifyFailOn>strict</verifyFailOn>
         </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>${pom.fmt.action}</goal>
+            </goals>
+            <phase>verify</phase>
+          </execution>
+        </executions>
       </plugin>
 
     </plugins>
+
+    <!-- ======================================================== -->
+    <!--              Extensions settings for Deployment          -->
+    <!-- ======================================================== -->
+    <extensions>
+
+      <!--....................................-->
+      <!-- java.net maven2 (using wagon svn)  -->
+      <!--....................................-->
+      <!-- <extension>                             -->
+      <!--  <groupId>org.jvnet.wagon-svn</groupId> -->
+      <!--  <artifactId>wagon-svn</artifactId>     -->
+      <!--  <version>RELEASE</version>             -->
+      <!-- </extension>                            -->
+
+      <!--.............................................-->
+      <!--       geo-solutions (using wagon ftp)       -->
+      <!--.............................................-->
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-ftp</artifactId>
+        <version>1.0-beta-2</version>
+      </extension>
+
+      <!--....................................-->
+      <!--        (using wagon webdav)        -->
+      <!--....................................-->
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-webdav</artifactId>
+        <version>1.0-beta-2</version>
+      </extension>
+    </extensions>
   </build>
 
   <reporting>
@@ -683,6 +675,9 @@
           <name>release</name>
         </property>
       </activation>
+      <modules>
+        <module>release</module>
+      </modules>
       <build>
         <plugins>
 
@@ -692,10 +687,10 @@
             <executions>
               <execution>
                 <id>copy-dependencies</id>
-                <phase>package</phase>
                 <goals>
                   <goal>copy-dependencies</goal>
                 </goals>
+                <phase>package</phase>
                 <configuration>
                   <includeGroupIds>it.geosolutions.imageio-ext</includeGroupIds>
                   <includeArtifactIds>imageio-ext-gdalframework</includeArtifactIds>
@@ -705,9 +700,6 @@
           </plugin>
         </plugins>
       </build>
-      <modules>
-        <module>release</module>
-      </modules>
     </profile>
     <profile>
       <!-- compiler options when building with JDK 8 -->
@@ -764,10 +756,10 @@
               </execution>
               <execution>
                 <id>post-unit-test</id>
-                <phase>test</phase>
                 <goals>
                   <goal>report</goal>
                 </goals>
+                <phase>test</phase>
               </execution>
             </executions>
           </plugin>
