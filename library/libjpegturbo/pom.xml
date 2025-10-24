@@ -1,62 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>org.libjpegturbo</groupId>
-    <artifactId>turbojpeg-wrapper</artifactId>
-    <version>1.2.1.6</version>
-    <packaging>jar</packaging>
-    <name>Libjpegturbo java wrapper</name>
-    <profiles>
-        <profile>
-            <id>deployosgeo</id>
-            <distributionManagement>
-                <repository>
-                    <uniqueVersion>false</uniqueVersion>
-                    <id>nexus</id>
-                    <name>OSGeo Release Repository</name>
-                    <url>https://repo.osgeo.org/repository/geotools-releases/</url>
-                </repository>
-                <snapshotRepository>
-                    <uniqueVersion>false</uniqueVersion>
-                    <id>nexus</id>
-                    <name>OSGeo Snapshot Repository</name>
-                    <url>https://repo.osgeo.org/repository/geotools-snapshots/</url>
-                </snapshotRepository>
-            </distributionManagement>
-        </profile>
-        <!--..................................-->
-        <!--      GeoSolutions Repository     -->
-        <!--..................................-->
-        <profile>
-            <id>deploygeosolutions</id>
-            <distributionManagement>
-                <repository>
-                    <uniqueVersion>false</uniqueVersion>
-                    <id>geosolutions</id>
-                    <url>ftp://demo.geo-solutions.it</url>
-                </repository>
-            </distributionManagement>
-        </profile>
-    </profiles>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>11</source>  <!-- The -source argument for the Java compiler. -->
-                    <target>11</target>  <!-- The -target argument for the Java compiler. -->
-                    <debug>true</debug>   <!-- Whether to include debugging information.   -->
-                </configuration>
-            </plugin>
-        </plugins>
-        <extensions>
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ftp</artifactId>
-                <version>1.0-beta-2</version>
-            </extension>
-        </extensions>
-    </build>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>it.geosolutions.imageio-ext</groupId>
+    <artifactId>imageio-ext-library</artifactId>
+    <version>2.1-SNAPSHOT</version>
+  </parent>
+  <groupId>org.libjpegturbo</groupId>
+  <artifactId>turbojpeg-wrapper</artifactId>
+  <version>1.2.1.6</version>
+  <packaging>jar</packaging>
+  <name>Libjpegturbo java wrapper</name>
+  <build>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-ftp</artifactId>
+        <version>1.0-beta-2</version>
+      </extension>
+    </extensions>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>11</source>
+          <!-- The -source argument for the Java compiler. -->
+          <target>11</target>
+          <!-- The -target argument for the Java compiler. -->
+          <debug>true</debug>
+          <!-- Whether to include debugging information.   -->
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <profiles>
+    <profile>
+      <id>deployosgeo</id>
+      <distributionManagement>
+        <repository>
+          <uniqueVersion>false</uniqueVersion>
+          <id>nexus</id>
+          <name>OSGeo Release Repository</name>
+          <url>https://repo.osgeo.org/repository/geotools-releases/</url>
+        </repository>
+        <snapshotRepository>
+          <uniqueVersion>false</uniqueVersion>
+          <id>nexus</id>
+          <name>OSGeo Snapshot Repository</name>
+          <url>https://repo.osgeo.org/repository/geotools-snapshots/</url>
+        </snapshotRepository>
+      </distributionManagement>
+    </profile>
+    <!--..................................-->
+    <!--      GeoSolutions Repository     -->
+    <!--..................................-->
+    <profile>
+      <id>deploygeosolutions</id>
+      <distributionManagement>
+        <repository>
+          <uniqueVersion>false</uniqueVersion>
+          <id>geosolutions</id>
+          <url>ftp://demo.geo-solutions.it</url>
+        </repository>
+      </distributionManagement>
+    </profile>
+  </profiles>
 </project>
