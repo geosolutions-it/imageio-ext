@@ -22,6 +22,11 @@
     <libdeflate.java.version>0.1.0-beta</libdeflate.java.version>
     <imagen.version>0.9.0</imagen.version>
     <surefire.jvm.args></surefire.jvm.args>
+    <pom.fmt.action>sort</pom.fmt.action>
+    <pom.fmt.skip>${spotless.apply.skip}</pom.fmt.skip>
+    <qa>false</qa>
+    <spotless.action>apply</spotless.action>
+    <spotless.apply.skip>false</spotless.apply.skip>
   </properties>
 
   <!-- ======================================================== -->
@@ -176,6 +181,34 @@
         </surefire.jvm.args>
       </properties>
     </profile>
+    <!-- code coverage -->
+    <profile>
+      <id>jacoco</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>${jacoco.version}</version>
+            <executions>
+              <execution>
+                <id>pre-unit-test</id>
+                <goals>
+                  <goal>prepare-agent</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>post-unit-test</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>report</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 
   <reporting>
@@ -297,6 +330,20 @@
       <plugin>
        <artifactId>maven-project-info-reports-plugin</artifactId>
       </plugin>
+      
+      <!-- jacoco plugin (test code coverage reports) -->
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco.version}</version>
+        <configuration>
+          <formats>
+            <format>HTML</format>
+            <format>XML</format>
+          </formats>
+        </configuration>
+      </plugin>
+
     </plugins>
   </reporting>
    
@@ -547,6 +594,21 @@
           <artifactId>maven-javadoc-plugin</artifactId>
           <version>3.11.2</version>
         </plugin>
+        <plugin>
+          <groupId>com.diffplug.spotless</groupId>
+          <artifactId>spotless-maven-plugin</artifactId>
+          <version>3.0.0</version>
+        </plugin>
+        <plugin>
+          <groupId>com.github.ekryd.sortpom</groupId>
+          <artifactId>sortpom-maven-plugin</artifactId>
+          <version>2.15.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>0.8.14</version>
+        </plugin>
       </plugins>
     </pluginManagement>
    
@@ -608,6 +670,56 @@
            <outputDirectory>${project.build.directory}/release</outputDirectory>
           </configuration>
       </plugin>
+
+      <!-- doc-include-spotless-plugin-start (marker comment for documentation literalinclude directive) -->
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>validate</phase>
+            <goals>
+              <goal>${spotless.action}</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <java>
+            <palantirJavaFormat>
+              <version>2.74.0</version>
+              <formatJavadoc>true</formatJavadoc>
+            </palantirJavaFormat>
+          </java>
+          <upToDateChecking>
+            <enabled>true</enabled>
+            <indexFile>${project.basedir}/.spotless-index</indexFile>
+          </upToDateChecking>
+        </configuration>
+      </plugin>
+
+      <!-- doc-include-sortpom-plugin-start (marker comment for documentation literalinclude directive) -->
+      <plugin>
+        <groupId>com.github.ekryd.sortpom</groupId>
+        <artifactId>sortpom-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>verify</phase>
+            <goals>
+              <goal>${pom.fmt.action}</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <skip>${pom.fmt.skip}</skip>
+          <keepBlankLines>true</keepBlankLines>
+          <spaceBeforeCloseEmptyElement>false</spaceBeforeCloseEmptyElement>
+          <createBackupFile>false</createBackupFile>
+          <verifyFail>stop</verifyFail>
+          <verifyFailOn>strict</verifyFailOn>
+        </configuration>
+      </plugin>
+
+      
     </plugins>
    
   <!-- ======================================================== -->
