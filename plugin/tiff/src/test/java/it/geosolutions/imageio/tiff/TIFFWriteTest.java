@@ -33,9 +33,11 @@ import java.util.logging.Logger;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageReadParam;
+import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.event.IIOWriteProgressListener;
+import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.FileImageOutputStream;
 import org.eclipse.imagen.PlanarImage;
@@ -261,6 +263,62 @@ public class TIFFWriteTest extends Assert {
         image=null;
         
         reader.dispose();
+    }
+
+    @Test
+    public void replacePixelsWriteTiff() throws IOException {
+        final File inputFile = TestData.file(this, "test.tif");
+        final File outputFile = TestData.temp(this, "testw.tif");
+        TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi().createReaderInstance();
+        reader.setInput(new FileImageInputStream(inputFile));
+        BufferedImage image = reader.read(0);
+        final TIFFImageWriter writer = (TIFFImageWriter) new TIFFImageWriterSpi().createWriterInstance(null);
+        final TIFFImageWriteParam writeParam = new TIFFImageWriteParam(Locale.getDefault());
+        writeParam.setCompressionMode(ImageWriteParam.MODE_DISABLED);
+
+        writer.setOutput(new FileImageOutputStream(outputFile));
+
+        final IIOMetadata streamMetadata = writer.getDefaultStreamMetadata(writeParam);
+        final ImageTypeSpecifier imageTypeSpecifier = ImageTypeSpecifier.createFromRenderedImage(image);
+        IIOMetadata imageMetadata = writer.getDefaultImageMetadata(imageTypeSpecifier, writeParam);
+        writer.prepareWriteEmpty(streamMetadata, imageTypeSpecifier, image.getWidth(), image.getHeight(), imageMetadata, null, writeParam);
+        writer.endWriteEmpty();
+
+        writer.prepareReplacePixels(0, new Rectangle(image.getWidth(), image.getHeight()));
+        writer.replacePixels(image, writeParam);
+        writer.endReplacePixels();
+
+        writer.dispose();
+        TIFFReadTest.assertImagesEqual(image, TIFFReadTest.readTiff(outputFile));
+    }
+
+    @Test
+    public void writeBigTiff() throws IOException {
+        final File inputFile = TestData.file(this, "test.tif");
+        final File outputFile = TestData.temp(this, "testw.tif");
+        TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi()
+                .createReaderInstance();
+        reader.setInput(new FileImageInputStream(inputFile));
+        BufferedImage image = reader.read(0);
+        final TIFFImageWriter writer = (TIFFImageWriter) new TIFFImageWriterSpi().createWriterInstance(null);
+        final TIFFImageWriteParam writeParam = new TIFFImageWriteParam(Locale.getDefault());
+        writeParam.setCompressionMode(ImageWriteParam.MODE_DISABLED);
+        writeParam.setForceToBigTIFF(true);
+
+        writer.setOutput(new FileImageOutputStream(outputFile));
+
+        final IIOMetadata streamMetadata = writer.getDefaultStreamMetadata(writeParam);
+        final ImageTypeSpecifier imageTypeSpecifier = ImageTypeSpecifier.createFromRenderedImage(image);
+        IIOMetadata imageMetadata = writer.getDefaultImageMetadata(imageTypeSpecifier, writeParam);
+        writer.prepareWriteEmpty(streamMetadata, imageTypeSpecifier, image.getWidth(), image.getHeight(), imageMetadata, null, writeParam);
+        writer.endWriteEmpty();
+
+        writer.prepareReplacePixels(0, new Rectangle(image.getWidth(), image.getHeight()));
+        writer.replacePixels(image, writeParam);
+        writer.endReplacePixels();
+
+        writer.dispose();
+        TIFFReadTest.assertImagesEqual(image, TIFFReadTest.readTiff(outputFile));
     }
 
     @Test
