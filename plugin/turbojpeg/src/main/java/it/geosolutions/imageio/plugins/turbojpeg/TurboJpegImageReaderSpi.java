@@ -16,24 +16,20 @@
  */
 package it.geosolutions.imageio.plugins.turbojpeg;
 
+import com.sun.media.imageioimpl.common.PackageUtil;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.imageio.IIOException;
-import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageInputStream;
 
-import com.sun.media.imageioimpl.common.PackageUtil;
-
 /**
- * 
  * @author Emanuele Tajariol, GeoSolutions SaS
  * @author Daniele Romagnoli, GeoSolutions SaS
  */
@@ -46,52 +42,51 @@ public class TurboJpegImageReaderSpi extends ImageReaderSpi {
     }
 
     /** The LOGGER for this class. */
-    private static final Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.plugins.turbojpeg");
+    private static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.turbojpeg");
 
     // Adding a byte[] supported class. This allows the reader to receive bytes from a tiff reader
     // which may have internally JPEG compressed tiles
-    public static final Class[] SUPPORTED_CLASSES = { ImageInputStream.class, byte[].class };
+    public static final Class[] SUPPORTED_CLASSES = {ImageInputStream.class, byte[].class};
 
-    public static final String[] names = { "jpeg", "JPEG", "jpg", "JPG", "jfif", "JFIF",
-            "jpeg-lossless", "JPEG-LOSSLESS", "jpeg-ls", "JPEG-LS" };
+    public static final String[] names = {
+        "jpeg", "JPEG", "jpg", "JPG", "jfif", "JFIF", "jpeg-lossless", "JPEG-LOSSLESS", "jpeg-ls", "JPEG-LS"
+    };
 
     private static final String[] suffixes = {"jpeg", "jpg", "jfif", "jls"};
 
     private static final String[] MIMETypes = {"image/jpeg"};
 
-    private static final String readerClassName =
-        "it.geosolutions.imageio.plugins.turbojpeg.TurboJpegImageReader";
+    private static final String readerClassName = "it.geosolutions.imageio.plugins.turbojpeg.TurboJpegImageReader";
 
-    private static final String[] writerSpiNames = {
-        "it.geosolutions.imageio.plugins.turbojpeg.TurboJpegImageWriterSpi"
+    private static final String[] writerSpiNames = {"it.geosolutions.imageio.plugins.turbojpeg.TurboJpegImageWriterSpi"
     };
 
     static final String nativeImageMetadataFormatName = null;
 
     static final String nativeImageMetadataFormatClassName = null;
 
-    static final String[] extraImageMetadataFormatNames = { null };
+    static final String[] extraImageMetadataFormatNames = {null};
 
-    static final String[] extraImageMetadataFormatClassNames = { null };
+    static final String[] extraImageMetadataFormatClassNames = {null};
 
     private boolean registered = false;
 
     public TurboJpegImageReaderSpi() {
-        super(PackageUtil.getVendor(),
-              PackageUtil.getVersion(),
-              names,
-              suffixes,
-              MIMETypes,
-              readerClassName,
-              SUPPORTED_CLASSES,
-              writerSpiNames,
-              false, // supportsStandardStreamMetadataFormat
-              null,  // nativeStreamMetadataFormatName
-              null,  // nativeStreamMetadataFormatClassName
-              null,  // extraStreamMetadataFormatNames
-              null,  // extraStreamMetadataFormatClassNames
-              true,  // supportsStandardImageMetadataFormat
+        super(
+                PackageUtil.getVendor(),
+                PackageUtil.getVersion(),
+                names,
+                suffixes,
+                MIMETypes,
+                readerClassName,
+                SUPPORTED_CLASSES,
+                writerSpiNames,
+                false, // supportsStandardStreamMetadataFormat
+                null, // nativeStreamMetadataFormatName
+                null, // nativeStreamMetadataFormatClassName
+                null, // extraStreamMetadataFormatNames
+                null, // extraStreamMetadataFormatClassNames
+                true, // supportsStandardImageMetadataFormat
                 nativeImageMetadataFormatName,
                 nativeImageMetadataFormatClassName,
                 extraImageMetadataFormatNames,
@@ -99,7 +94,7 @@ public class TurboJpegImageReaderSpi extends ImageReaderSpi {
     }
 
     public void onRegistration(ServiceRegistry registry, Class category) {
-    	super.onRegistration(registry, category);
+        super.onRegistration(registry, category);
         if (registered) {
             return;
         }
@@ -118,6 +113,7 @@ public class TurboJpegImageReaderSpi extends ImageReaderSpi {
     }
 
     private static Method readerFormatNamesMethod;
+
     static {
         try {
             readerFormatNamesMethod = ImageReaderSpi.class.getMethod("getFormatNames");
@@ -135,19 +131,19 @@ public class TurboJpegImageReaderSpi extends ImageReaderSpi {
         }
 
         try {
-            Iterator<ImageReaderSpi> iter = registry.getServiceProviders(ImageReaderSpi.class,
-                    new ContainsFilter(readerFormatNamesMethod, "JPEG"), true);
+            Iterator<ImageReaderSpi> iter = registry.getServiceProviders(
+                    ImageReaderSpi.class, new ContainsFilter(readerFormatNamesMethod, "JPEG"), true);
 
-            for (; iter.hasNext();) {
+            for (; iter.hasNext(); ) {
                 ImageReaderSpi spi = iter.next();
                 if (!spi.getClass().equals(this.getClass())) {
                     if (LOGGER.isLoggable(Level.FINE)) {
                         LOGGER.fine("Deprioritizing " + spi);
                     }
-                    
-                    // ETj: we used to deregister the other ones, but they may be 
+
+                    // ETj: we used to deregister the other ones, but they may be
                     // explicitely requested
-//                  registry.deregisterServiceProvider(spi);
+                    //                  registry.deregisterServiceProvider(spi);
                     registry.setOrdering(category, this, spi);
                 }
             }
@@ -218,21 +214,18 @@ public class TurboJpegImageReaderSpi extends ImageReaderSpi {
         do {
             byte1 = iis.read();
             byte2 = iis.read();
-            if (byte1 != 0xFF)
-                break; // something wrong, but probably readable
-            if (byte2 == 0xDA)
-                break; // Start of scan
+            if (byte1 != 0xFF) break; // something wrong, but probably readable
+            if (byte2 == 0xDA) break; // Start of scan
             if (byte2 == 0xC2) { // progressive mode, can't decode
                 iis.reset();
                 return false;
             }
             if ((byte2 >= 0xC0) && (byte2 <= 0xC3)) // not progressive, can decode
-                break;
+            break;
             int length = iis.read() << 8;
             length += iis.read();
             length -= 2;
-            while (length > 0)
-                length -= iis.skipBytes(length);
+            while (length > 0) length -= iis.skipBytes(length);
         } while (true);
         iis.reset();
 

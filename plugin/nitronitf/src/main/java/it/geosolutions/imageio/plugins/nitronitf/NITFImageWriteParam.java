@@ -18,13 +18,11 @@ package it.geosolutions.imageio.plugins.nitronitf;
 
 import it.geosolutions.imageio.plugins.nitronitf.NITFUtilities.WriteCompression;
 import it.geosolutions.imageio.plugins.nitronitf.wrapper.NITFProperties;
-
 import javax.imageio.ImageWriteParam;
-
 
 /**
  * Class holding Write parameters to customize the write operations
- * 
+ *
  * @author Daniele Romagnoli, GeoSolutions SaS
  */
 public class NITFImageWriteParam extends ImageWriteParam {
@@ -38,13 +36,13 @@ public class NITFImageWriteParam extends ImageWriteParam {
     public boolean canWriteTiles() {
         return true;
     }
-    
-    //TODO Convert some of them as proper metadata entities (imageMetadata/streamMetadata)
-    
+
+    // TODO Convert some of them as proper metadata entities (imageMetadata/streamMetadata)
+
     private WriteCompression writeCompression;
-    
+
     private NITFProperties nitfProperties;
-    
+
     public NITFProperties getNitfProperties() {
         return nitfProperties;
     }
@@ -60,5 +58,4 @@ public class NITFImageWriteParam extends ImageWriteParam {
     public void setWriteCompression(WriteCompression writeCompression) {
         this.writeCompression = writeCompression;
     }
-
 }

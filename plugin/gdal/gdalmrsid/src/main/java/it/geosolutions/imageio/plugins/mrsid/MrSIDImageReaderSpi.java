@@ -18,35 +18,32 @@ package it.geosolutions.imageio.plugins.mrsid;
 
 import it.geosolutions.imageio.gdalframework.GDALImageReaderSpi;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.imageio.ImageReader;
 
 /**
  * Service provider interface for MrSid image reader
- * 
+ *
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class MrSIDImageReaderSpi extends GDALImageReaderSpi {
 
-    private static final Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.plugins.mrsid");
+    private static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.mrsid");
 
-    static final String[] suffixes = { "sid", "sdw" };
+    static final String[] suffixes = {"sid", "sdw"};
 
-    static final String[] formatNames = { "MrSID" };
+    static final String[] formatNames = {"MrSID"};
 
-    static final String[] MIMETypes = { "image/sid" };
+    static final String[] MIMETypes = {"image/sid"};
 
     static final String version = "1.0";
-    
+
     static final String description = "MrSID Image Reader, version " + version;
 
     static final String readerCN = "it.geosolutions.imageio.plugins.mrsid.MrSIDImageReader";
@@ -54,7 +51,7 @@ public class MrSIDImageReaderSpi extends GDALImageReaderSpi {
     static final String vendorName = "GeoSolutions";
 
     // writerSpiNames
-    static final String[] wSN = { null };
+    static final String[] wSN = {null};
 
     // StreamMetadataFormatNames and StreamMetadataFormatClassNames
     static final boolean supportsStandardStreamMetadataFormat = false;
@@ -63,21 +60,20 @@ public class MrSIDImageReaderSpi extends GDALImageReaderSpi {
 
     static final String nativeStreamMetadataFormatClassName = null;
 
-    static final String[] extraStreamMetadataFormatNames = { null };
+    static final String[] extraStreamMetadataFormatNames = {null};
 
-    static final String[] extraStreamMetadataFormatClassNames = { null };
+    static final String[] extraStreamMetadataFormatClassNames = {null};
 
     // ImageMetadataFormatNames and ImageMetadataFormatClassNames
     static final boolean supportsStandardImageMetadataFormat = false;
 
     static final String nativeImageMetadataFormatName = MrSIDIIOImageMetadata.mrsidImageMetadataName;
 
-    static final String nativeImageMetadataFormatClassName = MrSIDIIOImageMetadataFormat.class
-            .toString();
+    static final String nativeImageMetadataFormatClassName = MrSIDIIOImageMetadataFormat.class.toString();
 
-    static final String[] extraImageMetadataFormatNames = { null };
+    static final String[] extraImageMetadataFormatNames = {null};
 
-    static final String[] extraImageMetadataFormatClassNames = { null };
+    static final String[] extraImageMetadataFormatClassNames = {null};
 
     public MrSIDImageReaderSpi() {
         super(
@@ -87,7 +83,7 @@ public class MrSIDImageReaderSpi extends GDALImageReaderSpi {
                 suffixes,
                 MIMETypes,
                 readerCN, // readerClassName
-                new Class[] { File.class, FileImageInputStreamExt.class },
+                new Class[] {File.class, FileImageInputStreamExt.class},
                 wSN, // writer Spi Names
                 supportsStandardStreamMetadataFormat,
                 nativeStreamMetadataFormatName,
@@ -98,25 +94,21 @@ public class MrSIDImageReaderSpi extends GDALImageReaderSpi {
                 nativeImageMetadataFormatName,
                 nativeImageMetadataFormatClassName,
                 extraImageMetadataFormatNames,
-                extraImageMetadataFormatClassNames, Collections
-                        .singletonList("MrSID"));
-        if (LOGGER.isLoggable(Level.FINE))
-            LOGGER.fine("MrSIDImageReaderSpi Constructor");
-
+                extraImageMetadataFormatClassNames,
+                Collections.singletonList("MrSID"));
+        if (LOGGER.isLoggable(Level.FINE)) LOGGER.fine("MrSIDImageReaderSpi Constructor");
     }
 
     /**
      * Returns an instance of the MrSIDImageReader
-     * 
+     *
      * @see javax.imageio.spi.ImageReaderSpi#createReaderInstance(java.lang.Object)
      */
     public ImageReader createReaderInstance(Object source) throws IOException {
         return new MrSIDImageReader(this);
     }
 
-    /**
-     * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
-     */
+    /** @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale) */
     public String getDescription(Locale locale) {
         return description;
     }

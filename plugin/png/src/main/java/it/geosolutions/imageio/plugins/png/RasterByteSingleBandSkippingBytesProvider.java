@@ -21,15 +21,14 @@ import java.awt.image.PixelInterleavedSampleModel;
 import java.awt.image.Raster;
 
 /**
- * A scanline provider that copy data from the buffered image into the scanline 
- * by skipping some bytes due to pixelStride not equal to number of bands
- * (There might be some bandSelect happening)
- * 
+ * A scanline provider that copy data from the buffered image into the scanline by skipping some bytes due to
+ * pixelStride not equal to number of bands (There might be some bandSelect happening)
+ *
  * @author Daniele Romagnoli - GeoSolutions
  */
 public final class RasterByteSingleBandSkippingBytesProvider extends AbstractScanlineProvider {
 
-    final static int[] PIXEL_STRIDES = new int[]{1};
+    static final int[] PIXEL_STRIDES = new int[] {1};
 
     int pixelStride;
 
@@ -40,7 +39,11 @@ public final class RasterByteSingleBandSkippingBytesProvider extends AbstractSca
     int numBands;
 
     public RasterByteSingleBandSkippingBytesProvider(Raster raster) {
-        super(raster, 8, raster.getWidth() * computePixelStride(raster, PIXEL_STRIDES), computePixelStride(raster, PIXEL_STRIDES));
+        super(
+                raster,
+                8,
+                raster.getWidth() * computePixelStride(raster, PIXEL_STRIDES),
+                computePixelStride(raster, PIXEL_STRIDES));
         PixelInterleavedSampleModel sm = (PixelInterleavedSampleModel) raster.getSampleModel();
         this.bytes = ((DataBufferByte) raster.getDataBuffer()).getData();
         this.pixelStride = sm.getPixelStride();
@@ -69,5 +72,4 @@ public final class RasterByteSingleBandSkippingBytesProvider extends AbstractSca
         }
         currentRow++;
     }
-
 }

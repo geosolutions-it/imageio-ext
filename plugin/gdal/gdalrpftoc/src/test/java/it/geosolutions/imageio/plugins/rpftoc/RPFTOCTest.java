@@ -20,32 +20,29 @@ import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
-
 import java.awt.image.Raster;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import javax.imageio.ImageReadParam;
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
-
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
  * Testing reading capabilities for {@link RPFTOCImageReader}.
- * 
+ *
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
-public class RPFTOCTest extends  AbstractGDALTest {
-    public final static String fileName = "A.TOC";
+public class RPFTOCTest extends AbstractGDALTest {
+    public static final String fileName = "A.TOC";
 
     @Test
     public void read() throws FileNotFoundException, IOException {
-    	if (!isGDALAvailable) {
+        if (!isGDALAvailable) {
             return;
         }
         File file;
@@ -66,8 +63,7 @@ public class RPFTOCTest extends  AbstractGDALTest {
         final int ySubSampling = 2;
         final int xSubSamplingOffset = 0;
         final int ySubSamplingOffset = 0;
-        irp.setSourceSubsampling(xSubSampling, ySubSampling,
-                xSubSamplingOffset, ySubSamplingOffset);
+        irp.setSourceSubsampling(xSubSampling, ySubSampling, xSubSamplingOffset, ySubSamplingOffset);
         pbjImageRead = new ParameterBlockJAI("ImageRead");
         pbjImageRead.setParameter("Input", file);
         pbjImageRead.setParameter("readParam", irp);
@@ -75,12 +71,10 @@ public class RPFTOCTest extends  AbstractGDALTest {
         // get a RenderedImage
         RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 
-        if (TestData.isInteractiveTest())
-            Viewer.visualizeAllInformation(image, "Subsampling Read");
-        else
-        {
-        	Raster[] io = image.getTiles();
-        	Assert.assertNotNull(io );
+        if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(image, "Subsampling Read");
+        else {
+            Raster[] io = image.getTiles();
+            Assert.assertNotNull(io);
             Assert.assertTrue(image.getWidth() == 768);
             Assert.assertTrue(image.getHeight() == 768);
         }

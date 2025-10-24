@@ -17,6 +17,18 @@ package it.geosolutions.imageio.tiff;
 
 import static org.junit.Assume.assumeTrue;
 
+import com.sun.media.jai.operator.ImageReadDescriptor;
+import it.geosolutions.imageio.core.CoreCommonImageMetadata;
+import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
+import it.geosolutions.imageio.plugins.tiff.PrivateTIFFTagSet;
+import it.geosolutions.imageio.plugins.turbojpeg.TurboJpegUtilities;
+import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
+import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
+import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReader;
+import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
+import it.geosolutions.imageioimpl.plugins.tiff.TIFFStreamMetadata.MetadataNode;
+import it.geosolutions.resources.TestData;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
@@ -26,49 +38,30 @@ import java.awt.image.SampleModel;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
-import java.lang.reflect.Field;
 import java.nio.ByteOrder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.imageio.ImageReadParam;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.FileImageInputStream;
 import javax.media.jai.PlanarImage;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.sun.media.jai.operator.ImageReadDescriptor;
-
-import it.geosolutions.imageio.core.CoreCommonImageMetadata;
-import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
-import it.geosolutions.imageio.plugins.tiff.PrivateTIFFTagSet;
-import it.geosolutions.imageio.plugins.turbojpeg.TurboJpegImageReader;
-import it.geosolutions.imageio.plugins.turbojpeg.TurboJpegUtilities;
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
-import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
-import it.geosolutions.imageio.utilities.ImageIOUtilities;
-import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReader;
-import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
-import it.geosolutions.imageioimpl.plugins.tiff.TIFFJPEGDecompressor;
-import it.geosolutions.imageioimpl.plugins.tiff.TIFFStreamMetadata.MetadataNode;
-import it.geosolutions.resources.TestData;
-
 /**
  * Testing reading capabilities for {@link JP2KKakaduImageReader} leveraging on JAI.
- * 
+ *
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
  */
 public class TIFFReadTest extends Assert {
 
     /** Logger used for recording any possible exception */
-    private final static Logger logger = Logger.getLogger(TIFFReadTest.class.getName());
+    private static final Logger logger = Logger.getLogger(TIFFReadTest.class.getName());
 
     @Test
     public void readFromFileJAI() throws IOException {
@@ -81,13 +74,19 @@ public class TIFFReadTest extends Assert {
         // final double time = System.nanoTime();
 
         // IMAGE 0
-        RenderedImage image = ImageReadDescriptor.create(new FileImageInputStream(file),
-                Integer.valueOf(0), false, false, false, null, null, null,
-                new TIFFImageReaderSpi().createReaderInstance(), null);
-        if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image, "testManualRead");
-        else
-            Assert.assertNotNull(PlanarImage.wrapRenderedImage(image).getTiles());
+        RenderedImage image = ImageReadDescriptor.create(
+                new FileImageInputStream(file),
+                Integer.valueOf(0),
+                false,
+                false,
+                false,
+                null,
+                null,
+                null,
+                new TIFFImageReaderSpi().createReaderInstance(),
+                null);
+        if (TestData.isInteractiveTest()) ImageIOUtilities.visualize(image, "testManualRead");
+        else Assert.assertNotNull(PlanarImage.wrapRenderedImage(image).getTiles());
         // sum += System.nanoTime() - time;
         Assert.assertEquals(30, image.getWidth());
         Assert.assertEquals(26, image.getHeight());
@@ -99,13 +98,19 @@ public class TIFFReadTest extends Assert {
         // IMAGE 2
         final ImageReadParam readParam = new ImageReadParam();
         readParam.setSourceRegion(new Rectangle(0, 0, 10, 10));
-        image = ImageReadDescriptor.create(new FileImageInputStream(file), Integer.valueOf(2),
-                false, false, false, null, null, readParam,
-                new TIFFImageReaderSpi().createReaderInstance(), null);
-        if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image, "testManualRead");
-        else
-            Assert.assertNotNull(image.getData());
+        image = ImageReadDescriptor.create(
+                new FileImageInputStream(file),
+                Integer.valueOf(2),
+                false,
+                false,
+                false,
+                null,
+                null,
+                readParam,
+                new TIFFImageReaderSpi().createReaderInstance(),
+                null);
+        if (TestData.isInteractiveTest()) ImageIOUtilities.visualize(image, "testManualRead");
+        else Assert.assertNotNull(image.getData());
         // sum+=System.nanoTime()-time;
         Assert.assertEquals(8, image.getWidth());
         Assert.assertEquals(7, image.getHeight());
@@ -114,14 +119,20 @@ public class TIFFReadTest extends Assert {
         image = null;
 
         // IMAGE 4
-        image = ImageReadDescriptor.create(new FileImageInputStream(file), Integer.valueOf(4),
-                false, false, false, null, null, null,
-                new TIFFImageReaderSpi().createReaderInstance(), null);
+        image = ImageReadDescriptor.create(
+                new FileImageInputStream(file),
+                Integer.valueOf(4),
+                false,
+                false,
+                false,
+                null,
+                null,
+                null,
+                new TIFFImageReaderSpi().createReaderInstance(),
+                null);
 
-        if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image, "testManualRead");
-        else
-            Assert.assertNotNull(image.getData());
+        if (TestData.isInteractiveTest()) ImageIOUtilities.visualize(image, "testManualRead");
+        else Assert.assertNotNull(image.getData());
         // sum+=System.nanoTime()-time;
         Assert.assertEquals(2, image.getWidth());
         Assert.assertEquals(2, image.getHeight());
@@ -130,14 +141,20 @@ public class TIFFReadTest extends Assert {
         image = null;
 
         // IMAGE 5
-        image = ImageReadDescriptor.create(new FileImageInputStream(file), Integer.valueOf(5),
-                false, false, false, null, null, null,
-                new TIFFImageReaderSpi().createReaderInstance(), null);
+        image = ImageReadDescriptor.create(
+                new FileImageInputStream(file),
+                Integer.valueOf(5),
+                false,
+                false,
+                false,
+                null,
+                null,
+                null,
+                new TIFFImageReaderSpi().createReaderInstance(),
+                null);
 
-        if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image, "testManualRead");
-        else
-            Assert.assertNotNull(image.getData());
+        if (TestData.isInteractiveTest()) ImageIOUtilities.visualize(image, "testManualRead");
+        else Assert.assertNotNull(image.getData());
         // sum+=System.nanoTime()-time;
         Assert.assertEquals(1, image.getWidth());
         Assert.assertEquals(1, image.getHeight());
@@ -146,14 +163,20 @@ public class TIFFReadTest extends Assert {
         image = null;
 
         // IMAGE 1
-        image = ImageReadDescriptor.create(new FileImageInputStream(file), Integer.valueOf(1),
-                false, false, false, null, null, null,
-                new TIFFImageReaderSpi().createReaderInstance(), null);
+        image = ImageReadDescriptor.create(
+                new FileImageInputStream(file),
+                Integer.valueOf(1),
+                false,
+                false,
+                false,
+                null,
+                null,
+                null,
+                new TIFFImageReaderSpi().createReaderInstance(),
+                null);
 
-        if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image, "testManualRead");
-        else
-            Assert.assertNotNull(image.getData());
+        if (TestData.isInteractiveTest()) ImageIOUtilities.visualize(image, "testManualRead");
+        else Assert.assertNotNull(image.getData());
         // sum+=System.nanoTime()-time;
         Assert.assertEquals(15, image.getWidth());
         Assert.assertEquals(13, image.getHeight());
@@ -162,14 +185,20 @@ public class TIFFReadTest extends Assert {
         image = null;
 
         // IMAGE 3
-        image = ImageReadDescriptor.create(new FileImageInputStream(file), Integer.valueOf(3),
-                false, false, false, null, null, null,
-                new TIFFImageReaderSpi().createReaderInstance(), null);
+        image = ImageReadDescriptor.create(
+                new FileImageInputStream(file),
+                Integer.valueOf(3),
+                false,
+                false,
+                false,
+                null,
+                null,
+                null,
+                new TIFFImageReaderSpi().createReaderInstance(),
+                null);
 
-        if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image, "testManualRead");
-        else
-            Assert.assertNotNull(image.getData());
+        if (TestData.isInteractiveTest()) ImageIOUtilities.visualize(image, "testManualRead");
+        else Assert.assertNotNull(image.getData());
         // sum+=System.nanoTime()-time;
         Assert.assertEquals(4, image.getWidth());
         Assert.assertEquals(4, image.getHeight());
@@ -178,23 +207,26 @@ public class TIFFReadTest extends Assert {
         image = null;
 
         // IMAGE 5
-        image = ImageReadDescriptor.create(new FileImageInputStream(file), Integer.valueOf(5),
-                false, false, false, null, null, null,
-                new TIFFImageReaderSpi().createReaderInstance(), null);
+        image = ImageReadDescriptor.create(
+                new FileImageInputStream(file),
+                Integer.valueOf(5),
+                false,
+                false,
+                false,
+                null,
+                null,
+                null,
+                new TIFFImageReaderSpi().createReaderInstance(),
+                null);
 
-        if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image, "testManualRead");
-        else
-            Assert.assertNotNull(image.getData());
+        if (TestData.isInteractiveTest()) ImageIOUtilities.visualize(image, "testManualRead");
+        else Assert.assertNotNull(image.getData());
         // sum+=System.nanoTime()-time;
         Assert.assertEquals(1, image.getWidth());
         Assert.assertEquals(1, image.getHeight());
 
         PlanarImage.wrapRenderedImage(image).dispose();
         image = null;
-
-
-
     }
 
     @Test
@@ -208,12 +240,11 @@ public class TIFFReadTest extends Assert {
         // double sum=0;
         // final long num = 10000l;
 
-        final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi()
-                .createReaderInstance();
-        
+        final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi().createReaderInstance();
+
         FileImageInputStream inputStream = new FileImageInputStream(file);
-        try{
-        	reader.setInput(inputStream);
+        try {
+            reader.setInput(inputStream);
             // System.out.println(new IIOMetadataDumper(
             // reader.getImageMetadata(0),TIFFImageMetadata.nativeMetadataFormatName).getMetadata());
 
@@ -256,7 +287,6 @@ public class TIFFReadTest extends Assert {
             image.flush();
             image = null;
 
-
             // sum+=System.nanoTime()-time;
             // Assert.assertEquals(120, image.getWidth());
             // Assert.assertEquals(107, image.getHeight());
@@ -265,21 +295,21 @@ public class TIFFReadTest extends Assert {
             //
             // }
             // System.out.println(sum/num);
-        }catch(Exception e){
-			// If an exception occurred the logger catch the exception and print
-			// the message
-			logger.log(Level.SEVERE, e.getMessage(), e);
-        }finally{
-			// Finally, if an exception has been thrown or not, the reader
-			// and the input stream are closed
-			if(inputStream!=null){
-				inputStream.flush();
-				inputStream.close();
-			}
-			
-			if (reader != null) {
-				reader.dispose();
-			}
+        } catch (Exception e) {
+            // If an exception occurred the logger catch the exception and print
+            // the message
+            logger.log(Level.SEVERE, e.getMessage(), e);
+        } finally {
+            // Finally, if an exception has been thrown or not, the reader
+            // and the input stream are closed
+            if (inputStream != null) {
+                inputStream.flush();
+                inputStream.close();
+            }
+
+            if (reader != null) {
+                reader.dispose();
+            }
         }
     }
 
@@ -291,8 +321,7 @@ public class TIFFReadTest extends Assert {
         final ImageReadParam param = new ImageReadParam();
         param.setSourceRegion(new Rectangle(0, 0, 2, 2));
         // Reader creation
-        final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi()
-                .createReaderInstance();
+        final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi().createReaderInstance();
         // Stream creation
         FileImageInputStream inputStream = new FileImageInputStream(file);
         try {
@@ -330,36 +359,36 @@ public class TIFFReadTest extends Assert {
                 MetadataNode mnode = MetadataNode.getFromName(nodeName);
                 // Checking Attribute value
                 switch (mnode) {
-                case B_ORDER:
-                    Assert.assertTrue(value.equalsIgnoreCase(ByteOrder.LITTLE_ENDIAN.toString()));
-                    break;
-                case N_INT_MASK:
-                    Assert.assertEquals(5, Integer.parseInt(value));
-                    break;
-                case N_EXT_MASK:
-                    Assert.assertEquals(-1, Integer.parseInt(value));
-                    break;
-                case N_INT_OVR:
-                    Assert.assertEquals(4, Integer.parseInt(value));
-                    break;
-                case N_EXT_OVR:
-                    Assert.assertEquals(-1, Integer.parseInt(value));
-                    break;
-                case N_EXT_OVR_MASK:
-                    Assert.assertEquals(-1, Integer.parseInt(value));
-                    break;
-                case EXT_MASK_FILE:
-                    Assert.assertTrue(value.isEmpty());
-                    break;
-                case EXT_OVR_FILE:
-                    Assert.assertTrue(value.isEmpty());
-                    break;
-                case EXT_OVR_MASK_FILE:
-                    Assert.assertTrue(value.isEmpty());
-                    break;
-                default:
-                    // Wrong element
-                    Assert.assertTrue(false);
+                    case B_ORDER:
+                        Assert.assertTrue(value.equalsIgnoreCase(ByteOrder.LITTLE_ENDIAN.toString()));
+                        break;
+                    case N_INT_MASK:
+                        Assert.assertEquals(5, Integer.parseInt(value));
+                        break;
+                    case N_EXT_MASK:
+                        Assert.assertEquals(-1, Integer.parseInt(value));
+                        break;
+                    case N_INT_OVR:
+                        Assert.assertEquals(4, Integer.parseInt(value));
+                        break;
+                    case N_EXT_OVR:
+                        Assert.assertEquals(-1, Integer.parseInt(value));
+                        break;
+                    case N_EXT_OVR_MASK:
+                        Assert.assertEquals(-1, Integer.parseInt(value));
+                        break;
+                    case EXT_MASK_FILE:
+                        Assert.assertTrue(value.isEmpty());
+                        break;
+                    case EXT_OVR_FILE:
+                        Assert.assertTrue(value.isEmpty());
+                        break;
+                    case EXT_OVR_MASK_FILE:
+                        Assert.assertTrue(value.isEmpty());
+                        break;
+                    default:
+                        // Wrong element
+                        Assert.assertTrue(false);
                 }
             }
         } catch (Exception e) {
@@ -389,8 +418,7 @@ public class TIFFReadTest extends Assert {
         final ImageReadParam param = new ImageReadParam();
         param.setSourceRegion(new Rectangle(0, 0, 2, 2));
         // Creating the reader
-        final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi()
-                .createReaderInstance();
+        final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi().createReaderInstance();
         // Using FileImageInputStreamExt for being able to locate the file path
         FileImageInputStreamExt inputStream = new FileImageInputStreamExtImpl(file);
         try {
@@ -428,36 +456,36 @@ public class TIFFReadTest extends Assert {
                 MetadataNode mnode = MetadataNode.getFromName(nodeName);
                 // Checking Attribute value
                 switch (mnode) {
-                case B_ORDER:
-                    Assert.assertTrue(value.equalsIgnoreCase(ByteOrder.LITTLE_ENDIAN.toString()));
-                    break;
-                case N_INT_MASK:
-                    Assert.assertEquals(0, Integer.parseInt(value));
-                    break;
-                case N_EXT_MASK:
-                    Assert.assertEquals(5, Integer.parseInt(value));
-                    break;
-                case N_INT_OVR:
-                    Assert.assertEquals(4, Integer.parseInt(value));
-                    break;
-                case N_EXT_OVR:
-                    Assert.assertEquals(0, Integer.parseInt(value));
-                    break;
-                case N_EXT_OVR_MASK:
-                    Assert.assertEquals(0, Integer.parseInt(value));
-                    break;
-                case EXT_MASK_FILE:
-                    Assert.assertTrue(value.contains("external.tif.msk"));
-                    break;
-                case EXT_OVR_FILE:
-                    Assert.assertTrue(value.isEmpty());
-                    break;
-                case EXT_OVR_MASK_FILE:
-                    Assert.assertTrue(value.isEmpty());
-                    break;
-                default:
-                    // Wrong element
-                    Assert.assertTrue(false);
+                    case B_ORDER:
+                        Assert.assertTrue(value.equalsIgnoreCase(ByteOrder.LITTLE_ENDIAN.toString()));
+                        break;
+                    case N_INT_MASK:
+                        Assert.assertEquals(0, Integer.parseInt(value));
+                        break;
+                    case N_EXT_MASK:
+                        Assert.assertEquals(5, Integer.parseInt(value));
+                        break;
+                    case N_INT_OVR:
+                        Assert.assertEquals(4, Integer.parseInt(value));
+                        break;
+                    case N_EXT_OVR:
+                        Assert.assertEquals(0, Integer.parseInt(value));
+                        break;
+                    case N_EXT_OVR_MASK:
+                        Assert.assertEquals(0, Integer.parseInt(value));
+                        break;
+                    case EXT_MASK_FILE:
+                        Assert.assertTrue(value.contains("external.tif.msk"));
+                        break;
+                    case EXT_OVR_FILE:
+                        Assert.assertTrue(value.isEmpty());
+                        break;
+                    case EXT_OVR_MASK_FILE:
+                        Assert.assertTrue(value.isEmpty());
+                        break;
+                    default:
+                        // Wrong element
+                        Assert.assertTrue(false);
                 }
             }
         } catch (Exception e) {
@@ -487,8 +515,7 @@ public class TIFFReadTest extends Assert {
         final ImageReadParam param = new ImageReadParam();
         param.setSourceRegion(new Rectangle(0, 0, 2, 2));
         // Creating a new Reader
-        final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi()
-                .createReaderInstance();
+        final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi().createReaderInstance();
         // Using FileImageInputStreamExt for being able to locate the file path
         FileImageInputStreamExt inputStream = new FileImageInputStreamExtImpl(file);
         try {
@@ -525,36 +552,36 @@ public class TIFFReadTest extends Assert {
                 MetadataNode mnode = MetadataNode.getFromName(nodeName);
                 // Checking Attribute value
                 switch (mnode) {
-                case B_ORDER:
-                    Assert.assertTrue(value.equalsIgnoreCase(ByteOrder.LITTLE_ENDIAN.toString()));
-                    break;
-                case N_INT_MASK:
-                    Assert.assertEquals(0, Integer.parseInt(value));
-                    break;
-                case N_EXT_MASK:
-                    Assert.assertEquals(1, Integer.parseInt(value));
-                    break;
-                case N_INT_OVR:
-                    Assert.assertEquals(0, Integer.parseInt(value));
-                    break;
-                case N_EXT_OVR:
-                    Assert.assertEquals(0, Integer.parseInt(value));
-                    break;
-                case N_EXT_OVR_MASK:
-                    Assert.assertEquals(4, Integer.parseInt(value));
-                    break;
-                case EXT_MASK_FILE:
-                    Assert.assertTrue(value.contains("external2.tif.msk"));
-                    break;
-                case EXT_OVR_FILE:
-                    Assert.assertTrue(value.isEmpty());
-                    break;
-                case EXT_OVR_MASK_FILE:
-                    Assert.assertTrue(value.contains("external2.tif.msk.ovr"));
-                    break;
-                default:
-                    // Wrong element
-                    Assert.assertTrue(false);
+                    case B_ORDER:
+                        Assert.assertTrue(value.equalsIgnoreCase(ByteOrder.LITTLE_ENDIAN.toString()));
+                        break;
+                    case N_INT_MASK:
+                        Assert.assertEquals(0, Integer.parseInt(value));
+                        break;
+                    case N_EXT_MASK:
+                        Assert.assertEquals(1, Integer.parseInt(value));
+                        break;
+                    case N_INT_OVR:
+                        Assert.assertEquals(0, Integer.parseInt(value));
+                        break;
+                    case N_EXT_OVR:
+                        Assert.assertEquals(0, Integer.parseInt(value));
+                        break;
+                    case N_EXT_OVR_MASK:
+                        Assert.assertEquals(4, Integer.parseInt(value));
+                        break;
+                    case EXT_MASK_FILE:
+                        Assert.assertTrue(value.contains("external2.tif.msk"));
+                        break;
+                    case EXT_OVR_FILE:
+                        Assert.assertTrue(value.isEmpty());
+                        break;
+                    case EXT_OVR_MASK_FILE:
+                        Assert.assertTrue(value.contains("external2.tif.msk.ovr"));
+                        break;
+                    default:
+                        // Wrong element
+                        Assert.assertTrue(false);
                 }
             }
         } catch (Exception e) {
@@ -582,15 +609,14 @@ public class TIFFReadTest extends Assert {
         // is made of empty tiles filled with nodata
         final File file = TestData.file(this, "emptyTiles.tif");
 
-        final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi()
-                .createReaderInstance();
+        final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi().createReaderInstance();
 
         FileImageInputStream inputStream = new FileImageInputStream(file);
         try {
             reader.setInput(inputStream);
             ImageReadParam param = new ImageReadParam();
             // Setting up a region to fall in the half of the image containing empty tiles
-            param.setSourceRegion(new Rectangle(360,0,720,720));
+            param.setSourceRegion(new Rectangle(360, 0, 720, 720));
             BufferedImage image = reader.read(0, param);
             Assert.assertEquals(720, image.getWidth());
             Assert.assertEquals(720, image.getHeight());
@@ -606,7 +632,7 @@ public class TIFFReadTest extends Assert {
             assertEquals(noDataArray[0], noDataValue, 0d);
             assertEquals(noDataArray[1], noDataValue, 0d);
 
-            // Check that the value is noData (the empty Tiles are filled with NoData) 
+            // Check that the value is noData (the empty Tiles are filled with NoData)
             double val = image.getData().getSampleDouble(719, 0, 0);
             assertEquals(Double.toString(noDataValue), Double.toString(val));
             image.flush();
@@ -652,8 +678,8 @@ public class TIFFReadTest extends Assert {
     @Test
     public void readDeflatePredictor2On32BitsIntBigEndian() throws IOException {
         // This image has been created from test.tif using the command:
-        // gdal_translate -ot UInt32 -co COMPRESS=DEFLATE -co PREDICTOR=2 test.tif 
-        //                --config GDAL_TIFF_ENDIANNESS BIG deflate32_p2_bigendian.tif  
+        // gdal_translate -ot UInt32 -co COMPRESS=DEFLATE -co PREDICTOR=2 test.tif
+        //                --config GDAL_TIFF_ENDIANNESS BIG deflate32_p2_bigendian.tif
         assertImagesEqual(readTiff("test.tif"), readTiff("deflate32_p2_bigendian.tif"));
     }
 
@@ -667,14 +693,15 @@ public class TIFFReadTest extends Assert {
     @Test
     public void readLzwPredictor2On32BitsIntBigEndian() throws IOException {
         // This image has been created from test.tif using the command:
-        // gdal_translate -ot UInt32 -co COMPRESS=LZW -co PREDICTOR=2 test.tif --config GDAL_TIFF_ENDIANNESS BIG lzw32_p2_bigendian.tif  
+        // gdal_translate -ot UInt32 -co COMPRESS=LZW -co PREDICTOR=2 test.tif --config GDAL_TIFF_ENDIANNESS BIG
+        // lzw32_p2_bigendian.tif
         assertImagesEqual(readTiff("test.tif"), readTiff("lzw32_p2_bigendian.tif"));
     }
 
     @Test
     public void readDeflatePredictor2On32BitsFloat() throws IOException {
         // This image has been created from test.tif using the command:
-        // gdal_translate -ot Float32 -co COMPRESS=DEFLATE -co PREDICTOR=2 test.tif deflate32f_p2.tif  
+        // gdal_translate -ot Float32 -co COMPRESS=DEFLATE -co PREDICTOR=2 test.tif deflate32f_p2.tif
         assertImagesEqual(readTiff("test.tif"), readTiff("deflate32f_p2.tif"));
     }
 
@@ -689,7 +716,7 @@ public class TIFFReadTest extends Assert {
     @Test
     public void readLzwPredictor2On32BitsFloat() throws IOException {
         // This image has been created from test.tif using the command:
-        // gdal_translate -ot Float32 -co COMPRESS=LZW -co PREDICTOR=2 test.tif lzw32f_p2.tif  
+        // gdal_translate -ot Float32 -co COMPRESS=LZW -co PREDICTOR=2 test.tif lzw32f_p2.tif
         assertImagesEqual(readTiff("test.tif"), readTiff("lzw32f_p2.tif"));
     }
 
@@ -750,8 +777,12 @@ public class TIFFReadTest extends Assert {
         int h = expected.getRaster().getHeight();
         assertArrayEquals(
                 "Rasters are different",
-                toByteArray(expected.getSampleModel().getDataType(), expected.getRaster().getDataElements(0, 0, w, h, null)),
-                toByteArray(actual.getSampleModel().getDataType(), actual.getRaster().getDataElements(0, 0, w, h, null)));
+                toByteArray(
+                        expected.getSampleModel().getDataType(),
+                        expected.getRaster().getDataElements(0, 0, w, h, null)),
+                toByteArray(
+                        actual.getSampleModel().getDataType(),
+                        actual.getRaster().getDataElements(0, 0, w, h, null)));
     }
 
     @Test
@@ -839,8 +870,7 @@ public class TIFFReadTest extends Assert {
 
     static BufferedImage readTiff(File file) throws IOException {
 
-        final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi()
-                .createReaderInstance();
+        final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi().createReaderInstance();
 
         FileImageInputStream inputStream = new FileImageInputStream(file);
         try {
@@ -872,9 +902,11 @@ public class TIFFReadTest extends Assert {
     }
 
     @Test
-    public void readTIFFTurboJpegNoJpegTables() throws IOException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+    public void readTIFFTurboJpegNoJpegTables()
+            throws IOException, NoSuchFieldException, SecurityException, IllegalArgumentException,
+                    IllegalAccessException {
         // This image has been created with this command on GDAL 2.1.3:
-        // gdal_translate -co COMPRESS=JPEG -CO TILED=YES -CO JPEGTABLESMODE=0\ 
+        // gdal_translate -co COMPRESS=JPEG -CO TILED=YES -CO JPEGTABLESMODE=0\
         // -CO BLOCKXSIZE=64 -CO BLOCKYSIZE=64 -outsize 256 256 -r bilinear test.tif notables.tif
 
         // This will create a TIFF with internally compressed JPEG images but no JPEGTables metadata
@@ -894,29 +926,29 @@ public class TIFFReadTest extends Assert {
             fis = new FileImageInputStream(file);
             reader.setInput(fis);
             ImageReadParam param = new ImageReadParam();
-            param.setSourceRegion(new Rectangle(0,0,64,64));
+            param.setSourceRegion(new Rectangle(0, 0, 64, 64));
             image = reader.read(0, param);
 
             assertEquals(64, image.getWidth());
             assertEquals(64, image.getHeight());
             assertEquals(1, image.getSampleModel().getNumBands());
 
-//            // Using reflection to check the data array being used
-//            Field f = reader.getClass().getDeclaredField("decompressor");
-//            f.setAccessible(true);
-//            TIFFJPEGDecompressor decompressor = (TIFFJPEGDecompressor) f.get(reader);
-//
-//            f = decompressor.getClass().getDeclaredField("JPEGReader");
-//            f.setAccessible(true);
-//            TurboJpegImageReader jpegReader = (TurboJpegImageReader) f.get(decompressor);
-//
-//            f = jpegReader.getClass().getDeclaredField("data");
-//            f.setAccessible(true);
-//            byte[] data = (byte[]) f.get(jpegReader);
-//
-//            // Before the fix, the data array would have been, more or less, big as
-//            // the whole stream content (almost 16000), making this check fail.
-//            assertTrue(data.length < 300);
+            //            // Using reflection to check the data array being used
+            //            Field f = reader.getClass().getDeclaredField("decompressor");
+            //            f.setAccessible(true);
+            //            TIFFJPEGDecompressor decompressor = (TIFFJPEGDecompressor) f.get(reader);
+            //
+            //            f = decompressor.getClass().getDeclaredField("JPEGReader");
+            //            f.setAccessible(true);
+            //            TurboJpegImageReader jpegReader = (TurboJpegImageReader) f.get(decompressor);
+            //
+            //            f = jpegReader.getClass().getDeclaredField("data");
+            //            f.setAccessible(true);
+            //            byte[] data = (byte[]) f.get(jpegReader);
+            //
+            //            // Before the fix, the data array would have been, more or less, big as
+            //            // the whole stream content (almost 16000), making this check fail.
+            //            assertTrue(data.length < 300);
             image.flush();
             image = null;
         } finally {
@@ -941,8 +973,7 @@ public class TIFFReadTest extends Assert {
     @Test
     public void readWithNegativeInfinityNoData() throws IOException {
         final File file = TestData.file(this, "float32_neg_infinity_nodata.tif");
-        final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi()
-                .createReaderInstance();
+        final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi().createReaderInstance();
 
         FileImageInputStream inputStream = new FileImageInputStream(file);
         try {
@@ -977,8 +1008,7 @@ public class TIFFReadTest extends Assert {
     }
 
     private void readExtraSample(String inputFile, boolean hasAlpha, String description, int value) throws IOException {
-        final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi()
-                .createReaderInstance();
+        final TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi().createReaderInstance();
 
         final File file = TestData.file(this, inputFile);
         FileImageInputStream inputStream = new FileImageInputStream(file);
@@ -996,7 +1026,9 @@ public class TIFFReadTest extends Assert {
             Node rootNode = metadata.getAsTree(metadata.getNativeMetadataFormatName());
             IIOMetadataNode field = getTiffField(rootNode, BaselineTIFFTagSet.TAG_EXTRA_SAMPLES);
             assertNotNull(field);
-            Node node = ((IIOMetadataNode) field.getFirstChild()).getElementsByTagName("TIFFShort").item(0);
+            Node node = ((IIOMetadataNode) field.getFirstChild())
+                    .getElementsByTagName("TIFFShort")
+                    .item(0);
             NamedNodeMap map = node.getAttributes();
             assertTrue(description.equalsIgnoreCase(map.item(1).getNodeValue()));
             assertEquals(value, Integer.parseInt(map.item(0).getNodeValue()));
@@ -1019,7 +1051,9 @@ public class TIFFReadTest extends Assert {
         if (noDataNode == null) {
             return Double.NaN;
         }
-        Node node = ((IIOMetadataNode) noDataNode .getFirstChild()).getElementsByTagName("TIFFAscii").item(0);
+        Node node = ((IIOMetadataNode) noDataNode.getFirstChild())
+                .getElementsByTagName("TIFFAscii")
+                .item(0);
         final String valueAttribute = node.getAttributes().getNamedItem("value").getNodeValue();
         final int length = valueAttribute.length() + 1;
 

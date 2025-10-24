@@ -16,28 +16,24 @@
  */
 package it.geosolutions.imageio.plugins.jp2k.box;
 
-
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadataNode;
-
 import org.w3c.dom.Node;
 
-/**
- * This class is defined to represent a UUIDInfo Box of JPEG JP2 file format.
- */
+/** This class is defined to represent a UUIDInfo Box of JPEG JP2 file format. */
 @SuppressWarnings("serial")
 public class UUIDInfoBox extends DefaultJP2KBox {
 
-    public final static int BOX_TYPE = 0x75696E66;
+    public static final int BOX_TYPE = 0x75696E66;
 
-    public final static String NAME = "uinf";
+    public static final String NAME = "uinf";
 
-    public final static String JP2K_MD_NAME = "JP2KUUIDInfoBox";
+    public static final String JP2K_MD_NAME = "JP2KUUIDInfoBox";
 
     public UUIDInfoBox(Node node) throws IIOInvalidTreeException {
         super(node);
     }
-    
+
     public UUIDInfoBox(byte[] data) {
         super(8 + data.length, BOX_TYPE, data);
     }
@@ -48,10 +44,8 @@ public class UUIDInfoBox extends DefaultJP2KBox {
     }
 
     @Override
-    protected void parse(byte[] data) {
-        
-    }
-    
+    protected void parse(byte[] data) {}
+
     public IIOMetadataNode getNativeNode() {
         String name = BoxUtilities.getName(getType());
         IIOMetadataNode node = new IIOMetadataNode(name);

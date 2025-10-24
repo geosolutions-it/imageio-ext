@@ -17,28 +17,22 @@
 
 package it.geosolutions.imageio.plugins.vrt;
 
+import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
+import it.geosolutions.imageio.utilities.ImageIOUtilities;
+import it.geosolutions.resources.TestData;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import javax.imageio.ImageReader;
-import javax.media.jai.ImageLayout;
-
 import org.junit.Assert;
 import org.junit.Before;
 
-import it.geosolutions.imageio.core.GCP;
-import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
-import it.geosolutions.imageio.plugins.vrt.VRTImageReaderSpi;
-import it.geosolutions.imageio.utilities.ImageIOUtilities;
-import it.geosolutions.resources.TestData;
-
 public class VRTReadTest extends AbstractGDALTest {
-	
-	public final static String fileName = "3timesutmFloat32.vrt";
-	
+
+    public static final String fileName = "3timesutmFloat32.vrt";
+
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -48,10 +42,10 @@ public class VRTReadTest extends AbstractGDALTest {
         // unzip it
         TestData.unzipFile(this, "test-data.zip");
     }
-	
-	/**
+
+    /**
      * Test reading a vrt format
-     * 
+     *
      * @throws FileNotFoundException
      * @throws IOException
      */
@@ -69,7 +63,7 @@ public class VRTReadTest extends AbstractGDALTest {
         }
 
         // get a RenderedImage
-        ImageReader reader= new VRTImageReaderSpi().createReaderInstance();
+        ImageReader reader = new VRTImageReaderSpi().createReaderInstance();
         reader.setInput(file);
         RenderedImage image = reader.read(0);
         if (TestData.isInteractiveTest()) {
@@ -79,12 +73,10 @@ public class VRTReadTest extends AbstractGDALTest {
         }
         Assert.assertEquals(256, image.getWidth());
         Assert.assertEquals(256, image.getHeight());
-        
+
         // check for expected datatype
-        Assert.assertEquals(DataBuffer.TYPE_FLOAT, image.getSampleModel().getDataType());      
-        
+        Assert.assertEquals(DataBuffer.TYPE_FLOAT, image.getSampleModel().getDataType());
+
         reader.dispose();
     }
-	
-
 }

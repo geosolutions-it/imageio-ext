@@ -18,32 +18,27 @@ package it.geosolutions.imageioimpl.plugins.cog;
 
 import it.geosolutions.imageio.core.ExtCaches;
 import it.geosolutions.imageio.utilities.SoftValueHashMap;
-
 import java.util.Map;
 
-/**
- * Utility class to assist building Azure async client.
- * Azure clients should be singletons and re-used.
- */
+/** Utility class to assist building Azure async client. Azure clients should be singletons and re-used. */
 public class AzureClientFactory {
     private static final Map<String, AzureClient> asyncClients = new SoftValueHashMap<>();
 
     static {
-        ExtCaches.addListener(()->{
-        	synchronized (asyncClients) {
-            	asyncClients.clear();
-			}
+        ExtCaches.addListener(() -> {
+            synchronized (asyncClients) {
+                asyncClients.clear();
+            }
         });
     }
 
-    private AzureClientFactory() {
-    }
+    private AzureClientFactory() {}
 
     public static AzureClient getClient(AzureConfigurationProperties configProps) {
 
         String container = configProps.getContainer();
         synchronized (asyncClients) {
-            return asyncClients.computeIfAbsent(container, c->new AzureClient(configProps));
-		}
+            return asyncClients.computeIfAbsent(container, c -> new AzureClient(configProps));
+        }
     }
 }

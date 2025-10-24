@@ -18,9 +18,7 @@ package it.geosolutions.imageio.plugins.jp2k;
 
 import javax.swing.tree.MutableTreeNode;
 
-/**
- * @author Simone Giannecchini, GeoSolutions
- */
+/** @author Simone Giannecchini, GeoSolutions */
 public interface MutableJP2KBox extends JP2KBox, MutableTreeNode {
 
     /** Returns the box content in byte array. */
@@ -33,5 +31,4 @@ public interface MutableJP2KBox extends JP2KBox, MutableTreeNode {
     public void setType(final int type);
 
     public void setIsLeaf(final boolean isLeaf);
-
 }

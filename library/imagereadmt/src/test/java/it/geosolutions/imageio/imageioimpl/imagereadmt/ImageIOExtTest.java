@@ -30,27 +30,21 @@
 package it.geosolutions.imageio.imageioimpl.imagereadmt;
 
 import java.io.IOException;
-
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
-
 import org.junit.Assert;
 
-/**
- * @author Simone Giannecchini, GeoSolutions.
- */
+/** @author Simone Giannecchini, GeoSolutions. */
 public class ImageIOExtTest {
 
-
-
-	@org.junit.Test
+    @org.junit.Test
     public void testImageReadMT() {
         ImageReadDescriptorMT.register(JAI.getDefaultInstance());
         final ParameterBlockJAI pbj = new ParameterBlockJAI("ImageReadMT");
         Assert.assertNotNull(pbj);
     }
 
-	@org.junit.Test
+    @org.junit.Test
     public void testImageReadMTOperation() throws IOException {
         // final String opName = "ImageReadMT";
         // JAI.getDefaultInstance().getTileScheduler().setParallelism(5);

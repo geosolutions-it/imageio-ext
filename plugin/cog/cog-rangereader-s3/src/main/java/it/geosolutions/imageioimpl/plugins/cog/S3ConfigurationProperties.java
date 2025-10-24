@@ -16,42 +16,38 @@
  */
 package it.geosolutions.imageioimpl.plugins.cog;
 
-
 import it.geosolutions.imageio.core.BasicAuthURI;
-
 import java.net.URI;
 import java.net.URLDecoder;
 import java.util.*;
 import java.util.logging.Logger;
 
 /**
- * Helps locate configuration properties in system/environment for use in building S3 client.  Attempts to read
+ * Helps locate configuration properties in system/environment for use in building S3 client. Attempts to read
  * environment variables containing connection settings and if not found, will fallback to attempting to read system
- * properties.  If still not found, the provided default values will be used.
+ * properties. If still not found, the provided default values will be used.
  *
- * @author joshfix
- * Created on 2019-09-19
+ * @author joshfix Created on 2019-09-19
  */
 public class S3ConfigurationProperties {
 
-    private final static String S3_DOT = "s3.";
+    private static final String S3_DOT = "s3.";
 
     /** Some Old Regions support S3 dash Region endpoints, using a dash instead of a dot */
-    private final static String S3_DASH = "s3-";
+    private static final String S3_DASH = "s3-";
 
     /** Virtual-Hosted-Styles URL pieces */
-    final static String S3_DOT_VH = "." + S3_DOT;
+    static final String S3_DOT_VH = "." + S3_DOT;
 
-    private final static String S3_DASH_VH = "." + S3_DASH;
+    private static final String S3_DASH_VH = "." + S3_DASH;
 
-    final static String AMAZON_AWS = ".amazonaws.com";
+    static final String AMAZON_AWS = ".amazonaws.com";
 
     /**
      * Some more info on different types of supported URLs and old regions syntax:
      * https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html
      */
-
-    static abstract class S3URIParser {
+    abstract static class S3URIParser {
         protected String region;
 
         protected String bucket;
@@ -75,8 +71,8 @@ public class S3ConfigurationProperties {
     /**
      * A Parser dealing with path-style URLs
      *
-     * http://s3.aws-region.amazonaws.com/bucket (S3 dot Regions)
-     * http://s3-aws-region.amazonaws.com/bucket (S3 dash Regions)
+     * <p>http://s3.aws-region.amazonaws.com/bucket (S3 dot Regions) http://s3-aws-region.amazonaws.com/bucket (S3 dash
+     * Regions)
      */
     class HTTPPathStyleParser extends S3ConfigurationProperties.S3URIParser {
 
@@ -97,8 +93,8 @@ public class S3ConfigurationProperties {
     /**
      * A Parser dealing with virtual-hosted-style URL
      *
-     * http://bucket.s3.aws-region.amazonaws.com (S3 dot region)
-     * http://bucket.s3-aws-region.amazonaws.com (S3 dash region)
+     * <p>http://bucket.s3.aws-region.amazonaws.com (S3 dot region) http://bucket.s3-aws-region.amazonaws.com (S3 dash
+     * region)
      */
     class HTTPVirtualHostedStyleParser extends S3ConfigurationProperties.S3URIParser {
 
@@ -124,8 +120,7 @@ public class S3ConfigurationProperties {
     /**
      * A Parser dealing with S3 URLs
      *
-     * s3://bucket/key?region=us-west-2 (Region as query param)
-     * s3://bucket/key
+     * <p>s3://bucket/key?region=us-west-2 (Region as query param) s3://bucket/key
      */
     class S3Parser extends S3ConfigurationProperties.S3URIParser {
 
@@ -170,7 +165,7 @@ public class S3ConfigurationProperties {
     public final String AWS_S3_KEEP_ALIVE_TIME;
     public final String AWS_S3_FORCE_PATH_STYLE;
 
-    private final static Logger LOGGER = Logger.getLogger(S3ConfigurationProperties.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(S3ConfigurationProperties.class.getName());
 
     public S3ConfigurationProperties(String alias, BasicAuthURI cogUri) {
         this.alias = alias.toUpperCase();
@@ -187,16 +182,12 @@ public class S3ConfigurationProperties {
         password = PropertyLocator.getEnvironmentValue(AWS_S3_PASSWORD_KEY, null);
         region = PropertyLocator.getEnvironmentValue(AWS_S3_REGION_KEY, null);
         endpoint = PropertyLocator.getEnvironmentValue(AWS_S3_ENDPOINT_KEY, null);
-        corePoolSize = Integer.parseInt(
-                PropertyLocator.getEnvironmentValue(AWS_S3_CORE_POOL_SIZE_KEY, "50"));
-        maxPoolSize = Integer.parseInt(
-                PropertyLocator.getEnvironmentValue(AWS_S3_MAX_POOL_SIZE_KEY, "128"));
-        keepAliveTime = Integer.parseInt(
-                PropertyLocator.getEnvironmentValue(AWS_S3_KEEP_ALIVE_TIME, "10"));
-        forcePathStyle = Boolean.parseBoolean(
-                PropertyLocator.getEnvironmentValue(AWS_S3_FORCE_PATH_STYLE, "false"));
+        corePoolSize = Integer.parseInt(PropertyLocator.getEnvironmentValue(AWS_S3_CORE_POOL_SIZE_KEY, "50"));
+        maxPoolSize = Integer.parseInt(PropertyLocator.getEnvironmentValue(AWS_S3_MAX_POOL_SIZE_KEY, "128"));
+        keepAliveTime = Integer.parseInt(PropertyLocator.getEnvironmentValue(AWS_S3_KEEP_ALIVE_TIME, "10"));
+        forcePathStyle = Boolean.parseBoolean(PropertyLocator.getEnvironmentValue(AWS_S3_FORCE_PATH_STYLE, "false"));
 
-        if (cogUri.getUser() != null && cogUri.getPassword()!= null) {
+        if (cogUri.getUser() != null && cogUri.getPassword() != null) {
             user = cogUri.getUser();
             password = cogUri.getPassword();
         }
@@ -208,7 +199,7 @@ public class S3ConfigurationProperties {
         if (scheme.startsWith("http")) {
             String host = uri.getHost();
             String hostLowerCase = host.toLowerCase();
-            if ((hostLowerCase.startsWith(S3_DASH) || hostLowerCase.startsWith(S3_DOT))  && host.contains(".")) {
+            if ((hostLowerCase.startsWith(S3_DASH) || hostLowerCase.startsWith(S3_DOT)) && host.contains(".")) {
                 parser = new HTTPPathStyleParser(uri, region, hostLowerCase.startsWith(S3_DASH));
             } else if (hostLowerCase.contains(S3_DASH_VH) || hostLowerCase.contains(S3_DOT_VH)) {
                 parser = new HTTPVirtualHostedStyleParser(uri, region, hostLowerCase.contains(S3_DASH_VH));
@@ -238,7 +229,7 @@ public class S3ConfigurationProperties {
         return parts[parts.length - 1];
     }
 
-    public static Map<String, List<String>> splitQuery(URI uri)  {
+    public static Map<String, List<String>> splitQuery(URI uri) {
         String query = uri.getQuery();
         if (query == null || query.isEmpty()) {
             return Collections.emptyMap();
@@ -252,12 +243,13 @@ public class S3ConfigurationProperties {
                 if (!query_pairs.containsKey(key)) {
                     query_pairs.put(key, new LinkedList<>());
                 }
-                final String value = idx > 0 && pair.length() > idx + 1 ? URLDecoder.decode(pair.substring(idx + 1), "UTF-8") : null;
+                final String value =
+                        idx > 0 && pair.length() > idx + 1 ? URLDecoder.decode(pair.substring(idx + 1), "UTF-8") : null;
                 query_pairs.get(key).add(value);
             }
             return query_pairs;
         } catch (Exception e) {
-            LOGGER.warning("Unable to split query into key/value pairs for URI " + uri + ". "  + e.getMessage());
+            LOGGER.warning("Unable to split query into key/value pairs for URI " + uri + ". " + e.getMessage());
             return Collections.emptyMap();
         }
     }

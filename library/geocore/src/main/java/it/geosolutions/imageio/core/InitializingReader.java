@@ -19,15 +19,13 @@ package it.geosolutions.imageio.core;
 import java.awt.*;
 
 /**
- * Interface for ImageReader requiring an initialization step
- * usually needed right before invoking the setInput method
+ * Interface for ImageReader requiring an initialization step usually needed right before invoking the setInput method
  */
 public interface InitializingReader {
 
     /**
-     * Initialize the reader. hints may be provided to customize the
-     * initialization steps. A boolean will be returned to report
-     * that the initialization occurred.
+     * Initialize the reader. hints may be provided to customize the initialization steps. A boolean will be returned to
+     * report that the initialization occurred.
      */
-    boolean init (RenderingHints hints);
+    boolean init(RenderingHints hints);
 }

@@ -19,29 +19,23 @@ package it.geosolutions.imageio.plugins.dted;
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
-
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
-import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.media.jai.ImageLayout;
-import javax.media.jai.ParameterBlockJAI;
-
 import org.junit.Assert;
 import org.junit.Before;
 
 /**
  * Testing reading capabilities for {@link DTEDImageReader}.
- * 
+ *
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class DTEDTest extends AbstractGDALTest {
-    public final static String fileName = "n43.dt0";
-
+    public static final String fileName = "n43.dt0";
 
     @Before
     public void setUp() throws Exception {
@@ -50,7 +44,7 @@ public class DTEDTest extends AbstractGDALTest {
 
     /**
      * Test read exploiting common JAI operations (Crop-Translate-Rotate)
-     * 
+     *
      * @throws FileNotFoundException
      * @throws IOException
      */
@@ -73,7 +67,7 @@ public class DTEDTest extends AbstractGDALTest {
         l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(32).setTileWidth(32);
 
         // get a RenderedImage
-        ImageReader reader= new DTEDImageReaderSpi().createReaderInstance();
+        ImageReader reader = new DTEDImageReaderSpi().createReaderInstance();
         reader.setInput(file);
         RenderedImage image = reader.read(0);
         if (TestData.isInteractiveTest()) {

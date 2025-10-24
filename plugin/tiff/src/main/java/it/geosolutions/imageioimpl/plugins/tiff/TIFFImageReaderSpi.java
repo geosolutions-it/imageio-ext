@@ -75,16 +75,15 @@ package it.geosolutions.imageioimpl.plugins.tiff;
 
 import com.sun.media.imageioimpl.common.PackageUtil;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
-
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Locale;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageReaderWriterSpi;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageInputStream;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Locale;
 
 public class TIFFImageReaderSpi extends ImageReaderSpi {
 
@@ -101,7 +100,8 @@ public class TIFFImageReaderSpi extends ImageReaderSpi {
     protected boolean registered = false;
 
     public TIFFImageReaderSpi() {
-        this("it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReader",
+        this(
+                "it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReader",
                 new String[] {"it.geosolutions.imageioimpl.plugins.tiff.TIFFImageWriterSpi"});
     }
 
@@ -110,7 +110,8 @@ public class TIFFImageReaderSpi extends ImageReaderSpi {
     }
 
     public TIFFImageReaderSpi(String readerClassName, String[] writerSpiNames) {
-        super("ImageIO-Ext",
+        super(
+                "ImageIO-Ext",
                 "1.0",
                 names,
                 suffixes,
@@ -121,20 +122,20 @@ public class TIFFImageReaderSpi extends ImageReaderSpi {
                 false,
                 TIFFStreamMetadata.nativeMetadataFormatName,
                 "it.geosolutions.imageioimpl.plugins.tiff.TIFFStreamMetadataFormat",
-                null, null,
+                null,
+                null,
                 true,
                 TIFFImageMetadata.nativeMetadataFormatName,
                 "it.geosolutions.imageioimpl.plugins.tiff.TIFFImageMetadataFormat",
-                new String[]{""}, new String[]{""}
-        );
+                new String[] {""},
+                new String[] {""});
 
         this.readerClassName = readerClassName;
         this.writerSpiNames = writerSpiNames;
     }
 
     public String getDescription(Locale locale) {
-        String desc = PackageUtil.getSpecificationTitle() +
-                " TIFF Image Reader";
+        String desc = PackageUtil.getSpecificationTitle() + " TIFF Image Reader";
         return desc;
     }
 
@@ -149,17 +150,10 @@ public class TIFFImageReaderSpi extends ImageReaderSpi {
         stream.readFully(b);
         stream.reset();
 
-        return (
-                ((b[0] == (byte) 0x49 && b[1] == (byte) 0x49 &&
-                        b[2] == (byte) 0x2a && b[3] == (byte) 0x00) ||
-                        (b[0] == (byte) 0x4d && b[1] == (byte) 0x4d &&
-                                b[2] == (byte) 0x00 && b[3] == (byte) 0x2a)) ||
-
-                        ((b[0] == (byte) 0x49 && b[1] == (byte) 0x49 &&
-                                b[2] == (byte) 0x2b && b[3] == (byte) 0x00) ||
-                                (b[0] == (byte) 0x4d && b[1] == (byte) 0x4d &&
-                                        b[2] == (byte) 0x00 && b[3] == (byte) 0x2b))
-        );
+        return (((b[0] == (byte) 0x49 && b[1] == (byte) 0x49 && b[2] == (byte) 0x2a && b[3] == (byte) 0x00)
+                        || (b[0] == (byte) 0x4d && b[1] == (byte) 0x4d && b[2] == (byte) 0x00 && b[3] == (byte) 0x2a))
+                || ((b[0] == (byte) 0x49 && b[1] == (byte) 0x49 && b[2] == (byte) 0x2b && b[3] == (byte) 0x00)
+                        || (b[0] == (byte) 0x4d && b[1] == (byte) 0x4d && b[2] == (byte) 0x00 && b[3] == (byte) 0x2b)));
     }
 
     public ImageReader createReaderInstance(Object extension) {
@@ -173,8 +167,9 @@ public class TIFFImageReaderSpi extends ImageReaderSpi {
             return;
         }
         registered = true;
-        Iterator<ImageReaderWriterSpi> readers = ImageIOUtilities
-                .getImageReaderWriterSPI(registry, new TIFFFilter(true), "TIFF", true).iterator();
+        Iterator<ImageReaderWriterSpi> readers = ImageIOUtilities.getImageReaderWriterSPI(
+                        registry, new TIFFFilter(true), "TIFF", true)
+                .iterator();
         while (readers.hasNext()) {
             final ImageReaderSpi spi = (ImageReaderSpi) readers.next();
             if (spi == this) {
@@ -186,7 +181,8 @@ public class TIFFImageReaderSpi extends ImageReaderSpi {
     }
 
     /**
-     * Filter which returns <code>true</code> if and only if the provider is an ImageReader/WriterSpi which supports the TIFF format.
+     * Filter which returns <code>true</code> if and only if the provider is an ImageReader/WriterSpi which supports the
+     * TIFF format.
      */
     static class TIFFFilter implements ServiceRegistry.Filter {
         boolean isReader;
@@ -196,8 +192,7 @@ public class TIFFImageReaderSpi extends ImageReaderSpi {
         }
 
         public boolean filter(Object provider) {
-            boolean isSupportedSpi = isReader ? provider instanceof ImageReaderSpi
-                    : provider instanceof ImageWriterSpi;
+            boolean isSupportedSpi = isReader ? provider instanceof ImageReaderSpi : provider instanceof ImageWriterSpi;
             if (!isSupportedSpi) {
                 return false;
             }

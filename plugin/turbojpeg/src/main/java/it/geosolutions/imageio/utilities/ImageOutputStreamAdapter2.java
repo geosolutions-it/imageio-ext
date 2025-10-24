@@ -18,16 +18,13 @@ package it.geosolutions.imageio.utilities;
 
 import java.io.IOException;
 import java.io.OutputStream;
-
 import javax.imageio.stream.ImageOutputStreamImpl;
 
-/**
- * @author Simone Giannecchini, GeoSolutions
- */
+/** @author Simone Giannecchini, GeoSolutions */
 public class ImageOutputStreamAdapter2 extends ImageOutputStreamImpl {
 
-    // Supporting marking is a big issue. I should overline this somehow 
-    
+    // Supporting marking is a big issue. I should overline this somehow
+
     private OutputStream os;
 
     public OutputStream getOs() {
@@ -38,44 +35,32 @@ public class ImageOutputStreamAdapter2 extends ImageOutputStreamImpl {
         this.os = os;
     }
 
-    /**
-     * @see javax.imageio.stream.ImageOutputStreamImpl#write(int)
-     */
+    /** @see javax.imageio.stream.ImageOutputStreamImpl#write(int) */
     public void write(int b) throws IOException {
         os.write(b);
     }
 
-    /**
-     * @see javax.imageio.stream.ImageOutputStreamImpl#write(byte[], int, int)
-     */
+    /** @see javax.imageio.stream.ImageOutputStreamImpl#write(byte[], int, int) */
     public void write(byte[] b, int off, int len) throws IOException {
         os.write(b, off, len);
     }
 
-    /**
-     * @see javax.imageio.stream.ImageInputStreamImpl#read()
-     */
+    /** @see javax.imageio.stream.ImageInputStreamImpl#read() */
     public int read() throws IOException {
         throw new UnsupportedOperationException("Operation not supported.");
     }
 
-    /**
-     * @see javax.imageio.stream.ImageInputStreamImpl#read(byte[], int, int)
-     */
+    /** @see javax.imageio.stream.ImageInputStreamImpl#read(byte[], int, int) */
     public int read(byte[] b, int off, int len) throws IOException {
         throw new UnsupportedOperationException("Operation not supported.");
     }
 
-    /**
-     * @see javax.imageio.stream.ImageInputStreamImpl#flush()
-     */
+    /** @see javax.imageio.stream.ImageInputStreamImpl#flush() */
     public void flush() throws IOException {
         os.flush();
     }
 
-    /**
-     * @see javax.imageio.stream.ImageInputStreamImpl#close()
-     */
+    /** @see javax.imageio.stream.ImageInputStreamImpl#close() */
     public void close() throws IOException {
         try {
             super.close();

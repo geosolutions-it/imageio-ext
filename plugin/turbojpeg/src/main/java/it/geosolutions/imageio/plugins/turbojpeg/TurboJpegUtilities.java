@@ -18,15 +18,12 @@ package it.geosolutions.imageio.plugins.turbojpeg;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.libjpegturbo.turbojpeg.TJ;
 
 /**
  * @author Daniele Romagnoli, GeoSolutions SaS
  * @author Emanuele Tajariol, GeoSolutions SaS
- * 
- *         Class containing some methods ported from the TurboJPEG C code as well as lib availability check.
- * 
+ *     <p>Class containing some methods ported from the TurboJPEG C code as well as lib availability check.
  */
 public class TurboJpegUtilities {
 
@@ -65,16 +62,17 @@ public class TurboJpegUtilities {
                 isInitialized = true;
             }
         }
-
     }
 
     public static final String LIBNAME = "turbojpeg";
-    
+
     static void load() {
-        try {            
-            System.loadLibrary(LIBNAME); // If this method is called more than once with the same library name, the second and subsequent calls are ignored.
+        try {
+            System.loadLibrary(
+                    LIBNAME); // If this method is called more than once with the same library name, the second and
+            // subsequent calls are ignored.
             if (LOGGER.isLoggable(Level.INFO)) {
-                LOGGER.info("TurboJPEG library loaded ("+LIBNAME+")");
+                LOGGER.info("TurboJPEG library loaded (" + LIBNAME + ")");
             }
         } catch (java.lang.UnsatisfiedLinkError e) {
             String os = System.getProperty("os.name").toLowerCase();
@@ -111,22 +109,22 @@ public class TurboJpegUtilities {
 
     public static String getTurboJpegFlagAsString(final int key) {
         switch (key) {
-        case TJ.FLAG_ACCURATEDCT:
-            return "FLAG_ACCURATEDCT";
-        case TJ.FLAG_BOTTOMUP:
-            return "FLAG_BOTTOMUP";
-        case TJ.FLAG_FASTDCT:
-            return "FLAG_FASTDCT";
-        case TJ.FLAG_FASTUPSAMPLE:
-            return "FLAG_FASTUPSAMPLE";
-        case TJ.FLAG_FORCEMMX:
-            return "FLAG_FORCEMMX";
-        case TJ.FLAG_FORCESSE:
-            return "FLAG_FORCESSE";
-        case TJ.FLAG_FORCESSE2:
-            return "FLAG_FORCESSE2";
-        case TJ.FLAG_FORCESSE3:
-            return "FLAG_FORCESSE3";
+            case TJ.FLAG_ACCURATEDCT:
+                return "FLAG_ACCURATEDCT";
+            case TJ.FLAG_BOTTOMUP:
+                return "FLAG_BOTTOMUP";
+            case TJ.FLAG_FASTDCT:
+                return "FLAG_FASTDCT";
+            case TJ.FLAG_FASTUPSAMPLE:
+                return "FLAG_FASTUPSAMPLE";
+            case TJ.FLAG_FORCEMMX:
+                return "FLAG_FORCEMMX";
+            case TJ.FLAG_FORCESSE:
+                return "FLAG_FORCESSE";
+            case TJ.FLAG_FORCESSE2:
+                return "FLAG_FORCESSE2";
+            case TJ.FLAG_FORCESSE3:
+                return "FLAG_FORCESSE3";
         }
         throw new IllegalArgumentException("Unsupported flag");
     }

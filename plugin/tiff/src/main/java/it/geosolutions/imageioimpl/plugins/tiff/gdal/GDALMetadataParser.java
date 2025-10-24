@@ -18,19 +18,15 @@
 
 package it.geosolutions.imageioimpl.plugins.tiff.gdal;
 
+import it.geosolutions.imageio.pam.PAMParser;
 import java.io.StringReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import it.geosolutions.imageio.pam.PAMParser;
-
-/**
- * Utility class to parse GDALMetadata objects from XML strings contained in the TIFF tags
- */
+/** Utility class to parse GDALMetadata objects from XML strings contained in the TIFF tags */
 public class GDALMetadataParser {
 
     private static JAXBContext CONTEXT;

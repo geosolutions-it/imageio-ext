@@ -30,10 +30,9 @@
 package it.geosolutions.imageio.compression;
 
 /**
- * Simple enum for CompressionType being supported by the Compression SPI machinery.
- * At the moment, only DEFLATE is supported.
+ * Simple enum for CompressionType being supported by the Compression SPI machinery. At the moment, only DEFLATE is
+ * supported.
  */
 public enum CompressionType {
-
     DEFLATE
 }

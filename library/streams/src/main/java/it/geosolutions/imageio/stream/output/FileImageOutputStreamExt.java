@@ -16,35 +16,25 @@
  */
 package it.geosolutions.imageio.stream.output;
 
+import com.sun.media.imageio.stream.FileChannelImageOutputStream;
 import it.geosolutions.imageio.stream.AccessibleStream;
 import it.geosolutions.imageio.stream.eraf.EnhancedRandomAccessFile;
-
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
-
 import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageOutputStream;
 
-import com.sun.media.imageio.stream.FileChannelImageOutputStream;
-
 /**
- * Interfaces for for {@link ImageOutputStream} subclasses that exclusively
- * points to a {@link File} object.
- * 
- * <p>
- * Such an {@link ImageOutputStream} internally uses an
- * {@link EnhancedRandomAccessFile} which basically is a
+ * Interfaces for for {@link ImageOutputStream} subclasses that exclusively points to a {@link File} object.
+ *
+ * <p>Such an {@link ImageOutputStream} internally uses an {@link EnhancedRandomAccessFile} which basically is a
  * {@link RandomAccessFile} with buffering.
- * 
- * <p>
- * Overall performance is improved with respect to simple
- * {@link FileImageOutputStream}. Some simplicistic tests showed that
- * performances are close to the performances of the
- * {@link FileChannelImageOutputStream} but without the burden of using
- * {@link FileChannel} which on some platform with some older versions of Java
- * can be problematic.
- * 
+ *
+ * <p>Overall performance is improved with respect to simple {@link FileImageOutputStream}. Some simplicistic tests
+ * showed that performances are close to the performances of the {@link FileChannelImageOutputStream} but without the
+ * burden of using {@link FileChannel} which on some platform with some older versions of Java can be problematic.
+ *
  * @author Daniele Romagnoli, GeoSolutions
  * @author Simone Giannecchini, GeoSolutions
  * @deprecated use {@link AccessibleStream} instead
@@ -53,7 +43,7 @@ public interface FileImageOutputStreamExt extends ImageOutputStream, AccessibleS
 
     /**
      * Returns the associated {@link File}
-     * 
+     *
      * @return the associated {@link File}
      */
     public File getFile();

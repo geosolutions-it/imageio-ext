@@ -18,18 +18,16 @@ package it.geosolutions.imageioimpl.plugins.cog;
 
 import com.sun.media.imageioimpl.common.PackageUtil;
 import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
-
+import java.io.IOException;
+import java.util.Locale;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageInputStream;
-import java.io.IOException;
-import java.util.Locale;
 
 /**
  * SPI for creating `CogImageReader`
  *
- * @author joshfix
- * Created on 2019-09-18
+ * @author joshfix Created on 2019-09-18
  */
 public class CogImageReaderSpi extends TIFFImageReaderSpi {
 
@@ -55,7 +53,7 @@ public class CogImageReaderSpi extends TIFFImageReaderSpi {
         }
 
         // cog input streams must have the header initialized before they can be used in any capacity
-        if (!((CogImageInputStream)input).isInitialized()) {
+        if (!((CogImageInputStream) input).isInitialized()) {
             return false;
         }
 
@@ -65,17 +63,10 @@ public class CogImageReaderSpi extends TIFFImageReaderSpi {
         stream.readFully(b);
         stream.reset();
 
-        return (
-                ((b[0] == (byte) 0x49 && b[1] == (byte) 0x49 &&
-                        b[2] == (byte) 0x2a && b[3] == (byte) 0x00) ||
-                        (b[0] == (byte) 0x4d && b[1] == (byte) 0x4d &&
-                                b[2] == (byte) 0x00 && b[3] == (byte) 0x2a)) ||
-
-                        ((b[0] == (byte) 0x49 && b[1] == (byte) 0x49 &&
-                                b[2] == (byte) 0x2b && b[3] == (byte) 0x00) ||
-                                (b[0] == (byte) 0x4d && b[1] == (byte) 0x4d &&
-                                        b[2] == (byte) 0x00 && b[3] == (byte) 0x2b))
-        );
+        return (((b[0] == (byte) 0x49 && b[1] == (byte) 0x49 && b[2] == (byte) 0x2a && b[3] == (byte) 0x00)
+                        || (b[0] == (byte) 0x4d && b[1] == (byte) 0x4d && b[2] == (byte) 0x00 && b[3] == (byte) 0x2a))
+                || ((b[0] == (byte) 0x49 && b[1] == (byte) 0x49 && b[2] == (byte) 0x2b && b[3] == (byte) 0x00)
+                        || (b[0] == (byte) 0x4d && b[1] == (byte) 0x4d && b[2] == (byte) 0x00 && b[3] == (byte) 0x2b)));
     }
 
     @Override
@@ -87,5 +78,4 @@ public class CogImageReaderSpi extends TIFFImageReaderSpi {
         }
         registered = true;
     }
-
 }

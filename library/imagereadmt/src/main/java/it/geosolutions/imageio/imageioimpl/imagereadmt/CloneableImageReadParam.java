@@ -30,19 +30,16 @@
 package it.geosolutions.imageio.imageioimpl.imagereadmt;
 
 import it.geosolutions.imageio.imageioimpl.EnhancedImageReadParam;
-
 import javax.imageio.ImageReadParam;
 
 /**
  * A class to be used to allows {@link ImageReadParam}s to be cloned.
- * 
+ *
  * @author Simone Giannecchini, GeoSolutions
  * @author Daniele Romagnoli, GeoSolutions
  * @deprecated use {@link EnhancedImageReadParam} instead.
  */
-public abstract class CloneableImageReadParam extends ImageReadParam implements
-        Cloneable {
+public abstract class CloneableImageReadParam extends ImageReadParam implements Cloneable {
 
     public abstract Object clone() throws CloneNotSupportedException;
-
 }

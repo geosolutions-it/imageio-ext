@@ -30,14 +30,11 @@
 package it.geosolutions.imageio.compression.libdeflate;
 
 import it.geosolutions.imageio.compression.Decompressor;
+import java.util.zip.DataFormatException;
 import me.steinborn.libdeflate.CompressionType;
 import me.steinborn.libdeflate.LibdeflateDecompressor;
 
-import java.util.zip.DataFormatException;
-
-/**
- * Decompressor implementation based on libdeflate java library
- */
+/** Decompressor implementation based on libdeflate java library */
 public class LibDeflateDecompressor implements Decompressor {
 
     LibdeflateDecompressor decompressor;
@@ -51,9 +48,7 @@ public class LibDeflateDecompressor implements Decompressor {
 
     @Override
     public void decompress(byte[] buffer, int offset, int maxUncompressedSize) throws DataFormatException {
-        decompressor.decompress(srcData, 0,
-                srcData.length, buffer, offset, CompressionType.ZLIB,
-                maxUncompressedSize);
+        decompressor.decompress(srcData, 0, srcData.length, buffer, offset, CompressionType.ZLIB, maxUncompressedSize);
     }
 
     @Override

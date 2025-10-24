@@ -12,15 +12,13 @@ import it.geosolutions.imageio.pam.PAMDataset.PAMRasterBand.Histograms.HistItem;
 import it.geosolutions.imageio.pam.PAMDataset.PAMRasterBand.Metadata;
 import it.geosolutions.imageio.pam.PAMDataset.PAMRasterBand.Metadata.MDI;
 import it.geosolutions.resources.TestData;
-
 import java.io.File;
 import java.util.List;
-
 import org.junit.Test;
 
 public class PAMParserTest {
 
-    private final static double DELTA = 1E-5;
+    private static final double DELTA = 1E-5;
 
     @Test
     public void testMarshalling() throws Exception {
@@ -76,22 +74,22 @@ public class PAMParserTest {
         // Scan the first band
         final PAMRasterBand band = bands.get(0);
         assertEquals(1, (int) band.getBand());
-        
+
         // Get the Raster Attribute Table
         GDALRasterAttributeTable rat = band.getGdalRasterAttributeTable();
         assertNotNull(rat);
-        
+
         // Check each field
         List<PAMRasterBand.FieldDefn> fields = rat.getFieldDefn();
         assertEquals(3, fields.size());
-        assertField(fields.get(0), "con_min" , FieldType.Real, FieldUsage.Min);
-        assertField(fields.get(1), "con_max" , FieldType.Real, FieldUsage.Max);
-        assertField(fields.get(2), "test" , FieldType.String, FieldUsage.Generic);
-        
+        assertField(fields.get(0), "con_min", FieldType.Real, FieldUsage.Min);
+        assertField(fields.get(1), "con_max", FieldType.Real, FieldUsage.Max);
+        assertField(fields.get(2), "test", FieldType.String, FieldUsage.Generic);
+
         // Check rows
         List<PAMRasterBand.Row> rows = rat.getRow();
         assertEquals(8, rows.size());
-        
+
         // one sample row
         PAMRasterBand.Row row = rows.get(1);
         List<String> fieldValues = row.getF();

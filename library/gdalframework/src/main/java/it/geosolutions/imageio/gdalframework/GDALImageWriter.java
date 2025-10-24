@@ -19,7 +19,6 @@ package it.geosolutions.imageio.gdalframework;
 import it.geosolutions.imageio.gdalframework.GDALUtilities.DriverCreateCapabilities;
 import it.geosolutions.imageio.stream.output.FileImageOutputStreamExt;
 import it.geosolutions.imageio.utilities.Utilities;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -43,7 +42,6 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.imageio.IIOImage;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
@@ -51,7 +49,6 @@ import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.media.jai.PlanarImage;
-
 import org.gdal.gdal.Band;
 import org.gdal.gdal.ColorTable;
 import org.gdal.gdal.Dataset;
@@ -60,31 +57,26 @@ import org.gdal.gdal.gdal;
 import org.gdal.gdalconst.gdalconstConstants;
 
 /**
- * Main abstract class defining the main framework which needs to be used to
- * extend Image I/O architecture using <a href="http://www.gdal.org/"> GDAL
- * (Geospatial Data Abstraction Library)</a> by means of SWIG (Simplified
- * Wrapper and Interface Generator) bindings in order to perform write
- * operations.
- * 
+ * Main abstract class defining the main framework which needs to be used to extend Image I/O architecture using <a
+ * href="http://www.gdal.org/">GDAL (Geospatial Data Abstraction Library)</a> by means of SWIG (Simplified Wrapper and
+ * Interface Generator) bindings in order to perform write operations.
+ *
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
 public abstract class GDALImageWriter extends ImageWriter {
-	
+
     private static final Logger LOGGER = Logger.getLogger(GDALImageWriter.class.toString());
 
     /**
-     * Utility method which checks if a system property has been specified to
-     * set the maximum allowed size to create a GDAL "In Memory Raster" Dataset
-     * in case of CreateCopy. In case of the system property has been set,
-     * returns this value, otherwise it returns a default value.
-     * 
+     * Utility method which checks if a system property has been specified to set the maximum allowed size to create a
+     * GDAL "In Memory Raster" Dataset in case of CreateCopy. In case of the system property has been set, returns this
+     * value, otherwise it returns a default value.
+     *
      * @see GDALImageWriter#DEFAULT_GDALMEMORYRASTER_MAXSIZE
-     * 
-     * @return the maximum allowed size to create a GDAL "In Memory Raster"
-     *         Dataset in case of CreateCopy.
+     * @return the maximum allowed size to create a GDAL "In Memory Raster" Dataset in case of CreateCopy.
      */
-    protected final static int getMaxMemorySizeForGDALMemoryDataset() {
+    protected static final int getMaxMemorySizeForGDALMemoryDataset() {
         int size = DEFAULT_GDALMEMORYRASTER_MAXSIZE;
 
         // //
@@ -93,8 +85,7 @@ public abstract class GDALImageWriter extends ImageWriter {
         //
         // //
         Integer maxSize = Integer.getInteger(GDALUtilities.GDALMEMORYRASTER_MAXSIZE_KEY);
-        if (maxSize != null)
-            size = maxSize.intValue();
+        if (maxSize != null) size = maxSize.intValue();
         else {
             // //
             //
@@ -113,15 +104,12 @@ public abstract class GDALImageWriter extends ImageWriter {
                 // Checking for valid multiplier suffix
                 //
                 // //
-                if (suffix.equalsIgnoreCase("M")
-                        || suffix.equalsIgnoreCase("K")) {
+                if (suffix.equalsIgnoreCase("M") || suffix.equalsIgnoreCase("K")) {
                     int val;
                     try {
                         val = Integer.parseInt(value);
-                        if (suffix.equalsIgnoreCase("M"))
-                            val *= (1024 * 1024); // Size in MegaBytes
-                        else
-                            val *= 1024; // Size in KiloBytes
+                        if (suffix.equalsIgnoreCase("M")) val *= (1024 * 1024); // Size in MegaBytes
+                        else val *= 1024; // Size in KiloBytes
                         size = val;
                     } catch (NumberFormatException nfe) {
                         // not a valid value
@@ -132,10 +120,7 @@ public abstract class GDALImageWriter extends ImageWriter {
         return size;
     }
 
-    /**
-     * The maximum amount of memory which should be requested to use an "In
-     * Memory" Dataset in case of createcopy
-     */
+    /** The maximum amount of memory which should be requested to use an "In Memory" Dataset in case of createcopy */
     private static final int DEFAULT_GDALMEMORYRASTER_MAXSIZE = 1024 * 1024 * 32;
 
     /** Output File */
@@ -150,72 +135,48 @@ public abstract class GDALImageWriter extends ImageWriter {
 
     private static ThreadLocalMemoryDriver memDriver = new ThreadLocalMemoryDriver();
 
-    /**
-     * return a "In Memory" Driver which need to be used when using the
-     * CreateCopy method.
-     */
+    /** return a "In Memory" Driver which need to be used when using the CreateCopy method. */
     protected static Driver getMemoryDriver() {
         return (Driver) memDriver.get();
     }
 
-    /**
-     * Constructor for <code>GDALImageWriter</code>
-     */
+    /** Constructor for <code>GDALImageWriter</code> */
     public GDALImageWriter(ImageWriterSpi originatingProvider) {
         super(originatingProvider);
     }
 
     public IIOMetadata getDefaultStreamMetadata(ImageWriteParam param) {
-        throw new UnsupportedOperationException(
-                "getDefaultStreamMetadata not implemented yet.");
+        throw new UnsupportedOperationException("getDefaultStreamMetadata not implemented yet.");
     }
 
     /**
      * Write the input image to the output.
-     * <p>
-     * The output must have been set beforehand using the <code>setOutput</code>
-     * method.
-     * 
-     * <p>
-     * An <code>ImageWriteParam</code> may optionally be supplied to control
-     * the writing process. If <code>param</code> is <code>null</code>, a
-     * default write param will be used.
-     * 
-     * <p>
-     * If the supplied <code>ImageWriteParam</code> contains optional setting
-     * values not supported by this writer (<i>e.g.</i> progressive encoding
-     * or any format-specific settings), they will be ignored.
-     * 
-     * @param streamMetadata
-     *                an <code>IIOMetadata</code> object representing stream
-     *                metadata, or <code>null</code> to use default values.
-     * @param image
-     *                an <code>IIOImage</code> object containing an image, and
-     *                metadata to be written. Note that metadata is actually
-     *                supposed to be an instance of
-     *                {@link GDALCommonIIOImageMetadata}.
-     *                {@link GDALWritableCommonIIOImageMetadata} may be used to
-     *                set properties from other type of ImageMetadata to a
-     *                format which is understood by this writer.
-     * @param param
-     *                an <code>ImageWriteParam</code>, or <code>null</code>
-     *                to use a default <code>ImageWriteParam</code>.
-     * 
-     * @exception IllegalStateException
-     *                    if the output has not been set.
-     * @exception IllegalArgumentException
-     *                    if <code>image</code> is <code>null</code>.
-     * @exception IOException
-     *                    if an error occurs during writing.
+     *
+     * <p>The output must have been set beforehand using the <code>setOutput</code> method.
+     *
+     * <p>An <code>ImageWriteParam</code> may optionally be supplied to control the writing process. If <code>param
+     * </code> is <code>null</code>, a default write param will be used.
+     *
+     * <p>If the supplied <code>ImageWriteParam</code> contains optional setting values not supported by this writer
+     * (<i>e.g.</i> progressive encoding or any format-specific settings), they will be ignored.
+     *
+     * @param streamMetadata an <code>IIOMetadata</code> object representing stream metadata, or <code>null</code> to
+     *     use default values.
+     * @param image an <code>IIOImage</code> object containing an image, and metadata to be written. Note that metadata
+     *     is actually supposed to be an instance of {@link GDALCommonIIOImageMetadata}.
+     *     {@link GDALWritableCommonIIOImageMetadata} may be used to set properties from other type of ImageMetadata to
+     *     a format which is understood by this writer.
+     * @param param an <code>ImageWriteParam</code>, or <code>null</code> to use a default <code>ImageWriteParam</code>.
+     * @exception IllegalStateException if the output has not been set.
+     * @exception IllegalArgumentException if <code>image</code> is <code>null</code>.
+     * @exception IOException if an error occurs during writing.
      */
-    public void write(IIOMetadata streamMetadata, IIOImage image,
-            ImageWriteParam param) throws IOException {
+    public void write(IIOMetadata streamMetadata, IIOImage image, ImageWriteParam param) throws IOException {
 
         if (outputFile == null) {
             throw new IllegalStateException("the output is null!");
         }
-        if (param == null)
-            param = getDefaultWriteParam();
+        if (param == null) param = getDefaultWriteParam();
 
         // /////////////////////////////////////////////////////////////////////
         //
@@ -224,13 +185,12 @@ public abstract class GDALImageWriter extends ImageWriter {
         //
         // /////////////////////////////////////////////////////////////////////
         final String driverName = (String) ((GDALImageWriterSpi) this.originatingProvider)
-                .getSupportedFormats().get(0);
-        final DriverCreateCapabilities writingCapabilities = GDALUtilities
-                .formatWritingCapabilities(driverName);
+                .getSupportedFormats()
+                .get(0);
+        final DriverCreateCapabilities writingCapabilities = GDALUtilities.formatWritingCapabilities(driverName);
         if (writingCapabilities == GDALUtilities.DriverCreateCapabilities.READ_ONLY)
             throw new IllegalStateException("This writer seems to not support either create or create copy");
-        if (image == null)
-            throw new IllegalArgumentException("The provided input image is invalid.");
+        if (image == null) throw new IllegalArgumentException("The provided input image is invalid.");
 
         // //
         //
@@ -253,10 +213,9 @@ public abstract class GDALImageWriter extends ImageWriter {
         // //
         final int xSubsamplingFactor = param.getSourceXSubsampling();
         final int ySubsamplingFactor = param.getSourceYSubsampling();
-        final Vector<String> myOptions = (Vector<String>) ((GDALImageWriteParam) param)
-                .getCreateOptionsHandler().getCreateOptions();
-        Rectangle imageBounds = new Rectangle(sourceMinX, sourceMinY,
-                sourceWidth, sourceHeight);
+        final Vector<String> myOptions = (Vector<String>)
+                ((GDALImageWriteParam) param).getCreateOptionsHandler().getCreateOptions();
+        Rectangle imageBounds = new Rectangle(sourceMinX, sourceMinY, sourceWidth, sourceHeight);
         Dimension destSize = new Dimension();
         computeRegions(imageBounds, destSize, param);
 
@@ -289,146 +248,147 @@ public abstract class GDALImageWriter extends ImageWriter {
         // /////////////////////////////////////////////////////////////////////
         Dataset writeDataset = null;
         Driver driver = null;
-        try{
-	        // TODO: send some warning when setting georeferencing or size
-	        // properties, if cropping or sourceregion has been defined.
-	
-	        if (writingCapabilities == GDALUtilities.DriverCreateCapabilities.CREATE) {
-	            // /////////////////////////////////////////////////////////////////
-	            //
-	            // Create is supported
-	            // -------------------
-	            //
-	            // /////////////////////////////////////////////////////////////////
-	
-	            // Retrieving the file name.
-	            final String fileName = outputFile.getAbsolutePath();
-	
-	            // //
-	            //
-	            // Dataset creation
-	            //
-	            // //
-	            driver = gdal.GetDriverByName(driverName);
-	            writeDataset = driver.Create(fileName, destinationWidth,
-	                    destinationHeight, nBands, dataType, myOptions);
-	
-	            // //
-	            //
-	            // Data Writing
-	            //
-	            // //
-	            writeDataset = writeData(writeDataset, inputRenderedImage,
-	                    imageBounds, nBands, dataType, xSubsamplingFactor,
-	                    ySubsamplingFactor);
-	
-	            // //
-	            //
-	            // Metadata Setting
-	            //
-	            // //
-	            if (imageMetadata != null) {
-	                setMetadata(writeDataset, imageMetadata);
-	            }
-	        } else {
-	
-	            // ////////////////////////////////////////////////////////////////
-	            //
-	            // Only CreateCopy is supported
-	            // ----------------------------------------------------------------
-	            //
-	            // First of all, it is worth to point out that CreateCopy method
-	            // allows to create a File from an existing Dataset.
-	            // ////////////////////////////////////////////////////////////////
-	
-	            driver = gdal.GetDriverByName(driverName);
-	            // //
-	            //
-	            // Temporary Dataset creation from the originating image
-	            //
-	            // //
-	            final File tempFile = File.createTempFile("datasetTemp", ".ds", null);
-	            Dataset tempDataset = null; 
-		        try{
-		        	tempDataset = createDatasetFromImage(
-		                    inputRenderedImage, tempFile.getAbsolutePath(),
-		                    imageBounds, nBands, dataType, destinationWidth,
-		                    destinationHeight, xSubsamplingFactor, ySubsamplingFactor);
-		            tempDataset.FlushCache();
-		
-		            // //
-		            //
-		            // Metadata Setting on the temporary dataset since setting metadata
-		            // with createCopy is not supported
-		            //
-		            // //
-		            if (imageMetadata != null) {
-		                setMetadata(tempDataset, imageMetadata);
-		            }
-		
-		            // //
-		            //
-		            // Copy back the temporary dataset to the requested dataset
-		            //
-		            // //
-		            writeDataset = driver.CreateCopy(outputFile.getPath(), tempDataset,
-		                    0, myOptions);
-		        } finally {
-		        	if (tempDataset != null){
-		        		try{
-		                    // Closing the dataset
-		        			GDALUtilities.closeDataSet(tempDataset);
-		        		}catch (Throwable e) {
-							if(LOGGER.isLoggable(Level.FINEST))
-								LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
-						}
-		        	}
-		        }
-	            tempFile.delete();
-	        }
-	
-	        // //
-	        //
-	        // Flushing and closing dataset
-	        //
-	        // //
-	        writeDataset.FlushCache();
-        } finally{
-        	if (writeDataset != null){
-        		try{
+        try {
+            // TODO: send some warning when setting georeferencing or size
+            // properties, if cropping or sourceregion has been defined.
+
+            if (writingCapabilities == GDALUtilities.DriverCreateCapabilities.CREATE) {
+                // /////////////////////////////////////////////////////////////////
+                //
+                // Create is supported
+                // -------------------
+                //
+                // /////////////////////////////////////////////////////////////////
+
+                // Retrieving the file name.
+                final String fileName = outputFile.getAbsolutePath();
+
+                // //
+                //
+                // Dataset creation
+                //
+                // //
+                driver = gdal.GetDriverByName(driverName);
+                writeDataset =
+                        driver.Create(fileName, destinationWidth, destinationHeight, nBands, dataType, myOptions);
+
+                // //
+                //
+                // Data Writing
+                //
+                // //
+                writeDataset = writeData(
+                        writeDataset,
+                        inputRenderedImage,
+                        imageBounds,
+                        nBands,
+                        dataType,
+                        xSubsamplingFactor,
+                        ySubsamplingFactor);
+
+                // //
+                //
+                // Metadata Setting
+                //
+                // //
+                if (imageMetadata != null) {
+                    setMetadata(writeDataset, imageMetadata);
+                }
+            } else {
+
+                // ////////////////////////////////////////////////////////////////
+                //
+                // Only CreateCopy is supported
+                // ----------------------------------------------------------------
+                //
+                // First of all, it is worth to point out that CreateCopy method
+                // allows to create a File from an existing Dataset.
+                // ////////////////////////////////////////////////////////////////
+
+                driver = gdal.GetDriverByName(driverName);
+                // //
+                //
+                // Temporary Dataset creation from the originating image
+                //
+                // //
+                final File tempFile = File.createTempFile("datasetTemp", ".ds", null);
+                Dataset tempDataset = null;
+                try {
+                    tempDataset = createDatasetFromImage(
+                            inputRenderedImage,
+                            tempFile.getAbsolutePath(),
+                            imageBounds,
+                            nBands,
+                            dataType,
+                            destinationWidth,
+                            destinationHeight,
+                            xSubsamplingFactor,
+                            ySubsamplingFactor);
+                    tempDataset.FlushCache();
+
+                    // //
+                    //
+                    // Metadata Setting on the temporary dataset since setting metadata
+                    // with createCopy is not supported
+                    //
+                    // //
+                    if (imageMetadata != null) {
+                        setMetadata(tempDataset, imageMetadata);
+                    }
+
+                    // //
+                    //
+                    // Copy back the temporary dataset to the requested dataset
+                    //
+                    // //
+                    writeDataset = driver.CreateCopy(outputFile.getPath(), tempDataset, 0, myOptions);
+                } finally {
+                    if (tempDataset != null) {
+                        try {
+                            // Closing the dataset
+                            GDALUtilities.closeDataSet(tempDataset);
+                        } catch (Throwable e) {
+                            if (LOGGER.isLoggable(Level.FINEST)) LOGGER.log(Level.FINEST, e.getLocalizedMessage(), e);
+                        }
+                    }
+                }
+                tempFile.delete();
+            }
+
+            // //
+            //
+            // Flushing and closing dataset
+            //
+            // //
+            writeDataset.FlushCache();
+        } finally {
+            if (writeDataset != null) {
+                try {
                     // Closing the dataset
-        			GDALUtilities.closeDataSet(writeDataset);
-        		}catch (Throwable e) {
-					if(LOGGER.isLoggable(Level.FINEST))
-						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
-				}
-        	}
-        	
-        	if (driver != null){
-	    		try{
+                    GDALUtilities.closeDataSet(writeDataset);
+                } catch (Throwable e) {
+                    if (LOGGER.isLoggable(Level.FINEST)) LOGGER.log(Level.FINEST, e.getLocalizedMessage(), e);
+                }
+            }
+
+            if (driver != null) {
+                try {
                     // Closing the driver
-	    			driver.delete();
-        		}catch (Throwable e) {
-					if(LOGGER.isLoggable(Level.FINEST))
-						LOGGER.log(Level.FINEST,e.getLocalizedMessage(),e);
-				}
-	    	}
+                    driver.delete();
+                } catch (Throwable e) {
+                    if (LOGGER.isLoggable(Level.FINEST)) LOGGER.log(Level.FINEST, e.getLocalizedMessage(), e);
+                }
+            }
         }
     }
 
     /**
-     * Set all the metadata available in the imageMetadata
-     * <code>IIOMetadata</code> instance
-     * 
-     * @param dataset
-     *                the dataset on which to set metadata and properties
-     * @param imageMetadata
-     *                an instance of a {@link GDALCommonIIOImageMetadata}
-     *                containing metadata
-     * 
+     * Set all the metadata available in the imageMetadata <code>IIOMetadata</code> instance
+     *
+     * @param dataset the dataset on which to set metadata and properties
+     * @param imageMetadata an instance of a {@link GDALCommonIIOImageMetadata} containing metadata
      */
-    private void setMetadata(Dataset dataset,
-            GDALCommonIIOImageMetadata imageMetadata) {
+    private void setMetadata(Dataset dataset, GDALCommonIIOImageMetadata imageMetadata) {
         // TODO: which metadata should be copied in the dataset?
         // Should width, height and similar properties to be copied?
 
@@ -438,8 +398,7 @@ public abstract class GDALImageWriter extends ImageWriter {
         //
         // //
         final double[] geoTransformation = imageMetadata.getGeoTransformation();
-        if (geoTransformation != null)
-            dataset.SetGeoTransform(geoTransformation);
+        if (geoTransformation != null) dataset.SetGeoTransform(geoTransformation);
 
         // //
         //
@@ -447,8 +406,7 @@ public abstract class GDALImageWriter extends ImageWriter {
         //
         // //
         final String projection = imageMetadata.getProjection();
-        if (projection != null && projection.trim().length() != 0)
-            dataset.SetProjection(projection);
+        if (projection != null && projection.trim().length() != 0) dataset.SetProjection(projection);
 
         // //
         //
@@ -473,8 +431,7 @@ public abstract class GDALImageWriter extends ImageWriter {
         final int nBands = imageMetadata.getNumBands();
         for (int i = 0; i < nBands; i++) {
             final Band band = dataset.GetRasterBand(i + 1);
-            final int colorInterpretation = imageMetadata
-                    .getColorInterpretations(i);
+            final int colorInterpretation = imageMetadata.getColorInterpretations(i);
             band.SetRasterColorInterpretation(colorInterpretation);
             if (i == 0 && nBands == 1) {
 
@@ -494,19 +451,16 @@ public abstract class GDALImageWriter extends ImageWriter {
                         //
                         // //
                         final int size = icm.getMapSize();
-                        ColorTable ct = new ColorTable(
-                                gdalconstConstants.GPI_RGB);
+                        ColorTable ct = new ColorTable(gdalconstConstants.GPI_RGB);
                         int j = 0;
-                        for (; j < size; j++)
-                            ct.SetColorEntry(j, new Color(icm.getRGB(j)));
+                        for (; j < size; j++) ct.SetColorEntry(j, new Color(icm.getRGB(j)));
                         band.SetRasterColorTable(ct);
                     }
                 }
             }
             try {
                 final double noData = imageMetadata.getNoDataValue(i);
-                if (!Double.isNaN(noData))
-                    band.SetNoDataValue(noData);
+                if (!Double.isNaN(noData)) band.SetNoDataValue(noData);
             } catch (IllegalArgumentException iae) {
                 // NoDataValue not found or wrong bandIndex specified. Go on
             }
@@ -537,31 +491,26 @@ public abstract class GDALImageWriter extends ImageWriter {
     }
 
     /**
-     * Given a previously created <code>Dataset</code>, containing no data,
-     * provides to store required data coming from an input
-     * <code>RenderedImage</code> in compliance with a set of parameter such
-     * as subSampling factors, SourceRegion.
-     * 
-     * @param dataset
-     *                the destination dataset
-     * @param inputRenderedImage
-     *                the input image containing data which need to be written
-     * @param sourceRegion
-     *                the rectangle used to clip the source image dimensions
-     * @param nBands
-     *                the number of bands need to be written
-     * @param dataType
-     *                the datatype
-     * @param xSubsamplingFactor
-     *                the subsamplingFactor along X
+     * Given a previously created <code>Dataset</code>, containing no data, provides to store required data coming from
+     * an input <code>RenderedImage</code> in compliance with a set of parameter such as subSampling factors,
+     * SourceRegion.
+     *
+     * @param dataset the destination dataset
+     * @param inputRenderedImage the input image containing data which need to be written
+     * @param sourceRegion the rectangle used to clip the source image dimensions
+     * @param nBands the number of bands need to be written
+     * @param dataType the datatype
+     * @param xSubsamplingFactor the subsamplingFactor along X
      * @return the <code>Dataset</code> resulting after the write operation
-     * 
-     * TODO: minimize JNI calls by filling the databuffer before calling
-     * writeDirect
+     *     <p>TODO: minimize JNI calls by filling the databuffer before calling writeDirect
      */
-    private Dataset writeData(Dataset dataset,
-            RenderedImage inputRenderedImage, final Rectangle sourceRegion,
-            final int nBands, final int dataType, int xSubsamplingFactor,
+    private Dataset writeData(
+            Dataset dataset,
+            RenderedImage inputRenderedImage,
+            final Rectangle sourceRegion,
+            final int nBands,
+            final int dataType,
+            int xSubsamplingFactor,
             int ySubsamplingFactor) {
         final int typeSizeInBytes = gdal.GetDataTypeSize(dataType) / 8;
 
@@ -617,8 +566,7 @@ public abstract class GDALImageWriter extends ImageWriter {
         // splitBands = false -> I read n Bands at once.
         // splitBands = true -> I need to read 1 Band at a time.
         boolean splitBands = false;
-        final boolean isSubSampled = ySubsamplingFactor > 1
-                || xSubsamplingFactor > 1;
+        final boolean isSubSampled = ySubsamplingFactor > 1 || xSubsamplingFactor > 1;
         int dstWidth = 0;
         int dstHeight = 0;
         int xOff = 0;
@@ -627,16 +575,16 @@ public abstract class GDALImageWriter extends ImageWriter {
         // ////////////////////////////////////////////////////////////////////
         //
         // Loop on tiles composing the source image
-        // 
+        //
         // ////////////////////////////////////////////////////////////////////
         for (int ty = minTileY; ty < maxTileY; ty++) {
             xOff = 0;
             for (int tx = minTileX; tx < maxTileX; tx++) {
 
                 // //
-                // 
+                //
                 // get the source raster for the current tile
-                // 
+                //
                 // //
                 final Raster raster = inputRenderedImage.getTile(tx, ty);
                 int minx = raster.getMinX();
@@ -646,7 +594,7 @@ public abstract class GDALImageWriter extends ImageWriter {
                 //
                 // Cropping tiles if they have regions outside the original
                 // image
-                // 
+                //
                 // //
                 minx = minx < minx_ ? minx_ : minx;
                 miny = miny < miny_ ? miny_ : miny;
@@ -663,42 +611,34 @@ public abstract class GDALImageWriter extends ImageWriter {
                 //
                 // Offsets and sizes tunings.
                 // Comparing tile bounds with the specified source region
-                // 
+                //
                 // //
                 if (minx < srcRegionXOffset) {
-                    if (maxx <= srcRegionXOffset)
-                        continue; // Tile is outside the sourceRegion
+                    if (maxx <= srcRegionXOffset) continue; // Tile is outside the sourceRegion
                     else {
                         // SrcRegion X Offset is contained in the current tile
                         // I need to update the Offset X
                         offsetX = srcRegionXOffset;
-                        if (srcRegionXEnd <= maxx)
-                            newWidth = srcRegionWidth; // Tile is wider than
+                        if (srcRegionXEnd <= maxx) newWidth = srcRegionWidth; // Tile is wider than
                         // the sourceRegion
-                        else
-                            newWidth = tileW - (offsetX - minx);
+                        else newWidth = tileW - (offsetX - minx);
                     }
-                } else if (minx >= srcRegionXEnd)
-                    break; // Tile is outside the sourceRegion
+                } else if (minx >= srcRegionXEnd) break; // Tile is outside the sourceRegion
                 else if (maxx >= srcRegionXEnd) {
                     newWidth = srcRegionXEnd - minx;
                 }
 
                 if (miny < srcRegionYOffset) {
-                    if (maxy <= srcRegionYOffset)
-                        continue;// Tile is outside the sourceRegion
+                    if (maxy <= srcRegionYOffset) continue; // Tile is outside the sourceRegion
                     else {
                         // SrcRegion Y Offset is contained in the current tile
                         // I need to update the Offset Y
                         offsetY = srcRegionYOffset;
-                        if (srcRegionYEnd <= maxy)
-                            newHeight = srcRegionHeight;// Tile is higher than
+                        if (srcRegionYEnd <= maxy) newHeight = srcRegionHeight; // Tile is higher than
                         // the sourceRegion
-                        else
-                            newHeight = tileH - (offsetY - miny);
+                        else newHeight = tileH - (offsetY - miny);
                     }
-                } else if (miny >= srcRegionYEnd)
-                    break; // Tile is outside the sourceRegion
+                } else if (miny >= srcRegionYEnd) break; // Tile is outside the sourceRegion
                 else if (maxy >= srcRegionYEnd) {
                     newHeight = srcRegionYEnd - miny;
                 }
@@ -714,27 +654,23 @@ public abstract class GDALImageWriter extends ImageWriter {
                 // Setting the destination Width
                 if (ySubsamplingFactor > 1) {
                     for (int j = offsetY; j < endY; j++) {
-                        if (((j - srcRegionYOffset) % ySubsamplingFactor) != 0)
-                            continue;
+                        if (((j - srcRegionYOffset) % ySubsamplingFactor) != 0) continue;
                         dstHeight++;
                     }
-                } else
-                    dstHeight = newHeight;
+                } else dstHeight = newHeight;
 
                 // Setting the destination Height
                 if (xSubsamplingFactor > 1) {
                     for (int i = offsetX; i < endX; i++) {
-                        if (((i - srcRegionXOffset) % xSubsamplingFactor) != 0)
-                            continue;
+                        if (((i - srcRegionXOffset) % xSubsamplingFactor) != 0) continue;
                         dstWidth++;
                     }
-                } else
-                    dstWidth = newWidth;
+                } else dstWidth = newWidth;
 
                 // //
-                // 
+                //
                 // Checks on data size
-                // 
+                //
                 // //
                 int capacity = dstWidth * dstHeight * typeSizeInBytes * nBands;
                 if (capacity < 0) {
@@ -745,41 +681,57 @@ public abstract class GDALImageWriter extends ImageWriter {
                 // ////////////////////////////////////////////////////////////////////
                 //
                 // Loading Data from the source Image
-                // 
+                //
                 // ////////////////////////////////////////////////////////////////////
                 ByteBuffer[] bandsBuffer;
                 if (!isSubSampled) {
-                    bandsBuffer = getDataRegion(raster, offsetX, offsetY,
-                            endX - 1, endY - 1, dataType, nBands, splitBands,
-                            capacity);
+                    bandsBuffer = getDataRegion(
+                            raster, offsetX, offsetY, endX - 1, endY - 1, dataType, nBands, splitBands, capacity);
                 } else
-                    bandsBuffer = getSubSampledDataRegion(raster, offsetX,
-                            offsetY, endX - 1, endY - 1, srcRegionXOffset,
-                            srcRegionYOffset, xSubsamplingFactor,
-                            ySubsamplingFactor, dataType, nBands, splitBands,
+                    bandsBuffer = getSubSampledDataRegion(
+                            raster,
+                            offsetX,
+                            offsetY,
+                            endX - 1,
+                            endY - 1,
+                            srcRegionXOffset,
+                            srcRegionYOffset,
+                            xSubsamplingFactor,
+                            ySubsamplingFactor,
+                            dataType,
+                            nBands,
+                            splitBands,
                             capacity);
 
                 // ////////////////////////////////////////////////////////////////////
                 //
                 // Writing Data in the destination dataset
-                // 
+                //
                 // ////////////////////////////////////////////////////////////////////
                 if (!splitBands) {
                     final int[] bands = new int[nBands];
-                    for (int i = 0; i < nBands; i++)
-                        bands[i]=i+1;
+                    for (int i = 0; i < nBands; i++) bands[i] = i + 1;
                     // I can perform a single Write operation.
-                    dataset.WriteRaster_Direct(xOff, yOff, dstWidth, dstHeight,
-                            dstWidth, dstHeight, dataType, bandsBuffer[0], bands, 
-                            nBands  * typeSizeInBytes, dstWidth * nBands
-                                    * typeSizeInBytes, 1);
+                    dataset.WriteRaster_Direct(
+                            xOff,
+                            yOff,
+                            dstWidth,
+                            dstHeight,
+                            dstWidth,
+                            dstHeight,
+                            dataType,
+                            bandsBuffer[0],
+                            bands,
+                            nBands * typeSizeInBytes,
+                            dstWidth * nBands * typeSizeInBytes,
+                            1);
                 } else {
                     // I need to perform a write operation for each band.
                     final int[] bands = new int[nBands];
                     for (int i = 0; i < nBands; i++)
-                        dataset.GetRasterBand(i + 1).WriteRaster_Direct(xOff,
-                                yOff, dstWidth, dstHeight, dstWidth, dstHeight,
-                                dataType, bandsBuffer[i]);
+                        dataset.GetRasterBand(i + 1)
+                                .WriteRaster_Direct(
+                                        xOff, yOff, dstWidth, dstHeight, dstWidth, dstHeight, dataType, bandsBuffer[i]);
                 }
                 // Updating the X offset position for writing in the dataset
                 xOff += dstWidth;
@@ -791,54 +743,30 @@ public abstract class GDALImageWriter extends ImageWriter {
     }
 
     /**
-     * Returns a proper <code>ByteBuffer</code> array containing data loaded
-     * from the input <code>Raster</code>. Requested portion of data is
-     * specified by means of a set of index parameters. In case
-     * <code>splitBands</code> is <code>true</code> the array will contain
-     * <code>nBands</code> <code>ByteBuffer</code>'s, each one containing
-     * data element for a single band. In case <code>splitBands</code> is
-     * <code>false</code>, the returned array has a single
-     * <code>ByteBuffer</code> containing data for different bands stored as
-     * PixelInterleaved
-     * 
-     * @param raster
-     *                the input <code>Raster</code> containing data to be
-     *                retrieved for the future write operation
-     * @param firstX
-     *                X index of the first data element to be scanned
-     * @param firstY
-     *                Y index of the first data element to be scanned
-     * @param lastX
-     *                X index of the last data element to be scanned
-     * @param lastY
-     *                Y index of the last data element to be scanned
-     * @param srcRegionXOffset
-     *                the original sourceRegion X offset value
-     * @param srcRegionYOffset
-     *                the original sourceRegion Y offset value
-     * @param xSubsamplingFactor
-     *                the subSampling factor along X
-     * @param ySubsamplingFactor
-     *                the subSampling factor along Y
-     * @param dataType
-     *                the datatype
-     * @param nBands
-     *                the number of bands
-     * @param splitBands
-     *                when <code>false</code>, a single
-     *                <code>ByteBuffer</code> is created. When
-     *                <code>true</code>, a number of buffer equals to the
-     *                number of bands will be created and each buffer will
-     *                contain data elements for a single band
-     * @param capacity
-     *                the size of each <code>ByteBuffer</code> contained in
-     *                the returned array
-     * @return a proper <code>ByteBuffer</code> array containing data loaded
-     *         from the input <code>Raster</code>.
-     * 
-     * @throws IllegalArgumentException
-     *                 in case the requested region is not valid. This could
-     *                 happen in the following cases: <code>
+     * Returns a proper <code>ByteBuffer</code> array containing data loaded from the input <code>Raster</code>.
+     * Requested portion of data is specified by means of a set of index parameters. In case <code>splitBands</code> is
+     * <code>true</code> the array will contain <code>nBands</code> <code>ByteBuffer</code>'s, each one containing data
+     * element for a single band. In case <code>splitBands</code> is <code>false</code>, the returned array has a single
+     * <code>ByteBuffer</code> containing data for different bands stored as PixelInterleaved
+     *
+     * @param raster the input <code>Raster</code> containing data to be retrieved for the future write operation
+     * @param firstX X index of the first data element to be scanned
+     * @param firstY Y index of the first data element to be scanned
+     * @param lastX X index of the last data element to be scanned
+     * @param lastY Y index of the last data element to be scanned
+     * @param srcRegionXOffset the original sourceRegion X offset value
+     * @param srcRegionYOffset the original sourceRegion Y offset value
+     * @param xSubsamplingFactor the subSampling factor along X
+     * @param ySubsamplingFactor the subSampling factor along Y
+     * @param dataType the datatype
+     * @param nBands the number of bands
+     * @param splitBands when <code>false</code>, a single <code>ByteBuffer</code> is created. When <code>true</code>, a
+     *     number of buffer equals to the number of bands will be created and each buffer will contain data elements for
+     *     a single band
+     * @param capacity the size of each <code>ByteBuffer</code> contained in the returned array
+     * @return a proper <code>ByteBuffer</code> array containing data loaded from the input <code>Raster</code>.
+     * @throws IllegalArgumentException in case the requested region is not valid. This could happen in the following
+     *     cases: <code>
      *             <UL>
      *             <LI> firstX < srcRegionXOffset </LI>
      *             <LI> firstY < srcRegionYOffset </LI>
@@ -847,17 +775,23 @@ public abstract class GDALImageWriter extends ImageWriter {
      * </UL>
      * </code>
      */
-    private ByteBuffer[] getSubSampledDataRegion(Raster raster,
-            final int firstX, final int firstY, final int lastX,
-            final int lastY, final int srcRegionXOffset,
-            final int srcRegionYOffset, final int xSubsamplingFactor,
-            final int ySubsamplingFactor, final int dataType, final int nBands,
-            final boolean splitBands, final int capacity) {
+    private ByteBuffer[] getSubSampledDataRegion(
+            Raster raster,
+            final int firstX,
+            final int firstY,
+            final int lastX,
+            final int lastY,
+            final int srcRegionXOffset,
+            final int srcRegionYOffset,
+            final int xSubsamplingFactor,
+            final int ySubsamplingFactor,
+            final int dataType,
+            final int nBands,
+            final boolean splitBands,
+            final int capacity) {
 
-        if (firstX < srcRegionXOffset || firstX < srcRegionYOffset
-                || firstX > lastX || firstY > lastY)
-            throw new IllegalArgumentException(
-                    "The requested region is not valid");
+        if (firstX < srcRegionXOffset || firstX < srcRegionYOffset || firstX > lastX || firstY > lastY)
+            throw new IllegalArgumentException("The requested region is not valid");
         // TODO: provide a more user-friendly error message containing ranges
         // and values set.
 
@@ -867,10 +801,8 @@ public abstract class GDALImageWriter extends ImageWriter {
         //
         // //
         ByteBuffer[] bandsBuffer;
-        if (splitBands)
-            bandsBuffer = new ByteBuffer[nBands];
-        else
-            bandsBuffer = new ByteBuffer[1];
+        if (splitBands) bandsBuffer = new ByteBuffer[nBands];
+        else bandsBuffer = new ByteBuffer[1];
 
         // ////////////////////////////////////////////////////////////////
         //
@@ -885,8 +817,7 @@ public abstract class GDALImageWriter extends ImageWriter {
             // //
             for (int k = 0; k < nBands; k++) {
                 bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
-                if (!splitBands)
-                    break;
+                if (!splitBands) break;
             }
             byte[] data = new byte[nBands];
             // //
@@ -905,11 +836,8 @@ public abstract class GDALImageWriter extends ImageWriter {
                         continue;
                     }
                     data = (byte[]) raster.getDataElements(i, j, data);
-                    if (splitBands)
-                        for (int k = 0; k < nBands; k++)
-                            bandsBuffer[k].put(data, k, 1);
-                    else
-                        bandsBuffer[0].put(data, 0, nBands);
+                    if (splitBands) for (int k = 0; k < nBands; k++) bandsBuffer[k].put(data, k, 1);
+                    else bandsBuffer[0].put(data, 0, nBands);
                 }
             }
         }
@@ -929,8 +857,7 @@ public abstract class GDALImageWriter extends ImageWriter {
                 bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
                 bandsBuffer[k].order(ByteOrder.nativeOrder());
                 buf[k] = bandsBuffer[k].asShortBuffer();
-                if (!splitBands)
-                    break;
+                if (!splitBands) break;
             }
             short[] data = new short[nBands];
             // //
@@ -949,11 +876,8 @@ public abstract class GDALImageWriter extends ImageWriter {
                         continue;
                     }
                     data = (short[]) raster.getDataElements(i, j, data);
-                    if (splitBands)
-                        for (int k = 0; k < nBands; k++)
-                            buf[k].put(data, k, 1);
-                    else
-                        buf[0].put(data, 0, nBands);
+                    if (splitBands) for (int k = 0; k < nBands; k++) buf[k].put(data, k, 1);
+                    else buf[0].put(data, 0, nBands);
                 }
             }
         }
@@ -973,8 +897,7 @@ public abstract class GDALImageWriter extends ImageWriter {
                 bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
                 bandsBuffer[k].order(ByteOrder.nativeOrder());
                 buf[k] = bandsBuffer[k].asShortBuffer();
-                if (!splitBands)
-                    break;
+                if (!splitBands) break;
             }
             short[] data = new short[nBands];
             // //
@@ -998,11 +921,8 @@ public abstract class GDALImageWriter extends ImageWriter {
                     // for (int k=0;k<nBands;k++){
                     // data[k]&=0xffff;
                     // }
-                    if (splitBands)
-                        for (int k = 0; k < nBands; k++)
-                            buf[k].put(data, k, 1);
-                    else
-                        buf[0].put(data, 0, nBands);
+                    if (splitBands) for (int k = 0; k < nBands; k++) buf[k].put(data, k, 1);
+                    else buf[0].put(data, 0, nBands);
                 }
             }
         }
@@ -1022,8 +942,7 @@ public abstract class GDALImageWriter extends ImageWriter {
                 bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
                 bandsBuffer[k].order(ByteOrder.nativeOrder());
                 buf[k] = bandsBuffer[k].asIntBuffer();
-                if (!splitBands)
-                    break;
+                if (!splitBands) break;
             }
             int[] data = new int[nBands];
             // //
@@ -1042,11 +961,8 @@ public abstract class GDALImageWriter extends ImageWriter {
                         continue;
                     }
                     data = (int[]) raster.getDataElements(i, j, data);
-                    if (splitBands)
-                        for (int k = 0; k < nBands; k++)
-                            buf[k].put(data, k, 1);
-                    else
-                        buf[0].put(data, 0, nBands);
+                    if (splitBands) for (int k = 0; k < nBands; k++) buf[k].put(data, k, 1);
+                    else buf[0].put(data, 0, nBands);
                 }
             }
         }
@@ -1066,8 +982,7 @@ public abstract class GDALImageWriter extends ImageWriter {
                 bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
                 bandsBuffer[k].order(ByteOrder.nativeOrder());
                 buf[k] = bandsBuffer[k].asFloatBuffer();
-                if (!splitBands)
-                    break;
+                if (!splitBands) break;
             }
             float[] data = new float[nBands];
             // //
@@ -1085,11 +1000,8 @@ public abstract class GDALImageWriter extends ImageWriter {
                         continue;
                     }
                     data = (float[]) raster.getDataElements(i, j, data);
-                    if (splitBands)
-                        for (int k = 0; k < nBands; k++)
-                            buf[k].put(data, k, 1);
-                    else
-                        buf[0].put(data, 0, nBands);
+                    if (splitBands) for (int k = 0; k < nBands; k++) buf[k].put(data, k, 1);
+                    else buf[0].put(data, 0, nBands);
                 }
             }
         }
@@ -1109,8 +1021,7 @@ public abstract class GDALImageWriter extends ImageWriter {
                 bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
                 bandsBuffer[k].order(ByteOrder.nativeOrder());
                 buf[k] = bandsBuffer[k].asDoubleBuffer();
-                if (!splitBands)
-                    break;
+                if (!splitBands) break;
             }
             double[] data = new double[nBands];
             // //
@@ -1128,11 +1039,8 @@ public abstract class GDALImageWriter extends ImageWriter {
                         continue;
                     }
                     data = (double[]) raster.getDataElements(i, j, data);
-                    if (splitBands)
-                        for (int k = 0; k < nBands; k++)
-                            buf[k].put(data, k, 1);
-                    else
-                        buf[0].put(data, 0, nBands);
+                    if (splitBands) for (int k = 0; k < nBands; k++) buf[k].put(data, k, 1);
+                    else buf[0].put(data, 0, nBands);
                 }
             }
         }
@@ -1140,60 +1048,44 @@ public abstract class GDALImageWriter extends ImageWriter {
     }
 
     /**
-     * Returns a proper <code>ByteBuffer</code> array containing data loaded
-     * from the input <code>Raster</code>. Requested portion of data is
-     * specified by means of a set of index parameters. In case
-     * <code>splitBands</code> is <code>true</code> the array will contain
-     * <code>nBands</code> <code>ByteBuffer</code>'s, each one containing
-     * data element for a single band. In case <code>splitBands</code> is
-     * <code>false</code>, the returned array has a single
-     * <code>ByteBuffer</code> containing data for different bands stored as
-     * PixelInterleaved
-     * 
-     * @param raster
-     *                the input <code>Raster</code> containing data to be
-     *                retrieved for the future write operation
-     * @param firstX
-     *                X index of the first data element to be scanned
-     * @param firstY
-     *                Y index of the first data element to be scanned
-     * @param lastX
-     *                X index of the last data element to be scanned
-     * @param lastY
-     *                Y index of the last data element to be scanned
-     * @param dataType
-     *                the datatype
-     * @param nBands
-     *                the number of bands
-     * @param splitBands
-     *                when <code>false</code>, a single
-     *                <code>ByteBuffer</code> is created. When
-     *                <code>true</code>, a number of buffer equals to the
-     *                number of bands will be created and each buffer will
-     *                contain data elements for a single band
-     * @param capacity
-     *                the size of each <code>ByteBuffer</code> contained in
-     *                the returned array
-     * @return a proper <code>ByteBuffer</code> array containing data loaded
-     *         from the input <code>Raster</code>.
-     * 
-     * @throws IllegalArgumentException
-     *                 in case the requested region is not valid. This could
-     *                 happen in the following cases: <code>
+     * Returns a proper <code>ByteBuffer</code> array containing data loaded from the input <code>Raster</code>.
+     * Requested portion of data is specified by means of a set of index parameters. In case <code>splitBands</code> is
+     * <code>true</code> the array will contain <code>nBands</code> <code>ByteBuffer</code>'s, each one containing data
+     * element for a single band. In case <code>splitBands</code> is <code>false</code>, the returned array has a single
+     * <code>ByteBuffer</code> containing data for different bands stored as PixelInterleaved
+     *
+     * @param raster the input <code>Raster</code> containing data to be retrieved for the future write operation
+     * @param firstX X index of the first data element to be scanned
+     * @param firstY Y index of the first data element to be scanned
+     * @param lastX X index of the last data element to be scanned
+     * @param lastY Y index of the last data element to be scanned
+     * @param dataType the datatype
+     * @param nBands the number of bands
+     * @param splitBands when <code>false</code>, a single <code>ByteBuffer</code> is created. When <code>true</code>, a
+     *     number of buffer equals to the number of bands will be created and each buffer will contain data elements for
+     *     a single band
+     * @param capacity the size of each <code>ByteBuffer</code> contained in the returned array
+     * @return a proper <code>ByteBuffer</code> array containing data loaded from the input <code>Raster</code>.
+     * @throws IllegalArgumentException in case the requested region is not valid. This could happen in the following
+     *     cases: <code>
      *             <UL>
      *             <LI> firstX > lastX </LI>
      *             <LI> firstY > lastY </LI>
      * </UL>
      * </code>
      */
-    private ByteBuffer[] getDataRegion(Raster raster, final int firstX,
-            final int firstY, final int lastX, final int lastY,
-            final int dataType, final int nBands, final boolean splitBands,
+    private ByteBuffer[] getDataRegion(
+            Raster raster,
+            final int firstX,
+            final int firstY,
+            final int lastX,
+            final int lastY,
+            final int dataType,
+            final int nBands,
+            final boolean splitBands,
             final int capacity) {
 
-        if (firstX > lastX || firstY > lastY)
-            throw new IllegalArgumentException(
-                    "The requested region is not valid");
+        if (firstX > lastX || firstY > lastY) throw new IllegalArgumentException("The requested region is not valid");
         // TODO: provide a more user-friendly error message containing ranges
         // and values set.
 
@@ -1203,10 +1095,8 @@ public abstract class GDALImageWriter extends ImageWriter {
         //
         // //
         ByteBuffer[] bandsBuffer;
-        if (splitBands)
-            bandsBuffer = new ByteBuffer[nBands];
-        else
-            bandsBuffer = new ByteBuffer[1];
+        if (splitBands) bandsBuffer = new ByteBuffer[nBands];
+        else bandsBuffer = new ByteBuffer[1];
 
         // ////////////////////////////////////////////////////////////////
         //
@@ -1221,8 +1111,7 @@ public abstract class GDALImageWriter extends ImageWriter {
             // //
             for (int k = 0; k < nBands; k++) {
                 bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
-                if (!splitBands)
-                    break;
+                if (!splitBands) break;
             }
             byte[] data = new byte[nBands];
             // //
@@ -1233,11 +1122,8 @@ public abstract class GDALImageWriter extends ImageWriter {
             for (int j = firstY; j <= lastY; j++) {
                 for (int i = firstX; i <= lastX; i++) {
                     data = (byte[]) raster.getDataElements(i, j, data);
-                    if (splitBands)
-                        for (int k = 0; k < nBands; k++)
-                            bandsBuffer[k].put(data, k, 1);
-                    else
-                        bandsBuffer[0].put(data, 0, nBands);
+                    if (splitBands) for (int k = 0; k < nBands; k++) bandsBuffer[k].put(data, k, 1);
+                    else bandsBuffer[0].put(data, 0, nBands);
                 }
             }
         }
@@ -1257,8 +1143,7 @@ public abstract class GDALImageWriter extends ImageWriter {
                 bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
                 bandsBuffer[k].order(ByteOrder.nativeOrder());
                 buf[k] = bandsBuffer[k].asShortBuffer();
-                if (!splitBands)
-                    break;
+                if (!splitBands) break;
             }
             short[] data = new short[nBands];
             // //
@@ -1269,11 +1154,8 @@ public abstract class GDALImageWriter extends ImageWriter {
             for (int j = firstY; j <= lastY; j++) {
                 for (int i = firstX; i <= lastX; i++) {
                     data = (short[]) raster.getDataElements(i, j, data);
-                    if (splitBands)
-                        for (int k = 0; k < nBands; k++)
-                            buf[k].put(data, k, 1);
-                    else
-                        buf[0].put(data, 0, nBands);
+                    if (splitBands) for (int k = 0; k < nBands; k++) buf[k].put(data, k, 1);
+                    else buf[0].put(data, 0, nBands);
                 }
             }
         }
@@ -1293,8 +1175,7 @@ public abstract class GDALImageWriter extends ImageWriter {
                 bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
                 bandsBuffer[k].order(ByteOrder.nativeOrder());
                 buf[k] = bandsBuffer[k].asShortBuffer();
-                if (!splitBands)
-                    break;
+                if (!splitBands) break;
             }
             short[] data = new short[nBands];
             // //
@@ -1310,11 +1191,8 @@ public abstract class GDALImageWriter extends ImageWriter {
                     // for (int k=0;k<nBands;k++){
                     // data[k]&=0xffff;
                     // }
-                    if (splitBands)
-                        for (int k = 0; k < nBands; k++)
-                            buf[k].put(data, k, 1);
-                    else
-                        buf[0].put(data, 0, nBands);
+                    if (splitBands) for (int k = 0; k < nBands; k++) buf[k].put(data, k, 1);
+                    else buf[0].put(data, 0, nBands);
                 }
             }
         }
@@ -1334,8 +1212,7 @@ public abstract class GDALImageWriter extends ImageWriter {
                 bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
                 bandsBuffer[k].order(ByteOrder.nativeOrder());
                 buf[k] = bandsBuffer[k].asIntBuffer();
-                if (!splitBands)
-                    break;
+                if (!splitBands) break;
             }
             int[] data = new int[nBands];
             // //
@@ -1346,11 +1223,8 @@ public abstract class GDALImageWriter extends ImageWriter {
             for (int j = firstY; j <= lastY; j++) {
                 for (int i = firstX; i <= lastX; i++) {
                     data = (int[]) raster.getDataElements(i, j, data);
-                    if (splitBands)
-                        for (int k = 0; k < nBands; k++)
-                            buf[k].put(data, k, 1);
-                    else
-                        buf[0].put(data, 0, nBands);
+                    if (splitBands) for (int k = 0; k < nBands; k++) buf[k].put(data, k, 1);
+                    else buf[0].put(data, 0, nBands);
                 }
             }
         }
@@ -1370,8 +1244,7 @@ public abstract class GDALImageWriter extends ImageWriter {
                 bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
                 bandsBuffer[k].order(ByteOrder.nativeOrder());
                 buf[k] = bandsBuffer[k].asFloatBuffer();
-                if (!splitBands)
-                    break;
+                if (!splitBands) break;
             }
             float[] data = new float[nBands];
             // //
@@ -1382,11 +1255,8 @@ public abstract class GDALImageWriter extends ImageWriter {
             for (int j = firstY; j <= lastY; j++) {
                 for (int i = firstX; i <= lastX; i++) {
                     data = (float[]) raster.getDataElements(i, j, data);
-                    if (splitBands)
-                        for (int k = 0; k < nBands; k++)
-                            buf[k].put(data, k, 1);
-                    else
-                        buf[0].put(data, 0, nBands);
+                    if (splitBands) for (int k = 0; k < nBands; k++) buf[k].put(data, k, 1);
+                    else buf[0].put(data, 0, nBands);
                 }
             }
         }
@@ -1406,8 +1276,7 @@ public abstract class GDALImageWriter extends ImageWriter {
                 bandsBuffer[k] = ByteBuffer.allocateDirect(capacity);
                 bandsBuffer[k].order(ByteOrder.nativeOrder());
                 buf[k] = bandsBuffer[k].asDoubleBuffer();
-                if (!splitBands)
-                    break;
+                if (!splitBands) break;
             }
             double[] data = new double[nBands];
             // //
@@ -1418,11 +1287,8 @@ public abstract class GDALImageWriter extends ImageWriter {
             for (int j = firstY; j <= lastY; j++) {
                 for (int i = firstX; i <= lastX; i++) {
                     data = (double[]) raster.getDataElements(i, j, data);
-                    if (splitBands)
-                        for (int k = 0; k < nBands; k++)
-                            buf[k].put(data, k, 1);
-                    else
-                        buf[0].put(data, 0, nBands);
+                    if (splitBands) for (int k = 0; k < nBands; k++) buf[k].put(data, k, 1);
+                    else buf[0].put(data, 0, nBands);
                 }
             }
         }
@@ -1430,41 +1296,32 @@ public abstract class GDALImageWriter extends ImageWriter {
     }
 
     /**
-     * Given an input <code>RenderedImage</code> builds a temporary
-     * <code>Dataset</code> and fill it with data from the input image. Source
-     * region settings are allowed in order to specify the desired portion of
-     * input image which need to be used to populate the dataset.
-     * 
-     * @param inputRenderedImage
-     *                the input <code>RenderedImage</code> from which to get
-     *                data
-     * @param tempFile
-     *                a fileName where to store the temporary dataset
-     * @param sourceRegion
-     *                a <code>Rectangle</code> specifying the desired portion
-     *                of the input image which need to be used to populate the
-     *                dataset.
-     * @param nBands
-     *                the number of the bands of the created dataset
-     * @param dataType
-     *                the dataType of the created dataset.
-     * @param width
-     *                the width of the created dataset
-     * @param height
-     *                the height of the created dataset
-     * @param xSubsamplingFactor
-     *                the X subsampling factor which need to be used when
-     *                loading data from the input image
-     * @param ySubsamplingFactor
-     *                the Y subsampling factor which need to be used when
-     *                loading data from the input image
-     * @return a <code>Dataset</code> containing data coming from the input
-     *         image
+     * Given an input <code>RenderedImage</code> builds a temporary <code>Dataset</code> and fill it with data from the
+     * input image. Source region settings are allowed in order to specify the desired portion of input image which need
+     * to be used to populate the dataset.
+     *
+     * @param inputRenderedImage the input <code>RenderedImage</code> from which to get data
+     * @param tempFile a fileName where to store the temporary dataset
+     * @param sourceRegion a <code>Rectangle</code> specifying the desired portion of the input image which need to be
+     *     used to populate the dataset.
+     * @param nBands the number of the bands of the created dataset
+     * @param dataType the dataType of the created dataset.
+     * @param width the width of the created dataset
+     * @param height the height of the created dataset
+     * @param xSubsamplingFactor the X subsampling factor which need to be used when loading data from the input image
+     * @param ySubsamplingFactor the Y subsampling factor which need to be used when loading data from the input image
+     * @return a <code>Dataset</code> containing data coming from the input image
      */
-    private Dataset createDatasetFromImage(RenderedImage inputRenderedImage,
-            final String tempFile, Rectangle sourceRegion, final int nBands,
-            final int dataType, final int width, final int height,
-            final int xSubsamplingFactor, final int ySubsamplingFactor) {
+    private Dataset createDatasetFromImage(
+            RenderedImage inputRenderedImage,
+            final String tempFile,
+            Rectangle sourceRegion,
+            final int nBands,
+            final int dataType,
+            final int width,
+            final int height,
+            final int xSubsamplingFactor,
+            final int ySubsamplingFactor) {
 
         // //
         //
@@ -1474,15 +1331,13 @@ public abstract class GDALImageWriter extends ImageWriter {
 
         Dataset tempDs = null;
         final int threshold = getMaxMemorySizeForGDALMemoryDataset();
-        final int neededMemory = width * height * nBands
-                * gdal.GetDataTypeSize(dataType) / 8;
+        final int neededMemory = width * height * nBands * gdal.GetDataTypeSize(dataType) / 8;
 
         if (neededMemory <= threshold) {
             // TODO: the real Memory Raster Driver use should create a Memory
             // Dataset from data in memory by specifying the address of the
             // memory containing data.
-            tempDs = getMemoryDriver().Create(tempFile, width, height, nBands,
-                    dataType, (String[])null);
+            tempDs = getMemoryDriver().Create(tempFile, width, height, nBands, dataType, (String[]) null);
         }
         if (tempDs == null) {
             // //
@@ -1492,8 +1347,7 @@ public abstract class GDALImageWriter extends ImageWriter {
             //
             // //
             final Driver driver = gdal.GetDriverByName("GTiff");
-            tempDs = driver.Create(tempFile, width, height, nBands, dataType,
-                    (String[])null);
+            tempDs = driver.Create(tempFile, width, height, nBands, dataType, (String[]) null);
         }
 
         // //
@@ -1501,12 +1355,12 @@ public abstract class GDALImageWriter extends ImageWriter {
         // Writing data in the temp dataset and return it
         //
         // //
-        return writeData(tempDs, inputRenderedImage, sourceRegion, nBands,
-                dataType, xSubsamplingFactor, ySubsamplingFactor);
+        return writeData(
+                tempDs, inputRenderedImage, sourceRegion, nBands, dataType, xSubsamplingFactor, ySubsamplingFactor);
     }
 
-    public IIOMetadata getDefaultImageMetadata(ImageTypeSpecifier imageType,ImageWriteParam param) {
-    	
+    public IIOMetadata getDefaultImageMetadata(ImageTypeSpecifier imageType, ImageWriteParam param) {
+
         final GDALWritableCommonIIOImageMetadata imageMetadata = new GDALWritableCommonIIOImageMetadata();
         SampleModel sm = imageType.getSampleModel();
 
@@ -1531,14 +1385,11 @@ public abstract class GDALImageWriter extends ImageWriter {
         return imageMetadata;
     }
 
-    public IIOMetadata convertStreamMetadata(IIOMetadata inData,
-            ImageWriteParam param) {
-        throw new UnsupportedOperationException(
-                "convertStreamMetadata not supported yet.");
+    public IIOMetadata convertStreamMetadata(IIOMetadata inData, ImageWriteParam param) {
+        throw new UnsupportedOperationException("convertStreamMetadata not supported yet.");
     }
 
-    public IIOMetadata convertImageMetadata(IIOMetadata inData,
-            ImageTypeSpecifier imageType, ImageWriteParam param) {
+    public IIOMetadata convertImageMetadata(IIOMetadata inData, ImageTypeSpecifier imageType, ImageWriteParam param) {
 
         throw new UnsupportedOperationException(
                 "convertImageMetadata not supported yet. Create a new GDALWritableCommonIIOImageMetadata and set required fields");
@@ -1563,34 +1414,28 @@ public abstract class GDALImageWriter extends ImageWriter {
     }
 
     /**
-     * Sets the destination to the given <code>Object</code>, usually a
-     * <code>File</code> or a {@link FileImageOutputStreamExt}.
-     * 
-     * @param output
-     *                the <code>Object</code> to use for future writing.
+     * Sets the destination to the given <code>Object</code>, usually a <code>File</code> or a
+     * {@link FileImageOutputStreamExt}.
+     *
+     * @param output the <code>Object</code> to use for future writing.
      */
     public void setOutput(Object output) {
         super.setOutput(output); // validates output
-        if (output instanceof File)
-            outputFile = (File) output;
-        else if (output instanceof FileImageOutputStreamExt)
-            outputFile = ((FileImageOutputStreamExt) output).getFile();
+        if (output instanceof File) outputFile = (File) output;
+        else if (output instanceof FileImageOutputStreamExt) outputFile = ((FileImageOutputStreamExt) output).getFile();
         else if (output instanceof URL) {
             final URL tempURL = (URL) output;
             if (tempURL.getProtocol().equalsIgnoreCase("file")) {
-                    outputFile = Utilities.urlToFile(tempURL);
-            }
-            else
-                throw new IllegalArgumentException("Not a Valid Input");
+                outputFile = Utilities.urlToFile(tempURL);
+            } else throw new IllegalArgumentException("Not a Valid Input");
         }
     }
 
     /**
      * This method is a shorthand for <code>write(null, image, null)</code>.
-     * 
-     * @param image
-     *                an <code>IIOImage</code> object containing an image,
-     *                thumbnails, and metadata to be written to the output.
+     *
+     * @param image an <code>IIOImage</code> object containing an image, thumbnails, and metadata to be written to the
+     *     output.
      */
     public void write(IIOImage image) throws IOException {
         write(null, image, null);
@@ -1599,26 +1444,20 @@ public abstract class GDALImageWriter extends ImageWriter {
     /**
      * This method is a shorthand for <code>write(null, new IIOImage(image,
      * null, null), null)</code>.
-     * 
-     * @param image
-     *                a <code>RenderedImage</code> to be written.
+     *
+     * @param image a <code>RenderedImage</code> to be written.
      */
     public void write(RenderedImage image) throws IOException {
         write(null, new IIOImage(image, null, null), null);
     }
 
-    /**
-     * Compute the source region and destination dimensions taking any parameter
-     * settings into account.
-     */
-    private static void computeRegions(Rectangle sourceBounds,
-            Dimension destSize, ImageWriteParam p) {
+    /** Compute the source region and destination dimensions taking any parameter settings into account. */
+    private static void computeRegions(Rectangle sourceBounds, Dimension destSize, ImageWriteParam p) {
         int periodX = 1;
         int periodY = 1;
         if (p != null) {
             int[] sourceBands = p.getSourceBands();
-            if (sourceBands != null
-                    && (sourceBands.length != 1 || sourceBands[0] != 0)) {
+            if (sourceBands != null && (sourceBands.length != 1 || sourceBands[0] != 0)) {
                 throw new IllegalArgumentException("Cannot sub-band image!");
             }
 
@@ -1652,8 +1491,7 @@ public abstract class GDALImageWriter extends ImageWriter {
         // Compute output dimensions
         //
         // ////////////////////////////////////////////////////////////////////
-        destSize.setSize((sourceBounds.width + periodX - 1) / periodX,
-                (sourceBounds.height + periodY - 1) / periodY);
+        destSize.setSize((sourceBounds.width + periodX - 1) / periodX, (sourceBounds.height + periodY - 1) / periodY);
         if (destSize.width <= 0 || destSize.height <= 0) {
             throw new IllegalArgumentException("Empty source region!");
         }

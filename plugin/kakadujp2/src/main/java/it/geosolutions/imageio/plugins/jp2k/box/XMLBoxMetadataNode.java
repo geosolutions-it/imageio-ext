@@ -16,19 +16,14 @@
  */
 package it.geosolutions.imageio.plugins.jp2k.box;
 
-import java.io.ByteArrayInputStream;
-
 import it.geosolutions.imageio.plugins.jp2k.JP2KBox;
-
 import it.geosolutions.util.KakaduUtilities;
+import java.io.ByteArrayInputStream;
 import org.w3c.dom.DOMException;
 
-import com.sun.media.imageioimpl.common.ImageUtil;
-
 /**
- * This class is defined to represent a XML box of JPEG JP2 file format. This
- * type of box has a length, a type of "xml ". Its content is a text string of a
- * XML instance.
+ * This class is defined to represent a XML box of JPEG JP2 file format. This type of box has a length, a type of "xml
+ * ". Its content is a text string of a XML instance.
  */
 public class XMLBoxMetadataNode extends BaseJP2KBoxMetadataNode {
 
@@ -39,11 +34,9 @@ public class XMLBoxMetadataNode extends BaseJP2KBoxMetadataNode {
     private synchronized byte[] getContent() {
         if (content == null) {
             byte[] b = wrappedBox.getContent();
-            if (b != null)
-                content = b.clone();
+            if (b != null) content = b.clone();
         }
         return content;
-
     }
 
     public XMLBoxMetadataNode(final JP2KBox box) {

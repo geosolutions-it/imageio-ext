@@ -19,30 +19,26 @@ package it.geosolutions.imageio.plugins.bsb;
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
-
 import java.awt.RenderingHints;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import javax.imageio.ImageReadParam;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
-
 import org.junit.Assert;
 import org.junit.Before;
 
 /**
  * Testing reading capabilities for {@link BSBImageReader}.
- * 
+ *
  * @author Daniele Romagnoli, GeoSolutions.
  */
 public class BSBTest extends AbstractGDALTest {
-    public final static String fileName = "rgbsmall.kap";
-    
-    
+    public static final String fileName = "rgbsmall.kap";
+
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -50,7 +46,7 @@ public class BSBTest extends AbstractGDALTest {
 
     /**
      * Test read exploiting common JAI operations (Crop-Translate-Rotate)
-     * 
+     *
      * @throws FileNotFoundException
      * @throws IOException
      */
@@ -80,7 +76,7 @@ public class BSBTest extends AbstractGDALTest {
         l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(32).setTileWidth(32);
 
         // get a RenderedImage
-        RenderedOp image = JAI.create("ImageRead", pbjImageRead,new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
+        RenderedOp image = JAI.create("ImageRead", pbjImageRead, new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
 
         if (TestData.isInteractiveTest()) {
             ImageIOUtilities.visualize(image, "test", true);

@@ -21,19 +21,18 @@ import com.sun.media.imageio.plugins.tiff.EXIFParentTIFFTagSet;
 import com.sun.media.imageio.plugins.tiff.EXIFTIFFTagSet;
 
 public class EXIFTags {
-    
+
     public static final int COPYRIGHT = BaselineTIFFTagSet.TAG_COPYRIGHT;
 
     public static final int EXIF_IFD_POINTER = EXIFParentTIFFTagSet.TAG_EXIF_IFD_POINTER;
 
     public static final int USER_COMMENT = EXIFTIFFTagSet.TAG_USER_COMMENT;
-    
-    private EXIFTags() {
-        
-    }
-    
-    public enum Type{
-        BASELINE, EXIF
-        //TODO more may be added in the future, like GPS, ...
+
+    private EXIFTags() {}
+
+    public enum Type {
+        BASELINE,
+        EXIF
+        // TODO more may be added in the future, like GPS, ...
     }
 }

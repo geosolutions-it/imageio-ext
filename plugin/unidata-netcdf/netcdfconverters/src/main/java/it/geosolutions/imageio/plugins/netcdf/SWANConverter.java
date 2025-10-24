@@ -20,9 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-
 import javax.media.jai.JAI;
-
 import ucar.ma2.Array;
 import ucar.ma2.ArrayFloat;
 import ucar.ma2.DataType;
@@ -32,9 +30,7 @@ import ucar.nc2.NetcdfFile;
 import ucar.nc2.NetcdfFileWriteable;
 import ucar.nc2.Variable;
 
-/**
- * @author Daniele Romagnoli
- */
+/** @author Daniele Romagnoli */
 public class SWANConverter {
 
     private static final String fileNameIn = "c:\\Work\\data\\rixen\\lscv08\\NRL/SWAN/Ligurian_Sea/2008092500.nc";
@@ -57,19 +53,17 @@ public class SWANConverter {
             final NetcdfFile ncFileIn = NetcdfFile.open(fileNameIn);
             final File fileOut = new File(fileNameOut);
             // keep original name
-            final File outputFile = File.createTempFile(fileIn.getName(),
-                    ".tmp");
-            final NetcdfFileWriteable ncFileOut = NetcdfFileWriteable
-                    .createNew(outputFile.getAbsolutePath());
+            final File outputFile = File.createTempFile(fileIn.getName(), ".tmp");
+            final NetcdfFileWriteable ncFileOut = NetcdfFileWriteable.createNew(outputFile.getAbsolutePath());
 
             boolean hasZeta = false;
             // input dimensions
             final Dimension timeDim0 = ncFileIn.findDimension("time");
             final int nTimes = timeDim0.getLength();
-            
+
             final Dimension latDim0 = ncFileIn.findDimension(NetCDFUtilities.LATITUDE);
             final int nLat = latDim0.getLength();
-               
+
             final Dimension lonDim0 = ncFileIn.findDimension(NetCDFUtilities.LONGITUDE);
             final int nLon = lonDim0.getLength();
 
@@ -81,7 +75,7 @@ public class SWANConverter {
 
             final Variable lonOriginalVar = ncFileIn.findVariable(NetCDFUtilities.LONGITUDE);
             final DataType lonDataType = lonOriginalVar.getDataType();
-            
+
             final Variable latOriginalVar = ncFileIn.findVariable(NetCDFUtilities.LATITUDE);
             final DataType latDataType = latOriginalVar.getDataType();
 
@@ -108,41 +102,33 @@ public class SWANConverter {
             }
 
             Dimension timeDim = ncFileOut.addDimension("time", nTimes);
-            Dimension latDim = ncFileOut.addDimension(NetCDFUtilities.LAT,
-                    nLat);
-            
-            Dimension lonDim = ncFileOut.addDimension(NetCDFUtilities.LON,
-                    nLon);
+            Dimension latDim = ncFileOut.addDimension(NetCDFUtilities.LAT, nLat);
 
-            if (hasZeta)
-                zDim = ncFileOut.addDimension(NetCDFUtilities.HEIGHT,
-                        nZeta);
+            Dimension lonDim = ncFileOut.addDimension(NetCDFUtilities.LON, nLon);
+
+            if (hasZeta) zDim = ncFileOut.addDimension(NetCDFUtilities.HEIGHT, nZeta);
 
             NetCDFConverterUtilities.copyGlobalAttributes(ncFileOut, ncFileIn.getGlobalAttributes());
 
             // Dimensions
-            Variable timeVar = ncFileOut.addVariable("time", timeDataType,
-                    new Dimension[] { timeDim });
-            NetCDFConverterUtilities.setVariableAttributes(timeOriginalVar, ncFileOut, new String[]{"long_name"});
+            Variable timeVar = ncFileOut.addVariable("time", timeDataType, new Dimension[] {timeDim});
+            NetCDFConverterUtilities.setVariableAttributes(timeOriginalVar, ncFileOut, new String[] {"long_name"});
             ncFileOut.addVariableAttribute("time", "long_name", "time");
 
-            ncFileOut.addVariable(NetCDFUtilities.LAT, latDataType,
-                    new Dimension[] { latDim });
-            NetCDFConverterUtilities.setVariableAttributes(latOriginalVar, ncFileOut, NetCDFUtilities.LAT );
+            ncFileOut.addVariable(NetCDFUtilities.LAT, latDataType, new Dimension[] {latDim});
+            NetCDFConverterUtilities.setVariableAttributes(latOriginalVar, ncFileOut, NetCDFUtilities.LAT);
 
-            ncFileOut.addVariable(NetCDFUtilities.LON, lonDataType,
-                    new Dimension[] { lonDim });
+            ncFileOut.addVariable(NetCDFUtilities.LON, lonDataType, new Dimension[] {lonDim});
             NetCDFConverterUtilities.setVariableAttributes(lonOriginalVar, ncFileOut, NetCDFUtilities.LON);
-            
-            if (hasZeta){
-                ncFileOut.addVariable(NetCDFUtilities.HEIGHT, zetaDataType,
-                        new Dimension[] { zDim });
-                NetCDFConverterUtilities.setVariableAttributes(levelOriginalVar, ncFileOut, NetCDFUtilities.HEIGHT, new String[]{"long_name"});
+
+            if (hasZeta) {
+                ncFileOut.addVariable(NetCDFUtilities.HEIGHT, zetaDataType, new Dimension[] {zDim});
+                NetCDFConverterUtilities.setVariableAttributes(
+                        levelOriginalVar, ncFileOut, NetCDFUtilities.HEIGHT, new String[] {"long_name"});
                 ncFileOut.addVariableAttribute(NetCDFUtilities.HEIGHT, "positive", "up");
                 ncFileOut.addVariableAttribute(NetCDFUtilities.HEIGHT, "long_name", NetCDFUtilities.HEIGHT);
-
             }
-            
+
             // lat Variable
             Array lat1Data = NetCDFConverterUtilities.getArray(nLat, latDataType);
             NetCDFConverterUtilities.setData1D(latOriginalData, lat1Data, latDataType, nLat, true);
@@ -150,7 +136,7 @@ public class SWANConverter {
             // lon Variable
             Array lon1Data = NetCDFConverterUtilities.getArray(nLon, lonDataType);
             NetCDFConverterUtilities.setData1D(lonOriginalData, lon1Data, lonDataType, nLon, false);
-            
+
             if (hasZeta) {
                 // depth level Variable
                 zeta1Data = NetCDFConverterUtilities.getArray(nZeta, zetaDataType);
@@ -165,31 +151,24 @@ public class SWANConverter {
             for (Variable var : findVariables) {
                 if (var != null) {
                     String varName = var.getName();
-                    if (varName.equalsIgnoreCase(NetCDFUtilities.LATITUDE) ||
-                        varName.equalsIgnoreCase(NetCDFUtilities.LONGITUDE) ||
-                        varName.equalsIgnoreCase(NetCDFUtilities.TIME) ||
-                        varName.equalsIgnoreCase(NetCDFUtilities.ZETA))
-                        continue;
+                    if (varName.equalsIgnoreCase(NetCDFUtilities.LATITUDE)
+                            || varName.equalsIgnoreCase(NetCDFUtilities.LONGITUDE)
+                            || varName.equalsIgnoreCase(NetCDFUtilities.TIME)
+                            || varName.equalsIgnoreCase(NetCDFUtilities.ZETA)) continue;
                     variables.add(varName);
                     List<Dimension> dims = var.getDimensions();
                     boolean hasLocalZeta = false;
-                    for (Dimension dim: dims){
-                        if (dim.getName().equalsIgnoreCase(NetCDFUtilities.ZETA)){
+                    for (Dimension dim : dims) {
+                        if (dim.getName().equalsIgnoreCase(NetCDFUtilities.ZETA)) {
                             hasLocalZeta = true;
                             break;
                         }
                     }
                     if (hasZeta && hasLocalZeta)
-                    ncFileOut
-                            .addVariable(varName, var.getDataType(),
-                                    new Dimension[] { timeDim, zDim,
-                                            latDim, lonDim });
-                    else 
-                        ncFileOut
-                        .addVariable(varName, var.getDataType(),
-                                new Dimension[] { timeDim,
-                                        latDim, lonDim });
-                    NetCDFConverterUtilities.setVariableAttributes(var, ncFileOut, new String[]{"missing_value"});
+                        ncFileOut.addVariable(
+                                varName, var.getDataType(), new Dimension[] {timeDim, zDim, latDim, lonDim});
+                    else ncFileOut.addVariable(varName, var.getDataType(), new Dimension[] {timeDim, latDim, lonDim});
+                    NetCDFConverterUtilities.setVariableAttributes(var, ncFileOut, new String[] {"missing_value"});
                     numVars++;
                 }
             }
@@ -198,12 +177,10 @@ public class SWANConverter {
 
             ncFileOut.create();
 
-            ArrayFloat timeData = new ArrayFloat(new int[] { timeDim
-                    .getLength() });
+            ArrayFloat timeData = new ArrayFloat(new int[] {timeDim.getLength()});
             Index timeIndex = timeData.getIndex();
             for (int t = 0; t < timeDim.getLength(); t++) {
-                timeData.setFloat(timeIndex.set(t), timeOriginalData
-                        .getFloat(timeOriginalIndex.set(t)));
+                timeData.setFloat(timeIndex.set(t), timeOriginalData.getFloat(timeOriginalIndex.set(t)));
             }
 
             ncFileOut.write("time", timeData);
@@ -227,24 +204,20 @@ public class SWANConverter {
                 Array destArray = null;
                 int[] dimensions = null;
                 if (hasZeta && hasLocalZeta) {
-                    dimensions = new int[] { timeDim.getLength(),
-                            zDim.getLength(), latDim.getLength(),
-                            lonDim.getLength() };
+                    dimensions =
+                            new int[] {timeDim.getLength(), zDim.getLength(), latDim.getLength(), lonDim.getLength()};
 
                 } else {
-                    dimensions = new int[] { timeDim.getLength(),
-                            latDim.getLength(), lonDim.getLength() };
+                    dimensions = new int[] {timeDim.getLength(), latDim.getLength(), lonDim.getLength()};
                 }
-                destArray = NetCDFConverterUtilities.getArray(dimensions,
-                        varDataType);
-                
+                destArray = NetCDFConverterUtilities.getArray(dimensions, varDataType);
+
                 final boolean setZeta = hasZeta && hasLocalZeta;
                 final int[] loopLengths;
-                if (setZeta)
-                    loopLengths = new int[]{nTimes, nZeta, nLat, nLon};
-                else 
-                    loopLengths = new int[]{nTimes, nLat, nLon};
-                NetCDFConverterUtilities.writeData(ncFileOut, varName, var, originalVarArray, destArray, false, false, loopLengths, true);
+                if (setZeta) loopLengths = new int[] {nTimes, nZeta, nLat, nLon};
+                else loopLengths = new int[] {nTimes, nLat, nLon};
+                NetCDFConverterUtilities.writeData(
+                        ncFileOut, varName, var, originalVarArray, destArray, false, false, loopLengths, true);
             }
 
             ncFileOut.close();
@@ -256,5 +229,4 @@ public class SWANConverter {
             JAI.getDefaultInstance().getTileCache().flush();
         }
     }
-
 }

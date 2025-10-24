@@ -17,28 +17,22 @@
 package it.geosolutions.imageio.plugins.idrisi;
 
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
-
 import java.awt.image.RenderedImage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * {@link IDRISIImageReader} is a {@link GDALImageReader} able to create
- * {@link RenderedImage} from ASCII arcGrid files.
- * 
+ * {@link IDRISIImageReader} is a {@link GDALImageReader} able to create {@link RenderedImage} from ASCII arcGrid files.
+ *
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
- * 
  */
 public class IDRISIImageReader extends GDALImageReader {
 
-	private static final Logger LOGGER = Logger
-			.getLogger(IDRISIImageReader.class.toString());
+    private static final Logger LOGGER = Logger.getLogger(IDRISIImageReader.class.toString());
 
-	public IDRISIImageReader(IDRISIImageReaderSpi originatingProvider) {
-		super(originatingProvider,0);
-		if (LOGGER.isLoggable(Level.FINE))
-			LOGGER.fine("IDRISIImageReader Constructor");
-	}
-
+    public IDRISIImageReader(IDRISIImageReaderSpi originatingProvider) {
+        super(originatingProvider, 0);
+        if (LOGGER.isLoggable(Level.FINE)) LOGGER.fine("IDRISIImageReader Constructor");
+    }
 }

@@ -20,16 +20,13 @@ import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import javax.imageio.ImageReadParam;
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -39,12 +36,12 @@ import org.junit.Test;
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
-public class NitfVrtTest extends  AbstractGDALTest {
-    public final static String fileName = "001zc013.on1.vrt";
+public class NitfVrtTest extends AbstractGDALTest {
+    public static final String fileName = "001zc013.on1.vrt";
 
     /**
      * Test read exploiting common JAI operations (Crop-Translate-Rotate)
-     * 
+     *
      * @throws FileNotFoundException
      * @throws IOException
      */
@@ -66,8 +63,7 @@ public class NitfVrtTest extends  AbstractGDALTest {
         final int ySubSampling = 2;
         final int xSubSamplingOffset = 0;
         final int ySubSamplingOffset = 0;
-        irp.setSourceSubsampling(xSubSampling, ySubSampling,
-                xSubSamplingOffset, ySubSamplingOffset);
+        irp.setSourceSubsampling(xSubSampling, ySubSampling, xSubSamplingOffset, ySubSamplingOffset);
         pbjImageRead = new ParameterBlockJAI("ImageRead");
         pbjImageRead.setParameter("Input", file);
         pbjImageRead.setParameter("readParam", irp);
@@ -75,12 +71,8 @@ public class NitfVrtTest extends  AbstractGDALTest {
         // get a RenderedImage
         RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 
-        if (TestData.isInteractiveTest())
-            Viewer.visualizeAllInformation(image, "Subsampling Read");
-        else
-            Assert.assertNotNull(image.getTiles());
+        if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(image, "Subsampling Read");
+        else Assert.assertNotNull(image.getTiles());
         ImageIOUtilities.disposeImage(image);
     }
-
-
 }

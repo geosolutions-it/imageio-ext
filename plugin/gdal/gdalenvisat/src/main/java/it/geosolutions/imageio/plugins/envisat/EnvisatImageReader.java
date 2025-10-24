@@ -17,26 +17,22 @@
 package it.geosolutions.imageio.plugins.envisat;
 
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
-
 import java.awt.image.RenderedImage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * {@link EnvisatImageReader} is a {@link GDALImageReader} able to create
- * {@link RenderedImage} from Envisat files.
- * 
+ * {@link EnvisatImageReader} is a {@link GDALImageReader} able to create {@link RenderedImage} from Envisat files.
+ *
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class EnvisatImageReader extends GDALImageReader {
 
-    private static final Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.plugins.envisat");
+    private static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.envisat");
 
     public EnvisatImageReader(EnvisatImageReaderSpi originatingProvider) {
         super(originatingProvider, 0);
-        if (LOGGER.isLoggable(Level.FINE))
-            LOGGER.fine("EnvisatImageReader Constructor");
+        if (LOGGER.isLoggable(Level.FINE)) LOGGER.fine("EnvisatImageReader Constructor");
     }
 }

@@ -17,15 +17,14 @@
 package it.geosolutions.imageio.cog;
 
 import it.geosolutions.imageioimpl.plugins.cog.ContiguousRangeComposer;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Testing HTTP range reading capabilities.
- * 
+ *
  * @author joshfix
  */
 public class RangeBuilderTest {
@@ -45,7 +44,7 @@ public class RangeBuilderTest {
         Assert.assertEquals(2, ranges.size());
 
         ranges.forEach(range -> {
-           Assert.assertTrue(range[0] == initialRangeStart || range[0] == tileRange1Start);
+            Assert.assertTrue(range[0] == initialRangeStart || range[0] == tileRange1Start);
             Assert.assertTrue(range[1] == initialRangeEnd || range[1] == tileRange1End);
         });
 

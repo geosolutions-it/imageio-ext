@@ -19,16 +19,13 @@ package it.geosolutions.imageio.plugins.nitronitf.wrapper;
 import it.geosolutions.imageio.plugins.nitronitf.NITFUtilities;
 
 /**
- * Main Wrapper class recording encryption field, as well as security classification and security
- * classification system.
- * 
+ * Main Wrapper class recording encryption field, as well as security classification and security classification system.
+ *
  * @author Daniele Romagnoli, GeoSolutions s.a.s.
  */
 public class NITFObjectWrapper {
 
-    protected NITFObjectWrapper() {
-
-    }
+    protected NITFObjectWrapper() {}
 
     int encrypted = NITFUtilities.Consts.DEFAULT_ENCRYPTED;
 
@@ -59,5 +56,4 @@ public class NITFObjectWrapper {
     public void setSecurityClassification(String securityClassification) {
         this.securityClassification = securityClassification;
     }
-
 }

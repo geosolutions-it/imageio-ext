@@ -32,8 +32,8 @@ package it.geosolutions.imageio.compression;
 import java.util.Iterator;
 
 /**
- * The SPI finder, delegated to retrieve compressors and decompressors for a specific
- * CompressionType format. At the moment, only DEFLATE compression is supported.
+ * The SPI finder, delegated to retrieve compressors and decompressors for a specific CompressionType format. At the
+ * moment, only DEFLATE compression is supported.
  */
 public class CompressionFinder {
 
@@ -44,8 +44,8 @@ public class CompressionFinder {
     }
 
     /**
-     * Find the higher priority Compressor SPI for the requested {@link CompressionType}
-     * supporting the specified compression level and instantiate a Compressor.
+     * Find the higher priority Compressor SPI for the requested {@link CompressionType} supporting the specified
+     * compression level and instantiate a Compressor.
      */
     public static Compressor getCompressor(int level, CompressionType compressionType) {
 
@@ -71,8 +71,8 @@ public class CompressionFinder {
     }
 
     /**
-     * Find the higher priority Decompressor SPI for the requested {@link CompressionType}
-     * and instantiate a Decompressor
+     * Find the higher priority Decompressor SPI for the requested {@link CompressionType} and instantiate a
+     * Decompressor
      */
     public static Decompressor getDecompressor(CompressionType compressionType) {
 
@@ -89,5 +89,4 @@ public class CompressionFinder {
         }
         return null;
     }
-
 }

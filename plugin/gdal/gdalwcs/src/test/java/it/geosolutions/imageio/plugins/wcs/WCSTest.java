@@ -18,37 +18,30 @@ package it.geosolutions.imageio.plugins.wcs;
 
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.GDALUtilities;
-import it.geosolutions.imageio.plugins.wcs.WCSImageReader;
-import it.geosolutions.imageio.plugins.wcs.WCSImageReaderSpi;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
-
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import javax.imageio.ImageReader;
-
 import org.junit.Assert;
-import org.junit.Test;
 import org.junit.Ignore;
 
 /**
  * Testing reading capabilities for {@link WCSImageReader}.
- * 
+ *
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class WCSTest extends AbstractGDALTest {
-    public final static String fileName = "wcs.xml";
+    public static final String fileName = "wcs.xml";
 
-    private final static boolean isDriverAvailable = isGDALAvailable
-            && GDALUtilities.isDriverAvailable("WCS");
+    private static final boolean isDriverAvailable = isGDALAvailable && GDALUtilities.isDriverAvailable("WCS");
 
     /**
      * Test read exploiting common JAI operations (Crop-Translate-Rotate)
-     * 
+     *
      * @throws FileNotFoundException
      * @throws IOException
      */
@@ -57,7 +50,7 @@ public class WCSTest extends AbstractGDALTest {
         if (!isDriverAvailable) {
             return;
         }
-        if (!isGDALDATAEnvSet){
+        if (!isGDALDATAEnvSet) {
             warningMessage("GDAL_DATA environment variable has not been set. Tests are skipped");
             return;
         }
@@ -71,16 +64,12 @@ public class WCSTest extends AbstractGDALTest {
         // ////////////////////////////////////////////////////////////////
         // preparing to read
         // ////////////////////////////////////////////////////////////////
-        final ImageReader mReader = new WCSImageReaderSpi()
-                .createReaderInstance();
+        final ImageReader mReader = new WCSImageReaderSpi().createReaderInstance();
         mReader.setInput(file);
         final RenderedImage image = mReader.read(0);
- 
+
         if (TestData.isInteractiveTest()) {
             ImageIOUtilities.visualize(image);
-        }
-        else
-            Assert.assertNotNull(image.getData());
+        } else Assert.assertNotNull(image.getData());
     }
-
 }

@@ -29,17 +29,14 @@
  */
 package it.geosolutions.imageio.compression;
 
-import it.geosolutions.imageio.registry.RegisterablePlugin;
 import it.geosolutions.imageio.registry.ImageIOEXTRegistry;
-
+import it.geosolutions.imageio.registry.RegisterablePlugin;
 import java.util.Iterator;
 import java.util.Set;
 
-
 /**
- * A Compression SPI, reporting supported compressionType and priority.
- * Subclasses can set priorities so you can have multiple SPIs for the same compression type
- * and decide which one should be used based on priority.
+ * A Compression SPI, reporting supported compressionType and priority. Subclasses can set priorities so you can have
+ * multiple SPIs for the same compression type and decide which one should be used based on priority.
  */
 public abstract class AbstractCompressionSpi implements CompressionPrioritySpi, RegisterablePlugin {
 
@@ -54,10 +51,11 @@ public abstract class AbstractCompressionSpi implements CompressionPrioritySpi, 
     /** simple method checking if the compression is supported by this SPI */
     protected void checkCompression(CompressionType compressionType) {
         if (!getSupportedCompressions().contains(compressionType)) {
-            throw new IllegalArgumentException("Unsupported Compression Type: " +
-                    compressionType + " Not in range: " + getSupportedCompressions().toString());
+            throw new IllegalArgumentException("Unsupported Compression Type: " + compressionType + " Not in range: "
+                    + getSupportedCompressions().toString());
         }
-    };
+    }
+    ;
 
     /** Return the priority for this SPI */
     public int getPriority() {
@@ -69,10 +67,7 @@ public abstract class AbstractCompressionSpi implements CompressionPrioritySpi, 
         this.priority = priority;
     }
 
-    /**
-     * There might be special conditions for which the SPI is not enabled, i.e. a missing
-     * dependency native lib
-     */
+    /** There might be special conditions for which the SPI is not enabled, i.e. a missing dependency native lib */
     public boolean isEnabled() {
         return true;
     }
@@ -106,5 +101,4 @@ public abstract class AbstractCompressionSpi implements CompressionPrioritySpi, 
     public void onDeregistration(ImageIOEXTRegistry imageIOEXTRegistry, Class<?> aClass) {
         // do nothing
     }
-
 }

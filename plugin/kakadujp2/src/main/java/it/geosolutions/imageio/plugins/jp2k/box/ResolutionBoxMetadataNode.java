@@ -20,9 +20,9 @@ import javax.imageio.metadata.IIOMetadataNode;
 
 /**
  * This class is defined to represent a Resolution Box of JPEG JP2 file format.
- * 
- * Its contents includes the resolution numerators, denominator, and the
- * exponents for both horizontal and vertical directions.
+ *
+ * <p>Its contents includes the resolution numerators, denominator, and the exponents for both horizontal and vertical
+ * directions.
  */
 public class ResolutionBoxMetadataNode extends BaseJP2KBoxMetadataNode {
 
@@ -54,8 +54,7 @@ public class ResolutionBoxMetadataNode extends BaseJP2KBoxMetadataNode {
         final short hNum = box.getHorizontalResolutionNumerator();
         final byte hExp = box.getHorizontalResolutionExponent();
 
-        IIOMetadataNode child = new IIOMetadataNode(
-                "VerticalResolutionNumerator");
+        IIOMetadataNode child = new IIOMetadataNode("VerticalResolutionNumerator");
         child.setUserObject(new Short(vNum));
         verticalResolutionNumerator = Short.toString(vNum);
         child.setNodeValue(verticalResolutionNumerator);
@@ -135,5 +134,4 @@ public class ResolutionBoxMetadataNode extends BaseJP2KBoxMetadataNode {
     public String getVerticalResolution() {
         return verticalResolution;
     }
-
 }

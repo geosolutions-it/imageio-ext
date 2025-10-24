@@ -16,18 +16,14 @@
  */
 package it.geosolutions.imageio.plugins.jp2k.box;
 
+import com.sun.media.imageioimpl.common.ImageUtil;
 import javax.imageio.metadata.IIOMetadataNode;
 
-import com.sun.media.imageioimpl.common.ImageUtil;
-
 /**
- * This class is defined to represent a Bits Per Component Box of JPEG JP2 file
- * format. A Bits Per Component box has a length, and a fixed type of "bpcc".
- * Its content is a byte array containing the bit depths of the color
- * components.
- * 
- * This box is necessary only when the bit depth are not identical for all the
- * components.
+ * This class is defined to represent a Bits Per Component Box of JPEG JP2 file format. A Bits Per Component box has a
+ * length, and a fixed type of "bpcc". Its content is a byte array containing the bit depths of the color components.
+ *
+ * <p>This box is necessary only when the bit depth are not identical for all the components.
  *
  * @author Simone Giannecchini, GeoSolutions
  * @author Daniele Romagnoli, GeoSolutions

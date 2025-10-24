@@ -16,32 +16,29 @@
  */
 package it.geosolutions.imageio.plugins.jp2k.box;
 
+import com.sun.media.imageioimpl.common.ImageUtil;
 import javax.imageio.metadata.IIOMetadataNode;
 
-import com.sun.media.imageioimpl.common.ImageUtil;
-
 /**
- * This class is defined to represent a File Type Box of JPEG JP2 file format. 
- * A File Type Box has a length, and a fixed type of "ftyp". 
- * The content of a file type box contains the brand ("jp2 " for JP2 file", 
- * the minor version (0 for JP2 file format), and a compatibility list 
- * (one of which should be "jp2 " if brand is not "jp2 ".)
+ * This class is defined to represent a File Type Box of JPEG JP2 file format. A File Type Box has a length, and a fixed
+ * type of "ftyp". The content of a file type box contains the brand ("jp2 " for JP2 file", the minor version (0 for JP2
+ * file format), and a compatibility list (one of which should be "jp2 " if brand is not "jp2 ".)
  */
 @SuppressWarnings("serial")
 public class FileTypeBoxMetadataNode extends BaseJP2KBoxMetadataNode {
 
     private final String brand;
-    
+
     private final String minorVersion;
-    
+
     private final String compatibilityList;
-    
+
     FileTypeBoxMetadataNode(final FileTypeBox box) {
         super(box);
         brand = ImageUtil.convertObjectToString(box.getBrand());
         minorVersion = Integer.toString(box.getMinorVersion());
-        compatibilityList= ImageUtil.convertObjectToString(box.getCompatibilitySet());
-        
+        compatibilityList = ImageUtil.convertObjectToString(box.getCompatibilitySet());
+
         try {
             IIOMetadataNode child = new IIOMetadataNode("Brand");
             child.setNodeValue(brand);
@@ -68,5 +65,4 @@ public class FileTypeBoxMetadataNode extends BaseJP2KBoxMetadataNode {
     public String getCompatibilityList() {
         return compatibilityList;
     }
-
 }

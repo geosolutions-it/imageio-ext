@@ -17,25 +17,21 @@
 package it.geosolutions.imageio.plugins.srp;
 
 import it.geosolutions.imageio.gdalframework.GDALImageReader;
-
 import java.awt.image.RenderedImage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * {@link SPRImageReader} is a {@link GDALImageReader} able to create
- * {@link RenderedImage} from SRP (ASPR/USPR) files.
- * 
+ * {@link SPRImageReader} is a {@link GDALImageReader} able to create {@link RenderedImage} from SRP (ASPR/USPR) files.
+ *
  * @author Andrea Aime, GeoSolutions.
  */
 public class SPRImageReader extends GDALImageReader {
 
-    private static final Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.plugins.rpftoc");
+    private static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.rpftoc");
 
     public SPRImageReader(SRPImageReaderSpi originatingProvider) {
         super(originatingProvider, 0);
-        if (LOGGER.isLoggable(Level.FINE))
-            LOGGER.fine("RPFTOCImageReaderSpi Constructor");
+        if (LOGGER.isLoggable(Level.FINE)) LOGGER.fine("RPFTOCImageReaderSpi Constructor");
     }
 }

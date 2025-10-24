@@ -31,9 +31,7 @@ package it.geosolutions.imageio.registry;
 
 import java.util.*;
 
-/**
- * A Registry for Plugins
- */
+/** A Registry for Plugins */
 public class ImageIOEXTRegistry {
 
     private void checkSubType(SubTypeRegistry reg) {
@@ -42,12 +40,11 @@ public class ImageIOEXTRegistry {
         }
     }
 
-    void ensureNotNull (Object object, String name) {
+    void ensureNotNull(Object object, String name) {
         if (object == null) {
             throw new IllegalArgumentException(name + " == null!");
         }
     }
-
 
     private <T> void checkSpis(T firstSpi, T secondSpi) {
         if (firstSpi == null || secondSpi == null) {
@@ -62,8 +59,8 @@ public class ImageIOEXTRegistry {
 
     public ImageIOEXTRegistry(Iterator<Class<?>> subTypes) {
         ensureNotNull(subTypes, "subTypes");
-        while(subTypes.hasNext()) {
-            Class<?> subType = (Class)subTypes.next();
+        while (subTypes.hasNext()) {
+            Class<?> subType = (Class) subTypes.next();
             SubTypeRegistry reg = new SubTypeRegistry(this, subType);
             subTypesMap.put(subType, reg);
         }
@@ -72,8 +69,8 @@ public class ImageIOEXTRegistry {
     public void registerSPI(Object spi) {
         ensureNotNull(spi, "spi");
         Iterator regs = this.getSubRegistries(spi);
-        while(regs.hasNext()) {
-            SubTypeRegistry reg = (SubTypeRegistry)regs.next();
+        while (regs.hasNext()) {
+            SubTypeRegistry reg = (SubTypeRegistry) regs.next();
             reg.registerSPI(spi);
         }
     }
@@ -87,8 +84,8 @@ public class ImageIOEXTRegistry {
             if (!regs.hasNext()) {
                 return false;
             }
-            reg = (SubTypeRegistry)regs.next();
-        } while(!reg.isRegistered(spi));
+            reg = (SubTypeRegistry) regs.next();
+        } while (!reg.isRegistered(spi));
 
         return true;
     }
@@ -117,8 +114,8 @@ public class ImageIOEXTRegistry {
         ensureNotNull(spi, "spi");
         Iterator regs = getSubRegistries(spi);
 
-        while(regs.hasNext()) {
-            SubTypeRegistry reg = (SubTypeRegistry)regs.next();
+        while (regs.hasNext()) {
+            SubTypeRegistry reg = (SubTypeRegistry) regs.next();
             reg.deregisterSPI(spi);
         }
     }
@@ -132,8 +129,8 @@ public class ImageIOEXTRegistry {
     public void deregisterAll() {
         Iterator iter = subTypesMap.values().iterator();
 
-        while(iter.hasNext()) {
-            SubTypeRegistry reg = (SubTypeRegistry)iter.next();
+        while (iter.hasNext()) {
+            SubTypeRegistry reg = (SubTypeRegistry) iter.next();
             reg.clear();
         }
     }
@@ -146,8 +143,8 @@ public class ImageIOEXTRegistry {
         List<SubTypeRegistry> l = new ArrayList();
         Iterator iter = getSubTypes();
 
-        while(iter.hasNext()) {
-            Class<?> c = (Class)iter.next();
+        while (iter.hasNext()) {
+            Class<?> c = (Class) iter.next();
             if (c.isAssignableFrom(spi.getClass())) {
                 l.add(subTypesMap.get(c));
             }
@@ -160,5 +157,4 @@ public class ImageIOEXTRegistry {
         this.deregisterAll();
         super.finalize();
     }
-
 }

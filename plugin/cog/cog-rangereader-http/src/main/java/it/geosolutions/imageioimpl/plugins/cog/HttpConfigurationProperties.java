@@ -16,17 +16,16 @@
  */
 package it.geosolutions.imageioimpl.plugins.cog;
 
+import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.SocketAddress;
-import java.net.InetSocketAddress;
 
 /**
- * Provides configuration properties for the OkHttp client.  Attempts to read environment variables containing
- * connection settings and if not found, will fallback to attempting to read system properties.  If still not found,
- * the provided default values will be used.
+ * Provides configuration properties for the OkHttp client. Attempts to read environment variables containing connection
+ * settings and if not found, will fallback to attempting to read system properties. If still not found, the provided
+ * default values will be used.
  *
- * @author joshfix
- * Created on 10/23/19
+ * @author joshfix Created on 10/23/19
  */
 public class HttpConfigurationProperties {
 
@@ -45,14 +44,10 @@ public class HttpConfigurationProperties {
     public final String HTTP_PROXY_PORT = "HTTP_PROXY_PORT";
 
     public HttpConfigurationProperties() {
-        maxRequests = Integer.parseInt(
-                PropertyLocator.getEnvironmentValue(HTTP_MAX_REQUESTS, "128"));
-        maxRequestsPerHost = Integer.parseInt(
-                PropertyLocator.getEnvironmentValue(HTTP_MAX_REQUESTS_PER_HOST, "5"));
-        maxIdleConnections = Integer.parseInt(
-                PropertyLocator.getEnvironmentValue(HTTP_MAX_IDLE_CONNECTIONS, "5"));
-        keepAliveDuration = Integer.parseInt(
-                PropertyLocator.getEnvironmentValue(HTTP_KEEP_ALIVE_TIME, "60"));
+        maxRequests = Integer.parseInt(PropertyLocator.getEnvironmentValue(HTTP_MAX_REQUESTS, "128"));
+        maxRequestsPerHost = Integer.parseInt(PropertyLocator.getEnvironmentValue(HTTP_MAX_REQUESTS_PER_HOST, "5"));
+        maxIdleConnections = Integer.parseInt(PropertyLocator.getEnvironmentValue(HTTP_MAX_IDLE_CONNECTIONS, "5"));
+        keepAliveDuration = Integer.parseInt(PropertyLocator.getEnvironmentValue(HTTP_KEEP_ALIVE_TIME, "60"));
         httpProxyHost = PropertyLocator.getEnvironmentValue(HTTP_PROXY_HOST, null);
         httpProxyPort = Integer.parseInt(PropertyLocator.getEnvironmentValue(HTTP_PROXY_PORT, "3128"));
     }
@@ -74,7 +69,7 @@ public class HttpConfigurationProperties {
     }
 
     public Proxy getHttpProxy() {
-        if(httpProxyHost != null) {
+        if (httpProxyHost != null) {
             SocketAddress addr = new InetSocketAddress(this.httpProxyHost, this.httpProxyPort);
             Proxy proxy = new Proxy(Proxy.Type.HTTP, addr);
             return proxy;

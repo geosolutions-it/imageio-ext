@@ -1,42 +1,42 @@
 /*
  * $RCSfile: BaselineTIFFTagSet.java,v $
  *
- * 
+ *
  * Copyright (c) 2005 Sun Microsystems, Inc. All  Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
- * are met: 
- * 
- * - Redistribution of source code must retain the above copyright 
+ * are met:
+ *
+ * - Redistribution of source code must retain the above copyright
  *   notice, this  list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in 
+ *   notice, this list of conditions and the following disclaimer in
  *   the documentation and/or other materials provided with the
  *   distribution.
- * 
- * Neither the name of Sun Microsystems, Inc. or the names of 
- * contributors may be used to endorse or promote products derived 
+ *
+ * Neither the name of Sun Microsystems, Inc. or the names of
+ * contributors may be used to endorse or promote products derived
  * from this software without specific prior written permission.
- * 
- * This software is provided "AS IS," without a warranty of any 
- * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND 
- * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, 
+ *
+ * This software is provided "AS IS," without a warranty of any
+ * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND
+ * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY
- * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL 
- * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF 
+ * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL
+ * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF
  * USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS
- * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR 
+ * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR
  * ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL,
  * CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND
  * REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR
  * INABILITY TO USE THIS SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGES. 
- * 
- * You acknowledge that this software is not designed or intended for 
- * use in the design, construction, operation or maintenance of any 
- * nuclear facility. 
+ * POSSIBILITY OF SUCH DAMAGES.
+ *
+ * You acknowledge that this software is not designed or intended for
+ * use in the design, construction, operation or maintenance of any
+ * nuclear facility.
  *
  * $Revision: 1.2 $
  * $Date: 2006/04/26 21:39:46 $
@@ -77,34 +77,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A class representing the set of tags found in the baseline TIFF
- * specification as well as some common additional tags.
+ * A class representing the set of tags found in the baseline TIFF specification as well as some common additional tags.
  *
- * <p> The non-baseline tags included in this class are:
+ * <p>The non-baseline tags included in this class are:
+ *
  * <ul>
- * <li> {@link #TAG_JPEG_TABLES JPEGTables}
- * <li> {@link #TAG_ICC_PROFILE ICC&nbsp;Profile}
+ *   <li>{@link #TAG_JPEG_TABLES JPEGTables}
+ *   <li>{@link #TAG_ICC_PROFILE ICC&nbsp;Profile}
  * </ul>
- * </p>
  *
- * <p> The non-baseline values of baseline tags included in this class are
+ * <p>The non-baseline values of baseline tags included in this class are
  * <li>{@link #TAG_COMPRESSION Compression} tag values:
- * <ul>
- * <li>{@link #COMPRESSION_JPEG JPEG-in-TIFF&nbsp;compression}</li>
- * <li>{@link #COMPRESSION_ZLIB Zlib-in-TIFF&nbsp;compression}</li>
- * <li>{@link #COMPRESSION_DEFLATE Deflate&nbsp;compression}</li>
- * </ul>
- * </li>
- * <li>{@link #TAG_PHOTOMETRIC_INTERPRETATION PhotometricInterpretation}
- * tag values:
- * <ul>
- * <li>{@link #PHOTOMETRIC_INTERPRETATION_ICCLAB ICCLAB&nbsp;
- * photometric&nbsp;interpretation}</li>
- * </ul>
- * </li>
- * </p>
  *
- * @see <a href="http://partners.adobe.com/public/developer/en/tiff/TIFF6.pdf">  TIFF 6.0 Specification</a>
+ *     <ul>
+ *       <li>{@link #COMPRESSION_JPEG JPEG-in-TIFF&nbsp;compression}
+ *       <li>{@link #COMPRESSION_ZLIB Zlib-in-TIFF&nbsp;compression}
+ *       <li>{@link #COMPRESSION_DEFLATE Deflate&nbsp;compression}
+ *     </ul>
+ *
+ * <li>{@link #TAG_PHOTOMETRIC_INTERPRETATION PhotometricInterpretation} tag values:
+ *
+ *     <ul>
+ *       <li>{@link #PHOTOMETRIC_INTERPRETATION_ICCLAB ICCLAB&nbsp; photometric&nbsp;interpretation}
+ *     </ul>
+ *
+ * @see <a href="http://partners.adobe.com/public/developer/en/tiff/TIFF6.pdf">TIFF 6.0 Specification</a>
  */
 public class BaselineTIFFTagSet extends TIFFTagSet {
 
@@ -172,19 +169,13 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
      */
     public static final int SUBFILE_TYPE_SINGLE_PAGE = 3;
 
-    /**
-     * Constant specifying the "ImageWidth" tag.
-     */
+    /** Constant specifying the "ImageWidth" tag. */
     public static final int TAG_IMAGE_WIDTH = 256;
 
-    /**
-     * Constant specifying the "ImageLength" tag.
-     */
+    /** Constant specifying the "ImageLength" tag. */
     public static final int TAG_IMAGE_LENGTH = 257;
 
-    /**
-     * Constant specifying the "BitsPerSample" tag.
-     */
+    /** Constant specifying the "BitsPerSample" tag. */
     public static final int TAG_BITS_PER_SAMPLE = 258;
 
     /**
@@ -249,7 +240,8 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
      * A value to be used with the "Compression" tag.
      *
      * @see #TAG_COMPRESSION
-     * @see <a href="http://partners.adobe.com/public/developer/en/tiff/TIFFphotoshop.pdf">TIFF Specification Supplement 2</a>
+     * @see <a href="http://partners.adobe.com/public/developer/en/tiff/TIFFphotoshop.pdf">TIFF Specification Supplement
+     *     2</a>
      */
     public static final int COMPRESSION_JPEG = 7;
 
@@ -257,7 +249,8 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
      * A value to be used with the "Compression" tag.
      *
      * @see #TAG_COMPRESSION
-     * @see <a href="http://partners.adobe.com/public/developer/en/tiff/TIFFphotoshop.pdf"> TIFF Specification Supplement 2</a>
+     * @see <a href="http://partners.adobe.com/public/developer/en/tiff/TIFFphotoshop.pdf">TIFF Specification Supplement
+     *     2</a>
      */
     public static final int COMPRESSION_ZLIB = 8;
 
@@ -273,7 +266,8 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
      *
      * @see #TAG_COMPRESSION
      * @see <a href="http://www.isi.edu/in-notes/rfc1951.txt">DEFLATE specification</a>
-     * @see <a href="http://partners.adobe.com/public/developer/en/tiff/TIFFphotoshop.pdf"> TIFF Specification Supplement 2</a>
+     * @see <a href="http://partners.adobe.com/public/developer/en/tiff/TIFFphotoshop.pdf">TIFF Specification Supplement
+     *     2</a>
      */
     public static final int COMPRESSION_DEFLATE = 32946;
 
@@ -289,7 +283,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
      * @see #PHOTOMETRIC_INTERPRETATION_CIELAB
      * @see #PHOTOMETRIC_INTERPRETATION_ICCLAB
      */
-    public static final int TAG_PHOTOMETRIC_INTERPRETATION = 262; 
+    public static final int TAG_PHOTOMETRIC_INTERPRETATION = 262;
 
     /**
      * A value to be used with the "PhotometricInterpretation" tag.
@@ -385,14 +379,10 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
      */
     public static final int THRESHHOLDING_RANDOMIZED_DITHER = 3;
 
-    /**
-     * Constant specifying the "Cell_Width" tag.
-     */
+    /** Constant specifying the "Cell_Width" tag. */
     public static final int TAG_CELL_WIDTH = 264;
 
-    /**
-     * Constant specifying the "cell_length" tag.
-     */
+    /** Constant specifying the "cell_length" tag. */
     public static final int TAG_CELL_LENGTH = 265;
 
     /**
@@ -417,29 +407,19 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
      */
     public static final int FILL_ORDER_RIGHT_TO_LEFT = 2;
 
-    /**
-     * Constant specifying the "document_name" tag.
-     */
+    /** Constant specifying the "document_name" tag. */
     public static final int TAG_DOCUMENT_NAME = 269;
 
-    /**
-     * Constant specifying the "Image_description" tag.
-     */
+    /** Constant specifying the "Image_description" tag. */
     public static final int TAG_IMAGE_DESCRIPTION = 270;
 
-    /**
-     * Constant specifying the "Make" tag.
-     */
+    /** Constant specifying the "Make" tag. */
     public static final int TAG_MAKE = 271;
 
-    /**
-     * Constant specifying the "Model" tag.
-     */
+    /** Constant specifying the "Model" tag. */
     public static final int TAG_MODEL = 272;
- 
-    /**
-     * Constant specifying the "Strip_offsets" tag.
-     */
+
+    /** Constant specifying the "Strip_offsets" tag. */
     public static final int TAG_STRIP_OFFSETS = 273;
 
     /**
@@ -512,39 +492,25 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
      */
     public static final int ORIENTATION_ROW_0_LEFT_COLUMN_0_BOTTOM = 8;
 
-    /**
-     * Constant specifying the "Samples_per_pixel" tag.
-     */
+    /** Constant specifying the "Samples_per_pixel" tag. */
     public static final int TAG_SAMPLES_PER_PIXEL = 277;
-    
-    /**
-     * Constant specifying the "Rows_per_strip" tag.
-     */
+
+    /** Constant specifying the "Rows_per_strip" tag. */
     public static final int TAG_ROWS_PER_STRIP = 278;
-    
-    /**
-     * Constant specifying the "Strip_byte_counts" tag.
-     */
+
+    /** Constant specifying the "Strip_byte_counts" tag. */
     public static final int TAG_STRIP_BYTE_COUNTS = 279;
-    
-    /**
-     * Constant specifying the "Min_sample_value" tag.
-     */
+
+    /** Constant specifying the "Min_sample_value" tag. */
     public static final int TAG_MIN_SAMPLE_VALUE = 280;
-    
-    /**
-     * Constant specifying the "Max_sample_value" tag.
-     */
+
+    /** Constant specifying the "Max_sample_value" tag. */
     public static final int TAG_MAX_SAMPLE_VALUE = 281;
-    
-    /**
-     * Constant specifying the "XResolution" tag.
-     */
+
+    /** Constant specifying the "XResolution" tag. */
     public static final int TAG_X_RESOLUTION = 282;
-    
-    /**
-     * Constant specifying the "YResolution" tag.
-     */
+
+    /** Constant specifying the "YResolution" tag. */
     public static final int TAG_Y_RESOLUTION = 283;
 
     /**
@@ -568,30 +534,20 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
      * @see #TAG_PLANAR_CONFIGURATION
      */
     public static final int PLANAR_CONFIGURATION_PLANAR = 2;
-    
-    /**
-     * Constant specifying the "PageName" tag.
-     */
+
+    /** Constant specifying the "PageName" tag. */
     public static final int TAG_PAGE_NAME = 285;
-    
-    /**
-     * Constant specifying the "XPosition" tag.
-     */
+
+    /** Constant specifying the "XPosition" tag. */
     public static final int TAG_X_POSITION = 286;
-    
-    /**
-     * Constant specifying the "YPosition" tag.
-     */
+
+    /** Constant specifying the "YPosition" tag. */
     public static final int TAG_Y_POSITION = 287;
-    
-    /**
-     * Constant specifying the "FreeOffsets" tag.
-     */
+
+    /** Constant specifying the "FreeOffsets" tag. */
     public static final int TAG_FREE_OFFSETS = 288;
-    
-    /**
-     * Constant specifying the "FreeByteCounts" tag.
-     */
+
+    /** Constant specifying the "FreeByteCounts" tag. */
     public static final int TAG_FREE_BYTE_COUNTS = 289;
 
     /**
@@ -639,12 +595,10 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
      * @see #TAG_GRAY_RESPONSE_UNIT
      */
     public static final int GRAY_RESPONSE_UNIT_HUNDRED_THOUSANDTHS = 5;
-    
-    /**
-     * Constant specifying the "GrayResponseCurve" tag.
-     */
+
+    /** Constant specifying the "GrayResponseCurve" tag. */
     public static final int TAG_GRAY_RESPONSE_CURVE = 291;
-    
+
     /**
      * Constant specifying the "T4Options" tag.
      *
@@ -674,7 +628,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
      * @see #TAG_T4_OPTIONS
      */
     public static final int T4_OPTIONS_EOL_BYTE_ALIGNED = 4;
-    
+
     /**
      * Constant specifying the "T6Options" tag.
      *
@@ -719,35 +673,22 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
      */
     public static final int RESOLUTION_UNIT_CENTIMETER = 3;
 
-    
-    /**
-     * Constant specifying the "PageNumber" tag.
-     */
+    /** Constant specifying the "PageNumber" tag. */
     public static final int TAG_PAGE_NUMBER = 297;
-    
-    /**
-     * Constant specifying the "TransferFunction" tag.
-     */
+
+    /** Constant specifying the "TransferFunction" tag. */
     public static final int TAG_TRANSFER_FUNCTION = 301;
-    
-    /**
-     * Constant specifying the "Software" tag.
-     */
+
+    /** Constant specifying the "Software" tag. */
     public static final int TAG_SOFTWARE = 305;
-    
-    /**
-     * Constant specifying the "DateTime" tag.
-     */
+
+    /** Constant specifying the "DateTime" tag. */
     public static final int TAG_DATE_TIME = 306;
-    
-    /**
-     * Constant specifying the "Artist" tag.
-     */
+
+    /** Constant specifying the "Artist" tag. */
     public static final int TAG_ARTIST = 315;
-    
-    /**
-     * Constant specifying the "HostComputer" tag.
-     */
+
+    /** Constant specifying the "HostComputer" tag. */
     public static final int TAG_HOST_COMPUTER = 316;
 
     /**
@@ -785,44 +726,28 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
      */
     public static final int PREDICTOR_FLOATING_POINT = 3;
 
-    /**
-     * Constant specifying the "WhitePoint" tag.
-     */
+    /** Constant specifying the "WhitePoint" tag. */
     public static final int TAG_WHITE_POINT = 318;
-    
-    /**
-     * Constant specifying the "PrimaryChromaticites" tag.
-     */
+
+    /** Constant specifying the "PrimaryChromaticites" tag. */
     public static final int TAG_PRIMARY_CHROMATICITES = 319;
-    
-    /**
-     * Constant specifying the "ColorMap" tag.
-     */
+
+    /** Constant specifying the "ColorMap" tag. */
     public static final int TAG_COLOR_MAP = 320;
-    
-    /**
-     * Constant specifying the "HalftoneHints" tag.
-     */
+
+    /** Constant specifying the "HalftoneHints" tag. */
     public static final int TAG_HALFTONE_HINTS = 321;
-    
-    /**
-     * Constant specifying the "TileWidth" tag.
-     */
+
+    /** Constant specifying the "TileWidth" tag. */
     public static final int TAG_TILE_WIDTH = 322;
-    
-    /**
-     * Constant specifying the "TileLength" tag.
-     */
+
+    /** Constant specifying the "TileLength" tag. */
     public static final int TAG_TILE_LENGTH = 323;
-    
-    /**
-     * Constant specifying the "TileOffsets" tag.
-     */
+
+    /** Constant specifying the "TileOffsets" tag. */
     public static final int TAG_TILE_OFFSETS = 324;
-    
-    /**
-     * Constant specifying the "TileByteCounts" tag.
-     */
+
+    /** Constant specifying the "TileByteCounts" tag. */
     public static final int TAG_TILE_BYTE_COUNTS = 325;
 
     /**
@@ -847,24 +772,16 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
      */
     public static final int INK_SET_NOT_CMYK = 2;
 
-    /**
-     * Constant specifying the "InkNames" tag.
-     */
+    /** Constant specifying the "InkNames" tag. */
     public static final int TAG_INK_NAMES = 333;
-    
-    /**
-     * Constant specifying the "NumberOfInks" tag.
-     */
+
+    /** Constant specifying the "NumberOfInks" tag. */
     public static final int TAG_NUMBER_OF_INKS = 334;
-    
-    /**
-     * Constant specifying the "DotRange" tag.
-     */
+
+    /** Constant specifying the "DotRange" tag. */
     public static final int TAG_DOT_RANGE = 336;
-    
-    /**
-     * Constant specifying the "TargetPrinter" tag.
-     */
+
+    /** Constant specifying the "TargetPrinter" tag. */
     public static final int TAG_TARGET_PRINTER = 337;
 
     /**
@@ -934,35 +851,28 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
      * @see #TAG_SAMPLE_FORMAT
      */
     public static final int SAMPLE_FORMAT_UNDEFINED = 4;
-    
-    /**
-     * Constant specifying the "SMinSampleValue" tag.
-     */
+
+    /** Constant specifying the "SMinSampleValue" tag. */
     public static final int TAG_S_MIN_SAMPLE_VALUE = 340;
-    
-    /**
-     * Constant specifying the "SMaxSampleValue" tag.
-     */
+
+    /** Constant specifying the "SMaxSampleValue" tag. */
     public static final int TAG_S_MAX_SAMPLE_VALUE = 341;
-    
-    /**
-     * Constant specifying the "TransferRange" tag.
-     */
+
+    /** Constant specifying the "TransferRange" tag. */
     public static final int TAG_TRANSFER_RANGE = 342;
 
     /**
      * Constant specifying the "JPEGTables" tag.
      *
-     * @see <a href="http://partners.adobe.com/public/developer/en/tiff/TIFFphotoshop.pdf">TIFF Specification Supplement 2</a>
+     * @see <a href="http://partners.adobe.com/public/developer/en/tiff/TIFFphotoshop.pdf">TIFF Specification Supplement
+     *     2</a>
      * @see <a href="ftp://ftp.sgi.com/graphics/tiff/TTN2.draft.txt">JPEG-in-TIFF compression</a>
      */
     public static final int TAG_JPEG_TABLES = 347;
 
-    /**
-     * Constant specifying the "JPEGProc" tag.
-     */
+    /** Constant specifying the "JPEGProc" tag. */
     public static final int TAG_JPEG_PROC = 512;
-    
+
     /**
      * A value to be used with the "JPEGProc" tag.
      *
@@ -977,54 +887,34 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
      */
     public static final int JPEG_PROC_LOSSLESS = 14;
 
-    /**
-     * Constant specifying the "JPEGInterchangeFormat" tag.
-     */
+    /** Constant specifying the "JPEGInterchangeFormat" tag. */
     public static final int TAG_JPEG_INTERCHANGE_FORMAT = 513;
-    
-    /**
-     * Constant specifying the "JPEGInterchangeFormatLength" tag.
-     */
+
+    /** Constant specifying the "JPEGInterchangeFormatLength" tag. */
     public static final int TAG_JPEG_INTERCHANGE_FORMAT_LENGTH = 514;
-    
-    /**
-     * Constant specifying the "JPEGRestartInterval" tag.
-     */
+
+    /** Constant specifying the "JPEGRestartInterval" tag. */
     public static final int TAG_JPEG_RESTART_INTERVAL = 515;
-    
-    /**
-     * Constant specifying the "JPEGLosslessPredictors" tag.
-     */
+
+    /** Constant specifying the "JPEGLosslessPredictors" tag. */
     public static final int TAG_JPEG_LOSSLESS_PREDICTORS = 517;
-    
-    /**
-     * Constant specifying the "JPEGPointTransforms" tag.
-     */
+
+    /** Constant specifying the "JPEGPointTransforms" tag. */
     public static final int TAG_JPEG_POINT_TRANSFORMS = 518;
-    
-    /**
-     * Constant specifying the "JPEGQTables" tag.
-     */
+
+    /** Constant specifying the "JPEGQTables" tag. */
     public static final int TAG_JPEG_Q_TABLES = 519;
-    
-    /**
-     * Constant specifying the "JPEGDCTables" tag.
-     */
+
+    /** Constant specifying the "JPEGDCTables" tag. */
     public static final int TAG_JPEG_DC_TABLES = 520;
-    
-    /**
-     * Constant specifying the "JPEGACTables" tag.
-     */
+
+    /** Constant specifying the "JPEGACTables" tag. */
     public static final int TAG_JPEG_AC_TABLES = 521;
-    
-    /**
-     * Constant specifying the "YCbCrCoefficients" tag.
-     */
+
+    /** Constant specifying the "YCbCrCoefficients" tag. */
     public static final int TAG_Y_CB_CR_COEFFICIENTS = 529;
-    
-    /**
-     * Constant specifying the "YCbCrSubsampling" tag.
-     */
+
+    /** Constant specifying the "YCbCrSubsampling" tag. */
     public static final int TAG_Y_CB_CR_SUBSAMPLING = 530;
 
     /**
@@ -1049,26 +939,23 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
      */
     public static final int Y_CB_CR_POSITIONING_COSITED = 2;
 
-    /**
-     * Constant specifying the "ReferenceBlackWhite" tag.
-     */
+    /** Constant specifying the "ReferenceBlackWhite" tag. */
     public static final int TAG_REFERENCE_BLACK_WHITE = 532;
-    
-    /**
-     * Constant specifying the "Copyright" tag.
-     */
+
+    /** Constant specifying the "Copyright" tag. */
     public static final int TAG_COPYRIGHT = 33432;
 
     // Common non-baseline tags
 
     // ICC profiles (Spec ICC 1:2001-04, Appendix B)
-    
+
     // 34675 - Embedded ICC Profile               (UNDEFINED/any)
-    
+
     /**
      * Constant specifying the "ICC Profile" tag.
      *
-     * @see <a href="http://www.color.org/ICC1V42.pdf">ICC Specification, section B.4: Embedding ICC profiles in TIFF files</a>
+     * @see <a href="http://www.color.org/ICC1V42.pdf">ICC Specification, section B.4: Embedding ICC profiles in TIFF
+     *     files</a>
      */
     public static final int TAG_ICC_PROFILE = 34675;
 
@@ -1077,9 +964,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class Artist extends TIFFTag {
 
         public Artist() {
-            super("Artist",
-                  TAG_ARTIST,
-                  1 << TIFF_ASCII);
+            super("Artist", TAG_ARTIST, 1 << TIFF_ASCII);
         }
     }
 
@@ -1088,9 +973,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class BitsPerSample extends TIFFTag {
 
         public BitsPerSample() {
-            super("BitsPerSample",
-                  TAG_BITS_PER_SAMPLE,
-                  1 << TIFF_SHORT);
+            super("BitsPerSample", TAG_BITS_PER_SAMPLE, 1 << TIFF_SHORT);
         }
     }
 
@@ -1099,9 +982,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class CellLength extends TIFFTag {
 
         public CellLength() {
-            super("CellLength",
-                  TAG_CELL_LENGTH,
-                  1 << TIFF_SHORT);
+            super("CellLength", TAG_CELL_LENGTH, 1 << TIFF_SHORT);
         }
     }
 
@@ -1110,9 +991,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class CellWidth extends TIFFTag {
 
         public CellWidth() {
-            super("CellWidth",
-                  TAG_CELL_WIDTH,
-                  1 << TIFF_SHORT);
+            super("CellWidth", TAG_CELL_WIDTH, 1 << TIFF_SHORT);
         }
     }
 
@@ -1121,9 +1000,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class ColorMap extends TIFFTag {
 
         public ColorMap() {
-            super("ColorMap",
-                  TAG_COLOR_MAP,
-                  1 << TIFF_SHORT);
+            super("ColorMap", TAG_COLOR_MAP, 1 << TIFF_SHORT);
         }
     }
 
@@ -1132,9 +1009,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class Compression extends TIFFTag {
 
         public Compression() {
-            super("Compression",
-                  TAG_COMPRESSION,
-                  1 << TIFF_SHORT);
+            super("Compression", TAG_COMPRESSION, 1 << TIFF_SHORT);
 
             addValueName(COMPRESSION_NONE, "Uncompressed");
             addValueName(COMPRESSION_CCITT_RLE, "CCITT RLE");
@@ -1161,9 +1036,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class Copyright extends TIFFTag {
 
         public Copyright() {
-            super("Copyright",
-                  TAG_COPYRIGHT,
-                  1 << TIFF_ASCII);
+            super("Copyright", TAG_COPYRIGHT, 1 << TIFF_ASCII);
         }
     }
 
@@ -1172,9 +1045,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class DateTime extends TIFFTag {
 
         public DateTime() {
-            super("DateTime",
-                  TAG_DATE_TIME,
-                  1 << TIFF_ASCII);
+            super("DateTime", TAG_DATE_TIME, 1 << TIFF_ASCII);
         }
     }
 
@@ -1183,9 +1054,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class DocumentName extends TIFFTag {
 
         public DocumentName() {
-            super("DocumentName",
-                  TAG_DOCUMENT_NAME,
-                  1 << TIFF_ASCII);
+            super("DocumentName", TAG_DOCUMENT_NAME, 1 << TIFF_ASCII);
         }
     }
 
@@ -1194,10 +1063,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class DotRange extends TIFFTag {
 
         public DotRange() {
-            super("DotRange",
-                  TAG_DOT_RANGE,
-                  (1 << TIFF_BYTE) |
-                  (1 << TIFF_SHORT));
+            super("DotRange", TAG_DOT_RANGE, (1 << TIFF_BYTE) | (1 << TIFF_SHORT));
         }
     }
 
@@ -1206,16 +1072,11 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class ExtraSamples extends TIFFTag {
 
         public ExtraSamples() {
-            super("ExtraSamples",
-                  TAG_EXTRA_SAMPLES,
-                  1 << TIFF_SHORT);
+            super("ExtraSamples", TAG_EXTRA_SAMPLES, 1 << TIFF_SHORT);
 
-            addValueName(EXTRA_SAMPLES_UNSPECIFIED,
-                         "Unspecified");
-            addValueName(EXTRA_SAMPLES_ASSOCIATED_ALPHA,
-                         "Associated Alpha");
-            addValueName(EXTRA_SAMPLES_UNASSOCIATED_ALPHA,
-                         "Unassociated Alpha");
+            addValueName(EXTRA_SAMPLES_UNSPECIFIED, "Unspecified");
+            addValueName(EXTRA_SAMPLES_ASSOCIATED_ALPHA, "Associated Alpha");
+            addValueName(EXTRA_SAMPLES_UNASSOCIATED_ALPHA, "Unassociated Alpha");
         }
     }
 
@@ -1224,9 +1085,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class FillOrder extends TIFFTag {
 
         public FillOrder() {
-            super("FillOrder",
-                  TAG_FILL_ORDER,
-                  1 << TIFF_SHORT);
+            super("FillOrder", TAG_FILL_ORDER, 1 << TIFF_SHORT);
 
             addValueName(FILL_ORDER_LEFT_TO_RIGHT, "LeftToRight");
             addValueName(FILL_ORDER_RIGHT_TO_LEFT, "RightToLeft");
@@ -1238,9 +1097,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class FreeByteCounts extends TIFFTag {
 
         public FreeByteCounts() {
-            super("FreeByteCounts",
-                  TAG_FREE_BYTE_COUNTS,
-                  1 << TIFF_LONG);
+            super("FreeByteCounts", TAG_FREE_BYTE_COUNTS, 1 << TIFF_LONG);
         }
     }
 
@@ -1249,9 +1106,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class FreeOffsets extends TIFFTag {
 
         public FreeOffsets() {
-            super("FreeOffsets",
-                  TAG_FREE_OFFSETS,
-                  1 << TIFF_LONG);
+            super("FreeOffsets", TAG_FREE_OFFSETS, 1 << TIFF_LONG);
         }
     }
 
@@ -1260,9 +1115,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class GrayResponseCurve extends TIFFTag {
 
         public GrayResponseCurve() {
-            super("GrayResponseCurve",
-                  TAG_GRAY_RESPONSE_CURVE,
-                  1 << TIFF_SHORT);
+            super("GrayResponseCurve", TAG_GRAY_RESPONSE_CURVE, 1 << TIFF_SHORT);
         }
     }
 
@@ -1271,20 +1124,13 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class GrayResponseUnit extends TIFFTag {
 
         public GrayResponseUnit() {
-            super("GrayResponseUnit",
-                  TAG_GRAY_RESPONSE_UNIT,
-                  1 << TIFF_SHORT);
+            super("GrayResponseUnit", TAG_GRAY_RESPONSE_UNIT, 1 << TIFF_SHORT);
 
-            addValueName(GRAY_RESPONSE_UNIT_TENTHS,
-                         "Tenths");
-            addValueName(GRAY_RESPONSE_UNIT_HUNDREDTHS,
-                         "Hundredths");
-            addValueName(GRAY_RESPONSE_UNIT_THOUSANDTHS,
-                         "Thousandths");
-            addValueName(GRAY_RESPONSE_UNIT_TEN_THOUSANDTHS,
-                         "Ten-Thousandths");
-            addValueName(GRAY_RESPONSE_UNIT_HUNDRED_THOUSANDTHS,
-                         "Hundred-Thousandths");
+            addValueName(GRAY_RESPONSE_UNIT_TENTHS, "Tenths");
+            addValueName(GRAY_RESPONSE_UNIT_HUNDREDTHS, "Hundredths");
+            addValueName(GRAY_RESPONSE_UNIT_THOUSANDTHS, "Thousandths");
+            addValueName(GRAY_RESPONSE_UNIT_TEN_THOUSANDTHS, "Ten-Thousandths");
+            addValueName(GRAY_RESPONSE_UNIT_HUNDRED_THOUSANDTHS, "Hundred-Thousandths");
         }
     }
 
@@ -1293,9 +1139,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class HalftoneHints extends TIFFTag {
 
         public HalftoneHints() {
-            super("HalftoneHints",
-                  TAG_HALFTONE_HINTS,
-                  1 << TIFF_SHORT);
+            super("HalftoneHints", TAG_HALFTONE_HINTS, 1 << TIFF_SHORT);
         }
     }
 
@@ -1304,9 +1148,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class HostComputer extends TIFFTag {
 
         public HostComputer() {
-            super("HostComputer",
-                  TAG_HOST_COMPUTER,
-                  1 << TIFF_ASCII);
+            super("HostComputer", TAG_HOST_COMPUTER, 1 << TIFF_ASCII);
         }
     }
 
@@ -1315,9 +1157,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class ImageDescription extends TIFFTag {
 
         public ImageDescription() {
-            super("ImageDescription",
-                  TAG_IMAGE_DESCRIPTION,
-                  1 << TIFF_ASCII);
+            super("ImageDescription", TAG_IMAGE_DESCRIPTION, 1 << TIFF_ASCII);
         }
     }
 
@@ -1326,10 +1166,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class ImageLength extends TIFFTag {
 
         public ImageLength() {
-            super("ImageLength",
-                  TAG_IMAGE_LENGTH,
-                  (1 << TIFF_SHORT) |
-                  (1 << TIFF_LONG));
+            super("ImageLength", TAG_IMAGE_LENGTH, (1 << TIFF_SHORT) | (1 << TIFF_LONG));
         }
     }
 
@@ -1338,10 +1175,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class ImageWidth extends TIFFTag {
 
         public ImageWidth() {
-            super("ImageWidth",
-                  TAG_IMAGE_WIDTH,
-                  (1 << TIFF_SHORT) |
-                  (1 << TIFF_LONG));
+            super("ImageWidth", TAG_IMAGE_WIDTH, (1 << TIFF_SHORT) | (1 << TIFF_LONG));
         }
     }
 
@@ -1350,9 +1184,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class InkNames extends TIFFTag {
 
         public InkNames() {
-            super("InkNames",
-                  TAG_INK_NAMES,
-                  1 << TIFF_ASCII);
+            super("InkNames", TAG_INK_NAMES, 1 << TIFF_ASCII);
         }
     }
 
@@ -1361,9 +1193,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class InkSet extends TIFFTag {
 
         public InkSet() {
-            super("InkSet",
-                  TAG_INK_SET,
-                  1 << TIFF_SHORT);
+            super("InkSet", TAG_INK_SET, 1 << TIFF_SHORT);
 
             addValueName(INK_SET_CMYK, "CMYK");
             addValueName(INK_SET_NOT_CMYK, "Not CMYK");
@@ -1375,9 +1205,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class JPEGTables extends TIFFTag {
 
         public JPEGTables() {
-            super("JPEGTables",
-                  TAG_JPEG_TABLES,
-                  1 << TIFF_UNDEFINED);
+            super("JPEGTables", TAG_JPEG_TABLES, 1 << TIFF_UNDEFINED);
         }
     }
 
@@ -1386,9 +1214,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class JPEGACTables extends TIFFTag {
 
         public JPEGACTables() {
-            super("JPEGACTables",
-                  TAG_JPEG_AC_TABLES,
-                  1 << TIFF_LONG);
+            super("JPEGACTables", TAG_JPEG_AC_TABLES, 1 << TIFF_LONG);
         }
     }
 
@@ -1397,9 +1223,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class JPEGDCTables extends TIFFTag {
 
         public JPEGDCTables() {
-            super("JPEGDCTables",
-                  TAG_JPEG_DC_TABLES,
-                  1 << TIFF_LONG);
+            super("JPEGDCTables", TAG_JPEG_DC_TABLES, 1 << TIFF_LONG);
         }
     }
 
@@ -1408,9 +1232,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class JPEGInterchangeFormat extends TIFFTag {
 
         public JPEGInterchangeFormat() {
-            super("JPEGInterchangeFormat",
-                  TAG_JPEG_INTERCHANGE_FORMAT,
-                  1 << TIFF_LONG);
+            super("JPEGInterchangeFormat", TAG_JPEG_INTERCHANGE_FORMAT, 1 << TIFF_LONG);
         }
     }
 
@@ -1419,9 +1241,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class JPEGInterchangeFormatLength extends TIFFTag {
 
         public JPEGInterchangeFormatLength() {
-            super("JPEGInterchangeFormatLength",
-                  TAG_JPEG_INTERCHANGE_FORMAT_LENGTH,
-                  1 << TIFF_LONG);
+            super("JPEGInterchangeFormatLength", TAG_JPEG_INTERCHANGE_FORMAT_LENGTH, 1 << TIFF_LONG);
         }
     }
 
@@ -1430,9 +1250,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class JPEGLosslessPredictors extends TIFFTag {
 
         public JPEGLosslessPredictors() {
-            super("JPEGLosslessPredictors",
-                  TAG_JPEG_LOSSLESS_PREDICTORS,
-                  1 << TIFF_SHORT);
+            super("JPEGLosslessPredictors", TAG_JPEG_LOSSLESS_PREDICTORS, 1 << TIFF_SHORT);
 
             addValueName(1, "A");
             addValueName(2, "B");
@@ -1449,9 +1267,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class JPEGPointTransforms extends TIFFTag {
 
         public JPEGPointTransforms() {
-            super("JPEGPointTransforms",
-                  TAG_JPEG_POINT_TRANSFORMS,
-                  1 << TIFF_SHORT);
+            super("JPEGPointTransforms", TAG_JPEG_POINT_TRANSFORMS, 1 << TIFF_SHORT);
         }
     }
 
@@ -1460,13 +1276,10 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class JPEGProc extends TIFFTag {
 
         public JPEGProc() {
-            super("JPEGProc",
-                  TAG_JPEG_PROC,
-                  1 << TIFF_SHORT);
+            super("JPEGProc", TAG_JPEG_PROC, 1 << TIFF_SHORT);
 
             addValueName(JPEG_PROC_BASELINE, "Baseline sequential process");
-            addValueName(JPEG_PROC_LOSSLESS,
-                         "Lossless process with Huffman coding");
+            addValueName(JPEG_PROC_LOSSLESS, "Lossless process with Huffman coding");
         }
     }
 
@@ -1475,9 +1288,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class JPEGQTables extends TIFFTag {
 
         public JPEGQTables() {
-            super("JPEGQTables",
-                  TAG_JPEG_Q_TABLES,
-                  1 << TIFF_LONG);
+            super("JPEGQTables", TAG_JPEG_Q_TABLES, 1 << TIFF_LONG);
         }
     }
 
@@ -1486,9 +1297,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class JPEGRestartInterval extends TIFFTag {
 
         public JPEGRestartInterval() {
-            super("JPEGRestartInterval",
-                  TAG_JPEG_RESTART_INTERVAL,
-                  1 << TIFF_SHORT);
+            super("JPEGRestartInterval", TAG_JPEG_RESTART_INTERVAL, 1 << TIFF_SHORT);
         }
     }
 
@@ -1497,9 +1306,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class Make extends TIFFTag {
 
         public Make() {
-            super("Make",
-                  TAG_MAKE,
-                  1 << TIFF_ASCII);
+            super("Make", TAG_MAKE, 1 << TIFF_ASCII);
         }
     }
 
@@ -1508,9 +1315,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class MaxSampleValue extends TIFFTag {
 
         public MaxSampleValue() {
-            super("MaxSampleValue",
-                  TAG_MAX_SAMPLE_VALUE,
-                  1 << TIFF_SHORT);
+            super("MaxSampleValue", TAG_MAX_SAMPLE_VALUE, 1 << TIFF_SHORT);
         }
     }
 
@@ -1519,9 +1324,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class MinSampleValue extends TIFFTag {
 
         public MinSampleValue() {
-            super("MinSampleValue",
-                  TAG_MIN_SAMPLE_VALUE,
-                  1 << TIFF_SHORT);
+            super("MinSampleValue", TAG_MIN_SAMPLE_VALUE, 1 << TIFF_SHORT);
         }
     }
 
@@ -1530,9 +1333,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class Model extends TIFFTag {
 
         public Model() {
-            super("Model",
-                  TAG_MODEL,
-                  1 << TIFF_ASCII);
+            super("Model", TAG_MODEL, 1 << TIFF_ASCII);
         }
     }
 
@@ -1541,31 +1342,21 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class NewSubfileType extends TIFFTag {
 
         public NewSubfileType() {
-            super("NewSubfileType",
-                  TAG_NEW_SUBFILE_TYPE,
-                  1 << TIFF_LONG);
+            super("NewSubfileType", TAG_NEW_SUBFILE_TYPE, 1 << TIFF_LONG);
 
-            addValueName(0,
-                         "Default");
-            addValueName(NEW_SUBFILE_TYPE_REDUCED_RESOLUTION,
-                         "ReducedResolution");
-            addValueName(NEW_SUBFILE_TYPE_SINGLE_PAGE,
-                         "SinglePage");
-            addValueName(NEW_SUBFILE_TYPE_SINGLE_PAGE |
-                         NEW_SUBFILE_TYPE_REDUCED_RESOLUTION,
-                         "SinglePage+ReducedResolution");
-            addValueName(NEW_SUBFILE_TYPE_TRANSPARENCY,
-                         "Transparency");
-            addValueName(NEW_SUBFILE_TYPE_TRANSPARENCY |
-                         NEW_SUBFILE_TYPE_REDUCED_RESOLUTION,
-                         "Transparency+ReducedResolution");
-            addValueName(NEW_SUBFILE_TYPE_TRANSPARENCY |
-                         NEW_SUBFILE_TYPE_SINGLE_PAGE,
-                         "Transparency+SinglePage");
-            addValueName(NEW_SUBFILE_TYPE_TRANSPARENCY |
-                         NEW_SUBFILE_TYPE_SINGLE_PAGE |
-                         NEW_SUBFILE_TYPE_REDUCED_RESOLUTION,
-                         "Transparency+SinglePage+ReducedResolution");
+            addValueName(0, "Default");
+            addValueName(NEW_SUBFILE_TYPE_REDUCED_RESOLUTION, "ReducedResolution");
+            addValueName(NEW_SUBFILE_TYPE_SINGLE_PAGE, "SinglePage");
+            addValueName(
+                    NEW_SUBFILE_TYPE_SINGLE_PAGE | NEW_SUBFILE_TYPE_REDUCED_RESOLUTION, "SinglePage+ReducedResolution");
+            addValueName(NEW_SUBFILE_TYPE_TRANSPARENCY, "Transparency");
+            addValueName(
+                    NEW_SUBFILE_TYPE_TRANSPARENCY | NEW_SUBFILE_TYPE_REDUCED_RESOLUTION,
+                    "Transparency+ReducedResolution");
+            addValueName(NEW_SUBFILE_TYPE_TRANSPARENCY | NEW_SUBFILE_TYPE_SINGLE_PAGE, "Transparency+SinglePage");
+            addValueName(
+                    NEW_SUBFILE_TYPE_TRANSPARENCY | NEW_SUBFILE_TYPE_SINGLE_PAGE | NEW_SUBFILE_TYPE_REDUCED_RESOLUTION,
+                    "Transparency+SinglePage+ReducedResolution");
         }
     }
 
@@ -1574,9 +1365,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class NumberOfInks extends TIFFTag {
 
         public NumberOfInks() {
-            super("NumberOfInks",
-                  TAG_NUMBER_OF_INKS,
-                  1 << TIFF_SHORT);
+            super("NumberOfInks", TAG_NUMBER_OF_INKS, 1 << TIFF_SHORT);
         }
     }
 
@@ -1585,24 +1374,15 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class Orientation extends TIFFTag {
 
         public Orientation() {
-            super("Orientation",
-                  TAG_ORIENTATION,
-                  1 << TIFF_SHORT);
+            super("Orientation", TAG_ORIENTATION, 1 << TIFF_SHORT);
 
-            addValueName(ORIENTATION_ROW_0_TOP_COLUMN_0_LEFT,
-                         "Row 0=Top, Column 0=Left");
-            addValueName(ORIENTATION_ROW_0_TOP_COLUMN_0_RIGHT,
-                         "Row 0=Top, Column 0=Right");
-            addValueName(ORIENTATION_ROW_0_BOTTOM_COLUMN_0_RIGHT,
-                         "Row 0=Bottom, Column 0=Right");
-            addValueName(ORIENTATION_ROW_0_BOTTOM_COLUMN_0_LEFT,
-                         "Row 0=Bottom, Column 0=Left");
-            addValueName(ORIENTATION_ROW_0_LEFT_COLUMN_0_TOP,
-                         "Row 0=Left, Column 0=Top");
-            addValueName(ORIENTATION_ROW_0_RIGHT_COLUMN_0_TOP,
-                         "Row 0=Right, Column 0=Top");
-            addValueName(ORIENTATION_ROW_0_RIGHT_COLUMN_0_BOTTOM,
-                         "Row 0=Right, Column 0=Bottom");
+            addValueName(ORIENTATION_ROW_0_TOP_COLUMN_0_LEFT, "Row 0=Top, Column 0=Left");
+            addValueName(ORIENTATION_ROW_0_TOP_COLUMN_0_RIGHT, "Row 0=Top, Column 0=Right");
+            addValueName(ORIENTATION_ROW_0_BOTTOM_COLUMN_0_RIGHT, "Row 0=Bottom, Column 0=Right");
+            addValueName(ORIENTATION_ROW_0_BOTTOM_COLUMN_0_LEFT, "Row 0=Bottom, Column 0=Left");
+            addValueName(ORIENTATION_ROW_0_LEFT_COLUMN_0_TOP, "Row 0=Left, Column 0=Top");
+            addValueName(ORIENTATION_ROW_0_RIGHT_COLUMN_0_TOP, "Row 0=Right, Column 0=Top");
+            addValueName(ORIENTATION_ROW_0_RIGHT_COLUMN_0_BOTTOM, "Row 0=Right, Column 0=Bottom");
         }
     }
 
@@ -1611,9 +1391,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class PageName extends TIFFTag {
 
         public PageName() {
-            super("PageName",
-                  TAG_PAGE_NAME,
-                  1 << TIFF_ASCII);
+            super("PageName", TAG_PAGE_NAME, 1 << TIFF_ASCII);
         }
     }
 
@@ -1622,9 +1400,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class PageNumber extends TIFFTag {
 
         public PageNumber() {
-            super("PageNumber",
-                  TAG_PAGE_NUMBER,
-                  1 << TIFF_SHORT);
+            super("PageNumber", TAG_PAGE_NUMBER, 1 << TIFF_SHORT);
         }
     }
 
@@ -1633,28 +1409,17 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class PhotometricInterpretation extends TIFFTag {
 
         public PhotometricInterpretation() {
-            super("PhotometricInterpretation",
-                  TAG_PHOTOMETRIC_INTERPRETATION,
-                  1 << TIFF_SHORT);
+            super("PhotometricInterpretation", TAG_PHOTOMETRIC_INTERPRETATION, 1 << TIFF_SHORT);
 
-            addValueName(PHOTOMETRIC_INTERPRETATION_WHITE_IS_ZERO,
-                         "WhiteIsZero");
-            addValueName(PHOTOMETRIC_INTERPRETATION_BLACK_IS_ZERO,
-                         "BlackIsZero");
-            addValueName(PHOTOMETRIC_INTERPRETATION_RGB,
-                         "RGB");
-            addValueName(PHOTOMETRIC_INTERPRETATION_PALETTE_COLOR,
-                         "Palette Color");
-            addValueName(PHOTOMETRIC_INTERPRETATION_TRANSPARENCY_MASK,
-                         "Transparency Mask");
-            addValueName(PHOTOMETRIC_INTERPRETATION_CMYK,
-                         "CMYK");
-            addValueName(PHOTOMETRIC_INTERPRETATION_Y_CB_CR,
-                         "YCbCr");
-            addValueName(PHOTOMETRIC_INTERPRETATION_CIELAB,
-                         "CIELAB");
-            addValueName(PHOTOMETRIC_INTERPRETATION_ICCLAB,
-                         "ICCLAB"); // Non-baseline
+            addValueName(PHOTOMETRIC_INTERPRETATION_WHITE_IS_ZERO, "WhiteIsZero");
+            addValueName(PHOTOMETRIC_INTERPRETATION_BLACK_IS_ZERO, "BlackIsZero");
+            addValueName(PHOTOMETRIC_INTERPRETATION_RGB, "RGB");
+            addValueName(PHOTOMETRIC_INTERPRETATION_PALETTE_COLOR, "Palette Color");
+            addValueName(PHOTOMETRIC_INTERPRETATION_TRANSPARENCY_MASK, "Transparency Mask");
+            addValueName(PHOTOMETRIC_INTERPRETATION_CMYK, "CMYK");
+            addValueName(PHOTOMETRIC_INTERPRETATION_Y_CB_CR, "YCbCr");
+            addValueName(PHOTOMETRIC_INTERPRETATION_CIELAB, "CIELAB");
+            addValueName(PHOTOMETRIC_INTERPRETATION_ICCLAB, "ICCLAB"); // Non-baseline
         }
     }
 
@@ -1663,9 +1428,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class PlanarConfiguration extends TIFFTag {
 
         public PlanarConfiguration() {
-            super("PlanarConfiguration",
-                  TAG_PLANAR_CONFIGURATION,
-                  1 << TIFF_SHORT);
+            super("PlanarConfiguration", TAG_PLANAR_CONFIGURATION, 1 << TIFF_SHORT);
 
             addValueName(PLANAR_CONFIGURATION_CHUNKY, "Chunky");
             addValueName(PLANAR_CONFIGURATION_PLANAR, "Planar");
@@ -1677,14 +1440,10 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class Predictor extends TIFFTag {
 
         public Predictor() {
-            super("Predictor",
-                  TAG_PREDICTOR,
-                  1 << TIFF_SHORT);
+            super("Predictor", TAG_PREDICTOR, 1 << TIFF_SHORT);
 
-            addValueName(PREDICTOR_NONE,
-                         "None");
-            addValueName(PREDICTOR_HORIZONTAL_DIFFERENCING,
-                         "Horizontal Differencing");
+            addValueName(PREDICTOR_NONE, "None");
+            addValueName(PREDICTOR_HORIZONTAL_DIFFERENCING, "Horizontal Differencing");
         }
     }
 
@@ -1693,9 +1452,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class PrimaryChromaticities extends TIFFTag {
 
         public PrimaryChromaticities() {
-            super("PrimaryChromaticities",
-                  TAG_PRIMARY_CHROMATICITES,
-                  1 << TIFF_RATIONAL);
+            super("PrimaryChromaticities", TAG_PRIMARY_CHROMATICITES, 1 << TIFF_RATIONAL);
         }
     }
 
@@ -1704,9 +1461,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class ReferenceBlackWhite extends TIFFTag {
 
         public ReferenceBlackWhite() {
-            super("ReferenceBlackWhite",
-                  TAG_REFERENCE_BLACK_WHITE,
-                  1 << TIFF_RATIONAL);
+            super("ReferenceBlackWhite", TAG_REFERENCE_BLACK_WHITE, 1 << TIFF_RATIONAL);
         }
     }
 
@@ -1715,9 +1470,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class ResolutionUnit extends TIFFTag {
 
         public ResolutionUnit() {
-            super("ResolutionUnit",
-                  TAG_RESOLUTION_UNIT,
-                  1 << TIFF_SHORT);
+            super("ResolutionUnit", TAG_RESOLUTION_UNIT, 1 << TIFF_SHORT);
 
             addValueName(RESOLUTION_UNIT_NONE, "None");
             addValueName(RESOLUTION_UNIT_INCH, "Inch");
@@ -1730,10 +1483,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class RowsPerStrip extends TIFFTag {
 
         public RowsPerStrip() {
-            super("RowsPerStrip",
-                  TAG_ROWS_PER_STRIP,
-                  (1 << TIFF_SHORT) |
-                  (1 << TIFF_LONG));
+            super("RowsPerStrip", TAG_ROWS_PER_STRIP, (1 << TIFF_SHORT) | (1 << TIFF_LONG));
         }
     }
 
@@ -1742,9 +1492,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class SampleFormat extends TIFFTag {
 
         public SampleFormat() {
-            super("SampleFormat",
-                  TAG_SAMPLE_FORMAT,
-                  1 << TIFF_SHORT);
+            super("SampleFormat", TAG_SAMPLE_FORMAT, 1 << TIFF_SHORT);
 
             addValueName(SAMPLE_FORMAT_UNSIGNED_INTEGER, "Unsigned Integer");
             addValueName(SAMPLE_FORMAT_SIGNED_INTEGER, "Signed Integer");
@@ -1758,9 +1506,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class SamplesPerPixel extends TIFFTag {
 
         public SamplesPerPixel() {
-            super("SamplesPerPixel",
-                  TAG_SAMPLES_PER_PIXEL,
-                  1 << TIFF_SHORT);
+            super("SamplesPerPixel", TAG_SAMPLES_PER_PIXEL, 1 << TIFF_SHORT);
         }
     }
 
@@ -1769,18 +1515,19 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class SMaxSampleValue extends TIFFTag {
 
         public SMaxSampleValue() {
-            super("SMaxSampleValue",
-                  TAG_S_MAX_SAMPLE_VALUE,
-                  (1 << TIFF_BYTE) |
-                  (1 << TIFF_SHORT) |
-                  (1 << TIFF_LONG) |
-                  (1 << TIFF_RATIONAL) |
-                  (1 << TIFF_SBYTE) |
-                  (1 << TIFF_SSHORT) |
-                  (1 << TIFF_SLONG) |
-                  (1 << TIFF_SRATIONAL) |
-                  (1 << TIFF_FLOAT) |
-                  (1 << TIFF_DOUBLE));
+            super(
+                    "SMaxSampleValue",
+                    TAG_S_MAX_SAMPLE_VALUE,
+                    (1 << TIFF_BYTE)
+                            | (1 << TIFF_SHORT)
+                            | (1 << TIFF_LONG)
+                            | (1 << TIFF_RATIONAL)
+                            | (1 << TIFF_SBYTE)
+                            | (1 << TIFF_SSHORT)
+                            | (1 << TIFF_SLONG)
+                            | (1 << TIFF_SRATIONAL)
+                            | (1 << TIFF_FLOAT)
+                            | (1 << TIFF_DOUBLE));
         }
     }
 
@@ -1789,18 +1536,19 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class SMinSampleValue extends TIFFTag {
 
         public SMinSampleValue() {
-            super("SMinSampleValue",
-                  TAG_S_MIN_SAMPLE_VALUE,
-                  (1 << TIFF_BYTE) |
-                  (1 << TIFF_SHORT) |
-                  (1 << TIFF_LONG) |
-                  (1 << TIFF_RATIONAL) |
-                  (1 << TIFF_SBYTE) |
-                  (1 << TIFF_SSHORT) |
-                  (1 << TIFF_SLONG) |
-                  (1 << TIFF_SRATIONAL) |
-                  (1 << TIFF_FLOAT) |
-                  (1 << TIFF_DOUBLE));
+            super(
+                    "SMinSampleValue",
+                    TAG_S_MIN_SAMPLE_VALUE,
+                    (1 << TIFF_BYTE)
+                            | (1 << TIFF_SHORT)
+                            | (1 << TIFF_LONG)
+                            | (1 << TIFF_RATIONAL)
+                            | (1 << TIFF_SBYTE)
+                            | (1 << TIFF_SSHORT)
+                            | (1 << TIFF_SLONG)
+                            | (1 << TIFF_SRATIONAL)
+                            | (1 << TIFF_FLOAT)
+                            | (1 << TIFF_DOUBLE));
         }
     }
 
@@ -1809,9 +1557,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class Software extends TIFFTag {
 
         public Software() {
-            super("Software",
-                  TAG_SOFTWARE,
-                  1 << TIFF_ASCII);
+            super("Software", TAG_SOFTWARE, 1 << TIFF_ASCII);
         }
     }
 
@@ -1820,12 +1566,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class StripByteCounts extends TIFFTag {
 
         public StripByteCounts() {
-            super("StripByteCounts",
-                  TAG_STRIP_BYTE_COUNTS,
-                  (1 << TIFF_SHORT) |
-                  (1 << TIFF_LONG) |
-                  (1 << TIFF_LONG8)
-                  );
+            super("StripByteCounts", TAG_STRIP_BYTE_COUNTS, (1 << TIFF_SHORT) | (1 << TIFF_LONG) | (1 << TIFF_LONG8));
         }
     }
 
@@ -1834,12 +1575,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class StripOffsets extends TIFFTag {
 
         public StripOffsets() {
-            super("StripOffsets",
-                  TAG_STRIP_OFFSETS,
-                  (1 << TIFF_SHORT) |
-                  (1 << TIFF_LONG) |
-                  (1 << TIFF_LONG8)
-                  );
+            super("StripOffsets", TAG_STRIP_OFFSETS, (1 << TIFF_SHORT) | (1 << TIFF_LONG) | (1 << TIFF_LONG8));
         }
     }
 
@@ -1848,9 +1584,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class SubfileType extends TIFFTag {
 
         public SubfileType() {
-            super("SubfileType",
-                  TAG_SUBFILE_TYPE,
-                  1 << TIFF_SHORT);
+            super("SubfileType", TAG_SUBFILE_TYPE, 1 << TIFF_SHORT);
 
             addValueName(SUBFILE_TYPE_FULL_RESOLUTION, "FullResolution");
             addValueName(SUBFILE_TYPE_REDUCED_RESOLUTION, "ReducedResolution");
@@ -1863,70 +1597,49 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class T4Options extends TIFFTag {
 
         public T4Options() {
-            super("T4Options",
-                  TAG_T4_OPTIONS,
-                  1 << TIFF_LONG);
+            super("T4Options", TAG_T4_OPTIONS, 1 << TIFF_LONG);
 
-            addValueName(0,
-                         "Default 1DCoding"); // 0x00
-            addValueName(T4_OPTIONS_2D_CODING,
-                         "2DCoding"); // 0x01
-            addValueName(T4_OPTIONS_UNCOMPRESSED,
-                         "Uncompressed"); // 0x02
-            addValueName(T4_OPTIONS_2D_CODING |
-                         T4_OPTIONS_UNCOMPRESSED,
-                         "2DCoding+Uncompressed"); // 0x03
-            addValueName(T4_OPTIONS_EOL_BYTE_ALIGNED,
-                         "EOLByteAligned"); // 0x04
-            addValueName(T4_OPTIONS_2D_CODING |
-                         T4_OPTIONS_EOL_BYTE_ALIGNED,
-                         "2DCoding+EOLByteAligned"); // 0x05
-            addValueName(T4_OPTIONS_UNCOMPRESSED |
-                         T4_OPTIONS_EOL_BYTE_ALIGNED,
-                         "Uncompressed+EOLByteAligned"); // 0x06
-            addValueName(T4_OPTIONS_2D_CODING |
-                         T4_OPTIONS_UNCOMPRESSED |
-                         T4_OPTIONS_EOL_BYTE_ALIGNED,
-                         "2DCoding+Uncompressed+EOLByteAligned"); // 0x07
+            addValueName(0, "Default 1DCoding"); // 0x00
+            addValueName(T4_OPTIONS_2D_CODING, "2DCoding"); // 0x01
+            addValueName(T4_OPTIONS_UNCOMPRESSED, "Uncompressed"); // 0x02
+            addValueName(T4_OPTIONS_2D_CODING | T4_OPTIONS_UNCOMPRESSED, "2DCoding+Uncompressed"); // 0x03
+            addValueName(T4_OPTIONS_EOL_BYTE_ALIGNED, "EOLByteAligned"); // 0x04
+            addValueName(T4_OPTIONS_2D_CODING | T4_OPTIONS_EOL_BYTE_ALIGNED, "2DCoding+EOLByteAligned"); // 0x05
+            addValueName(T4_OPTIONS_UNCOMPRESSED | T4_OPTIONS_EOL_BYTE_ALIGNED, "Uncompressed+EOLByteAligned"); // 0x06
+            addValueName(
+                    T4_OPTIONS_2D_CODING | T4_OPTIONS_UNCOMPRESSED | T4_OPTIONS_EOL_BYTE_ALIGNED,
+                    "2DCoding+Uncompressed+EOLByteAligned"); // 0x07
         }
     }
-    
+
     // T6Options
 
     static class T6Options extends TIFFTag {
 
         public T6Options() {
-            super("T6Options",
-                  TAG_T6_OPTIONS,
-                  1 << TIFF_LONG);
+            super("T6Options", TAG_T6_OPTIONS, 1 << TIFF_LONG);
 
-            addValueName(0,
-                         "Default"); // 0x00
+            addValueName(0, "Default"); // 0x00
             // 0x01 is not possible as bit 0 is unused and always zero.
-            addValueName(T6_OPTIONS_UNCOMPRESSED,
-                         "Uncompressed"); // 0x02
+            addValueName(T6_OPTIONS_UNCOMPRESSED, "Uncompressed"); // 0x02
         }
     }
-    
+
     // TargetPrinter
 
     static class TargetPrinter extends TIFFTag {
 
         public TargetPrinter() {
-            super("TargetPrinter",
-                  TAG_TARGET_PRINTER,
-                  1 << TIFF_ASCII);
+            super("TargetPrinter", TAG_TARGET_PRINTER, 1 << TIFF_ASCII);
         }
     }
 
     // Threshholding
 
     static class Threshholding extends TIFFTag {
-        
+
         public Threshholding() {
-            super("Threshholding",
-                  TAG_THRESHHOLDING,
-                  1 << TIFF_SHORT);
+            super("Threshholding", TAG_THRESHHOLDING, 1 << TIFF_SHORT);
 
             addValueName(1, "None");
             addValueName(2, "OrderedDither");
@@ -1939,12 +1652,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class TileByteCounts extends TIFFTag {
 
         public TileByteCounts() {
-            super("TileByteCounts",
-                  TAG_TILE_BYTE_COUNTS,
-                  (1 << TIFF_SHORT) |
-                  (1 << TIFF_LONG) |
-                  (1 << TIFF_LONG8)
-                  );
+            super("TileByteCounts", TAG_TILE_BYTE_COUNTS, (1 << TIFF_SHORT) | (1 << TIFF_LONG) | (1 << TIFF_LONG8));
         }
     }
 
@@ -1953,11 +1661,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class TileOffsets extends TIFFTag {
 
         public TileOffsets() {
-            super("TileOffsets",
-                  TAG_TILE_OFFSETS,
-                  (1 << TIFF_LONG) |
-                  (1 << TIFF_LONG8)
-                  );
+            super("TileOffsets", TAG_TILE_OFFSETS, (1 << TIFF_LONG) | (1 << TIFF_LONG8));
         }
     }
 
@@ -1966,10 +1670,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class TileLength extends TIFFTag {
 
         public TileLength() {
-            super("TileLength",
-                  TAG_TILE_LENGTH,
-                  (1 << TIFF_SHORT) |
-                  (1 << TIFF_LONG));
+            super("TileLength", TAG_TILE_LENGTH, (1 << TIFF_SHORT) | (1 << TIFF_LONG));
         }
     }
 
@@ -1978,10 +1679,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class TileWidth extends TIFFTag {
 
         public TileWidth() {
-            super("TileWidth",
-                  TAG_TILE_WIDTH,
-                  (1 << TIFF_SHORT) |
-                  (1 << TIFF_LONG));
+            super("TileWidth", TAG_TILE_WIDTH, (1 << TIFF_SHORT) | (1 << TIFF_LONG));
         }
     }
 
@@ -1990,9 +1688,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class TransferFunction extends TIFFTag {
 
         public TransferFunction() {
-            super("TransferFunction",
-                  TAG_TRANSFER_FUNCTION,
-                  1 << TIFF_SHORT);
+            super("TransferFunction", TAG_TRANSFER_FUNCTION, 1 << TIFF_SHORT);
         }
     }
 
@@ -2001,9 +1697,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class TransferRange extends TIFFTag {
 
         public TransferRange() {
-            super("TransferRange",
-                  TAG_TRANSFER_RANGE,
-                  1 << TIFF_SHORT);
+            super("TransferRange", TAG_TRANSFER_RANGE, 1 << TIFF_SHORT);
         }
     }
 
@@ -2012,9 +1706,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class WhitePoint extends TIFFTag {
 
         public WhitePoint() {
-            super("WhitePoint",
-                  TAG_WHITE_POINT,
-                  1 << TIFF_RATIONAL);
+            super("WhitePoint", TAG_WHITE_POINT, 1 << TIFF_RATIONAL);
         }
     }
 
@@ -2023,9 +1715,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class XPosition extends TIFFTag {
 
         public XPosition() {
-            super("XPosition",
-                  TAG_X_POSITION,
-                  1 << TIFF_RATIONAL);
+            super("XPosition", TAG_X_POSITION, 1 << TIFF_RATIONAL);
         }
     }
 
@@ -2034,9 +1724,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class XResolution extends TIFFTag {
 
         public XResolution() {
-            super("XResolution",
-                  TAG_X_RESOLUTION,
-                  1 << TIFF_RATIONAL);
+            super("XResolution", TAG_X_RESOLUTION, 1 << TIFF_RATIONAL);
         }
     }
 
@@ -2045,9 +1733,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class YCbCrCoefficients extends TIFFTag {
 
         public YCbCrCoefficients() {
-            super("YCbCrCoefficients",
-                  TAG_Y_CB_CR_COEFFICIENTS,
-                  1 << TIFF_RATIONAL);
+            super("YCbCrCoefficients", TAG_Y_CB_CR_COEFFICIENTS, 1 << TIFF_RATIONAL);
         }
     }
 
@@ -2056,9 +1742,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class YCbCrPositioning extends TIFFTag {
 
         public YCbCrPositioning() {
-            super("YCbCrPositioning",
-                  TAG_Y_CB_CR_POSITIONING,
-                  1 << TIFF_SHORT);
+            super("YCbCrPositioning", TAG_Y_CB_CR_POSITIONING, 1 << TIFF_SHORT);
 
             addValueName(Y_CB_CR_POSITIONING_CENTERED, "Centered");
             addValueName(Y_CB_CR_POSITIONING_COSITED, "Cosited");
@@ -2070,9 +1754,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class YCbCrSubSampling extends TIFFTag {
 
         public YCbCrSubSampling() {
-            super("YCbCrSubSampling",
-                  TAG_Y_CB_CR_SUBSAMPLING,
-                  1 << TIFF_SHORT);
+            super("YCbCrSubSampling", TAG_Y_CB_CR_SUBSAMPLING, 1 << TIFF_SHORT);
         }
     }
 
@@ -2081,9 +1763,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class YPosition extends TIFFTag {
 
         public YPosition() {
-            super("YPosition",
-                  TAG_Y_POSITION,
-                  1 << TIFF_RATIONAL);
+            super("YPosition", TAG_Y_POSITION, 1 << TIFF_RATIONAL);
         }
     }
 
@@ -2092,9 +1772,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     static class YResolution extends TIFFTag {
 
         public YResolution() {
-            super("YResolution",
-                  TAG_Y_RESOLUTION,
-                  1 << TIFF_RATIONAL);
+            super("YResolution", TAG_Y_RESOLUTION, 1 << TIFF_RATIONAL);
         }
     }
 
@@ -2103,11 +1781,9 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
     // ICC Profile (Spec. ICC.1:2001-12, File Format for Color Profiles)
 
     static class ICCProfile extends TIFFTag {
-        
+
         public ICCProfile() {
-            super("ICC Profile",
-                  TAG_ICC_PROFILE,
-                  1 << TIFF_UNDEFINED);
+            super("ICC Profile", TAG_ICC_PROFILE, 1 << TIFF_UNDEFINED);
         }
     }
 
@@ -2203,7 +1879,7 @@ public class BaselineTIFFTagSet extends TIFFTagSet {
      *
      * @return a <code>BaselineTIFFTagSet</code> instance.
      */
-    public synchronized static BaselineTIFFTagSet getInstance() {
+    public static synchronized BaselineTIFFTagSet getInstance() {
         if (theInstance == null) {
             initTags();
             theInstance = new BaselineTIFFTagSet();

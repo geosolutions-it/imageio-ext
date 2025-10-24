@@ -23,15 +23,14 @@ import it.geosolutions.imageio.plugins.jp2k.JP2KKakaduImageWriterSpi;
 import it.geosolutions.imageio.plugins.nitronitf.NITFUtilities.WriteCompression;
 import it.geosolutions.imageio.plugins.nitronitf.wrapper.HeaderWrapper;
 import it.geosolutions.imageio.plugins.nitronitf.wrapper.ImageWrapper;
+import it.geosolutions.imageio.plugins.nitronitf.wrapper.ImageWrapper.Category;
+import it.geosolutions.imageio.plugins.nitronitf.wrapper.ImageWrapper.ImageBand;
 import it.geosolutions.imageio.plugins.nitronitf.wrapper.NITFProperties;
 import it.geosolutions.imageio.plugins.nitronitf.wrapper.ShapeFileWrapper;
 import it.geosolutions.imageio.plugins.nitronitf.wrapper.TextWrapper;
-import it.geosolutions.imageio.plugins.nitronitf.wrapper.ImageWrapper.Category;
-import it.geosolutions.imageio.plugins.nitronitf.wrapper.ImageWrapper.ImageBand;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
 import it.geosolutions.imageio.stream.output.FileImageOutputStreamExt;
-
 import java.awt.image.DataBufferByte;
 import java.awt.image.RenderedImage;
 import java.io.File;
@@ -45,7 +44,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.imageio.IIOImage;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
@@ -53,7 +51,6 @@ import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.media.jai.operator.BandSelectDescriptor;
-
 import nitf.BandInfo;
 import nitf.BandSource;
 import nitf.DESegment;
@@ -76,7 +73,6 @@ import nitf.TextSubheader;
 import nitf.Version;
 import nitf.WriteHandler;
 import nitf.Writer;
-
 import org.apache.commons.io.FilenameUtils;
 
 public class NITFImageWriter extends ImageWriter {
@@ -85,7 +81,7 @@ public class NITFImageWriter extends ImageWriter {
 
     private static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.nitronitf.NITFImageWriter");
 
-    private final static JP2KKakaduImageWriterSpi KAKADU_SPI = new JP2KKakaduImageWriterSpi();
+    private static final JP2KKakaduImageWriterSpi KAKADU_SPI = new JP2KKakaduImageWriterSpi();
 
     private static final String JP2_TEMP_FOLDER;
 
@@ -103,8 +99,7 @@ public class NITFImageWriter extends ImageWriter {
             if (!exist || !isDirectory || !canWrite) {
                 if (LOGGER.isLoggable(Level.WARNING)) {
                     final StringBuilder warningMessage = new StringBuilder(
-                            "The specified folder can't be used as jp2 temporary folder: "
-                                    + jp2TempFolder);
+                            "The specified folder can't be used as jp2 temporary folder: " + jp2TempFolder);
                     warningMessage.append(" since it ");
                     boolean comma = false;
                     if (!exist) {
@@ -141,7 +136,6 @@ public class NITFImageWriter extends ImageWriter {
         } else {
             throw new IllegalArgumentException("unsupported output type");
         }
-
     }
 
     @Override
@@ -161,21 +155,19 @@ public class NITFImageWriter extends ImageWriter {
     }
 
     @Override
-    public IIOMetadata convertImageMetadata(IIOMetadata inData, ImageTypeSpecifier imageType,
-            ImageWriteParam param) {
+    public IIOMetadata convertImageMetadata(IIOMetadata inData, ImageTypeSpecifier imageType, ImageWriteParam param) {
         // TODO Auto-generated method stub
         return null;
     }
 
     /**
      * Setup all the header fields taking them from the wrapper
-     * 
+     *
      * @param record
      * @param headerWrapper
      * @throws NITFException
      */
-    private static void initFileHeader(Record record, HeaderWrapper headerWrapper)
-            throws NITFException {
+    private static void initFileHeader(Record record, HeaderWrapper headerWrapper) throws NITFException {
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.log(Level.FINE, "Populating file header");
         }
@@ -188,7 +180,10 @@ public class NITFImageWriter extends ImageWriter {
             NITFUtilities.setField("FDT", header.getFileDateTime(), headerWrapper.getDateTime());
             NITFUtilities.setField("FTITLE", header.getFileTitle(), headerWrapper.getTitle());
             NITFUtilities.setField("FSCLAS", header.getClassification(), headerWrapper.getSecurityClassification());
-            NITFUtilities.setField("FSCLSY", header.getSecurityGroup().getClassificationSystem(), headerWrapper.getSecurityClassificationSystem());
+            NITFUtilities.setField(
+                    "FSCLSY",
+                    header.getSecurityGroup().getClassificationSystem(),
+                    headerWrapper.getSecurityClassificationSystem());
             NITFUtilities.setField("ENCRYP", header.getEncrypted(), Integer.toString(headerWrapper.getEncrypted()));
             NITFUtilities.setField("FBKGC", header.getBackgroundColor(), headerWrapper.getBackgroundColor());
             NITFUtilities.setField("ONAME", header.getOriginatorName(), headerWrapper.getOriginatorName());
@@ -220,7 +215,7 @@ public class NITFImageWriter extends ImageWriter {
 
     /**
      * Setup the ImageSegment
-     * 
+     *
      * @param record
      * @param images
      * @param fis
@@ -229,8 +224,11 @@ public class NITFImageWriter extends ImageWriter {
      * @throws NITFException
      * @throws IOException
      */
-    private static void addImageSegment(final Record record, final List<ImageWrapper> images,
-            final FileImageInputStreamExt fis, final WriteCompression compression)
+    private static void addImageSegment(
+            final Record record,
+            final List<ImageWrapper> images,
+            final FileImageInputStreamExt fis,
+            final WriteCompression compression)
             throws NITFException, IOException {
         ImageSegment segment = null;
         ImageSubheader subheader = null;
@@ -240,8 +238,7 @@ public class NITFImageWriter extends ImageWriter {
         for (ImageWrapper image : images) {
 
             // Getting compression parameter and imageProperties
-            WriteCompression writeCompression = img == 0 ? compression
-                    : WriteCompression.UNCOMPRESSED;
+            WriteCompression writeCompression = img == 0 ? compression : WriteCompression.UNCOMPRESSED;
             segment = record.newImageSegment();
 
             // Setting up the image Sub Header
@@ -252,12 +249,10 @@ public class NITFImageWriter extends ImageWriter {
                 initTREs(subheader, image, writeCompression, bpppb);
             }
             img++;
-
         }
     }
 
     /**
-     * 
      * @param subheader
      * @param isSingleBand
      * @param compression
@@ -265,8 +260,12 @@ public class NITFImageWriter extends ImageWriter {
      * @param bpppb
      * @throws NITFException
      */
-    private static void initTREs(final ImageSubheader subheader, final ImageWrapper wrapper,
-            final WriteCompression compression, final double bpppb) throws NITFException {
+    private static void initTREs(
+            final ImageSubheader subheader,
+            final ImageWrapper wrapper,
+            final WriteCompression compression,
+            final double bpppb)
+            throws NITFException {
         Extensions extendedSection = subheader.getExtendedSection();
         final boolean isSingleBand = wrapper.getImage().getSampleModel().getNumBands() == 1;
         final Map<String, Map<String, String>> tresMap = wrapper.getTres();
@@ -286,23 +285,25 @@ public class NITFImageWriter extends ImageWriter {
         }
 
         if (compression != WriteCompression.UNCOMPRESSED) {
-            //Setting the J2KLRA TRE in case the image need to be jp2 compressed
+            // Setting the J2KLRA TRE in case the image need to be jp2 compressed
             setJ2KLRA(extendedSection, compression, isSingleBand, bpppb);
         }
-
     }
 
     /**
      * Set the J2KLRA Tagged record extension containing information about quality layers and bit rates.
-     * 
+     *
      * @param extendedSection
      * @param compression
      * @param isSingleBand
      * @param lastRate
      * @throws NITFException
      */
-    private static void setJ2KLRA(final Extensions extendedSection,
-            final WriteCompression compression, final boolean isSingleBand, final double lastRate)
+    private static void setJ2KLRA(
+            final Extensions extendedSection,
+            final WriteCompression compression,
+            final boolean isSingleBand,
+            final double lastRate)
             throws NITFException {
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.log(Level.FINE, "Populating J2KLRA TRE");
@@ -310,8 +311,8 @@ public class NITFImageWriter extends ImageWriter {
 
         // Initialize values
         final String compressionString = compression.toString();
-        final String origData = compressionString.startsWith("NPJE") ? "0" : compressionString
-                .startsWith("EPJE") ? "2" : "8";
+        final String origData =
+                compressionString.startsWith("NPJE") ? "0" : compressionString.startsWith("EPJE") ? "2" : "8";
         final boolean isVL = compression.getCompression() == Compression.LOSSY;
         final int nLayers = compression.getQualityLayers();
         final double bitRates[] = compression.getBitRates();
@@ -323,8 +324,9 @@ public class NITFImageWriter extends ImageWriter {
 
         j2klraMapping.put("NLAYERS_O", String.valueOf(nLayers));
         for (int i = 0; i < nLayers; i++) {
-            double rate = i != nLayers - 1 ? bitRates[i] : isVL ? bitRates[i] : (!Double
-                    .isNaN(lastRate) ? lastRate : NITFUtilities.BPPPB[i - 1]);
+            double rate = i != nLayers - 1
+                    ? bitRates[i]
+                    : isVL ? bitRates[i] : (!Double.isNaN(lastRate) ? lastRate : NITFUtilities.BPPPB[i - 1]);
             String bitrate = customFormat(rate);
             j2klraMapping.put("LAYER_ID[" + i + "]", String.valueOf(i));
             j2klraMapping.put("BITRATE[" + i + "]", bitrate);
@@ -333,7 +335,6 @@ public class NITFImageWriter extends ImageWriter {
     }
 
     /**
-     * 
      * @param imageWrapper
      * @param subheader
      * @param compression
@@ -342,9 +343,12 @@ public class NITFImageWriter extends ImageWriter {
      * @throws IOException
      * @throws NITFException
      */
-    private static double initImageSubHeader(final ImageWrapper imageWrapper,
-            final ImageSubheader subheader, final WriteCompression compression,
-            final FileImageInputStreamExt fis) throws IOException, NITFException {
+    private static double initImageSubHeader(
+            final ImageWrapper imageWrapper,
+            final ImageSubheader subheader,
+            final WriteCompression compression,
+            final FileImageInputStreamExt fis)
+            throws IOException, NITFException {
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.log(Level.FINE, "Populating ImageSubHeader");
         }
@@ -357,14 +361,16 @@ public class NITFImageWriter extends ImageWriter {
         final int nCols = ri.getWidth();
         final int nRows = ri.getHeight();
         final int nBits = ri.getSampleModel().getSampleSize(0);
-        final String numBlocksPerRow = isJP2 ? String.valueOf((int) Math.ceil((double) nCols
-                / NITFUtilities.DEFAULT_TILE_WIDTH)) : String.valueOf(1);
-        final String numBlocksPerCol = isJP2 ? String.valueOf((int) Math.ceil((double) nRows
-                / NITFUtilities.DEFAULT_TILE_HEIGHT)) : String.valueOf(1);
-        final String numPixelsPerVertBlock = isJP2 ? String
-                .valueOf(NITFUtilities.DEFAULT_TILE_HEIGHT) : "0000"; // As per specification
-        final String numPixelsPerHorizBlock = isJP2 ? String
-                .valueOf(NITFUtilities.DEFAULT_TILE_WIDTH) : "0000"; // As per specification
+        final String numBlocksPerRow = isJP2
+                ? String.valueOf((int) Math.ceil((double) nCols / NITFUtilities.DEFAULT_TILE_WIDTH))
+                : String.valueOf(1);
+        final String numBlocksPerCol = isJP2
+                ? String.valueOf((int) Math.ceil((double) nRows / NITFUtilities.DEFAULT_TILE_HEIGHT))
+                : String.valueOf(1);
+        final String numPixelsPerVertBlock =
+                isJP2 ? String.valueOf(NITFUtilities.DEFAULT_TILE_HEIGHT) : "0000"; // As per specification
+        final String numPixelsPerHorizBlock =
+                isJP2 ? String.valueOf(NITFUtilities.DEFAULT_TILE_WIDTH) : "0000"; // As per specification
 
         double ratio = Double.NaN;
 
@@ -373,14 +379,23 @@ public class NITFImageWriter extends ImageWriter {
         NITFUtilities.setField("IDATIM", subheader.getImageDateAndTime(), imageWrapper.getDateTime());
         NITFUtilities.setField("IID2", subheader.getImageTitle(), imageWrapper.getTitle());
         NITFUtilities.setField("ISCLAS", subheader.getImageSecurityClass(), imageWrapper.getSecurityClassification());
-        NITFUtilities.setField("ISCLSY", subheader.getSecurityGroup().getClassificationSystem(), imageWrapper.getSecurityClassificationSystem());
+        NITFUtilities.setField(
+                "ISCLSY",
+                subheader.getSecurityGroup().getClassificationSystem(),
+                imageWrapper.getSecurityClassificationSystem());
         NITFUtilities.setField("ENCRYP", subheader.getEncrypted(), Integer.toString(imageWrapper.getEncrypted()));
         NITFUtilities.setField("ISORCE", subheader.getImageSource(), imageWrapper.getSource());
         NITFUtilities.setField("NROWS", subheader.getNumRows(), String.valueOf(nRows));
         NITFUtilities.setField("NCOLS", subheader.getNumCols(), String.valueOf(nCols));
         NITFUtilities.setField("PVTYPE", subheader.getPixelValueType(), NITFUtilities.Consts.DEFAULT_PVTYPE);
-        NITFUtilities.setField("IREP", subheader.getImageRepresentation(), imageWrapper.getRepresentation().toString());
-        NITFUtilities.setField("ICAT", subheader.getImageCategory(), imageWrapper.getImageCategory().toString());
+        NITFUtilities.setField(
+                "IREP",
+                subheader.getImageRepresentation(),
+                imageWrapper.getRepresentation().toString());
+        NITFUtilities.setField(
+                "ICAT",
+                subheader.getImageCategory(),
+                imageWrapper.getImageCategory().toString());
         NITFUtilities.setField("ABPP", subheader.getActualBitsPerPixel(), Integer.toString(nBits));
         NITFUtilities.setField("PJUST", subheader.getPixelJustification(), imageWrapper.getPixelJustification());
         NITFUtilities.setField("ICORDS", subheader.getImageCoordinateSystem(), imageWrapper.getImageCoordinateSystem());
@@ -408,10 +423,10 @@ public class NITFImageWriter extends ImageWriter {
         NITFUtilities.setField("ILOC", subheader.getImageLocation(), NITFUtilities.Consts.ZERO);
         NITFUtilities.setField("IMAG", subheader.getImageMagnification(), imageWrapper.getImageMagnification());
         return ratio;
-
     }
 
-    private static void setImageBands(final ImageSubheader subheader, final ImageWrapper imageWrapper) throws NITFException {
+    private static void setImageBands(final ImageSubheader subheader, final ImageWrapper imageWrapper)
+            throws NITFException {
         BandInfo[] bandInfos = null;
         final ImageBand[] bands = imageWrapper.getBands();
         if (bands == null || bands.length == 0) {
@@ -423,7 +438,11 @@ public class NITFImageWriter extends ImageWriter {
             BandInfo bandInfo = bandInfos[i];
             NITFUtilities.setField("IREPBAND" + i, bandInfo.getRepresentation(), bands[i].getRepresentation());
             // ISUBCAT shouldn't be null for MultiSpectral Imagery
-            NITFUtilities.setField("ISUBCAT" + i, bandInfo.getSubcategory(), bands[i].getSubCategory(), imageWrapper.getImageCategory() == Category.MS);
+            NITFUtilities.setField(
+                    "ISUBCAT" + i,
+                    bandInfo.getSubcategory(),
+                    bands[i].getSubCategory(),
+                    imageWrapper.getImageCategory() == Category.MS);
             NITFUtilities.setField("IFC" + i, bandInfo.getImageFilterCondition(), NITFUtilities.Consts.NONE);
             NITFUtilities.setField("NLUTS" + i, bandInfo.getNumLUTs(), NITFUtilities.Consts.ZERO);
         }
@@ -431,7 +450,7 @@ public class NITFImageWriter extends ImageWriter {
 
     /**
      * Setup Image Compression related fields depending on the compression properties.
-     * 
+     *
      * @param subheader the {@link ImageSubheader} to be set
      * @param compression the specified {@link WriteCompression}
      * @param isJP2 whether a JP2
@@ -440,9 +459,12 @@ public class NITFImageWriter extends ImageWriter {
      * @return
      * @throws IOException
      */
-    private static double setImageCompression(final ImageSubheader subheader,
-            final WriteCompression compression, final RenderedImage ri,
-            final FileImageInputStreamExt fis) throws IOException {
+    private static double setImageCompression(
+            final ImageSubheader subheader,
+            final WriteCompression compression,
+            final RenderedImage ri,
+            final FileImageInputStreamExt fis)
+            throws IOException {
         double ratio = Double.NaN;
         final int numBits = ri.getSampleModel().getSampleSize(0);
         if (compression != null && compression != WriteCompression.UNCOMPRESSED) {
@@ -450,7 +472,8 @@ public class NITFImageWriter extends ImageWriter {
             NITFUtilities.setField("IC", subheader.getImageCompression(), NITFUtilities.Consts.COMPRESSION_JP2);
             if (fis != null) {
                 final long codeStreamSize = fis.length();
-                final long imageSize = ri.getWidth() * ri.getHeight() * ri.getSampleModel().getNumBands();
+                final long imageSize =
+                        ri.getWidth() * ri.getHeight() * ri.getSampleModel().getNumBands();
                 ratio = codeStreamSize / (double) (imageSize / (double) numBits);
             }
             String comrat = "";
@@ -476,7 +499,7 @@ public class NITFImageWriter extends ImageWriter {
 
     /**
      * Set a new Tagged Record Extension on top of the specified fields map.
-     * 
+     *
      * @param treName the name of the TRE to be setup
      * @param fieldsMap the map of fields <key,value> pairs
      * @return the populated TRE
@@ -503,7 +526,7 @@ public class NITFImageWriter extends ImageWriter {
 
     /**
      * Do the real write operation (writing images, texts, ...)
-     * 
+     *
      * @param record
      * @param images
      * @param shp
@@ -513,9 +536,13 @@ public class NITFImageWriter extends ImageWriter {
      * @throws NITFException
      * @throws IOException
      */
-    private boolean writeNITF(final Record record, final List<ImageWrapper> images,
-            final ShapeFileWrapper shp, final FileImageInputStreamExt fis,
-            final List<TextWrapper> texts) throws NITFException, IOException {
+    private boolean writeNITF(
+            final Record record,
+            final List<ImageWrapper> images,
+            final ShapeFileWrapper shp,
+            final FileImageInputStreamExt fis,
+            final List<TextWrapper> texts)
+            throws NITFException, IOException {
         final int numImages = images.size();
         ImageWrapper image = images.get(0);
         RenderedImage ri = image.getImage();
@@ -523,7 +550,8 @@ public class NITFImageWriter extends ImageWriter {
         int nBands = ri.getSampleModel().getNumBands();
         boolean written = false;
         Writer writer = new Writer();
-        IOHandle handle = new IOHandle(outputFile.getCanonicalPath(), IOHandle.NITF_ACCESS_WRITEONLY, IOHandle.NITF_CREATE);
+        IOHandle handle =
+                new IOHandle(outputFile.getCanonicalPath(), IOHandle.NITF_ACCESS_WRITEONLY, IOHandle.NITF_CREATE);
 
         byte[] shapeFileData = null;
         final boolean isJP2 = !(compression == WriteCompression.UNCOMPRESSED);
@@ -553,7 +581,6 @@ public class NITFImageWriter extends ImageWriter {
             codeStream = new StreamIOWriteHandler(io, 0, size);
             writer.setImageWriteHandler(0, codeStream);
             prepared = true;
-
         }
         if (!isJP2 || numImages > 1) {
 
@@ -578,7 +605,7 @@ public class NITFImageWriter extends ImageWriter {
                     successes[0] = imageSource.addBand(bs);
                 } else {
                     for (int i = 0; i < nBands; i++) {
-                        RenderedImage band = BandSelectDescriptor.create(ri, new int[] { i }, null);
+                        RenderedImage band = BandSelectDescriptor.create(ri, new int[] {i}, null);
                         DataBufferByte dbb = (DataBufferByte) band.getData().getDataBuffer();
                         BandSource bs = new MemorySource(dbb.getData(), dbb.getSize(), 0, 0, 0);
                         successes[i] = imageSource.addBand(bs);
@@ -598,7 +625,6 @@ public class NITFImageWriter extends ImageWriter {
                 successes[0] = imageSource.addBand(bs);
                 imageWriter2.attachSource(imageSource);
             }
-
         }
 
         // Adding text
@@ -608,8 +634,7 @@ public class NITFImageWriter extends ImageWriter {
                 byte[] textContent = text.getTextContent();
                 if (textContent != null) {
                     SegmentWriter textWriter = writer.getNewTextWriter(i++);
-                    SegmentSource source = SegmentSource.makeSegmentMemorySource(textContent,
-                            textContent.length, 0, 0);
+                    SegmentSource source = SegmentSource.makeSegmentMemorySource(textContent, textContent.length, 0, 0);
                     textWriter.attachSource(source);
                 }
             }
@@ -624,16 +649,17 @@ public class NITFImageWriter extends ImageWriter {
     }
 
     /**
-     * Encode a RenderedImage as a JP2K codestream on the specified outputFile, using the proper set of compression parameters.
-     * 
+     * Encode a RenderedImage as a JP2K codestream on the specified outputFile, using the proper set of compression
+     * parameters.
+     *
      * @param outputFile
      * @param compression
      * @param ri
      * @throws FileNotFoundException
      * @throws IOException
      */
-    private void prepareJP2Image(final RenderedImage ri, final File outputFile,
-            final WriteCompression compression) throws FileNotFoundException, IOException {
+    private void prepareJP2Image(final RenderedImage ri, final File outputFile, final WriteCompression compression)
+            throws FileNotFoundException, IOException {
         JP2KKakaduImageWriter kakaduWriter = null;
 
         try {
@@ -642,8 +668,7 @@ public class NITFImageWriter extends ImageWriter {
             final boolean isMulti = numBands == 1 ? false : true;
             kakaduWriter = new JP2KKakaduImageWriter(KAKADU_SPI);
             kakaduWriter.setOutput(outputFile);
-            JP2KKakaduImageWriteParam param = NITFUtilities.getCompressionParam(kakaduWriter,
-                    compression, isMulti);
+            JP2KKakaduImageWriteParam param = NITFUtilities.getCompressionParam(kakaduWriter, compression, isMulti);
 
             kakaduWriter.write(null, new IIOImage(ri, null, null), param);
         } finally {
@@ -657,9 +682,7 @@ public class NITFImageWriter extends ImageWriter {
         }
     }
 
-    /**
-     * Write data extension on a segment
-     */
+    /** Write data extension on a segment */
     private void writeData(byte[] fullData, Writer writer) throws NITFException {
         final SegmentWriter deWriter = writer.getNewDEWriter(0);
         final SegmentSource source = SegmentSource.makeSegmentMemorySource(fullData, fullData.length, 0, 0);
@@ -667,15 +690,13 @@ public class NITFImageWriter extends ImageWriter {
     }
 
     /**
-     * 
      * @param record
      * @param shape
      * @return
      * @throws NITFException
      * @throws IOException
      */
-    private byte[] getShapeData(Record record, ShapeFileWrapper shape) throws NITFException,
-            IOException {
+    private byte[] getShapeData(Record record, ShapeFileWrapper shape) throws NITFException, IOException {
         final DESegment des = record.newDESegment();
         byte[] fullData = null;
         TRE csshpa = new TRE("CSSHPA");
@@ -713,12 +734,10 @@ public class NITFImageWriter extends ImageWriter {
         NITFUtilities.setField("DESCLSY", des.getSubheader().getSecurityGroup().getClassificationSystem(), "US");
 
         return fullData;
-
     }
 
     @Override
-    public void write(IIOMetadata streamMetadata, IIOImage image, ImageWriteParam param)
-            throws IOException {
+    public void write(IIOMetadata streamMetadata, IIOImage image, ImageWriteParam param) throws IOException {
 
         // Headers and segments initialization
         NITFImageWriteParam nitfParam = null;
@@ -738,7 +757,6 @@ public class NITFImageWriter extends ImageWriter {
                 inputImages = nitfMetadata.getImagesWrapper();
             }
             compression = nitfParam.getWriteCompression();
-
         }
 
         ImageWrapper imageW = inputImages.get(0);
@@ -751,8 +769,7 @@ public class NITFImageWriter extends ImageWriter {
             if (isJP2) {
                 // Proceeding with jp2 compression
                 if (JP2_TEMP_FOLDER != null) {
-                    tempFile = File.createTempFile("jp2compressed", ".jpc", new File(
-                            JP2_TEMP_FOLDER));
+                    tempFile = File.createTempFile("jp2compressed", ".jpc", new File(JP2_TEMP_FOLDER));
                 }
                 String parentPath = outputFile.getParent();
                 String name = FilenameUtils.getBaseName(outputFile.getCanonicalPath());
@@ -795,7 +812,6 @@ public class NITFImageWriter extends ImageWriter {
 
                 }
             }
-
         }
 
         // record.destruct();
@@ -806,7 +822,7 @@ public class NITFImageWriter extends ImageWriter {
 
     /**
      * Add a new text Segment to the record with the information provided by the {@link TextWrapper} instance
-     * 
+     *
      * @param record
      * @param wrapper
      * @throws NITFException
@@ -819,9 +835,13 @@ public class NITFImageWriter extends ImageWriter {
                 NITFUtilities.setField("TEXTID", textSubHeader.getTextID(), wrapper.getId());
                 NITFUtilities.setField("TXTITL", textSubHeader.getTitle(), wrapper.getTitle());
                 NITFUtilities.setField("TXTALVL", textSubHeader.getAttachmentLevel(), wrapper.getAttachmentLevel());
-                NITFUtilities.setField("TSCLSY", textSubHeader.getSecurityGroup().getClassificationSystem(), wrapper.getSecurityClassificationSystem());
+                NITFUtilities.setField(
+                        "TSCLSY",
+                        textSubHeader.getSecurityGroup().getClassificationSystem(),
+                        wrapper.getSecurityClassificationSystem());
                 NITFUtilities.setField("TXTDT", textSubHeader.getDateTime(), wrapper.getDateTime());
-                NITFUtilities.setField("ENCRYP", textSubHeader.getEncrypted(), Integer.toString(wrapper.getEncrypted()));
+                NITFUtilities.setField(
+                        "ENCRYP", textSubHeader.getEncrypted(), Integer.toString(wrapper.getEncrypted()));
                 NITFUtilities.setField("TXTFMT", textSubHeader.getFormat(), wrapper.getFormat());
             }
         }

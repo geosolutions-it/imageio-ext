@@ -16,19 +16,17 @@
  */
 package it.geosolutions.imageioimpl.plugins.cog;
 
+import java.io.IOException;
+import java.util.logging.Logger;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-import java.util.logging.Logger;
-
 /**
  * Callback for asynchronous HTTP requests for OkHttp
  *
- * @author joshfix
- * Created on 2019-09-24
+ * @author joshfix Created on 2019-09-24
  */
 public class AsyncHttpCallback implements Callback {
 
@@ -42,7 +40,7 @@ public class AsyncHttpCallback implements Callback {
     private long startPosition;
     private long endPosition;
     private byte[] bytes;
-    private final static Logger LOGGER = Logger.getLogger(AsyncHttpCallback.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AsyncHttpCallback.class.getName());
 
     @Override
     public void onFailure(@NotNull Call call, @NotNull IOException e) {

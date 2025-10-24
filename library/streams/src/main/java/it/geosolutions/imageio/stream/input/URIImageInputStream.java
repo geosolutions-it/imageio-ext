@@ -17,14 +17,12 @@
 package it.geosolutions.imageio.stream.input;
 
 import it.geosolutions.imageio.stream.AccessibleStream;
-
 import java.net.URI;
-
 import javax.imageio.stream.ImageInputStream;
 
 /**
  * An {@link ImageInputStream} that gets its input from a {@link URI}
- * 
+ *
  * @author Daniele Romagnoli, GeoSolutions
  * @author Simone Giannecchini, GeoSolutions
  */
@@ -32,7 +30,7 @@ public interface URIImageInputStream extends ImageInputStream, AccessibleStream<
 
     /**
      * Returns the associated {@link URI}
-     * 
+     *
      * @return the associated {@link URI}
      */
     URI getUri();

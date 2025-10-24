@@ -22,7 +22,7 @@ import java.awt.image.Raster;
 
 /**
  * A scanline provider optimized for Raster objects containing a 16bit BGR or ABGR image
- * 
+ *
  * @author Andrea Aime - GeoSolutions
  */
 public final class RasterShortABGRProvider extends AbstractScanlineProvider {
@@ -40,7 +40,6 @@ public final class RasterShortABGRProvider extends AbstractScanlineProvider {
         bgrOrder = ((ComponentSampleModel) raster.getSampleModel()).getBandOffsets()[0] != 0;
     }
 
-    
     public void next(final byte[] scanline, final int offset, final int length) {
         int shortsIdx = cursor.next();
         int i = offset;
@@ -78,7 +77,7 @@ public final class RasterShortABGRProvider extends AbstractScanlineProvider {
                 }
             }
         } else {
-            if(bgrOrder) {
+            if (bgrOrder) {
                 while (i < max) {
                     final short b = shorts[shortsIdx++];
                     final short g = shorts[shortsIdx++];
@@ -105,5 +104,4 @@ public final class RasterShortABGRProvider extends AbstractScanlineProvider {
             }
         }
     }
-
 }

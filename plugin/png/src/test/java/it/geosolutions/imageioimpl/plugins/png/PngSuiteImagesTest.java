@@ -16,11 +16,10 @@
  */
 package it.geosolutions.imageioimpl.plugins.png;
 
-
 import static org.junit.Assert.assertEquals;
 
+import ar.com.hjg.pngj.FilterType;
 import it.geosolutions.imageio.plugins.png.PNGWriter;
-
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
@@ -34,25 +33,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
 import javax.imageio.ImageIO;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.RenderedOp;
 import javax.media.jai.operator.FormatDescriptor;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import ar.com.hjg.pngj.FilterType;
-
 @RunWith(Parameterized.class)
 public class PngSuiteImagesTest {
 
     private File sourceFile;
-
 
     public PngSuiteImagesTest(File sourceFile) {
         this.sourceFile = sourceFile;
@@ -63,7 +57,7 @@ public class PngSuiteImagesTest {
         List<Object[]> result = new ArrayList<Object[]>();
         File source = new File("./src/test/resources/pngsuite");
         File[] files = source.listFiles(new FilenameFilter() {
-            
+
             @Override
             public boolean accept(File dir, String name) {
                 return name.endsWith(".png");
@@ -71,7 +65,7 @@ public class PngSuiteImagesTest {
         });
         Arrays.sort(files);
         for (File file : files) {
-            result.add(new Object[] { file });
+            result.add(new Object[] {file});
         }
 
         return result;
@@ -94,8 +88,7 @@ public class PngSuiteImagesTest {
         il.setTileHeight(8);
 
         RenderingHints hints = new RenderingHints(JAI.KEY_IMAGE_LAYOUT, il);
-        RenderedOp tiled = FormatDescriptor.create(input, input.getSampleModel().getDataType(),
-                hints);
+        RenderedOp tiled = FormatDescriptor.create(input, input.getSampleModel().getDataType(), hints);
         assertEquals(8, tiled.getTileWidth());
         assertEquals(8, tiled.getTileHeight());
 
@@ -105,7 +98,7 @@ public class PngSuiteImagesTest {
     private void roundTripPNGJ(BufferedImage original, RenderedImage source) throws Exception {
         // write the PNG
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        float quality = 4f/9 - 1;
+        float quality = 4f / 9 - 1;
         new PNGWriter().writePNG(original, bos, -quality, FilterType.FILTER_NONE);
 
         // write the output to file for eventual visual comparison
@@ -132,5 +125,4 @@ public class PngSuiteImagesTest {
             }
         }
     }
-
 }

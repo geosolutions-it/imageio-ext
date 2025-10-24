@@ -20,24 +20,21 @@ import it.geosolutions.imageio.plugins.jp2k.box.ASOCBox;
 import it.geosolutions.imageio.plugins.jp2k.box.BoxUtilities;
 import it.geosolutions.imageio.plugins.jp2k.box.XMLBox;
 import it.geosolutions.resources.TestData;
-
 import java.io.File;
 import java.io.IOException;
-
 import javax.imageio.metadata.IIOMetadata;
-
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 /**
  * Experimental test class for JP2Boxes parsing
- * 
+ *
  * @author Daniele Romagnoli, GeoSolutions
  * @todo remove System.out
  */
 public class JP2BoxesTest extends AbstractJP2KakaduTestCase {
 
-    private final static String fileName = "jpx.jpx";
+    private static final String fileName = "jpx.jpx";
 
     // // private final static String fileName3 = "simple.jpx";
     //
@@ -45,11 +42,9 @@ public class JP2BoxesTest extends AbstractJP2KakaduTestCase {
 
     // private final static String fileName2 = "example.jp2";
 
-
     @org.junit.Test
     public void testBoxInfo() throws IOException {
-        if (!runTests)
-            return;
+        if (!runTests) return;
         File file = new File(fileName);
         if (!file.exists()) {
             file = TestData.file(this, fileName);
@@ -64,8 +59,7 @@ public class JP2BoxesTest extends AbstractJP2KakaduTestCase {
         // file3 = TestData.file(this, fileName3);
         // }
 
-        JP2KKakaduImageReader reader = new JP2KKakaduImageReader(
-                new JP2KKakaduImageReaderSpi());
+        JP2KKakaduImageReader reader = new JP2KKakaduImageReader(new JP2KKakaduImageReaderSpi());
 
         reader.setInput(file);
         // visualize(reader.readAsRenderedImage(0, null), "");
@@ -85,11 +79,9 @@ public class JP2BoxesTest extends AbstractJP2KakaduTestCase {
 
         if (TestData.isInteractiveTest()) {
             if (imageMetadata != null)
-                displayImageIOMetadata(imageMetadata
-                        .getAsTree(JP2KImageMetadata.nativeMetadataFormatName));
+                displayImageIOMetadata(imageMetadata.getAsTree(JP2KImageMetadata.nativeMetadataFormatName));
             if (streamMetadata != null)
-                displayImageIOMetadata(streamMetadata
-                        .getAsTree(JP2KStreamMetadata.nativeMetadataFormatName));
+                displayImageIOMetadata(streamMetadata.getAsTree(JP2KStreamMetadata.nativeMetadataFormatName));
         }
 
         // if (imageMetadata2 != null)
@@ -139,15 +131,13 @@ public class JP2BoxesTest extends AbstractJP2KakaduTestCase {
             }
         }
         System.out.print(">"); // close current tag
-        if ((nodeName.equalsIgnoreCase(BoxUtilities.getName(XMLBox.BOX_TYPE)) || nodeName
-                .equalsIgnoreCase(BoxUtilities.getName(ASOCBox.BOX_TYPE)))) {
+        if ((nodeName.equalsIgnoreCase(BoxUtilities.getName(XMLBox.BOX_TYPE))
+                || nodeName.equalsIgnoreCase(BoxUtilities.getName(ASOCBox.BOX_TYPE)))) {
             System.out.println(" VALUE HAS BEEN SKIPPED FROM VISUALIZATION");
         } else {
             String nodeValue = node.getNodeValue();
-            if (nodeValue != null)
-                System.out.println(" " + nodeValue);
-            else
-                System.out.println("");
+            if (nodeValue != null) System.out.println(" " + nodeValue);
+            else System.out.println("");
         }
         Node child = node.getFirstChild();
         if (child != null) {
@@ -161,5 +151,4 @@ public class JP2BoxesTest extends AbstractJP2KakaduTestCase {
             // System.out.println("/>");
         }
     }
-
 }

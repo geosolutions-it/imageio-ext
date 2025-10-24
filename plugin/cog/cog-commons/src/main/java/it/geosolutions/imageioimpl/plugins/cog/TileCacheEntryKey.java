@@ -21,8 +21,7 @@ import java.io.Serializable;
 /**
  * A simple cache key for tiles requiring the image URL and the tile index.
  *
- * @author joshfix
- * Created on 2019-09-18
+ * @author joshfix Created on 2019-09-18
  */
 public class TileCacheEntryKey implements Serializable {
 
@@ -70,5 +69,4 @@ public class TileCacheEntryKey implements Serializable {
         result = 31 * result + tileIndex;
         return result;
     }
-
 }

@@ -33,7 +33,7 @@ import it.geosolutions.imageio.imageioimpl.EnhancedImageReadParam;
 
 /**
  * Default implementation of {@link BaseClonableImageReadParam}
- * 
+ *
  * @author Daniele Romagnoli, GeoSolutions
  * @author Simone Giannecchini, GeoSolutions
  * @deprecated use {@link EnhancedImageReadParam} instead.

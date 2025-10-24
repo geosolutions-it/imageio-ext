@@ -1,15 +1,14 @@
 package it.geosolutions.imageio.plugins.nitronitf;
 
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
-
 import java.io.File;
 import java.io.IOException;
-
 import nitf.IOInterface;
 import nitf.NITFException;
 
 /**
  * implementation of the IOInterface, which allows to do buffered read operations on top of a FileInputStream.
+ *
  * @author Daniele Romagnoli, GeoSolutions SaS
  */
 public class IOFileInputStream extends IOInterface {
@@ -32,7 +31,6 @@ public class IOFileInputStream extends IOInterface {
             stream.read(buf);
         } catch (IOException e) {
             throw new NITFException(e);
-
         }
     }
 
@@ -41,7 +39,6 @@ public class IOFileInputStream extends IOInterface {
         byte[] b = new byte[size];
         read(b);
         return b;
-
     }
 
     @Override
@@ -56,7 +53,6 @@ public class IOFileInputStream extends IOInterface {
     @Override
     public long getSize() throws NITFException {
         return size;
-
     }
 
     @Override
@@ -71,7 +67,6 @@ public class IOFileInputStream extends IOInterface {
         } catch (IOException e) {
             throw new NITFException(e);
         }
-
     }
 
     @Override
@@ -84,18 +79,16 @@ public class IOFileInputStream extends IOInterface {
         try {
             long pos = stream.getStreamPosition();
             switch (whence) {
-            case IOInterface.SEEK_CUR:
-                if (offset + pos > size)
-                    throw new NITFException("Attempting to seek past buffer boundary.");
-                stream.seek((int) (pos + offset));
-                break;
-            case IOInterface.SEEK_END:
-                throw new NITFException("SEEK_END is unsupported with MemoryIO.");
-            case IOInterface.SEEK_SET:
-                if (offset > size)
-                    throw new NITFException("Attempting to seek past buffer boundary.");
-                stream.seek((int) (offset));
-                break;
+                case IOInterface.SEEK_CUR:
+                    if (offset + pos > size) throw new NITFException("Attempting to seek past buffer boundary.");
+                    stream.seek((int) (pos + offset));
+                    break;
+                case IOInterface.SEEK_END:
+                    throw new NITFException("SEEK_END is unsupported with MemoryIO.");
+                case IOInterface.SEEK_SET:
+                    if (offset > size) throw new NITFException("Attempting to seek past buffer boundary.");
+                    stream.seek((int) (offset));
+                    break;
             }
             return stream.getStreamPosition();
         } catch (IOException ioe) {
@@ -116,5 +109,4 @@ public class IOFileInputStream extends IOInterface {
     public void write(byte[] buf, int size) throws NITFException {
         throw new UnsupportedOperationException();
     }
-
 }

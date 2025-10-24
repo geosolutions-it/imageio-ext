@@ -21,24 +21,23 @@ import javax.imageio.stream.ImageOutputStream;
 
 /**
  * Simple interface to expose the underlying target for an {@link ImageInputStream}or {@link ImageOutputStream}.
- * 
- * @author Simone Giannecchini, GeoSolutions
  *
+ * @author Simone Giannecchini, GeoSolutions
  * @param <T>
  */
 public interface AccessibleStream<T> {
-    
+
     /**
      * Retrieves the target object on which we work.
-     * 
+     *
      * @return the target object on which we work.
      */
     public T getTarget();
-    
+
     /**
      * Retrieve the class for the target object.
+     *
      * @return the class for the target object.
      */
     public Class<T> getBinding();
-
 }

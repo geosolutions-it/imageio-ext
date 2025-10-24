@@ -18,7 +18,6 @@ package it.geosolutions.imageio.stream.input.compressed;
 
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExtImpl;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -27,13 +26,10 @@ import java.io.IOException;
  * @author Daniele Romagnoli, GeoSolutions
  * @author Simone Giannecchini, GeoSolutions
  */
-
-public class GZIPFilterFileImageInputStreamExt extends GZIPImageInputStream
-        implements FileImageInputStreamExt {
+public class GZIPFilterFileImageInputStreamExt extends GZIPImageInputStream implements FileImageInputStreamExt {
     private File file;
 
-    public GZIPFilterFileImageInputStreamExt(File file)
-            throws FileNotFoundException, IOException {
+    public GZIPFilterFileImageInputStreamExt(File file) throws FileNotFoundException, IOException {
         super(new GZIPImageInputStream(new FileImageInputStreamExtImpl(file)));
         this.file = file;
     }
@@ -46,7 +42,7 @@ public class GZIPFilterFileImageInputStreamExt extends GZIPImageInputStream
 
     /**
      * return the associated file
-     * 
+     *
      * @return the file
      */
     public File getFile() {

@@ -16,9 +16,9 @@
  */
 package it.geosolutions.imageio.plugins.geotiff;
 
+import com.sun.media.imageio.plugins.tiff.TIFFImageWriteParam;
 import it.geosolutions.imageio.gdalframework.GDALImageWriteParam;
 import java.util.Locale;
-import com.sun.media.imageio.plugins.tiff.TIFFImageWriteParam;
 
 /**
  * @author Daniele Romagnoli, GeoSolutions.
@@ -27,7 +27,6 @@ import com.sun.media.imageio.plugins.tiff.TIFFImageWriteParam;
 public class GeoTiffImageWriteParam extends GDALImageWriteParam {
     public GeoTiffImageWriteParam() {
 
-        super(new TIFFImageWriteParam(Locale.getDefault()),
-                new GeoTiffCreateOptionsHandler());
+        super(new TIFFImageWriteParam(Locale.getDefault()), new GeoTiffCreateOptionsHandler());
     }
 }

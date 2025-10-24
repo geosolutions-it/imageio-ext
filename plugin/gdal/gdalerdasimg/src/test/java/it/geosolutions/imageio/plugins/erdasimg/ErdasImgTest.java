@@ -20,32 +20,27 @@ import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
-
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
  * Testing reading capabilities for {@link ErdasImgImageReader}.
- * 
+ *
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class ErdasImgTest extends AbstractGDALTest {
-    public final static String fileName = "sample.img";
-
-
+    public static final String fileName = "sample.img";
 
     /**
      * Test read exploiting common JAI operations (Crop-Translate-Rotate)
-     * 
+     *
      * @throws FileNotFoundException
      * @throws IOException
      */
@@ -58,7 +53,7 @@ public class ErdasImgTest extends AbstractGDALTest {
         try {
             TestData.unzipFile(this, "test.zip");
             file = TestData.file(this, fileName);
-            
+
         } catch (FileNotFoundException fnfe) {
             warningMessage();
             return;
@@ -73,11 +68,8 @@ public class ErdasImgTest extends AbstractGDALTest {
         // get a RenderedImage
         RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 
-        if (TestData.isInteractiveTest())
-            Viewer.visualizeAllInformation(image, "Read");
-        else
-            Assert.assertNotNull(image.getTiles());
+        if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(image, "Read");
+        else Assert.assertNotNull(image.getTiles());
         ImageIOUtilities.disposeImage(image);
     }
-
 }

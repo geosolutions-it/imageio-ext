@@ -23,7 +23,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -41,7 +40,7 @@ public class AzureRangeReaderOnlineTest {
         AzureRangeReader reader = new AzureRangeReader(cogUrl, 4096);
         reader = spy(reader);
 
-        long[] range1 = new long[]{20000, 21000};
+        long[] range1 = new long[] {20000, 21000};
 
         Map<Long, byte[]> data1 = reader.read(range1);
         Map<Long, byte[]> data2 = reader.read(range1);
@@ -58,8 +57,8 @@ public class AzureRangeReaderOnlineTest {
         byte[] header = rangeReader.readHeader();
         Assert.assertEquals(headerByteLength, header.length);
 
-        long[] range1 = new long[]{5000, 6000};
-        long[] range2 = new long[]{8000, 9000};
+        long[] range1 = new long[] {5000, 6000};
+        long[] range2 = new long[] {8000, 9000};
 
         Map<Long, byte[]> data = rangeReader.read(range1, range2);
 
@@ -80,14 +79,11 @@ public class AzureRangeReaderOnlineTest {
         long range2Length = range2[1] - range2[0];
         nonZeroValueFound = false;
         for (long i = 0; i < range2Length; i++) {
-            if (range2Bytes[(int)i] != 0) {
+            if (range2Bytes[(int) i] != 0) {
                 nonZeroValueFound = true;
                 break;
             }
         }
         Assert.assertTrue(nonZeroValueFound);
-        
     }
-    
-
 }

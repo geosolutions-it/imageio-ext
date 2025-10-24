@@ -19,27 +19,25 @@ package it.geosolutions.imageioimpl.plugins.cog;
 import it.geosolutions.imageio.plugins.cog.CogImageReadParam;
 import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
 import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReader;
-
-import javax.imageio.ImageReadParam;
-import javax.imageio.spi.ImageReaderSpi;
-import javax.media.jai.PlanarImage;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.logging.Logger;
+import javax.imageio.ImageReadParam;
+import javax.imageio.spi.ImageReaderSpi;
+import javax.media.jai.PlanarImage;
 
 /**
- * ImageReader implementation extending from TIFFImageReader.  If this class encounters an ImageInputStream that does
- * not implement `CogImageInputStream`, it will simply pass the request on to TIFFImageReader.  Otherwise, it will
- * prefetch all requested tiles using the CogImageInputStream and cache them in the input stream object for
- * `TIFFImageReader` to utilize.
+ * ImageReader implementation extending from TIFFImageReader. If this class encounters an ImageInputStream that does not
+ * implement `CogImageInputStream`, it will simply pass the request on to TIFFImageReader. Otherwise, it will prefetch
+ * all requested tiles using the CogImageInputStream and cache them in the input stream object for `TIFFImageReader` to
+ * utilize.
  *
- * @author joshfix
- * Created on 2019-08-22
+ * @author joshfix Created on 2019-08-22
  */
 public class CogImageReader extends TIFFImageReader {
 
-    private final static Logger LOGGER = Logger.getLogger(CogImageReader.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(CogImageReader.class.getName());
 
     public CogImageReader(ImageReaderSpi originatingProvider) {
         super(originatingProvider);
@@ -54,11 +52,11 @@ public class CogImageReader extends TIFFImageReader {
 
         // the input stream needs to have either been initialized with a RangeReader implementation or the RangeReader
         // implementation class needs to have been provided in a CogImageReadParam
-        if (!((CogImageInputStream)stream).isInitialized() && param instanceof CogImageReadParam) {
+        if (!((CogImageInputStream) stream).isInitialized() && param instanceof CogImageReadParam) {
             ((CogImageInputStream) stream).init((CogImageReadParam) param);
         }
 
-        if (!((CogImageInputStream)stream).isInitialized()) {
+        if (!((CogImageInputStream) stream).isInitialized()) {
             throw new IOException("The CogImageInputStream has not been initialized.  Either pass a RangeReader"
                     + " implementation to the CogImageInputStream via the constructor or init method, or declare"
                     + " a valid RangeReader implementation class in the CogImageReadParam.");
@@ -91,7 +89,7 @@ public class CogImageReader extends TIFFImageReader {
 
         LOGGER.fine("Reading tiles (" + minTileX + "," + minTileY + ") - (" + maxTileX + "," + maxTileY + ")");
 
-        CogTileInfo cogTileInfoHeader = ((CogImageInputStream)stream).getHeader();
+        CogTileInfo cogTileInfoHeader = ((CogImageInputStream) stream).getHeader();
         CogTileInfo cogTileInfo = new CogTileInfo(cogTileInfoHeader.getHeaderLength());
 
         // loops through each requested tile and complies information about each tile offset and byte length
@@ -125,5 +123,4 @@ public class CogImageReader extends TIFFImageReader {
         // Now we proceed with the legacy TIFFImageReader code.
         return super.read(imageIndex, param);
     }
-
 }

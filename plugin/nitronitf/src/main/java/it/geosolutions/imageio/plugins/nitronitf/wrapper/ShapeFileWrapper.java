@@ -18,8 +18,7 @@ package it.geosolutions.imageio.plugins.nitronitf.wrapper;
 
 public class ShapeFileWrapper {
 
-    public ShapeFileWrapper(byte[] shp, byte[] shx, byte[] dbf, int shpLength, int shxLength,
-            int dbfLength) {
+    public ShapeFileWrapper(byte[] shp, byte[] shx, byte[] dbf, int shpLength, int shxLength, int dbfLength) {
         super();
         this.shp = shp;
         this.shx = shx;
@@ -88,5 +87,4 @@ public class ShapeFileWrapper {
     public void setDbfLength(int dbfLength) {
         this.dbfLength = dbfLength;
     }
-
 }

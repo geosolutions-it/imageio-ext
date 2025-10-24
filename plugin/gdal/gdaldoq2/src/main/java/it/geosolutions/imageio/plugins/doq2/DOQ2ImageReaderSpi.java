@@ -18,43 +18,41 @@ package it.geosolutions.imageio.plugins.doq2;
 
 import it.geosolutions.imageio.gdalframework.GDALImageReaderSpi;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.imageio.ImageReader;
 
 /**
  * Service provider interface for New Labelled USGS Digital Orthophoto Quarter Quadrangles image reader
- * 
+ *
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class DOQ2ImageReaderSpi extends GDALImageReaderSpi {
 
-    private static final Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.plugins.doq2");
+    private static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.doq2");
 
-    static final String[] suffixes = { "NWS" };
+    static final String[] suffixes = {"NWS"};
 
-    static final String[] formatNames = { "DOQ2" };
+    static final String[] formatNames = {"DOQ2"};
 
-    static final String[] MIMETypes = { "image/doq2" };
+    static final String[] MIMETypes = {"image/doq2"};
 
     static final String version = "1.0";
-    
-    static final String description = "New Labelled USGS Digital Orthophoto Quarter Quadrangles Image Reader, version " + version;
+
+    static final String description =
+            "New Labelled USGS Digital Orthophoto Quarter Quadrangles Image Reader, version " + version;
 
     static final String readerCN = "it.geosolutions.imageio.plugins.doq2.DOQ2ImageReader";
 
     static final String vendorName = "GeoSolutions";
 
     // writerSpiNames
-    static final String[] wSN = { null };
+    static final String[] wSN = {null};
 
     // StreamMetadataFormatNames and StreamMetadataFormatClassNames
     static final boolean supportsStandardStreamMetadataFormat = false;
@@ -63,9 +61,9 @@ public class DOQ2ImageReaderSpi extends GDALImageReaderSpi {
 
     static final String nativeStreamMetadataFormatClassName = null;
 
-    static final String[] extraStreamMetadataFormatNames = { null };
+    static final String[] extraStreamMetadataFormatNames = {null};
 
-    static final String[] extraStreamMetadataFormatClassNames = { null };
+    static final String[] extraStreamMetadataFormatClassNames = {null};
 
     // ImageMetadataFormatNames and ImageMetadataFormatClassNames
     static final boolean supportsStandardImageMetadataFormat = false;
@@ -74,9 +72,9 @@ public class DOQ2ImageReaderSpi extends GDALImageReaderSpi {
 
     static final String nativeImageMetadataFormatClassName = null;
 
-    static final String[] extraImageMetadataFormatNames = { null };
+    static final String[] extraImageMetadataFormatNames = {null};
 
-    static final String[] extraImageMetadataFormatClassNames = { null };
+    static final String[] extraImageMetadataFormatClassNames = {null};
 
     public DOQ2ImageReaderSpi() {
         super(
@@ -86,7 +84,7 @@ public class DOQ2ImageReaderSpi extends GDALImageReaderSpi {
                 suffixes,
                 MIMETypes,
                 readerCN, // readerClassName
-                new Class[] { File.class, FileImageInputStreamExt.class },
+                new Class[] {File.class, FileImageInputStreamExt.class},
                 wSN, // writer Spi Names
                 supportsStandardStreamMetadataFormat,
                 nativeStreamMetadataFormatName,
@@ -97,32 +95,27 @@ public class DOQ2ImageReaderSpi extends GDALImageReaderSpi {
                 nativeImageMetadataFormatName,
                 nativeImageMetadataFormatClassName,
                 extraImageMetadataFormatNames,
-                extraImageMetadataFormatClassNames, Collections.singletonList("DOQ2"));
-        if (LOGGER.isLoggable(Level.FINE))
-            LOGGER.fine("EnvisatImageReaderSpi Constructor");
+                extraImageMetadataFormatClassNames,
+                Collections.singletonList("DOQ2"));
+        if (LOGGER.isLoggable(Level.FINE)) LOGGER.fine("EnvisatImageReaderSpi Constructor");
     }
 
-    /**
-     * This method checks if the provided input can be decoded from this SPI
-     */
+    /** This method checks if the provided input can be decoded from this SPI */
     public boolean canDecodeInput(Object input) throws IOException {
         return super.canDecodeInput(input);
     }
 
     /**
      * Returns an instance of the EnvisatImageReader
-     * 
+     *
      * @see javax.imageio.spi.ImageReaderSpi#createReaderInstance(java.lang.Object)
      */
     public ImageReader createReaderInstance(Object source) throws IOException {
         return new DOQ2ImageReader(this);
     }
 
-    /**
-     * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
-     */
+    /** @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale) */
     public String getDescription(Locale locale) {
         return description;
     }
-
 }

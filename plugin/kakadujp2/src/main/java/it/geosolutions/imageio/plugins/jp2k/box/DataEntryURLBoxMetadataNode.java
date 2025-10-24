@@ -16,16 +16,13 @@
  */
 package it.geosolutions.imageio.plugins.jp2k.box;
 
-
+import com.sun.media.imageioimpl.common.ImageUtil;
 import javax.imageio.metadata.IIOMetadataNode;
 
-import com.sun.media.imageioimpl.common.ImageUtil;
-
 /**
- * This class is defined to represent a Data Entry URL Box of JPEG JP2 file
- * format. A Data Entry URL Box has a length, and a fixed type of "url ". Its
- * content are a one-byte version, a three-byte flags and a URL pertains to the
- * UUID List box within its UUID Info superbox.
+ * This class is defined to represent a Data Entry URL Box of JPEG JP2 file format. A Data Entry URL Box has a length,
+ * and a fixed type of "url ". Its content are a one-byte version, a three-byte flags and a URL pertains to the UUID
+ * List box within its UUID Info superbox.
  */
 @SuppressWarnings("serial")
 public class DataEntryURLBoxMetadataNode extends BaseJP2KBoxMetadataNode {
@@ -48,12 +45,12 @@ public class DataEntryURLBoxMetadataNode extends BaseJP2KBoxMetadataNode {
             child.setUserObject(new Byte(v));
             child.setNodeValue(version);
             appendChild(child);
-            
+
             child = new IIOMetadataNode("Flags");
             child.setUserObject(fl);
             child.setNodeValue(flags);
             appendChild(child);
-            
+
             child = new IIOMetadataNode("URL");
             child.setNodeValue(url);
             appendChild(child);

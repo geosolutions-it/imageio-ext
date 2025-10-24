@@ -19,29 +19,24 @@ package it.geosolutions.imageio.plugins.arcbinarygrid;
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
-
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
-
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
-
 import org.junit.Assert;
 
 /**
- * Testing reading capabilities for {@link ArcBinaryGridImageReader} leveraging
- * on JAI.
- * 
+ * Testing reading capabilities for {@link ArcBinaryGridImageReader} leveraging on JAI.
+ *
  * @author Simone Giannecchini, GeoSolutions.
  * @author Daniele Romagnoli, GeoSolutions.
- * 
  */
 public class ArcBinaryGridReadTest extends AbstractGDALTest {
     public ArcBinaryGridReadTest() {
@@ -49,20 +44,19 @@ public class ArcBinaryGridReadTest extends AbstractGDALTest {
     }
 
     /**
-     * To run this test, you need to get the content of the 
-     * whole nzdem500 folder available at:
+     * To run this test, you need to get the content of the whole nzdem500 folder available at:
      * http://download.osgeo.org/gdal/data/aig/nzdem/nzdem500/
      */
-    private final static String fileName = "nzdem500/vat.adf";
-    
-    private final static StringBuilder warningMessage = 
-        new StringBuilder("test-data not found: ").append(fileName).
-        append("\n download it at http://download.osgeo.org/gdal/data/aig/nzdem/nzdem500/")
-        .append("\nTests are skipped");
+    private static final String fileName = "nzdem500/vat.adf";
+
+    private static final StringBuilder warningMessage = new StringBuilder("test-data not found: ")
+            .append(fileName)
+            .append("\n download it at http://download.osgeo.org/gdal/data/aig/nzdem/nzdem500/")
+            .append("\nTests are skipped");
 
     /**
      * Simple test read through JAI - ImageIO
-     * 
+     *
      * @throws FileNotFoundException
      * @throws IOException
      */
@@ -85,10 +79,8 @@ public class ArcBinaryGridReadTest extends AbstractGDALTest {
         pbjImageRead.setParameter("Input", file);
         RenderedOp image = JAI.create("ImageRead", pbjImageRead);
 
-        if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image, fileName, true);
-        else
-            image.getTiles();
+        if (TestData.isInteractiveTest()) ImageIOUtilities.visualize(image, fileName, true);
+        else image.getTiles();
         Assert.assertEquals(251, image.getWidth());
         Assert.assertEquals(369, image.getHeight());
         ImageIOUtilities.disposeImage(image);
@@ -96,7 +88,7 @@ public class ArcBinaryGridReadTest extends AbstractGDALTest {
 
     /**
      * Simple test read through ImageIO
-     * 
+     *
      * @throws FileNotFoundException
      * @throws IOException
      */
@@ -131,8 +123,7 @@ public class ArcBinaryGridReadTest extends AbstractGDALTest {
         rp.setSourceSubsampling(4, 4, 0, 0);
         reader.setInput(file);
         RenderedImage image = reader.read(0, rp);
-        if (TestData.isInteractiveTest())
-            ImageIOUtilities.visualize(image, "subsample read " + file.getName(), true);
+        if (TestData.isInteractiveTest()) ImageIOUtilities.visualize(image, "subsample read " + file.getName(), true);
         reader.reset();
         reader.dispose();
         ImageIOUtilities.disposeImage(image);

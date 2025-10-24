@@ -29,11 +29,10 @@
  */
 package it.geosolutions.imageio.compression.zipdeflate;
 
+import it.geosolutions.imageio.compression.AbstractCompressionSpi;
 import it.geosolutions.imageio.compression.CompressionType;
 import it.geosolutions.imageio.compression.Decompressor;
 import it.geosolutions.imageio.compression.DecompressorSpi;
-import it.geosolutions.imageio.compression.AbstractCompressionSpi;
-
 import java.util.Collections;
 import java.util.Set;
 
@@ -45,7 +44,6 @@ public class ZipDeflateDecompressorSpi extends AbstractCompressionSpi implements
     public Set<CompressionType> getSupportedCompressions() {
         return SUPPORTED_TYPES;
     }
-
 
     @Override
     public Decompressor createDecompressor(CompressionType compressionType) {

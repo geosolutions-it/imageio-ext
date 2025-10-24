@@ -17,14 +17,12 @@
 package it.geosolutions.imageio.stream.input;
 
 import it.geosolutions.imageio.stream.AccessibleStream;
-
 import java.io.File;
-
 import javax.imageio.stream.ImageInputStream;
 
 /**
  * An {@link ImageInputStream} that gets its input from a {@link File}.
- * 
+ *
  * @author Daniele Romagnoli, GeoSolutions
  * @author Simone Giannecchini, GeoSolutions
  * @deprecated use AccessibleStream instead
@@ -32,7 +30,7 @@ import javax.imageio.stream.ImageInputStream;
 public interface FileImageInputStreamExt extends ImageInputStream, AccessibleStream<File> {
     /**
      * Returns the associated {@link File}
-     * 
+     *
      * @return the associated {@link File}
      */
     public File getFile();

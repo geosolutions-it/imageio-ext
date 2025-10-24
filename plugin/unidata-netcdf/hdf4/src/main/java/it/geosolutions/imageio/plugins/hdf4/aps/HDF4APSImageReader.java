@@ -19,7 +19,6 @@ package it.geosolutions.imageio.plugins.hdf4.aps;
 import it.geosolutions.imageio.plugins.hdf4.BaseHDF4ImageReader;
 import it.geosolutions.imageio.plugins.netcdf.BaseNetCDFImageReader;
 import it.geosolutions.imageio.plugins.netcdf.NetCDFUtilities;
-
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
@@ -28,11 +27,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
-
 import ucar.ma2.Array;
 import ucar.ma2.ArrayDouble;
 import ucar.ma2.InvalidRangeException;
@@ -42,13 +39,13 @@ import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
 
 /**
- * {@link HDF4APSImageReader} is a {@link ImageReader} able to create
- * {@link RenderedImage} from APS generated HDF sources.
- * 
+ * {@link HDF4APSImageReader} is a {@link ImageReader} able to create {@link RenderedImage} from APS generated HDF
+ * sources.
+ *
  * @author Daniele Romagnoli
  */
 public class HDF4APSImageReader extends BaseHDF4ImageReader {
-	
+
     /** The Products Dataset List contained within the APS File */
     private String[] productList;
 
@@ -56,27 +53,24 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
     private String projectionDatasetName;
 
     private HDF4APSStreamMetadata streamMetadata;
-    
+
     Map<String, String> projectionMap = null;
 
-    private class APSDatasetWrapper extends HDF4DatasetWrapper{
+    private class APSDatasetWrapper extends HDF4DatasetWrapper {
         private APSDatasetWrapper(Variable var) {
-        	super(var);
-		}
+            super(var);
+        }
     }
-    
-    BaseNetCDFImageReader getInnerReader() {
-		return reader;
-	}
 
-    /**
-     * Initialize main properties for this <code>HDF4APSImageReader</code>
-     */
+    BaseNetCDFImageReader getInnerReader() {
+        return reader;
+    }
+
+    /** Initialize main properties for this <code>HDF4APSImageReader</code> */
     protected void initializeProfile() throws IOException {
         final NetcdfDataset dataset = reader.getDataset();
         if (dataset == null) {
-            throw new IOException(
-                    "Unable to initialize profile due to a null dataset");
+            throw new IOException("Unable to initialize profile due to a null dataset");
         }
         final List<Variable> variables = dataset.getVariables();
         final List<Attribute> attributes = dataset.getGlobalAttributes();
@@ -88,17 +82,16 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
         // Getting projection dataset name
         //
         // //
-        
-        final String navAttrib = NetCDFUtilities.getGlobalAttributeAsString(dataset,
-        		HDF4APSProperties.PFA_NA_MAPPROJECTION);
-        if (navAttrib != null && navAttrib.length()>0) {
+
+        final String navAttrib =
+                NetCDFUtilities.getGlobalAttributeAsString(dataset, HDF4APSProperties.PFA_NA_MAPPROJECTION);
+        if (navAttrib != null && navAttrib.length() > 0) {
             projectionDatasetName = navAttrib;
         }
 
-        final String prodAttrib = NetCDFUtilities.getGlobalAttributeAsString(dataset,
-        		HDF4APSProperties.PRODLIST);
+        final String prodAttrib = NetCDFUtilities.getGlobalAttributeAsString(dataset, HDF4APSProperties.PRODLIST);
         int numImages = 0;
-        if (prodAttrib != null && prodAttrib.length()>0) {
+        if (prodAttrib != null && prodAttrib.length() > 0) {
             String products[] = prodAttrib.split(",");
             productList = HDF4APSProperties.refineProductList(products);
             numImages = productList.length;
@@ -107,7 +100,7 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
         }
         setNumImages(numImages);
         reader.setNumImages(numImages);
-        final Map<Range,APSDatasetWrapper> indexMap = new HashMap<Range, APSDatasetWrapper>(numImages);
+        final Map<Range, APSDatasetWrapper> indexMap = new HashMap<Range, APSDatasetWrapper>(numImages);
 
         Variable varProjection;
         // //
@@ -118,7 +111,7 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
 
         // getting map dataset
         varProjection = dataset.findVariable(projectionDatasetName);
-        if (varProjection != null&& varProjection.getName().equalsIgnoreCase(projectionDatasetName)) {
+        if (varProjection != null && varProjection.getName().equalsIgnoreCase(projectionDatasetName)) {
             // TODO: All projection share the same dataset
             // structure?
             Array data = varProjection.read();
@@ -129,30 +122,30 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
                 // the map
             }
         }
-	    try{
-	        // Scanning all the datasets
-	        for (Variable var : variables) {
-	            final String name = var.getName();
-	            for (int j = 0; j < numImages; j++) {
-	                // Checking if the actual dataset is a product.
-	                if (name.equals(productList[j])) {
-	                    // Updating the subDatasetsMap map
-	                	indexMap.put(new Range(j,j+1), new APSDatasetWrapper(var));
-	                    break;
-	                }
-	            }
-	        }
-	    } catch (InvalidRangeException e) {
-	    	throw new IllegalArgumentException( "Error occurred during NetCDF file parsing", e);
-		}
-	    reader.setIndexMap(indexMap);
+        try {
+            // Scanning all the datasets
+            for (Variable var : variables) {
+                final String name = var.getName();
+                for (int j = 0; j < numImages; j++) {
+                    // Checking if the actual dataset is a product.
+                    if (name.equals(productList[j])) {
+                        // Updating the subDatasetsMap map
+                        indexMap.put(new Range(j, j + 1), new APSDatasetWrapper(var));
+                        break;
+                    }
+                }
+            }
+        } catch (InvalidRangeException e) {
+            throw new IllegalArgumentException("Error occurred during NetCDF file parsing", e);
+        }
+        reader.setIndexMap(indexMap);
     }
 
-    private static Map<String,String> buildProjectionAttributesMap(final Array data, int datatype) {
-        final Map<String,String> projMap = new LinkedHashMap<String,String>(29);
+    private static Map<String, String> buildProjectionAttributesMap(final Array data, int datatype) {
+        final Map<String, String> projMap = new LinkedHashMap<String, String>(29);
 
         if (datatype == DataBuffer.TYPE_DOUBLE && data instanceof ArrayDouble) {
-            double[] values = (double[])data.get1DJavaArray(double.class);
+            double[] values = (double[]) data.get1DJavaArray(double.class);
             // TODO: I need to build a parser or a formatter to properly
             // interpret these settings
             projMap.put("Code", Double.toString(values[0]));
@@ -191,7 +184,7 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
     public HDF4APSImageReader(ImageReaderSpi originatingProvider) {
         super(originatingProvider);
     }
-    
+
     protected int getBandNumberFromProduct(String productName) {
         return HDF4APSProperties.apsProducts.get(productName).getNBands();
     }
@@ -212,54 +205,46 @@ public class HDF4APSImageReader extends BaseHDF4ImageReader {
         return datasetName;
     }
 
-
-
-    public void reset(){
+    public void reset() {
         super.reset();
     }
-    
-	/**
-	 * @see javax.imageio.ImageReader#getImageMetadata(int, java.lang.String, java.util.Set)
-	 */
-	@Override
-	public IIOMetadata getImageMetadata(int imageIndex, String formatName, Set<String> nodeNames) throws IOException {
-		initialize();
-	    checkImageIndex(imageIndex);
-	    if (formatName.equalsIgnoreCase(HDF4APSImageMetadata.nativeMetadataFormatName))
-	    	return new HDF4APSImageMetadata(this, imageIndex);
-	    
-	    // fallback on the super type metadata
-		return super.getImageMetadata(imageIndex, formatName, nodeNames);
-	}
 
-	/**
-	 * @see javax.imageio.ImageReader#getStreamMetadata(java.lang.String, java.util.Set)
-	 */
-	@Override
-	public synchronized IIOMetadata getStreamMetadata(String formatName, Set<String> nodeNames) throws IOException {
-		if(formatName.equalsIgnoreCase(HDF4APSStreamMetadata.nativeMetadataFormatName)){
-	        if (streamMetadata == null)
-	            streamMetadata = new HDF4APSStreamMetadata(this);
-	        return streamMetadata;
-		}
-		return super.getStreamMetadata(formatName, nodeNames);
-	}
+    /** @see javax.imageio.ImageReader#getImageMetadata(int, java.lang.String, java.util.Set) */
+    @Override
+    public IIOMetadata getImageMetadata(int imageIndex, String formatName, Set<String> nodeNames) throws IOException {
+        initialize();
+        checkImageIndex(imageIndex);
+        if (formatName.equalsIgnoreCase(HDF4APSImageMetadata.nativeMetadataFormatName))
+            return new HDF4APSImageMetadata(this, imageIndex);
+
+        // fallback on the super type metadata
+        return super.getImageMetadata(imageIndex, formatName, nodeNames);
+    }
+
+    /** @see javax.imageio.ImageReader#getStreamMetadata(java.lang.String, java.util.Set) */
+    @Override
+    public synchronized IIOMetadata getStreamMetadata(String formatName, Set<String> nodeNames) throws IOException {
+        if (formatName.equalsIgnoreCase(HDF4APSStreamMetadata.nativeMetadataFormatName)) {
+            if (streamMetadata == null) streamMetadata = new HDF4APSStreamMetadata(this);
+            return streamMetadata;
+        }
+        return super.getStreamMetadata(formatName, nodeNames);
+    }
 
     public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
-    	return getImageMetadata(imageIndex, HDF4APSImageMetadata.nativeMetadataFormatName, null);
+        return getImageMetadata(imageIndex, HDF4APSImageMetadata.nativeMetadataFormatName, null);
     }
-    
-	public IIOMetadata getImageMetadata(int imageIndex, final String format) throws IOException {
-    	return getImageMetadata(imageIndex, format, null);
-    }
-    
-	public synchronized IIOMetadata getStreamMetadata() throws IOException {
-		return getStreamMetadata(HDF4APSStreamMetadata.nativeMetadataFormatName, null);
-	}
-	
-	@Override
-	protected HDF4DatasetWrapper getDatasetWrapper(int imageIndex) {
-		return (HDF4DatasetWrapper) reader.getVariableWrapper(imageIndex);
-	}
 
+    public IIOMetadata getImageMetadata(int imageIndex, final String format) throws IOException {
+        return getImageMetadata(imageIndex, format, null);
+    }
+
+    public synchronized IIOMetadata getStreamMetadata() throws IOException {
+        return getStreamMetadata(HDF4APSStreamMetadata.nativeMetadataFormatName, null);
+    }
+
+    @Override
+    protected HDF4DatasetWrapper getDatasetWrapper(int imageIndex) {
+        return (HDF4DatasetWrapper) reader.getVariableWrapper(imageIndex);
+    }
 }

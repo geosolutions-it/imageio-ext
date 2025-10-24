@@ -18,35 +18,32 @@ package it.geosolutions.imageio.plugins.envihdr;
 
 import it.geosolutions.imageio.gdalframework.GDALImageReaderSpi;
 import it.geosolutions.imageio.stream.input.FileImageInputStreamExt;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.imageio.ImageReader;
 
 /**
  * Service provider interface for the ENVI Hdr labelled Image
- * 
+ *
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
 public class ENVIHdrImageReaderSpi extends GDALImageReaderSpi {
 
-    private static final Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.plugins.envihdr");
+    private static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.envihdr");
 
-    static final String[] suffixes = { "bil", "bip", "bsq", "img" };
+    static final String[] suffixes = {"bil", "bip", "bsq", "img"};
 
-    static final String[] formatNames = { "ENVI Hdr labelled", "ENVIHDR" };
+    static final String[] formatNames = {"ENVI Hdr labelled", "ENVIHDR"};
 
-    static final String[] MIMETypes = { "image/bil", "image/bip", "image/bsq"};
+    static final String[] MIMETypes = {"image/bil", "image/bip", "image/bsq"};
 
     static final String version = "1.0";
-    
+
     static final String description = "ENVI Hdr labelled Image Reader, version " + version;
 
     static final String readerCN = "it.geosolutions.imageio.plugins.envi.ENVIHdrImageReader";
@@ -54,7 +51,7 @@ public class ENVIHdrImageReaderSpi extends GDALImageReaderSpi {
     static final String vendorName = "GeoSolutions";
 
     // writerSpiNames
-    static final String[] wSN = { null };
+    static final String[] wSN = {null};
 
     // StreamMetadataFormatNames and StreamMetadataFormatClassNames
     static final boolean supportsStandardStreamMetadataFormat = false;
@@ -63,9 +60,9 @@ public class ENVIHdrImageReaderSpi extends GDALImageReaderSpi {
 
     static final String nativeStreamMetadataFormatClassName = null;
 
-    static final String[] extraStreamMetadataFormatNames = { null };
+    static final String[] extraStreamMetadataFormatNames = {null};
 
-    static final String[] extraStreamMetadataFormatClassNames = { null };
+    static final String[] extraStreamMetadataFormatClassNames = {null};
 
     // ImageMetadataFormatNames and ImageMetadataFormatClassNames
     static final boolean supportsStandardImageMetadataFormat = false;
@@ -74,9 +71,9 @@ public class ENVIHdrImageReaderSpi extends GDALImageReaderSpi {
 
     static final String nativeImageMetadataFormatClassName = null;
 
-    static final String[] extraImageMetadataFormatNames = { null };
+    static final String[] extraImageMetadataFormatNames = {null};
 
-    static final String[] extraImageMetadataFormatClassNames = { null };
+    static final String[] extraImageMetadataFormatClassNames = {null};
 
     public ENVIHdrImageReaderSpi() {
         super(
@@ -86,7 +83,7 @@ public class ENVIHdrImageReaderSpi extends GDALImageReaderSpi {
                 suffixes,
                 MIMETypes,
                 readerCN, // readerClassName
-                new Class[] { File.class, FileImageInputStreamExt.class },
+                new Class[] {File.class, FileImageInputStreamExt.class},
                 wSN, // writer Spi Names
                 supportsStandardStreamMetadataFormat,
                 nativeStreamMetadataFormatName,
@@ -97,25 +94,22 @@ public class ENVIHdrImageReaderSpi extends GDALImageReaderSpi {
                 nativeImageMetadataFormatName,
                 nativeImageMetadataFormatClassName,
                 extraImageMetadataFormatNames,
-                extraImageMetadataFormatClassNames, Collections
-                        .singletonList("ENVI"));
+                extraImageMetadataFormatClassNames,
+                Collections.singletonList("ENVI"));
 
-        if (LOGGER.isLoggable(Level.FINE))
-            LOGGER.fine("ENVIHdrImageReaderSpi Constructor");
+        if (LOGGER.isLoggable(Level.FINE)) LOGGER.fine("ENVIHdrImageReaderSpi Constructor");
     }
 
     /**
      * Returns an instance of the ENVIHdrImageReader
-     * 
+     *
      * @see javax.imageio.spi.ImageReaderSpi#createReaderInstance(java.lang.Object)
      */
     public ImageReader createReaderInstance(Object source) throws IOException {
         return new ENVIHdrImageReader(this);
     }
 
-    /**
-     * @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale)
-     */
+    /** @see javax.imageio.spi.IIOServiceProvider#getDescription(java.util.Locale) */
     public String getDescription(Locale locale) {
         return description;
     }

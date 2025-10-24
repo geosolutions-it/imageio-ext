@@ -19,6 +19,12 @@ package it.geosolutions.imageioimpl.plugins.png;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import ar.com.hjg.pngj.FilterType;
+import ar.com.hjg.pngj.PngReader;
+import ar.com.hjg.pngj.chunks.PngMetadata;
+import com.sun.media.jai.operator.ImageReadDescriptor;
+import it.geosolutions.imageio.plugins.png.PNGWriter;
+import it.geosolutions.resources.TestData;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.io.ByteArrayInputStream;
@@ -29,25 +35,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageInputStream;
 import javax.media.jai.RenderedOp;
 import javax.media.jai.operator.BandSelectDescriptor;
-
 import org.junit.Test;
 
-import com.sun.media.jai.operator.ImageReadDescriptor;
-
-import ar.com.hjg.pngj.FilterType;
-import ar.com.hjg.pngj.PngReader;
-import ar.com.hjg.pngj.chunks.PngMetadata;
-import it.geosolutions.imageio.plugins.png.PNGWriter;
-import it.geosolutions.resources.TestData;
-
-/**
- * Unit test for simple App.
- */
+/** Unit test for simple App. */
 public class PNGWriterTest {
 
     @Test
@@ -110,7 +104,6 @@ public class PNGWriterTest {
                 } catch (IOException e) {
 
                 }
-
             }
         }
 
@@ -129,7 +122,6 @@ public class PNGWriterTest {
         } finally {
             if (reader != null) {
                 reader.close();
-
             }
         }
     }
@@ -139,7 +131,7 @@ public class PNGWriterTest {
         File source = new File("./src/test/resources/pngsuite/basn6a08.png");
         FileImageInputStream fis = new FileImageInputStream(source);
         RenderedOp readImage = ImageReadDescriptor.create(fis, 0, false, false, false, null, null, null, null, null);
-        RenderedOp bandSelect = BandSelectDescriptor.create(readImage, new int[] { 0, 1, 2 }, null);
+        RenderedOp bandSelect = BandSelectDescriptor.create(readImage, new int[] {0, 1, 2}, null);
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         float quality = 5f / 9 - 1;

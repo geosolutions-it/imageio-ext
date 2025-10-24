@@ -18,19 +18,18 @@ package it.geosolutions.imageio.plugins.jp2k.box;
 
 import it.geosolutions.imageio.plugins.jp2k.JP2KBox;
 import it.geosolutions.util.KakaduUtilities;
-
 import javax.imageio.metadata.IIOMetadataNode;
 
 /**
  * This class is defined to represent a Label Box of JPEG JP2 file format.
- * 
+ *
  * @author Simone Giannecchini, GeoSolutions
  */
 @SuppressWarnings("serial")
 public class LabelBoxMetadataNode extends BaseJP2KBoxMetadataNode {
 
-    public final static String GML_DATA = "gml.data";
-    
+    public static final String GML_DATA = "gml.data";
+
     private String text;
 
     public String getText() {

@@ -1,18 +1,13 @@
 package it.geosolutions.imageio.plugins.nitronitf;
 
-import it.geosolutions.imageio.plugins.nitronitf.NITFImageWriteParam;
-import it.geosolutions.imageio.plugins.nitronitf.NITFImageWriter;
-import it.geosolutions.imageio.plugins.nitronitf.NITFImageWriterSpi;
-import it.geosolutions.imageio.plugins.nitronitf.NITFUtilities;
 import it.geosolutions.imageio.plugins.nitronitf.NITFUtilities.WriteCompression;
 import it.geosolutions.imageio.plugins.nitronitf.wrapper.HeaderWrapper;
 import it.geosolutions.imageio.plugins.nitronitf.wrapper.ImageWrapper;
-import it.geosolutions.imageio.plugins.nitronitf.wrapper.NITFProperties;
-import it.geosolutions.imageio.plugins.nitronitf.wrapper.TextWrapper;
 import it.geosolutions.imageio.plugins.nitronitf.wrapper.ImageWrapper.Category;
 import it.geosolutions.imageio.plugins.nitronitf.wrapper.ImageWrapper.ImageBand;
 import it.geosolutions.imageio.plugins.nitronitf.wrapper.ImageWrapper.Representation;
-
+import it.geosolutions.imageio.plugins.nitronitf.wrapper.NITFProperties;
+import it.geosolutions.imageio.plugins.nitronitf.wrapper.TextWrapper;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
@@ -24,25 +19,22 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 import javax.imageio.IIOImage;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.stream.FileImageInputStream;
-
 import nitf.NITFException;
-
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
 public class WriterTest extends Assert {
 
-    private final static String DEFAULT_IMAGE_SOURCE = "GeoSolutions";
+    private static final String DEFAULT_IMAGE_SOURCE = "GeoSolutions";
 
     private static final String DATE_FORMAT_NOW = "yyyyMMddHHmmss";
 
-    private static final String[] DECIMAL_DIGITS = new String[] { "", "0", "00", "000", "0000",
-            "00000", "000000", "0000000" };
+    private static final String[] DECIMAL_DIGITS =
+            new String[] {"", "0", "00", "000", "0000", "00000", "000000", "0000000"};
 
     private static final SimpleDateFormat SDF = new SimpleDateFormat(DATE_FORMAT_NOW);
 
@@ -54,9 +46,8 @@ public class WriterTest extends Assert {
     @Test
     @Ignore
     /**
-     * Simple writing code which won't be run. You can use it as a sample on how to 
-     * setup some writing machinery.
-     * 
+     * Simple writing code which won't be run. You can use it as a sample on how to setup some writing machinery.
+     *
      * @throws IOException
      * @throws NITFException
      */
@@ -67,17 +58,17 @@ public class WriterTest extends Assert {
             return;
         }
 
-        final String inputFilePaths[] = new String[] { "/tmp/sampleForNitf.tif" };
-        final String requestedCrs[] = new String[] { "EPSG:32638" };
+        final String inputFilePaths[] = new String[] {"/tmp/sampleForNitf.tif"};
+        final String requestedCrs[] = new String[] {"EPSG:32638"};
 
         FileImageInputStream fisi = new FileImageInputStream(new File("/tmp/license.txt"));
         int length = (int) fisi.length();
         byte[] data = new byte[length];
         fisi.read(data);
 
-//        final int j = 0;
-//        String inputFilePath = inputFilePaths[0];
-//
+        //        final int j = 0;
+        //        String inputFilePath = inputFilePaths[0];
+        //
         // final GeoTiffReader gtReader = new GeoTiffReader(new File(inputFilePath));
         // final GridCoverage2D gridCoverage = gtReader.read(null);
         // final RenderedImage ri = gridCoverage.getRenderedImage();
@@ -96,15 +87,16 @@ public class WriterTest extends Assert {
         //
         // //
         NITFImageWriterSpi SPI = new NITFImageWriterSpi();
-        final WriteCompression[] compressions = new WriteCompression[] { WriteCompression.NPJE_NL,
-                WriteCompression.EPJE_NL, WriteCompression.NPJE_VL, WriteCompression.EPJE_VL, };
+        final WriteCompression[] compressions = new WriteCompression[] {
+            WriteCompression.NPJE_NL, WriteCompression.EPJE_NL, WriteCompression.NPJE_VL, WriteCompression.EPJE_VL,
+        };
 
         for (int w = 0; w < 4; w++) {
 
             final NITFImageWriter writer = new NITFImageWriter(SPI);
             final WriteCompression compression = compressions[w];
-            String fileName = "/tmp/output_" + (numBands == 1 ? "PAN_" : "MULTI_")
-                    + compression.toString() + "_jp2.ntf";
+            String fileName =
+                    "/tmp/output_" + (numBands == 1 ? "PAN_" : "MULTI_") + compression.toString() + "_jp2.ntf";
             File nitfFile = new File(fileName);
 
             HeaderWrapper header = setupDefaultHeaderWrapper();
@@ -136,8 +128,7 @@ public class WriterTest extends Assert {
             ImageWrapper image = new ImageWrapper();
             image.setImage(ri);
             image.setSource(DEFAULT_IMAGE_SOURCE);
-            image.setTitle(numBands == 1 ? "SamplePanchromaticImagery.ntf"
-                    : "SampleMultiSpectralImagery.NTF");
+            image.setTitle(numBands == 1 ? "SamplePanchromaticImagery.ntf" : "SampleMultiSpectralImagery.NTF");
             image.setId(numBands == 1 ? "P100000000" : "M100000000");
             List<String> comments = new ArrayList<String>(5);
             comments.add("The imagery and metadata data has been added ");
@@ -161,8 +152,7 @@ public class WriterTest extends Assert {
                 imageBands[0] = new ImageBand("", "" + rString.charAt(0));
             } else {
                 for (int i = 0; i < nBands; i++) {
-                    imageBands[i] = new ImageBand("" + (rString.charAt(i)), ""
-                            + (rString.charAt(i)));
+                    imageBands[i] = new ImageBand("" + (rString.charAt(i)), "" + (rString.charAt(i)));
                 }
             }
 
@@ -182,7 +172,6 @@ public class WriterTest extends Assert {
             writer.dispose();
             // gtReader.dispose();
         }
-
     }
 
     // static void writeShape(final String filePath, Geometry geometry) throws IOException {
@@ -323,7 +312,7 @@ public class WriterTest extends Assert {
         headerWrapper.setOriginatorName("GeoSolutions");
         headerWrapper.setOriginatorPhone("+390584962313");
         headerWrapper.setOriginStationId("GS");
-        headerWrapper.setBackgroundColor(new byte[] { 0x7e, 0x7e, 0x7e });
+        headerWrapper.setBackgroundColor(new byte[] {0x7e, 0x7e, 0x7e});
         return headerWrapper;
     }
 
@@ -335,12 +324,11 @@ public class WriterTest extends Assert {
         text.setAttachmentLevel("000");
         text.setDateTime("20121212000000");
         return text;
-
     }
 
     /**
      * Check the provided UTM easting coordinates is within the valid range
-     * 
+     *
      * @param corner
      * @param x
      * @return
@@ -348,8 +336,8 @@ public class WriterTest extends Assert {
     private static boolean checkUtmEasting(final String corner, final double x) {
         final int floor = (int) Math.floor((x) + 0.5);
         if ((floor <= -100000) || (floor >= 1000000)) {
-            throw new IllegalArgumentException("Unable to write UTM easting " + floor
-                    + " for corner " + corner + "being outside of valid range.");
+            throw new IllegalArgumentException(
+                    "Unable to write UTM easting " + floor + " for corner " + corner + "being outside of valid range.");
         }
 
         return true;
@@ -357,7 +345,7 @@ public class WriterTest extends Assert {
 
     /**
      * Check the provided coordinates UTM Northing is within the valid range
-     * 
+     *
      * @param corner
      * @param x
      * @return
@@ -365,8 +353,8 @@ public class WriterTest extends Assert {
     private static boolean checkUtmNorthing(final String corner, final double y) {
         final int floor = (int) Math.floor((y) + 0.5);
         if ((floor <= -1000000) || (floor >= 10000000)) {
-            throw new IllegalArgumentException("Unable to write UTM northing " + floor
-                    + " for corner " + corner + "being outside of valid range.");
+            throw new IllegalArgumentException("Unable to write UTM northing " + floor + " for corner " + corner
+                    + "being outside of valid range.");
         }
 
         return true;
@@ -551,5 +539,4 @@ public class WriterTest extends Assert {
         DecimalFormat df = new DecimalFormat(DECIMAL_DIGITS[digits]);
         return df.format(number);
     }
-
 }

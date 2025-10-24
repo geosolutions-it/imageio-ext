@@ -16,9 +16,13 @@
  */
 package it.geosolutions.imageio.plugins.turbojpeg;
 
+import static org.junit.Assume.*;
+
+import com.sun.imageio.plugins.jpeg.JPEGImageReaderSpi;
+import com.sun.imageio.plugins.png.PNGImageReaderSpi;
+import com.sun.media.imageioimpl.common.PackageUtil;
 import it.geosolutions.imageio.utilities.ImageOutputStreamAdapter2;
 import it.geosolutions.resources.TestData;
-
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.ByteArrayOutputStream;
@@ -26,7 +30,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-
+import java.util.logging.Logger;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriteParam;
@@ -40,23 +44,16 @@ import javax.imageio.stream.ImageOutputStream;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
 import javax.media.jai.operator.ExtremaDescriptor;
 import javax.media.jai.operator.SubtractDescriptor;
-
 import org.junit.Test;
-import static org.junit.Assume.*;
-
-import com.sun.imageio.plugins.jpeg.JPEGImageReaderSpi;
-import com.sun.imageio.plugins.png.PNGImageReaderSpi;
-import com.sun.media.imageioimpl.common.PackageUtil;
-import java.util.logging.Logger;
 
 public class JPEGWriterCompareTest extends BaseTest {
 
-    private static final Logger LOGGER = Logger.getLogger(JPEGWriterCompareTest.class.toString());    
-    
+    private static final Logger LOGGER = Logger.getLogger(JPEGWriterCompareTest.class.toString());
+
     static final int LOOP = 30;
 
     static final long DELAY_MS = 15000;
-    
+
     static final boolean CODEC_LIB_AVAILABLE = PackageUtil.isCodecLibAvailable();
 
     static void dispose(ByteArrayOutputStream out, FileOutputStream fos) {
@@ -79,13 +76,13 @@ public class JPEGWriterCompareTest extends BaseTest {
         }
     }
 
-    public static java.io.ByteArrayOutputStream encodeImageAsJpeg(RenderedImage image,
-            final float quality, final boolean useNative) throws Exception {
+    public static java.io.ByteArrayOutputStream encodeImageAsJpeg(
+            RenderedImage image, final float quality, final boolean useNative) throws Exception {
         // sanity check, the two writers will emit very odd messages in this case, let's
         // have a human readable one instead
         if (image.getColorModel().hasAlpha()) {
-            throw new Exception("Can't write images with alpha band in JPEG "
-                    + "format, please use alpha=false with jpeg output");
+            throw new Exception(
+                    "Can't write images with alpha band in JPEG " + "format, please use alpha=false with jpeg output");
         }
 
         java.io.ByteArrayOutputStream output = new java.io.ByteArrayOutputStream();
@@ -93,11 +90,10 @@ public class JPEGWriterCompareTest extends BaseTest {
         writeJPEG(image, output, "JPEG", quality, useNative);
 
         return output;
-
     }
 
-    private static int write(final int loop, final long delayMs, final BufferedImage buffered,
-            final boolean useNative) throws Exception {
+    private static int write(final int loop, final long delayMs, final BufferedImage buffered, final boolean useNative)
+            throws Exception {
         int differences = 0;
         for (int i = 0; i < loop; i++) {
             ByteArrayOutputStream out1 = encodeImageAsJpeg(buffered, 0.75f, useNative);
@@ -142,8 +138,8 @@ public class JPEGWriterCompareTest extends BaseTest {
 
     private static boolean imagesAreEquals(BufferedImage bi1, BufferedImage bi2) {
         RenderedImage subtractA = SubtractDescriptor.create(bi1, bi2, null);
-        double[][] extremaA = (double[][]) ExtremaDescriptor.create(subtractA, null, 1, 1, false,
-                1, null).getProperty("Extrema");
+        double[][] extremaA = (double[][])
+                ExtremaDescriptor.create(subtractA, null, 1, 1, false, 1, null).getProperty("Extrema");
         System.out.println("A - B");
 
         return extremaIsZero(extremaA);
@@ -154,8 +150,12 @@ public class JPEGWriterCompareTest extends BaseTest {
                 + extrema[0][1] + "," + extrema[0][2] + "] ; [" + extrema[1][0] + ","
                 + extrema[1][1] + "," + extrema[1][2] + "]");
 
-        if (isZero(extrema[0][0]) && isZero(extrema[0][1]) && isZero(extrema[0][2])
-                && isZero(extrema[1][0]) && isZero(extrema[1][1]) && isZero(extrema[1][2])) {
+        if (isZero(extrema[0][0])
+                && isZero(extrema[0][1])
+                && isZero(extrema[0][2])
+                && isZero(extrema[1][0])
+                && isZero(extrema[1][1])
+                && isZero(extrema[1][2])) {
             return true;
         }
 
@@ -167,27 +167,26 @@ public class JPEGWriterCompareTest extends BaseTest {
     }
 
     /**
-     * Writes outs the image contained into this {@link ImageWorker} as a JPEG using the provided
-     * destination , compression and compression rate.
-     * <p>
-     * The destination object can be anything providing that we have an {@link ImageOutputStreamSpi}
-     * that recognizes it.
-     * 
-     * @param destination
-     *            where to write the internal {@link #image} as a JPEG.
-     * @param compression
-     *            algorithm.
-     * @param compressionRate
-     *            percentage of compression.
-     * @param nativeAcc
-     *            should we use native acceleration.
+     * Writes outs the image contained into this {@link ImageWorker} as a JPEG using the provided destination ,
+     * compression and compression rate.
+     *
+     * <p>The destination object can be anything providing that we have an {@link ImageOutputStreamSpi} that recognizes
+     * it.
+     *
+     * @param destination where to write the internal {@link #image} as a JPEG.
+     * @param compression algorithm.
+     * @param compressionRate percentage of compression.
+     * @param nativeAcc should we use native acceleration.
      * @return this {@link ImageWorker}.
-     * @throws IOException
-     *             In case an error occurs during the search for an {@link ImageOutputStream} or
-     *             during the eoncding process.
+     * @throws IOException In case an error occurs during the search for an {@link ImageOutputStream} or during the
+     *     eoncding process.
      */
-    public static final void writeJPEG(final RenderedImage image, final Object destination,
-            final String compression, final float compressionRate, final boolean nativeAcc)
+    public static final void writeJPEG(
+            final RenderedImage image,
+            final Object destination,
+            final String compression,
+            final float compressionRate,
+            final boolean nativeAcc)
             throws IOException {
         ImageWriterSpi spi = nativeAcc ? clibSPI : turboSPI;
         ImageWriter writer = spi.createWriterInstance();
@@ -195,15 +194,15 @@ public class JPEGWriterCompareTest extends BaseTest {
         // Compression is available on both lib
         final ImageWriteParam iwp = writer.getDefaultWriteParam();
 
-        final ImageOutputStream outStream = nativeAcc ? new MemoryCacheImageOutputStream(
-                (OutputStream) destination) : new ImageOutputStreamAdapter2((OutputStream) destination);
-        
+        final ImageOutputStream outStream = nativeAcc
+                ? new MemoryCacheImageOutputStream((OutputStream) destination)
+                : new ImageOutputStreamAdapter2((OutputStream) destination);
+
         iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
         iwp.setCompressionType("JPEG");
         iwp.setCompressionQuality(compressionRate); // We can control quality here.
         if (nativeAcc) {
             iwp.setCompressionType(compression); // Lossy compression.
-
         }
         if (iwp instanceof JPEGImageWriteParam) {
             final JPEGImageWriteParam param = (JPEGImageWriteParam) iwp;
@@ -227,7 +226,6 @@ public class JPEGWriterCompareTest extends BaseTest {
                     writer.dispose();
                 } catch (Throwable e) {
                     System.out.println(e.getLocalizedMessage());
-    
                 }
             }
             if (outStream != null) {
@@ -237,23 +235,22 @@ public class JPEGWriterCompareTest extends BaseTest {
                     System.out.println(e.getLocalizedMessage());
                 }
             }
-
         }
     }
 
     @Test
     public void writeAsJpeg() throws Exception {
-        if (!TestData.isExtensiveTest()){
+        if (!TestData.isExtensiveTest()) {
             LOGGER.info("Skipping compare tests. Use Extensive tests to enable it");
             return;
         }
-        
-        if (SKIP_TESTS){
+
+        if (SKIP_TESTS) {
             LOGGER.warning(ERROR_LIB_MESSAGE);
-            assumeTrue(!SKIP_TESTS);            
+            assumeTrue(!SKIP_TESTS);
             return;
         }
-        
+
         ImageReaderSpi spiReader = new PNGImageReaderSpi();
         ImageReader reader = null;
         File inputFile = TestData.file(this, "testmergb.png");
@@ -302,9 +299,12 @@ public class JPEGWriterCompareTest extends BaseTest {
 
         int differencesNoNative = write(LOOP, DELAY_MS, buffered, false);
 
-        System.out.println(" Doing "+ LOOP + " couples of writes resulted in \n"
-                        + (CODEC_LIB_AVAILABLE ? (differencesNative + " difference on outputImage between 2 consecutive writes using the CLIB writer and \n") : "")
-                        + differencesNoNative + " difference on outputImage between 2 consecutive writes using the Turbo writer");
-
+        System.out.println(" Doing " + LOOP + " couples of writes resulted in \n"
+                + (CODEC_LIB_AVAILABLE
+                        ? (differencesNative
+                                + " difference on outputImage between 2 consecutive writes using the CLIB writer and \n")
+                        : "")
+                + differencesNoNative
+                + " difference on outputImage between 2 consecutive writes using the Turbo writer");
     }
 }

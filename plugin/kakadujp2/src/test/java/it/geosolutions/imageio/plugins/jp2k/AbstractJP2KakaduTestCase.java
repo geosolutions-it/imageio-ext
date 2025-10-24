@@ -18,7 +18,6 @@ package it.geosolutions.imageio.plugins.jp2k;
 
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.util.KakaduUtilities;
-
 import javax.imageio.spi.ImageReaderSpi;
 import javax.media.jai.JAI;
 
@@ -27,31 +26,33 @@ public class AbstractJP2KakaduTestCase {
 
     static {
         runTests = KakaduUtilities.isKakaduAvailable();
-        if(runTests)
-	        try {
-        	
-	        	//check if our jp2k plugin is in the path
-				final String kakaduJp2Name=it.geosolutions.imageio.plugins.jp2k.JP2KKakaduImageReaderSpi.class.getName();
-				Class.forName(kakaduJp2Name);
+        if (runTests)
+            try {
 
-				// imageio jp2k reader
-				final String standardJp2Name=com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageReaderSpi.class.getName();
-			
-				final boolean succeeded=ImageIOUtilities.replaceProvider(ImageReaderSpi.class, kakaduJp2Name, standardJp2Name, "JPEG2000");
-			} catch (ClassNotFoundException e) {
-				//No reader available
-				runTests = false;
-			} 
+                // check if our jp2k plugin is in the path
+                final String kakaduJp2Name =
+                        it.geosolutions.imageio.plugins.jp2k.JP2KKakaduImageReaderSpi.class.getName();
+                Class.forName(kakaduJp2Name);
+
+                // imageio jp2k reader
+                final String standardJp2Name =
+                        com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageReaderSpi.class.getName();
+
+                final boolean succeeded = ImageIOUtilities.replaceProvider(
+                        ImageReaderSpi.class, kakaduJp2Name, standardJp2Name, "JPEG2000");
+            } catch (ClassNotFoundException e) {
+                // No reader available
+                runTests = false;
+            }
     }
 
     public void setUp() throws Exception {
         // general settings
-         JAI.getDefaultInstance().getTileScheduler().setParallelism(2);
-         JAI.getDefaultInstance().getTileScheduler().setPriority(6);
-         JAI.getDefaultInstance().getTileScheduler().setPrefetchPriority(2);
-         JAI.getDefaultInstance().getTileScheduler().setPrefetchParallelism(1);
-         JAI.getDefaultInstance().getTileCache().setMemoryCapacity(
-         64 * 1024 * 1024);
-         JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
+        JAI.getDefaultInstance().getTileScheduler().setParallelism(2);
+        JAI.getDefaultInstance().getTileScheduler().setPriority(6);
+        JAI.getDefaultInstance().getTileScheduler().setPrefetchPriority(2);
+        JAI.getDefaultInstance().getTileScheduler().setPrefetchParallelism(1);
+        JAI.getDefaultInstance().getTileCache().setMemoryCapacity(64 * 1024 * 1024);
+        JAI.getDefaultInstance().getTileCache().setMemoryThreshold(1.0f);
     }
 }

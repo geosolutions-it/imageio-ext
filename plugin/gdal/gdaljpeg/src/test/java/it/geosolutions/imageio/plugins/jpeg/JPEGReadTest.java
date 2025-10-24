@@ -16,11 +16,11 @@
  */
 package it.geosolutions.imageio.plugins.jpeg;
 
+import com.sun.media.jai.codecimpl.util.RasterFactory;
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
-
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
@@ -31,7 +31,6 @@ import java.awt.image.SampleModel;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
@@ -39,16 +38,12 @@ import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
-
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.sun.media.jai.codecimpl.util.RasterFactory;
-
 /**
- * Testing reading capabilities for {@link JpegGDALImageReader} leveraging on
- * JAI.
- * 
+ * Testing reading capabilities for {@link JpegGDALImageReader} leveraging on JAI.
+ *
  * @author Daniele Romagnoli, GeoSolutions.
  * @author Simone Giannecchini, GeoSolutions.
  */
@@ -56,7 +51,7 @@ public class JPEGReadTest extends AbstractGDALTest {
 
     /**
      * Simple test read
-     * 
+     *
      * @throws FileNotFoundException
      * @throws IOException
      */
@@ -72,26 +67,21 @@ public class JPEGReadTest extends AbstractGDALTest {
         irp.setSourceSubsampling(1, 2, 0, 0);
         pbjImageRead = new ParameterBlockJAI("ImageRead");
         pbjImageRead.setParameter("Input", file);
-        pbjImageRead.setParameter("Reader", new JpegGDALImageReaderSpi()
-                .createReaderInstance());
+        pbjImageRead.setParameter("Reader", new JpegGDALImageReaderSpi().createReaderInstance());
         pbjImageRead.setParameter("readParam", irp);
 
         final ImageLayout l = new ImageLayout();
-        l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512)
-                .setTileWidth(512);
+        l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(512).setTileWidth(512);
 
-        RenderedOp image = JAI.create("ImageRead", pbjImageRead,
-                new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
-        if (TestData.isInteractiveTest())
-            Viewer.visualizeAllInformation(image,fileName);
-        else
-            Assert.assertNotNull(image.getTiles());
+        RenderedOp image = JAI.create("ImageRead", pbjImageRead, new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
+        if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(image, fileName);
+        else Assert.assertNotNull(image.getTiles());
         ImageIOUtilities.disposeImage(image);
     }
 
     /**
      * Test sourceBands management capabilities.
-     * 
+     *
      * @throws FileNotFoundException
      * @throws IOException
      */
@@ -120,17 +110,16 @@ public class JPEGReadTest extends AbstractGDALTest {
         //
         // //
         ImageReadParam rparam = new ImageReadParam();
-        rparam.setSourceRegion(new Rectangle(srcRegionX, srcRegionY,
-                srcRegionWidth, srcRegionHeight));
+        rparam.setSourceRegion(new Rectangle(srcRegionX, srcRegionY, srcRegionWidth, srcRegionHeight));
         rparam.setSourceSubsampling(subSamplingX, subSamplingY, 0, 0);
-        rparam.setSourceBands(new int[] { 0 });
+        rparam.setSourceBands(new int[] {0});
 
         // //
         //
         // Setting destination settings parameters
         //
         // //
-        rparam.setDestinationBands(new int[] { 0 });
+        rparam.setDestinationBands(new int[] {0});
 
         ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
         ColorModel cm = RasterFactory.createComponentColorModel(
@@ -145,8 +134,7 @@ public class JPEGReadTest extends AbstractGDALTest {
         Assert.assertEquals(destWidth, 200);
         Assert.assertEquals(destHeight, 300);
 
-        final SampleModel sm = cm.createCompatibleSampleModel(destWidth,
-                destHeight);
+        final SampleModel sm = cm.createCompatibleSampleModel(destWidth, destHeight);
         rparam.setDestinationType(new ImageTypeSpecifier(cm, sm));
 
         // //
@@ -154,25 +142,18 @@ public class JPEGReadTest extends AbstractGDALTest {
         // Preparing for image read operation
         //
         // //
-        ImageReader reader = new JpegGDALImageReaderSpi()
-                .createReaderInstance();
-        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI(
-                "ImageRead");
+        ImageReader reader = new JpegGDALImageReaderSpi().createReaderInstance();
+        final ParameterBlockJAI pbjImageRead = new ParameterBlockJAI("ImageRead");
         pbjImageRead.setParameter("Input", inputFile);
         pbjImageRead.setParameter("reader", reader);
         pbjImageRead.setParameter("readParam", rparam);
         final ImageLayout l = new ImageLayout();
-        l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(128)
-                .setTileWidth(128);
+        l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(128).setTileWidth(128);
 
-        RenderedOp image = JAI.create("ImageRead", pbjImageRead,
-                new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
+        RenderedOp image = JAI.create("ImageRead", pbjImageRead, new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
 
-        if (TestData.isInteractiveTest())
-            Viewer.visualizeAllInformation(image,"imageread");
-        else
-        	Assert.assertNotNull(image.getTiles());
+        if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(image, "imageread");
+        else Assert.assertNotNull(image.getTiles());
         ImageIOUtilities.disposeImage(image);
     }
-
 }

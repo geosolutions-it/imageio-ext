@@ -19,20 +19,17 @@ package it.geosolutions.imageio.plugins.jp2k.box;
 import javax.imageio.metadata.IIOMetadataNode;
 
 /**
- * This class is defined to represent a Signature Box of JPEG JP2 file format.
- * This type of box has a fixed length of 12, a type of "jP " and a four byte
- * content of 0x0D0A870A, which is used to detects of the common file
- * transmission errors which substitutes <CR><LF> with <LF> or vice versa.
- * 
- * <p>
- * <strong>It must be the first box in a JP2 file.</strong>
- * </p>
+ * This class is defined to represent a Signature Box of JPEG JP2 file format. This type of box has a fixed length of
+ * 12, a type of "jP " and a four byte content of 0x0D0A870A, which is used to detects of the common file transmission
+ * errors which substitutes <CR><LF> with <LF> or vice versa.
+ *
+ * <p><strong>It must be the first box in a JP2 file.</strong>
  */
 @SuppressWarnings("serial")
 public class SignatureBoxMetadataNode extends BaseJP2KBoxMetadataNode {
 
     private String signature;
-    
+
     SignatureBoxMetadataNode(final SignatureBox box) {
         super(box);
         signature = SignatureBox.SIGNATURE;

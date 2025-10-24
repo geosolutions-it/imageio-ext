@@ -1,42 +1,42 @@
 /*
  * $RCSfile: TIFFRenderedImage.java,v $
  *
- * 
+ *
  * Copyright (c) 2005 Sun Microsystems, Inc. All  Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
- * are met: 
- * 
- * - Redistribution of source code must retain the above copyright 
+ * are met:
+ *
+ * - Redistribution of source code must retain the above copyright
  *   notice, this  list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in 
+ *   notice, this list of conditions and the following disclaimer in
  *   the documentation and/or other materials provided with the
  *   distribution.
- * 
- * Neither the name of Sun Microsystems, Inc. or the names of 
- * contributors may be used to endorse or promote products derived 
+ *
+ * Neither the name of Sun Microsystems, Inc. or the names of
+ * contributors may be used to endorse or promote products derived
  * from this software without specific prior written permission.
- * 
- * This software is provided "AS IS," without a warranty of any 
- * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND 
- * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, 
+ *
+ * This software is provided "AS IS," without a warranty of any
+ * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND
+ * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY
- * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL 
- * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF 
+ * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL
+ * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF
  * USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS
- * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR 
+ * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR
  * ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL,
  * CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND
  * REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR
  * INABILITY TO USE THIS SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGES. 
- * 
- * You acknowledge that this software is not designed or intended for 
- * use in the design, construction, operation or maintenance of any 
- * nuclear facility. 
+ * POSSIBILITY OF SUCH DAMAGES.
+ *
+ * You acknowledge that this software is not designed or intended for
+ * use in the design, construction, operation or maintenance of any
+ * nuclear facility.
  *
  * $Revision: 1.2 $
  * $Date: 2006/02/22 22:06:23 $
@@ -75,7 +75,6 @@ package it.geosolutions.imageioimpl.plugins.tiff;
 
 import it.geosolutions.imageio.plugins.tiff.TIFFImageReadParam;
 import it.geosolutions.imageio.plugins.tiff.TIFFTagSet;
-
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
@@ -89,7 +88,6 @@ import java.util.List;
 import java.util.Vector;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageTypeSpecifier;
-
 
 public class TIFFRenderedImage implements RenderedImage {
 
@@ -109,10 +107,8 @@ public class TIFFRenderedImage implements RenderedImage {
 
     ImageTypeSpecifier its;
 
-    public TIFFRenderedImage(TIFFImageReader reader,
-                             int imageIndex,
-                             ImageReadParam readParam,
-                             int width, int height) throws IOException {
+    public TIFFRenderedImage(TIFFImageReader reader, int imageIndex, ImageReadParam readParam, int width, int height)
+            throws IOException {
         this.reader = reader;
         this.imageIndex = imageIndex;
         this.tileParam = cloneImageReadParam(readParam, false);
@@ -122,60 +118,57 @@ public class TIFFRenderedImage implements RenderedImage {
 
         this.isSubsampling = this.subsampleX != 1 || this.subsampleY != 1;
 
-        this.width = width/subsampleX;
-        this.height = height/subsampleY;
+        this.width = width / subsampleX;
+        this.height = height / subsampleY;
 
         // If subsampling is being used, we may not match the
         // true tile grid exactly, but everything should still work
-        this.tileWidth = reader.getTileWidth(imageIndex)/subsampleX;
-        this.tileHeight = reader.getTileHeight(imageIndex)/subsampleY;
-        
+        this.tileWidth = reader.getTileWidth(imageIndex) / subsampleX;
+        this.tileHeight = reader.getTileHeight(imageIndex) / subsampleY;
+
         Iterator iter = reader.getImageTypes(imageIndex);
-        this.its = (ImageTypeSpecifier)iter.next();
+        this.its = (ImageTypeSpecifier) iter.next();
         tileParam.setDestinationType(its);
     }
 
     /**
-     * Creates a copy of <code>param</code>. The source subsampling and
-     * and bands settings and the destination bands and offset settings
-     * are copied. If <code>param</code> is a <code>TIFFImageReadParam</code>
-     * then the <code>TIFFDecompressor</code> and
-     * <code>TIFFColorConverter</code> settings are also copied; otherwise
-     * they are explicitly set to <code>null</code>.
+     * Creates a copy of <code>param</code>. The source subsampling and and bands settings and the destination bands and
+     * offset settings are copied. If <code>param</code> is a <code>TIFFImageReadParam</code> then the <code>
+     * TIFFDecompressor</code> and <code>TIFFColorConverter</code> settings are also copied; otherwise they are
+     * explicitly set to <code>null</code>.
      *
      * @param param the parameters to be copied.
-     * @param copyTagSets whether the <code>TIFFTagSet</code> settings
-     * should be copied if set.
+     * @param copyTagSets whether the <code>TIFFTagSet</code> settings should be copied if set.
      * @return copied parameters.
      */
-    private ImageReadParam cloneImageReadParam(ImageReadParam param,
-                                               boolean copyTagSets) {
+    private ImageReadParam cloneImageReadParam(ImageReadParam param, boolean copyTagSets) {
         // Create a new TIFFImageReadParam.
         TIFFImageReadParam newParam = new TIFFImageReadParam();
 
         // Copy the basic settings.
-        newParam.setSourceSubsampling(param.getSourceXSubsampling(),
-                                      param.getSourceYSubsampling(),
-                                      param.getSubsamplingXOffset(),
-                                      param.getSubsamplingYOffset());
+        newParam.setSourceSubsampling(
+                param.getSourceXSubsampling(),
+                param.getSourceYSubsampling(),
+                param.getSubsamplingXOffset(),
+                param.getSubsamplingYOffset());
         newParam.setSourceBands(param.getSourceBands());
         newParam.setDestinationBands(param.getDestinationBands());
         newParam.setDestinationOffset(param.getDestinationOffset());
 
         // Set the decompressor and color converter.
-        if(param instanceof TIFFImageReadParam) {
+        if (param instanceof TIFFImageReadParam) {
             // Copy the settings from the input parameter.
-            TIFFImageReadParam tparam = (TIFFImageReadParam)param;
+            TIFFImageReadParam tparam = (TIFFImageReadParam) param;
             newParam.setTIFFDecompressor(tparam.getTIFFDecompressor());
             newParam.setColorConverter(tparam.getColorConverter());
 
-            if(copyTagSets) {
+            if (copyTagSets) {
                 List tagSets = tparam.getAllowedTagSets();
-                if(tagSets != null) {
+                if (tagSets != null) {
                     Iterator tagSetIter = tagSets.iterator();
-                    if(tagSetIter != null) {
-                        while(tagSetIter.hasNext()) {
-                            TIFFTagSet tagSet = (TIFFTagSet)tagSetIter.next();
+                    if (tagSetIter != null) {
+                        while (tagSetIter.hasNext()) {
+                            TIFFTagSet tagSet = (TIFFTagSet) tagSetIter.next();
                             newParam.addAllowedTagSet(tagSet);
                         }
                     }
@@ -227,11 +220,11 @@ public class TIFFRenderedImage implements RenderedImage {
     }
 
     public int getNumXTiles() {
-        return (width + tileWidth - 1)/tileWidth;
+        return (width + tileWidth - 1) / tileWidth;
     }
 
     public int getNumYTiles() {
-        return (height + tileHeight - 1)/tileHeight;
+        return (height + tileHeight - 1) / tileHeight;
     }
 
     public int getMinTileX() {
@@ -259,10 +252,7 @@ public class TIFFRenderedImage implements RenderedImage {
     }
 
     public Raster getTile(int tileX, int tileY) {
-        Rectangle tileRect = new Rectangle(tileX*tileWidth,
-                                           tileY*tileHeight,
-                                           tileWidth,
-                                           tileHeight);
+        Rectangle tileRect = new Rectangle(tileX * tileWidth, tileY * tileHeight, tileWidth, tileHeight);
         return getData(tileRect);
     }
 
@@ -279,20 +269,19 @@ public class TIFFRenderedImage implements RenderedImage {
     public synchronized WritableRaster read(Rectangle rect) {
         // XXX Does this need to consider the subsampling offsets or is
         // that handled implicitly by the reader?
-        tileParam.setSourceRegion(isSubsampling ?
-                                  new Rectangle(subsampleX*rect.x,
-                                                subsampleY*rect.y,
-                                                subsampleX*rect.width,
-                                                subsampleY*rect.height) :
-                                  rect);
+        tileParam.setSourceRegion(
+                isSubsampling
+                        ? new Rectangle(
+                                subsampleX * rect.x,
+                                subsampleY * rect.y,
+                                subsampleX * rect.width,
+                                subsampleY * rect.height)
+                        : rect);
 
         try {
             BufferedImage bi = reader.read(imageIndex, tileParam);
             WritableRaster ras = bi.getRaster();
-            return ras.createWritableChild(0, 0,
-                                           ras.getWidth(), ras.getHeight(),
-                                           rect.x, rect.y,
-                                           null);
+            return ras.createWritableChild(0, 0, ras.getWidth(), ras.getHeight(), rect.x, rect.y, null);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -1,109 +1,104 @@
 /**
- *   MathUtils.java  1.0  01/01/2001
+ * MathUtils.java 1.0 01/01/2001
  *
- * (C) Benjamin Stark
- * (c) simone giannecchini 
-
+ * <p>(C) Benjamin Stark (c) simone giannecchini
  */
 package it.geosolutions.io.output;
 
-
-/**A class that contains several static utility methods.
+/**
+ * A class that contains several static utility methods.
  *
- * A class that contains several static methods for converting multiple bytes into
- * one float or integer.
+ * <p>A class that contains several static methods for converting multiple bytes into one float or integer.
  *
- * @author  Benjamin Stark
- * @author  Simone Giannecchini
+ * @author Benjamin Stark
+ * @author Simone Giannecchini
  * @version 1.1
  */
 public final class MathUtils {
-    //bitMask used to Mask data received
-    static final int[] bitMask = { 0, 1, 3, 7, 15, 31, 63, 127, 255 };
+    // bitMask used to Mask data received
+    static final int[] bitMask = {0, 1, 3, 7, 15, 31, 63, 127, 255};
 
-    /**Convert two bytes into a signed integer.
-     *
+    /**
      * Convert two bytes into a signed integer.
+     *
+     * <p>Convert two bytes into a signed integer.
      *
      * @param a higher byte
      * @param b lower byte
-     *
      * @return integer value
      */
-    public static int int2(final int a,final  int b) {
+    public static int int2(final int a, final int b) {
         return (1 - ((a & 128) >> 6)) * ((((a & 255) & 127) << 8) | (b & 255));
     }
 
-    /**Convert three bytes into a signed integer.
-     *
+    /**
      * Convert three bytes into a signed integer.
+     *
+     * <p>Convert three bytes into a signed integer.
      *
      * @param a higher byte
      * @param b middle part byte
      * @param c lower byte
-     *
      * @return integer value
      */
-    public static int int3(final int a, final int b,final  int c) {
-        return (1 - ((a & 128) >> 6)) * ((((a & 255) & 127) << 16)
-        | ((b & 255) << 8) | (c & 255));
+    public static int int3(final int a, final int b, final int c) {
+        return (1 - ((a & 128) >> 6)) * ((((a & 255) & 127) << 16) | ((b & 255) << 8) | (c & 255));
     }
 
-    /**Convert four bytes into a signed integer.
-     *
+    /**
      * Convert four bytes into a signed integer.
+     *
+     * <p>Convert four bytes into a signed integer.
      *
      * @param a highest byte
      * @param b higher middle byte
      * @param c lower middle byte
      * @param d lowest byte
-     *
      * @return integer value
      */
     public static int int4(final int a, final int b, final int c, final int d) {
-        return (1 - ((a & 128) >> 6)) * ((((a & 255) & 127) << 24)
-        | ((b & 255) << 16) | ((c & 255) << 8) | (d & 255));
+        return (1 - ((a & 128) >> 6)) * ((((a & 255) & 127) << 24) | ((b & 255) << 16) | ((c & 255) << 8) | (d & 255));
     }
 
-    /**Convert two bytes into an unsigned integer.
-     *
+    /**
      * Convert two bytes into an unsigned integer.
+     *
+     * <p>Convert two bytes into an unsigned integer.
      *
      * @param a higher byte
      * @param b lower byte
-     *
      * @return integer value
      */
-    public static int uint2(final int a,final  int b) {
+    public static int uint2(final int a, final int b) {
         return ((a & 255) << 8) | (b & 255);
     }
 
-    /**Convert three bytes into an unsigned integer.
-     *
+    /**
      * Convert three bytes into an unsigned integer.
+     *
+     * <p>Convert three bytes into an unsigned integer.
      *
      * @param a higher byte
      * @param b middle byte
      * @param c lower byte
-     *
      * @return integer value
      */
-    public static int uint3(final int a,final  int b, final int c) {
+    public static int uint3(final int a, final int b, final int c) {
         return ((a & 255) << 16) | ((b & 255) << 8) | (c & 255);
     }
 
-    /**Convert four bytes into a float value.
-     *
+    /**
      * Convert four bytes into a float value.
+     *
+     * <p>Convert four bytes into a float value.
      *
      * @param a highest byte
      * @param b higher byte
      * @param c lower byte
      * @param d lowest byte
-     *
      * @return float value
      */
-    public static double IBM2FLoat(final int a,final  int b,final  int c,final  int d) {
+    public static double IBM2FLoat(final int a, final int b, final int c, final int d) {
         boolean positive = true;
         int power = 0;
         int abspower = 0;
@@ -143,33 +138,31 @@ public final class MathUtils {
         return value;
     }
 
-    /**Converts a double to the standard IBM representation for a single precision real floating point number.
+    /**
+     * Converts a double to the standard IBM representation for a single precision real floating point number.
      *
-     * Converts a float to the standard IBM representation for a single precision real floating point number.
-     * This code is heavily based on code from gribw a c utility to encode
-     * grib files (see <A HREF="http://www.cpc.ncep.noaa.gov/products/wesley/gribw.html">
-     * gribw(riter)</A> )}.
-     * Many thanks to the author.
+     * <p>Converts a float to the standard IBM representation for a single precision real floating point number. This
+     * code is heavily based on code from gribw a c utility to encode grib files (see <A
+     * HREF="http://www.cpc.ncep.noaa.gov/products/wesley/gribw.html"> gribw(riter)</A> )}. Many thanks to the author.
      */
     public static byte[] Float2IBM(double fVal) {
-        //ret value
-    	final byte[] ibm = new byte[4];
+        // ret value
+        final byte[] ibm = new byte[4];
         int sign = 0;
         int exp = 0;
         double mant = 0.0d;
         int imant = 0;
 
-        //do we need to proceed
+        // do we need to proceed
         if (fVal == 0.0) {
             return ibm;
         }
 
-        //setting sign
+        // setting sign
         if (fVal < 0.0) {
             sign = 128;
             fVal = -fVal;
-        }
-        else {
+        } else {
             sign = 0;
         }
 
@@ -204,8 +197,8 @@ public final class MathUtils {
         if (exp > 127) {
             System.err.println("overflow in flt2ibm");
 
-            //ibm[0] = (byte)(sign | 127);
-            //ibm[1] = ibm[2] = ibm[3]=255;
+            // ibm[0] = (byte)(sign | 127);
+            // ibm[1] = ibm[2] = ibm[3]=255;
             return null;
         }
 
@@ -217,71 +210,71 @@ public final class MathUtils {
         return ibm;
     }
 
-    /**Convert an integer containing length bits into a vector of bytes.
+    /**
+     * Convert an integer containing length bits into a vector of bytes.
      *
-     * Convert an integer containing length bits into a vector of bytes. The most signifiant byte is returned
-     * firs. The last byte contains the less signifiant part of the bitvector.
+     * <p>Convert an integer containing length bits into a vector of bytes. The most signifiant byte is returned firs.
+     * The last byte contains the less signifiant part of the bitvector.
      *
      * @param bitVector int The bit vector to convert.
      * @param length int The number of bits in the vector.
-     *
      * @return byte[] Byte vector.
      */
-    public static byte[] bitVector2ByteVector(final int bitVector,final int length) {
+    public static byte[] bitVector2ByteVector(final int bitVector, final int length) {
         if ((length <= 0) || (length > 32)) {
             return null;
         }
 
-        //how many octets?
+        // how many octets?
         final byte octetsNumber = (byte) Math.ceil(length / 8.0);
 
-        //last octet bits number to read
+        // last octet bits number to read
         final byte lastOctetNumBits = (byte) (((length % 8) != 0) ? (length % 8) : 8);
 
-        //return value
+        // return value
         final byte[] retVal = new byte[(byte) Math.ceil(length / 8.0)];
 
         for (byte i = octetsNumber; i > 0; i--) {
             if (i == octetsNumber) {
-                retVal[octetsNumber - i] = (byte) ((bitVector >> ((i - 1) * 8))
-                    & MathUtils.bitMask[lastOctetNumBits]);
-            }
-            else {
-                retVal[octetsNumber - i] = (byte) ((bitVector >> ((i - 1) * 8))
-                    & MathUtils.bitMask[8]);
+                retVal[octetsNumber - i] = (byte) ((bitVector >> ((i - 1) * 8)) & MathUtils.bitMask[lastOctetNumBits]);
+            } else {
+                retVal[octetsNumber - i] = (byte) ((bitVector >> ((i - 1) * 8)) & MathUtils.bitMask[8]);
             }
         }
 
-        //sign
+        // sign
         return retVal;
     }
 
-    /**log2.
-     *
+    /**
      * log2.
+     *
+     * <p>log2.
      *
      * @param aFloat float
      */
-    static public double log2(final double val) {
+    public static double log2(final double val) {
         return (Math.log(val) / Math.log(2));
     }
 
-    /**exp2.
-     *
+    /**
      * exp2.
+     *
+     * <p>exp2.
      *
      * @param val double
      */
-    static public double exp2(final double val) {
+    public static double exp2(final double val) {
         return Math.exp(val * Math.log(2));
     }
 
-    /**signedInt2Bytes, converts a signed integer to a vector of bytes.
-     *
+    /**
      * signedInt2Bytes, converts a signed integer to a vector of bytes.
+     *
+     * <p>signedInt2Bytes, converts a signed integer to a vector of bytes.
      */
-    static public byte[] signedInt2Bytes(int val, final int numBytes) {
-        //sign
+    public static byte[] signedInt2Bytes(int val, final int numBytes) {
+        // sign
         boolean negative = false;
 
         if (val < 0) {
@@ -292,85 +285,87 @@ public final class MathUtils {
         final byte[] retVal = new byte[numBytes];
 
         switch (numBytes) {
-        case 4:
-            retVal[0] = ((byte) ((val >> 24) & 255));
-            retVal[1] = ((byte) ((val >> 16) & 255));
-            retVal[2] = ((byte) ((val >> 8) & 255));
-            retVal[3] = ((byte) ((val) & 255));
+            case 4:
+                retVal[0] = ((byte) ((val >> 24) & 255));
+                retVal[1] = ((byte) ((val >> 16) & 255));
+                retVal[2] = ((byte) ((val >> 8) & 255));
+                retVal[3] = ((byte) ((val) & 255));
 
-            break;
+                break;
 
-        case 3:
-            retVal[0] = ((byte) ((val >> 16) & 255));
-            retVal[1] = ((byte) ((val >> 8) & 255));
-            retVal[2] = ((byte) ((val) & 255));
+            case 3:
+                retVal[0] = ((byte) ((val >> 16) & 255));
+                retVal[1] = ((byte) ((val >> 8) & 255));
+                retVal[2] = ((byte) ((val) & 255));
 
-            break;
+                break;
 
-        case 2:
-            retVal[0] = ((byte) ((val >> 8) & 255));
-            retVal[1] = ((byte) ((val) & 255));
+            case 2:
+                retVal[0] = ((byte) ((val >> 8) & 255));
+                retVal[1] = ((byte) ((val) & 255));
 
-            break;
+                break;
 
-        case 1:
-            retVal[0] = ((byte) ((val) & 255));
+            case 1:
+                retVal[0] = ((byte) ((val) & 255));
 
-            break;
+                break;
 
-        default:
-            return null;
+            default:
+                return null;
         }
 
-        //SIGN
+        // SIGN
         retVal[0] |= (negative ? (1 << 7) : (0 << 7));
 
         return retVal;
     }
 
-    /**frexpMant, builds and gives the mantissa base 2 for the floating point representation of a real number.
-     *
+    /**
      * frexpMant, builds and gives the mantissa base 2 for the floating point representation of a real number.
+     *
+     * <p>frexpMant, builds and gives the mantissa base 2 for the floating point representation of a real number.
      */
     public static double frexpMant(final double val) {
-        //getting ieee 754 representation
+        // getting ieee 754 representation
         int intBits = Float.floatToIntBits((float) val);
 
-        //getting the mantissa out of it
+        // getting the mantissa out of it
         intBits &= ((int) Math.pow(2, 23) - 1);
 
-        double mantissa = (intBits * Math.pow(2, -23)) + 1; //adding hidden bit
+        double mantissa = (intBits * Math.pow(2, -23)) + 1; // adding hidden bit
 
-        //natissa should stay in between 1/2 and 1
+        // natissa should stay in between 1/2 and 1
         mantissa /= 2;
 
         return mantissa;
     }
 
-    /**frexpExp, builds and  gives the exponent base 2 for the floating point representation of a real number.
+    /**
+     * frexpExp, builds and gives the exponent base 2 for the floating point representation of a real number.
      *
-     * frexpExp, builds give the exponent base 2 for the floating point representation of a real number.
+     * <p>frexpExp, builds give the exponent base 2 for the floating point representation of a real number.
      */
     public static byte frexpExp(final double val) {
-        //getting ieee 754 representation
+        // getting ieee 754 representation
         int intBits = Float.floatToIntBits((float) val);
 
-        //removing sign bit
+        // removing sign bit
         intBits >>>= 23;
 
-        //shifting to get the sign
+        // shifting to get the sign
         intBits &= 0xff;
 
-        //getting the sign
+        // getting the sign
         intBits &= 255;
 
-        //removing the bias
+        // removing the bias
         intBits -= 127;
 
-        //adding 1 because i have to take into account that ieee 754 single precision
-        //deals with normalized mantissa using a hidden bit
-        //terefore at the end the mantissa is 1.something
-        //we need mantissa to be in between 1 and 1/2
+        // adding 1 because i have to take into account that ieee 754 single precision
+        // deals with normalized mantissa using a hidden bit
+        // terefore at the end the mantissa is 1.something
+        // we need mantissa to be in between 1 and 1/2
         return (byte) ++intBits;
     }
 }

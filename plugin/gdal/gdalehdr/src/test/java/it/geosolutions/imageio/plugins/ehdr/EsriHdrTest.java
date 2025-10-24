@@ -19,14 +19,11 @@ package it.geosolutions.imageio.plugins.ehdr;
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.resources.TestData;
-
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import javax.imageio.ImageReader;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -38,7 +35,7 @@ public class EsriHdrTest extends AbstractGDALTest {
 
     /**
      * Test Read without exploiting JAI-ImageIO Tools
-     * 
+     *
      * @throws FileNotFoundException
      * @throws IOException
      */
@@ -53,10 +50,8 @@ public class EsriHdrTest extends AbstractGDALTest {
         ImageReader reader = new EsriHdrImageReaderSpi().createReaderInstance();
         reader.setInput(file);
         final RenderedImage image = reader.read(0);
-        if (TestData.isInteractiveTest())
-            Viewer.visualizeAllInformation(image,fileName);
-        else
-            Assert.assertNotNull(image);
+        if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(image, fileName);
+        else Assert.assertNotNull(image);
         Assert.assertEquals(image.getWidth(), 600);
         Assert.assertEquals(image.getHeight(), 600);
         reader.dispose();

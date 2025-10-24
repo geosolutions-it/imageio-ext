@@ -19,26 +19,25 @@ package it.geosolutions.imageio.plugins.vrt;
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
-import org.junit.Assert;
-import org.junit.Before;
-
+import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import javax.imageio.ImageReadParam;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
-import java.awt.*;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import org.junit.Assert;
+import org.junit.Before;
 
 /**
  * Testing reading capabilities for BSB with {@link VRTImageReader}.
- * 
+ *
  * @author Daniele Romagnoli, GeoSolutions.
  */
 public class BsbVrtTest extends AbstractGDALTest {
-    public final static String fileName = "rgbsmall.kap.vrt";
+    public static final String fileName = "rgbsmall.kap.vrt";
 
     @Before
     public void setUp() throws Exception {
@@ -47,7 +46,7 @@ public class BsbVrtTest extends AbstractGDALTest {
 
     /**
      * Test read exploiting common JAI operations (Crop-Translate-Rotate)
-     * 
+     *
      * @throws FileNotFoundException
      * @throws IOException
      */
@@ -72,7 +71,7 @@ public class BsbVrtTest extends AbstractGDALTest {
         l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(32).setTileWidth(32);
 
         // get a RenderedImage
-        RenderedOp image = JAI.create("ImageRead", pbjImageRead,new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
+        RenderedOp image = JAI.create("ImageRead", pbjImageRead, new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
 
         if (TestData.isInteractiveTest()) {
             ImageIOUtilities.visualize(image, "test", true);

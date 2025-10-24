@@ -19,7 +19,6 @@ package it.geosolutions.imageio.plugins.hdf4.terascan;
 import it.geosolutions.imageio.core.CoreCommonImageMetadata;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
-
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
@@ -27,7 +26,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.logging.Logger;
-
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
@@ -35,20 +33,16 @@ import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RenderedOp;
-
 import junit.framework.TestCase;
-
 import org.junit.Assert;
 import org.junit.Before;
 
 public class HDF4TeraScanTest extends TestCase {
 
-    private static final Logger LOGGER = Logger
-            .getLogger("it.geosolutions.imageio.plugins.jhdf.avhrr");
+    private static final Logger LOGGER = Logger.getLogger("it.geosolutions.imageio.plugins.jhdf.avhrr");
 
     private void warningMessage() {
-        StringBuffer sb = new StringBuffer(
-                "Test file not available. Test are skipped");
+        StringBuffer sb = new StringBuffer("Test file not available. Test are skipped");
         LOGGER.info(sb.toString());
     }
 
@@ -66,20 +60,17 @@ public class HDF4TeraScanTest extends TestCase {
         final int index = 0;
         if (TestData.isInteractiveTest()) {
             ImageIOUtilities.visualize(reader.read(0), "mcsst", false);
-        } else
-            Assert.assertNotNull(reader.read(index));
+        } else Assert.assertNotNull(reader.read(index));
 
         IIOMetadata metadata = reader.getImageMetadata(index);
-        ImageIOUtilities.displayImageIOMetadata(metadata
-                .getAsTree(CoreCommonImageMetadata.nativeMetadataFormatName));
-        ImageIOUtilities.displayImageIOMetadata(metadata
-                .getAsTree(HDF4TeraScanImageMetadata.nativeMetadataFormatName));
+        ImageIOUtilities.displayImageIOMetadata(metadata.getAsTree(CoreCommonImageMetadata.nativeMetadataFormatName));
+        ImageIOUtilities.displayImageIOMetadata(metadata.getAsTree(HDF4TeraScanImageMetadata.nativeMetadataFormatName));
         reader.dispose();
     }
 
     /**
      * Test read exploiting common JAI operations (Crop-Translate-Rotate)
-     * 
+     *
      * @throws FileNotFoundException
      * @throws IOException
      */
@@ -99,8 +90,7 @@ public class HDF4TeraScanTest extends TestCase {
             final int ySubSampling = 2;
             final int xSubSamplingOffset = 0;
             final int ySubSamplingOffset = 0;
-            irp.setSourceSubsampling(xSubSampling, ySubSampling,
-                    xSubSamplingOffset, ySubSamplingOffset);
+            irp.setSourceSubsampling(xSubSampling, ySubSampling, xSubSamplingOffset, ySubSamplingOffset);
 
             final ImageLayout l = new ImageLayout();
             l.setTileGridXOffset(0).setTileGridYOffset(0).setTileHeight(64).setTileWidth(64);
@@ -110,10 +100,8 @@ public class HDF4TeraScanTest extends TestCase {
             pbjImageRead.setParameter("readParam", irp);
 
             // get a RenderedImage
-            final RenderedOp image = JAI.create("ImageRead", pbjImageRead,
-                    new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
+            final RenderedOp image = JAI.create("ImageRead", pbjImageRead, new RenderingHints(JAI.KEY_IMAGE_LAYOUT, l));
 
-            
             // Silly equality test
             final BufferedImage buffImage = image.getAsBufferedImage();
             final ImageReader reader = new HDF4TeraScanImageReaderSpi().createReaderInstance();
@@ -127,8 +115,7 @@ public class HDF4TeraScanTest extends TestCase {
             final Raster raster2 = buffImage2.getData();
             for (int i = 0; i < h; i++) {
                 for (int j = 0; j < w; j++) {
-                	Assert.assertEquals(raster1.getSample(j, i, 0), raster2.getSample(
-                            j, i, 0));
+                    Assert.assertEquals(raster1.getSample(j, i, 0), raster2.getSample(j, i, 0));
                 }
             }
 

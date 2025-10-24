@@ -1,42 +1,42 @@
 /*
  * $RCSfile: ResolutionBox.java,v $
  *
- * 
+ *
  * Copyright (c) 2005 Sun Microsystems, Inc. All  Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
- * are met: 
- * 
- * - Redistribution of source code must retain the above copyright 
+ * are met:
+ *
+ * - Redistribution of source code must retain the above copyright
  *   notice, this  list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in 
+ *   notice, this list of conditions and the following disclaimer in
  *   the documentation and/or other materials provided with the
  *   distribution.
- * 
- * Neither the name of Sun Microsystems, Inc. or the names of 
- * contributors may be used to endorse or promote products derived 
+ *
+ * Neither the name of Sun Microsystems, Inc. or the names of
+ * contributors may be used to endorse or promote products derived
  * from this software without specific prior written permission.
- * 
- * This software is provided "AS IS," without a warranty of any 
- * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND 
- * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, 
+ *
+ * This software is provided "AS IS," without a warranty of any
+ * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND
+ * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY
- * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL 
- * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF 
+ * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL
+ * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF
  * USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS
- * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR 
+ * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR
  * ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL,
  * CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND
  * REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR
  * INABILITY TO USE THIS SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGES. 
- * 
- * You acknowledge that this software is not designed or intended for 
- * use in the design, construction, operation or maintenance of any 
- * nuclear facility. 
+ * POSSIBILITY OF SUCH DAMAGES.
+ *
+ * You acknowledge that this software is not designed or intended for
+ * use in the design, construction, operation or maintenance of any
+ * nuclear facility.
  *
  * $Revision: 1.1 $
  * $Date: 2005/02/11 05:01:37 $
@@ -66,12 +66,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * This class is defined to represent a Resolution Box of JPEG JP2 file format.
- * A Resolution Box has a length, and a fixed type of "resc" (capture
- * resolution) or "resd" (default display resolution).
- * 
- * Its contents includes the resolution numerators, denominator, and the
- * exponents for both horizontal and vertical directions.
+ * This class is defined to represent a Resolution Box of JPEG JP2 file format. A Resolution Box has a length, and a
+ * fixed type of "resc" (capture resolution) or "resd" (default display resolution).
+ *
+ * <p>Its contents includes the resolution numerators, denominator, and the exponents for both horizontal and vertical
+ * directions.
  */
 @SuppressWarnings("serial")
 public class ResolutionBox extends BaseJP2KBox {
@@ -88,23 +87,23 @@ public class ResolutionBox extends BaseJP2KBox {
 
     private byte expH;
 
-    public final static int BOX_TYPE = 0x72657320;
+    public static final int BOX_TYPE = 0x72657320;
 
-    public final static int BOX_TYPE_CAPTURE = 0x72657363;
+    public static final int BOX_TYPE_CAPTURE = 0x72657363;
 
-    public final static int BOX_TYPE_DEFAULT_DISPLAY = 0x72657364;
+    public static final int BOX_TYPE_DEFAULT_DISPLAY = 0x72657364;
 
-    public final static String NAME = "res ";
+    public static final String NAME = "res ";
 
-    public final static String CAP_NAME = "resc";
+    public static final String CAP_NAME = "resc";
 
-    public final static String DEF_NAME = "resd";
+    public static final String DEF_NAME = "resd";
 
-    public final static String JP2K_MD_NAME = "JP2KResolutionBox";
+    public static final String JP2K_MD_NAME = "JP2KResolutionBox";
 
-    public final static String JP2_MD_CAP_NAME = "JP2KCaptureResolutionBox";
+    public static final String JP2_MD_CAP_NAME = "JP2KCaptureResolutionBox";
 
-    public final static String JP2_MD_DEF_DISP_NAME = "JP2KDefaultDisplayResolutionBox";
+    public static final String JP2_MD_DEF_DISP_NAME = "JP2KDefaultDisplayResolutionBox";
 
     /** The cached horizontal/vertical resolutions. */
     private float hRes;
@@ -113,10 +112,7 @@ public class ResolutionBox extends BaseJP2KBox {
 
     private byte[] localData;
 
-    /**
-     * Constructs a <code>ResolutionBox</code> from the provided type and
-     * content data array.
-     */
+    /** Constructs a <code>ResolutionBox</code> from the provided type and content data array. */
     public ResolutionBox(int type, byte[] data) {
         super(8 + data.length, type, data);
     }
@@ -125,10 +121,7 @@ public class ResolutionBox extends BaseJP2KBox {
         this(BOX_TYPE, data);
     }
 
-    /**
-     * Constructs a <code>ResolutionBox</code> from the provided type and
-     * horizontal/vertical resolutions.
-     */
+    /** Constructs a <code>ResolutionBox</code> from the provided type and horizontal/vertical resolutions. */
     public ResolutionBox(int type, float hRes, float vRes) {
         super(8 + 18, type, null);
         this.hRes = hRes;
@@ -160,10 +153,7 @@ public class ResolutionBox extends BaseJP2KBox {
         }
     }
 
-    /**
-     * Constructs a <code>ResolutionBox</code> based on the provided
-     * <code>org.w3c.dom.Node</code>.
-     */
+    /** Constructs a <code>ResolutionBox</code> based on the provided <code>org.w3c.dom.Node</code>. */
     public ResolutionBox(Node node) throws IIOInvalidTreeException {
         super(node);
         NodeList children = node.getChildNodes();
@@ -220,17 +210,15 @@ public class ResolutionBox extends BaseJP2KBox {
     }
 
     /**
-     * Creates an <code>IIOMetadataNode</code> from this resolution box. The
-     * format of this node is defined in the XML dtd and xsd for the JP2 image
-     * file.
+     * Creates an <code>IIOMetadataNode</code> from this resolution box. The format of this node is defined in the XML
+     * dtd and xsd for the JP2 image file.
      */
     public IIOMetadataNode getNativeNode() {
-       return new ResolutionBoxMetadataNode(this);
+        return new ResolutionBoxMetadataNode(this);
     }
 
     protected synchronized byte[] compose() {
-        if (localData != null)
-            return localData;
+        if (localData != null) return localData;
         localData = new byte[10];
         localData[0] = (byte) (numV >> 8);
         localData[1] = (byte) (numV & 0xFF);
@@ -246,7 +234,7 @@ public class ResolutionBox extends BaseJP2KBox {
         localData[9] = expH;
         return localData;
     }
-    
+
     public short getVerticalResolutionNumerator() {
         return numV;
     }

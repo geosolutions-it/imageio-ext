@@ -18,7 +18,6 @@ package it.geosolutions.imageio.plugins.jp2kakadu;
 
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.GDALUtilities;
-
 import org.gdal.gdal.Driver;
 import org.gdal.gdal.gdal;
 
@@ -37,10 +36,8 @@ public class AbstractJP2KTestCase extends AbstractGDALTest {
             final Driver drivermrsid = gdal.GetDriverByName("JP2MrSID");
             if (driverEcw != null || drivermrsid != null) {
                 final StringBuilder skipDriver = new StringBuilder("");
-                if (driverEcw != null)
-                    skipDriver.append("JP2ECW ");
-                if (drivermrsid != null)
-                    skipDriver.append("JP2MrSID");
+                if (driverEcw != null) skipDriver.append("JP2ECW ");
+                if (drivermrsid != null) skipDriver.append("JP2MrSID");
                 gdal.SetConfigOption("GDAL_SKIP", skipDriver.toString());
                 gdal.AllRegister();
             }
