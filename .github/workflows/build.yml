@@ -33,6 +33,9 @@ jobs:
         distribution: 'zulu'
         cache: maven
 
+    - name: Validate source code and pom formatting
+      run: mvn verify -Dspotless.action=check -Dpom.fmt.action=verify -Dall -DskipTests -ntp
+
     - name: Set up GDAL
       run: |
         sudo apt update
