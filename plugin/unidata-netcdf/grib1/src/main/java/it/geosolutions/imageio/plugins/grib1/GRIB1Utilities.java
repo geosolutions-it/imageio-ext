@@ -158,7 +158,7 @@ public class GRIB1Utilities {
             for (int i = 0; i < size; i++) {
 
                 switch (dataType) {
-                    // TODO: ADD MORE.
+                        // TODO: ADD MORE.
                     case DataBuffer.TYPE_SHORT:
                         final short val1s = values.getShort(indexes[i]);
                         sb.append(Short.toString(val1s));

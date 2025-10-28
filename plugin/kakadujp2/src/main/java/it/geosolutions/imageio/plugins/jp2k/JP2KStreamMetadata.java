@@ -97,7 +97,7 @@ public class JP2KStreamMetadata extends IIOMetadata {
         if (node == null) throw new IllegalArgumentException("Null node provided ");
         IIOMetadataNode mdNode;
         switch (node.getType()) {
-            // Using LazyBox in the following 3 cases.
+                // Using LazyBox in the following 3 cases.
             case XMLBox.BOX_TYPE:
                 mdNode = new XMLBoxMetadataNode(node);
                 break;

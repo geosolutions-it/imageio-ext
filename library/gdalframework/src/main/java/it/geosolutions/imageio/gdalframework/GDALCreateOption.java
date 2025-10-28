@@ -278,40 +278,40 @@ public class GDALCreateOption {
      */
     private boolean checkValidity(String checkingValue) {
         switch (validityCheckType) {
-            // //
-            //
-            // No validity check is required for this option
-            //
-            // //
+                // //
+                //
+                // No validity check is required for this option
+                //
+                // //
             case VALIDITYCHECKTYPE_NONE:
                 return true;
-            // //
-            //
-            // The specified value must be the only one value, supported by this
-            // option
-            //
-            // //
+                // //
+                //
+                // The specified value must be the only one value, supported by this
+                // option
+                //
+                // //
             case VALIDITYCHECKTYPE_VALUE:
                 return checkValueIs(checkingValue);
-            // //
-            //
-            // The specified value must be only one of a predefined set.
-            //
-            // //
+                // //
+                //
+                // The specified value must be only one of a predefined set.
+                //
+                // //
             case VALIDITYCHECKTYPE_ONEOF:
                 return checkOneOf(checkingValue);
-            // //
-            //
-            // The specified value must be one or more of a predefined set.
-            //
-            // //
+                // //
+                //
+                // The specified value must be one or more of a predefined set.
+                //
+                // //
             case VALIDITYCHECKTYPE_COMBINATIONOF:
                 return checkCombinationOf(checkingValue);
-            // //
-            //
-            // The specified value must belong to a predefined range.
-            //
-            // //
+                // //
+                //
+                // The specified value must belong to a predefined range.
+                //
+                // //
             case VALIDITYCHECKTYPE_VALUE_BELONGINGRANGE_EXTREMESEXCLUDED:
             case VALIDITYCHECKTYPE_VALUE_BELONGINGRANGE_EXTREMESINCLUDED:
             case VALIDITYCHECKTYPE_VALUE_BELONGINGRANGE_LEFTEXCLUDED:
@@ -323,11 +323,11 @@ public class GDALCreateOption {
                         return checkFloatRange(checkingValue);
                 }
                 break;
-            // //
-            //
-            // The specified value must be compared to a reference value.
-            //
-            // //
+                // //
+                //
+                // The specified value must be compared to a reference value.
+                //
+                // //
             case VALIDITYCHECKTYPE_VALUE_LESSTHANOREQUALTO:
             case VALIDITYCHECKTYPE_VALUE_LESSTHAN:
             case VALIDITYCHECKTYPE_VALUE_GREATERTHANOREQUALTO:
@@ -342,12 +342,12 @@ public class GDALCreateOption {
                 }
                 break;
 
-            // //
-            //
-            // The specified value is a String which must respect a predefined
-            // syntax
-            //
-            // //
+                // //
+                //
+                // The specified value is a String which must respect a predefined
+                // syntax
+                //
+                // //
             case VALIDITYCHECKTYPE_STRING_SYNTAX:
                 return checkStringSyntaxCompliance(checkingValue);
         }
