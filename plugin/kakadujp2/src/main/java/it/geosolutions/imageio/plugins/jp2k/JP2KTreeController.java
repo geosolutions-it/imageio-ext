@@ -162,11 +162,11 @@ public class JP2KTreeController implements JP2KTreeChecker, TreeModelListener {
 
             switch (node.getType()) {
 
-                // ////////////////////////////////////////////////////
-                //
-                // Checking the FileBox
-                //
-                // ////////////////////////////////////////////////////
+                    // ////////////////////////////////////////////////////
+                    //
+                    // Checking the FileBox
+                    //
+                    // ////////////////////////////////////////////////////
                 case JP2KFileBox.BOX_TYPE:
                     if (childrenIndices.length >= 1 && children != null) {
                         for (int i = 0; i < childrenIndices.length; i++) {
@@ -177,11 +177,11 @@ public class JP2KTreeController implements JP2KTreeChecker, TreeModelListener {
                             final int childType = candidate.getType();
                             switch (childType) {
 
-                                // //
-                                //
-                                // Checking the JP2HeaderBox
-                                //
-                                // //
+                                    // //
+                                    //
+                                    // Checking the JP2HeaderBox
+                                    //
+                                    // //
                                 case JP2HeaderBox.BOX_TYPE:
                                     final int contiguousCodestreamBoxIndex =
                                             getChildIndex(node, ContiguousCodestreamBox.BOX_TYPE);
@@ -191,11 +191,11 @@ public class JP2KTreeController implements JP2KTreeChecker, TreeModelListener {
                                                     "ContiguousCodestream Box must appear after the JP2Header Box"));
                                     break;
 
-                                // //
-                                //
-                                // Checking the ContiguousCodestreamBox
-                                //
-                                // //
+                                    // //
+                                    //
+                                    // Checking the ContiguousCodestreamBox
+                                    //
+                                    // //
                                 case ContiguousCodestreamBox.BOX_TYPE:
                                     final int jp2HeaderBoxIndex = getChildIndex(node, JP2HeaderBox.BOX_TYPE);
                                     if (jp2HeaderBoxIndex != -1)
@@ -204,11 +204,11 @@ public class JP2KTreeController implements JP2KTreeChecker, TreeModelListener {
                                                     "JP2Header Box must appear before the ContiguousCodestream"));
                                     break;
 
-                                // //
-                                //
-                                // Checking the IPRBox
-                                //
-                                // //
+                                    // //
+                                    //
+                                    // Checking the IPRBox
+                                    //
+                                    // //
                                 case IPRBox.BOX_TYPE:
                                     final int jp2HeaderIndex = getChildIndex(node, JP2HeaderBox.BOX_TYPE);
                                     if (jp2HeaderIndex != -1) {
@@ -231,11 +231,11 @@ public class JP2KTreeController implements JP2KTreeChecker, TreeModelListener {
                         }
                     }
 
-                // ////////////////////////////////////////////////////
-                //
-                // Checking the JP2Header Box
-                //
-                // ////////////////////////////////////////////////////
+                    // ////////////////////////////////////////////////////
+                    //
+                    // Checking the JP2Header Box
+                    //
+                    // ////////////////////////////////////////////////////
                 case JP2HeaderBox.BOX_TYPE:
                     if (childrenIndices.length >= 1 && children != null) {
                         for (int i = 0; i < childrenIndices.length; i++) {
@@ -711,11 +711,11 @@ public class JP2KTreeController implements JP2KTreeChecker, TreeModelListener {
 
             switch (node.getType()) {
 
-                // ////////////////////////////////////////////////////
-                //
-                // Checking the FileBox
-                //
-                // ////////////////////////////////////////////////////
+                    // ////////////////////////////////////////////////////
+                    //
+                    // Checking the FileBox
+                    //
+                    // ////////////////////////////////////////////////////
                 case JP2KFileBox.BOX_TYPE:
                     if (childrenIndices.length >= 1 && children != null) {
                         for (int i = 0; i < childrenIndices.length; i++) {
@@ -726,11 +726,11 @@ public class JP2KTreeController implements JP2KTreeChecker, TreeModelListener {
                             final int childType = candidate.getType();
                             switch (childType) {
 
-                                // //
-                                //
-                                // Checking the ReaderRequirementsBox
-                                //
-                                // //
+                                    // //
+                                    //
+                                    // Checking the ReaderRequirementsBox
+                                    //
+                                    // //
                                 case ReaderRequirementsBox.BOX_TYPE:
                                     final int fileTypeBoxIndex = getChildIndex(node, FileTypeBox.BOX_TYPE);
                                     if (fileTypeBoxIndex != -1)
@@ -781,11 +781,11 @@ public class JP2KTreeController implements JP2KTreeChecker, TreeModelListener {
                                                     "CodestreamHeader Box must appear after the JP2Header Box"));
                                     break;
 
-                                // //
-                                //
-                                // Checking the ContiguousCodestreamBox
-                                //
-                                // //
+                                    // //
+                                    //
+                                    // Checking the ContiguousCodestreamBox
+                                    //
+                                    // //
                                 case ContiguousCodestreamBox.BOX_TYPE:
                                     final int jp2HBoxIndex2 = getChildIndex(node, JP2HeaderBox.BOX_TYPE);
                                     if (jp2HBoxIndex2 != -1)
@@ -794,11 +794,11 @@ public class JP2KTreeController implements JP2KTreeChecker, TreeModelListener {
                                                     "JP2Header Box must appear before the ContiguousCodestream"));
                                     break;
 
-                                // //
-                                //
-                                // Checking the IPRBox
-                                //
-                                // //
+                                    // //
+                                    //
+                                    // Checking the IPRBox
+                                    //
+                                    // //
                                 case IPRBox.BOX_TYPE:
                                     final int jp2HeaderIndex = getChildIndex(node, JP2HeaderBox.BOX_TYPE);
                                     if (jp2HeaderIndex != -1) {
@@ -821,11 +821,11 @@ public class JP2KTreeController implements JP2KTreeChecker, TreeModelListener {
                         }
                     }
 
-                // ////////////////////////////////////////////////////
-                //
-                // Checking the JP2Header Box
-                //
-                // ////////////////////////////////////////////////////
+                    // ////////////////////////////////////////////////////
+                    //
+                    // Checking the JP2Header Box
+                    //
+                    // ////////////////////////////////////////////////////
                 case JP2HeaderBox.BOX_TYPE:
                     if (childrenIndices.length >= 1 && children != null) {
                         for (int i = 0; i < childrenIndices.length; i++) {
