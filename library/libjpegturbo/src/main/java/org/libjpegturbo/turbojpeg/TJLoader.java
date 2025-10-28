@@ -29,7 +29,8 @@
 package org.libjpegturbo.turbojpeg;
 
 final class TJLoader {
-  static void load() {
-    System.loadLibrary("turbojpeg");
-  }
-};
+    static void load() {
+        System.loadLibrary("turbojpeg");
+    }
+}
+;
