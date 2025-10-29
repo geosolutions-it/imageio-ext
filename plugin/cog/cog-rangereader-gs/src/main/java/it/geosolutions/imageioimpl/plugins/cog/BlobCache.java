@@ -99,7 +99,20 @@ class BlobCache {
                 }
             });
 
-    static final Storage DEFAULT_STORAGE = StorageOptions.getDefaultInstance().getService();
+    static final Storage DEFAULT_STORAGE = createDefaultStorage();
+
+    private static Storage createDefaultStorage() {
+        // Check for emulator host system property (useful for testing with fake-gcs-server)
+        String emulatorHost = PropertyLocator.getPropertyValue("gs.reader.host", null);
+        if (emulatorHost != null) {
+            return StorageOptions.newBuilder()
+                    .setHost(emulatorHost)
+                    .setProjectId("test-project") // Required but not used by emulator
+                    .build()
+                    .getService();
+        }
+        return StorageOptions.getDefaultInstance().getService();
+    }
 
     static {
         ExtCaches.addListener(() -> {

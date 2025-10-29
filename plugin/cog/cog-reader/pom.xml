@@ -10,7 +10,9 @@
   <artifactId>imageio-ext-cog-reader</artifactId>
 
   <name>Cloud Optimized GeoTIFF Reader</name>
-
+  <properties>
+    <skipITs>true</skipITs>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
@@ -24,9 +26,57 @@
       <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-cog-streams</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers-nginx</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers-azure</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.azure</groupId>
+      <artifactId>azure-storage-blob</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers-localstack</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers-minio</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.aiven</groupId>
+      <artifactId>testcontainers-fake-gcs-server</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.5.6</version>
+      <scope>runtime</scope>
+    </dependency>
   </dependencies>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <configuration>
+            <skipITs>${skipITs}</skipITs>
+            <skipTests>false</skipTests>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -77,6 +127,19 @@
 
     <profile>
       <id>cog-http</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <configuration>
+              <includes>
+                <include>**/http/**/*IT.java</include>
+              </includes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
       <properties>
         <jar.finalName>${project.artifactId}-http-${project.version}</jar.finalName>
       </properties>
@@ -91,6 +154,19 @@
 
     <profile>
       <id>cog-s3</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <configuration>
+              <includes>
+                <include>**/s3/**/*IT.java</include>
+              </includes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
       <properties>
         <jar.finalName>${project.artifactId}-s3-${project.version}</jar.finalName>
       </properties>
@@ -105,6 +181,19 @@
 
     <profile>
       <id>cog-azure</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <configuration>
+              <includes>
+                <include>**/azure/**/*IT.java</include>
+              </includes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
       <properties>
         <jar.finalName>${project.artifactId}-azure-${project.version}</jar.finalName>
       </properties>
@@ -118,10 +207,46 @@
     </profile>
 
     <profile>
+      <id>cog-gs</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <configuration>
+              <includes>
+                <include>**/gs/**/*IT.java</include>
+              </includes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+      <properties>
+        <jar.finalName>${project.artifactId}-gs-${project.version}</jar.finalName>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>it.geosolutions.imageio-ext</groupId>
+          <artifactId>imageio-ext-cog-rangereader-gs</artifactId>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <profile>
       <id>cog-all</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <!-- Run all integration tests (*IT.java) -->
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
       <properties>
         <jar.finalName>${project.artifactId}-all-${project.version}</jar.finalName>
       </properties>
