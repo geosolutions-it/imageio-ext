@@ -116,6 +116,19 @@
              software.amazon.awssdk:s3:jar:2.24.13
              +- software.amazon.awssdk:netty-nio-client:jar:2.24.13
                 +- io.netty:netty-codec-http:jar:4.1.107.Final
+
+             Similarly, converges the Jackson dependency versions from cog-rangereader-gs and
+             cog-rangereader-azure:
+
+             From cog-rangereader-gs:
+             com.google.cloud:google-cloud-storage:jar:2.1.0
+             +- com.fasterxml.jackson.core:jackson-core:jar:2.12.4
+
+             From cog-rangereader-azure:
+             com.azure:azure-storage-blob:jar:12.27.1
+             +- com.azure:azure-core:jar:1.51.0
+                +- com.fasterxml.jackson.core:jackson-core:jar:2.17.2
+                +- com.fasterxml.jackson.core:jackson-databind:jar:2.17.2
             -->
       <id>dependencyConvergence</id>
       <activation>
@@ -127,6 +140,13 @@
             <groupId>io.netty</groupId>
             <artifactId>netty-bom</artifactId>
             <version>4.1.113.Final</version>
+            <type>pom</type>
+            <scope>import</scope>
+          </dependency>
+          <dependency>
+            <groupId>com.fasterxml.jackson</groupId>
+            <artifactId>jackson-bom</artifactId>
+            <version>2.19.0</version>
             <type>pom</type>
             <scope>import</scope>
           </dependency>
