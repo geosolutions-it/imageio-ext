@@ -4,11 +4,11 @@
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext-gdal-plugin</artifactId>
-    <version>2.0-SNAPSHOT</version>
+    <version>2.0.1</version>
   </parent>
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext-gdalenvisat</artifactId>
-  <version>2.0-SNAPSHOT</version>
+  <version>2.0.1</version>
   <packaging>jar</packaging>
   <name>Envisat Plugin that internally uses GDAL</name>
 </project>
