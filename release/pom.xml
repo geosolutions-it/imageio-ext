@@ -1,20 +1,18 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  
+
   <parent>
     <groupId>it.geosolutions.imageio-ext</groupId>
     <artifactId>imageio-ext</artifactId>
-    <version>2.0.1</version>
+    <version>2.0-SNAPSHOT</version>
   </parent>
-  
+
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>release</artifactId>
   <packaging>jar</packaging>
   <name>ImageIO-Ext Release Module</name>
-  
+
   <dependencies>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
@@ -121,7 +119,7 @@
       <artifactId>imageio-ext-gdalkakadujp2</artifactId>
       <version>${project.version}</version>
     </dependency>
-     <dependency>
+    <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-gdalvrt</artifactId>
       <version>${project.version}</version>
@@ -185,7 +183,7 @@
 
   <build>
     <plugins>
-      
+
       <plugin>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
@@ -199,5 +197,5 @@
       </plugin>
     </plugins>
   </build>
-  
+
 </project>
