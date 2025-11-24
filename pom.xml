@@ -87,7 +87,7 @@
     <gdal.version>3.2.0</gdal.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <libdeflate.java.version>0.1.0-beta</libdeflate.java.version>
-    <imagen.version>0.9.0</imagen.version>
+    <imagen.version>0.9.2-SNAPSHOT</imagen.version>
     <surefire.jvm.args></surefire.jvm.args>
     <pom.fmt.action>sort</pom.fmt.action>
     <pom.fmt.skip>${spotless.apply.skip}</pom.fmt.skip>
