@@ -35,11 +35,11 @@ import java.awt.image.BufferedImage;
 import java.awt.image.PixelInterleavedSampleModel;
 import java.awt.image.SampleModel;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.stream.ImageInputStream;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -117,6 +117,7 @@ public abstract class BaseCogImageReaderTest {
             imageReader.dispose();
         }
     }
+
     /** Connection parameters for {@link #getLandTopoCog1024ImageInputStream()} */
     protected abstract BasicAuthURI landTopoCog1024ConnectionParams();
 
@@ -127,15 +128,13 @@ public abstract class BaseCogImageReaderTest {
      * @param caching whether to use a {@link CachingCogImageInputStream} (true) or {@link DefaultCogImageInputStream}
      *     (false)
      */
-    protected ImageInputStream getLandTopoCog1024ImageInputStream(boolean caching) {
+    protected CogImageInputStream getLandTopoCog1024ImageInputStream(boolean caching) {
         BasicAuthURI params = landTopoCog1024ConnectionParams();
-        ImageInputStream cogStream;
         if (caching) {
-            cogStream = new CachingCogImageInputStream(params);
+            return new CachingCogImageInputStream(params);
         } else {
-            cogStream = new DefaultCogImageInputStream(params);
+            return new DefaultCogImageInputStream(params);
         }
-        return cogStream;
     }
 
     /** Builds a {@link CogImageReader} with {@link #getLandTopoCog1024ImageInputStream()} as input */
@@ -145,9 +144,20 @@ public abstract class BaseCogImageReaderTest {
 
     /** Builds a {@link CogImageReader} with {@link #getLandTopoCog1024ImageInputStream(boolean)} as input */
     protected CogImageReader getLandTopoCog1024ImageReader(boolean caching) throws IOException {
-        ImageInputStream cogStream = getLandTopoCog1024ImageInputStream(caching);
+        CogImageInputStream cogStream = getLandTopoCog1024ImageInputStream(caching);
         CogImageReader imageReader = new CogImageReader(new CogImageReaderSpi());
         imageReader.setInput(cogStream);
+
+        // set up the range reader
+        try {
+            RangeReader rangeReader = getRangeReaderClass()
+                    .getDeclaredConstructor(URI.class, int.class)
+                    .newInstance(landTopoCog1024ConnectionParams().getUri(), CogImageReadParam.DEFAULT_HEADER_LENGTH);
+            cogStream.init(rangeReader);
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
+
         return imageReader;
     }
 

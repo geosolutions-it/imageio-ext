@@ -32,8 +32,6 @@ import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Ignore;
-import org.junit.Test;
 import org.testcontainers.containers.MinIOContainer;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -167,68 +165,5 @@ public class CogImageReaderS3MinioIT extends BaseCogImageReaderTest {
         // will make the S3 client use MinIO
         String uri = "s3://%s/%s".formatted(BUCKET_NAME, blobName);
         return new BasicAuthURI(uri);
-    }
-
-    @Test
-    @Ignore(
-            """
-            Fails with Cannot invoke "java.util.Map.entrySet()" because "this.data" is null
-            """)
-    public void getNumImages() throws IOException {
-        super.getNumImages();
-    }
-
-    @Test
-    @Ignore(
-            """
-            Fails with Cannot invoke "java.util.Map.entrySet()" because "this.data" is null
-            """)
-    public void isSeekForwardOnly() throws IOException {
-        super.isSeekForwardOnly();
-    }
-
-    @Test
-    @Ignore(
-            """
-            Fails with Cannot invoke "java.util.Map.entrySet()" because "this.data" is null
-            """)
-    public void isImageTiled() throws IOException {
-        super.isImageTiled();
-    }
-
-    @Test
-    @Ignore(
-            """
-            Fails with Cannot invoke "java.util.Map.entrySet()" because "this.data" is null
-            """)
-    public void getWidthAndHeight() throws IOException {
-        super.getWidthAndHeight();
-    }
-
-    @Test
-    @Ignore(
-            """
-            Fails with Cannot invoke "java.util.Map.entrySet()" because "this.data" is null
-            """)
-    public void getAspectRatio() throws IOException {
-        super.getAspectRatio();
-    }
-
-    @Test
-    @Ignore(
-            """
-            Fails with Cannot invoke "java.util.Map.entrySet()" because "this.data" is null
-            """)
-    public void getRawImageType() throws IOException {
-        super.getRawImageType();
-    }
-
-    @Test
-    @Ignore(
-            """
-            Fails with Cannot invoke "java.util.Map.entrySet()" because "this.data" is null
-            """)
-    public void getTileDimensions() throws IOException {
-        super.getTileDimensions();
     }
 }
