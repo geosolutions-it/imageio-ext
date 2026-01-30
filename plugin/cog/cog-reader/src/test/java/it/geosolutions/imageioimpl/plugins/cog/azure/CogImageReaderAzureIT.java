@@ -111,6 +111,9 @@ public class CogImageReaderAzureIT extends BaseCogImageReaderTest {
 
     @AfterClass
     public static void stopContainer() {
+        System.clearProperty("azure.reader.serviceurl");
+        System.clearProperty("azure.reader.accountname");
+        System.clearProperty("azure.reader.accountkey");
         container.stop();
     }
 
