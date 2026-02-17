@@ -23,8 +23,8 @@
 
   <properties>
     <okhttp.version>4.12.0</okhttp.version>
-    <aws.version>2.27.23</aws.version>
-    <azure.version>12.27.1</azure.version>
+    <aws.version>2.41.30</aws.version>
+    <azure.version>12.29.1</azure.version>
     <ehcache.version>3.4.0</ehcache.version>
     <online.skip.pattern>**/*OnlineTest.java</online.skip.pattern>
   </properties>
@@ -139,7 +139,7 @@
           <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-bom</artifactId>
-            <version>4.1.113.Final</version>
+            <version>4.1.130.Final</version>
             <type>pom</type>
             <scope>import</scope>
           </dependency>
