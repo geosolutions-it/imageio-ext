@@ -22,15 +22,21 @@
   </modules>
 
   <properties>
+    <cloud-dependencies-bom.version>1.0.1</cloud-dependencies-bom.version>
     <okhttp.version>4.12.0</okhttp.version>
-    <aws.version>2.27.23</aws.version>
-    <azure.version>12.27.1</azure.version>
     <ehcache.version>3.4.0</ehcache.version>
     <online.skip.pattern>**/*OnlineTest.java</online.skip.pattern>
   </properties>
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>io.tileverse</groupId>
+        <artifactId>cloud-dependencies-bom</artifactId>
+        <version>${cloud-dependencies-bom.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
       <dependency>
         <groupId>it.geosolutions.imageio-ext</groupId>
         <artifactId>imageio-ext-tiff</artifactId>
@@ -72,86 +78,24 @@
         <version>${okhttp.version}</version>
       </dependency>
       <dependency>
-        <groupId>software.amazon.awssdk</groupId>
-        <artifactId>s3</artifactId>
-        <version>${aws.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>software.amazon.awssdk</groupId>
-        <artifactId>auth</artifactId>
-        <version>${aws.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>software.amazon.awssdk</groupId>
-        <artifactId>sts</artifactId>
-        <version>${aws.version}</version>
-      </dependency>
-      <dependency>
         <groupId>org.ehcache</groupId>
         <artifactId>ehcache</artifactId>
         <version>${ehcache.version}</version>
       </dependency>
-      <dependency>
-        <groupId>com.azure</groupId>
-        <artifactId>azure-storage-blob</artifactId>
-        <version>${azure.version}</version>
-      </dependency>
     </dependencies>
   </dependencyManagement>
-
-  <profiles>
-    <profile>
-      <!--
-             Converges the netty dependency version from cog-rangereader-s3 and cog-rangereader-azure
-             to a common version that works with both, so that both plugins can co-exist without
-             adding netty libs with slightly different versions to the dependencies.
-
-             From cog-rangereader-azure:
-
-             com.azure:azure-storage-blob:jar:12.27.1
-             +- com.azure:azure-core-http-netty:jar:1.15.3
-                +- io.netty:netty-handler:jar:4.1.110.Final
-
-             From cog-rangereader-s3:
-             software.amazon.awssdk:s3:jar:2.24.13
-             +- software.amazon.awssdk:netty-nio-client:jar:2.24.13
-                +- io.netty:netty-codec-http:jar:4.1.107.Final
-
-             Similarly, converges the Jackson dependency versions from cog-rangereader-gs and
-             cog-rangereader-azure:
-
-             From cog-rangereader-gs:
-             com.google.cloud:google-cloud-storage:jar:2.1.0
-             +- com.fasterxml.jackson.core:jackson-core:jar:2.12.4
-
-             From cog-rangereader-azure:
-             com.azure:azure-storage-blob:jar:12.27.1
-             +- com.azure:azure-core:jar:1.51.0
-                +- com.fasterxml.jackson.core:jackson-core:jar:2.17.2
-                +- com.fasterxml.jackson.core:jackson-databind:jar:2.17.2
-            -->
-      <id>dependencyConvergence</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <dependencyManagement>
-        <dependencies>
-          <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-bom</artifactId>
-            <version>4.1.113.Final</version>
-            <type>pom</type>
-            <scope>import</scope>
-          </dependency>
-          <dependency>
-            <groupId>com.fasterxml.jackson</groupId>
-            <artifactId>jackson-bom</artifactId>
-            <version>2.19.0</version>
-            <type>pom</type>
-            <scope>import</scope>
-          </dependency>
-        </dependencies>
-      </dependencyManagement>
-    </profile>
-  </profiles>
+  <repositories>
+    <repository>
+      <!-- in case of a SNAPSHOT cloud-dependencies-bom.version property value -->
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>central-portal-snapshots</id>
+      <name>Central Portal Snapshots</name>
+      <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+    </repository>
+  </repositories>
 </project>
