@@ -21,6 +21,11 @@
       <artifactId>azure-storage-blob</artifactId>
     </dependency>
     <dependency>
+      <!-- JDK HttpClient, azure-storage-blob has netty excluded -->
+      <groupId>com.azure</groupId>
+      <artifactId>azure-core-http-jdk-httpclient</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
       <scope>test</scope>

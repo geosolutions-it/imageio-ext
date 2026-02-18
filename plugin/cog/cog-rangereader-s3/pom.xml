@@ -21,6 +21,11 @@
       <artifactId>s3</artifactId>
     </dependency>
     <dependency>
+      <!-- Sync and Async clients alternative, software.amazon.awssdk:s3 has netty excluded -->
+      <groupId>software.amazon.awssdk</groupId>
+      <artifactId>aws-crt-client</artifactId>
+    </dependency>
+    <dependency>
       <groupId>software.amazon.awssdk</groupId>
       <artifactId>auth</artifactId>
     </dependency>
