@@ -18,5 +18,9 @@
       <artifactId>grib</artifactId>
       <version>6.0.18</version>
     </dependency>
+    <dependency>
+      <groupId>it.geosolutions.imageio-ext</groupId>
+      <artifactId>imageio-ext-netcdf-core</artifactId>
+    </dependency>
   </dependencies>
 </project>

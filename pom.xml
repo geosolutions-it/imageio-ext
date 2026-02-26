@@ -181,6 +181,11 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
+        <groupId>it.geosolutions.imageio-ext</groupId>
+        <artifactId>imageio-ext-netcdf-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
         <groupId>me.steinborn</groupId>
         <artifactId>libdeflate-java-core</artifactId>
         <version>${libdeflate.java.version}</version>
