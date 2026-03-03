@@ -131,6 +131,68 @@ public class PredictorDecompressor {
                         }
                     }
                 }
+            } else if (bitsPerSample[0] == 64) {
+                if (byteOrder == ByteOrder.LITTLE_ENDIAN) {
+                    for (int j = 0; j < srcHeight; j++) {
+                        int count = dstOffset + samplesPerPixel * (j * srcWidth + 1) * 8;
+                        for (int i = samplesPerPixel; i < srcWidth * samplesPerPixel; i++) {
+                            int prevBase = count - samplesPerPixel * 8;
+                            long prev = TIFFDecompressor.readLongFromBuffer(
+                                    buf,
+                                    prevBase,
+                                    prevBase + 1,
+                                    prevBase + 2,
+                                    prevBase + 3,
+                                    prevBase + 4,
+                                    prevBase + 5,
+                                    prevBase + 6,
+                                    prevBase + 7);
+                            long curr = TIFFDecompressor.readLongFromBuffer(
+                                    buf, count, count + 1, count + 2, count + 3, count + 4, count + 5, count + 6,
+                                    count + 7);
+                            long sum = curr + prev;
+                            buf[count] = (byte) (sum & 0xFF);
+                            buf[count + 1] = (byte) ((sum >> 8) & 0xFF);
+                            buf[count + 2] = (byte) ((sum >> 16) & 0xFF);
+                            buf[count + 3] = (byte) ((sum >> 24) & 0xFF);
+                            buf[count + 4] = (byte) ((sum >> 32) & 0xFF);
+                            buf[count + 5] = (byte) ((sum >> 40) & 0xFF);
+                            buf[count + 6] = (byte) ((sum >> 48) & 0xFF);
+                            buf[count + 7] = (byte) ((sum >> 56) & 0xFF);
+                            count += 8;
+                        }
+                    }
+                } else {
+                    for (int j = 0; j < srcHeight; j++) {
+                        int count = dstOffset + samplesPerPixel * (j * srcWidth + 1) * 8;
+                        for (int i = samplesPerPixel; i < srcWidth * samplesPerPixel; i++) {
+                            int prevBase = count - samplesPerPixel * 8;
+                            long prev = TIFFDecompressor.readLongFromBuffer(
+                                    buf,
+                                    prevBase + 7,
+                                    prevBase + 6,
+                                    prevBase + 5,
+                                    prevBase + 4,
+                                    prevBase + 3,
+                                    prevBase + 2,
+                                    prevBase + 1,
+                                    prevBase);
+                            long curr = TIFFDecompressor.readLongFromBuffer(
+                                    buf, count + 7, count + 6, count + 5, count + 4, count + 3, count + 2, count + 1,
+                                    count);
+                            long sum = curr + prev;
+                            buf[count + 7] = (byte) (sum & 0xFF);
+                            buf[count + 6] = (byte) ((sum >> 8) & 0xFF);
+                            buf[count + 5] = (byte) ((sum >> 16) & 0xFF);
+                            buf[count + 4] = (byte) ((sum >> 24) & 0xFF);
+                            buf[count + 3] = (byte) ((sum >> 32) & 0xFF);
+                            buf[count + 2] = (byte) ((sum >> 40) & 0xFF);
+                            buf[count + 1] = (byte) ((sum >> 48) & 0xFF);
+                            buf[count] = (byte) ((sum >> 56) & 0xFF);
+                            count += 8;
+                        }
+                    }
+                }
             } else
                 throw new IIOException(
                         "Unexpected branch of Horizontal differencing Predictor, bps=" + bitsPerSample[0]);
@@ -175,7 +237,7 @@ public class PredictorDecompressor {
         if (predictor == BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING) {
             int len = bitsPerSample.length;
             final int bps = bitsPerSample[0];
-            if (bps != 8 && bps != 16 && bps != 32) {
+            if (bps != 8 && bps != 16 && bps != 32 && bps != 64) {
                 throw new IIOException(
                         bps + "-bit samples " + "are not supported for Horizontal " + "differencing Predictor");
             }
