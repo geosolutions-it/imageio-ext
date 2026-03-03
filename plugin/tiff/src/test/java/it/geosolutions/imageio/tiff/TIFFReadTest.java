@@ -729,6 +729,36 @@ public class TIFFReadTest extends Assert {
     }
 
     @Test
+    public void readDeflatePredictor2On64BitsFloat() throws IOException {
+        // This image has been created from test.tif using the command:
+        // gdal_translate -ot Float64 -co COMPRESS=DEFLATE -co PREDICTOR=2 test.tif deflate64_p2.tif
+        assertImagesEqual(readTiff("test.tif"), readTiff("deflate64_p2.tif"));
+    }
+
+    @Test
+    public void readDeflatePredictor2On64BitsFloatBigEndian() throws IOException {
+        // This image has been created from test.tif using the command:
+        // gdal_translate -ot Float64 -co COMPRESS=DEFLATE -co PREDICTOR=2 --config
+        // GDAL_TIFF_ENDIANNESS BIG test.tif deflate64_p2_bigendian.tif
+        assertImagesEqual(readTiff("test.tif"), readTiff("deflate64_p2_bigendian.tif"));
+    }
+
+    @Test
+    public void readLzwPredictor2On64BitsFloat() throws IOException {
+        // This image has been created from test.tif using the command:
+        // gdal_translate -ot Float64 -co COMPRESS=LZW -co PREDICTOR=2 test.tif lzw64_p2.tif
+        assertImagesEqual(readTiff("test.tif"), readTiff("lzw64_p2.tif"));
+    }
+
+    @Test
+    public void readLzwPredictor2On64BitsFloatBigEndian() throws IOException {
+        // This image has been created from test.tif using the command:
+        // gdal_translate -ot Float64 -co COMPRESS=LZW -co PREDICTOR=2 --config
+        // GDAL_TIFF_ENDIANNESS BIG test.tif lzw64_p2_bigendian.tif
+        assertImagesEqual(readTiff("test.tif"), readTiff("lzw64_p2_bigendian.tif"));
+    }
+
+    @Test
     public void readLZWPredictor3On32BitsFloat() throws IOException {
         // This image has been created from test.tif using the command:
         // gdal_translate -ot Float32 -co COMPRESS=LZW -CO PREDICTOR=3 test.tif lzw32f_p3.tif
@@ -816,6 +846,12 @@ public class TIFFReadTest extends Assert {
     }
 
     @Test
+    public void readMultiBandFloat64Predictor2() throws IOException {
+        assertImagesEqual(readTiff("sampleRGBA.tif"), readTiff("sampleRGBA64f_LZW_p2.tif"));
+        assertImagesEqual(readTiff("sampleRGBA.tif"), readTiff("sampleRGBA64f_DEFLATE_p2.tif"));
+    }
+
+    @Test
     public void readMultiBandPredictor2BandInterleaved() throws IOException {
         assertImagesEqual(readTiff("sampleRGBA.tif"), readTiff("sampleRGBA_LZW_p2_bi.tif"));
         assertImagesEqual(readTiff("sampleRGBA.tif"), readTiff("sampleRGBA_DEFLATE_p2_bi.tif"));
@@ -848,6 +884,12 @@ public class TIFFReadTest extends Assert {
         assertImagesEqual(readTiff("sampleRGBA.tif"), readTiff("sampleRGBA32f_LZW_p3_bi.tif"));
         assertImagesEqual(readTiff("sampleRGBA.tif"), readTiff("sampleRGBA32f_DEFLATE_p3_bi.tif"));
         assertImagesEqual(readTiff("sampleRGBA.tif"), readTiff("sampleRGBA32f_ZSTD_p3_bi.tif"));
+    }
+
+    @Test
+    public void readMultiBandFloat64Predictor2BandInterleaved() throws IOException {
+        assertImagesEqual(readTiff("sampleRGBA.tif"), readTiff("sampleRGBA64f_LZW_p2_bi.tif"));
+        assertImagesEqual(readTiff("sampleRGBA.tif"), readTiff("sampleRGBA64f_DEFLATE_p2_bi.tif"));
     }
 
     static int[] toByteArray(int dataType, Object arr) {

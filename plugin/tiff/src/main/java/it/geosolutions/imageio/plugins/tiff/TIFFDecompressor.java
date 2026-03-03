@@ -2701,4 +2701,15 @@ public abstract class TIFFDecompressor {
                 | ((buf[offset3] & 0xFF) << 16)
                 | ((buf[offset4] & 0xFF) << 24);
     }
+
+    public static long readLongFromBuffer(byte[] buf, int o1, int o2, int o3, int o4, int o5, int o6, int o7, int o8) {
+        return ((long) (buf[o1] & 0xFF))
+                | (((long) (buf[o2] & 0xFF)) << 8)
+                | (((long) (buf[o3] & 0xFF)) << 16)
+                | (((long) (buf[o4] & 0xFF)) << 24)
+                | (((long) (buf[o5] & 0xFF)) << 32)
+                | (((long) (buf[o6] & 0xFF)) << 40)
+                | (((long) (buf[o7] & 0xFF)) << 48)
+                | (((long) (buf[o8] & 0xFF)) << 56);
+    }
 }
