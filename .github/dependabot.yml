@@ -16,8 +16,6 @@ updates:
     open-pull-requests-limit: 10
     labels:
       - "dependencies"
-      - "java"
-      - "dependabot"
     commit-message:
       prefix: "chore(deps)"
     pull-request-branch-name:
