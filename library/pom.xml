@@ -22,6 +22,5 @@
     <module>geocore</module>
     <module>gdalframework</module>
     <module>netcdf-core</module>
-    <module>libjpegturbo</module>
   </modules>
 </project>
