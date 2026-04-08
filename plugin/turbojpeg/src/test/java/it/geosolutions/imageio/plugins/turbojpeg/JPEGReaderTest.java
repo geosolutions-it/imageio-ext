@@ -31,7 +31,7 @@ public class JPEGReaderTest {
             return;
         }
 
-        final ImageReader reader = new TurboJpegImageReaderSpi().createReaderInstance();
+        ImageReader reader = new TurboJpegImageReaderSpi().createReaderInstance();
 
         FileImageInputStream fis = null;
         BufferedImage image = null;
@@ -79,7 +79,7 @@ public class JPEGReaderTest {
         // //
         try {
             fis = new FileImageInputStream(fileGray);
-
+            reader = new TurboJpegImageReaderSpi().createReaderInstance();
             reader.setInput(fis);
             image = reader.read(0, null);
             assertEquals(227, image.getWidth());
