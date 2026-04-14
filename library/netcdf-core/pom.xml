@@ -46,7 +46,7 @@
     <dependency>
       <groupId>essi-unidata</groupId>
       <artifactId>netcdf-java</artifactId>
-      <version>4.0.41</version>
+      <version>4.0.49</version>
     </dependency>
     <!-- declare SLF4J dependency ourselves, since essi-unidata:netcdf-java depends on it,
          but doesn't say it depends on it -->
