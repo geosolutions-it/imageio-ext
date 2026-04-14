@@ -23,7 +23,7 @@ already provided with imageio-ext.  The strategy is:
 A code sample may look like this:
 
 ```java
-CogUri cogUri = new CogUri("https://server.com/cog.tif", true);
+BasicAuthURI cogUri = new BasicAuthURI("https://server.com/cog.tif", true);
 ImageInputStream cogStream = new CogImageInputStreamSpi().createInputStreamInstance(cogUri);
 
 CogImageReader reader = new CogImageReader(new CogImageReaderSpi());
@@ -68,11 +68,12 @@ is an ImageInputStream implementation that will cache GeoTIFF tiles using Ehcach
 for data that is expected to be read multiple times.  Subsequent reads of the same tiles using this input stream 
 provides a significant performance increase.
 
-[CogUri](./cog-commons/src/main/java/it/geosolutions/imageioimpl/plugins/cog/CogUri.java) is a simple Java bean that 
+[BasicAuthURI](../../library/geocore/src/main/java/it/geosolutions/imageio/core/BasicAuthURI.java) is a simple Java bean that 
 is used as the CogImageReader's input source.  Using a custom class helps ImageIOExt.getImageInputStreamSPI() 
-automatically select the properly ImageInputStream implementation.  CogUri contains the URI of the image along with a 
-boolean `useCache` to specify whether the Caching or Default ImageInputStream implementation should be used.  The 
-value defaults to true and if not modified, the SPI will return the `CachingCogImageInputStream`.  
+automatically select the properly ImageInputStream implementation. BasicAuthURI contains the URI of the image along with a 
+boolean `useCache` to specify whether the Caching or Default ImageInputStream implementation should be used, and optionally 
+a HTTP basic authentication (e.g. username/password). The `useCache` value defaults to true and if not modified, the SPI will 
+return the `CachingCogImageInputStream`.  
 
 [RangeBuilder](./cog-commons/src/main/java/it/geosolutions/imageioimpl/plugins/cog/RangeBuilder.java)) is responsible 
 for comparing individual tile start/end information and group all contiguous ranges into a single range.  These are 
