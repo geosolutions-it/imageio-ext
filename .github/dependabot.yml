@@ -8,7 +8,7 @@ updates:
     target-branch: "master"
     schedule:
       interval: "daily"
-      time: "05:01"
+      time: "05:00"
       timezone: "Europe/Rome"
     groups:
       maven-deps:
