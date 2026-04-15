@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+   <suppress>
+      <notes><![CDATA[file name: opentelemetry-gcp-resources-1.37.0-alpha.jar taken for a Go implementation of the same library]]></notes>
+      <packageUrl regex="true">^pkg:maven/io\.opentelemetry\.contrib/opentelemetry-gcp-resources@.*$</packageUrl>
+      <cpe>cpe:/a:opentelemetry:opentelemetry</cpe>
+   </suppress>
+   <suppress>
+      <notes><![CDATA[file name: opentelemetry-semconv-1.29.0-alpha.jar taken for a Go implementation of the same library]]></notes>
+      <packageUrl regex="true">^pkg:maven/io\.opentelemetry\.semconv/opentelemetry-semconv@.*$</packageUrl>
+      <cpe>cpe:/a:opentelemetry:opentelemetry</cpe>
+   </suppress>
+</suppressions>
