@@ -4,13 +4,21 @@ import it.geosolutions.imageio.pam.PAMDataset.PAMRasterBand;
 import it.geosolutions.imageio.pam.PAMDataset.PAMRasterBand.Metadata;
 import it.geosolutions.imageio.pam.PAMDataset.PAMRasterBand.Metadata.MDI;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.sax.SAXSource;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 /**
  * Parsing class which allows to parse GDAL PAM Auxiliary files into PAMDataset objects.
@@ -49,7 +57,7 @@ public class PAMParser {
         PAMDataset pamDataset;
         try {
             pamDataset = unmarshal(file);
-        } catch (JAXBException e) {
+        } catch (JAXBException | ParserConfigurationException | SAXException e) {
             throw new IOException("Exception occurred while parsing the file", e);
         }
         return pamDataset;
@@ -62,12 +70,26 @@ public class PAMParser {
      * @return
      * @throws JAXBException
      */
-    private PAMDataset unmarshal(final File pamFile) throws JAXBException {
-        Unmarshaller unmarshaller = null;
+    private PAMDataset unmarshal(final File pamFile)
+            throws JAXBException, SAXException, ParserConfigurationException, IOException {
         PAMDataset pamDataset = null;
         if (pamFile != null) {
-            unmarshaller = CONTEXT.createUnmarshaller();
-            pamDataset = (PAMDataset) unmarshaller.unmarshal(pamFile);
+            Unmarshaller unmarshaller = CONTEXT.createUnmarshaller();
+            SAXParserFactory spf = SAXParserFactory.newInstance();
+            spf.setNamespaceAware(true);
+            spf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            spf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            spf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            spf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            spf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            XMLReader xmlReader = spf.newSAXParser().getXMLReader();
+            // Prevent any external entity resolution
+            xmlReader.setEntityResolver((publicId, systemId) -> new InputSource(new java.io.StringReader("")));
+            try (FileInputStream fis = new FileInputStream(pamFile)) {
+                InputSource inputSource = new InputSource(fis);
+                SAXSource source = new SAXSource(xmlReader, inputSource);
+                pamDataset = (PAMDataset) unmarshaller.unmarshal(source);
+            }
         }
         return pamDataset;
     }
@@ -91,10 +113,12 @@ public class PAMParser {
             return null;
         }
         List<MDI> mdis = metadata.getMDI();
-        if (mdis == null || mdis.size() == 0)
+        if (mdis == null || mdis.isEmpty()) {
             if (LOGGER.isLoggable(Level.FINE)) {
                 LOGGER.fine("No metadata have been found from the provided Raster band");
             }
+            return null;
+        }
         for (MDI mdi : mdis) {
             if (mdi.getKey().equalsIgnoreCase(key)) {
                 return mdi.getValue();
