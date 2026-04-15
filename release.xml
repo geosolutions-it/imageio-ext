@@ -26,12 +26,7 @@
      <copy file="readme.txt" tofile="deploy/readme.txt" />
      
      <!-- copying all jar classes to a single archive to be deployed -->
-     <mkdir dir="release/target/netcdf" />
-     <move todir="release/target/netcdf">
-       <fileset dir="release/target/dependency" includes="commons-http*, *grib*, grib*, *hdf*, *netcdf*, netcdf*, *4j*, opendap*" />
-     </move>
      <zip destfile="deploy/imageio-ext-${version}-jars.zip" basedir="release/target/dependency" />
-     <zip destfile="deploy/imageio-ext-${version}-netcdf.zip" basedir="release/target/netcdf" />
      
      <!-- copying javadocs -->
      <copy file="target/release/imageio-ext-${version}-javadoc.zip" toFile="deploy/imageio-ext-${version}-javadocs.zip" />
