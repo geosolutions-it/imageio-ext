@@ -105,11 +105,10 @@ public class PAMParserTest {
     @Test
     public void testParsePamRejectsDoctype() throws Exception {
         String xml =
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                        "<!DOCTYPE PAMDataset [<!ENTITY blocked \"x\">]>\n" +
-                        "<PAMDataset>\n" +
-                        "  <Metadata>&blocked;</Metadata>\n" +
-                        "</PAMDataset>\n";
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<!DOCTYPE PAMDataset [<!ENTITY blocked \"x\">]>\n"
+                        + "<PAMDataset>\n"
+                        + "  <Metadata>&blocked;</Metadata>\n"
+                        + "</PAMDataset>\n";
 
         Path tempFile = Files.createTempFile("pamparser-security-", ".pam");
         Files.writeString(tempFile, xml, StandardCharsets.UTF_8);

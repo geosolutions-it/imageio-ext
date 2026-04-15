@@ -6,23 +6,19 @@ import it.geosolutions.imageio.pam.PAMDataset.PAMRasterBand.Metadata.MDI;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
-import org.xml.sax.XMLReader;
-
-import javax.xml.XMLConstants;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.transform.sax.SAXSource;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.XMLConstants;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.sax.SAXSource;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 /**
  * Parsing class which allows to parse GDAL PAM Auxiliary files into PAMDataset objects.
@@ -74,7 +70,8 @@ public class PAMParser {
      * @return
      * @throws JAXBException
      */
-    private PAMDataset unmarshal(final File pamFile) throws JAXBException, SAXException, ParserConfigurationException, IOException {
+    private PAMDataset unmarshal(final File pamFile)
+            throws JAXBException, SAXException, ParserConfigurationException, IOException {
         PAMDataset pamDataset = null;
         if (pamFile != null) {
             Unmarshaller unmarshaller = CONTEXT.createUnmarshaller();
