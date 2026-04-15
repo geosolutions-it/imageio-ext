@@ -2,6 +2,7 @@ package it.geosolutions.imageio.pam;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 
 import it.geosolutions.imageio.pam.PAMDataset.PAMRasterBand;
 import it.geosolutions.imageio.pam.PAMDataset.PAMRasterBand.FieldType;
@@ -13,6 +14,9 @@ import it.geosolutions.imageio.pam.PAMDataset.PAMRasterBand.Metadata;
 import it.geosolutions.imageio.pam.PAMDataset.PAMRasterBand.Metadata.MDI;
 import it.geosolutions.resources.TestData;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import org.junit.Test;
 
@@ -96,6 +100,25 @@ public class PAMParserTest {
         assertEquals("1.4", fieldValues.get(0));
         assertEquals("1.6", fieldValues.get(1));
         assertEquals("white", fieldValues.get(2));
+    }
+
+    @Test
+    public void testParsePamRejectsDoctype() throws Exception {
+        String xml =
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                        "<!DOCTYPE PAMDataset [<!ENTITY blocked \"x\">]>\n" +
+                        "<PAMDataset>\n" +
+                        "  <Metadata>&blocked;</Metadata>\n" +
+                        "</PAMDataset>\n";
+
+        Path tempFile = Files.createTempFile("pamparser-security-", ".pam");
+        Files.writeString(tempFile, xml, StandardCharsets.UTF_8);
+
+        try {
+            assertThrows(Exception.class, () -> PAMParser.getInstance().parsePAM(tempFile.toFile()));
+        } finally {
+            Files.deleteIfExists(tempFile);
+        }
     }
 
     private void assertField(PAMRasterBand.FieldDefn fieldDefn, String name, FieldType type, FieldUsage usage) {
