@@ -136,16 +136,6 @@
     </dependency>
     <dependency>
       <groupId>it.geosolutions.imageio-ext</groupId>
-      <artifactId>imageio-ext-grib1</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>it.geosolutions.imageio-ext</groupId>
-      <artifactId>imageio-ext-hdf4</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>it.geosolutions.imageio-ext</groupId>
       <artifactId>imageio-ext-turbojpeg</artifactId>
       <version>${project.version}</version>
     </dependency>

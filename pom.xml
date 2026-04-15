@@ -780,5 +780,33 @@
         </plugins>
       </build>
     </profile>
+    <!--
+       Dependency vulnerability checks. Run with:
+       mvnd initialize dependency-check:aggregate -Dall -Pdependencycheck -nsu -fae -DnvdApiKey=<your nvd api key>
+    -->
+    <profile>
+      <id>dependencycheck</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.owasp</groupId>
+            <artifactId>dependency-check-maven</artifactId>
+            <version>12.2.0</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>aggregate</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <failBuildOnCVSS>7</failBuildOnCVSS>
+              <suppressionFile>dependency-check-suppression.xml</suppressionFile>
+              <format>ALL</format>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 </project>
