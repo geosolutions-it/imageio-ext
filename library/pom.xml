@@ -21,6 +21,5 @@
     <module>streams</module>
     <module>geocore</module>
     <module>gdalframework</module>
-    <module>netcdf-core</module>
   </modules>
 </project>
