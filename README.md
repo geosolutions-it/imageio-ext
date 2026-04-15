@@ -7,8 +7,7 @@ The **ImageIO-Ext** is an Open Source project that provides extensions, fixes an
 2. Support for reading/writing JPEG2000 files with [Kakadu](http://www.kakadusoftware.com/)
 3. Improved support for reading/writing tiff files 
 4. A Reader/Writer for JPEG images based on the [libjpeg-turbo](http://libjpeg-turbo.virtualgl.org/) open source high performance library. More info can be found [here](https://github.com/geosolutions-it/imageio-ext/wiki/TurboJPEG-plugin)
-5. A NITF plugin based on [NITRO](http://nitro-nitf.sourceforge.net/wikka.php?wakka=HomePage). More info can be found [here](https://github.com/geosolutions-it/imageio-ext/wiki/NITF-plugin)
-6. A new PNG Writer with improved performances. More informations can be found [here](https://github.com/geosolutions-it/imageio-ext/wiki/PNG-plugin).
+5. A new PNG Writer with improved performances. More informations can be found [here](https://github.com/geosolutions-it/imageio-ext/wiki/PNG-plugin).
 
 The ImageIO library provides support for encoding/decoding raster formats in Java. Some useful documentation on ImageIO can be found [here](https://docs.oracle.com/javase/8/docs/technotes/guides/imageio/spec/imageio_guideTOC.fm.html).
 

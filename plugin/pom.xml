@@ -77,7 +77,6 @@
         <module>tiff</module>
         <module>gdal</module>
         <module>turbojpeg</module>
-        <module>nitronitf</module>
         <module>unidata-netcdf</module>
         <module>png</module>
         <module>cog</module>
