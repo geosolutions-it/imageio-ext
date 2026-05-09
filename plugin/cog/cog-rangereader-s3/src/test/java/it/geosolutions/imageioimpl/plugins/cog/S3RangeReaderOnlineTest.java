@@ -141,7 +141,7 @@ public class S3RangeReaderOnlineTest {
         uri.setPassword("");
         uri.setUser("");
         String region = "us-west-2";
-        System.setProperty("ioo.s3-us.aws.region", region);
+        System.setProperty("iio.s3-us.aws.region", region);
         readRanges(new S3RangeReader(uri, CogImageReadParam.DEFAULT_HEADER_LENGTH));
     }
 }

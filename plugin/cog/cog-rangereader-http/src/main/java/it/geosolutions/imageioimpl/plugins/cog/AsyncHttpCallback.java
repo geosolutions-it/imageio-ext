@@ -21,7 +21,6 @@ import java.util.logging.Logger;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Callback for asynchronous HTTP requests for OkHttp
@@ -43,13 +42,13 @@ public class AsyncHttpCallback implements Callback {
     private static final Logger LOGGER = Logger.getLogger(AsyncHttpCallback.class.getName());
 
     @Override
-    public void onFailure(@NotNull Call call, @NotNull IOException e) {
+    public void onFailure(Call call, IOException e) {
         LOGGER.severe("Error executing HTTP request. " + e);
         status = Status.FAILED;
     }
 
     @Override
-    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+    public void onResponse(Call call, Response response) throws IOException {
         try {
             bytes = response.body().bytes();
             status = Status.DONE;
