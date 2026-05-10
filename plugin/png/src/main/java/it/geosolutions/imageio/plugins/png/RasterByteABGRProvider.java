@@ -52,24 +52,38 @@ public final class RasterByteABGRProvider extends AbstractScanlineProvider {
 
     public void next(final byte[] row, final int offset, final int length) {
         int bytesIdx = cursor.next();
+        if (!bgrOrder && (numBands == pixelStride)) {
+            // already in RGB(A) order, plain copy
+            System.arraycopy(bytes, bytesIdx, row, offset, length);
+            return;
+        }
+
         int i = offset;
         final int max = offset + length;
-        if (!bgrOrder && (numBands == pixelStride)) {
-            System.arraycopy(bytes, bytesIdx, row, offset, length);
-        } else {
+
+        if (numBands == 4) {
+            final int r = bandOffsets[0];
+            final int g = bandOffsets[1];
+            final int b = bandOffsets[2];
+            final int a = bandOffsets[3];
+
             while (i < max) {
-                for (int j = 0; j < numBands; j++) {
-                    // We assign data pixels on the expected order
-                    // So if bgrOrder (bandOffset is 2,1,0):
-                    // row[i+2] = B
-                    // row[i+1] = G
-                    // row[i+0] = R
-                    row[i + j] = bytes[bytesIdx + bandOffsets[j]];
-                }
-                // Pixel stride may be longer than numBands due to bandSelect
-                // sharing same dataBuffer of the original image
+                row[i++] = bytes[bytesIdx + r];
+                row[i++] = bytes[bytesIdx + g];
+                row[i++] = bytes[bytesIdx + b];
+                row[i++] = bytes[bytesIdx + a];
                 bytesIdx += pixelStride;
-                i += numBands;
+            }
+        } else {
+            final int r = bandOffsets[0];
+            final int g = bandOffsets[1];
+            final int b = bandOffsets[2];
+
+            while (i < max) {
+                row[i++] = bytes[bytesIdx + r];
+                row[i++] = bytes[bytesIdx + g];
+                row[i++] = bytes[bytesIdx + b];
+                bytesIdx += pixelStride;
             }
         }
     }
