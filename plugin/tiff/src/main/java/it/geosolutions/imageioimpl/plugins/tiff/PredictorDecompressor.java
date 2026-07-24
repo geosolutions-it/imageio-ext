@@ -60,12 +60,11 @@ public class PredictorDecompressor {
             throws IIOException {
         if (predictor == BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING) {
             if (bitsPerSample[0] == 8) {
-                for (int j = 0; j < srcHeight; j++) {
-                    int count = bufOffset + samplesPerPixel * (j * srcWidth + 1);
-                    for (int i = samplesPerPixel; i < srcWidth * samplesPerPixel; i++) {
-                        buf[count] += buf[count - samplesPerPixel];
-                        count++;
-                    }
+                if (samplesPerPixel == 1) {
+                    reverseDifferencing(buf, bufOffset, srcHeight, srcWidth, samplesPerPixel);
+                } else {
+                    reverseDifferencingInterleaved(
+                            buf, bufOffset, srcHeight, srcWidth * samplesPerPixel, samplesPerPixel);
                 }
             } else if (bitsPerSample[0] == 16) {
                 if (byteOrder == ByteOrder.LITTLE_ENDIAN) {
@@ -227,6 +226,51 @@ public class PredictorDecompressor {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    /**
+     * Reverses 8-bit horizontal differencing on single band rows, in place.
+     *
+     * <p>The running value stays in acc rather than being read back from the array. stride is always 1 here, but it is
+     * taken as an argument on purpose: written as a literal 1 the same loop measured four times slower, the JIT
+     * evidently choosing a worse shape for it. byte addition wraps mod 256, which is the predictor's semantics.
+     */
+    private static void reverseDifferencing(byte[] buf, int bufOffset, int srcHeight, int rowSamples, int stride) {
+        for (int j = 0; j < srcHeight; j++) {
+            final int rowStart = bufOffset + j * rowSamples;
+            final int rowEnd = rowStart + rowSamples;
+            byte acc = buf[rowStart];
+            for (int p = rowStart + stride; p < rowEnd; p += stride) {
+                acc += buf[p];
+                buf[p] = acc;
+            }
+        }
+    }
+
+    /**
+     * Reverses 8-bit horizontal differencing on band interleaved rows, in place.
+     *
+     * <p>Each band has its own prefix sum, as in {@link #reverseDifferencing}, but the row is walked once in address
+     * order instead of once per band: a walk of stride samplesPerPixel reads every cache line samplesPerPixel times to
+     * use 64/samplesPerPixel bytes of it each time, and that measured about twice as slow. Consecutive samples belong
+     * to different bands, so the accumulators in acc still form independent dependency chains; acc is samplesPerPixel
+     * bytes wide and stays in L1.
+     */
+    private static void reverseDifferencingInterleaved(
+            byte[] buf, int bufOffset, int srcHeight, int rowSamples, int samplesPerPixel) {
+        final byte[] acc = new byte[samplesPerPixel];
+        for (int j = 0; j < srcHeight; j++) {
+            final int rowStart = bufOffset + j * rowSamples;
+            final int rowEnd = rowStart + rowSamples;
+            System.arraycopy(buf, rowStart, acc, 0, samplesPerPixel);
+            int band = 0;
+            for (int p = rowStart + samplesPerPixel; p < rowEnd; p++) {
+                byte v = (byte) (acc[band] + buf[p]);
+                acc[band] = v;
+                buf[p] = v;
+                if (++band == samplesPerPixel) band = 0;
             }
         }
     }
