@@ -65,11 +65,23 @@ public class PredictorDecompressor {
     public void decompress(byte[] buf, int bufOffset, int dstOffset, int srcHeight, int srcWidth, int bytesPerRow) throws IIOException {
         if (predictor == BaselineTIFFTagSet.PREDICTOR_HORIZONTAL_DIFFERENCING) {
             if (bitsPerSample[0] == 8) {
+                // Reverse horizontal differencing as a per-band prefix sum, carrying the running
+                // reconstructed value in a register instead of re-reading the previous sample from
+                // the array (which was a store-to-load dependency plus a bounds check per byte).
+                // Same total array accesses, tighter loop; the sum is serial per band so it cannot
+                // vectorize. byte accumulation wraps mod 256, which is the predictor's semantics.
+                final byte[] b = buf;
+                final int spp = samplesPerPixel;
+                final int rowSamples = srcWidth * spp;
                 for (int j = 0; j < srcHeight; j++) {
-                    int count = bufOffset + samplesPerPixel * (j * srcWidth + 1);
-                    for (int i = samplesPerPixel; i < srcWidth * samplesPerPixel; i++) {
-                        buf[count] += buf[count - samplesPerPixel];
-                        count++;
+                    final int rowStart = bufOffset + j * rowSamples;
+                    final int rowEnd = rowStart + rowSamples;
+                    for (int band = 0; band < spp; band++) {
+                        byte acc = b[rowStart + band];
+                        for (int p = rowStart + band + spp; p < rowEnd; p += spp) {
+                            acc += b[p];
+                            b[p] = acc;
+                        }
                     }
                 }
             } else if (bitsPerSample[0] == 16) {
