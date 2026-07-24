@@ -45,5 +45,17 @@
       <version>2.7</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.openjdk.jmh</groupId>
+      <artifactId>jmh-core</artifactId>
+      <version>1.37</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openjdk.jmh</groupId>
+      <artifactId>jmh-generator-annprocess</artifactId>
+      <version>1.37</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>
