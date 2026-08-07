@@ -28,7 +28,7 @@
   <groupId>it.geosolutions.imageio-ext</groupId>
   <artifactId>imageio-ext</artifactId>
   <packaging>pom</packaging>
-  <version>1.4.7_p1</version>
+  <version>1.4.7_p2</version>
   <name>GeoSolutions Image I/O-Extensions Library Root Project</name>
 
   <scm>
@@ -88,7 +88,7 @@
       <repository>
        <uniqueVersion>false</uniqueVersion>
        <id>geosolutions</id>
-       <url>ftp://demo.geo-solutions.it</url>
+       <url>sftp://maven.geo-solutions.it</url>
       </repository>
     </distributionManagement>
    </profile>
@@ -593,14 +593,14 @@
     <!--  <version>RELEASE</version>             -->
     <!-- </extension>                            -->
     
-    <!--.............................................-->
-    <!--       geo-solutions (using wagon ftp)       -->
-    <!--.............................................-->
-      <extension>                                  
-       <groupId>org.apache.maven.wagon</groupId>   
-       <artifactId>wagon-ftp</artifactId>           
-       <version>1.0-beta-2</version>               
-      </extension>                                
+      <!--.............................................-->
+      <!--       geo-solutions (using wagon ftp)       -->
+      <!--.............................................-->
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-ssh</artifactId>
+        <version>3.5.3</version>
+      </extension>                            
    
     <!--....................................-->
     <!--        (using wagon webdav)        -->
