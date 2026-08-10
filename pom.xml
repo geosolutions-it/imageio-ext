@@ -113,23 +113,23 @@
       </dependency>
       <dependency>
         <groupId>org.eclipse.imagen</groupId>
-        <artifactId>imageread</artifactId>
+        <artifactId>imagen-imageread</artifactId>
         <version>${imagen.version}</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.imagen</groupId>
-        <artifactId>rendered-image-browser</artifactId>
+        <artifactId>imagen-rendered-image-browser</artifactId>
         <version>${imagen.version}</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.imagen</groupId>
-        <artifactId>bandmerge</artifactId>
+        <artifactId>imagen-bandmerge</artifactId>
         <version>${imagen.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.eclipse.imagen</groupId>
-        <artifactId>mosaic</artifactId>
+        <artifactId>imagen-mosaic</artifactId>
         <version>${imagen.version}</version>
         <scope>test</scope>
       </dependency>

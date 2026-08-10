@@ -15,11 +15,11 @@
   <dependencies>
     <dependency>
       <groupId>org.eclipse.imagen</groupId>
-      <artifactId>imageread</artifactId>
+      <artifactId>imagen-imageread</artifactId>
     </dependency>
     <dependency>
       <groupId>org.eclipse.imagen</groupId>
-      <artifactId>rendered-image-browser</artifactId>
+      <artifactId>imagen-rendered-image-browser</artifactId>
     </dependency>
   </dependencies>
 </project>
