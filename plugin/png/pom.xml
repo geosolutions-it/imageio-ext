@@ -52,12 +52,12 @@
     </dependency>
     <dependency>
       <groupId>org.eclipse.imagen</groupId>
-      <artifactId>bandmerge</artifactId>
+      <artifactId>imagen-bandmerge</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.imagen</groupId>
-      <artifactId>mosaic</artifactId>
+      <artifactId>imagen-mosaic</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
