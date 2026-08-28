@@ -73,7 +73,7 @@ public class CogImageReaderHttpIT extends BaseCogImageReaderTest {
         Path landTopoCog1024 = testData.landTopoCog1024();
         String fileName = landTopoCog1024.getFileName().toString();
 
-        nginx = new NginxContainer("nginx:latest")
+        nginx = new NginxContainer("nginx:1.30.4")
                 .withCopyToContainer(MountableFile.forHostPath(landTopoCog1024), "/usr/share/nginx/html/" + fileName);
         nginx.start();
 
