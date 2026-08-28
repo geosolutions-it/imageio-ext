@@ -75,7 +75,7 @@ public class CogImageReaderS3MinioIT extends BaseCogImageReaderTest {
     @ClassRule
     public static CogTestData testData = new CogTestData();
 
-    static MinIOContainer container = new MinIOContainer("minio/minio:latest");
+    static MinIOContainer container = new MinIOContainer("minio/minio:RELEASE.2025-09-07T16-13-09Z");
 
     private static S3Client s3Client;
 

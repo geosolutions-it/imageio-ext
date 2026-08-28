@@ -68,7 +68,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
  */
 public class CogImageReaderS3LocalStackIT extends BaseCogImageReaderTest {
 
-    private static final DockerImageName DOCKER_IMAGE_NAME = DockerImageName.parse("localstack/localstack:s3-latest");
+    private static final DockerImageName DOCKER_IMAGE_NAME = DockerImageName.parse("localstack/localstack:4.14.0");
 
     private static final String BUCKET_NAME = "test-bucket";
 
