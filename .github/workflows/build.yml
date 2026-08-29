@@ -48,4 +48,4 @@ jobs:
         sudo mv /usr/lib/jni/libgdalalljni.so /usr/lib
 
     - name: Build and Test
-      run: mvn -U clean install -T1C -Dall -Djava.awt.headless=true -DskipTests=false -ntp -fae
+      run: mvn -U test install -T1C -Dall -Djava.awt.headless=true -DskipTests=false -ntp -fae
