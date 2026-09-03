@@ -63,7 +63,7 @@ class AzureClient {
         } catch (RuntimeException e) {
             throw new IllegalArgumentException("Failed to setup Azure connection and container", e);
         }
-        if (!containerClient.exists()) {
+        if (configuration.canReadContainerProperties() && !containerClient.exists()) {
             throw new IllegalArgumentException("container " + containerName + " does not exist");
         }
         return containerClient;
@@ -71,7 +71,6 @@ class AzureClient {
 
     BlobServiceClient createBlobServiceClient() {
         String serviceURL = getServiceURL(configuration);
-        AzureNamedKeyCredential creds = getCredentials(configuration);
         ClientOptions clientOpts = new ClientOptions();
         HttpClient httpClient = createHttpClient(configuration);
 
@@ -79,13 +78,23 @@ class AzureClient {
                 .endpoint(serviceURL)
                 .clientOptions(clientOpts)
                 .httpClient(httpClient);
-        if (null != creds) {
-            builder = builder.credential(creds);
-        }
-        return builder.buildClient();
+        return configureCredentials(builder, configuration).buildClient();
     }
 
-    AzureNamedKeyCredential getCredentials(AzureConfigurationProperties configuration) {
+    static BlobServiceClientBuilder configureCredentials(
+            BlobServiceClientBuilder builder, AzureConfigurationProperties configuration) {
+        String sasToken = configuration.getSasToken();
+        if (sasToken != null) {
+            return builder.sasToken(sasToken);
+        }
+        AzureNamedKeyCredential credential = getAccountKeyCredential(configuration);
+        if (credential != null) {
+            return builder.credential(credential);
+        }
+        return builder;
+    }
+
+    static AzureNamedKeyCredential getAccountKeyCredential(AzureConfigurationProperties configuration) {
         String accountName = configuration.getAccountName();
         String accountKey = configuration.getAccountKey();
         if (null != accountName && null != accountKey) {

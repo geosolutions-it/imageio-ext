@@ -21,11 +21,26 @@ import it.geosolutions.imageio.core.BasicAuthURI;
 import java.net.MalformedURLException;
 import java.net.URI;
 
-/** Helps locate configuration properties in system/environment for use in building Azure client. */
+/**
+ * Helps locate configuration properties in system/environment for use in building Azure client.
+ *
+ * <p>Supported properties:
+ *
+ * <ul>
+ *   <li>azure.reader.accountName - Azure storage account name
+ *   <li>azure.reader.accountKey - Azure storage account key
+ *   <li>azure.reader.sasToken - Azure Shared Access Signature token
+ *   <li>azure.reader.container - Azure blob container name
+ *   <li>azure.reader.prefix - Blob name prefix
+ *   <li>azure.reader.maxConnections - Maximum number of connections
+ *   <li>azure.reader.serviceurl - Custom service URL (useful for Azurite or other Azure-compatible storage emulators)
+ * </ul>
+ */
 public class AzureConfigurationProperties {
 
     private static final String AZURE_ACCOUNT_NAME = "azure.reader.accountName";
     private static final String AZURE_ACCOUNT_KEY = "azure.reader.accountKey";
+    private static final String AZURE_SAS_TOKEN = "azure.reader.sasToken";
     private static final String AZURE_ACCOUNT_CONTAINER = "azure.reader.container";
     private static final String AZURE_ACCOUNT_PREFIX = "azure.reader.prefix";
     private static final String AZURE_MAX_CONNECTIONS = "azure.reader.maxConnections";
@@ -34,6 +49,7 @@ public class AzureConfigurationProperties {
     private String prefix;
     private String accountName;
     private String accountKey;
+    private String sasToken;
     private Integer maxConnections = 64;
     private boolean useHTTPS = true;
     private String serviceURL = null;
@@ -78,14 +94,19 @@ public class AzureConfigurationProperties {
         }
         if (cogUri.getUser() != null && cogUri.getPassword() != null) {
             accountName = cogUri.getUser();
-            accountKey = cogUri.getPassword();
+            setCredential(cogUri.getPassword());
         }
 
         if (accountName == null) { // REVISIT: dead code
             accountName = PropertyLocator.getEnvironmentValue(AZURE_ACCOUNT_NAME, null);
         }
-        if (accountKey == null) {
-            accountKey = PropertyLocator.getEnvironmentValue(AZURE_ACCOUNT_KEY, null);
+        if (accountKey == null && sasToken == null) {
+            String configuredSasToken = PropertyLocator.getPropertyValue(AZURE_SAS_TOKEN, null);
+            if (configuredSasToken != null) {
+                setSasToken(configuredSasToken);
+            } else {
+                accountKey = PropertyLocator.getEnvironmentValue(AZURE_ACCOUNT_KEY, null);
+            }
         }
         if (maxConnections == null) { // REVISIT: dead code
             maxConnections = Integer.parseInt(PropertyLocator.getEnvironmentValue(AZURE_MAX_CONNECTIONS, "5"));
@@ -122,6 +143,62 @@ public class AzureConfigurationProperties {
 
     public void setAccountKey(String accountKey) {
         this.accountKey = accountKey;
+    }
+
+    public String getSasToken() {
+        return sasToken;
+    }
+
+    public void setSasToken(String sasToken) {
+        this.sasToken = normalizeSasToken(sasToken);
+    }
+
+    private void setCredential(String credential) {
+        if (isSasToken(credential)) {
+            setSasToken(credential);
+        } else {
+            accountKey = credential;
+        }
+    }
+
+    static boolean isSasToken(String credential) {
+        return getSasParameter(credential, "sig") != null;
+    }
+
+    boolean canReadContainerProperties() {
+        if (sasToken == null) {
+            return true;
+        }
+        // Account SAS must include Blob (ss=b), container (srt=c), and read (sp=r) access.
+        return sasParameterContains("ss", 'b') && sasParameterContains("srt", 'c') && sasParameterContains("sp", 'r');
+    }
+
+    private boolean sasParameterContains(String name, char value) {
+        String parameterValue = getSasParameter(sasToken, name);
+        return parameterValue != null && parameterValue.indexOf(value) >= 0;
+    }
+
+    private static String getSasParameter(String sasToken, String parameterName) {
+        String normalized = normalizeSasToken(sasToken);
+        if (normalized == null || normalized.isEmpty()) {
+            return null;
+        }
+        for (String parameter : normalized.split("&")) {
+            int separator = parameter.indexOf('=');
+            String name = separator >= 0 ? parameter.substring(0, separator) : parameter;
+            if (parameterName.equalsIgnoreCase(name)) {
+                return separator >= 0 ? parameter.substring(separator + 1) : "";
+            }
+        }
+        return null;
+    }
+
+    private static String normalizeSasToken(String sasToken) {
+        if (sasToken == null) {
+            return null;
+        }
+        String normalized = sasToken.trim();
+        return normalized.startsWith("?") ? normalized.substring(1) : normalized;
     }
 
     public Integer getMaxConnections() {
