@@ -63,7 +63,7 @@ import org.testcontainers.utility.DockerImageName;
 public class CogImageReaderAzureIT extends BaseCogImageReaderTest {
 
     private static final DockerImageName DOCKER_IMAGE_NAME =
-            DockerImageName.parse("mcr.microsoft.com/azure-storage/azurite:3.35.0");
+            DockerImageName.parse("mcr.microsoft.com/azure-storage/azurite:3.37.0");
 
     private static final String CONTAINER_NAME = "test-container";
 
