@@ -33,6 +33,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.testcontainers.containers.MinIOContainer;
+import org.testcontainers.utility.DockerImageName;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -75,7 +76,13 @@ public class CogImageReaderS3MinioIT extends BaseCogImageReaderTest {
     @ClassRule
     public static CogTestData testData = new CogTestData();
 
-    static MinIOContainer container = new MinIOContainer("minio/minio:RELEASE.2025-09-07T16-13-09Z");
+    /**
+     * Pulled from quay.io: the {@code minio/minio} repository on Docker Hub has been removed, so the default registry
+     * answers the pull with a 404.
+     */
+    static MinIOContainer container =
+            new MinIOContainer(DockerImageName.parse("quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z")
+                    .asCompatibleSubstituteFor("minio/minio"));
 
     private static S3Client s3Client;
 
