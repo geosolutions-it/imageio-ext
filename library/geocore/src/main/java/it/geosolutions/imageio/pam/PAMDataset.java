@@ -18,11 +18,14 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlSchemaType;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.XmlValue;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 /**
  * Java class for anonymous complex type.
@@ -159,6 +162,8 @@ import java.util.Objects;
         propOrder = {"pamRasterBand"})
 @XmlRootElement(name = "PAMDataset")
 public class PAMDataset implements Serializable {
+
+    private static final Logger LOGGER = Logger.getLogger(PAMDataset.class.getName());
 
     @XmlElement(name = "PAMRasterBand", required = true)
     protected List<PAMDataset.PAMRasterBand> pamRasterBand;
@@ -633,6 +638,7 @@ public class PAMDataset implements Serializable {
             }
         }
 
+        /** Field types of a raster attribute table. The ordinal of each constant is its GDAL type code. */
         @XmlEnum(Integer.class)
         public static enum FieldType {
             @XmlEnumValue("0")
@@ -640,15 +646,75 @@ public class PAMDataset implements Serializable {
             @XmlEnumValue("1")
             Real,
             @XmlEnumValue("2")
-            String;
+            String,
+            /** Holds "true" or "false". Added by GDAL 3.12. */
+            @XmlEnumValue("3")
+            Boolean,
+            /** ISO 8601 date and time with a time zone offset. Added by GDAL 3.12. */
+            @XmlEnumValue("4")
+            DateTime,
+            /** Geometry, written as WKT text despite the name. Added by GDAL 3.12. */
+            @XmlEnumValue("5")
+            WKBGeometry;
 
+            /** Returns the type for the given GDAL type code, or {@link #String} if the code is unknown. */
             public static FieldType fromValue(int value) {
                 for (FieldType c : FieldType.values()) {
                     if (c.ordinal() == value) {
                         return c;
                     }
                 }
-                throw new IllegalArgumentException("Could not find type " + value);
+                // same fallback as GDAL, so a newer GDAL adding a type does not break reads
+                LOGGER.warning("Unknown raster attribute table field type " + value + ", reading it as String");
+                return String;
+            }
+        }
+
+        /** Maps the Type element, falling back to a String field when GDAL used a type this build does not know. */
+        public static class FieldTypeAdapter extends XmlAdapter<String, FieldType> {
+
+            @Override
+            public FieldType unmarshal(String value) {
+                try {
+                    return FieldType.fromValue(Integer.parseInt(value.trim()));
+                } catch (NumberFormatException e) {
+                    // GDAL does not fail on a broken type either, see GDALRasterAttributeTable::XMLInit
+                    LOGGER.warning("Unreadable raster attribute table field type " + value + ", reading it as String");
+                    return FieldType.String;
+                }
+            }
+
+            @Override
+            public String marshal(FieldType type) {
+                return String.valueOf(type.ordinal());
+            }
+        }
+
+        /** Table type of a raster attribute table. GDAL knows these two values only. */
+        @XmlEnum
+        public static enum TableType {
+            @XmlEnumValue("thematic")
+            Thematic,
+            @XmlEnumValue("athematic")
+            Athematic
+        }
+
+        /** Maps the tableType attribute the way GDAL reads it: only "athematic" is athematic. */
+        public static class TableTypeAdapter extends XmlAdapter<String, TableType> {
+
+            @Override
+            public TableType unmarshal(String value) {
+                // GDALRasterAttributeTable::XMLInit compares case insensitively and treats
+                // everything that is not athematic as thematic
+                return TableType.Athematic.name().equalsIgnoreCase(value.trim())
+                        ? TableType.Athematic
+                        : TableType.Thematic;
+            }
+
+            @Override
+            public String marshal(TableType type) {
+                // a table with no tableType must not get one written back, GDAL defaults it in memory
+                return type == null ? null : type.name().toLowerCase();
             }
         }
 
@@ -749,7 +815,7 @@ public class PAMDataset implements Serializable {
             protected String name;
 
             @XmlElement(name = "Type")
-            @XmlSchemaType(name = "unsignedInt")
+            @XmlJavaTypeAdapter(FieldTypeAdapter.class)
             protected FieldType type;
 
             @XmlElement(name = "Usage")
@@ -940,6 +1006,10 @@ public class PAMDataset implements Serializable {
                 propOrder = {"fieldDefn", "row"})
         public static class GDALRasterAttributeTable implements Serializable {
 
+            @XmlAttribute(name = "tableType")
+            @XmlJavaTypeAdapter(TableTypeAdapter.class)
+            protected TableType tableType;
+
             @XmlElement(name = "FieldDefn")
             protected List<FieldDefn> fieldDefn;
 
@@ -988,6 +1058,15 @@ public class PAMDataset implements Serializable {
                     row = new ArrayList<Row>();
                 }
                 return this.row;
+            }
+
+            /** Returns "thematic" or "athematic", or null when the table does not say. */
+            public TableType getTableType() {
+                return tableType;
+            }
+
+            public void setTableType(TableType tableType) {
+                this.tableType = tableType;
             }
         }
     }

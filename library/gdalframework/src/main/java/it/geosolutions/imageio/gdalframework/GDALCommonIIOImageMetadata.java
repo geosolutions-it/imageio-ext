@@ -26,6 +26,7 @@ import it.geosolutions.imageio.pam.PAMDataset.PAMRasterBand.FieldType;
 import it.geosolutions.imageio.pam.PAMDataset.PAMRasterBand.GDALRasterAttributeTable;
 import it.geosolutions.imageio.pam.PAMDataset.PAMRasterBand.Metadata;
 import it.geosolutions.imageio.pam.PAMDataset.PAMRasterBand.Row;
+import it.geosolutions.imageio.pam.PAMDataset.PAMRasterBand.TableType;
 import java.awt.Dimension;
 import java.awt.image.BandedSampleModel;
 import java.awt.image.ColorModel;
@@ -271,6 +272,8 @@ public class GDALCommonIIOImageMetadata extends CoreCommonImageMetadata {
         RasterAttributeTable rat = band.GetDefaultRAT();
         if (rat != null) {
             GDALRasterAttributeTable pdRAT = new GDALRasterAttributeTable();
+            pdRAT.setTableType(
+                    rat.GetTableType() == gdalconstConstants.GRTT_ATHEMATIC ? TableType.Athematic : TableType.Thematic);
             List<FieldDefn> fields = pdRAT.getFieldDefn();
             int columns = rat.GetColumnCount();
             for (int i = 0; i < columns; i++) {
