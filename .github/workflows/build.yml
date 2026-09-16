@@ -38,13 +38,15 @@ jobs:
 
     - name: Set up GDAL
       run: |
+        set -euo pipefail
         sudo apt update
         sudo apt install --no-install-recommends -y gdal-bin libgdal-dev
         # From OSGeo live
-        URL="http://download.osgeo.org/livedvd/data/gdal/gdal-3.4.3+dfsg-java.20220622.tgz"
+        URL="https://download.osgeo.org/livedvd/data/gdal/gdal-3.4.3+dfsg-java.20220622.tgz"
         FILE=/tmp/$(basename "$URL")
-        wget --no-verbose -O "$FILE" "$URL" && \
-        sudo tar xvf "$FILE" -C /
+        wget --no-verbose --tries=5 --waitretry=15 --retry-connrefused \
+             --retry-on-http-error=429,500,502,503,504 -O "$FILE" "$URL"
+        sudo tar xf "$FILE" -C /
         sudo mv /usr/lib/jni/libgdalalljni.so /usr/lib
 
     - name: Build and Test
