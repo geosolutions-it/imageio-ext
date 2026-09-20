@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.jp2kakadu;
 
+import static org.junit.Assume.assumeTrue;
+
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.plugins.jp2kakadu.JP2GDALKakaduImageReaderSpi.KakaduErrorManagementType;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
@@ -51,9 +53,7 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
      */
     @Test
     public void read() throws FileNotFoundException, IOException {
-        if (!isJp2KakDriverAvailable) {
-            return;
-        }
+        assumeTrue("Jp2KakDriver driver is not available", isJp2KakDriverAvailable);
 
         final ParameterBlockImageN pbjImageRead;
         final File file = TestData.file(this, fileName);
@@ -78,9 +78,7 @@ public class JP2KReadTest extends AbstractJP2KTestCase {
      */
     @Test
     public void jaiOperations() throws IOException {
-        if (!isJp2KakDriverAvailable) {
-            return;
-        }
+        assumeTrue("Jp2KakDriver driver is not available", isJp2KakDriverAvailable);
         final File inputFile = TestData.file(this, fileName);
 
         JP2GDALKakaduImageReaderSpi.setKakaduInputErrorManagement(KakaduErrorManagementType.FAST);

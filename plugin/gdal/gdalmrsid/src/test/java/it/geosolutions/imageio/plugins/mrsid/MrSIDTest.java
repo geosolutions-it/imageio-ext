@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.mrsid;
 
+import static org.junit.Assume.assumeTrue;
+
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
 import it.geosolutions.imageio.gdalframework.GDALUtilities;
@@ -83,9 +85,7 @@ public class MrSIDTest extends AbstractGDALTest {
      */
     @Test
     public void metadataAccess() throws FileNotFoundException, IOException {
-        if (!isMrSidAvailable) {
-            return;
-        }
+        assumeTrue("MrSid driver is not available", isMrSidAvailable);
         try {
             final File file = TestData.file(this, fileName);
             final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN("ImageRead");
@@ -135,9 +135,7 @@ public class MrSIDTest extends AbstractGDALTest {
      */
     @Test
     public void jaiOperations() throws FileNotFoundException, IOException {
-        if (!isMrSidAvailable) {
-            return;
-        }
+        assumeTrue("MrSid driver is not available", isMrSidAvailable);
         try {
             final File file = TestData.file(this, fileName);
 
@@ -235,9 +233,7 @@ public class MrSIDTest extends AbstractGDALTest {
      */
     @Test
     public void subBandsRead() throws IOException {
-        if (!isMrSidAvailable) {
-            return;
-        }
+        assumeTrue("MrSid driver is not available", isMrSidAvailable);
         try {
             ImageReader reader = new MrSIDImageReaderSpi().createReaderInstance();
             final File file = TestData.file(this, fileName);
@@ -327,9 +323,7 @@ public class MrSIDTest extends AbstractGDALTest {
      */
     @Test
     public void manualRead() throws IOException {
-        if (!isMrSidAvailable) {
-            return;
-        }
+        assumeTrue("MrSid driver is not available", isMrSidAvailable);
         try {
             ImageReader reader = new MrSIDImageReaderSpi().createReaderInstance();
 

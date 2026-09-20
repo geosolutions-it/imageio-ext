@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.dted;
 
+import static org.junit.Assume.assumeTrue;
+
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
@@ -50,9 +52,7 @@ public class DTEDTest extends AbstractGDALTest {
      */
     @org.junit.Test
     public void imageRead() throws FileNotFoundException, IOException {
-        if (!isGDALAvailable) {
-            return;
-        }
+        assumeTrue("GDAL library is not available", isGDALAvailable);
         File file;
         try {
             file = TestData.file(this, fileName);

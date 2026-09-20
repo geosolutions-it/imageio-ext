@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.vrt;
 
+import static org.junit.Assume.assumeTrue;
+
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
@@ -47,9 +49,7 @@ public class NitfVrtTest extends AbstractGDALTest {
      */
     @Test
     public void testJaiOperations() throws FileNotFoundException, IOException {
-        if (!isGDALAvailable) {
-            return;
-        }
+        assumeTrue("GDAL library is not available", isGDALAvailable);
         File file = TestData.file(this, fileName);
 
         // ////////////////////////////////////////////////////////////////

@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.vrt;
 
+import static org.junit.Assume.assumeTrue;
+
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.GDALUtilities;
 import it.geosolutions.imageio.gdalframework.Viewer;
@@ -55,9 +57,7 @@ public class ErdasImgVrtTest extends AbstractGDALTest {
      */
     @Test
     public void jaiOperations() throws FileNotFoundException, IOException {
-        if (!isGDALAvailable) {
-            return;
-        }
+        assumeTrue("GDAL library is not available", isGDALAvailable);
         File file = TestData.file(this, fileName);
 
         // ////////////////////////////////////////////////////////////////
@@ -77,9 +77,7 @@ public class ErdasImgVrtTest extends AbstractGDALTest {
 
     @Test
     public void bandSelection() throws FileNotFoundException, IOException {
-        if (!isGDALAvailable) {
-            return;
-        }
+        assumeTrue("GDAL library is not available", isGDALAvailable);
         File file = TestData.file(this, fileName);
 
         // ////////////////////////////////////////////////////////////////

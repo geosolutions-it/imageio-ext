@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.ecw;
 
+import static org.junit.Assume.assumeTrue;
+
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.GDALUtilities;
 import it.geosolutions.imageio.gdalframework.Viewer;
@@ -74,7 +76,7 @@ public class ECWTest extends AbstractGDALTest {
      */
     @Test
     public void imageRead() throws FileNotFoundException, IOException {
-        if (!isECWAvailable) return;
+        assumeTrue("ECW driver is not available", isECWAvailable);
         final ParameterBlockImageN pbjImageRead;
         final EnhancedImageReadParam irp = new EnhancedImageReadParam();
         final String fileName = "sample.ecw";
@@ -96,7 +98,7 @@ public class ECWTest extends AbstractGDALTest {
 
     @Test
     public void manualRead() throws FileNotFoundException, IOException {
-        if (!isECWAvailable) return;
+        assumeTrue("ECW driver is not available", isECWAvailable);
         final ECWImageReaderSpi spi = new ECWImageReaderSpi();
         final ECWImageReader mReader = new ECWImageReader(spi);
         final String fileName = "sample.ecw";
@@ -114,7 +116,7 @@ public class ECWTest extends AbstractGDALTest {
 
     @Test
     public void manualReadDestination() throws FileNotFoundException, IOException {
-        if (!isECWAvailable) return;
+        assumeTrue("ECW driver is not available", isECWAvailable);
         final ECWImageReaderSpi spi = new ECWImageReaderSpi();
         final ECWImageReader mReader = new ECWImageReader(spi);
         final String fileName = "sample.ecw";
@@ -133,7 +135,7 @@ public class ECWTest extends AbstractGDALTest {
 
     @Test
     public void ecwpRead() throws FileNotFoundException, IOException {
-        if (!isECWAvailable) return;
+        assumeTrue("ECW driver is not available", isECWAvailable);
         if (ECWP.equalsIgnoreCase(ECWPSkipTest)) return;
 
         final ImageReader mReader = new ECWImageReaderSpi().createReaderInstance();

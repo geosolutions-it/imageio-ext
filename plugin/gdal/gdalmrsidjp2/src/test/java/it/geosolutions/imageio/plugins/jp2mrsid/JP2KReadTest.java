@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.jp2mrsid;
 
+import static org.junit.Assume.assumeTrue;
+
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.GDALUtilities;
 import it.geosolutions.imageio.gdalframework.Viewer;
@@ -81,9 +83,7 @@ public class JP2KReadTest extends AbstractGDALTest {
      */
     @Test
     public void read() throws FileNotFoundException, IOException {
-        if (!isJp2MrSidDriverAvailable) {
-            return;
-        }
+        assumeTrue("Jp2MrSidDriver driver is not available", isJp2MrSidDriverAvailable);
         final ParameterBlockImageN pbjImageRead;
         final File file = TestData.file(this, fileName);
         pbjImageRead = new ParameterBlockImageN("ImageRead");
@@ -106,9 +106,7 @@ public class JP2KReadTest extends AbstractGDALTest {
      */
     @Test
     public void jaiOperations() throws IOException {
-        if (!isJp2MrSidDriverAvailable) {
-            return;
-        }
+        assumeTrue("Jp2MrSidDriver driver is not available", isJp2MrSidDriverAvailable);
         final File inputFile = TestData.file(this, fileName);
 
         // ////////////////////////////////////////////////////////////////

@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.jp2ecw;
 
+import static org.junit.Assume.assumeTrue;
+
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.GDALUtilities;
 import it.geosolutions.imageio.gdalframework.Viewer;
@@ -78,9 +80,7 @@ public class JP2KReadTest extends AbstractGDALTest {
      */
     @org.junit.Test
     public void testRead() throws FileNotFoundException, IOException {
-        if (!isJP2ECWAvailable) {
-            return;
-        }
+        assumeTrue("JP2ECW driver is not available", isJP2ECWAvailable);
         final ParameterBlockImageN pbjImageRead;
         final File file = TestData.file(this, fileName);
         pbjImageRead = new ParameterBlockImageN("ImageRead");
@@ -103,9 +103,7 @@ public class JP2KReadTest extends AbstractGDALTest {
      */
     @org.junit.Test
     public void testJaiOperations() throws IOException {
-        if (!isJP2ECWAvailable) {
-            return;
-        }
+        assumeTrue("JP2ECW driver is not available", isJP2ECWAvailable);
         final File inputFile = TestData.file(this, fileName);
 
         // ////////////////////////////////////////////////////////////////

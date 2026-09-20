@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.envisat;
 
+import static org.junit.Assume.assumeTrue;
+
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.resources.TestData;
@@ -46,9 +48,7 @@ public class EnvisatTest extends AbstractGDALTest {
      */
     @Test
     public void testEnvisat() throws FileNotFoundException, IOException {
-        if (!isGDALAvailable) {
-            return;
-        }
+        assumeTrue("GDAL library is not available", isGDALAvailable);
         File file;
         try {
             file = TestData.file(this, fileName);
