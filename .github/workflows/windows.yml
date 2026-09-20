@@ -49,21 +49,20 @@ jobs:
     # -Dall builds every module, like the Linux job. Modules whose native library
     # is missing on the runner still compile, their tests check for the driver and skip.
     - name: Build and Test
-      run: |
-        mvn -U clean install -T1C -Dall -Prelease "-Djava.awt.headless=true" "-DskipTests=false" -ntp -fae 2>&1 |
-          Tee-Object -FilePath build.log
-        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      run: mvn -U clean install -T1C -Dall -Prelease "-Djava.awt.headless=true" "-DskipTests=false" -ntp -fae
 
-    # Without the native libraries the GDAL tests skip themselves and the build stays
-    # green while testing nothing, so treat a failed load as a build failure.
-    - name: Check the GDAL native libraries were loaded
+    # Without the native libraries the GDAL tests skip themselves and the build stays green
+    # while testing nothing. VRT is a built-in driver, so a skip there means GDAL did not load.
+    - name: Check the VRT tests ran
       if: always()
       run: |
-        if (Test-Path build.log) {
-          $failed = Select-String -Path build.log -Pattern 'GDAL Library is not Available','Failed to load the GDAL native libs'
-          if ($failed) {
-            $failed | Select-Object -First 5 | ForEach-Object { $_.Line }
-            throw "GDAL native libraries did not load, the GDAL tests did not run"
-          }
-          Write-Host "GDAL native libraries loaded"
+        $reports = "plugin\gdal\gdalvrt\target\surefire-reports"
+        if (-not (Test-Path $reports)) {
+          throw "The VRT tests did not run, there are no surefire reports in $reports"
         }
+        $skipped = Select-String -Path "$reports\*.xml" -Pattern 'skipped="[1-9]'
+        if ($skipped) {
+          $skipped | Select-Object -First 5 | ForEach-Object { $_.Line }
+          throw "GDAL native libraries did not load, the VRT tests were skipped"
+        }
+        Write-Host "The VRT tests ran"
