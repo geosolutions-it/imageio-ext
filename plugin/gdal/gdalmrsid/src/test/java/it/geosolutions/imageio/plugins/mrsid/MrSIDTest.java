@@ -27,6 +27,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.Raster;
@@ -207,18 +208,15 @@ public class MrSIDTest extends AbstractGDALTest {
             // preparing to rotate
             // ////////////////////////////////////////////////////////////////
 
-            final ParameterBlockImageN pbjRotate = new ParameterBlockImageN("Rotate");
+            final ParameterBlockImageN pbjRotate = new ParameterBlockImageN("Affine");
             pbjRotate.addSource(translatedImage);
 
-            Float xOrigin = new Float(cropWidth.floatValue() / 2);
-            Float yOrigin = new Float(cropHeigth.floatValue() / 2);
-            Float angle = new Float(java.lang.Math.PI / 2);
+            AffineTransform rotation = AffineTransform.getRotateInstance(
+                    Math.PI / 2, cropWidth.floatValue() / 2, cropHeigth.floatValue() / 2);
 
-            pbjRotate.setParameter("xOrigin", xOrigin);
-            pbjRotate.setParameter("yOrigin", yOrigin);
-            pbjRotate.setParameter("angle", angle);
+            pbjRotate.setParameter("transform", rotation);
 
-            final RenderedOp rotatedImage = ImageN.create("Rotate", pbjRotate);
+            final RenderedOp rotatedImage = ImageN.create("Affine", pbjRotate);
             if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(rotatedImage, "Rotated Image");
             else {
                 Assert.assertNotNull(image.getTiles());

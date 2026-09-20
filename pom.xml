@@ -134,6 +134,24 @@
         <scope>test</scope>
       </dependency>
       <dependency>
+        <groupId>org.eclipse.imagen</groupId>
+        <artifactId>imagen-affine</artifactId>
+        <version>${imagen.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.imagen</groupId>
+        <artifactId>imagen-crop</artifactId>
+        <version>${imagen.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.imagen</groupId>
+        <artifactId>imagen-translate</artifactId>
+        <version>${imagen.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>4.13.2</version>
