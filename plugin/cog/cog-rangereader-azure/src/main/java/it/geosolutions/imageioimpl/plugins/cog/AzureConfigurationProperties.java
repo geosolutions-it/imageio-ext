@@ -44,6 +44,7 @@ public class AzureConfigurationProperties {
     private static final String AZURE_ACCOUNT_CONTAINER = "azure.reader.container";
     private static final String AZURE_ACCOUNT_PREFIX = "azure.reader.prefix";
     private static final String AZURE_MAX_CONNECTIONS = "azure.reader.maxConnections";
+    private static final String AZURE_SERVICE_URL = "azure.reader.serviceurl";
 
     private String container;
     private String prefix;
@@ -110,6 +111,9 @@ public class AzureConfigurationProperties {
         }
         if (maxConnections == null) { // REVISIT: dead code
             maxConnections = Integer.parseInt(PropertyLocator.getEnvironmentValue(AZURE_MAX_CONNECTIONS, "5"));
+        }
+        if (serviceURL == null) {
+            serviceURL = PropertyLocator.getEnvironmentValue(AZURE_SERVICE_URL, null);
         }
     }
 
