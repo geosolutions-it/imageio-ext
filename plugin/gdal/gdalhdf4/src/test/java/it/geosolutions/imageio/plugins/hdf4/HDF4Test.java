@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.hdf4;
 
+import static org.junit.Assume.assumeTrue;
+
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.GDALUtilities;
 import it.geosolutions.imageio.gdalframework.Viewer;
@@ -183,10 +185,7 @@ public class HDF4Test extends AbstractGDALTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        if (!isDriverAvailable) {
-            LOGGER.warning(msg);
-            return;
-        }
+        assumeTrue(msg, isDriverAvailable);
         // general settings
         ImageN.getDefaultInstance().getTileScheduler().setParallelism(5);
         ImageN.getDefaultInstance().getTileScheduler().setPriority(4);

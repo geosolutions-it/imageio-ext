@@ -19,6 +19,7 @@ package it.geosolutions.imageio.plugins.vrt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
@@ -43,9 +44,7 @@ public class RasterAttributeTableTest extends AbstractGDALTest {
 
     @Test
     public void readImageIO() throws FileNotFoundException, IOException {
-        if (!isGDALAvailable) {
-            return;
-        }
+        assumeTrue("GDAL library is not available", isGDALAvailable);
         final File file = TestData.file(this, "095b_dem_90m.asc.vrt");
 
         final Iterator<ImageReader> it = ImageIO.getImageReaders(file);
@@ -102,9 +101,7 @@ public class RasterAttributeTableTest extends AbstractGDALTest {
 
     @Test
     public void readGdal312FieldTypes() throws FileNotFoundException, IOException {
-        if (!isGDALAvailable) {
-            return;
-        }
+        assumeTrue("GDAL library is not available", isGDALAvailable);
         final File file = TestData.file(this, "rat-gdal312-types.vrt");
 
         final ImageReader reader = ImageIO.getImageReaders(file).next();

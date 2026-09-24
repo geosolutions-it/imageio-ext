@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.arcgrid;
 
+import static org.junit.Assume.assumeTrue;
+
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
@@ -54,9 +56,7 @@ public class ArcGridReadTest extends AbstractGDALTest {
      */
     @org.junit.Test
     public void readJAI() throws FileNotFoundException, IOException {
-        if (!isGDALAvailable) {
-            return;
-        }
+        assumeTrue("GDAL library is not available", isGDALAvailable);
         final ParameterBlockImageN pbjImageRead;
         final String fileName = "095b_dem_90m.asc";
         TestData.unzipFile(this, "arcgrid.zip");
@@ -79,9 +79,7 @@ public class ArcGridReadTest extends AbstractGDALTest {
      */
     @Test
     public void readImageIO() throws FileNotFoundException, IOException {
-        if (!isGDALAvailable) {
-            return;
-        }
+        assumeTrue("GDAL library is not available", isGDALAvailable);
         final File file = TestData.file(this, "095b_dem_90m.asc");
 
         // //

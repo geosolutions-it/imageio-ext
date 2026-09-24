@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.gdalframework;
 
+import static org.junit.Assume.assumeTrue;
+
 import java.util.logging.Logger;
 import org.junit.Test;
 
@@ -47,10 +49,7 @@ public class AbstractGDALTest {
 
     @Test
     public void setUp() throws Exception {
-        if (!isGDALAvailable) {
-            LOGGER.warning("GDAL Library is not Available");
-            return;
-        }
+        assumeTrue("GDAL library is not available", isGDALAvailable);
     }
 
     public static final void missingDriverMessage(final String format) {

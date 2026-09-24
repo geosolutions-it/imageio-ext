@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.mrsid;
 
+import static org.junit.Assume.assumeTrue;
+
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
 import it.geosolutions.imageio.gdalframework.GDALUtilities;
@@ -27,6 +29,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.Raster;
@@ -82,9 +85,7 @@ public class MrSIDTest extends AbstractGDALTest {
      */
     @Test
     public void metadataAccess() throws FileNotFoundException, IOException {
-        if (!isMrSidAvailable) {
-            return;
-        }
+        assumeTrue("MrSid driver is not available", isMrSidAvailable);
         try {
             final File file = TestData.file(this, fileName);
             final ParameterBlockImageN pbjImageRead = new ParameterBlockImageN("ImageRead");
@@ -134,9 +135,7 @@ public class MrSIDTest extends AbstractGDALTest {
      */
     @Test
     public void jaiOperations() throws FileNotFoundException, IOException {
-        if (!isMrSidAvailable) {
-            return;
-        }
+        assumeTrue("MrSid driver is not available", isMrSidAvailable);
         try {
             final File file = TestData.file(this, fileName);
 
@@ -207,18 +206,15 @@ public class MrSIDTest extends AbstractGDALTest {
             // preparing to rotate
             // ////////////////////////////////////////////////////////////////
 
-            final ParameterBlockImageN pbjRotate = new ParameterBlockImageN("Rotate");
+            final ParameterBlockImageN pbjRotate = new ParameterBlockImageN("Affine");
             pbjRotate.addSource(translatedImage);
 
-            Float xOrigin = new Float(cropWidth.floatValue() / 2);
-            Float yOrigin = new Float(cropHeigth.floatValue() / 2);
-            Float angle = new Float(java.lang.Math.PI / 2);
+            AffineTransform rotation = AffineTransform.getRotateInstance(
+                    Math.PI / 2, cropWidth.floatValue() / 2, cropHeigth.floatValue() / 2);
 
-            pbjRotate.setParameter("xOrigin", xOrigin);
-            pbjRotate.setParameter("yOrigin", yOrigin);
-            pbjRotate.setParameter("angle", angle);
+            pbjRotate.setParameter("transform", rotation);
 
-            final RenderedOp rotatedImage = ImageN.create("Rotate", pbjRotate);
+            final RenderedOp rotatedImage = ImageN.create("Affine", pbjRotate);
             if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(rotatedImage, "Rotated Image");
             else {
                 Assert.assertNotNull(image.getTiles());
@@ -237,9 +233,7 @@ public class MrSIDTest extends AbstractGDALTest {
      */
     @Test
     public void subBandsRead() throws IOException {
-        if (!isMrSidAvailable) {
-            return;
-        }
+        assumeTrue("MrSid driver is not available", isMrSidAvailable);
         try {
             ImageReader reader = new MrSIDImageReaderSpi().createReaderInstance();
             final File file = TestData.file(this, fileName);
@@ -329,9 +323,7 @@ public class MrSIDTest extends AbstractGDALTest {
      */
     @Test
     public void manualRead() throws IOException {
-        if (!isMrSidAvailable) {
-            return;
-        }
+        assumeTrue("MrSid driver is not available", isMrSidAvailable);
         try {
             ImageReader reader = new MrSIDImageReaderSpi().createReaderInstance();
 

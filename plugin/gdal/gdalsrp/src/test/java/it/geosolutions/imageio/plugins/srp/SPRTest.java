@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.srp;
 
+import static org.junit.Assume.assumeTrue;
+
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
@@ -37,9 +39,7 @@ public class SPRTest extends AbstractGDALTest {
 
     @Test
     public void read() throws FileNotFoundException, IOException {
-        if (!isGDALAvailable) {
-            return;
-        }
+        assumeTrue("GDAL library is not available", isGDALAvailable);
         File file;
         try {
             file = TestData.file(this, fileName);

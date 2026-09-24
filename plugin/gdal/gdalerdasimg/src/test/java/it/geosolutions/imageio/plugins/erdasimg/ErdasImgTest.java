@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.erdasimg;
 
+import static org.junit.Assume.assumeTrue;
+
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
@@ -46,9 +48,7 @@ public class ErdasImgTest extends AbstractGDALTest {
      */
     @Test
     public void jaiOperations() throws FileNotFoundException, IOException {
-        if (!isGDALAvailable) {
-            return;
-        }
+        assumeTrue("GDAL library is not available", isGDALAvailable);
         File file;
         try {
             TestData.unzipFile(this, "test.zip");

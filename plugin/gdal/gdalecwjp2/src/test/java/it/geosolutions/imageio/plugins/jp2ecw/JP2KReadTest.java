@@ -16,12 +16,15 @@
  */
 package it.geosolutions.imageio.plugins.jp2ecw;
 
+import static org.junit.Assume.assumeTrue;
+
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.GDALUtilities;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
 import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -77,9 +80,7 @@ public class JP2KReadTest extends AbstractGDALTest {
      */
     @org.junit.Test
     public void testRead() throws FileNotFoundException, IOException {
-        if (!isJP2ECWAvailable) {
-            return;
-        }
+        assumeTrue("JP2ECW driver is not available", isJP2ECWAvailable);
         final ParameterBlockImageN pbjImageRead;
         final File file = TestData.file(this, fileName);
         pbjImageRead = new ParameterBlockImageN("ImageRead");
@@ -102,9 +103,7 @@ public class JP2KReadTest extends AbstractGDALTest {
      */
     @org.junit.Test
     public void testJaiOperations() throws IOException {
-        if (!isJP2ECWAvailable) {
-            return;
-        }
+        assumeTrue("JP2ECW driver is not available", isJP2ECWAvailable);
         final File inputFile = TestData.file(this, fileName);
 
         // ////////////////////////////////////////////////////////////////
@@ -170,18 +169,15 @@ public class JP2KReadTest extends AbstractGDALTest {
         // ////////////////////////////////////////////////////////////////
         // preparing to rotate
         // ////////////////////////////////////////////////////////////////
-        final ParameterBlockImageN pbjRotate = new ParameterBlockImageN("Rotate");
+        final ParameterBlockImageN pbjRotate = new ParameterBlockImageN("Affine");
         pbjRotate.addSource(translatedImage);
 
-        Float xOrigin = new Float(cropWidth.floatValue() / 2);
-        Float yOrigin = new Float(cropHeigth.floatValue() / 2);
-        Float angle = new Float(java.lang.Math.PI / 2);
+        AffineTransform rotation =
+                AffineTransform.getRotateInstance(Math.PI / 2, cropWidth.floatValue() / 2, cropHeigth.floatValue() / 2);
 
-        pbjRotate.setParameter("xOrigin", xOrigin);
-        pbjRotate.setParameter("yOrigin", yOrigin);
-        pbjRotate.setParameter("angle", angle);
+        pbjRotate.setParameter("transform", rotation);
 
-        final RenderedOp rotatedImage = ImageN.create("Rotate", pbjRotate);
+        final RenderedOp rotatedImage = ImageN.create("Affine", pbjRotate);
 
         StringBuilder title = new StringBuilder("SUBSAMP:")
                 .append("X[")
@@ -204,13 +200,8 @@ public class JP2KReadTest extends AbstractGDALTest {
                 .append(xTrans.toString())
                 .append("]-Y[")
                 .append(yTrans.toString())
-                .append("]ROTATE:xOrig[")
-                .append(xOrigin.toString())
-                .append("]-yOrig[")
-                .append(yOrigin.toString())
-                .append("]-ang[")
-                .append(angle.toString())
-                .append("]");
+                .append("]ROTATE:")
+                .append(rotation.toString());
         if (TestData.isInteractiveTest()) Viewer.visualizeAllInformation(rotatedImage, title.toString());
         else Assert.assertNotNull(rotatedImage.getTiles());
         ImageIOUtilities.disposeImage(rotatedImage);

@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.wcs;
 
+import static org.junit.Assume.assumeTrue;
+
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.GDALUtilities;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
@@ -47,9 +49,7 @@ public class WCSTest extends AbstractGDALTest {
      */
     @Ignore
     public void read() throws FileNotFoundException, IOException {
-        if (!isDriverAvailable) {
-            return;
-        }
+        assumeTrue("Driver driver is not available", isDriverAvailable);
         if (!isGDALDATAEnvSet) {
             warningMessage("GDAL_DATA environment variable has not been set. Tests are skipped");
             return;
