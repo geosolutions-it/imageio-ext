@@ -82,7 +82,7 @@
     <extensive.tests>false</extensive.tests>
     <interactive.tests>false</interactive.tests>
     <test.maxHeapSize>512M</test.maxHeapSize>
-    <kakadu.version>5.2.6</kakadu.version>
+    <kakadu.version>6.3.1</kakadu.version>
     <java.awt.headless>true</java.awt.headless>
     <gdal.version>3.2.0</gdal.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
