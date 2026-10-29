@@ -196,7 +196,7 @@ public class TIFFLZWDecompressor extends TIFFDecompressor {
             }
         }
 
-        predictorDecompressor.decompress(dstData, srcOffset, dstOffset, srcHeight, srcWidth, bytesPerRow);
+        predictorDecompressor.decompress(dstData, dstOffset, dstOffset, srcHeight, srcWidth, bytesPerRow);
 
         return dstIndex - dstOffset;
     }

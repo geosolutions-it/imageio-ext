@@ -819,6 +819,20 @@ public class TIFFReadTest extends Assert {
     }
 
     @Test
+    public void readLzwPredictor2On8BitsMultipleStrips() throws IOException {
+        // This image has been created from test.tif using the command:
+        // tiffcp -c lzw:2 -r 4 test.tif,0 lzw_p2_strips.tif
+        assertImagesEqual(readTiff("test.tif"), readTiff("lzw_p2_strips.tif"));
+    }
+
+    @Test
+    public void readMultiBandLzwPredictor2MultipleStrips() throws IOException {
+        // This image has been created from sampleRGBA.tif using the command:
+        // tiffcp -c lzw:2 -r 4 sampleRGBA.tif sampleRGBA_LZW_p2_strips.tif
+        assertImagesEqual(readTiff("sampleRGBA.tif"), readTiff("sampleRGBA_LZW_p2_strips.tif"));
+    }
+
+    @Test
     public void readMultiBandInt16Predictor2() throws IOException {
         assertImagesEqual(readTiff("sampleRGBA.tif"), readTiff("sampleRGBA16_LZW_p2.tif"));
         assertImagesEqual(readTiff("sampleRGBA.tif"), readTiff("sampleRGBA16_DEFLATE_p2.tif"));
