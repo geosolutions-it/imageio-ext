@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.vrt;
 
+import static org.junit.Assume.assumeTrue;
+
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.resources.TestData;
@@ -38,9 +40,7 @@ public class EnviHdrVrtTest extends AbstractGDALTest {
      */
     @Test
     public void testManualRead() throws IOException, FileNotFoundException {
-        if (!isGDALAvailable) {
-            return;
-        }
+        assumeTrue("GDAL library is not available", isGDALAvailable);
         final String fileName = "small_world.img.vrt";
         TestData.unzipFile(this, "small-world.zip");
         final File file = TestData.file(this, fileName);

@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.vrt;
 
+import static org.junit.Assume.assumeTrue;
+
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
@@ -54,9 +56,7 @@ public class ArcGridReadVrtTest extends AbstractGDALTest {
      */
     @Test
     public void readJAI() throws FileNotFoundException, IOException {
-        if (!isGDALAvailable) {
-            return;
-        }
+        assumeTrue("GDAL library is not available", isGDALAvailable);
         final ParameterBlockImageN pbjImageRead;
         final String fileName = "095b_dem_90m.asc.vrt";
         final File file = TestData.file(this, fileName);
@@ -78,9 +78,7 @@ public class ArcGridReadVrtTest extends AbstractGDALTest {
      */
     @Test
     public void readImageIO() throws FileNotFoundException, IOException {
-        if (!isGDALAvailable) {
-            return;
-        }
+        assumeTrue("GDAL library is not available", isGDALAvailable);
         final File file = TestData.file(this, "095b_dem_90m.asc.vrt");
 
         // //

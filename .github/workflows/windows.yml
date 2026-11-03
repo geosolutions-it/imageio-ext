@@ -1,0 +1,68 @@
+name: Windows Build and Test
+
+on:
+  push:
+    branches:
+      - '**/*'
+  pull_request:
+    branches:
+      - '**/*'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  # GDAL 3.12 added the boolean, datetime and geometry raster attribute table
+  # field types. Older versions keep the type code but drop the values, which
+  # RasterAttributeTableTest checks, so this is the lowest version that works.
+  GDAL_RELEASE: release-1944-x64-gdal-3-12-mapserver-8-6
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v7
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Set up GDAL
+      run: |
+        $url = "https://download.gisinternals.com/sdk/downloads/$env:GDAL_RELEASE.zip"
+        $zip = Join-Path $env:RUNNER_TEMP "gdal.zip"
+        $gdal = Join-Path $env:RUNNER_TEMP "gdal"
+        Invoke-WebRequest -Uri $url -OutFile $zip -MaximumRetryCount 5 -RetryIntervalSec 15
+        Expand-Archive -Path $zip -DestinationPath $gdal
+        # gdalalljni.dll is found through PATH, which Java adds to java.library.path
+        Add-Content $env:GITHUB_PATH "$gdal\bin"
+        Add-Content $env:GITHUB_PATH "$gdal\bin\gdal\java"
+        Add-Content $env:GITHUB_ENV "GDAL_DATA=$gdal\bin\gdal-data"
+        Add-Content $env:GITHUB_ENV "GDAL_DRIVER_PATH=$gdal\bin\gdal\plugins"
+        Add-Content $env:GITHUB_ENV "PROJ_LIB=$gdal\bin\proj9\share"
+
+    # -Dall builds every module, like the Linux job. Modules whose native library
+    # is missing on the runner still compile, their tests check for the driver and skip.
+    - name: Build and Test
+      run: mvn -U clean install -T1C -Dall -Prelease "-Djava.awt.headless=true" "-DskipTests=false" -ntp -fae
+
+    # Without the native libraries the GDAL tests skip themselves and the build stays green
+    # while testing nothing. VRT is a built-in driver, so a skip there means GDAL did not load.
+    - name: Check the VRT tests ran
+      if: always()
+      run: |
+        $reports = "plugin\gdal\gdalvrt\target\surefire-reports"
+        if (-not (Test-Path $reports)) {
+          throw "The VRT tests did not run, there are no surefire reports in $reports"
+        }
+        $skipped = Select-String -Path "$reports\*.xml" -Pattern 'skipped="[1-9]'
+        if ($skipped) {
+          $skipped | Select-Object -First 5 | ForEach-Object { $_.Line }
+          throw "GDAL native libraries did not load, the VRT tests were skipped"
+        }
+        Write-Host "The VRT tests ran"

@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.idrisi;
 
+import static org.junit.Assume.assumeTrue;
+
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
@@ -54,9 +56,7 @@ public class IdrisiReadTest extends AbstractGDALTest {
      */
     @org.junit.Test
     public void readJAI() throws FileNotFoundException, IOException {
-        if (!isGDALAvailable) {
-            return;
-        }
+        assumeTrue("GDAL library is not available", isGDALAvailable);
         final ParameterBlockImageN pbjImageRead;
         final String fileName = "idrisi.rst";
         TestData.unzipFile(this, "idrisi.zip");
@@ -79,9 +79,7 @@ public class IdrisiReadTest extends AbstractGDALTest {
      */
     @Test
     public void readImageIO() throws FileNotFoundException, IOException {
-        if (!isGDALAvailable) {
-            return;
-        }
+        assumeTrue("GDAL library is not available", isGDALAvailable);
         TestData.unzipFile(this, "idrisi.zip");
         final File file = TestData.file(this, "idrisi.rst");
 

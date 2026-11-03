@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.geotiff;
 
+import static org.junit.Assume.assumeTrue;
+
 import it.geosolutions.imageio.core.GCP;
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.GDALCommonIIOImageMetadata;
@@ -89,9 +91,7 @@ public class GeoTiffTest extends AbstractGDALTest {
      */
     @Test
     public void manualRead() throws IOException, FileNotFoundException {
-        if (!isGDALAvailable) {
-            return;
-        }
+        assumeTrue("GDAL library is not available", isGDALAvailable);
         final ImageReadParam irp = new ImageReadParam();
 
         // Reading a simple GrayScale image
@@ -115,9 +115,7 @@ public class GeoTiffTest extends AbstractGDALTest {
      */
     @Test
     public void read() throws FileNotFoundException, IOException {
-        if (!isGDALAvailable) {
-            return;
-        }
+        assumeTrue("GDAL library is not available", isGDALAvailable);
         final ParameterBlockImageN pbjImageRead;
         String fileName = "utmByte.tif";
         final File file = TestData.file(this, fileName);
@@ -138,9 +136,7 @@ public class GeoTiffTest extends AbstractGDALTest {
      */
     @Test
     public void write() throws IOException, FileNotFoundException {
-        if (!isGDALAvailable) {
-            return;
-        }
+        assumeTrue("GDAL library is not available", isGDALAvailable);
         final File outputFile = TestData.temp(this, "writetest.tif", false);
         outputFile.deleteOnExit();
         final File inputFile = TestData.file(this, "utmByte.tif");
@@ -190,9 +186,7 @@ public class GeoTiffTest extends AbstractGDALTest {
      */
     @Test
     public void palette() throws FileNotFoundException, IOException {
-        if (!isGDALAvailable) {
-            return;
-        }
+        assumeTrue("GDAL library is not available", isGDALAvailable);
         final File outputFile = TestData.temp(this, "writetest.tif", false);
         outputFile.deleteOnExit();
         final File inputFile = TestData.file(this, "paletted.tif");
@@ -235,9 +229,7 @@ public class GeoTiffTest extends AbstractGDALTest {
 
     @Test
     public void testDataTypes() throws IOException, FileNotFoundException {
-        if (!isGDALAvailable) {
-            return;
-        }
+        assumeTrue("GDAL library is not available", isGDALAvailable);
         final List<String> fileList = new ArrayList<String>(4);
         fileList.add("paletted.tif");
         fileList.add("utmByte.tif");
@@ -274,9 +266,7 @@ public class GeoTiffTest extends AbstractGDALTest {
      */
     @Test
     public void testGCP() throws FileNotFoundException, IOException {
-        if (!isGDALAvailable) {
-            return;
-        }
+        assumeTrue("GDAL library is not available", isGDALAvailable);
 
         String fileName = "gcp.tif";
         final File file = TestData.file(this, fileName);

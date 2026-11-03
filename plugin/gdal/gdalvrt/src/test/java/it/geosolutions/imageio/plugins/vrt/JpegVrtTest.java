@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.vrt;
 
+import static org.junit.Assume.assumeTrue;
+
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
@@ -54,9 +56,7 @@ public class JpegVrtTest extends AbstractGDALTest {
      */
     @Test
     public void read() throws FileNotFoundException, IOException {
-        if (!isGDALAvailable) {
-            return;
-        }
+        assumeTrue("GDAL library is not available", isGDALAvailable);
         final ParameterBlockImageN pbjImageRead;
         final ImageReadParam irp = new ImageReadParam();
         final String fileName = "bw_sample.jpg.vrt";
@@ -83,9 +83,7 @@ public class JpegVrtTest extends AbstractGDALTest {
      */
     @Test
     public void sourceBands() throws IOException, FileNotFoundException {
-        if (!isGDALAvailable) {
-            return;
-        }
+        assumeTrue("GDAL library is not available", isGDALAvailable);
         final File inputFile = TestData.file(this, "small_world.jpg.vrt");
 
         // //

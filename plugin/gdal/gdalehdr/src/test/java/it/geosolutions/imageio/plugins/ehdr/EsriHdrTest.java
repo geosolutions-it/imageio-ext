@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.ehdr;
 
+import static org.junit.Assume.assumeTrue;
+
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.gdalframework.Viewer;
 import it.geosolutions.resources.TestData;
@@ -41,9 +43,7 @@ public class EsriHdrTest extends AbstractGDALTest {
      */
     @Test
     public void testRead() throws IOException, FileNotFoundException {
-        if (!isGDALAvailable) {
-            return;
-        }
+        assumeTrue("GDAL library is not available", isGDALAvailable);
         final String fileName = "elggll.bil";
         TestData.unzipFile(this, "test.zip");
         final File file = TestData.file(this, fileName);

@@ -16,6 +16,8 @@
  */
 package it.geosolutions.imageio.plugins.arcbinarygrid;
 
+import static org.junit.Assume.assumeTrue;
+
 import it.geosolutions.imageio.gdalframework.AbstractGDALTest;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import it.geosolutions.resources.TestData;
@@ -61,9 +63,7 @@ public class ArcBinaryGridReadTest extends AbstractGDALTest {
      * @throws IOException
      */
     public void testReadJAI() throws IOException {
-        if (!isGDALAvailable) {
-            return;
-        }
+        assumeTrue("GDAL library is not available", isGDALAvailable);
         final ParameterBlockImageN pbjImageRead;
         File file = null;
         try {
@@ -93,9 +93,7 @@ public class ArcBinaryGridReadTest extends AbstractGDALTest {
      * @throws IOException
      */
     public void testReadImageIO() throws IOException {
-        if (!isGDALAvailable) {
-            return;
-        }
+        assumeTrue("GDAL library is not available", isGDALAvailable);
         File file = null;
         try {
             file = TestData.file(this, fileName);
