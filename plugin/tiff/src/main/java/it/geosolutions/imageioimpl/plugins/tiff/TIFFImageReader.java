@@ -2063,5 +2063,7 @@ public class TIFFImageReader extends ImageReader {
         this.imageMetadata = null;
         this.imageReadParam = null;
         this.stream = null;
+        // the page cache would keep every IFD read, tile offsets included, while the reader is referenced
+        this.pagesInfo = null;
     }
 }
