@@ -33,7 +33,9 @@ import java.awt.image.SampleModel;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.nio.ByteOrder;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageReadParam;
@@ -649,6 +651,27 @@ public class TIFFReadTest extends Assert {
                 reader.dispose();
             }
         }
+    }
+
+    /** Checks that dispose() drops the page cache, which holds the IFD of every page read. */
+    @Test
+    public void testDisposeReleasesPageCache() throws Exception {
+        File file = TestData.file(this, "emptyTiles.tif");
+        TIFFImageReader reader = (TIFFImageReader) new TIFFImageReaderSpi().createReaderInstance();
+        try (FileImageInputStream in = new FileImageInputStream(file)) {
+            reader.setInput(in);
+            reader.read(0);
+            assertEquals(1, pagesInfo(reader).size());
+
+            reader.dispose();
+            assertNull(pagesInfo(reader));
+        }
+    }
+
+    private static Map<?, ?> pagesInfo(TIFFImageReader reader) throws ReflectiveOperationException {
+        Field field = TIFFImageReader.class.getDeclaredField("pagesInfo");
+        field.setAccessible(true);
+        return (Map<?, ?>) field.get(reader);
     }
 
     @Test
